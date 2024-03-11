@@ -578,6 +578,8 @@ private:
     HashSet<Ref<WebProcessProxy>> processes(const API::InspectorExtension&) const;
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
+    API::ContentWorld& toContentWorld(WebExtensionContentWorldType) const;
+
     void addInjectedContent() { addInjectedContent(injectedContents()); }
     void addInjectedContent(const InjectedContentVector&);
     void addInjectedContent(const InjectedContentVector&, MatchPatternSet&);

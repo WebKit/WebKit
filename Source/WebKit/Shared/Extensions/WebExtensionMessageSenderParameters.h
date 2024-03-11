@@ -39,7 +39,7 @@ struct WebExtensionMessageSenderParameters {
     std::optional<WebExtensionTabParameters> tabParameters;
     std::optional<WebExtensionFrameIdentifier> frameIdentifier;
     WebPageProxyIdentifier pageProxyIdentifier;
-    WebExtensionContentWorldType contentWorldType;
+    WebExtensionContentWorldType contentWorldType { WebExtensionContentWorldType::ContentScript };
     URL url;
 };
 

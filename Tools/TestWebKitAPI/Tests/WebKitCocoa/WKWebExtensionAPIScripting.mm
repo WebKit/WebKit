@@ -860,6 +860,95 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIScripting, MainWorld)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>window.secretValue = 'This is a secret.'</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScriptsManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"js": @[ @"content_script.js" ],
+            @"world": @"MAIN"
+        } ]
+    };
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.test.assertEq(window.secretValue, 'This is a secret.')",
+
+        // Externally connectable exposes a limited browser but not chrome.
+        @"browser.test.assertEq(window.chrome, undefined)",
+        @"browser.test.assertEq(typeof window.browser?.runtime, 'object')",
+        @"browser.test.assertEq(window.browser?.runtime?.id, undefined)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"content_script.js": contentScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIScripting, IsolatedWorld)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>window.secretValue = 'This is a secret.'</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScriptsManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"js": @[ @"content_script.js" ],
+            @"world": @"ISOLATED"
+        } ]
+    };
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.test.assertEq(window.secretValue, undefined)",
+
+        // Both chrome and browser should be exposed.
+        @"browser.test.assertEq(typeof window.chrome?.runtime?.id, 'string')",
+        @"browser.test.assertEq(typeof window.browser?.runtime?.id, 'string')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"content_script.js": contentScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

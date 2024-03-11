@@ -94,9 +94,6 @@
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "%s %d×%d pixels" = "%s %d×%d pixels";
 
-/* Name of application's single WebCrypto master key in Keychain */
-"%s WebCrypto Master Key" = "%s WebCrypto Master Key";
-
 /* Present the number of selected <option> items in a <select multiple> element (iOS only) */
 "%zu Items" = "%zu Items";
 
@@ -123,9 +120,6 @@
 
 /* 2× media controls context menu playback speed label */
 "2× (Media Controls Menu Playback Speed)" = "2×";
-
-/* Name of application's single WebCrypto master key in Keychain */
-"<application> WebCrypto Master Key" = "<application> WebCrypto Master Key";
 
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "<filename> %d×%d pixels" = "<filename> %d×%d pixels";
@@ -730,6 +724,9 @@
 /* Inspect Element context menu item */
 "Inspect Element" = "Inspect Element";
 
+/* Message when a PDF fails to unlock with the given password */
+"Invalid Password" = "Invalid Password";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for commands */
 "Invalid `commands` manifest entry." = "Invalid `commands` manifest entry.";
 
@@ -750,9 +747,6 @@
 
 /* WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources */
 "Invalid `web_accessible_resources` manifest entry." = "Invalid `web_accessible_resources` manifest entry.";
-
-/* Message when a PDF fails to unlock with the given password */
-"Invalid Password" = "Invalid Password";
 
 /* Validation message for input form controls with a value not matching type */
 "Invalid value" = "Invalid value";
@@ -967,6 +961,9 @@
 /* WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value */
 "Manifest `content_scripts` entry has unknown `run_at` value." = "Manifest `content_scripts` entry has unknown `run_at` value.";
 
+/* WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value */
+"Manifest `content_scripts` entry has unknown `world` value." = "Manifest `content_scripts` entry has unknown `world` value.";
+
 /* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
 "Manifest has no `declarativeNetRequest` permission." = "Manifest has no `declarativeNetRequest` permission.";
 
@@ -1149,6 +1146,9 @@
 
 /* Playback Speed media controls context menu title */
 "Playback Speed (Media Controls Menu)" = "Playback Speed";
+
+/* Subtitle when a PDF needs a password to be unlocked */
+"Please enter the password below." = "Please enter the password below.";
 
 /* Label text to be used when a plug-in was blocked from loading because it was too small */
 "Plug-In too small" = "Plug-In too small";
@@ -1395,6 +1395,9 @@
 
 /* Label for the support with Apple Pay button. */
 "Support with Apple Pay" = "Support with Apple Pay";
+
+/* Swap characters context menu item */
+"Swap characters" = "Swap characters";
 
 /* File Upload alert sheet camera button string for taking only photos */
 "Take Photo (file upload action sheet)" = "Take Photo";
@@ -1795,6 +1798,9 @@
 /* accessibility role description for a mark element */
 "highlighted" = "highlighted";
 
+/* accessibility label for hour fields. */
+"hour" = "hour";
+
 /* accessibility role description for image map */
 "image map" = "image map";
 
@@ -1824,6 +1830,15 @@
 
 /* An ARIA accessibility group that contains mathematical symbols. */
 "math" = "math";
+
+/* accessibility label for meridiem fields. */
+"meridiem" = "meridiem";
+
+/* accessibility label for milliseconds fields. */
+"milliseconds" = "milliseconds";
+
+/* accessibility label for minutes fields. */
+"minutes" = "minutes";
 
 /* accessibility label for a date field month input. */
 "month" = "month";
@@ -1888,9 +1903,6 @@
 /* accessibility label for play button */
 "play" = "play";
 
-/* Subtitle when a PDF needs a password to be unlocked */
-"Please enter the password below." = "Please enter the password below.";
-
 /* Verb stating the action that will occur when a button is pressed, as used by accessibility */
 "press" = "press";
 
@@ -1917,6 +1929,9 @@
 
 /* An ARIA accessibility group that contains a search feature of a website. */
 "search" = "search";
+
+/* accessibility label for seconds fields. */
+"seconds" = "seconds";
 
 /* accessibility help text for jump back 30 seconds button */
 "seek movie back 30 seconds" = "seek movie back 30 seconds";
@@ -2016,13 +2031,6 @@
 
 /* accessibility label for a date field year input. */
 "year" = "year";
-
-/* Accessibility labels for time fields. */
-"hour" = "hour";
-"minutes" = "minutes";
-"seconds" = "seconds";
-"milliseconds" = "milliseconds";
-"meridiem" = "meridiem";
 
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";

@@ -82,7 +82,7 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
     }
 
     auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
-    Ref executionWorld = parameters.world == WebExtensionContentWorldType::Main ? API::ContentWorld::pageContentWorld() : *m_contentScriptWorld;
+    Ref executionWorld = toContentWorld(parameters.world);
 
     executeScript(scriptPairs, webView, executionWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
         completionHandler(WTFMove(injectionResults));
@@ -390,9 +390,9 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.identifier = parameters.identifier;
         injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
         injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
-        injectedContentData.injectionTime = parameters.injectionTime.value();
-        injectedContentData.injectsIntoAllFrames = parameters.allFrames.value();
-        injectedContentData.forMainWorld = parameters.world.value() == WebExtensionContentWorldType::Main;
+        injectedContentData.injectionTime = parameters.injectionTime.value_or(WebExtension::InjectionTime::DocumentIdle);
+        injectedContentData.injectsIntoAllFrames = parameters.allFrames.value_or(false);
+        injectedContentData.contentWorldType = parameters.world.value_or(WebExtensionContentWorldType::ContentScript);
         injectedContentData.scriptPaths = scriptPaths;
         injectedContentData.styleSheetPaths = styleSheetPaths;
 

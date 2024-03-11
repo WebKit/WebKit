@@ -1839,7 +1839,6 @@ localizedStrings["Ungrouped @ Computed Style variables grouping mode"] = "Ungrou
 /* Property value for `font-variant-capitals: unicase`. */
 localizedStrings["Unicase @ Font Details Sidebar Property Value"] = "Unicase";
 localizedStrings["Unique"] = "Unique";
-localizedStrings["Unknown"] = "Unknown";
 localizedStrings["Unknown Location"] = "Unknown Location";
 localizedStrings["Unknown error"] = "Unknown error";
 localizedStrings["Unknown node"] = "Unknown node";

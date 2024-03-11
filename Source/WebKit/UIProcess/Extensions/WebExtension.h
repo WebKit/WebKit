@@ -29,6 +29,7 @@
 
 #include "APIObject.h"
 #include "CocoaImage.h"
+#include "WebExtensionContentWorldType.h"
 #include "WebExtensionMatchPattern.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -155,7 +156,7 @@ public:
 
         bool matchesAboutBlank { false };
         bool injectsIntoAllFrames { false };
-        bool forMainWorld { false };
+        WebExtensionContentWorldType contentWorldType { WebExtensionContentWorldType::ContentScript };
 
         RetainPtr<NSArray> scriptPaths;
         RetainPtr<NSArray> styleSheetPaths;
@@ -174,7 +175,7 @@ public:
 
     struct DeclarativeNetRequestRulesetData {
         String rulesetID;
-        bool enabled;
+        bool enabled { false };
         String jsonPath;
     };
 

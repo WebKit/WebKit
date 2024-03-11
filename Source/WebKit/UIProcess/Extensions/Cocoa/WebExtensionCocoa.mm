@@ -112,6 +112,9 @@ static NSString * const contentScriptsDocumentEndManifestKey = @"document_end";
 static NSString * const contentScriptsAllFramesManifestKey = @"all_frames";
 static NSString * const contentScriptsJSManifestKey = @"js";
 static NSString * const contentScriptsCSSManifestKey = @"css";
+static NSString * const contentScriptsWorldManifestKey = @"world";
+static NSString * const contentScriptsIsolatedManifestKey = @"ISOLATED";
+static NSString * const contentScriptsMainManifestKey = @"MAIN";
 
 static NSString * const permissionsManifestKey = @"permissions";
 static NSString * const optionalPermissionsManifestKey = @"optional_permissions";
@@ -1950,13 +1953,22 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         else
             recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `run_at` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value")));
 
+        WebExtensionContentWorldType contentWorldType = WebExtensionContentWorldType::ContentScript;
+        NSString *worldString = objectForKey<NSString>(dictionary, contentScriptsWorldManifestKey);
+        if (!worldString || [worldString isEqualToString:contentScriptsIsolatedManifestKey])
+            contentWorldType = WebExtensionContentWorldType::ContentScript;
+        else if ([worldString isEqualToString:contentScriptsMainManifestKey])
+            contentWorldType = WebExtensionContentWorldType::Main;
+        else
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `world` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value")));
+
         InjectedContentData injectedContentData;
         injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
         injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
         injectedContentData.injectionTime = injectionTime;
         injectedContentData.matchesAboutBlank = matchesAboutBlank;
         injectedContentData.injectsIntoAllFrames = injectsIntoAllFrames;
-        injectedContentData.forMainWorld = false;
+        injectedContentData.contentWorldType = contentWorldType;
         injectedContentData.scriptPaths = scriptPaths;
         injectedContentData.styleSheetPaths = styleSheetPaths;
         injectedContentData.includeGlobPatternStrings = includeGlobPatternStrings;

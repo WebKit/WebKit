@@ -3519,6 +3519,25 @@ static WebCore::UserScriptInjectionTime toImpl(WebExtension::InjectionTime injec
     }
 }
 
+API::ContentWorld& WebExtensionContext::toContentWorld(WebExtensionContentWorldType contentWorldType) const
+{
+    ASSERT(isLoaded());
+
+    switch (contentWorldType) {
+    case WebExtensionContentWorldType::Main:
+    case WebExtensionContentWorldType::WebPage:
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    case WebExtensionContentWorldType::Inspector:
+#endif
+        return API::ContentWorld::pageContentWorld();
+    case WebExtensionContentWorldType::ContentScript:
+        return *m_contentScriptWorld;
+    case WebExtensionContentWorldType::Native:
+        ASSERT_NOT_REACHED();
+        return API::ContentWorld::pageContentWorld();
+    }
+}
+
 void WebExtensionContext::addInjectedContent(const InjectedContentVector& injectedContents, WebExtensionMatchPattern& pattern)
 {
     if (!isLoaded())
@@ -3604,7 +3623,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto injectedFrames = injectedContentData.injectsIntoAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly;
         auto injectionTime = toImpl(injectedContentData.injectionTime);
         auto waitForNotification = WebCore::WaitForNotificationBeforeInjecting::No;
-        Ref executionWorld = injectedContentData.forMainWorld ? API::ContentWorld::pageContentWorld() : *m_contentScriptWorld;
+        Ref executionWorld = toContentWorld(injectedContentData.contentWorldType);
 
         auto scriptID = injectedContentData.identifier;
         bool isRegisteredScript = !scriptID.isEmpty();

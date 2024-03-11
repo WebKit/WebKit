@@ -427,6 +427,15 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_FALSE([testContext hasInjectedContentForURL:webkitURL]);
     EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
 
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"world": @"MAIN" } ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+    EXPECT_TRUE(testContext.hasInjectedContent);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
+
     // Invalid cases
 
     testManifestDictionary[@"content_scripts"] = @[ ];
@@ -457,6 +466,15 @@ TEST(WKWebExtensionContext, ContentScriptsParsing)
     EXPECT_FALSE([testContext hasInjectedContentForURL:exampleURL]);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"run_at": @"invalid" } ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
+
+    EXPECT_NE(testExtension.errors.count, 0ul);
+    EXPECT_TRUE(testContext.hasInjectedContent);
+    EXPECT_FALSE([testContext hasInjectedContentForURL:webkitURL]);
+    EXPECT_TRUE([testContext hasInjectedContentForURL:exampleURL]);
+
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"world": @"INVALID" } ];
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 

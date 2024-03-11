@@ -223,6 +223,12 @@ TEST(WKWebExtension, ContentScriptsParsing)
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
     EXPECT_TRUE(testExtension.hasInjectedContent);
 
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"world": @"MAIN" } ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+    EXPECT_TRUE(testExtension.hasInjectedContent);
+
     // Invalid cases
 
     testManifestDictionary[@"content_scripts"] = @[ ];
@@ -247,6 +253,13 @@ TEST(WKWebExtension, ContentScriptsParsing)
     EXPECT_FALSE(testExtension.hasInjectedContent);
 
     testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"run_at": @"invalid" } ];
+    testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+
+    EXPECT_NE(testExtension.errors.count, 0ul);
+    EXPECT_NOT_NULL(matchingError(testExtension.errors, _WKWebExtensionErrorInvalidManifestEntry));
+    EXPECT_TRUE(testExtension.hasInjectedContent);
+
+    testManifestDictionary[@"content_scripts"] = @[ @{ @"js": @[ @"test.js" ], @"matches": @[ @"*://*.example.com/" ], @"world": @"INVALID" } ];
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
 
     EXPECT_NE(testExtension.errors.count, 0ul);
