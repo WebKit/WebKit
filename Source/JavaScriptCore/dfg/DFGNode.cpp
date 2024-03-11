@@ -403,7 +403,7 @@ void Node::convertToInByIdMaybeMegamorphic(Graph& graph, CacheableIdentifier ide
     ASSERT(op() == InByVal || op() == InByValMegamorphic);
     bool isMegamorphic = op() == InByValMegamorphic && canUseMegamorphicInById(graph.m_vm, identifier.uid());
     Edge base = graph.child(this, 0);
-    ASSERT(base.useKind() == ObjectUse);
+    ASSERT(base.useKind() == CellUse);
     setOpAndDefaultFlags(isMegamorphic ? InByIdMegamorphic : InById);
     children.setChild1(Edge(base.node(), CellUse));
     children.setChild2(Edge());

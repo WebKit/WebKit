@@ -2230,10 +2230,9 @@ private:
 
             if (node->op() == InByValMegamorphic) {
                 node->setArrayMode(node->arrayMode().withType(Array::Generic));
-                fixEdge<ObjectUse>(node->child1());
                 fixEdge<StringUse>(node->child2());
-            } else
-                fixEdge<CellUse>(node->child1());
+            }
+            fixEdge<CellUse>(node->child1());
             break;
         }
 
