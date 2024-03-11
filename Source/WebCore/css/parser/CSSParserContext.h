@@ -91,7 +91,6 @@ struct CSSParserContext {
     bool gradientInterpolationColorSpacesEnabled : 1 { false };
     bool subgridEnabled : 1 { false };
     bool masonryEnabled : 1 { false };
-    bool cssNestingEnabled : 1 { false };
     bool cssPaintingAPIEnabled : 1 { false };
     bool cssScopeAtRuleEnabled : 1 { false };
     bool cssStartingStyleAtRuleEnabled : 1 { false };

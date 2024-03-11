@@ -190,7 +190,7 @@ private:
 
     bool isStyleNestedContext()
     {
-        return (m_isAlwaysNestedContext == CSSParserEnum::IsNestedContext::Yes || m_styleRuleNestingLevel) && context().cssNestingEnabled;
+        return m_isAlwaysNestedContext == CSSParserEnum::IsNestedContext::Yes || m_styleRuleNestingLevel;
     }
 
     bool isNestedContext()
