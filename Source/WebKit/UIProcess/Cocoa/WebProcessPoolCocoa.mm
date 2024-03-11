@@ -49,6 +49,7 @@
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
+#import "WebPageProxy.h"
 #import "WebPreferencesKeys.h"
 #import "WebPrivacyHelpers.h"
 #import "WebProcessCache.h"
@@ -79,6 +80,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -271,29 +273,28 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
 }
 #endif
 
-static const char* description(ProcessThrottleState state)
-{
-    switch (state) {
-    case ProcessThrottleState::Foreground: return "foreground";
-    case ProcessThrottleState::Background: return "background";
-    case ProcessThrottleState::Suspended: return "suspended";
-    }
-    return nullptr;
-}
-
 static void logProcessPoolState(const WebProcessPool& pool)
 {
     for (Ref process : pool.processes()) {
-        WTF::TextStream stream;
-        stream << process;
+        WTF::TextStream processDescription;
+        processDescription << process;
 
-        if (auto taskInfo = process->taskInfo()) {
-            stream << ", state: " << description(taskInfo->state);
-            stream << ", phys_footprint_mb: " << (taskInfo->physicalFootprint / 1048576.0) << " MB";
+        RegistrableDomain domain = valueOrDefault(process->optionalRegistrableDomain());
+        String domainString = domain.isEmpty() ? "unknown"_s : domain.string();
+
+        WTF::TextStream pageURLs;
+        auto pages = process->pages();
+        if (pages.isEmpty())
+            pageURLs << "none";
+        else {
+            bool isFirst = true;
+            for (auto& page : pages) {
+                pageURLs << (isFirst ? "" : ", ") << page->currentURL();
+                isFirst = false;
+            }
         }
 
-        String domain = process->optionalRegistrableDomain() ? process->optionalRegistrableDomain()->string() : "unknown"_s;
-        RELEASE_LOG(Process, "WebProcessProxy %p - %" PUBLIC_LOG_STRING ", domain: %" PRIVATE_LOG_STRING, process.ptr(), stream.release().utf8().data(), domain.utf8().data());
+        RELEASE_LOG(Process, "WebProcessProxy %p - %" PUBLIC_LOG_STRING ", domain: %" PRIVATE_LOG_STRING ", pageURLs: %" SENSITIVE_LOG_STRING, process.ptr(), processDescription.release().utf8().data(), domainString.utf8().data(), pageURLs.release().utf8().data());
     }
 }
 

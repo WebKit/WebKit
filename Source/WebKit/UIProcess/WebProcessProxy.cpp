@@ -97,6 +97,7 @@
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakListHashSet.h>
@@ -2710,6 +2711,22 @@ TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
     appendIf(process.isRunningSharedWorkers(), "has-shared-worker"_s);
     appendIf(process.isUnderMemoryPressure(), "under-memory-pressure"_s);
     ts << ", " << process.throttler();
+
+#if PLATFORM(COCOA)
+    auto description = [](ProcessThrottleState state) -> ASCIILiteral {
+        switch (state) {
+        case ProcessThrottleState::Foreground: return "foreground"_s;
+        case ProcessThrottleState::Background: return "background"_s;
+        case ProcessThrottleState::Suspended: return "suspended"_s;
+        }
+        return "unknown"_s;
+    };
+
+    if (auto taskInfo = process.taskInfo()) {
+        ts << ", state: " << description(taskInfo->state);
+        ts << ", phys_footprint_mb: " << (taskInfo->physicalFootprint / MB) << " MB";
+    }
+#endif
 
     return ts;
 }
