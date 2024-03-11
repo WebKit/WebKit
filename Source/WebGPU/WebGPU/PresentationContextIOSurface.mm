@@ -74,6 +74,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
 {
     m_renderBuffers.clear();
     m_currentIndex = 0;
+    m_invalidTexture = Texture::createInvalid(device);
 
     if (descriptor.nextInChain)
         return;
@@ -235,7 +236,7 @@ void PresentationContextIOSurface::present()
 Texture* PresentationContextIOSurface::getCurrentTexture()
 {
     if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex)
-        return nullptr;
+        return m_invalidTexture.get();
 
     auto& texturePtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
     if (texturePtr.get()) {

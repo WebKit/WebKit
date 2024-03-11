@@ -62,6 +62,7 @@ private:
     };
     Vector<RenderBuffer> m_renderBuffers;
     RefPtr<Device> m_device;
+    RefPtr<Texture> m_invalidTexture;
     size_t m_currentIndex { 0 };
     id<MTLFunction> m_luminanceClampFunction;
     id<MTLComputePipelineState> m_computePipelineState;
