@@ -6190,6 +6190,18 @@
    },
    {
       "emails" : [
+         "pawel.lampe@gmail.com",
+         "plampe@igalia.com"
+      ],
+      "github" : "Scony",
+      "name" : "Pawel Lampe",
+      "nicks" : [
+         "Scony",
+         "plampe"
+      ]
+   },
+   {
+      "emails" : [
          "peng.liu6@apple.com",
          "peng.liu6@icloud.com"
       ],
