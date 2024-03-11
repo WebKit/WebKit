@@ -190,6 +190,21 @@ static bool shouldGetOcclusion(const RenderElement& renderer)
     return false;
 }
 
+static bool cachedImageIsPhoto(const CachedImage& cachedImage)
+{
+    if (cachedImage.errorOccurred())
+        return false;
+
+    auto* image = cachedImage.image();
+    if (!image || !image->isBitmapImage())
+        return false;
+
+    if (image->nativeImage() && image->nativeImage()->hasAlpha())
+        return false;
+
+    return true;
+}
+
 std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject& regionRenderer, const FloatRect& bounds)
 {
     if (bounds.isEmpty())
@@ -298,28 +313,18 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
                 if (is<RenderVideo>(renderImage))
                     return true;
 
-                if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
+                if (!renderImage->cachedImage())
                     return false;
 
-                auto* image = renderImage->cachedImage()->image();
-                if (!image || !image->isBitmapImage())
-                    return false;
-
-                if (image->nativeImage() && image->nativeImage()->hasAlpha())
-                    return false;
-
-                return true;
+                return cachedImageIsPhoto(*renderImage->cachedImage());
             }();
         } else if (regionRenderer.style().hasBackgroundImage()) {
-            auto* image = regionRenderer.style().backgroundLayers().image()->cachedImage()->image();
             isPhoto = [&]() -> bool {
-                if (!image || !image->isBitmapImage())
+                auto* backgroundImage = regionRenderer.style().backgroundLayers().image();
+                if (!backgroundImage || !backgroundImage->cachedImage())
                     return false;
 
-                if (image->nativeImage() && image->nativeImage()->hasAlpha())
-                    return false;
-
-                return true;
+                return cachedImageIsPhoto(*backgroundImage->cachedImage());
             }();
         }
     }
