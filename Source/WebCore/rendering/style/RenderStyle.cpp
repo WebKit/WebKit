@@ -882,7 +882,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.textAlignLast != second.textAlignLast
         || first.textJustify != second.textJustify
         || first.textIndentLine != second.textIndentLine
-        || first.effectiveZoom != second.effectiveZoom
+        || first.usedZoom != second.usedZoom
         || first.textZoom != second.textZoom
 #if ENABLE(TEXT_AUTOSIZING)
         || first.textSizeAdjust != second.textSizeAdjust
@@ -2087,7 +2087,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // strokeColor
         // visitedLinkStrokeColor
         // hasSetStrokeColor
-        // effectiveZoom
+        // usedZoom
         // textBoxEdge
         // textSecurity
         // userModify

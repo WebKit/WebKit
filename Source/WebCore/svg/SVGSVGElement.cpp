@@ -438,7 +438,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
             // We also need to adjust for the zoom level factored into CSS coordinates (bug #96361).
             if (CheckedPtr legacyRenderSVGRoot = dynamicDowncast<LegacyRenderSVGRoot>(*renderer)) {
                 location = legacyRenderSVGRoot->localToBorderBoxTransform().mapPoint(location);
-                zoomFactor = 1 / renderer->style().effectiveZoom();
+                zoomFactor = 1 / renderer->style().usedZoom();
             }
 
             // Translate in our CSS parent coordinate space
@@ -631,12 +631,12 @@ FloatSize SVGSVGElement::currentViewportSizeExcludingZoom() const
 
     if (renderer()) {
         if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderer()))
-            viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().effectiveZoom();
+            viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().usedZoom();
         else if (CheckedPtr svgViewportContainer = dynamicDowncast<LegacyRenderSVGViewportContainer>(renderer()))
             viewportSize = svgViewportContainer->viewport().size();
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         else if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer()))
-            viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().effectiveZoom();
+            viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().usedZoom();
         else if (CheckedPtr svgViewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer()))
             viewportSize = svgViewportContainer->viewport().size();
 #endif

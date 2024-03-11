@@ -86,7 +86,7 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
 {
     float zoomFactor = 1.0f;
     if (!useSVGZoomRules) {
-        zoomFactor = style->effectiveZoom();
+        zoomFactor = style->usedZoom();
         auto* frame = document.frame();
         if (frame && style->textZoom() != TextZoom::Reset)
             zoomFactor *= frame->textZoomFactor();

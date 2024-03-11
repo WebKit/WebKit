@@ -1238,7 +1238,7 @@ static bool mustRepaintFillLayers(const RenderElement& renderer, const FillLayer
 
     // Make sure we have a valid image.
     RefPtr image = layer.image();
-    if (!image || !image->canRender(&renderer, renderer.style().effectiveZoom()))
+    if (!image || !image->canRender(&renderer, renderer.style().usedZoom()))
         return false;
 
     if (!layer.xPosition().isZero() || !layer.yPosition().isZero())
@@ -1477,7 +1477,7 @@ bool RenderElement::borderImageIsLoadedAndCanBeRendered() const
     ASSERT(style().hasBorder());
 
     RefPtr borderImage = style().borderImage().image();
-    return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded(this);
+    return borderImage && borderImage->canRender(this, style().usedZoom()) && borderImage->isLoaded(this);
 }
 
 bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewportRect) const

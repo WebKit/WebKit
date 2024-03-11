@@ -123,7 +123,7 @@ public:
         auto ctm = computeAccumulatedTransform(stopAtLayer ? &stopAtLayer->renderer() : nullptr, TransformState::TrackSVGScreenCTMMatrix);
         ctm.scale(m_renderer.document().deviceScaleFactor());
         if (!m_renderer.document().isSVGDocument())
-            ctm.scale(m_renderer.style().effectiveZoom());
+            ctm.scale(m_renderer.style().usedZoom());
         return narrowPrecisionToFloat(std::hypot(ctm.xScale(), ctm.yScale()) / sqrtOfTwoDouble);
     }
 

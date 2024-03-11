@@ -211,7 +211,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
 
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.
-    return IntSize(paddingWidth + imageSize.width() * style().effectiveZoom(), paddingHeight + imageSize.height() * style().effectiveZoom());
+    return IntSize(paddingWidth + imageSize.width() * style().usedZoom(), paddingHeight + imageSize.height() * style().usedZoom());
 }
 
 // Sets the image height and width to fit the alt text.  Returns true if the
@@ -370,7 +370,7 @@ void RenderImage::updateInnerContentRect()
 
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
 {
-    LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().effectiveZoom());
+    LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().usedZoom());
     LayoutSize oldIntrinsicSize = intrinsicSize();
 
     updateIntrinsicSizeIfNeeded(newIntrinsicSize);
@@ -699,7 +699,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
         return;
 
     AffineTransform zoomTransform;
-    zoomTransform.scale(style().effectiveZoom());
+    zoomTransform.scale(style().usedZoom());
     path.transform(zoomTransform);
 
     auto adjustedOffset = paintOffset;
@@ -830,7 +830,7 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (tempResult.innerNode() && element()) {
         if (RefPtr map = imageMap()) {
             LayoutRect contentBox = contentBoxRect();
-            float scaleFactor = 1 / style().effectiveZoom();
+            float scaleFactor = 1 / style().usedZoom();
             LayoutPoint mapLocation = locationInContainer.point() - toLayoutSize(accumulatedOffset) - locationOffset() - toLayoutSize(contentBox.location());
             mapLocation.scale(scaleFactor);
 

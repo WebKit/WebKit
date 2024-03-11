@@ -91,7 +91,7 @@ public:
     
     RefPtr<CursorList> cursorData;
     Length indent;
-    float effectiveZoom;
+    float usedZoom;
 
     TextUnderlineOffset textUnderlineOffset;
 

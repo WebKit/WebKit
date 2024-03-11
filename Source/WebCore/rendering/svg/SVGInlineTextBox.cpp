@@ -355,7 +355,7 @@ bool SVGInlineTextBox::acquirePaintingResource(SVGPaintServerHandling& paintServ
             else
                 scalingFactor = 1.0;
 
-            if (auto zoomFactor = renderer.style().effectiveZoom(); zoomFactor != 1.0)
+            if (auto zoomFactor = renderer.style().usedZoom(); zoomFactor != 1.0)
                 scalingFactor *= zoomFactor;
 
             if (auto deviceScaleFactor = renderer.document().deviceScaleFactor(); deviceScaleFactor != 1.0)
@@ -426,7 +426,7 @@ bool SVGInlineTextBox::acquireLegacyPaintingResource(GraphicsContext*& context, 
             else
                 scalingFactor = 1.0;
 
-            if (auto zoomFactor = renderer.style().effectiveZoom(); zoomFactor != 1.0)
+            if (auto zoomFactor = renderer.style().usedZoom(); zoomFactor != 1.0)
                 scalingFactor *= zoomFactor;
 
             if (auto deviceScaleFactor = renderer.document().deviceScaleFactor(); deviceScaleFactor != 1.0)

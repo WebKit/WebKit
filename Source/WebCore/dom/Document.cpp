@@ -8414,7 +8414,7 @@ void Document::convertAbsoluteToClientQuads(Vector<FloatQuad>& quads, const Rend
     if (!frameView)
         return;
 
-    float inverseFrameScale = frameView->absoluteToDocumentScaleFactor(style.effectiveZoom());
+    float inverseFrameScale = frameView->absoluteToDocumentScaleFactor(style.usedZoom());
     auto documentToClientOffset = frameView->documentToClientOffset();
 
     for (auto& quad : quads) {
@@ -8431,7 +8431,7 @@ void Document::convertAbsoluteToClientRects(Vector<FloatRect>& rects, const Rend
     if (!frameView)
         return;
 
-    float inverseFrameScale = frameView->absoluteToDocumentScaleFactor(style.effectiveZoom());
+    float inverseFrameScale = frameView->absoluteToDocumentScaleFactor(style.usedZoom());
     auto documentToClientOffset = frameView->documentToClientOffset();
 
     for (auto& rect : rects) {
@@ -8448,7 +8448,7 @@ void Document::convertAbsoluteToClientRect(FloatRect& rect, const RenderStyle& s
     if (!frameView)
         return;
 
-    rect = frameView->absoluteToDocumentRect(rect, style.effectiveZoom());
+    rect = frameView->absoluteToDocumentRect(rect, style.usedZoom());
     rect = frameView->documentToClientRect(rect);
 }
 

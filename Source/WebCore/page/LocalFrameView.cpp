@@ -5232,32 +5232,32 @@ void LocalFrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, 
     renderView->setPrintRect(IntRect());
 }
 
-float LocalFrameView::documentToAbsoluteScaleFactor(std::optional<float> effectiveZoom) const
+float LocalFrameView::documentToAbsoluteScaleFactor(std::optional<float> usedZoom) const
 {
-    // If effectiveZoom is passed, it already factors in pageZoomFactor(). 
-    return effectiveZoom.value_or(m_frame->pageZoomFactor()) * m_frame->frameScaleFactor();
+    // If usedZoom is passed, it already factors in pageZoomFactor().
+    return usedZoom.value_or(m_frame->pageZoomFactor()) * m_frame->frameScaleFactor();
 }
 
-float LocalFrameView::absoluteToDocumentScaleFactor(std::optional<float> effectiveZoom) const
+float LocalFrameView::absoluteToDocumentScaleFactor(std::optional<float> usedZoom) const
 {
-    // If effectiveZoom is passed, it already factors in pageZoomFactor(). 
-    return 1 / documentToAbsoluteScaleFactor(effectiveZoom);
+    // If usedZoom is passed, it already factors in pageZoomFactor().
+    return 1 / documentToAbsoluteScaleFactor(usedZoom);
 }
 
-FloatRect LocalFrameView::absoluteToDocumentRect(FloatRect rect, std::optional<float> effectiveZoom) const
+FloatRect LocalFrameView::absoluteToDocumentRect(FloatRect rect, std::optional<float> usedZoom) const
 {
-    rect.scale(absoluteToDocumentScaleFactor(effectiveZoom));
+    rect.scale(absoluteToDocumentScaleFactor(usedZoom));
     return rect;
 }
 
-FloatPoint LocalFrameView::absoluteToDocumentPoint(FloatPoint p, std::optional<float> effectiveZoom) const
+FloatPoint LocalFrameView::absoluteToDocumentPoint(FloatPoint p, std::optional<float> usedZoom) const
 {
-    return p.scaled(absoluteToDocumentScaleFactor(effectiveZoom));
+    return p.scaled(absoluteToDocumentScaleFactor(usedZoom));
 }
 
-FloatRect LocalFrameView::absoluteToClientRect(FloatRect rect, std::optional<float> effectiveZoom) const
+FloatRect LocalFrameView::absoluteToClientRect(FloatRect rect, std::optional<float> usedZoom) const
 {
-    return documentToClientRect(absoluteToDocumentRect(rect, effectiveZoom));
+    return documentToClientRect(absoluteToDocumentRect(rect, usedZoom));
 }
 
 FloatSize LocalFrameView::documentToClientOffset() const

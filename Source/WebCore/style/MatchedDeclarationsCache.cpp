@@ -95,7 +95,7 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
 
 bool MatchedDeclarationsCache::Entry::isUsableAfterHighPriorityProperties(const RenderStyle& style) const
 {
-    if (style.effectiveZoom() != renderStyle->effectiveZoom())
+    if (style.usedZoom() != renderStyle->usedZoom())
         return false;
 
 #if ENABLE(DARK_MODE_CSS)

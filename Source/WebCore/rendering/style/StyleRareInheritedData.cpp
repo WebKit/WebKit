@@ -84,7 +84,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , visitedLinkCaretColor(StyleColor::currentColor())
     , accentColor(StyleColor::currentColor())
     , indent(RenderStyle::initialTextIndent())
-    , effectiveZoom(RenderStyle::initialZoom())
+    , usedZoom(RenderStyle::initialZoom())
     , textUnderlineOffset(RenderStyle::initialTextUnderlineOffset())
     , textBoxEdge(RenderStyle::initialTextBoxEdge())
     , miterLimit(RenderStyle::initialStrokeMiterLimit())
@@ -174,7 +174,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textShadow(o.textShadow ? makeUnique<ShadowData>(*o.textShadow) : nullptr)
     , cursorData(o.cursorData)
     , indent(o.indent)
-    , effectiveZoom(o.effectiveZoom)
+    , usedZoom(o.usedZoom)
     , textUnderlineOffset(o.textUnderlineOffset)
     , textBoxEdge(o.textBoxEdge)
     , miterLimit(o.miterLimit)
@@ -281,7 +281,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && arePointingToEqualData(textShadow, o.textShadow)
         && arePointingToEqualData(cursorData, o.cursorData)
         && indent == o.indent
-        && effectiveZoom == o.effectiveZoom
+        && usedZoom == o.usedZoom
         && textUnderlineOffset == o.textUnderlineOffset
         && textBoxEdge == o.textBoxEdge
         && wordSpacing == o.wordSpacing

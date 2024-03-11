@@ -365,8 +365,8 @@ void RenderListMarker::layout()
 
     if (isImage()) {
         updateMarginsAndContent();
-        setWidth(m_image->imageSize(this, style().effectiveZoom()).width());
-        setHeight(m_image->imageSize(this, style().effectiveZoom()).height());
+        setWidth(m_image->imageSize(this, style().usedZoom()).width());
+        setHeight(m_image->imageSize(this, style().usedZoom()).height());
     } else {
         setLogicalWidth(minPreferredLogicalWidth());
         setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
@@ -388,7 +388,7 @@ void RenderListMarker::layout()
 void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
 {
     if (m_image && o == m_image->data()) {
-        if (width() != m_image->imageSize(this, style().effectiveZoom()).width() || height() != m_image->imageSize(this, style().effectiveZoom()).height() || m_image->errorOccurred())
+        if (width() != m_image->imageSize(this, style().usedZoom()).width() || height() != m_image->imageSize(this, style().usedZoom()).height() || m_image->errorOccurred())
             setNeedsLayoutAndPrefWidthsRecalc();
         else
             repaint();
@@ -411,8 +411,8 @@ void RenderListMarker::updateContent()
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
         LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
         LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
-        LayoutSize imageSize = calculateImageIntrinsicDimensions(m_image.get(), defaultBulletSize, DoNotScaleByEffectiveZoom);
-        m_image->setContainerContextForRenderer(*this, imageSize, style().effectiveZoom());
+        LayoutSize imageSize = calculateImageIntrinsicDimensions(m_image.get(), defaultBulletSize, ScaleByUsedZoom::No);
+        m_image->setContainerContextForRenderer(*this, imageSize, style().usedZoom());
         m_textWithSuffix = emptyString();
         m_textWithoutSuffixLength = 0;
         m_textIsLeftToRightDirection = true;
@@ -450,7 +450,7 @@ void RenderListMarker::computePreferredLogicalWidths()
     updateContent();
 
     if (isImage()) {
-        LayoutSize imageSize = LayoutSize(m_image->imageSize(this, style().effectiveZoom()));
+        LayoutSize imageSize = LayoutSize(m_image->imageSize(this, style().usedZoom()));
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = style().isHorizontalWritingMode() ? imageSize.width() : imageSize.height();
         setPreferredLogicalWidthsDirty(false);
         updateMargins();
@@ -537,7 +537,7 @@ const RenderListItem* RenderListMarker::listItem() const
 FloatRect RenderListMarker::relativeMarkerRect()
 {
     if (isImage())
-        return FloatRect(0, 0, m_image->imageSize(this, style().effectiveZoom()).width(), m_image->imageSize(this, style().effectiveZoom()).height());
+        return FloatRect(0, 0, m_image->imageSize(this, style().usedZoom()).width(), m_image->imageSize(this, style().usedZoom()).height());
 
     FloatRect relativeRect;
     if (widthUsesMetricsOfPrimaryFont()) {

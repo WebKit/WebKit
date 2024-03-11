@@ -86,7 +86,7 @@ bool LegacyRenderSVGResourceClipper::applyResource(RenderElement& renderer, cons
     return applyClippingToContext(*context, renderer, boundingBox, boundingBox);
 }
 
-bool LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox, float effectiveZoom)
+bool LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox, float usedZoom)
 {
     // If the current clip-path gets clipped itself, we have to fall back to masking.
     if (style().clipPath())
@@ -142,9 +142,9 @@ bool LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
         transform.translate(objectBoundingBox.location());
         transform.scale(objectBoundingBox.size());
         clipPath.transform(transform);
-    } else if (effectiveZoom != 1) {
+    } else if (usedZoom != 1) {
         AffineTransform transform;
-        transform.scale(effectiveZoom);
+        transform.scale(usedZoom);
         clipPath.transform(transform);
     }
 
@@ -158,7 +158,7 @@ bool LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     return true;
 }
 
-ClipperData::Inputs LegacyRenderSVGResourceClipper::computeInputs(const GraphicsContext& context, const RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
+ClipperData::Inputs LegacyRenderSVGResourceClipper::computeInputs(const GraphicsContext& context, const RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float usedZoom)
 {
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
 
@@ -168,16 +168,16 @@ ClipperData::Inputs LegacyRenderSVGResourceClipper::computeInputs(const Graphics
     // Determine scale factor for the clipper. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
     ImageBuffer::sizeNeedsClamping(objectBoundingBox.size(), scale);
 
-    return { objectBoundingBox, clippedContentBounds, scale, effectiveZoom, context.paintingDisabled() };
+    return { objectBoundingBox, clippedContentBounds, scale, usedZoom, context.paintingDisabled() };
 }
 
-bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
+bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float usedZoom)
 {
     LOG_WITH_STREAM(SVG, stream << "LegacyRenderSVGResourceClipper " << this << " applyClippingToContext: renderer " << &renderer << " objectBoundingBox " << objectBoundingBox << " clippedContentBounds " << clippedContentBounds);
 
     AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
 
-    if (pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom)) {
+    if (pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, usedZoom)) {
         auto it = m_clipperMap.find(renderer);
         if (it != m_clipperMap.end())
             it->value->imageBuffer = nullptr;
@@ -189,7 +189,7 @@ bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& con
         return makeUnique<ClipperData>();
     }).iterator->value;
 
-    if (clipperData.invalidate(computeInputs(context, renderer, objectBoundingBox, clippedContentBounds, effectiveZoom))) {
+    if (clipperData.invalidate(computeInputs(context, renderer, objectBoundingBox, clippedContentBounds, usedZoom))) {
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
         clipperData.imageBuffer = context.createScaledImageBuffer(clippedContentBounds, clipperData.inputs.scale, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated); // FIXME
         if (!clipperData.imageBuffer)
@@ -208,10 +208,10 @@ bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& con
             if (!clipper->applyClippingToContext(maskContext, *this, objectBoundingBox, clippedContentBounds))
                 return false;
 
-            succeeded = drawContentIntoMaskImage(Ref { *clipperData.imageBuffer }, objectBoundingBox, effectiveZoom);
+            succeeded = drawContentIntoMaskImage(Ref { *clipperData.imageBuffer }, objectBoundingBox, usedZoom);
             // The context restore applies the clipping on non-CG platforms.
         } else
-            succeeded = drawContentIntoMaskImage(Ref { *clipperData.imageBuffer }, objectBoundingBox, effectiveZoom);
+            succeeded = drawContentIntoMaskImage(Ref { *clipperData.imageBuffer }, objectBoundingBox, usedZoom);
 
         if (!succeeded)
             clipperData = { };
@@ -224,7 +224,7 @@ bool LegacyRenderSVGResourceClipper::applyClippingToContext(GraphicsContext& con
     return true;
 }
 
-bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskImageBuffer, const FloatRect& objectBoundingBox, float effectiveZoom)
+bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskImageBuffer, const FloatRect& objectBoundingBox, float usedZoom)
 {
     GraphicsContext& maskContext = maskImageBuffer.context();
 
@@ -233,8 +233,8 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
         maskContentTransformation.translate(objectBoundingBox.location());
         maskContentTransformation.scale(objectBoundingBox.size());
         maskContext.concatCTM(maskContentTransformation);
-    } else if (effectiveZoom != 1) {
-        maskContentTransformation.scale(effectiveZoom);
+    } else if (usedZoom != 1) {
+        maskContentTransformation.scale(usedZoom);
         maskContext.concatCTM(maskContentTransformation);
     }
 

@@ -354,7 +354,7 @@ void LegacyRenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle
 // relative to our borderBox origin. This method gives us exactly that.
 void LegacyRenderSVGRoot::buildLocalToBorderBoxTransform()
 {
-    float scale = style().effectiveZoom();
+    float scale = style().usedZoom();
     FloatPoint translate = svgSVGElement().currentTranslateValue();
     LayoutSize borderAndPadding(borderLeft() + paddingLeft(), borderTop() + paddingTop());
     m_localToBorderBoxTransform = svgSVGElement().viewBoxToViewTransform(contentWidth() / scale, contentHeight() / scale);

@@ -1978,14 +1978,14 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     //     * Our own extension: if there is a difference in the effective zoom
 
     bool skipTables = isPositioned();
-    float currZoom = style().effectiveZoom();
+    float currZoom = style().usedZoom();
     CheckedPtr current = parent();
     while (current && (!current->element() || (!current->canContainAbsolutelyPositionedObjects() && !current->isBody()))) {
         RefPtr element = current->element();
         if (!skipTables && element && (is<HTMLTableElement>(*element) || is<HTMLTableCellElement>(*element)))
             break;
  
-        float newZoom = current->style().effectiveZoom();
+        float newZoom = current->style().usedZoom();
         if (currZoom != newZoom)
             break;
         currZoom = newZoom;

@@ -105,7 +105,7 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
         clipPathTransform.scale(objectBoundingBox.size());
     } else if (!targetRenderer.isSVGLayerAwareRenderer()) {
         clipPathTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
-        clipPathTransform.scale(targetRenderer.style().effectiveZoom());
+        clipPathTransform.scale(targetRenderer.style().usedZoom());
     }
     if (layer()->isTransformed())
         clipPathTransform.multiply(layer()->transform()->toAffineTransform());
@@ -154,7 +154,7 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
         contentTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
     } else if (!targetRenderer.isSVGLayerAwareRenderer()) {
         contentTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
-        contentTransform.scale(targetRenderer.style().effectiveZoom());
+        contentTransform.scale(targetRenderer.style().usedZoom());
     }
 
     // Figure out if we need to push a transparency layer to render our mask.

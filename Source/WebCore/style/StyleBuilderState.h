@@ -74,7 +74,7 @@ public:
     inline void setFontDescription(FontCascadeDescription&&);
     void setFontSize(FontCascadeDescription&, float size);
     inline void setZoom(float);
-    inline void setEffectiveZoom(float);
+    inline void setUsedZoom(float);
     inline void setWritingMode(WritingMode);
     inline void setTextOrientation(TextOrientation);
 

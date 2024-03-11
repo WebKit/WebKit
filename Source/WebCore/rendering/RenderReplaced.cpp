@@ -101,8 +101,8 @@ void RenderReplaced::willBeDestroyed()
 void RenderReplaced::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
-    auto previousEffectiveZoom = oldStyle ? oldStyle->effectiveZoom() : RenderStyle::initialZoom();
-    if (previousEffectiveZoom != style().effectiveZoom())
+    auto previousUsedZoom = oldStyle ? oldStyle->usedZoom() : RenderStyle::initialZoom();
+    if (previousUsedZoom != style().usedZoom())
         intrinsicSizeChanged();
 }
 
@@ -134,8 +134,8 @@ void RenderReplaced::layout()
 
 void RenderReplaced::intrinsicSizeChanged()
 {
-    int scaledWidth = static_cast<int>(cDefaultWidth * style().effectiveZoom());
-    int scaledHeight = static_cast<int>(cDefaultHeight * style().effectiveZoom());
+    int scaledWidth = static_cast<int>(cDefaultWidth * style().usedZoom());
+    int scaledHeight = static_cast<int>(cDefaultHeight * style().usedZoom());
     m_intrinsicSize = IntSize(scaledWidth, scaledHeight);
     setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -428,7 +428,7 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
             intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioWidth(), style().aspectRatioHeight());
 
         // Handle zoom & vertical writing modes here, as the embedded document doesn't know about them.
-        intrinsicSize.scale(style().effectiveZoom());
+        intrinsicSize.scale(style().usedZoom());
 
         if (auto* image = dynamicDowncast<RenderImage>(*this))
             intrinsicSize.scale(image->imageDevicePixelRatio());

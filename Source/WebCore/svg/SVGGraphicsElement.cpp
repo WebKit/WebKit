@@ -110,7 +110,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
         matrix = transform.toAffineTransform();
         // CSS bakes the zoom factor into lengths, including translation components.
         // In order to align CSS & SVG transforms, we need to invert this operation.
-        float zoom = style->effectiveZoom();
+        float zoom = style->usedZoom();
         if (zoom != 1) {
             matrix.setE(matrix.e() / zoom);
             matrix.setF(matrix.f() / zoom);

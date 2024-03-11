@@ -224,7 +224,7 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
 
 void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance appearance, RenderStyle& style) const
 {
-    auto minControlSize = Theme::singleton().minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.effectiveZoom());
+    auto minControlSize = Theme::singleton().minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
     if (minControlSize.width.value() > style.minWidth().value())
         style.setMinWidth(WTFMove(minControlSize.width));
     if (minControlSize.height.value() > style.minHeight().value())
@@ -725,8 +725,8 @@ void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element*) const
 {
     // FIXME: Deduplicate sizing with the generic code somehow.
     if (style.width().isAuto() || style.height().isAuto()) {
-        style.setLogicalWidth({ logicalSwitchWidth * style.effectiveZoom(), LengthType::Fixed });
-        style.setLogicalHeight({ logicalSwitchHeight * style.effectiveZoom(), LengthType::Fixed });
+        style.setLogicalWidth({ logicalSwitchWidth * style.usedZoom(), LengthType::Fixed });
+        style.setLogicalHeight({ logicalSwitchHeight * style.usedZoom(), LengthType::Fixed });
     }
 
     adjustSwitchStyleDisplay(style);

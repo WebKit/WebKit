@@ -712,7 +712,7 @@ int RenderView::viewHeight() const
     int height = 0;
     if (!shouldUsePrintingLayout()) {
         height = frameView().layoutHeight();
-        height = frameView().useFixedLayout() ? ceilf(style().effectiveZoom() * float(height)) : height;
+        height = frameView().useFixedLayout() ? ceilf(style().usedZoom() * float(height)) : height;
     }
     return height;
 }
@@ -722,7 +722,7 @@ int RenderView::viewWidth() const
     int width = 0;
     if (!shouldUsePrintingLayout()) {
         width = frameView().layoutWidth();
-        width = frameView().useFixedLayout() ? ceilf(style().effectiveZoom() * float(width)) : width;
+        width = frameView().useFixedLayout() ? ceilf(style().usedZoom() * float(width)) : width;
     }
     return width;
 }

@@ -118,7 +118,7 @@ RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeig
             int tickLength = theme().sliderTickSize().height();
             trackHeight = 2 * (offsetFromCenter + tickLength);
         }
-        float zoomFactor = style().effectiveZoom();
+        float zoomFactor = style().usedZoom();
         if (zoomFactor != 1.0)
             trackHeight *= zoomFactor;
 

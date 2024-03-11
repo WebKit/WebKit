@@ -145,8 +145,8 @@ Ref<const Shape> makeShapeForShapeOutside(const RenderBox& renderer)
     case ShapeValue::Type::Image: {
         ASSERT(shapeValue.isImageValid());
         auto* styleImage = shapeValue.image();
-        auto imageSize = renderer.calculateImageIntrinsicDimensions(styleImage, boxSize, RenderImage::ScaleByEffectiveZoom);
-        styleImage->setContainerContextForRenderer(renderer, imageSize, style.effectiveZoom());
+        auto imageSize = renderer.calculateImageIntrinsicDimensions(styleImage, boxSize, RenderImage::ScaleByUsedZoom::Yes);
+        styleImage->setContainerContextForRenderer(renderer, imageSize, style.usedZoom());
 
         auto marginRect = getShapeImageMarginRect(renderer, boxSize);
         auto* renderImage = dynamicDowncast<RenderImage>(renderer);

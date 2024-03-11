@@ -40,7 +40,7 @@ struct ClipperData {
         FloatRect objectBoundingBox;
         FloatRect clippedContentBounds;
         FloatSize scale;
-        float effectiveZoom = 1;
+        float usedZoom = 1;
         bool paintingDisabled { false };
     };
 
@@ -75,7 +75,7 @@ public:
     // FIXME: We made applyClippingToContext public because we cannot call applyResource on HTML elements (it asserts on RenderObject::objectBoundingBox)
     // objectBoundingBox ia used to compute clip path geometry when clipPathUnits="objectBoundingBox".
     // clippedContentBounds is the bounds of the content to which clipping is being applied.
-    bool applyClippingToContext(GraphicsContext&, RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom = 1);
+    bool applyClippingToContext(GraphicsContext&, RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float usedZoom = 1);
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override;
 
     RenderSVGResourceType resourceType() const override { return ClipperResourceType; }
@@ -91,9 +91,9 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceClipper"_s; }
 
-    ClipperData::Inputs computeInputs(const GraphicsContext&, const RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom);
-    bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&, float effectiveZoom);
-    bool drawContentIntoMaskImage(ImageBuffer&, const FloatRect& objectBoundingBox, float effectiveZoom);
+    ClipperData::Inputs computeInputs(const GraphicsContext&, const RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float usedZoom);
+    bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&, float usedZoom);
+    bool drawContentIntoMaskImage(ImageBuffer&, const FloatRect& objectBoundingBox, float usedZoom);
     void calculateClipContentRepaintRect(RepaintRectCalculation);
 
     EnumeratedArray<RepaintRectCalculation, FloatRect, RepaintRectCalculation::Accurate> m_clipBoundaries;

@@ -98,7 +98,7 @@ bool RenderSVGViewportContainer::needsHasSVGTransformFlags() const
         return true;
 
     if (isOutermostSVGViewportContainer())
-        return !useSVGSVGElement->currentTranslateValue().isZero() || useSVGSVGElement->renderer()->style().effectiveZoom() != 1;
+        return !useSVGSVGElement->currentTranslateValue().isZero() || useSVGSVGElement->renderer()->style().usedZoom() != 1;
 
     return false;
 }
@@ -132,7 +132,7 @@ void RenderSVGViewportContainer::updateLayerTransform()
             m_supplementalLayerTransform.translate(translation);
 
         // Handle zoom - take effective zoom from outermost <svg> element.
-        if (auto scale = useSVGSVGElement->renderer()->style().effectiveZoom(); scale != 1) {
+        if (auto scale = useSVGSVGElement->renderer()->style().usedZoom(); scale != 1) {
             m_supplementalLayerTransform.scale(scale);
             viewportSize.scale(1.0 / scale);
         }

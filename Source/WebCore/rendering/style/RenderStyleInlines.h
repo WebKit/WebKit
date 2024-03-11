@@ -202,7 +202,7 @@ inline PointerEvents RenderStyle::usedPointerEvents() const { return effectiveIn
 inline CSSPropertyID RenderStyle::effectiveStrokeColorProperty() const { return hasExplicitlySetStrokeColor() ? CSSPropertyStrokeColor : CSSPropertyWebkitTextStrokeColor; }
 inline OptionSet<TouchAction> RenderStyle::usedTouchActions() const { return m_rareInheritedData->usedTouchActions; }
 inline UserModify RenderStyle::usedUserModify() const { return effectiveInert() ? UserModify::ReadOnly : userModify(); }
-inline float RenderStyle::effectiveZoom() const { return m_rareInheritedData->effectiveZoom; }
+inline float RenderStyle::usedZoom() const { return m_rareInheritedData->usedZoom; }
 inline OptionSet<EventListenerRegionType> RenderStyle::eventListenerRegionTypes() const { return m_rareInheritedData->eventListenerRegionTypes; }
 inline const FilterOperations& RenderStyle::filter() const { return m_nonInheritedData->miscData->filter->operations; }
 inline IntOutsets RenderStyle::filterOutsets() const { return hasFilter() ? filter().outsets() : IntOutsets(); }
@@ -960,12 +960,12 @@ inline bool isSkippedContentRoot(const RenderStyle& style, const Element* elemen
 
 inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle& style)
 {
-    return value / style.effectiveZoom();
+    return value / style.usedZoom();
 }
 
 inline int adjustForAbsoluteZoom(int value, const RenderStyle& style)
 {
-    double zoomFactor = style.effectiveZoom();
+    double zoomFactor = style.usedZoom();
     if (zoomFactor == 1)
         return value;
     // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
@@ -981,13 +981,13 @@ inline int adjustForAbsoluteZoom(int value, const RenderStyle& style)
 
 inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderStyle& style)
 {
-    auto zoom = style.effectiveZoom();
+    auto zoom = style.usedZoom();
     return { size.width() / zoom, size.height() / zoom };
 }
 
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderStyle& style)
 {
-    return LayoutUnit(value / style.effectiveZoom());
+    return LayoutUnit(value / style.usedZoom());
 }
 
 constexpr BorderStyle collapsedBorderStyle(BorderStyle style)

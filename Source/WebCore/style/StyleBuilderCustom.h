@@ -160,7 +160,7 @@ public:
     static void applyValueStrokeColor(BuilderState&, CSSValue&);
 
 private:
-    static void resetEffectiveZoom(BuilderState&);
+    static void resetUsedZoom(BuilderState&);
 
     static Length mmLength(double mm);
     static Length inchLength(double inch);
@@ -186,21 +186,21 @@ inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSVa
     builderState.style().setHasExplicitlySetDirection();
 }
 
-inline void BuilderCustom::resetEffectiveZoom(BuilderState& builderState)
+inline void BuilderCustom::resetUsedZoom(BuilderState& builderState)
 {
     // Reset the zoom in effect. This allows the setZoom method to accurately compute a new zoom in effect.
-    builderState.setEffectiveZoom(builderState.parentStyle().effectiveZoom());
+    builderState.setUsedZoom(builderState.parentStyle().usedZoom());
 }
 
 inline void BuilderCustom::applyInitialZoom(BuilderState& builderState)
 {
-    resetEffectiveZoom(builderState);
+    resetUsedZoom(builderState);
     builderState.setZoom(RenderStyle::initialZoom());
 }
 
 inline void BuilderCustom::applyInheritZoom(BuilderState& builderState)
 {
-    resetEffectiveZoom(builderState);
+    resetUsedZoom(builderState);
     builderState.setZoom(builderState.parentStyle().zoom());
 }
 
@@ -209,21 +209,21 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.valueID() == CSSValueNormal) {
-        resetEffectiveZoom(builderState);
+        resetUsedZoom(builderState);
         builderState.setZoom(RenderStyle::initialZoom());
     } else if (primitiveValue.valueID() == CSSValueReset) {
-        builderState.setEffectiveZoom(RenderStyle::initialZoom());
+        builderState.setUsedZoom(RenderStyle::initialZoom());
         builderState.setZoom(RenderStyle::initialZoom());
     } else if (primitiveValue.valueID() == CSSValueDocument) {
         float docZoom = builderState.rootElementStyle() ? builderState.rootElementStyle()->zoom() : RenderStyle::initialZoom();
-        builderState.setEffectiveZoom(docZoom);
+        builderState.setUsedZoom(docZoom);
         builderState.setZoom(docZoom);
     } else if (primitiveValue.isPercentage()) {
-        resetEffectiveZoom(builderState);
+        resetUsedZoom(builderState);
         if (float percent = primitiveValue.floatValue())
             builderState.setZoom(percent / 100.0f);
     } else if (primitiveValue.isNumber()) {
-        resetEffectiveZoom(builderState);
+        resetUsedZoom(builderState);
         if (float number = primitiveValue.floatValue())
             builderState.setZoom(number);
     }
@@ -630,7 +630,7 @@ static inline float computeBaseSpecifiedFontSize(const Document& document, const
     auto* frame = document.frame();
     if (frame && style.textZoom() != TextZoom::Reset)
         result *= frame->textZoomFactor();
-    result *= style.effectiveZoom();
+    result *= style.usedZoom();
     if (percentageAutosizingEnabled
         && (!document.settings().textAutosizingUsesIdempotentMode() || document.settings().idempotentModeAutosizingOnlyHonorsPercentages()))
         result *= style.textSizeAdjust().multiplier();

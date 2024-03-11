@@ -338,7 +338,7 @@ bool RenderThemeAdwaita::paintTextField(const RenderObject& renderObject, const 
 
 #if ENABLE(DATALIST_ELEMENT)
     if (is<HTMLInputElement>(renderObject.generatingNode()) && downcast<HTMLInputElement>(*(renderObject.generatingNode())).list()) {
-        auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
+        auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().usedZoom();
         FloatRect arrowRect = rect;
         if (renderObject.style().direction() == TextDirection::LTR)
             arrowRect.move(arrowRect.width() - (zoomedArrowSize + textFieldBorderSize * 2), 0);
@@ -397,7 +397,7 @@ LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style) 
     if (style.usedAppearance() == StyleAppearance::None)
         return { };
 
-    auto zoomedArrowSize = menuListButtonArrowSize * style.effectiveZoom();
+    auto zoomedArrowSize = menuListButtonArrowSize * style.usedZoom();
     int leftPadding = menuListButtonPadding + (style.direction() == TextDirection::RTL ? zoomedArrowSize : 0);
     int rightPadding = menuListButtonPadding + (style.direction() == TextDirection::LTR ? zoomedArrowSize : 0);
 
@@ -418,7 +418,7 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
         states.add(ControlStyle::State::Hovered);
     Theme::singleton().paint(StyleAppearance::Button, states, graphicsContext, rect, renderObject.useDarkAppearance(), renderObject.style().usedAccentColor());
 
-    auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
+    auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().usedZoom();
     FloatRect fieldRect = rect;
     fieldRect.inflate(menuListButtonBorderSize);
     if (renderObject.style().direction() == TextDirection::LTR)

@@ -362,7 +362,7 @@ inline T BuilderConverter::convertLineWidth(BuilderState& builderState, const CS
         // Any original result that was >= 1 should not be allowed to fall below 1.
         // This keeps border lines from vanishing.
         T result = convertComputedLength<T>(builderState, value);
-        if (builderState.style().effectiveZoom() < 1.0f && result < 1.0) {
+        if (builderState.style().usedZoom() < 1.0f && result < 1.0) {
             T originalLength = primitiveValue.computeLength<T>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
             if (originalLength >= 1.0)
                 return 1;
@@ -773,7 +773,7 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
         if (is<CSSRayValue>(singleValue))
             operation = convertRayPathOperation(builderState, singleValue);
         else if (!singleValue.isValueID())
-            operation = ShapePathOperation::create(basicShapeForValue(builderState.cssToLengthConversionData(), singleValue, builderState.style().effectiveZoom()));
+            operation = ShapePathOperation::create(basicShapeForValue(builderState.cssToLengthConversionData(), singleValue, builderState.style().usedZoom()));
         else
             referenceBox = fromCSSValue<CSSBoxType>(singleValue);
     };
@@ -1429,7 +1429,7 @@ inline float zoomWithTextZoomFactor(BuilderState& builderState)
 {
     if (auto* frame = builderState.document().frame()) {
         float textZoomFactor = builderState.style().textZoom() != TextZoom::Reset ? frame->textZoomFactor() : 1.0f;
-        return builderState.style().effectiveZoom() * textZoomFactor;
+        return builderState.style().usedZoom() * textZoomFactor;
     }
     return builderState.cssToLengthConversionData().zoom();
 }

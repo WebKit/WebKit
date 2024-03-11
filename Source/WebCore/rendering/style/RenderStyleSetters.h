@@ -445,11 +445,11 @@ inline void RenderStyle::setColumnCount(unsigned short count)
     SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, autoCount, false);
 }
 
-inline bool RenderStyle::setEffectiveZoom(float zoomLevel)
+inline bool RenderStyle::setUsedZoom(float zoomLevel)
 {
-    if (compareEqual(m_rareInheritedData->effectiveZoom, zoomLevel))
+    if (compareEqual(m_rareInheritedData->usedZoom, zoomLevel))
         return false;
-    m_rareInheritedData.access().effectiveZoom = zoomLevel;
+    m_rareInheritedData.access().usedZoom = zoomLevel;
     return true;
 }
 
@@ -606,7 +606,7 @@ inline bool RenderStyle::setWritingMode(WritingMode mode)
 
 inline bool RenderStyle::setZoom(float zoomLevel)
 {
-    setEffectiveZoom(effectiveZoom() * zoomLevel);
+    setUsedZoom(usedZoom() * zoomLevel);
     if (compareEqual(m_nonInheritedData->rareData->zoom, zoomLevel))
         return false;
     m_nonInheritedData.access().rareData.access().zoom = zoomLevel;

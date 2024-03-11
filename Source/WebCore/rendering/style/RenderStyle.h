@@ -577,7 +577,7 @@ public:
     TextAutospace textAutospace() const;
 
     inline float zoom() const;
-    inline float effectiveZoom() const;
+    inline float usedZoom() const;
     
     inline TextZoom textZoom() const;
 
@@ -1253,8 +1253,7 @@ public:
     inline void setHasExplicitlySetDirection();
     void setLineHeight(Length&&);
     bool setZoom(float);
-    void setZoomWithoutReturnValue(float f) { setZoom(f); }
-    inline bool setEffectiveZoom(float);
+    inline bool setUsedZoom(float);
     inline void setTextZoom(TextZoom);
 
     void setTextIndentLine(TextIndentLine);
