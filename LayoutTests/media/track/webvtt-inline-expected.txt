@@ -1,0 +1,14 @@
+
+EVENT(canplay)
+EVENT(addtrack)
+EXPECTED (video.textTracks.length == '1') OK
+RUN(video.textTracks[0].mode = 'showing')
+RUN(video.currentTime = 1)
+EVENT(seeked)
+EXPECTED (window.internals.shadowRoot(video).querySelector('i') != 'null') OK
+EXPECTED (getComputedStyle(i).fontStyle == 'italic') OK
+EXPECTED (getComputedStyle(b).fontWeight == '700') OK
+EXPECTED (getComputedStyle(u).textDecoration == 'underline') OK
+EXPECTED (getComputedStyle(c).display == 'none') OK
+END OF TEST
+
