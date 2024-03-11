@@ -217,6 +217,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::PageIdentifier webPageID;
     WindowKind windowKind { WindowKind::Unparented };
     PageAllowedToRunInTheBackgroundCounter::Token pageAllowedToRunInTheBackgroundToken;
+    std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToNotifications;
 
     WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
 

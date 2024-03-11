@@ -6222,6 +6222,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
             internals().firstLayerTreeTransactionIdAfterDidCommitLoad = drawingAreaProxy->nextLayerTreeTransactionID();
 #endif
         internals().pageAllowedToRunInTheBackgroundToken = nullptr;
+        internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
     }
 
     auto transaction = internals().pageLoadState.transaction();
@@ -6477,6 +6478,7 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
     if (isMainFrame) {
         internals().pageLoadState.didFailLoad(transaction);
         internals().pageAllowedToRunInTheBackgroundToken = nullptr;
+        internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
     }
 
     if (m_controlledByAutomation) {
@@ -9779,6 +9781,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     internals().pageIsUserObservableCount = nullptr;
     internals().visiblePageToken = nullptr;
     internals().pageAllowedToRunInTheBackgroundToken = nullptr;
+    internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
 
     m_hasRunningProcess = false;
     m_areActiveDOMObjectsAndAnimationsSuspended = false;
@@ -10660,16 +10663,16 @@ void WebPageProxy::requestNotificationPermission(const String& originString, Com
 void WebPageProxy::pageWillLikelyUseNotifications()
 {
     WEBPAGEPROXY_RELEASE_LOG(ViewState, "pageWillLikelyUseNotifications: This page is likely to use notifications and is allowed to run in the background");
-    if (!internals().pageAllowedToRunInTheBackgroundToken)
-        internals().pageAllowedToRunInTheBackgroundToken = process().throttler().pageAllowedToRunInTheBackgroundToken();
+    if (!internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications)
+        internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = process().throttler().backgroundActivity("Page is likely to show notifications"_s).moveToUniquePtr();
 }
 
 void WebPageProxy::showNotification(IPC::Connection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources>&& notificationResources)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->show(this, connection, notificationData, WTFMove(notificationResources));
     WEBPAGEPROXY_RELEASE_LOG(ViewState, "showNotification: This page shows notifications and is allowed to run in the background");
-    if (!internals().pageAllowedToRunInTheBackgroundToken)
-        internals().pageAllowedToRunInTheBackgroundToken = process().throttler().pageAllowedToRunInTheBackgroundToken();
+    if (!internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications)
+        internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = process().throttler().backgroundActivity("Page has shown notification"_s).moveToUniquePtr();
 }
 
 void WebPageProxy::cancelNotification(const WTF::UUID& notificationID)
