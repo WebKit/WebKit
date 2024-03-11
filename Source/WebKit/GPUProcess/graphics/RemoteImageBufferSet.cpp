@@ -168,7 +168,12 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
     }
 
     if (!m_frontBuffer) {
-        m_frontBuffer = m_backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, WebCore::RenderingResourceIdentifier::generate());
+        ImageBufferCreationContext creationContext;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+        creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
+#endif
+
+        m_frontBuffer = m_backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, creationContext, WebCore::RenderingResourceIdentifier::generate());
         m_frontBufferIsCleared = true;
     }
 
@@ -296,6 +301,13 @@ void RemoteImageBufferSet::dynamicContentScalingDisplayList(CompletionHandler<vo
     if (m_frontBuffer)
         displayList = m_frontBuffer->dynamicContentScalingDisplayList();
     completionHandler({ WTFMove(displayList) });
+}
+
+DynamicContentScalingResourceCache RemoteImageBufferSet::ensureDynamicContentScalingResourceCache()
+{
+    if (!m_dynamicContentScalingResourceCache)
+        m_dynamicContentScalingResourceCache = DynamicContentScalingResourceCache::create();
+    return m_dynamicContentScalingResourceCache;
 }
 #endif
 
