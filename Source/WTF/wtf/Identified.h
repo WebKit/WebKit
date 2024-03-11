@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,6 @@
 
 #pragma once
 
-#include <atomic>
-#include <type_traits>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/ObjectIdentifier.h>
-#include <wtf/ThreadAssertions.h>
 #include <wtf/UUID.h>
 
 namespace WTF {
@@ -66,33 +61,6 @@ protected:
 };
 
 template <typename T>
-class LegacyIdentified : public IdentifiedBase<uint64_t> {
-protected:
-    LegacyIdentified()
-        : IdentifiedBase<uint64_t>(generateIdentifier())
-    {
-    }
-
-    LegacyIdentified(const LegacyIdentified&) = default;
-    LegacyIdentified& operator=(const LegacyIdentified&) = default;
-
-    explicit LegacyIdentified(uint64_t identifier)
-        : IdentifiedBase<uint64_t>(identifier)
-    {
-    }
-
-private:
-    static uint64_t generateIdentifier()
-    {
-        static NeverDestroyed<ThreadLikeAssertion> initializationThread;
-        assertIsCurrent(initializationThread); // You should be using ThreadSafeIdentified if you hit this assertion.
-
-        static uint64_t currentIdentifier;
-        return ++currentIdentifier;
-    }
-};
-
-template <typename T>
 class UUIDIdentified : public IdentifiedBase<UUID> {
 protected:
     UUIDIdentified()
@@ -106,5 +74,4 @@ protected:
 } // namespace WTF
 
 using WTF::Identified;
-using WTF::LegacyIdentified;
 using WTF::UUIDIdentified;
