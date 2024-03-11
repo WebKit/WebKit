@@ -76,16 +76,9 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
 {
     // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-request as of 4 August 2017
     // with enhancement from 14 November 2017 Editor's Draft.
-    if (!m_document || !m_document->page()) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError });
+    if (!performCommonChecks(options, promise)) {
         return;
     }
-    if (options.signal && options.signal->aborted()) {
-        promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
-        return;
-    }
-    // Step 1-2.
-    ASSERT(m_document->isSecureContext());
 
     // Step 3 is enhanced with doesHaveSameOriginAsItsAncestors.
     // Step 4-6. Shortcut as we only support PublicKeyCredential which can only
@@ -113,16 +106,8 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 {
     // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-create as of 4 August 2017
     // with enhancement from 14 November 2017 Editor's Draft.
-    if (!m_document || !m_document->page()) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError });
+    if (!performCommonChecks(options, promise))
         return;
-    }
-    if (options.signal && options.signal->aborted()) {
-        promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
-        return;
-    }
-    // Step 1-2.
-    ASSERT(m_document->isSecureContext());
 
     // Step 3-7. Shortcut as we only support one kind of credentials.
     if (!options.publicKey) {
@@ -142,6 +127,22 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const
 {
     promise.resolve();
+}
+
+template<typename Options>
+bool CredentialsContainer::performCommonChecks(const Options& options, CredentialPromise& promise)
+{
+    if (!m_document || !m_document->page()) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError });
+        return false;
+    }
+    if (options.signal && options.signal->aborted()) {
+        promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
+        return false;
+    }
+    // Step 1-2.
+    ASSERT(m_document->isSecureContext());
+    return true;
 }
 
 } // namespace WebCore

@@ -46,7 +46,7 @@ ASCIILiteral NavigatorIdentity::supplementName()
 CredentialsContainer* NavigatorIdentity::identity(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
 {
     if (!m_credentialsContainer)
-        m_credentialsContainer = CredentialsContainer::create(WTFMove(document));
+        m_credentialsContainer = IdentityCredentialsContainer::create(WTFMove(document));
 
     return m_credentialsContainer.get();
 }

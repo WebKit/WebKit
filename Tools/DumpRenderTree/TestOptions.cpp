@@ -120,6 +120,7 @@ const TestFeatures& TestOptions::defaults()
             { "CSSOMViewSmoothScrollingEnabled", false },
             { "ContactPickerAPIEnabled", false },
             { "CoreMathMLEnabled", false },
+            { "DigitalCredentialsEnabled", false },
             { "GenericCueAPIEnabled", false },
             { "IsLoggedInAPIEnabled", false },
             { "LazyIframeLoadingEnabled", false },

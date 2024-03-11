@@ -147,6 +147,7 @@ Modules/highlight/AppHighlightStorage.cpp
 Modules/highlight/HighlightRegistry.cpp
 Modules/highlight/Highlight.cpp
 Modules/identity/DigitalCredential.cpp
+Modules/identity/IdentityCredentialsContainer.cpp
 Modules/identity/NavigatorIdentity.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp

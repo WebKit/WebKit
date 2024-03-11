@@ -270,6 +270,7 @@ namespace WebCore {
     macro(IDBTransaction) \
     macro(IDBVersionChangeEvent) \
     macro(IIRFilterNode) \
+    macro(IdentityCredentialsContainer) \
     macro(ImageBitmap) \
     macro(ImageBitmapRenderingContext) \
     macro(ImageCapture) \

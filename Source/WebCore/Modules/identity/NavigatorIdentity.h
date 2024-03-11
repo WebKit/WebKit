@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "CredentialsContainer.h"
+#include "IdentityCredentialsContainer.h"
 #include "Supplementable.h"
 #include <wtf/WeakPtr.h>
 
@@ -50,7 +51,7 @@ private:
     static NavigatorIdentity* from(Navigator*);
     static ASCIILiteral supplementName();
 
-    RefPtr<CredentialsContainer> m_credentialsContainer;
+    RefPtr<IdentityCredentialsContainer> m_credentialsContainer;
 };
 
 } // namespace WebCore

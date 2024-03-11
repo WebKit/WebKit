@@ -2382,7 +2382,7 @@ DiagnosticLoggingEnabled:
 
 DigitalCredentialsEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: dom
   humanReadableName: "Digital Credentials API"
   humanReadableDescription: "Enable the experimental Digital Credentials API"
