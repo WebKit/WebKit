@@ -117,10 +117,8 @@ static std::optional<std::tuple<SVGFilterEffectsGraph, FilterEffectGeometryMap>>
             effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
         }
 
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
         if (effectElement.colorInterpolation() == ColorInterpolation::LinearRGB)
             effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
-#endif
 
         graph.addNamedNode(AtomString { effectElement.result() }, { *effect });
         graph.setNodeInputs(*effect, WTFMove(*inputs));

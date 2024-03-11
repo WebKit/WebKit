@@ -581,9 +581,7 @@ enum class PredefinedColorSpaceTag : uint8_t {
 
 enum DestinationColorSpaceTag {
     DestinationColorSpaceSRGBTag = 0,
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
     DestinationColorSpaceLinearSRGBTag = 1,
-#endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
     DestinationColorSpaceDisplayP3Tag = 2,
 #endif
@@ -2381,12 +2379,10 @@ private:
             return;
         }
 
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
         if (destinationColorSpace == DestinationColorSpace::LinearSRGB()) {
             write(DestinationColorSpaceLinearSRGBTag);
             return;
         }
-#endif
 
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
         if (destinationColorSpace == DestinationColorSpace::DisplayP3()) {
@@ -3766,11 +3762,9 @@ private:
         case DestinationColorSpaceSRGBTag:
             destinationColorSpace = DestinationColorSpace::SRGB();
             return true;
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
         case DestinationColorSpaceLinearSRGBTag:
             destinationColorSpace = DestinationColorSpace::LinearSRGB();
             return true;
-#endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
         case DestinationColorSpaceDisplayP3Tag:
             destinationColorSpace = DestinationColorSpace::DisplayP3();

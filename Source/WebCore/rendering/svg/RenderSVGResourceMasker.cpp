@@ -113,14 +113,12 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     auto drawColorSpace = DestinationColorSpace::SRGB();
 
     Ref svgStyle = style().svgStyle();
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
     if (svgStyle->colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG)
         maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
         drawColorSpace = DestinationColorSpace::LinearSRGB();
     }
-#endif
 
     // FIXME: try to use GraphicsContext::createScaledImageBuffer instead.
     auto maskImage = createImageBuffer(repaintBoundingBox, absoluteTransform, maskColorSpace, &context);
