@@ -46,6 +46,7 @@ DropTarget::DropTarget(GtkWidget* webView)
 {
     auto* formatsBuilder = gdk_content_formats_builder_new();
     gdk_content_formats_builder_add_gtype(formatsBuilder, G_TYPE_STRING);
+    gdk_content_formats_builder_add_gtype(formatsBuilder, GDK_TYPE_FILE_LIST);
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "text/html");
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "text/uri-list");
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "_NETSCAPE_URL");
@@ -109,6 +110,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
     m_selectionData = SelectionData();
     m_dataRequestCount = 0;
     m_cancellable = adoptGRef(g_cancellable_new());
+    m_uriListBuilder.clear();
 
     // WebCore needs the selection data to decide, so we need to preload the
     // data of targets we support. Once all data requests are done we start
@@ -129,7 +131,14 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         }, this);
     }
 
+    static const char* const portalMIMETypes[] = {
+        "application/vnd.portal.filetransfer",
+        "application/vnd.portal.files", // Deprecated, but added for compatibility
+    };
+
     static const char* const supportedMimeTypes[] = {
+        "application/vnd.portal.filetransfer",
+        "application/vnd.portal.files", // Deprecated, but added for compatibility
         "text/html",
         "_NETSCAPE_URL",
         "text/uri-list",
@@ -137,12 +146,37 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         "org.webkitgtk.WebKit.custom-pasteboard-data"
     };
 
+    bool transferredFilesFromPortal = false;
     for (unsigned i = 0; i < G_N_ELEMENTS(supportedMimeTypes); ++i) {
         if (!gdk_content_formats_contain_mime_type(formats, supportedMimeTypes[i]))
             continue;
 
+        // Reading from the File Transfer portal is a bit special. When either portal
+        // mimetypes are present, GTK serializes them using the GdkFileList type. If
+        // this type is present, ignore file:// URIs from the "text/uri-list" later on.
+        if (!transferredFilesFromPortal && g_strv_contains(portalMIMETypes, supportedMimeTypes[i])) {
+            ASSERT(gdk_content_formats_contain_gtype(formats, GDK_TYPE_FILE_LIST));
+
+            m_dataRequestCount++;
+            loadData([this, cancellable = m_cancellable](Vector<String>&& fileUris) {
+                if (g_cancellable_is_cancelled(cancellable.get()))
+                    return;
+
+                // Convert files transferred by the File Transfer portal into URIs
+                for (auto& fileUri : fileUris) {
+                    if (!m_uriListBuilder.isEmpty())
+                        m_uriListBuilder.append("\r\n");
+                    m_uriListBuilder.append(fileUri);
+                }
+
+                didLoadData();
+            });
+            transferredFilesFromPortal = true;
+            continue;
+        }
+
         m_dataRequestCount++;
-        loadData(supportedMimeTypes[i], [this, mimeType = String::fromUTF8(supportedMimeTypes[i]), cancellable = m_cancellable](GRefPtr<GBytes>&& data) {
+        loadData(supportedMimeTypes[i], [this, transferredFilesFromPortal, mimeType = String::fromUTF8(supportedMimeTypes[i]), cancellable = m_cancellable](GRefPtr<GBytes>&& data) {
             if (g_cancellable_is_cancelled(cancellable.get()))
                 return;
 
@@ -173,8 +207,29 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
             } else if (mimeType == "text/uri-list"_s) {
                 gsize length;
                 const auto* uriListData = g_bytes_get_data(data.get(), &length);
-                if (length)
-                    m_selectionData->setURIList(String::fromUTF8(reinterpret_cast<const char*>(uriListData), length));
+                if (length) {
+                    String uriListString(String::fromUTF8(reinterpret_cast<const char*>(uriListData), length));
+                    for (auto& line : uriListString.split('\n')) {
+                        line = line.trim(deprecatedIsSpaceOrNewline);
+                        if (line.isEmpty())
+                            continue;
+                        if (line[0] == '#')
+                            continue;
+
+                        // If we have file transfers from the portal, ignore file:// URIs.
+                        URL url { line };
+                        if (transferredFilesFromPortal && url.isValid()) {
+                            GUniqueOutPtr<GError> error;
+                            GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().data(), 0, &error.outPtr()));
+                            if (!error && filename)
+                                continue;
+                        }
+
+                        if (!m_uriListBuilder.isEmpty())
+                            m_uriListBuilder.append("\r\n");
+                        m_uriListBuilder.append(line);
+                    }
+                }
             } else if (mimeType == "application/vnd.webkitgtk.smartpaste"_s)
                 m_selectionData->setCanSmartReplace(true);
             else if (mimeType == PasteboardCustomData::gtkType()) {
@@ -187,24 +242,25 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
     }
 }
 
+template<typename T>
 struct DropReadAsyncData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    DropReadAsyncData(GCancellable* cancellable, CompletionHandler<void(GRefPtr<GBytes>&&)>&& handler)
+    DropReadAsyncData(GCancellable* cancellable, CompletionHandler<T>&& handler)
         : cancellable(cancellable)
         , completionHandler(WTFMove(handler))
     {
     }
 
     GRefPtr<GCancellable> cancellable;
-    CompletionHandler<void(GRefPtr<GBytes>&&)> completionHandler;
+    CompletionHandler<T> completionHandler;
 };
 
 void DropTarget::loadData(const char* mimeType, CompletionHandler<void(GRefPtr<GBytes>&&)>&& completionHandler)
 {
     const char* mimeTypes[] = { mimeType, nullptr };
     gdk_drop_read_async(m_drop.get(), mimeTypes, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* gdkDrop, GAsyncResult* result, gpointer userData) {
-        std::unique_ptr<DropReadAsyncData> data(static_cast<DropReadAsyncData*>(userData));
+        std::unique_ptr<DropReadAsyncData<void(GRefPtr<GBytes>&&)>> data(static_cast<DropReadAsyncData<void(GRefPtr<GBytes>&&)>*>(userData));
         GRefPtr<GInputStream> inputStream = adoptGRef(gdk_drop_read_finish(GDK_DROP(gdkDrop), result, nullptr, nullptr));
         if (!inputStream) {
             data->completionHandler(nullptr);
@@ -216,7 +272,7 @@ void DropTarget::loadData(const char* mimeType, CompletionHandler<void(GRefPtr<G
         g_output_stream_splice_async(outputStream.get(), inputStream.get(),
             static_cast<GOutputStreamSpliceFlags>(G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
             G_PRIORITY_DEFAULT, cancellable, [](GObject* stream, GAsyncResult* result, gpointer userData) {
-                std::unique_ptr<DropReadAsyncData> data(static_cast<DropReadAsyncData*>(userData));
+                std::unique_ptr<DropReadAsyncData<void(GRefPtr<GBytes>&&)>> data(static_cast<DropReadAsyncData<void(GRefPtr<GBytes>&&)>*>(userData));
                 GUniqueOutPtr<GError> error;
                 gssize writtenBytes = g_output_stream_splice_finish(G_OUTPUT_STREAM(stream), result, &error.outPtr());
                 if (writtenBytes <= 0) {
@@ -226,13 +282,40 @@ void DropTarget::loadData(const char* mimeType, CompletionHandler<void(GRefPtr<G
                 GRefPtr<GBytes> bytes = adoptGRef(g_memory_output_stream_steal_as_bytes(G_MEMORY_OUTPUT_STREAM(stream)));
                 data->completionHandler(WTFMove(bytes));
             }, data.release());
-    }, new DropReadAsyncData(m_cancellable.get(), WTFMove(completionHandler)));
+    }, new DropReadAsyncData<void(GRefPtr<GBytes>&&)>(m_cancellable.get(), WTFMove(completionHandler)));
+}
+
+void DropTarget::loadData(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    gdk_drop_read_value_async(m_drop.get(), GDK_TYPE_FILE_LIST, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* gdkDrop, GAsyncResult* result, gpointer userData) {
+        std::unique_ptr<DropReadAsyncData<void(Vector<String>&&)>> data(static_cast<DropReadAsyncData<void(Vector<String>&&)>*>(userData));
+        GUniqueOutPtr<GError> error;
+        Vector<String> fileUris;
+        const GValue* value = gdk_drop_read_value_finish(GDK_DROP(gdkDrop), result, &error.outPtr());
+
+        if (value) {
+            GSList* fileList = static_cast<GSList*>(g_value_get_boxed(value));
+            for (GSList *l = fileList; l; l = l->next) {
+                GUniquePtr<char> uri(g_file_get_uri(G_FILE(l->data)));
+                fileUris.append(String::fromUTF8(uri.get()));
+            }
+        }
+
+        data->completionHandler(WTFMove(fileUris));
+    }, new DropReadAsyncData<void(Vector<String>&&)>(m_cancellable.get(), WTFMove(completionHandler)));
 }
 
 void DropTarget::didLoadData()
 {
     if (--m_dataRequestCount)
         return;
+
+    // Build the URI list after collecting everything from transferred files,
+    // and the uri-list mimetype
+    if (!m_uriListBuilder.isEmpty()) {
+        m_selectionData->setURIList(m_uriListBuilder.toString());
+        m_uriListBuilder.clear();
+    }
 
     m_cancellable = nullptr;
 
