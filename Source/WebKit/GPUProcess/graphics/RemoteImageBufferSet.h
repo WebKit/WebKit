@@ -75,6 +75,7 @@ private:
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     void dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&&);
+    WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
 #endif
 
     bool isOpaque() const
@@ -103,6 +104,10 @@ private:
     std::optional<WebCore::IntRect> m_previouslyPaintedRect;
 
     std::optional<IPC::Signal> m_flushSignal;
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    WebCore::DynamicContentScalingResourceCache m_dynamicContentScalingResourceCache;
+#endif
 };
 
 
