@@ -426,27 +426,15 @@ RefPtr<Element> HTMLFormControlElement::invokeTargetElement() const
     return getElementAttribute(invoketargetAttr);
 }
 
-const AtomString& HTMLFormControlElement::invokeAction() const
-{
-    const AtomString& value = attributeWithoutSynchronization(HTMLNames::invokeactionAttr);
-
-    if (!value || value.isNull() || value.isEmpty())
-        return autoAtom();
-    return value;
-}
-
-void HTMLFormControlElement::setInvokeAction(const AtomString& value)
-{
-    setAttributeWithoutSynchronization(HTMLNames::invokeactionAttr, value);
-}
-
 void HTMLFormControlElement::handleInvokeAction()
 {
     RefPtr invokee = invokeTargetElement();
     if (!invokee)
         return;
 
-    auto action = invokeAction();
+    auto action = attributeWithoutSynchronization(HTMLNames::invokeactionAttr);
+    if (action.isNull())
+        action = emptyAtom();
 
     InvokeEvent::Init init;
     init.bubbles = false;
