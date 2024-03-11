@@ -9,7 +9,7 @@ layer at (0,0) size 785x2582
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 397x18
           text run at (0,0) width 397: "If you have any comments to make regarding this test, e-mail "
-        RenderInline {A} at (0,0) size 186x18 [color=#0000EE]
+        RenderInline {A} at (396,0) size 186x18 [color=#0000EE]
           RenderText {#text} at (396,0) size 186x18
             text run at (396,0) width 186: "py8ieh=eviltests@bath.ac.uk"
         RenderText {#text} at (581,0) size 5x18
@@ -189,7 +189,7 @@ layer at (0,0) size 785x2582
               RenderText at (8,2) size 432x13
                 text run at (8,2) width 432: "The tests all render identically, and this browser may or may not grok CSS2 tables."
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {LABEL} at (0,0) size 219x18
+          RenderInline {LABEL} at (0,19) size 219x18
             RenderText {#text} at (0,19) size 72x18
               text run at (0,19) width 72: "Comment: "
             RenderTextControl {INPUT} at (71,19) size 148x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
@@ -203,7 +203,7 @@ layer at (0,0) size 785x2582
       RenderBlock {P} at (0,2390) size 769x19
         RenderText {#text} at (0,0) size 64x18
           text run at (0,0) width 64: "Up to the "
-        RenderInline {A} at (0,0) size 73x18 [color=#0000EE]
+        RenderInline {A} at (63,0) size 73x18 [color=#0000EE]
           RenderText {#text} at (63,0) size 73x18
             text run at (63,0) width 73: "Table Tests"
         RenderText {#text} at (135,0) size 5x18
@@ -211,7 +211,7 @@ layer at (0,0) size 785x2582
       RenderBlock {P} at (0,2424) size 769x19
         RenderText {#text} at (0,0) size 64x18
           text run at (0,0) width 64: "Up to the "
-        RenderInline {A} at (0,0) size 99x18 [color=#0000EE]
+        RenderInline {A} at (63,0) size 99x18 [color=#0000EE]
           RenderText {#text} at (63,0) size 99x18
             text run at (63,0) width 99: "Evil Tests Page"
         RenderText {#text} at (161,0) size 5x18
@@ -219,18 +219,18 @@ layer at (0,0) size 785x2582
       RenderBlock {P} at (0,2458) size 769x19
         RenderText {#text} at (0,0) size 63x18
           text run at (0,0) width 63: "Bugzilla: "
-        RenderInline {A} at (0,0) size 64x18 [color=#0000EE]
+        RenderInline {A} at (62,0) size 64x18 [color=#0000EE]
           RenderText {#text} at (62,0) size 64x18
             text run at (62,0) width 64: "Bug 1044"
       RenderBlock {P} at (0,2492) size 769x19
         RenderText {#text} at (0,0) size 177x18
           text run at (0,0) width 177: "This page is maintained by "
-        RenderInline {A} at (0,0) size 79x18 [color=#0000EE]
+        RenderInline {A} at (176,0) size 79x18 [color=#0000EE]
           RenderText {#text} at (176,0) size 79x18
             text run at (176,0) width 79: "Ian Hickson"
         RenderText {#text} at (254,0) size 10x18
           text run at (254,0) width 10: " ("
-        RenderInline {A} at (0,0) size 125x18 [color=#0000EE]
+        RenderInline {A} at (263,0) size 125x18 [color=#0000EE]
           RenderText {#text} at (263,0) size 125x18
             text run at (263,0) width 125: "py8ieh@bath.ac.uk"
         RenderText {#text} at (387,0) size 10x18
