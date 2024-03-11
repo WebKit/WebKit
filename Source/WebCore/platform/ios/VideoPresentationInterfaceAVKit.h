@@ -58,8 +58,8 @@ public:
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
     bool isPlayingVideoInEnhancedFullscreen() const;
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
-    void presentFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&&) final;
-    void dismissFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&&) final;
+    void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
+    void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
 
 private:
     WEBCORE_EXPORT VideoPresentationInterfaceAVKit(PlaybackSessionInterfaceIOS&);

@@ -213,8 +213,8 @@ protected:
     WEBCORE_EXPORT void exitFullscreenHandler(BOOL success, NSError *, NextActions = NextActions());
     void doEnterFullscreen();
     void doExitFullscreen();
-    virtual void presentFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&&) = 0;
-    virtual void dismissFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&&) = 0;
+    virtual void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) = 0;
+    virtual void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) = 0;
     virtual void tryToStartPictureInPicture() = 0;
     virtual void stopPictureInPicture() = 0;
     virtual void setShowsPlaybackControls(bool) = 0;

@@ -62,8 +62,8 @@ private:
     UIViewController *playerViewController() const final;
     void tryToStartPictureInPicture() final { }
     void stopPictureInPicture() final { }
-    void presentFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&&) final;
-    void dismissFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&&) final;
+    void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
+    void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
     void setShowsPlaybackControls(bool) final;
     void setContentDimensions(const FloatSize&) final;
     void setAllowsPictureInPicturePlayback(bool) final { }

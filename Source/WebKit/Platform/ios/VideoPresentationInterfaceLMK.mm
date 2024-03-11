@@ -81,14 +81,14 @@ void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
     m_playerViewController = nil;
 }
 
-void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&& completionHandler)
+void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
     linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeFullscreenFromInline;
     // FIXME: Wait until -linearMediaPlayer:didEnterFullscreenWithError: is called before calling completionHandler
     completionHandler(YES, nil);
 }
 
-void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, CompletionHandler<void(BOOL, NSError *)>&& completionHandler)
+void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
     linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
     // FIXME: Wait until -linearMediaPlayer:didExitFullscreenWithError: is called before calling completionHandler
