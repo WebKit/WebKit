@@ -29,11 +29,16 @@
 #include "CommandResult.h"
 #include "SessionHost.h"
 #include "WebDriverAtoms.h"
+#if ENABLE(WEBDRIVER_BIDI)
+#include "WebSocketServer.h"
+#endif
+#include <cstdint>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashSet.h>
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebDriver {
 
@@ -68,6 +73,15 @@ Session::Session(std::unique_ptr<SessionHost>&& host)
     if (capabilities().timeouts)
         setTimeouts(capabilities().timeouts.value(), [](CommandResult&&) { });
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+Session::Session(std::unique_ptr<SessionHost>&& host, WeakPtr<WebSocketServer>&& bidiServer)
+    : Session(WTFMove(host))
+{
+    m_bidiServer = WTFMove(bidiServer);
+    m_host->addEventHandler(this);
+}
+#endif
 
 Session::~Session()
 {
@@ -3109,5 +3123,234 @@ void Session::takeScreenshot(std::optional<String> elementID, std::optional<bool
         });
     });
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+void Session::dispatchEvent(RefPtr<JSON::Object>&& message)
+{
+    fprintf(stderr, "%s %s %d handling message %s\n", __FILE__, __FUNCTION__, __LINE__, message->toJSONString().utf8().data());
+    // Check if "method" value matches "Automation.XXXX" format
+    auto method = message->getString("method"_s);
+    if (!method.startsWith("Automation."_s)) {
+        fprintf(stderr, "%s %s %d unknown event domain. Skipping\n", __FILE__, __FUNCTION__, __LINE__);
+        return;
+    }
+
+    auto methodSuffix = method.substring(11);
+    fprintf(stderr, "%s %s %d suffix: %s\n", __FILE__, __FUNCTION__, __LINE__, methodSuffix.utf8().data());
+    if (methodSuffix == "logEntryAdded"_s) {
+        doLogEntryAdded(WTFMove(message));
+        return;
+    }
+}
+
+// https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
+void Session::doLogEntryAdded(RefPtr<JSON::Object>&& message)
+{
+    fprintf(stderr, "%s %s %d \n", __FILE__, __FUNCTION__, __LINE__);
+    auto params = message->getObject("params"_s);
+    auto method = params->getString("method"_s);
+    // 1.1 If method is "error" or "assert", let level be "error".
+    //     If method is "debug" or "trace" let level be "debug".
+    //     If method is "warn", let level be "warn".
+    //     Otherwise let level be "info".
+    String level;
+    if (method == "error"_s || method == "assert"_s)
+        level = "error"_s;
+    else if (method == "debug"_s || method == "trace"_s)
+        level = "debug"_s;
+    else if (method == "warn"_s)
+        level = "warn"_s;
+    else
+        level = "info"_s;
+
+    // 2. Let timestamp be a time value representing the current date and time in UTC.
+    // Note: We already receive an epoch timestamp from the backend
+    // WebDriver uses the ECMA time format, which is the number of milliseconds since the Unix epoch.
+    // https://tc39.es/ecma262/#sec-time-values-and-time-range
+    // FIXME Due to limitations in JSON::Object.setInteger, we have to make a detour to avoid passing it as double
+    RefPtr<JSON::Value> timestampValue;
+    if (auto timestampOpt = params->getDouble("timestamp"_s)) {
+        std::string timestampStr = std::to_string(static_cast<uint64_t>(timestampOpt.value()));
+        timestampValue = JSON::Value::parseJSON(StringView::fromLatin1(timestampStr.c_str()));
+    } else
+        timestampValue = JSON::Value::create(0);
+
+    // 3. Let text be an empty string.
+    StringBuilder textBuilder;
+
+    // 4. If Type(args[0]) is String, and args[0] contains a formatting specifier, let formatted args be Formatter(args). Otherwise let formatted args be args.
+    // TODO Support variable args. For now we hardcode the text as the single parameter
+    auto formattedArgs = params->getArray("args"_s);
+    if (!formattedArgs) {
+        formattedArgs = JSON::Array::create();
+        formattedArgs->pushString(params->getString("text"_s));
+    }
+
+    // 5. For each arg in formatted args:
+    for (unsigned i = 0; i < formattedArgs->length(); ++i) {
+        auto arg = formattedArgs->get(i);
+        //   5.1 If arg is not the first entry in args, append a U+0020 SPACE to text.
+        if (i)
+            textBuilder.append(' ');
+        //   5.2 If arg is a primitive ECMAScript value, append ToString(arg) to text. Otherwise append an implementation-defined string to text.
+        if (arg->type() == JSON::Value::Type::String)
+            textBuilder.append(arg->asString());
+        else
+            textBuilder.append("null"_s);
+    }
+
+    // 6. Let realm be the realm id of the current Realm Record.
+    // 7. Let serialized args be a new list.
+    auto serializedArgs = JSON::Array::create();
+    // 8. Let serialization options be a map matching the script.SerializationOptions production with the fields set to their default values.
+    // 9. For each arg of args:
+    for (unsigned i = 0; i < formattedArgs->length(); ++i) {
+        auto arg = formattedArgs->get(i);
+        //  9.1 Let serialized arg be the result of serialize as a remote value with arg as value, serialization options, none as ownership type,
+        //      a new map as serialization internal map, realm and session.
+        // FIXME: Use proper serialization options, etc
+        auto serializedArg = JSON::Object::create();
+        switch (arg->type()) {
+        case JSON::Value::Type::String:
+            serializedArg->setString("type"_s, "string"_s);
+            serializedArg->setString("value"_s, arg->asString());
+            break;
+        case JSON::Value::Type::Double:
+            serializedArg->setString("type"_s, "number"_s);
+            serializedArg->setDouble("value"_s, *arg->asDouble());
+            break;
+        case JSON::Value::Type::Boolean:
+            serializedArg->setString("type"_s, "boolean"_s);
+            serializedArg->setBoolean("value"_s, *arg->asBoolean());
+            break;
+        case JSON::Value::Type::Null:
+            serializedArg->setString("type"_s, "null"_s);
+            break;
+        case JSON::Value::Type::Object:
+            serializedArg->setString("type"_s, "object"_s);
+            serializedArg->setString("value"_s, arg->toJSONString());
+            break;
+        case JSON::Value::Type::Array:
+            serializedArg->setString("type"_s, "array"_s);
+            serializedArg->setString("value"_s, arg->toJSONString());
+            break;
+        case JSON::Value::Type::Integer:
+            serializedArg->setString("type"_s, "number"_s);
+            serializedArg->setInteger("value"_s, *arg->asInteger());
+            break;
+        }
+        //  9.2 Add serialized arg to serialized args.
+        serializedArgs->pushObject(WTFMove(serializedArg));
+    }
+    // 10. Let source be the result of get the source given current Realm Record.
+    // 11. If method is "assert", "error", "trace", or "warn", let stack be the current stack trace. Otherwise let stack be null.
+
+    // 12. Let entry be a map matching the log.ConsoleLogEntry production, with the the level field set to level, the text field set to text, the timestamp
+    //     field set to timestamp, the stackTrace field set to stack if stack is not null, or omitted otherwise, the method field set to method, the source
+    //     field set to source and the args field set to serialized args.
+    auto entry = JSON::Object::create();
+    entry->setString("type"_s, "console"_s);
+    entry->setString("level"_s, level);
+    entry->setString("text"_s, textBuilder.toString());
+    entry->setValue("timestamp"_s, *timestampValue);
+    entry->setString("method"_s, method);
+    entry->setArray("args"_s, serializedArgs);
+
+    // 13. Let body be a map matching the log.EntryAdded production, with the params field set to entry.
+    auto body = JSON::Object::create();
+    body->setObject("params"_s, WTFMove(entry));
+
+    // FIXME Support multiple browsing contexts
+    // 14. Let settings be the current settings object
+    // 15. Let related browsing contexts be the result of get related browsing contexts given settings.
+    // 16. If event is enabled with session, "log.entryAdded" and related browsing contexts, emit an event with session and body.
+    if (eventIsEnabled("log.entryAdded"_s, { m_toplevelBrowsingContext.value() }))
+        emitEvent("log.entryAdded"_s, WTFMove(body));
+    // 17. Otherwise, buffer a log event with session, related browsing contexts, and body.
+    // TBI
+}
+
+void Session::emitEvent(const String& eventName, RefPtr<JSON::Object>&& body)
+{
+    // 1. Let event be a new map with the following fields:
+    //   1.1. Set the type field to "event".
+    //   1.2. Set the method field to eventName.
+    //   1.3. Set the params field to body.
+    // 2. Let event be the result of converting event to a JSON value.
+    // 3. Emit an event with the event value.
+    body->setString("type"_s, "event"_s);
+    body->setString("method"_s, eventName);
+    m_bidiServer->sendMessageFromSession(this->id(), body->toJSONString());
+}
+
+
+// https://w3c.github.io/webdriver-bidi/#event-enabled-browsing-contexts
+// To obtain a list of event enabled browsing contexts given session and event name:
+// 1. Let contexts be an empty set.
+// 2. For each context → events of session’s browsing context event map:
+//   2.1 If events contains event name, append context to contexts
+// 3. Return contexts.
+Vector<String> Session::eventEnabledBrowsingContexts(const String& eventName)
+{
+    Vector<String> contexts;
+    for (auto& context : m_browsingContextEventMap) {
+        auto& events = context.value;
+        if (events.contains(eventName))
+            contexts.append(context.key);
+    }
+    return contexts;
+}
+
+// https://w3c.github.io/webdriver-bidi/#set-of-sessions-for-which-an-event-is-enabled
+// The set of sessions for which an event is enabled given event name and browsing contexts is:
+// 1. Let sessions be a new set.
+// 2. For each session in active BiDI sessions:
+//   2.1. If event is enabled with session, event name and browsing contexts, append session to sessions.
+// 3. Return sessions.
+HashSet<String> Session::sessionsForWhichEventIsEnabled(const String& eventName, const Vector<String>& browsingContexts)
+{
+    HashSet<String> sessions;
+    // Note: We currently support single sessions for now
+    if (eventIsEnabled(eventName, browsingContexts))
+        sessions.add(this->id());
+    return sessions;
+}
+
+// https://w3c.github.io/webdriver-bidi/#event-is-enabled
+// To determine if an event is enabled given session, event name and browsing contexts:
+// 1. Let top-level browsing contexts be an empty set.
+// 2. For each browsing context of browsing contexts, append browsing context’s top-level browsing context to top-level browsing contexts.
+// 3. Let event map be the browsing context event map for session.
+// 4. For each browsing context of top-level browsing contexts:
+//   4.1. If event map contains browsing context, let browsing context events be event map[browsing context]. Otherwise let browsing context events be null.
+//   4.2. If browsing context events is not null, and browsing context events contains event name, return true.
+// 5. If the global event set for session contains event name return true.
+// 6. Return false.
+bool Session::eventIsEnabled(const String& eventName, const Vector<String>& browsingContexts)
+{
+    (void)browsingContexts;
+    HashSet<String> topLevelBrowsingContexts;
+    // FIXME: Keep track of other topLevelBrowsingContexts other than the current one
+    topLevelBrowsingContexts.add(m_toplevelBrowsingContext.value());
+
+    auto eventMap = m_browsingContextEventMap;
+
+    for (auto& topLevelBrowsingContext : topLevelBrowsingContexts) {
+        auto browsingContextEvents = eventMap.find(topLevelBrowsingContext);
+        if (!browsingContextEvents.get())
+            continue;
+        auto candidate = browsingContextEvents->value.find(eventName);
+        if (candidate.get())
+            return true;
+    }
+
+    return m_globalEventSet.contains(eventName);
+}
+
+void Session::enableGlobalEvent(const String& eventName)
+{
+    m_globalEventSet.add(eventName);
+}
+#endif
 
 } // namespace WebDriver

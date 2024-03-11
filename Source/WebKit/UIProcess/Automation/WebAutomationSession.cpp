@@ -2456,6 +2456,46 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, std::optional<
     callback->sendSuccess(base64EncodedData.value());
 }
 
+void WebAutomationSession::logEntryAdded(JSC::MessageType type, JSC::MessageLevel level, JSC::MessageSource source, const String& message, WallTime timestamp)
+{
+    // https://w3c.github.io/webdriver-bidi/#types-log-logentry
+    // log.Level = "debug" / "info" / "warn" / "error"
+    String levelString;
+    switch (level) {
+    case JSC::MessageLevel::Log:
+        levelString = "info"_s;
+        break;
+    case JSC::MessageLevel::Warning:
+        levelString = "warn"_s;
+        break;
+    case JSC::MessageLevel::Error:
+        levelString = "error"_s;
+        break;
+    case JSC::MessageLevel::Debug:
+        levelString = "debug"_s;
+        break;
+    case JSC::MessageLevel::Info:
+        levelString = "info"_s;
+        break;
+    default:
+        levelString = "debug"_s;
+        break;
+    }
+
+    String method;
+    // FIXME Get other methods from JSC::MessageType.
+    if (type == JSC::MessageType::Log)
+        method = "log"_s;
+
+    // FIXME BiDi's spec says source param is a script.Source entry, which deals with Realms and other stuff.
+    // We Might need to get this info through the IPC mechanism
+    (void)source;
+    String sourceString;
+
+    // FIXME Get browsing context handle and source info
+    m_domainNotifier->logEntryAdded({ }, method, levelString, sourceString, message, timestamp.secondsSinceEpoch().milliseconds());
+}
+
 #if !PLATFORM(COCOA) && !USE(CAIRO) && !USE(SKIA)
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&&)
 {

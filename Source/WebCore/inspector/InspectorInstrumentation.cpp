@@ -78,7 +78,9 @@
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <memory>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -86,6 +88,9 @@ using namespace Inspector;
 
 namespace {
 static HashSet<InstrumentingAgents*>* s_instrumentingAgentsSet = nullptr;
+#if ENABLE(WEBDRIVER_BIDI)
+static std::unique_ptr<Vector<WeakPtr<InspectorInstrumentationConsoleMessageClient>>> s_consoleMessageClients = nullptr;
+#endif
 }
 
 void InspectorInstrumentation::firstFrontendCreated()
@@ -920,6 +925,26 @@ static bool isConsoleAssertMessage(MessageSource source, MessageType type)
     return source == MessageSource::ConsoleAPI && type == MessageType::Assert;
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+void InspectorInstrumentation::addConsoleMessageClient(WeakPtr<InspectorInstrumentationConsoleMessageClient>&& client)
+{
+    if (!s_consoleMessageClients)
+        s_consoleMessageClients = WTF::makeUnique<Vector<WeakPtr<InspectorInstrumentationConsoleMessageClient>>>();
+
+    s_consoleMessageClients->append(WTFMove(client));
+}
+
+void InspectorInstrumentation::removeConsoleMessageClient(InspectorInstrumentationConsoleMessageClient* client)
+{
+    if (!s_consoleMessageClients)
+        return;
+
+    s_consoleMessageClients->removeAllMatching([client](const WeakPtr<InspectorInstrumentationConsoleMessageClient>& item) {
+        return item.get() == client || !item.get(); // Also clean up stale refs
+    });
+}
+#endif
+
 void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& instrumentingAgents, std::unique_ptr<ConsoleMessage> message)
 {
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
@@ -929,8 +954,17 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& inst
     MessageType type = message->type();
     String messageText = message->message();
 
-    if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
+    if (auto* consoleAgent = instrumentingAgents.webConsoleAgent()) {
+#if ENABLE(WEBDRIVER_BIDI)
+        if (s_consoleMessageClients)
+            for (WeakPtr<InspectorInstrumentationConsoleMessageClient>& client : *s_consoleMessageClients) {
+                if (client.get())
+                    client->addMessageToConsole(*message);
+            }
+#endif
+
         consoleAgent->addMessageToConsole(WTFMove(message));
+    }
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent()) {
         if (isConsoleAssertMessage(source, type))

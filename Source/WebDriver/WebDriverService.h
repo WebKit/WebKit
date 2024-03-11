@@ -32,13 +32,21 @@
 #include <wtf/JSONValues.h>
 #include <wtf/text/StringHash.h>
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include "WebSocketServer.h"
+#endif
+
 namespace WebDriver {
 
 struct Capabilities;
 class CommandResult;
 class Session;
 
-class WebDriverService final : public HTTPRequestHandler {
+class WebDriverService final : public HTTPRequestHandler
+#if ENABLE(WEBDRIVER_BIDI)
+                            , public WebSocketMessageHandler
+#endif
+{
 public:
     WebDriverService();
     ~WebDriverService() = default;
@@ -47,6 +55,8 @@ public:
 
     static void platformInit();
     static bool platformCompareBrowserVersions(const String&, const String&);
+
+    std::optional<RefPtr<Session>> session() const { return m_session; }
 
 private:
     enum class HTTPMethod { Get, Post, Delete };
@@ -123,6 +133,13 @@ private:
     void takeScreenshot(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void takeElementScreenshot(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    void bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Function<void (std::optional<WebSocketMessageHandler::Message>)>&&);
+    void bidiSessionNew(unsigned id, RefPtr<JSON::Object>&&, Function<void (std::optional<WebSocketMessageHandler::Message>)>&&);
+    void bidiSessionEnd(unsigned id, RefPtr<JSON::Object>&&, Function<void (std::optional<WebSocketMessageHandler::Message>)>&&);
+    void bidiSessionSubscribe(unsigned id, RefPtr<JSON::Object>&&, Function<void (std::optional<WebSocketMessageHandler::Message>)>&&);
+#endif
+
     static Capabilities platformCapabilities();
     Vector<Capabilities> processCapabilities(const JSON::Object&, Function<void (CommandResult&&)>&) const;
     RefPtr<JSON::Object> validatedCapabilities(const JSON::Object&) const;
@@ -131,6 +148,7 @@ private:
     bool platformValidateCapability(const String&, const Ref<JSON::Value>&) const;
     bool platformMatchCapability(const String&, const Ref<JSON::Value>&) const;
     bool platformSupportProxyType(const String&) const;
+    bool platformSupportBidi() const;
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void connectToBrowser(Vector<Capabilities>&&, Function<void (CommandResult&&)>&&);
@@ -140,7 +158,25 @@ private:
     void handleRequest(HTTPRequestHandler::Request&&, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler) override;
     void sendResponse(Function<void (HTTPRequestHandler::Response&&)>&& replyHandler, CommandResult&&) const;
 
+#if ENABLE(WEBDRIVER_BIDI)
+    void handleHandshake(HTTPRequestHandler::Request&&, Function<void (std::optional<HTTPRequestHandler::Response>&& response)>&& replyHandler) override;
+    void handleMessage(WebSocketMessageHandler::Message&&, Function<void (WebSocketMessageHandler::Message&&)>&& replyHandler) override;
+    void clientDisconnected(WebSocketMessageHandler::Connection) override;
+
+    typedef void (WebDriverService::*BidiCommandHandler)(unsigned id, RefPtr<JSON::Object>&&, Function<void (std::optional<WebSocketMessageHandler::Message>)>&&);
+    struct BidiCommand {
+        String method;
+        // FIXME Param type
+        BidiCommandHandler handler;
+    };
+    static const BidiCommand s_bidiCommands[];
+    static RefPtr<JSON::Object> findBidiCommand(RefPtr<JSON::Value>&, BidiCommandHandler*);
+#endif // ENABLE(WEBDRIVER_BIDI)
+
     HTTPServer m_server;
+#if ENABLE(WEBDRIVER_BIDI)
+    WebSocketServer m_bidiServer;
+#endif
     RefPtr<Session> m_session;
 
     String m_targetAddress;

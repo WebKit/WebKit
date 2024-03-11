@@ -23,4 +23,5 @@
 messages -> WebAutomationSession {
     DidEvaluateJavaScriptFunction(uint64_t callbackID, String result, String errorType)
     DidTakeScreenshot(uint64_t callbackID, std::optional<WebCore::ShareableBitmapHandle> imageDataHandle, String errorType)
+    LogEntryAdded(enum:uint8_t JSC::MessageType messageType, enum:uint8_t JSC::MessageLevel messageLevel, enum:uint8_t JSC::MessageSource source, String message, WallTime timestamp)
 }

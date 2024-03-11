@@ -44,12 +44,20 @@ public:
     static bool shouldInterceptResponse(const LocalFrame*, const ResourceResponse&);
     static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponse(const LocalFrame*, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    static void addConsoleMessageClient(WeakPtr<InspectorInstrumentationConsoleMessageClient>&&);
+    static void removeConsoleMessageClient(InspectorInstrumentationConsoleMessageClient*);
+#endif
 
 private:
     static bool shouldInterceptRequestInternal(const ResourceLoader&);
     static bool shouldInterceptResponseInternal(const LocalFrame&, const ResourceResponse&);
     static void interceptRequestInternal(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponseInternal(const LocalFrame&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    static void addConsoleMessageClientInternal(WeakPtr<InspectorInstrumentationConsoleMessageClient>&&);
+    static void removeConsoleMessageClientInternal(InspectorInstrumentationConsoleMessageClient*);
+#endif
 };
 
 inline bool InspectorInstrumentationWebKit::shouldInterceptRequest(const ResourceLoader& loader)
@@ -78,5 +86,16 @@ inline void InspectorInstrumentationWebKit::interceptResponse(const LocalFrame* 
     ASSERT(InspectorInstrumentationWebKit::shouldInterceptResponse(frame, response));
     interceptResponseInternal(*frame, response, identifier, WTFMove(handler));
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+inline void InspectorInstrumentationWebKit::addConsoleMessageClient(WeakPtr<InspectorInstrumentationConsoleMessageClient>&& client)
+{
+    return addConsoleMessageClientInternal(WTFMove(client));
+}
+inline void InspectorInstrumentationWebKit::removeConsoleMessageClient(InspectorInstrumentationConsoleMessageClient* client)
+{
+    return removeConsoleMessageClientInternal(client);
+}
+#endif
 
 }

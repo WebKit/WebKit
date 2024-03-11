@@ -85,6 +85,7 @@ struct Capabilities {
 #if PLATFORM(GTK)
     std::optional<bool> useOverlayScrollbars;
 #endif
+    std::optional<bool> webSocketURL;
 };
 
 } // namespace WebDriver

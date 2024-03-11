@@ -14,6 +14,10 @@ list(APPEND WebDriver_SOURCES
     wpe/WebDriverServiceWPE.cpp
 )
 
+if (ENABLE_WEBDRIVER_BIDI)
+    list(APPEND WebDriver_SOURCES soup/WebSocketServerSoup.cpp)
+endif ()
+
 list(APPEND WebDriver_LIBRARIES
     ${LIBSOUP_LIBRARIES}
 )

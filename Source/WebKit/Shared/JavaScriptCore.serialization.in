@@ -41,6 +41,25 @@ enum class JSC::MessageSource : uint8_t {
     Other,
 };
 
+header: <JavaScriptCore/ConsoleTypes.h>
+enum class JSC::MessageType : uint8_t {
+    Log,
+    Dir,
+    DirXML,
+    Table,
+    Trace,
+    StartGroup,
+    StartGroupCollapsed,
+    EndGroup,
+    Clear,
+    Assert,
+    Timing,
+    Profile,
+    ProfileEnd,
+    Image,
+};
+
+header: <JavaScriptCore/ConsoleTypes.h>
 enum class JSC::MessageLevel : uint8_t {
     Log,
     Warning,

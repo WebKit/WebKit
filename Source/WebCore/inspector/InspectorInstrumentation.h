@@ -248,6 +248,10 @@ public:
     static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponse(const LocalFrame&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    static void addConsoleMessageClient(WeakPtr<InspectorInstrumentationConsoleMessageClient>&&);
+    static void removeConsoleMessageClient(InspectorInstrumentationConsoleMessageClient*);
+#endif
     static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
     static void addMessageToConsole(WorkerOrWorkletGlobalScope&, std::unique_ptr<Inspector::ConsoleMessage>);
 

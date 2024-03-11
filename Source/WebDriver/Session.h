@@ -27,12 +27,18 @@
 
 #include "Actions.h"
 #include "Capabilities.h"
+#include "SessionHost.h"
+#if ENABLE(WEBDRIVER_BIDI)
+#include "WebSocketServer.h"
+#endif
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebDriver {
@@ -40,17 +46,31 @@ namespace WebDriver {
 class CommandResult;
 class SessionHost;
 
-class Session : public RefCounted<Session> {
+class Session : public RefCounted<Session>
+#if ENABLE(WEBDRIVER_BIDI)
+, BiDiEventHandler
+#endif
+{
 public:
     static Ref<Session> create(std::unique_ptr<SessionHost>&& host)
     {
         return adoptRef(*new Session(WTFMove(host)));
     }
-    ~Session();
+#if ENABLE(WEBDRIVER_BIDI)
+    static Ref<Session> create(std::unique_ptr<SessionHost>&& host, WeakPtr<WebSocketServer> bidiServer)
+    {
+        return adoptRef(*new Session(WTFMove(host), WTFMove(bidiServer)));
+    }
+#endif
+    virtual ~Session();
 
     const String& id() const;
     const Capabilities& capabilities() const;
     bool isConnected() const;
+#if ENABLE(WEBDRIVER_BIDI)
+    bool bidiFlag() const { return m_bidiFlag; };
+    void setBiDiFlag(bool flag) { m_bidiFlag = flag; }
+#endif
     double scriptTimeout() const  { return m_scriptTimeout; }
     double pageLoadTimeout() const { return m_pageLoadTimeout; }
     double implicitWaitTimeout() const { return m_implicitWaitTimeout; }
@@ -130,8 +150,16 @@ public:
     void sendAlertText(const String&, Function<void (CommandResult&&)>&&);
     void takeScreenshot(std::optional<String> elementID, std::optional<bool> scrollIntoView, Function<void (CommandResult&&)>&&);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    void enableGlobalEvent(const String&);
+    void dispatchEvent(RefPtr<JSON::Object>&&);
+#endif
+
 private:
     Session(std::unique_ptr<SessionHost>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    Session(std::unique_ptr<SessionHost>&&, WeakPtr<WebSocketServer>&&);
+#endif
 
     void switchToTopLevelBrowsingContext(const String&);
     void switchToBrowsingContext(const String&, Function<void(CommandResult&&)>&&);
@@ -224,6 +252,31 @@ private:
     std::optional<String> m_currentParentBrowsingContext;
     HashMap<String, InputSource> m_activeInputSources;
     HashMap<String, InputSourceState> m_inputStateTable;
+#if ENABLE(WEBDRIVER_BIDI)
+    bool m_bidiFlag;
+
+    // https://w3c.github.io/webdriver-bidi/#events
+    // A BiDi session has a global event set which is a set containing the event names for events that
+    // are enabled for all browsing contexts. This initially contains the event name for events that
+    // are in the default event set
+    HashSet<String> m_globalEventSet;
+    WeakPtr<WebSocketServer> m_bidiServer;
+
+    // A BiDi session has a browsing context event map, which is a map with top-level browsing context
+    // keys and values that are a set of event names for events that are enabled in the given browsing
+    // context.
+    HashMap<String, HashSet<String>> m_browsingContextEventMap;
+
+    // Event handler helper methods based on the BiDi spec description
+    Vector<String> eventEnabledBrowsingContexts(const String&);
+    HashSet<String> sessionsForWhichEventIsEnabled(const String&, const Vector<String>&);
+    bool eventIsEnabled(const String&, const Vector<String>&);
+    void emitEvent(const String&, RefPtr<JSON::Object>&&);
+
+    // Actual event handlers
+    void doLogEntryAdded(RefPtr<JSON::Object>&&);
+#endif
+
 };
 
 } // WebDriver
