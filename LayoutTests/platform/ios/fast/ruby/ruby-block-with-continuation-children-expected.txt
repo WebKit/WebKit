@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 272x60
+  RenderBlock (positioned) {RUBY} at (8,8) size 273x60
+    RenderBlock (anonymous) at (0,0) size 273x20
+      RenderInline (generated) at (0,0) size 273x19
+        RenderInline (generated) at (0,0) size 273x19
+          RenderText {#text} at (0,0) size 88x19
+            text run at (0,0) width 88: "Before the b. "
+          RenderInline {B} at (87,0) size 186x19
+            RenderText {#text} at (87,0) size 186x19
+              text run at (87,0) width 186: "Inside the b, before the div."
+    RenderBlock (anonymous) at (0,20) size 273x20
+      RenderBlock {DIV} at (0,0) size 273x20
+        RenderText {#text} at (0,0) size 93x19
+          text run at (0,0) width 93: "Inside the div"
+    RenderBlock (anonymous) at (0,40) size 273x20
+      RenderInline {B} at (0,0) size 170x19
+        RenderText {#text} at (0,0) size 170x19
+          text run at (0,0) width 170: "Iside the b, after the div. "
+      RenderText {#text} at (169,0) size 74x19
+        text run at (169,0) width 74: "After the b."

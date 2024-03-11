@@ -67,8 +67,14 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
 
     if (parent.style().display() == DisplayType::RubyBlock && parent.firstChild()) {
         // See if we have an anonymous ruby box already.
-        ASSERT(parent.firstChild()->style().display() == DisplayType::Ruby);
-        return downcast<RenderElement>(*parent.firstChild());
+        if (parent.firstChild()->style().display() == DisplayType::Ruby)
+            return downcast<RenderElement>(*parent.firstChild());
+
+        // If the child is not a ruby box, then we might have continuations.
+        ASSERT(parent.firstChild()->isAnonymousBlock());
+        auto* previous = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
+        beforeChild = nullptr;
+        return downcast<RenderElement>(*previous);
     }
 
     if (parent.style().display() != DisplayType::Ruby) {
