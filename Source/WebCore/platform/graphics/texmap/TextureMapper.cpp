@@ -47,6 +47,17 @@
 #include <wtf/text/CString.h>
 #endif
 
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
+#ifndef GL_TEXTURE_EXTERNAL_OES
+#define GL_TEXTURE_EXTERNAL_OES 0x8D65
+#endif
+#endif
+
 namespace WebCore {
 
 class TextureMapperGLData {

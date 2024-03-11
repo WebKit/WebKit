@@ -34,13 +34,18 @@
 #include "WCRemoteFrameHostLayerManager.h"
 #include "WCSceneContext.h"
 #include "WCUpdateInfo.h"
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <WebCore/BitmapTexture.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/TextureMapper.h>
-#include <WebCore/TextureMapperGLHeaders.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
 #include <WebCore/TextureMapperSparseBackingStore.h>
+
+#ifndef GL_BGRA
+#define GL_BGRA 0x80E1
+#endif
 
 namespace WebKit {
 

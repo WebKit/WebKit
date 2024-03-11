@@ -44,6 +44,25 @@
 #include <wtf/text/CString.h>
 #endif
 
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
+#ifndef GL_UNPACK_ROW_LENGTH
+#define GL_UNPACK_ROW_LENGTH 0x0CF2
+#endif
+
+#ifndef GL_UNPACK_SKIP_ROWS
+#define GL_UNPACK_SKIP_ROWS 0x0CF3
+#endif
+
+#ifndef GL_UNPACK_SKIP_PIXELS
+#define GL_UNPACK_SKIP_PIXELS 0x0CF4
+#endif
+#endif
+
 #if OS(DARWIN)
 #define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
 static const GLenum s_pixelDataType = GL_UNSIGNED_INT_8_8_8_8_REV;
@@ -53,10 +72,10 @@ static const GLenum s_pixelDataType = GL_UNSIGNED_BYTE;
 
 namespace WebCore {
 
-BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags, GLint internalFormat)
+BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags, std::optional<GLint> internalFormat)
     : m_flags(flags)
     , m_size(size)
-    , m_internalFormat(internalFormat == GL_DONT_CARE ? GL_RGBA : internalFormat)
+    , m_internalFormat(internalFormat.value_or(GL_RGBA))
     , m_format(GL_RGBA)
 {
     glGenTextures(1, &m_id);

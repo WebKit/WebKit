@@ -29,7 +29,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "TextureMapperGLHeaders.h"
 #include <wtf/Condition.h>
 #include <wtf/Function.h>
 #include <wtf/RunLoop.h>
@@ -53,7 +52,7 @@ public:
     WEBCORE_EXPORT void invalidate() override;
     WEBCORE_EXPORT void swapBuffer() override;
 
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> getAvailableBuffer(const IntSize&, GLint internalFormat);
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> getAvailableBuffer(const IntSize&);
     void pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer>&&);
 
     void dropCurrentBufferWhilePreservingTexture(bool shouldWait = false);

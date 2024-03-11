@@ -31,11 +31,18 @@
 #include "BitmapTexture.h"
 #include "TextureMapperLayer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
+#include <wtf/Scope.h>
+
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
-#include <wtf/Scope.h>
 
 static const Seconds releaseUnusedSecondsTolerance { 1_s };
 static const Seconds releaseUnusedBuffersTimerInterval = { 500_ms };
@@ -137,7 +144,7 @@ void TextureMapperPlatformLayerProxyGL::pushNextBuffer(std::unique_ptr<TextureMa
         m_compositor->onNewBufferAvailable();
 }
 
-std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerProxyGL::getAvailableBuffer(const IntSize& size, GLint internalFormat)
+std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerProxyGL::getAvailableBuffer(const IntSize& size)
 {
     ASSERT(m_lock.isHeld());
 
@@ -148,7 +155,7 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerProx
         if (!buffer)
             continue;
 
-        if (!availableBuffer && buffer->canReuseWithoutReset(size, internalFormat)) {
+        if (!availableBuffer && buffer->canReuseWithoutReset(size)) {
             availableBuffer = WTFMove(buffer);
             availableBuffer->markUsed();
             continue;

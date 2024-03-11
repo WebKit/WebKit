@@ -31,10 +31,13 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TextureMapperGLHeaders.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+
+typedef int GLint;
+typedef unsigned GLenum;
+typedef unsigned GLuint;
 
 namespace WebCore {
 
@@ -56,7 +59,7 @@ public:
         DepthBuffer = 1 << 1,
     };
 
-    static Ref<BitmapTexture> create(const IntSize& size, OptionSet<Flags> flags = { }, GLint internalFormat = GL_DONT_CARE)
+    static Ref<BitmapTexture> create(const IntSize& size, OptionSet<Flags> flags = { }, std::optional<GLint> internalFormat = std::nullopt)
     {
         return adoptRef(*new BitmapTexture(size, flags, internalFormat));
     }
@@ -93,7 +96,7 @@ public:
     OptionSet<TextureMapperFlags> colorConvertFlags() const { return m_colorConvertFlags; }
 
 private:
-    BitmapTexture(const IntSize&, OptionSet<Flags>, GLint internalFormat);
+    BitmapTexture(const IntSize&, OptionSet<Flags>, std::optional<GLint> internalFormat);
 
     void clearIfNeeded();
     void createFboIfNeeded();

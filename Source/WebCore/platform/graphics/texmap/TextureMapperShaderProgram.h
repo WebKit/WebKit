@@ -22,13 +22,14 @@
 
 #if USE(TEXTURE_MAPPER)
 
-#include "TextureMapperGLHeaders.h"
 #include "TransformationMatrix.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/text/AtomStringHash.h>
+
+typedef unsigned GLuint;
 
 namespace WebCore {
 

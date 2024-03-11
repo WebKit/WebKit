@@ -3383,7 +3383,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
                 return;
             layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
         } else {
-            layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
+            layerBuffer = proxy.getAvailableBuffer(frameHolder->size());
             if (UNLIKELY(!layerBuffer)) {
                 OptionSet<BitmapTexture::Flags> flags;
                 if (frameHolder->hasAlphaChannel())
@@ -4245,7 +4245,7 @@ void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
         [this](TextureMapperPlatformLayerProxyGL& proxy)
         {
             Locker locker { proxy.lock() };
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperFlags::ShouldNotBlend, GL_DONT_CARE);
+            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperFlags::ShouldNotBlend, std::nullopt);
             std::unique_ptr<GStreamerHolePunchClient> holePunchClient = makeUnique<GStreamerHolePunchClient>(m_videoSink.get());
             layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
             proxy.pushNextBuffer(WTFMove(layerBuffer));

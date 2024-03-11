@@ -69,10 +69,6 @@ using GCEGLImage = void*;
 using GCEGLSuface = void*;
 using GCEGLSync = void*;
 
-#if !PLATFORM(COCOA)
-typedef unsigned GLuint;
-#endif
-
 // Order in inverse of in GL specification, so that iteration is in GL specification order.
 enum class GCGLErrorCode : uint8_t {
     ContextLost = 1,
