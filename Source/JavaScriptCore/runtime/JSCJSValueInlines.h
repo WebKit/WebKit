@@ -1191,6 +1191,9 @@ inline bool JSValue::equal(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
     if (v1.isInt32() && v2.isInt32())
         return v1 == v2;
 
+    if (v1.isNumber() && v2.isNumber())
+        return v1.asNumber() == v2.asNumber();
+
     return equalSlowCase(globalObject, v1, v2);
 }
 

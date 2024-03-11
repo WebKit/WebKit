@@ -2369,7 +2369,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompareEq, size_t, (JSGlobalObject* globalObje
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::equalSlowCaseInline(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+    return JSValue::equal(globalObject, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
 #if USE(JSVALUE64)
