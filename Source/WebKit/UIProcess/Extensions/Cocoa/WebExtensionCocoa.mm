@@ -1336,13 +1336,13 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
         return !!scriptPath.length;
     });
 
-    // Scripts takes precedence over page.
-    if (m_backgroundScriptPaths.get().count)
-        m_backgroundPagePath = nil;
+    // Page takes precedence over service worker.
+    if (m_backgroundPagePath)
+        m_backgroundServiceWorkerPath = nil;
 
-    // Service Worker takes precedence over page and scripts.
-    if (m_backgroundServiceWorkerPath) {
-        m_backgroundScriptPaths = nil;
+    // Scripts takes precedence over page and service worker.
+    if (m_backgroundScriptPaths.get().count) {
+        m_backgroundServiceWorkerPath = nil;
         m_backgroundPagePath = nil;
     }
 
