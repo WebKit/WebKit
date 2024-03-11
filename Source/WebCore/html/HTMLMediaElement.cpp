@@ -7040,36 +7040,6 @@ void HTMLMediaElement::prepareForVideoFullscreenStandby()
 #endif
 }
 
-WEBCORE_EXPORT void HTMLMediaElement::setVideoFullscreenStandby(bool value)
-{
-    ASSERT(is<HTMLVideoElement>(*this));
-    if (m_videoFullscreenStandby == value)
-        return;
-
-    if (!document().page())
-        return;
-
-    if (!document().page()->chrome().client().supportsVideoFullscreenStandby())
-        return;
-
-    m_videoFullscreenStandby = value;
-
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (RefPtr player = m_player)
-        player->videoFullscreenStandbyChanged();
-#endif
-
-    if (m_videoFullscreenMode != VideoFullscreenModeNone)
-        return;
-
-    if (m_videoFullscreenStandby)
-        document().protectedPage()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone, m_videoFullscreenStandby);
-    else
-        document().protectedPage()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), [this, protectedThis = Ref { *this }](auto success) mutable {
-            m_videoFullscreenStandby = !success;
-        });
-}
-
 void HTMLMediaElement::willBecomeFullscreenElement(VideoFullscreenMode mode)
 {
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

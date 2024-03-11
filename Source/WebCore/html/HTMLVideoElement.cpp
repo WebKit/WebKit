@@ -727,6 +727,36 @@ void HTMLVideoElement::mediaPlayerEngineUpdated()
     mediaPlayerRenderingModeChanged();
 }
 
+void HTMLVideoElement::setVideoFullscreenStandby(bool value)
+{
+    if (videoFullscreenStandby() == value)
+        return;
+
+    if (!document().page())
+        return;
+
+    if (!document().page()->chrome().client().supportsVideoFullscreenStandby())
+        return;
+
+    setVideoFullscreenStandbyInternal(value);
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (RefPtr player = this->player())
+        player->videoFullscreenStandbyChanged();
+#endif
+
+    if (fullscreenMode() != VideoFullscreenModeNone)
+        return;
+
+    if (videoFullscreenStandby())
+        document().protectedPage()->chrome().client().enterVideoFullscreenForVideoElement(*this, VideoFullscreenModeNone, true);
+    else {
+        document().protectedPage()->chrome().client().exitVideoFullscreenForVideoElement(*this, [this, protectedThis = Ref { *this }](auto success) mutable {
+            setVideoFullscreenStandbyInternal(!success);
+        });
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)

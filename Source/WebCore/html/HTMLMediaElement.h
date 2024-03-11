@@ -488,7 +488,6 @@ public:
     WEBCORE_EXPORT void enterFullscreen() override;
     WEBCORE_EXPORT void exitFullscreen();
     WEBCORE_EXPORT void prepareForVideoFullscreenStandby();
-    WEBCORE_EXPORT void setVideoFullscreenStandby(bool);
 
     bool hasClosedCaptions() const override;
     bool closedCaptionsVisible() const override;
@@ -732,6 +731,9 @@ protected:
     void mediaPlayerReloadAndResumePlaybackIfNeeded() final;
     void mediaPlayerQueueTaskOnEventLoop(Function<void()>&&) final;
     void mediaPlayerCharacteristicChanged() final;
+
+    bool videoFullscreenStandby() const { return m_videoFullscreenStandby; }
+    void setVideoFullscreenStandbyInternal(bool videoFullscreenStandby) { m_videoFullscreenStandby = videoFullscreenStandby; }
 
 private:
     friend class Internals;

@@ -40,11 +40,11 @@ static inline std::optional<TrackEvent::TrackEventTrack> convertToTrackEventTrac
     case TrackBase::BaseTrack:
         return std::nullopt;
     case TrackBase::TextTrack:
-        return TrackEvent::TrackEventTrack { RefPtr<TextTrack>(&downcast<TextTrack>(track.get())) };
+        return TrackEvent::TrackEventTrack { RefPtr { uncheckedDowncast<TextTrack>(WTFMove(track)) } };
     case TrackBase::AudioTrack:
-        return TrackEvent::TrackEventTrack { RefPtr<AudioTrack>(&downcast<AudioTrack>(track.get())) };
+        return TrackEvent::TrackEventTrack { RefPtr { uncheckedDowncast<AudioTrack>(WTFMove(track)) } };
     case TrackBase::VideoTrack:
-        return TrackEvent::TrackEventTrack { RefPtr<VideoTrack>(&downcast<VideoTrack>(track.get())) };
+        return TrackEvent::TrackEventTrack { RefPtr { uncheckedDowncast<VideoTrack>(WTFMove(track)) } };
     }
     
     ASSERT_NOT_REACHED();

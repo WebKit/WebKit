@@ -121,6 +121,8 @@ public:
     unsigned requestVideoFrameCallback(Ref<VideoFrameRequestCallback>&&);
     void cancelVideoFrameCallback(unsigned);
 
+    WEBCORE_EXPORT void setVideoFullscreenStandby(bool);
+
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
 
