@@ -101,6 +101,13 @@ RenderBlockFlow* LineLayout::blockContainer(const RenderObject& renderer)
     return nullptr;
 }
 
+bool LineLayout::contains(const RenderElement& renderer) const
+{
+    if (!m_boxTree.contains(renderer))
+        return false;
+    return layoutState().hasBoxGeometry(m_boxTree.layoutBoxForRenderer(renderer));
+}
+
 LineLayout* LineLayout::containing(RenderObject& renderer)
 {
     if (!isContentRenderer(renderer))
@@ -854,11 +861,6 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
     });
 
     return result;
-}
-
-bool LineLayout::contains(const RenderElement& renderer) const
-{
-    return m_boxTree.contains(renderer);
 }
 
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const

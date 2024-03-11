@@ -508,12 +508,14 @@ LayoutUnit RenderInline::innerPaddingBoxHeight() const
 IntRect RenderInline::linesBoundingBox() const
 {
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
-        if (!layoutBox() || !layout->contains(*this)) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers
-            // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
-            ASSERT(needsLayout());
-            return { };
-        }
+         if (!layoutBox()) {
+             // Repaint may be issued on subtrees during content mutation with newly inserted renderers
+             // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
+             ASSERT(needsLayout());
+             return { };
+         }
+         if (!layout->contains(*this))
+             return { };
         return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
     }
 
