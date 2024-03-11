@@ -195,6 +195,12 @@
     .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
         filter: var(--filter-invert);
     }
+
+    @media (prefers-contrast: more) {
+        .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle {
+            border: white 1px solid;
+        }
+    }
 }
 
 .multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .options-container > .toggle,

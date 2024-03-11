@@ -416,4 +416,40 @@ body.window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disable
     body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
         --tab-item-background: hsl(0, 0%, 19%);
     }
+
+    @media (prefers-contrast: more) {
+        .tab-bar > .tabs > .item > .icon {
+            .tab-bar > .tabs > .item > .name {
+                color: hsl(0, 0%, var(--foreground-lightness));
+                filter: none;
+            }
+
+            body.window-inactive .tab-bar > .tabs > .item > .name {
+                color: hsl(0, 100%, var(--foreground-lightness));
+            }
+
+            .tab-bar > .tabs > .item:not(.selected):hover > .name {
+                color: hsl(0, 100%, var(--foreground-lightness));
+            }
+
+            .tab-bar > .tabs > .item:not(.disabled).selected > .name {
+                color: hsl(0, 100%, var(--foreground-lightness));
+            }
+
+            .tab-bar > .tabs > .item:not(.disabled).selected > .name {
+                color: hsl(0, 100%, var(--foreground-lightness));
+            }
+
+            body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected > .name {
+                color: hsl(0, 100%, var(--foreground-lightness));
+            }
+
+            body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar, body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar {
+                --tab-item-dark-border-color: hsl(0, 100%, 90%);
+                --tab-item-medium-border-color: hsl(0, 100%, 95%);
+                --tab-item-light-border-color: hsl(0, 100%, 100%);
+                --tab-item-border-color: hsl(0, 100%, 95%);
+            }
+        }
+    }
 }

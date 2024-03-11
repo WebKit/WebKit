@@ -313,4 +313,16 @@ body[dir=rtl] .details-section > .header::before {
     .details-section > .content > .group > .row.simple > .label {
         color: var(--text-color-secondary);
     }
+    @media (prefers-contrast: more) {
+        .details-section > .header {
+            color: white;
+        }
+        .details-section > .content > .group > .row:is(.empty, .text) {
+            color: white;
+        }
+        .details-section > .header > label,
+        .details-section > .content > .group > .row.simple > .label {
+            color: white;
+        }
+    }
 }

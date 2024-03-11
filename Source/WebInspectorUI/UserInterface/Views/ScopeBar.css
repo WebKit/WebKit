@@ -119,3 +119,20 @@
     margin-bottom: -1px;
     margin-inline: 6px 2px;
 }
+
+@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+    .scope-bar {
+        --scope-bar-text-color-default: hsl(288, 0%, 90%);
+        --scope-bar-border-color-default: white;
+    }
+
+    .scope-bar > li {
+        color: hsl(0, 0%, 90%);
+    }
+
+    .scope-bar > li:is(.selected, :hover) {
+        --scope-bar-text-color-default: black;
+        --scope-bar-background-color-default: var(--selected-background-color);
+        --scope-bar-border-color-default: white;
+    }
+}

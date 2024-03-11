@@ -188,4 +188,10 @@
     .content-view.audit-test > header table.controls > tr > th {
         color: var(--text-color-secondary);
     }
+
+    @media (prefers-contrast: more) {
+        .content-view.audit-test {
+            --audit-test-header-background-color: hsl(0, 0%, 10%);
+        }
+    }
 }

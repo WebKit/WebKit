@@ -427,4 +427,14 @@ body[dir=rtl] .console-group-title::before {
         color: var(--search-highlight-text-color-active);
         background-color: var(--search-highlight-background-color-active);
     }
+
+    @media (prefers-contrast: more) {
+        .console-messages a {
+            color: white;
+        }
+
+        .console-other-filters-button.active > .glyph {
+            color: hsl(212, 100%, 70%);
+        }
+    }
 }

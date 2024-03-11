@@ -116,3 +116,9 @@
 :is(.filter-bar, .search-bar).invalid > input[type="search"] {
     border-color: var(--error-text-color);
 }
+
+@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+    :is(.filter-bar, .search-bar) > input[type="search"] {
+        color: white;
+    }
+}

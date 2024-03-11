@@ -162,4 +162,8 @@
     .cm-s-default .cm-builtin {
         color: hsl(218, 64%, 76%);
     }
+
+    .syntax-highlighted :is(.html-doctype, .html-processing-instruction) {
+        color: hsl(0, 0%, 90%);
+    }
 }

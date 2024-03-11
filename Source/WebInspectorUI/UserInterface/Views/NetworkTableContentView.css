@@ -442,4 +442,18 @@ body[dir=rtl] .waterfall.network .block {
     .network-table > .table .cell.dom-node.name .icon {
         content: url(../Images/TypeIcons.svg#DOMElement-dark);
     }
+
+    @media (prefers-contrast: more) {
+        .network-table > .table .data-container .cell.name .range {
+            color: white;
+        }
+
+        .network-table > .table :not(.header) .cell.waterfall .waterfall-container > .area.dom-fullscreen {
+            background-color: hsl(0, 0%, 90%);
+        }
+
+        .network-table > .table .header .cell.waterfall:is(.sort-ascending, .sort-descending) {
+            background-color: black;
+        }
+    }
 }

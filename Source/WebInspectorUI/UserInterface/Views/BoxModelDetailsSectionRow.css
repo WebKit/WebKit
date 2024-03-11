@@ -188,5 +188,48 @@
     .details-section .row.box-model .box.border {
         border-color: var(--text-color-quaternary);
     }
-}
 
+    @media (prefers-contrast: more) {
+        .details-section .row.box-model .box.margin {
+            border-color: black;
+        }
+
+        .details-section .row.box-model .box.border {
+            border-color: black;
+        }
+
+        .details-section .row.box-model .box {
+            border-color: black;
+        }
+
+        .details-section .row.box-model:not(.hovered) .box.margin,
+        .details-section .row.box-model .box.margin.active {
+            background-color: hsla(30, 100%, 90%);
+        }
+
+        .details-section .row.box-model:not(.hovered) .box.padding,
+        .details-section .row.box-model .box.padding.active {
+            background-color: hsla(100, 100%, 90%);
+        }
+
+        .details-section .row.box-model:not(.hovered) .box.border,
+        .details-section .row.box-model .box.border.active {
+            background-color: hsla(70, 100%, 90%);
+        }
+
+        .details-section .row.box-model:is(.hovered) .box.margin,
+        .details-section .row.box-model .box.margin.active {
+            border-color: white;
+        }
+
+        .details-section .row.box-model:is(.hovered) .box.padding,
+        .details-section .row.box-model .box.padding.active {
+            border-color: white;
+        }
+
+        .details-section .row.box-model:is(.hovered) .box.border,
+        .details-section .row.box-model .box.border.active {
+            border-color: white;
+        }
+    }
+}

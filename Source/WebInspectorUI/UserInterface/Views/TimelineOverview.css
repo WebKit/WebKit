@@ -227,4 +227,26 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
     .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
         background: var(--background-color-alternate);
     }
+
+    @media (prefers-contrast: more) {
+        .navigation-bar.timelines .item.text.enabled-timelines {
+            color: hsl(0, 0%, 90%);
+        }
+
+        .navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):is(:focus, .activate.activated, .radio.selected) {
+            color: hsl(0, 0%, 95%);
+        }
+
+        .navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):active:is(:focus, .activate.activated, .radio.selected) {
+            color: hsl(0, 0%, 95%);
+        }
+
+        .navigation-bar.timelines .item.button.toggle-edit-instruments.disabled {
+            color: var(--glyph-color-disabled);
+        }
+
+        .navigation-bar.timelines .toggle-edit-instruments:not(.disabled):active {
+            color: hsl(0, 0%, 95%);
+        }
+    }
 }

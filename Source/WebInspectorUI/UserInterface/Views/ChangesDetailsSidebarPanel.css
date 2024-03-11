@@ -106,3 +106,9 @@
     left: var(--css-declaration-horizontal-padding);
     pointer-events: none;
 }
+
+@media (prefers-contrast: more) and @media (prefers-color-scheme: dark) {
+    .changes-panel .css-property-line.added {
+    color: hsl(90, 61%, 10%);
+    }
+}

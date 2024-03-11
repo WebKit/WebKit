@@ -352,4 +352,9 @@
     .console-message .go-to-link:focus {
         color: var(--selected-secondary-text-color-active);
     }
+    @media (prefers-contrast: more) {
+        .console-error-level .console-message-body {
+            color: hsl(10, 100%, 90%);
+        }
+    }
 }

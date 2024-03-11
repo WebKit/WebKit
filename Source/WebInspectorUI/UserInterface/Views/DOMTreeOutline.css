@@ -299,4 +299,34 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
     .tree-outline.dom .html-pseudo-element {
         color: hsl(0, 80%, 65%);
     }
+
+    @media (prefers-contrast: more) {
+        .tree-outline.dom {
+            --shadow-subtree-background-color: hsl(0, 0%, 95%);
+        }
+
+        .tree-outline.dom li.inspected-node > span::after {
+            color: hsl(0, 0%, 95%);
+        }
+
+        body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-within li.inspected-node.selected > span::after {
+            color: hsl(0, 0%, 95%);
+        }
+
+        .tree-outline.dom .shadow {
+            color: hsl(0, 0%, 10%);
+        }
+
+        .tree-outline.dom .html-pseudo-element {
+            color: hsl(0, 0%, 15%);
+        }
+
+        .showing-find-banner .tree-outline.dom .search-highlight {
+            background-color: hsla(53, 0%, 53%);
+        }
+
+        .tree-outline.dom .html-pseudo-element {
+            color: hsl(0, 0%, 65%);
+        }
+    }
 }

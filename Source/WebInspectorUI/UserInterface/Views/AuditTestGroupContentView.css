@@ -168,4 +168,13 @@
         /* FIXME: Use CSS4 color blend functions once they're available. */
         color: hsla(0, 0%, 88%, 0.65);
     }
+    @media (prefers-contrast: more) {
+        .content-view.audit-test-group > header > .percentage-pass {
+            color: hsla(0, 0%, 100%);
+        }
+
+        .content-view.audit-test-group > header > .percentage-pass > span {
+            color: hsla(0, 0%, 100%);
+        }
+    }
 }
