@@ -45,7 +45,7 @@
     if (!(self = [super init]))
         return nil;
 
-    m_dictionary = [dictionary mutableCopy];
+    m_dictionary = adoptNS([dictionary mutableCopy]);
     return self;
 }
 
