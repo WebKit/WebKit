@@ -373,17 +373,10 @@ fi
 
 function ios_family_process_webcontent_entitlements()
 {
-    if [[ "${PLATFORM_NAME}" != watchos ]]; then
+    if [[ "${WK_PLATFORM_NAME}" != watchos ]]
+    then
         plistbuddy Add :com.apple.private.verified-jit bool YES
-        if [[ "${PLATFORM_NAME}" == iphoneos ]]; then
-            if (( $(( ${SDK_VERSION_ACTUAL} )) >= 170400 )); then
-                plistbuddy Add :com.apple.developer.cs.allow-jit bool YES
-            else
-                plistbuddy Add :dynamic-codesigning bool YES
-            fi
-        else
-            plistbuddy Add :dynamic-codesigning bool YES
-        fi
+        plistbuddy Add :dynamic-codesigning bool YES
     fi
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
 
