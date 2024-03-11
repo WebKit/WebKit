@@ -247,7 +247,13 @@ struct PerWebProcessState {
 
     BOOL _findInteractionEnabled;
 #if HAVE(UIFINDINTERACTION)
-    RetainPtr<UIView> _findOverlay;
+    struct FindOverlays {
+        RetainPtr<UIView> top;
+        RetainPtr<UIView> right;
+        RetainPtr<UIView> bottom;
+        RetainPtr<UIView> left;
+    };
+    std::optional<FindOverlays> _findOverlaysOutsideContentView;
     RetainPtr<UIFindInteraction> _findInteraction;
 #endif
 
