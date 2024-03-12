@@ -37,7 +37,7 @@
 
 namespace WebCore::WebGPU {
 
-class Buffer : public RefCounted<GPUBuffer>, public CanMakeWeakPtr<GPUBuffer> {
+class Buffer : public RefCounted<Buffer>, public CanMakeWeakPtr<Buffer> {
 public:
     virtual ~Buffer() = default;
 
