@@ -315,25 +315,32 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (!node)
         return AccessibilityRole::Unknown;
 
-    if (RefPtr element = dynamicDowncast<Element>(*node); element && element->isLink())
-        return AccessibilityRole::WebCoreLink;
     if (node->isTextNode())
         return AccessibilityRole::StaticText;
-    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(*node))
+
+    RefPtr element = dynamicDowncast<HTMLElement>(*node);
+    if (!element)
+        return AccessibilityRole::Unknown;
+
+    if (element->isLink())
+        return AccessibilityRole::WebCoreLink;
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(*element))
         return selectElement->multiple() ? AccessibilityRole::ListBox : AccessibilityRole::PopUpButton;
-    if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(*node); imgElement && imgElement->hasAttributeWithoutSynchronization(usemapAttr))
+    if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(*element); imgElement && imgElement->hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
-    if (node->hasTagName(liTag))
+
+    if (element->hasTagName(liTag))
         return AccessibilityRole::ListItem;
-    if (node->hasTagName(buttonTag))
+    if (element->hasTagName(buttonTag))
         return buttonRoleType();
-    if (node->hasTagName(legendTag))
+    if (element->hasTagName(legendTag))
         return AccessibilityRole::Legend;
-    if (node->hasTagName(canvasTag))
+    if (element->hasTagName(canvasTag))
         return AccessibilityRole::Canvas;
-    if (isFileUploadButton())
-        return AccessibilityRole::Button;
-    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*node)) {
+
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element)) {
+        if (input->isFileUpload())
+            return AccessibilityRole::Button;
         if (input->isSwitch())
             return AccessibilityRole::Switch;
         if (input->isCheckbox())
@@ -364,48 +371,59 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (headingLevel())
         return AccessibilityRole::Heading;
 
-    if (node->hasTagName(codeTag))
+    if (element->hasTagName(codeTag))
         return AccessibilityRole::Code;
-    if (node->hasTagName(delTag))
+    if (element->hasTagName(delTag))
         return AccessibilityRole::Deletion;
-    if (node->hasTagName(insTag))
+    if (element->hasTagName(insTag))
         return AccessibilityRole::Insertion;
-    if (node->hasTagName(subTag))
+    if (element->hasTagName(subTag))
         return AccessibilityRole::Subscript;
-    if (node->hasTagName(supTag))
+    if (element->hasTagName(supTag))
         return AccessibilityRole::Superscript;
-    if (isStyleFormatGroup())
+
+    if (element->hasTagName(kbdTag)
+        || element->hasTagName(preTag)
+        || element->hasTagName(sampTag)
+        || element->hasTagName(varTag)
+        || element->hasTagName(citeTag))
         return treatStyleFormatGroupAsInline == TreatStyleFormatGroupAsInline::Yes ? AccessibilityRole::Inline : AccessibilityRole::TextGroup;
 
-    if (node->hasTagName(ddTag))
+    if (element->hasTagName(ddTag))
         return AccessibilityRole::DescriptionListDetail;
-    if (node->hasTagName(dtTag))
+    if (element->hasTagName(dtTag))
         return AccessibilityRole::DescriptionListTerm;
-    if (node->hasTagName(dlTag))
+    if (element->hasTagName(dlTag))
         return AccessibilityRole::DescriptionList;
-    if (node->hasTagName(menuTag) || node->hasTagName(olTag) || node->hasTagName(ulTag))
+
+    if (element->hasTagName(menuTag)
+        || element->hasTagName(olTag)
+        || element->hasTagName(ulTag))
         return AccessibilityRole::List;
-    if (node->hasTagName(fieldsetTag))
+
+    if (element->hasTagName(fieldsetTag))
         return AccessibilityRole::ApplicationGroup;
-    if (node->hasTagName(figureTag))
+    if (element->hasTagName(figureTag))
         return AccessibilityRole::Figure;
-    if (node->hasTagName(pTag))
+    if (element->hasTagName(pTag))
         return AccessibilityRole::Paragraph;
-    if (is<HTMLLabelElement>(node.get()))
+
+    if (is<HTMLLabelElement>(*element))
         return AccessibilityRole::Label;
-    if (node->hasTagName(dfnTag))
+    if (element->hasTagName(dfnTag))
         return AccessibilityRole::Definition;
-    if (node->hasTagName(divTag) && !isNonNativeTextControl())
+    if (element->hasTagName(divTag) && !isNonNativeTextControl())
         return AccessibilityRole::Generic;
-    if (is<HTMLFormElement>(node.get()))
+    if (is<HTMLFormElement>(*element))
         return AccessibilityRole::Form;
-    if (node->hasTagName(articleTag))
+    if (element->hasTagName(articleTag))
         return AccessibilityRole::DocumentArticle;
-    if (node->hasTagName(mainTag))
+    if (element->hasTagName(mainTag))
         return AccessibilityRole::LandmarkMain;
-    if (node->hasTagName(navTag))
+    if (element->hasTagName(navTag))
         return AccessibilityRole::LandmarkNavigation;
-    if (node->hasTagName(asideTag)) {
+
+    if (element->hasTagName(asideTag)) {
         if (ariaRoleAttribute() == AccessibilityRole::LandmarkComplementary)
             return AccessibilityRole::LandmarkComplementary;
         // The aside element should not assume the complementary role when nested
@@ -419,29 +437,28 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         }
         return AccessibilityRole::LandmarkComplementary;
     }
-    if (node->hasTagName(searchTag))
+
+    if (element->hasTagName(searchTag))
         return AccessibilityRole::LandmarkSearch;
 
     // The default role attribute value for the section element, region, became a landmark in ARIA 1.1.
     // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
     // for section elements which have names.
-    if (node->hasTagName(sectionTag))
+    if (element->hasTagName(sectionTag))
         return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
-    if (node->hasTagName(addressTag))
+    if (element->hasTagName(addressTag))
         return AccessibilityRole::ApplicationGroup;
-    if (node->hasTagName(blockquoteTag))
+    if (element->hasTagName(blockquoteTag))
         return AccessibilityRole::Blockquote;
-    if (node->hasTagName(captionTag) || node->hasTagName(figcaptionTag))
+    if (element->hasTagName(captionTag) || element->hasTagName(figcaptionTag))
         return AccessibilityRole::Caption;
-    if (node->hasTagName(dialogTag))
+    if (element->hasTagName(dialogTag))
         return AccessibilityRole::ApplicationDialog;
-    if (node->hasTagName(markTag) || equalLettersIgnoringASCIICase(getAttribute(roleAttr), "mark"_s))
+    if (element->hasTagName(markTag) || equalLettersIgnoringASCIICase(getAttribute(roleAttr), "mark"_s))
         return AccessibilityRole::Mark;
-    if (node->hasTagName(preTag))
-        return AccessibilityRole::Pre;
-    if (is<HTMLDetailsElement>(node.get()))
+    if (is<HTMLDetailsElement>(*element))
         return AccessibilityRole::Details;
-    if (auto* summaryElement = dynamicDowncast<HTMLSummaryElement>(node.get()); summaryElement && summaryElement->isActiveSummary())
+    if (RefPtr summaryElement = dynamicDowncast<HTMLSummaryElement>(*element); summaryElement && summaryElement->isActiveSummary())
         return AccessibilityRole::Summary;
 
 #if PLATFORM(COCOA)
@@ -451,28 +468,28 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
 
     // http://rawgit.com/w3c/aria/master/html-aam/html-aam.html
     // Output elements should be mapped to status role.
-    if (isOutput())
+    if (element->hasTagName(outputTag))
         return AccessibilityRole::ApplicationStatus;
 
 #if ENABLE(VIDEO)
-    if (is<HTMLVideoElement>(node.get()))
+    if (is<HTMLVideoElement>(*element))
         return AccessibilityRole::Video;
-    if (is<HTMLAudioElement>(node.get()))
+    if (is<HTMLAudioElement>(*element))
         return AccessibilityRole::Audio;
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
-    if (node->hasTagName(modelTag))
+    if (element->hasTagName(modelTag))
         return AccessibilityRole::Model;
 #endif
 
     // The HTML element should not be exposed as an element. That's what the RenderView element does.
-    if (node->hasTagName(htmlTag))
+    if (element->hasTagName(htmlTag))
         return AccessibilityRole::Ignored;
 
     // There should only be one banner/contentInfo per page. If header/footer are being used within an article or section then it should not be exposed as whole page's banner/contentInfo.
     // https://w3c.github.io/html-aam/#el-header
-    if (node->hasTagName(headerTag)) {
+    if (element->hasTagName(headerTag)) {
         if (!isDescendantOfElementType({ articleTag, asideTag, mainTag, navTag, sectionTag }))
             return AccessibilityRole::LandmarkBanner;
         return AccessibilityRole::Generic;
@@ -481,21 +498,19 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     // http://webkit.org/b/190138 Footers should become contentInfo's if scoped to body (and consequently become a landmark).
     // It should remain a footer if scoped to main, sectioning elements (article, aside, nav, section) or root sectioning element (blockquote, details, dialog, fieldset, figure, td).
     // https://w3c.github.io/html-aam/#el-footer
-    if (node->hasTagName(footerTag)) {
+    if (element->hasTagName(footerTag)) {
         if (!isDescendantOfElementType({ articleTag, asideTag, navTag, sectionTag, mainTag, blockquoteTag, detailsTag, dialogTag, fieldsetTag, figureTag, tdTag }))
             return AccessibilityRole::LandmarkContentInfo;
         return AccessibilityRole::Footer;
     }
 
-    if (node->hasTagName(timeTag))
+    if (element->hasTagName(timeTag))
         return AccessibilityRole::Time;
-    if (node->hasTagName(hrTag))
+    if (element->hasTagName(hrTag))
         return AccessibilityRole::HorizontalRule;
 
     // If the element does not have role, but it has ARIA attributes, or accepts tab focus, accessibility should fallback to exposing it as a group.
-    if (supportsARIAAttributes() || canSetFocusAttribute())
-        return AccessibilityRole::Group;
-    if (RefPtr element = dynamicDowncast<Element>(*node); element && element->isFocusable())
+    if (supportsARIAAttributes() || canSetFocusAttribute() || element->isFocusable())
         return AccessibilityRole::Group;
 
     return AccessibilityRole::Unknown;
