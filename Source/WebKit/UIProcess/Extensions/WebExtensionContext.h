@@ -336,6 +336,10 @@ public:
     bool hasAccessToAllURLs();
     bool hasAccessToAllHosts();
 
+    bool needsPermission(const String&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
+    bool needsPermission(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+    bool needsPermission(const WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+
     bool hasPermission(const String& permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
     bool hasPermission(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     bool hasPermission(const WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });

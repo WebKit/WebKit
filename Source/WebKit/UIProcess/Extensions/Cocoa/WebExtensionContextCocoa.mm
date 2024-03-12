@@ -1050,7 +1050,7 @@ void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& 
 {
     MatchPatternSet neededMatchPatterns;
     for (auto& pattern : requestedMatchPatterns) {
-        if (!hasPermission(pattern, tab.get()))
+        if (needsPermission(pattern, tab.get()))
             neededMatchPatterns.addVoid(pattern);
     }
 
@@ -1106,7 +1106,7 @@ void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& request
     for (auto& url : requestedURLs) {
         // Only HTTP family URLs are really valid to request. This avoids requesting for
         // things like new tab pages, special tabs, other extensions, about:blank, etc.
-        if (url.protocolIsInHTTPFamily() && !hasPermission(url, tab.get()))
+        if (url.protocolIsInHTTPFamily() && needsPermission(url, tab.get()))
             neededURLs.addVoid(url);
     }
 
@@ -1174,7 +1174,7 @@ void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPerm
 {
     PermissionsSet neededPermissions;
     for (auto& permission : requestedPermissions) {
-        if (!hasPermission(permission, tab.get()))
+        if (needsPermission(permission, tab.get()))
             neededPermissions.addVoid(permission);
     }
 
@@ -1222,6 +1222,61 @@ void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPerm
     [delegate webExtensionController:extensionController()->wrapper() promptForPermissions:toAPI(neededPermissions) inTab:tab ? tab->delegate() : nil forExtensionContext:wrapper() completionHandler:makeBlockPtr([callbackAggregator](NSSet *allowedPermissions, NSDate *expirationDate) {
         callbackAggregator.get()(allowedPermissions, expirationDate);
     }).get()];
+}
+
+bool WebExtensionContext::needsPermission(const String& permission, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
+{
+    ASSERT(!permission.isEmpty());
+    ASSERT(!options.contains(PermissionStateOptions::SkipRequestedPermissions));
+
+    switch (permissionState(permission, tab, options)) {
+    case PermissionState::Unknown:
+    case PermissionState::DeniedImplicitly:
+    case PermissionState::DeniedExplicitly:
+    case PermissionState::GrantedImplicitly:
+    case PermissionState::GrantedExplicitly:
+        return false;
+
+    case PermissionState::RequestedImplicitly:
+    case PermissionState::RequestedExplicitly:
+        return true;
+    }
+}
+
+bool WebExtensionContext::needsPermission(const URL& url, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
+{
+    ASSERT(!options.contains(PermissionStateOptions::SkipRequestedPermissions));
+
+    switch (permissionState(url, tab, options)) {
+    case PermissionState::Unknown:
+    case PermissionState::DeniedImplicitly:
+    case PermissionState::DeniedExplicitly:
+    case PermissionState::GrantedImplicitly:
+    case PermissionState::GrantedExplicitly:
+        return false;
+
+    case PermissionState::RequestedImplicitly:
+    case PermissionState::RequestedExplicitly:
+        return true;
+    }
+}
+
+bool WebExtensionContext::needsPermission(const WebExtensionMatchPattern& pattern, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
+{
+    ASSERT(!options.contains(PermissionStateOptions::SkipRequestedPermissions));
+
+    switch (permissionState(pattern, tab, options)) {
+    case PermissionState::Unknown:
+    case PermissionState::DeniedImplicitly:
+    case PermissionState::DeniedExplicitly:
+    case PermissionState::GrantedImplicitly:
+    case PermissionState::GrantedExplicitly:
+        return false;
+
+    case PermissionState::RequestedImplicitly:
+    case PermissionState::RequestedExplicitly:
+        return true;
+    }
 }
 
 bool WebExtensionContext::hasPermission(const String& permission, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
