@@ -1902,7 +1902,6 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/popover.css
     ${WEBCORE_DIR}/css/quirks.css
-    ${WEBCORE_DIR}/css/ruby.css
     ${WEBCORE_DIR}/css/svg.css
     ${WEBCORE_DIR}/css/viewTransitions.css
     ${WEBCORE_DIR}/html/shadow/attachmentElementShadow.css

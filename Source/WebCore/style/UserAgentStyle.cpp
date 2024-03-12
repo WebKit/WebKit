@@ -87,7 +87,6 @@ StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
 StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::htmlSwitchControlStyleSheet;
 StyleSheetContents* UserAgentStyle::counterStylesStyleSheet;
-StyleSheetContents* UserAgentStyle::rubyStyleSheet;
 StyleSheetContents* UserAgentStyle::viewTransitionsStyleSheet;
 #if ENABLE(FULLSCREEN_API)
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
@@ -263,11 +262,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     if (!counterStylesStyleSheet) {
         counterStylesStyleSheet = parseUASheet(StringImpl::createWithoutCopying(counterStylesUserAgentStyleSheet, sizeof(counterStylesUserAgentStyleSheet)));
         addToCounterStyleRegistry(*counterStylesStyleSheet);
-    }
-
-    if (!rubyStyleSheet && element.document().settings().cssBasedRubyEnabled()) {
-        rubyStyleSheet = parseUASheet(StringImpl::createWithoutCopying(rubyUserAgentStyleSheet, sizeof(rubyUserAgentStyleSheet)));
-        addToDefaultStyle(*rubyStyleSheet);
     }
 
 #if ENABLE(FULLSCREEN_API)
