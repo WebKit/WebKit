@@ -69,6 +69,8 @@ private:
     double latencyTime() const final;
     bool requiresTailProcessing() const final;
 
+    float noiseInjectionMultiplier() const final { return 0.01; }
+
     std::unique_ptr<DynamicsCompressor> m_dynamicsCompressor;
     Ref<AudioParam> m_threshold;
     Ref<AudioParam> m_knee;

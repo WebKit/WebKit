@@ -60,6 +60,8 @@ protected:
     AudioProcessor* processor() { return m_processor.get(); }
     const AudioProcessor* processor() const { return m_processor.get(); }
 
+    float noiseInjectionMultiplier() const override { return 0.01; }
+
     std::unique_ptr<AudioProcessor> m_processor;
 };
 

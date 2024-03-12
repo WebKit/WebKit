@@ -67,6 +67,8 @@ private:
 
     bool propagatesSilence() const final;
 
+    float noiseInjectionMultiplier() const final { return 0.01; }
+
     // One of the waveform types defined in the enum.
     OscillatorType m_type; // Only used on the main thread.
     

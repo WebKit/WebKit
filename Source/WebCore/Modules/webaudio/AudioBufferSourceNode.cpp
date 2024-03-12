@@ -609,6 +609,22 @@ bool AudioBufferSourceNode::propagatesSilence() const
     return m_sourceChannels.isEmpty();
 }
 
+float AudioBufferSourceNode::noiseInjectionMultiplier() const
+{
+    Locker locker { m_processLock };
+
+    if (!m_buffer)
+        return 0;
+
+    auto multiplier = m_buffer->noiseInjectionMultiplier();
+    if (m_isLooping && m_loopStart < m_loopEnd) {
+        static constexpr auto noiseMultiplierPerLoop = 0.005;
+        auto loopCount = m_buffer->duration() / (m_loopEnd - m_loopStart);
+        multiplier *= std::max(1.0, noiseMultiplierPerLoop * loopCount);
+    }
+    return multiplier;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

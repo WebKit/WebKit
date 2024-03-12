@@ -198,6 +198,7 @@ public:
     void setIsTailProcessing(bool isTailProcessing) { m_isTailProcessing = isTailProcessing; }
 
     NoiseInjectionPolicy noiseInjectionPolicy() const;
+    virtual float noiseInjectionMultiplier() const { return 0; }
 
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.

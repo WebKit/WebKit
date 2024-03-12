@@ -221,7 +221,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
             if (auto& input = m_inputs[inputIndex]) {
                 for (unsigned channelIndex = 0; channelIndex < input->numberOfChannels(); ++channelIndex) {
                     auto* channel = input->channel(channelIndex);
-                    AudioUtilities::applyNoise(channel->mutableData(), channel->length(), 0.001);
+                    AudioUtilities::applyNoise(channel->mutableData(), channel->length(), 0.01);
                 }
             }
         }
