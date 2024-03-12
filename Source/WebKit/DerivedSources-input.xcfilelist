@@ -157,6 +157,7 @@ $(PROJECT_DIR)/Platform/IPC/ConnectionHandle.serialization.in
 $(PROJECT_DIR)/Platform/IPC/FormDataReference.serialization.in
 $(PROJECT_DIR)/Platform/IPC/IPCEvent.serialization.in
 $(PROJECT_DIR)/Platform/IPC/IPCSemaphore.serialization.in
+$(PROJECT_DIR)/Platform/IPC/MessageFlags.serialization.in
 $(PROJECT_DIR)/Platform/IPC/ObjectIdentifierReference.serialization.in
 $(PROJECT_DIR)/Platform/IPC/SharedBufferReference.serialization.in
 $(PROJECT_DIR)/Platform/IPC/SharedFileHandle.serialization.in

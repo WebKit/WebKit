@@ -515,6 +515,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Platform/IPC/FormDataReference.serialization.in \
 	Platform/IPC/IPCEvent.serialization.in \
 	Platform/IPC/IPCSemaphore.serialization.in \
+	Platform/IPC/MessageFlags.serialization.in \
 	Platform/IPC/ObjectIdentifierReference.serialization.in \
 	Platform/IPC/SharedBufferReference.serialization.in \
 	Platform/IPC/SharedFileHandle.serialization.in \
