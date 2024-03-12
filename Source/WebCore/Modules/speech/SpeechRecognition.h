@@ -100,6 +100,7 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SpeechRecognition; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    bool virtualHasPendingActivity() const final;
 
     String m_lang;
     bool m_continuous { false };

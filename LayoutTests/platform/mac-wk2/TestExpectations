@@ -1980,7 +1980,6 @@ webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallbac
 [ Monterey+ Release ] media/audio-session-category-unmute-mute.html [ Pass Failure ]
 [ Monterey+ Release ] media/audio-session-category.html [ Pass Failure ]
 [ Monterey+ Release ] imported/w3c/web-platform-tests/preload/preload-in-data-doc.html [ Pass ImageOnlyFailure ]
-[ Monterey+ Release ] fast/speechrecognition/start-recognition-after-denied-gum.html [ Pass Timeout ]
 
 webkit.org/b/269639 http/tests/site-isolation/window-properties.html [ Skip ]
 

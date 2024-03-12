@@ -216,4 +216,9 @@ SpeechRecognition::~SpeechRecognition()
 {
 }
 
+bool SpeechRecognition::virtualHasPendingActivity() const
+{
+    return m_state != State::Inactive && hasEventListeners();
+}
+
 } // namespace WebCore
