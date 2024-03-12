@@ -197,12 +197,11 @@ RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(Styl
     return { };
 }
 
-CSSStyleSheet::WhetherContentsWereClonedForMutation CSSStyleSheet::willMutateRules()
-{
+auto CSSStyleSheet::willMutateRules() -> ContentsClonedForMutation {
     // If we are the only client it is safe to mutate.
     if (m_contents->hasOneClient() && !m_contents->isInMemoryCache()) {
         m_contents->setMutable();
-        return ContentsWereNotClonedForMutation;
+        return ContentsClonedForMutation::No;
     }
     // Only cacheable stylesheets should have multiple clients.
     ASSERT(m_contents->isCacheable());
@@ -217,7 +216,7 @@ CSSStyleSheet::WhetherContentsWereClonedForMutation CSSStyleSheet::willMutateRul
     // Any existing CSSOM wrappers need to be connected to the copied child rules.
     reattachChildRuleCSSOMWrappers();
 
-    return ContentsWereClonedForMutation;
+    return ContentsClonedForMutation::Yes;
 }
 
 void CSSStyleSheet::didMutateRuleFromCSSStyleDeclaration()
@@ -228,13 +227,13 @@ void CSSStyleSheet::didMutateRuleFromCSSStyleDeclaration()
 }
 
 // FIXME: counter-style: we might need something similar for counter-style (rdar://103018993).
-void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContentsWereClonedForMutation contentsWereClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName)
+void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsClonedForMutation contentsClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName)
 {
     ASSERT(m_contents->isMutable());
     ASSERT(m_contents->hasOneClient());
 
     forEachStyleScope([&](Style::Scope& scope) {
-        if ((mutationType == RuleInsertion || mutationType == RuleReplace) && !contentsWereClonedForMutation && !scope.activeStyleSheetsContains(*this)) {
+        if ((mutationType == RuleInsertion || mutationType == RuleReplace) && contentsClonedForMutation == ContentsClonedForMutation::No && !scope.activeStyleSheetsContains(*this)) {
             if (insertedKeyframesRule) {
                 if (auto* resolver = scope.resolverIfExists())
                     resolver->addKeyframeStyle(*insertedKeyframesRule);
@@ -601,13 +600,13 @@ CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMu
     , m_insertedKeyframesRule(insertedKeyframesRule)
 {
     ASSERT(m_styleSheet);
-    m_contentsWereClonedForMutation = m_styleSheet->willMutateRules();
+    m_contentsClonedForMutation = m_styleSheet->willMutateRules();
 }
 
 CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
     : m_styleSheet(rule ? rule->parentStyleSheet() : nullptr)
     , m_mutationType(is<CSSKeyframesRule>(rule) ? KeyframesRuleMutation : OtherMutation)
-    , m_contentsWereClonedForMutation(ContentsWereNotClonedForMutation)
+    , m_contentsClonedForMutation(ContentsClonedForMutation::No)
     , m_insertedKeyframesRule(nullptr)
     , m_modifiedKeyframesRuleName([rule] {
         auto* cssKeyframeRule = dynamicDowncast<CSSKeyframesRule>(rule);
@@ -615,13 +614,13 @@ CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
     }())
 {
     if (m_styleSheet)
-        m_contentsWereClonedForMutation = m_styleSheet->willMutateRules();
+        m_contentsClonedForMutation = m_styleSheet->willMutateRules();
 }
 
 CSSStyleSheet::RuleMutationScope::~RuleMutationScope()
 {
     if (m_styleSheet)
-        m_styleSheet->didMutateRules(m_mutationType, m_contentsWereClonedForMutation, m_insertedKeyframesRule.get(), m_modifiedKeyframesRuleName);
+        m_styleSheet->didMutateRules(m_mutationType, m_contentsClonedForMutation, m_insertedKeyframesRule.get(), m_modifiedKeyframesRuleName);
 }
 
 }
