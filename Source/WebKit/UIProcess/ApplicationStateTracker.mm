@@ -226,8 +226,21 @@ void ApplicationStateTracker::setWindow(UIWindow *window)
 
 void ApplicationStateTracker::setScene(UIScene *scene)
 {
-    if (m_scene.get() == scene)
+    auto isWindowAndSceneInBackground = [] (const auto& window, const auto& scene) {
+        if (!scene) {
+            // TestWebKitAPI will create a WKWebView and place it into a UIWindow that
+            // has no UIWindowScene. For the purposes of keeping tests passing, treat
+            // the combination of a window without a windowScene as not in the background:
+            return !window;
+        }
+
+        return [scene activationState] == UISceneActivationStateBackground || [scene activationState] == UISceneActivationStateUnattached;
+    };
+
+    if (m_scene.get() == scene) {
+        m_isInBackground = isWindowAndSceneInBackground(m_window, m_scene);
         return;
+    }
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
 
@@ -239,13 +252,11 @@ void ApplicationStateTracker::setScene(UIScene *scene)
     }
 
     m_scene = scene;
+    m_isInBackground = isWindowAndSceneInBackground(m_window, m_scene);
 
-    if (!m_scene) {
-        m_isInBackground = true;
+    if (!m_scene)
         return;
-    }
 
-    m_isInBackground = scene.activationState == UISceneActivationStateBackground || scene.activationState == UISceneActivationStateUnattached;
     RELEASE_LOG(ViewState, "%p - ApplicationStateTracker::ApplicationStateTracker(): m_isInBackground=%d", this, m_isInBackground);
 
     m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UISceneDidEnterBackgroundNotification object:scene queue:nil usingBlock:[this](NSNotification *notification) {
