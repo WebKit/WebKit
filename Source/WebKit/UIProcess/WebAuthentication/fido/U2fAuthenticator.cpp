@@ -84,8 +84,11 @@ void U2fAuthenticator::checkExcludeList(size_t index)
 void U2fAuthenticator::issueRegisterCommand()
 {
     auto u2fCmd = convertToU2fRegisterCommand(requestData().hash, std::get<PublicKeyCredentialCreationOptions>(requestData().options));
+    if (!u2fCmd) {
+        U2F_RELEASE_LOG("issueRegisterCommand: request not convertible to U2F.");
+        return;
+    }
     U2F_RELEASE_LOG("issueRegisterCommand: Sending %s", base64EncodeToString(*u2fCmd).utf8().data());
-    ASSERT(u2fCmd);
     issueNewCommand(WTFMove(*u2fCmd), CommandType::RegisterCommand);
 }
 
@@ -109,8 +112,11 @@ void U2fAuthenticator::issueSignCommand(size_t index)
         return;
     }
     auto u2fCmd = convertToU2fSignCommand(requestData().hash, requestOptions, requestOptions.allowCredentials[index].id, m_isAppId);
+    if (!u2fCmd) {
+        U2F_RELEASE_LOG("issueSignCommand: request not convertible to U2F.");
+        return;
+    }
     U2F_RELEASE_LOG("issueSignCommand: index: %lu Sending %s", index, base64EncodeToString(*u2fCmd).utf8().data());
-    ASSERT(u2fCmd);
     issueNewCommand(WTFMove(*u2fCmd), CommandType::SignCommand);
 }
 
