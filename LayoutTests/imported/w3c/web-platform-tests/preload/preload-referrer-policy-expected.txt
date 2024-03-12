@@ -145,56 +145,56 @@ PASS referrer policy (strict-origin-when-cross-origin -> , element, cross-origin
 PASS referrer policy (strict-origin-when-cross-origin -> , element, same-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> , header, cross-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> , header, same-origin)
-FAIL referrer policy (strict-origin-when-cross-origin -> no-referrer, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (strict-origin-when-cross-origin -> no-referrer, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (strict-origin-when-cross-origin -> no-referrer, element, cross-origin)
+PASS referrer policy (strict-origin-when-cross-origin -> no-referrer, element, same-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> no-referrer, header, cross-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> no-referrer, header, same-origin)
-FAIL referrer policy (strict-origin-when-cross-origin -> same-origin, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (strict-origin-when-cross-origin -> same-origin, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (strict-origin-when-cross-origin -> same-origin, element, cross-origin)
+PASS referrer policy (strict-origin-when-cross-origin -> same-origin, element, same-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> same-origin, header, cross-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> same-origin, header, same-origin)
-FAIL referrer policy (strict-origin-when-cross-origin -> origin, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (strict-origin-when-cross-origin -> origin, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (strict-origin-when-cross-origin -> origin, element, cross-origin)
+PASS referrer policy (strict-origin-when-cross-origin -> origin, element, same-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> origin, header, cross-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> origin, header, same-origin)
-FAIL referrer policy (strict-origin-when-cross-origin -> origin-when-cross-origin, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (strict-origin-when-cross-origin -> origin-when-cross-origin, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (strict-origin-when-cross-origin -> origin-when-cross-origin, element, cross-origin)
+PASS referrer policy (strict-origin-when-cross-origin -> origin-when-cross-origin, element, same-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> origin-when-cross-origin, header, cross-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> origin-when-cross-origin, header, same-origin)
-FAIL referrer policy (strict-origin-when-cross-origin -> strict-origin-when-cross-origin, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (strict-origin-when-cross-origin -> strict-origin-when-cross-origin, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (strict-origin-when-cross-origin -> strict-origin-when-cross-origin, element, cross-origin)
+PASS referrer policy (strict-origin-when-cross-origin -> strict-origin-when-cross-origin, element, same-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> strict-origin-when-cross-origin, header, cross-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> strict-origin-when-cross-origin, header, same-origin)
-FAIL referrer policy (strict-origin-when-cross-origin -> unsafe-url, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (strict-origin-when-cross-origin -> unsafe-url, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (strict-origin-when-cross-origin -> unsafe-url, element, cross-origin)
+PASS referrer policy (strict-origin-when-cross-origin -> unsafe-url, element, same-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> unsafe-url, header, cross-origin)
 PASS referrer policy (strict-origin-when-cross-origin -> unsafe-url, header, same-origin)
-FAIL referrer policy (unsafe-url -> , element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (unsafe-url -> , element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (unsafe-url -> , element, cross-origin)
+PASS referrer policy (unsafe-url -> , element, same-origin)
 PASS referrer policy (unsafe-url -> , header, cross-origin)
 PASS referrer policy (unsafe-url -> , header, same-origin)
-FAIL referrer policy (unsafe-url -> no-referrer, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (unsafe-url -> no-referrer, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (unsafe-url -> no-referrer, element, cross-origin)
+PASS referrer policy (unsafe-url -> no-referrer, element, same-origin)
 PASS referrer policy (unsafe-url -> no-referrer, header, cross-origin)
 PASS referrer policy (unsafe-url -> no-referrer, header, same-origin)
-FAIL referrer policy (unsafe-url -> same-origin, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (unsafe-url -> same-origin, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (unsafe-url -> same-origin, element, cross-origin)
+PASS referrer policy (unsafe-url -> same-origin, element, same-origin)
 PASS referrer policy (unsafe-url -> same-origin, header, cross-origin)
 PASS referrer policy (unsafe-url -> same-origin, header, same-origin)
-FAIL referrer policy (unsafe-url -> origin, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (unsafe-url -> origin, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (unsafe-url -> origin, element, cross-origin)
+PASS referrer policy (unsafe-url -> origin, element, same-origin)
 PASS referrer policy (unsafe-url -> origin, header, cross-origin)
 PASS referrer policy (unsafe-url -> origin, header, same-origin)
-FAIL referrer policy (unsafe-url -> origin-when-cross-origin, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (unsafe-url -> origin-when-cross-origin, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (unsafe-url -> origin-when-cross-origin, element, cross-origin)
+PASS referrer policy (unsafe-url -> origin-when-cross-origin, element, same-origin)
 PASS referrer policy (unsafe-url -> origin-when-cross-origin, header, cross-origin)
 PASS referrer policy (unsafe-url -> origin-when-cross-origin, header, same-origin)
-FAIL referrer policy (unsafe-url -> strict-origin-when-cross-origin, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (unsafe-url -> strict-origin-when-cross-origin, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (unsafe-url -> strict-origin-when-cross-origin, element, cross-origin)
+PASS referrer policy (unsafe-url -> strict-origin-when-cross-origin, element, same-origin)
 PASS referrer policy (unsafe-url -> strict-origin-when-cross-origin, header, cross-origin)
 PASS referrer policy (unsafe-url -> strict-origin-when-cross-origin, header, same-origin)
-FAIL referrer policy (unsafe-url -> unsafe-url, element, cross-origin) assert_equals: expected 1 but got 0
-FAIL referrer policy (unsafe-url -> unsafe-url, element, same-origin) assert_equals: expected 1 but got 0
+PASS referrer policy (unsafe-url -> unsafe-url, element, cross-origin)
+PASS referrer policy (unsafe-url -> unsafe-url, element, same-origin)
 PASS referrer policy (unsafe-url -> unsafe-url, header, cross-origin)
 PASS referrer policy (unsafe-url -> unsafe-url, header, same-origin)
 
