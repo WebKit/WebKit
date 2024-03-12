@@ -747,10 +747,6 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-#if ASSERT_ENABLED
-    bool hasScopedWatchpointSet(WatchpointSet*);
-#endif
-
     void finalizeUnconditionally(VM&, CollectionScope);
     void dump(PrintStream&) const;
 

@@ -112,15 +112,7 @@ public:
         unsigned namedLength = m_table->length();
         if (i < namedLength)
             m_scope->variableAt(m_table->get(i)).set(vm, m_scope.get(), value);
-
-            auto* watchpointSet = m_table->getWatchpointSet(i);
-            if (watchpointSet) {
-#if ASSERT_ENABLED
-                ASSERT(m_scope->symbolTable()->hasScopedWatchpointSet(watchpointSet));
-#endif
-                watchpointSet->touch(vm, "Write to ScopedArgument.");
-            }
-        } else
+        else
             storage()[i - namedLength].set(vm, this, value);
     }
 
