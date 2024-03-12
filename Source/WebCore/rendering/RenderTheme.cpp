@@ -272,8 +272,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case StyleAppearance::ImageControlsButton:
         return adjustImageControlsButtonStyle(style, element);
 #endif
-    case StyleAppearance::CapsLockIndicator:
-        return adjustCapsLockIndicatorStyle(style, element);
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
         return adjustApplePayButtonStyle(style, element);
@@ -371,9 +369,6 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
         if (part == UserAgentParts::webkitListButton())
             return StyleAppearance::ListButton;
 #endif
-
-        if (part == UserAgentParts::webkitCapsLockIndicator())
-            return StyleAppearance::CapsLockIndicator;
 
         if (part == UserAgentParts::webkitSearchCancelButton())
             return StyleAppearance::SearchFieldCancelButton;
@@ -567,9 +562,6 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
     case StyleAppearance::TextField:
         return TextFieldPart::create();
-
-    case StyleAppearance::CapsLockIndicator:
-        break;
 
 #if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
@@ -857,8 +849,6 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::ImageControlsButton:
         return paintImageControlsButton(box, paintInfo, integralSnappedRect);
 #endif
-    case StyleAppearance::CapsLockIndicator:
-        return paintCapsLockIndicator(box, paintInfo, integralSnappedRect);
 #if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
         return paintListButton(box, paintInfo, devicePixelSnappedRect);

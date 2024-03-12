@@ -3319,7 +3319,6 @@ enum class WebCore::StyleAppearance : uint8_t {
 #endif
     TextArea,
     TextField,
-    CapsLockIndicator,
 #if ENABLE(INPUT_TYPE_COLOR)
     ColorWell,
 #endif
