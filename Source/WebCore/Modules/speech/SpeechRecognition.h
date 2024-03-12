@@ -36,7 +36,7 @@ namespace WebCore {
 class Document;
 class SpeechRecognitionResult;
 
-class SpeechRecognition : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTarget  {
+class SpeechRecognition final : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTarget  {
     WTF_MAKE_ISO_ALLOCATED(SpeechRecognition);
 public:
     static Ref<SpeechRecognition> create(Document&);
