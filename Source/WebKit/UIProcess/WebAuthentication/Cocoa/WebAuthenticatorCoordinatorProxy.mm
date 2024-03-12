@@ -128,6 +128,55 @@ static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
     return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
 }
 
+static inline ExceptionCode toExceptionCode(NSInteger nsErrorCode)
+{
+    ExceptionCode exceptionCode = (ExceptionCode)nsErrorCode;
+
+    switch (exceptionCode) {
+    case ExceptionCode::IndexSizeError:
+    case ExceptionCode::HierarchyRequestError:
+    case ExceptionCode::WrongDocumentError:
+    case ExceptionCode::InvalidCharacterError:
+    case ExceptionCode::NoModificationAllowedError:
+    case ExceptionCode::NotFoundError:
+    case ExceptionCode::NotSupportedError:
+    case ExceptionCode::InUseAttributeError:
+    case ExceptionCode::InvalidStateError:
+    case ExceptionCode::SyntaxError:
+    case ExceptionCode::InvalidModificationError:
+    case ExceptionCode::NamespaceError:
+    case ExceptionCode::InvalidAccessError:
+    case ExceptionCode::TypeMismatchError:
+    case ExceptionCode::SecurityError:
+    case ExceptionCode::NetworkError:
+    case ExceptionCode::AbortError:
+    case ExceptionCode::URLMismatchError:
+    case ExceptionCode::QuotaExceededError:
+    case ExceptionCode::TimeoutError:
+    case ExceptionCode::InvalidNodeTypeError:
+    case ExceptionCode::DataCloneError:
+    case ExceptionCode::EncodingError:
+    case ExceptionCode::NotReadableError:
+    case ExceptionCode::UnknownError:
+    case ExceptionCode::ConstraintError:
+    case ExceptionCode::DataError:
+    case ExceptionCode::TransactionInactiveError:
+    case ExceptionCode::ReadonlyError:
+    case ExceptionCode::VersionError:
+    case ExceptionCode::OperationError:
+    case ExceptionCode::NotAllowedError:
+    case ExceptionCode::RangeError:
+    case ExceptionCode::TypeError:
+    case ExceptionCode::JSSyntaxError:
+    case ExceptionCode::StackOverflowError:
+    case ExceptionCode::OutOfMemoryError:
+    case ExceptionCode::ExistingExceptionError:
+        return exceptionCode;
+    }
+
+    return ExceptionCode::NotAllowedError;
+}
+
 #if HAVE(WEB_AUTHN_AS_MODERN)
 
 static inline ASAuthorizationPublicKeyCredentialLargeBlobSupportRequirement toASAuthorizationPublicKeyCredentialLargeBlobSupportRequirement(const String& requirement)
@@ -230,6 +279,22 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(co
             }
         }
     }
+
+    RetainPtr<NSMutableArray<ASAuthorizationPlatformPublicKeyCredentialDescriptor *>> platformExcludedCredentials = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor *>> crossPlatformExcludedCredentials = adoptNS([[NSMutableArray alloc] init]);
+    for (auto credential : options.excludeCredentials) {
+        if (credential.transports.contains(AuthenticatorTransport::Internal) || credential.transports.isEmpty())
+            [platformExcludedCredentials addObject:adoptNS([allocASAuthorizationPlatformPublicKeyCredentialDescriptorInstance() initWithCredentialID:toNSData(credential.id).get()]).get()];
+        if (credential.transports.isEmpty() || !credential.transports.contains(AuthenticatorTransport::Internal)) {
+            RetainPtr<NSMutableArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport>> transports = adoptNS([[NSMutableArray alloc] init]);
+            for (auto transport : credential.transports) {
+                if (auto asTransport = toASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport(transport))
+                    [transports addObject:asTransport.get()];
+            }
+            [crossPlatformExcludedCredentials addObject:adoptNS([allocASAuthorizationSecurityKeyPublicKeyCredentialDescriptorInstance() initWithCredentialID:toNSData(credential.id).get() transports:transports.get()]).get()];
+        }
+    }
+
     RetainPtr<ASPublicKeyCredentialClientData> clientData = adoptNS([allocASPublicKeyCredentialClientDataInstance() initWithChallenge:toNSData(options.challenge).get() origin:callerOrigin.toString()]);
     if (includePlatformRequest) {
         RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:*options.rp.id] createCredentialRegistrationRequestWithClientData:clientData.get() name:options.user.name userID:toNSData(options.user.id).get()]);
@@ -246,6 +311,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(co
             ASSERT(!options.extensions->largeBlob->read && !options.extensions->largeBlob->write);
             request.get().largeBlob = adoptNS([allocASAuthorizationPublicKeyCredentialLargeBlobRegistrationInputInstance() initWithSupportRequirement:toASAuthorizationPublicKeyCredentialLargeBlobSupportRequirement(options.extensions->largeBlob->support)]).get();
         }
+        request.get().excludedCredentials = platformExcludedCredentials.get();
         [requests addObject:request.leakRef()];
     }
     if (includeSecurityKeyRequest) {
@@ -264,6 +330,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(co
             request.get().userVerificationPreference = toASUserVerificationPreference(options.authenticatorSelection->userVerification).get();
             request.get().residentKeyPreference = toASResidentKeyPreference(options.authenticatorSelection->residentKey, options.authenticatorSelection->requireResidentKey).get();
         }
+        request.get().excludedCredentials = crossPlatformExcludedCredentials.get();
         [requests addObject:request.leakRef()];
     }
 
@@ -402,7 +469,9 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
             WebCore::AuthenticatorResponseData response = { };
             WebCore::ExceptionData exceptionData = { ExceptionCode::NotAllowedError, @"" };
             WebCore::AuthenticatorAttachment attachment = AuthenticatorAttachment::Platform;
-            if ([error.get().domain isEqualToString:ASAuthorizationErrorDomain] && error.get().code == ASAuthorizationErrorFailed && error.get().userInfo[NSUnderlyingErrorKey]) {
+            if ([error.get().domain isEqualToString:WKErrorDomain])
+                exceptionData = { toExceptionCode(error.get().code), error.get().userInfo[NSLocalizedDescriptionKey] };
+            else if ([error.get().domain isEqualToString:ASAuthorizationErrorDomain] && error.get().code == ASAuthorizationErrorFailed && error.get().userInfo[NSUnderlyingErrorKey]) {
                 RetainPtr<NSError> underlyingError = retainPtr(error.get().userInfo[NSUnderlyingErrorKey]);
                 if ([underlyingError.get().domain isEqualToString:ASCAuthorizationErrorDomain] && underlyingError.get().code == ASCAuthorizationErrorSecurityError)
                     exceptionData = { ExceptionCode::SecurityError, underlyingError.get().userInfo[NSLocalizedFailureReasonErrorKey] };
@@ -515,55 +584,6 @@ static inline RetainPtr<NSString> toNSString(AttestationConveyancePreference att
     }
 
     return @"none";
-}
-
-static inline ExceptionCode toExceptionCode(NSInteger nsErrorCode)
-{
-    ExceptionCode exceptionCode = (ExceptionCode)nsErrorCode;
-
-    switch (exceptionCode) {
-    case ExceptionCode::IndexSizeError: FALLTHROUGH;
-    case ExceptionCode::HierarchyRequestError: FALLTHROUGH;
-    case ExceptionCode::WrongDocumentError: FALLTHROUGH;
-    case ExceptionCode::InvalidCharacterError: FALLTHROUGH;
-    case ExceptionCode::NoModificationAllowedError: FALLTHROUGH;
-    case ExceptionCode::NotFoundError: FALLTHROUGH;
-    case ExceptionCode::NotSupportedError: FALLTHROUGH;
-    case ExceptionCode::InUseAttributeError: FALLTHROUGH;
-    case ExceptionCode::InvalidStateError: FALLTHROUGH;
-    case ExceptionCode::SyntaxError: FALLTHROUGH;
-    case ExceptionCode::InvalidModificationError: FALLTHROUGH;
-    case ExceptionCode::NamespaceError: FALLTHROUGH;
-    case ExceptionCode::InvalidAccessError: FALLTHROUGH;
-    case ExceptionCode::TypeMismatchError: FALLTHROUGH;
-    case ExceptionCode::SecurityError: FALLTHROUGH;
-    case ExceptionCode::NetworkError: FALLTHROUGH;
-    case ExceptionCode::AbortError: FALLTHROUGH;
-    case ExceptionCode::URLMismatchError: FALLTHROUGH;
-    case ExceptionCode::QuotaExceededError: FALLTHROUGH;
-    case ExceptionCode::TimeoutError: FALLTHROUGH;
-    case ExceptionCode::InvalidNodeTypeError: FALLTHROUGH;
-    case ExceptionCode::DataCloneError: FALLTHROUGH;
-    case ExceptionCode::EncodingError: FALLTHROUGH;
-    case ExceptionCode::NotReadableError: FALLTHROUGH;
-    case ExceptionCode::UnknownError: FALLTHROUGH;
-    case ExceptionCode::ConstraintError: FALLTHROUGH;
-    case ExceptionCode::DataError: FALLTHROUGH;
-    case ExceptionCode::TransactionInactiveError: FALLTHROUGH;
-    case ExceptionCode::ReadonlyError: FALLTHROUGH;
-    case ExceptionCode::VersionError: FALLTHROUGH;
-    case ExceptionCode::OperationError: FALLTHROUGH;
-    case ExceptionCode::NotAllowedError: FALLTHROUGH;
-    case ExceptionCode::RangeError: FALLTHROUGH;
-    case ExceptionCode::TypeError: FALLTHROUGH;
-    case ExceptionCode::JSSyntaxError: FALLTHROUGH;
-    case ExceptionCode::StackOverflowError: FALLTHROUGH;
-    case ExceptionCode::OutOfMemoryError: FALLTHROUGH;
-    case ExceptionCode::ExistingExceptionError:
-        return exceptionCode;
-    }
-
-    return ExceptionCode::NotAllowedError;
 }
 
 static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(PublicKeyCredentialDescriptor descriptor)
