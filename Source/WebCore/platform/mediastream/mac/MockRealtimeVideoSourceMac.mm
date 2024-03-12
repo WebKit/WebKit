@@ -100,7 +100,7 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     auto presentationTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
     auto videoFrame = m_imageTransferSession->createVideoFrame(platformImage.get(), presentationTime, size(), videoFrameRotation());
     if (!videoFrame) {
-        static const size_t MaxPixelGenerationFailureCount = 30;
+        static const size_t MaxPixelGenerationFailureCount = 150;
         if (++m_pixelGenerationFailureCount > MaxPixelGenerationFailureCount)
             captureFailed();
         return;
