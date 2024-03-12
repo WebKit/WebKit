@@ -178,7 +178,10 @@ private:
 
     static Vector<double> consumeKeyframeKeyList(CSSParserTokenRange);
 
-    RefPtr<StyleSheetContents> protectedStyleSheet() const;
+    RefPtr<StyleSheetContents> protectedStyleSheet() const
+    {
+        return m_styleSheet;
+    }
 
     Ref<StyleRuleBase> createNestingParentRule();
     void runInNewNestingContext(auto&& run);

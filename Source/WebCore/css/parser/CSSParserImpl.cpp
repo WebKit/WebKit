@@ -645,11 +645,6 @@ Ref<StyleRuleBase> CSSParserImpl::createNestingParentRule()
     return StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, CSSSelectorList { WTFMove(selectorList) }, { });
 }
 
-RefPtr<StyleSheetContents> CSSParserImpl::protectedStyleSheet() const
-{
-    return m_styleSheet;
-}
-
 Vector<Ref<StyleRuleBase>> CSSParserImpl::consumeNestedGroupRules(CSSParserTokenRange block)
 {
     NestingLevelIncrementer incrementer { m_ruleListNestingLevel };
@@ -669,7 +664,8 @@ Vector<Ref<StyleRuleBase>> CSSParserImpl::consumeNestedGroupRules(CSSParserToken
                 // property declarations.
                 rules.append(createNestingParentRule());
 
-                protectedStyleSheet()->setHasNestingRules();
+                if (RefPtr styleSheet = protectedStyleSheet())
+                    styleSheet->setHasNestingRules();
 
                 if (m_observerWrapper)
                     m_observerWrapper->observer().markRuleBodyContainsImplicitlyNestedProperties();
@@ -1091,7 +1087,7 @@ RefPtr<StyleRuleScope> CSSParserImpl::consumeScopeRule(CSSParserTokenRange prelu
     auto rules = consumeNestedGroupRules(block);
     m_ancestorRuleTypeStack.removeLast();
     Ref rule = StyleRuleScope::create(WTFMove(scopeStart), WTFMove(scopeEnd), WTFMove(rules));
-    if (RefPtr styleSheet = m_styleSheet)
+    if (RefPtr styleSheet = protectedStyleSheet())
         rule->setStyleSheetContents(*styleSheet);
     return rule;
 }
@@ -1348,7 +1344,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
             styleRule = StyleRule::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList));
         else {
             styleRule = StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList), WTFMove(nestedRules));
-            protectedStyleSheet()->setHasNestingRules();
+            if (RefPtr styleSheet = protectedStyleSheet())
+                styleSheet->setHasNestingRules();
         }
     });
 
