@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Intel Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -141,9 +141,9 @@ private:
     mutable RefPtr<PerformanceNavigation> m_navigation;
     mutable RefPtr<PerformanceTiming> m_timing;
 
-    // https://w3c.github.io/resource-timing/#extensions-performance-interface recommends size of 150.
+    // https://w3c.github.io/resource-timing/#sec-extensions-performance-interface recommends size of 250.
     Vector<RefPtr<PerformanceEntry>> m_resourceTimingBuffer;
-    unsigned m_resourceTimingBufferSize { 150 };
+    unsigned m_resourceTimingBufferSize { 250 };
 
     Timer m_resourceTimingBufferFullTimer;
     Vector<RefPtr<PerformanceEntry>> m_backupResourceTimingBuffer;
