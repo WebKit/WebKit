@@ -46,6 +46,8 @@ static auto *tabsManifest = @{
         @"type": @"module",
         @"persistent": @NO,
     },
+
+    @"permissions": @[ @"tabs" ],
 };
 
 static auto *tabsManifestV2 = @{
@@ -740,6 +742,8 @@ TEST(WKWebExtensionAPITabs, QueryWithAccessPrompt)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionTabs];
 
     __block bool firstPermissionRequest = true;
     auto *localhostURL = server.requestWithLocalhost().URL;

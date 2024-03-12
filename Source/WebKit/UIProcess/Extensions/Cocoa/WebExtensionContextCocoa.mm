@@ -1049,11 +1049,11 @@ WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::removeExpi
     return matchPatternMap;
 }
 
-void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& requestedMatchPatterns, RefPtr<WebExtensionTab> tab, CompletionHandler<void(MatchPatternSet&&, MatchPatternSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion)
+void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& requestedMatchPatterns, RefPtr<WebExtensionTab> tab, CompletionHandler<void(MatchPatternSet&&, MatchPatternSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion, OptionSet<PermissionStateOptions> options)
 {
     MatchPatternSet neededMatchPatterns;
     for (auto& pattern : requestedMatchPatterns) {
-        if (needsPermission(pattern, tab.get()))
+        if (needsPermission(pattern, tab.get(), options))
             neededMatchPatterns.addVoid(pattern);
     }
 
@@ -1103,13 +1103,13 @@ void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& 
     }).get()];
 }
 
-void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& requestedURLs, RefPtr<WebExtensionTab> tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion)
+void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& requestedURLs, RefPtr<WebExtensionTab> tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion, OptionSet<PermissionStateOptions> options)
 {
     URLSet neededURLs;
     for (auto& url : requestedURLs) {
         // Only HTTP family URLs are really valid to request. This avoids requesting for
         // things like new tab pages, special tabs, other extensions, about:blank, etc.
-        if (url.protocolIsInHTTPFamily() && needsPermission(url, tab.get()))
+        if (url.protocolIsInHTTPFamily() && needsPermission(url, tab.get(), options))
             neededURLs.addVoid(url);
     }
 
@@ -1173,11 +1173,11 @@ void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& request
     }).get()];
 }
 
-void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPermissions, RefPtr<WebExtensionTab> tab, CompletionHandler<void(PermissionsSet&&, PermissionsSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion)
+void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPermissions, RefPtr<WebExtensionTab> tab, CompletionHandler<void(PermissionsSet&&, PermissionsSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion, OptionSet<PermissionStateOptions> options)
 {
     PermissionsSet neededPermissions;
     for (auto& permission : requestedPermissions) {
-        if (needsPermission(permission, tab.get()))
+        if (needsPermission(permission, tab.get(), options))
             neededPermissions.addVoid(permission);
     }
 
@@ -1386,6 +1386,11 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (extension().hasRequestedPermission(permission))
         return PermissionState::RequestedExplicitly;
 
+    if (options.contains(PermissionStateOptions::IncludeOptionalPermissions)) {
+        if (extension().optionalPermissions().contains(permission))
+            return PermissionState::RequestedImplicitly;
+    }
+
     return PermissionState::Unknown;
 }
 
@@ -1502,6 +1507,11 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (options.contains(PermissionStateOptions::RequestedWithTabsPermission) && hasPermission(_WKWebExtensionPermissionTabs, tab, options))
         return PermissionState::RequestedImplicitly;
 
+    if (options.contains(PermissionStateOptions::IncludeOptionalPermissions)) {
+        if (WebExtensionMatchPattern::patternsMatchURL(extension().optionalPermissionMatchPatterns(), url))
+            return cacheResultAndReturn(PermissionState::RequestedImplicitly);
+    }
+
     return cacheResultAndReturn(PermissionState::Unknown);
 }
 
@@ -1582,6 +1592,11 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
 
     if (options.contains(PermissionStateOptions::RequestedWithTabsPermission) && hasPermission(_WKWebExtensionPermissionTabs, tab, options))
         return PermissionState::RequestedImplicitly;
+
+    if (options.contains(PermissionStateOptions::IncludeOptionalPermissions)) {
+        if (WebExtensionMatchPattern::patternsMatchPattern(extension().optionalPermissionMatchPatterns(), pattern))
+            return PermissionState::RequestedImplicitly;
+    }
 
     return PermissionState::Unknown;
 }

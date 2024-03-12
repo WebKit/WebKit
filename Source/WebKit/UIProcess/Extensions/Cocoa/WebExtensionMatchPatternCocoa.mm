@@ -68,10 +68,20 @@ WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::supportedSchem
     return schemes;
 }
 
-bool WebExtensionMatchPattern::patternsMatchURL(const MatchPatternSet& matchPatterns, URL& url)
+bool WebExtensionMatchPattern::patternsMatchURL(const MatchPatternSet& matchPatterns, const URL& url)
 {
     for (auto& matchPattern : matchPatterns) {
         if (matchPattern->matchesURL(url))
+            return true;
+    }
+
+    return false;
+}
+
+bool WebExtensionMatchPattern::patternsMatchPattern(const MatchPatternSet& matchPatterns, const WebExtensionMatchPattern& otherPattern)
+{
+    for (auto& matchPattern : matchPatterns) {
+        if (matchPattern->matchesPattern(otherPattern))
             return true;
     }
 

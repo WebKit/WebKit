@@ -123,14 +123,14 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
         resultHolder->matchPatternsAreGranted = neededMatchPatterns.size() == allowedMatchPatterns.size();
         resultHolder->neededMatchPatterns = WTFMove(neededMatchPatterns);
         resultHolder->permissionExpirationDate = expirationDate;
-    }, GrantOnCompletion::No);
+    }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
 
     requestPermissions(permissions, nullptr, [callbackAggregator, resultHolder](PermissionsSet&& neededPermissions, PermissionsSet&& allowedPermissions, WallTime expirationDate) {
         // The permissions.request() API only allows granting all or none.
         resultHolder->permissionsAreGranted = neededPermissions.size() == allowedPermissions.size();
         resultHolder->neededPermissions = WTFMove(neededPermissions);
         resultHolder->matchPatternExpirationDate = expirationDate;
-    }, GrantOnCompletion::No);
+    }, GrantOnCompletion::No, PermissionStateOptions::IncludeOptionalPermissions);
 }
 
 void WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)

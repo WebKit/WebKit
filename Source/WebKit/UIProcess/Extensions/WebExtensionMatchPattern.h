@@ -75,7 +75,8 @@ public:
     static Ref<WebExtensionMatchPattern> allHostsAndSchemesMatchPattern();
 
     static bool patternsMatchAllHosts(const MatchPatternSet&);
-    static bool patternsMatchURL(const MatchPatternSet&, URL&);
+    static bool patternsMatchURL(const MatchPatternSet&, const URL&);
+    static bool patternsMatchPattern(const MatchPatternSet&, const WebExtensionMatchPattern&);
 
     explicit WebExtensionMatchPattern() { }
     explicit WebExtensionMatchPattern(const String& pattern, NSError **outError = nullptr);
