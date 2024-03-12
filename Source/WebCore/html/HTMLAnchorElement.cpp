@@ -3,6 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -140,20 +141,16 @@ static bool hasNonEmptyBox(RenderBoxModelObject* renderer)
 
 bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
-    if (!isLink())
-        return HTMLElement::isKeyboardFocusable(event);
-
     if (!isFocusable())
         return false;
     
-    if (!document().frame())
-        return false;
+    // Anchor is focusable if the base element supports focus and is focusable.
+    if (isFocusable() && Element::supportsFocus())
+        return HTMLElement::isKeyboardFocusable(event);
 
-    if (!document().frame()->eventHandler().tabsToLinks(event))
+    if (isLink() && !document().frame()->eventHandler().tabsToLinks(event))
         return false;
-
-    if (!renderer() && ancestorsOfType<HTMLCanvasElement>(*this).first())
-        return true;
+    return HTMLElement::isKeyboardFocusable(event);
 
     return hasNonEmptyBox(renderBoxModelObject());
 }

@@ -17,7 +17,6 @@ function log(msg)
 function windowFocused(win, name)
 {
     return function() {
-        win.document.body.style.background = "green";
         log(name + ': window focused');
     }
 }
