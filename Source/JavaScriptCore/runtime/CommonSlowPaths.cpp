@@ -914,6 +914,14 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_property_key)
     RETURN(GET_C(bytecode.m_src).jsValue().toPropertyKeyValue(globalObject));
 }
 
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_property_key_or_number)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpToPropertyKeyOrNumber>();
+    JSValue srcValue = GET_C(bytecode.m_src).jsValue();
+    RETURN(srcValue.isNumber() ? srcValue : srcValue.toPropertyKeyValue(globalObject));
+}
+
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_property_enumerator)
 {
     BEGIN();

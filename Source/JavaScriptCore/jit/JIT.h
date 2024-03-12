@@ -526,6 +526,7 @@ namespace JSC {
         void emit_op_log_shadow_chicken_prologue(const JSInstruction*);
         void emit_op_log_shadow_chicken_tail(const JSInstruction*);
         void emit_op_to_property_key(const JSInstruction*);
+        void emit_op_to_property_key_or_number(const JSInstruction*);
 
         template<typename OpcodeType>
         void generateGetByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);

@@ -424,6 +424,26 @@ void JIT::emit_op_to_property_key(const JSInstruction* currentInstruction)
         emitPutVirtualRegister(dst, jsRegT10);
 }
 
+void JIT::emit_op_to_property_key_or_number(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpToPropertyKeyOrNumber>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister src = bytecode.m_src;
+
+    emitGetVirtualRegister(src, jsRegT10);
+
+    JumpList done;
+
+    done.append(branchIfNumber(jsRegT10, regT2));
+    addSlowCase(branchIfNotCell(jsRegT10));
+    done.append(branchIfSymbol(jsRegT10.payloadGPR()));
+    addSlowCase(branchIfNotString(jsRegT10.payloadGPR()));
+
+    done.link(this);
+    if (src != dst)
+        emitPutVirtualRegister(dst, jsRegT10);
+}
+
 void JIT::emit_op_set_function_name(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSetFunctionName>();
