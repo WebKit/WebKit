@@ -263,7 +263,11 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     // FIXME: <https://webkit.org/b/249266> Remove registered scripts from storage if an extension has updated.
 
-    moveLocalStorageIfNeeded(lastSeenBaseURL, [&] {
+    moveLocalStorageIfNeeded(lastSeenBaseURL, [this, protectedThis = Ref { *this }] {
+        // The extension could have been unloaded before this was called.
+        if (!isLoaded())
+            return;
+
         loadBackgroundWebViewDuringLoad();
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
