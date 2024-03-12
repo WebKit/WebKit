@@ -253,7 +253,9 @@ void logMemoryStatistics(LogMemoryStatisticsReason reason)
 #endif
 
 #if !PLATFORM(COCOA)
+#if !USE(SKIA)
 void platformReleaseMemory(Critical) { }
+#endif
 void platformReleaseGraphicsMemory(Critical) { }
 void jettisonExpensiveObjectsOnTopLevelNavigation() { }
 void registerMemoryReleaseNotifyCallbacks() { }
