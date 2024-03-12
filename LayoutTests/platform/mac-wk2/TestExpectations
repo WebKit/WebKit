@@ -2008,7 +2008,3 @@ webkit.org/b/270235 [ Ventura+ Debug x86_64 ] webgl/pending/conformance/glsl/mis
 # webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
 [ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Pass ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Pass ]
-
-# webkit.org/b/270823 REGRESSION (275808@main): [ MacOS ] 2x fast/forms/switch/no-pixels-outside-the-box tests are constant failures 
-[ Sonoma+ x86_64 ] fast/forms/switch/no-pixels-outside-the-box-vertical-lr-rtl.html [ ImageOnlyFailure ]
-[ Sonoma+ x86_64 ] fast/forms/switch/no-pixels-outside-the-box.html [ ImageOnlyFailure ]
