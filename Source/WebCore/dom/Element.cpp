@@ -70,6 +70,7 @@
 #include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNameCollection.h"
@@ -261,6 +262,7 @@ Element::~Element()
     ASSERT(!afterPseudoElement());
 
     elementIdentifiersMap().remove(*this);
+    ASSERT(!is<HTMLImageElement>(*this) || !intersectionObserverDataIfExists());
     disconnectFromIntersectionObservers();
 
     disconnectFromResizeObservers();
@@ -4523,6 +4525,7 @@ void Element::disconnectFromIntersectionObserversSlow(IntersectionObserverData& 
 
 IntersectionObserverData& Element::ensureIntersectionObserverData()
 {
+    ASSERT(!is<HTMLImageElement>(*this));
     auto& rareData = ensureElementRareData();
     if (!rareData.intersectionObserverData())
         rareData.setIntersectionObserverData(makeUnique<IntersectionObserverData>());

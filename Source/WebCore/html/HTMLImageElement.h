@@ -259,13 +259,17 @@ private:
     HTMLSourceElement* sourceElement() const;
     void setSourceElement(HTMLSourceElement*);
 
-    std::unique_ptr<HTMLImageLoader> m_imageLoader;
+    IntersectionObserverData& ensureIntersectionObserverData() final;
+    IntersectionObserverData* intersectionObserverDataIfExists() final;
 
-    CompositeOperator m_compositeOperator;
+    std::unique_ptr<HTMLImageLoader> m_imageLoader;
+    std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
+
     AtomString m_bestFitImageURL;
     URL m_currentURL;
     AtomString m_currentSrc;
     AtomString m_parsedUsemap;
+    CompositeOperator m_compositeOperator;
     float m_imageDevicePixelRatio;
 #if ENABLE(SERVICE_CONTROLS)
     bool m_isImageMenuEnabled { false };

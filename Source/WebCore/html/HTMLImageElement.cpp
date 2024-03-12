@@ -107,6 +107,7 @@ Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Doc
 
 HTMLImageElement::~HTMLImageElement()
 {
+    disconnectFromIntersectionObservers();
     document().removeDynamicMediaQueryDependentImage(*this);
     setForm(nullptr);
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -1112,6 +1113,18 @@ bool HTMLImageElement::originClean(const SecurityOrigin& origin) const
     ASSERT(cachedImage->origin());
     ASSERT(origin.toString() == cachedImage->origin()->toString());
     return true;
+}
+
+IntersectionObserverData& HTMLImageElement::ensureIntersectionObserverData()
+{
+    if (!m_intersectionObserverData)
+        m_intersectionObserverData = makeUnique<IntersectionObserverData>();
+    return *m_intersectionObserverData;
+}
+
+IntersectionObserverData* HTMLImageElement::intersectionObserverDataIfExists()
+{
+    return m_intersectionObserverData.get();
 }
 
 }
