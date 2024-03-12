@@ -147,36 +147,35 @@ bool JSCell::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, u
 
 JSValue JSCell::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType preferredType) const
 {
-    if (isString())
-        return static_cast<const JSString*>(this)->toPrimitive(globalObject, preferredType);
-    if (isSymbol())
-        return static_cast<const Symbol*>(this)->toPrimitive(globalObject, preferredType);
-    if (isHeapBigInt())
-        return static_cast<const JSBigInt*>(this)->toPrimitive(globalObject, preferredType);
-    return static_cast<const JSObject*>(this)->toPrimitive(globalObject, preferredType);
+    if (const auto* string = jsDynamicCast<const JSString*>(this))
+        return string->toPrimitive(globalObject, preferredType);
+    if (const auto* symbol = jsDynamicCast<const Symbol*>(this))
+        return symbol->toPrimitive(globalObject, preferredType);
+    if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
+        return bigInt->toPrimitive(globalObject, preferredType);
+    return jsSecureCast<const JSObject*>(this)->toPrimitive(globalObject, preferredType);
 }
 
 double JSCell::toNumber(JSGlobalObject* globalObject) const
 {
-    if (isString())
-        return static_cast<const JSString*>(this)->toNumber(globalObject);
-    if (isSymbol())
-        return static_cast<const Symbol*>(this)->toNumber(globalObject);
-    if (isHeapBigInt())
-        return static_cast<const JSBigInt*>(this)->toNumber(globalObject);
-    return static_cast<const JSObject*>(this)->toNumber(globalObject);
+    if (const auto* string = jsDynamicCast<const JSString*>(this))
+        return string->toNumber(globalObject);
+    if (const auto* symbol = jsDynamicCast<const Symbol*>(this))
+        return symbol->toNumber(globalObject);
+    if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
+        return bigInt->toNumber(globalObject);
+    return jsSecureCast<const JSObject*>(this)->toNumber(globalObject);
 }
 
 JSObject* JSCell::toObjectSlow(JSGlobalObject* globalObject) const
 {
     Integrity::auditStructureID(structureID());
     ASSERT(!isObject());
-    if (isString())
-        return static_cast<const JSString*>(this)->toObject(globalObject);
-    if (isHeapBigInt())
-        return static_cast<const JSBigInt*>(this)->toObject(globalObject);
-    ASSERT(isSymbol());
-    return static_cast<const Symbol*>(this)->toObject(globalObject);
+    if (const auto* string = jsDynamicCast<const JSString*>(this))
+        return string->toObject(globalObject);
+    if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
+        return bigInt->toObject(globalObject);
+    return jsSecureCast<const Symbol*>(this)->toObject(globalObject);
 }
 
 void slowValidateCell(JSCell* cell)
