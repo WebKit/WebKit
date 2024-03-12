@@ -182,12 +182,11 @@ void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescr
     ASSERT(m_backing);
 
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
+    RELEASE_ASSERT(convertedDescriptor);
 
     auto presentationContext = m_backing->createPresentationContext(*convertedDescriptor);
-    auto remotePresentationContext = RemotePresentationContext::create(presentationContext, m_objectHeap, *m_streamConnection, identifier);
+    RELEASE_ASSERT(presentationContext);
+    auto remotePresentationContext = RemotePresentationContext::create(*presentationContext, m_objectHeap, *m_streamConnection, identifier);
     m_objectHeap->addObject(identifier, remotePresentationContext);
 }
 
@@ -197,7 +196,8 @@ void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
     ASSERT(m_backing);
 
     auto compositorIntegration = m_backing->createCompositorIntegration();
-    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(compositorIntegration, m_objectHeap, *m_streamConnection, *this, identifier);
+    RELEASE_ASSERT(compositorIntegration);
+    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(*compositorIntegration, m_objectHeap, *m_streamConnection, *this, identifier);
     m_objectHeap->addObject(identifier, remoteCompositorIntegration);
 }
 

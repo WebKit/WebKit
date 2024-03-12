@@ -100,7 +100,7 @@ private:
     void popDebugGroup() final;
     void insertDebugMarker(String&& markerLabel) final;
 
-    Ref<WebCore::WebGPU::RenderBundle> finish(const WebCore::WebGPU::RenderBundleDescriptor&) final;
+    RefPtr<WebCore::WebGPU::RenderBundle> finish(const WebCore::WebGPU::RenderBundleDescriptor&) final;
 
     void setLabelInternal(const String&) final;
 

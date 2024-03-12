@@ -34,6 +34,7 @@
 
 namespace WebKit {
 
+class MediaPlaybackTargetContextSerialized;
 class WebProcess;
 
 class RemoteMediaSessionHelper final

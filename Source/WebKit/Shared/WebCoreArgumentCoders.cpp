@@ -266,7 +266,7 @@ std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>
     return fontCustomPlatformData.releaseNonNull();
 }
 
-void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encode(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
+void ArgumentCoder<WebCore::FontPlatformDataAttributes>::encode(Encoder& encoder, const WebCore::FontPlatformDataAttributes& data)
 {
     encoder << data.m_orientation;
     encoder << data.m_widthVariant;
@@ -278,7 +278,7 @@ void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encode(Encoder& encod
     encodePlatformData(encoder, data);
 }
 
-std::optional<FontPlatformData::Attributes> ArgumentCoder<FontPlatformData::Attributes>::decode(Decoder& decoder)
+std::optional<FontPlatformDataAttributes> ArgumentCoder<FontPlatformDataAttributes>::decode(Decoder& decoder)
 {
     std::optional<WebCore::FontOrientation> orientation;
     decoder >> orientation;
@@ -310,7 +310,7 @@ std::optional<FontPlatformData::Attributes> ArgumentCoder<FontPlatformData::Attr
     if (!syntheticOblique)
         return std::nullopt;
 
-    FontPlatformData::Attributes result(size.value(), orientation.value(), widthVariant.value(), textRenderingMode.value(), syntheticBold.value(), syntheticOblique.value());
+    FontPlatformDataAttributes result(size.value(), orientation.value(), widthVariant.value(), textRenderingMode.value(), syntheticBold.value(), syntheticOblique.value());
 
     if (!decodePlatformData(decoder, result))
         return std::nullopt;

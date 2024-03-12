@@ -81,7 +81,7 @@ public:
     void popDebugGroup();
     void insertDebugMarker(String&& markerLabel);
 
-    Ref<GPURenderBundle> finish(const std::optional<GPURenderBundleDescriptor>&);
+    ExceptionOr<Ref<GPURenderBundle>> finish(const std::optional<GPURenderBundleDescriptor>&);
 
     WebGPU::RenderBundleEncoder& backing() { return m_backing; }
     const WebGPU::RenderBundleEncoder& backing() const { return m_backing; }

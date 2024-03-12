@@ -49,7 +49,7 @@ public:
         return adoptRef(*new GPUPresentationContext(WTFMove(backing)));
     }
 
-    void configure(const GPUCanvasConfiguration&, GPUIntegerCoordinate, GPUIntegerCoordinate);
+    WARN_UNUSED_RETURN bool configure(const GPUCanvasConfiguration&, GPUIntegerCoordinate, GPUIntegerCoordinate);
     void unconfigure();
 
     RefPtr<GPUTexture> getCurrentTexture();

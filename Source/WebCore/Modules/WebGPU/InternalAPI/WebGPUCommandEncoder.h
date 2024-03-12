@@ -57,8 +57,8 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual Ref<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) = 0;
-    virtual Ref<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) = 0;
+    virtual RefPtr<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) = 0;
+    virtual RefPtr<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) = 0;
 
     virtual void copyBufferToBuffer(
         const Buffer& source,
@@ -100,7 +100,7 @@ public:
         const Buffer& destination,
         Size64 destinationOffset) = 0;
 
-    virtual Ref<CommandBuffer> finish(const CommandBufferDescriptor&) = 0;
+    virtual RefPtr<CommandBuffer> finish(const CommandBufferDescriptor&) = 0;
 
 protected:
     CommandEncoder() = default;

@@ -101,9 +101,9 @@ private:
 
     void requestAdapter(const WebCore::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>&&) final;
 
-    Ref<WebCore::WebGPU::PresentationContext> createPresentationContext(const WebCore::WebGPU::PresentationContextDescriptor&) final;
+    RefPtr<WebCore::WebGPU::PresentationContext> createPresentationContext(const WebCore::WebGPU::PresentationContextDescriptor&) final;
 
-    Ref<WebCore::WebGPU::CompositorIntegration> createCompositorIntegration() final;
+    RefPtr<WebCore::WebGPU::CompositorIntegration> createCompositorIntegration() final;
 
     void abandonGPUProcess();
     void disconnectGpuProcessIfNeeded();

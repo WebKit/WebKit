@@ -143,7 +143,7 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(GPUDisplayBufferDisplayDelegate::create())
     , m_compositorIntegration(gpu.createCompositorIntegration())
-    , m_presentationContext(gpu.createPresentationContext(presentationContextDescriptor(m_compositorIntegration)))
+    , m_presentationContext(m_compositorIntegration ? gpu.createPresentationContext(presentationContextDescriptor(*m_compositorIntegration)) : nullptr)
     , m_width(getCanvasWidth(htmlOrOffscreenCanvas()))
     , m_height(getCanvasHeight(htmlOrOffscreenCanvas()))
 {
@@ -179,7 +179,8 @@ void GPUCanvasContextCocoa::drawBufferToCanvas(SurfaceBuffer)
     base.clearCopiedImage();
     if (auto buffer = base.buffer(); buffer && m_configuration) {
         buffer->flushDrawingContext();
-        m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
+        if (m_compositorIntegration)
+            m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
     }
 }
 
@@ -201,18 +202,22 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
         return { };
 
     if (!configuration.device->isSupportedFormat(configuration.format))
-        return Exception { ExceptionCode::TypeError, "GPUCanvasContextCocoa.configure: Unsupported texture format."_s };
+        return Exception { ExceptionCode::TypeError, "GPUCanvasContext.configure: Unsupported texture format."_s };
 
     for (auto viewFormat : configuration.viewFormats) {
         if (!configuration.device->isSupportedFormat(viewFormat))
             return Exception { ExceptionCode::TypeError, "Unsupported texture view format."_s };
     }
 
+    if (!m_compositorIntegration)
+        return { };
+
     auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height);
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
     ASSERT(!renderBuffers.isEmpty());
 
-    m_presentationContext->configure(configuration, m_width, m_height);
+    if (!m_presentationContext || !m_presentationContext->configure(configuration, m_width, m_height))
+        return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContext.configure: Unable to configure."_s };
 
     m_configuration = {
         *configuration.device,
@@ -229,7 +234,8 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
 
 void GPUCanvasContextCocoa::unconfigure()
 {
-    m_presentationContext->unconfigure();
+    if (m_presentationContext)
+        m_presentationContext->unconfigure();
     m_configuration = std::nullopt;
     ASSERT(!isConfigured());
 }
@@ -245,6 +251,8 @@ RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
         return m_currentTexture;
 
     markContextChangedAndNotifyCanvasObservers();
+    if (!m_presentationContext)
+        return nullptr;
     m_currentTexture = m_presentationContext->getCurrentTexture();
     return m_currentTexture;
 }
@@ -271,7 +279,12 @@ void GPUCanvasContextCocoa::prepareForDisplay()
 
     ASSERT(m_configuration->frameCount < m_configuration->renderBuffers.size());
 
-    m_compositorIntegration->prepareForDisplay([&] {
+    if (!m_compositorIntegration)
+        return;
+
+    m_compositorIntegration->prepareForDisplay([this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
         if (m_configuration->frameCount >= m_configuration->renderBuffers.size())
             return;
         m_layerContentsDisplayDelegate->setDisplayBuffer(m_configuration->renderBuffers[m_configuration->frameCount]);
@@ -280,7 +293,8 @@ void GPUCanvasContextCocoa::prepareForDisplay()
         if (m_currentTexture)
             m_currentTexture->destroy();
         m_currentTexture = nullptr;
-        m_presentationContext->present();
+        if (m_presentationContext)
+            m_presentationContext->present();
     });
 }
 

@@ -49,37 +49,35 @@ RemoteCommandEncoderProxy::~RemoteCommandEncoderProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-Ref<WebCore::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPass(const WebCore::WebGPU::RenderPassDescriptor& descriptor)
+RefPtr<WebCore::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPass(const WebCore::WebGPU::RenderPassDescriptor& descriptor)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
-    if (!convertedDescriptor) {
-        // FIXME: Implement error handling.
-        return RemoteRenderPassEncoderProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
-    }
+    if (!convertedDescriptor)
+        return nullptr;
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteCommandEncoder::BeginRenderPass(*convertedDescriptor, identifier));
-    UNUSED_VARIABLE(sendResult);
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
 
     auto result = RemoteRenderPassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
     result->setLabel(WTFMove(convertedDescriptor->label));
     return result;
 }
 
-Ref<WebCore::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>& descriptor)
+RefPtr<WebCore::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>& descriptor)
 {
     std::optional<WebKit::WebGPU::ComputePassDescriptor> convertedDescriptor;
     if (descriptor) {
         convertedDescriptor = m_convertToBackingContext->convertToBacking(*descriptor);
-        if (!convertedDescriptor) {
-            // FIXME: Implement error handling.
-            return RemoteComputePassEncoderProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
-        }
+        if (!convertedDescriptor)
+            return nullptr;
     }
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteCommandEncoder::BeginComputePass(convertedDescriptor, identifier));
-    UNUSED_VARIABLE(sendResult);
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
 
     auto result = RemoteComputePassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
     result->setLabel(WTFMove(convertedDescriptor->label));
@@ -219,17 +217,16 @@ void RemoteCommandEncoderProxy::resolveQuerySet(
     UNUSED_VARIABLE(sendResult);
 }
 
-Ref<WebCore::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const WebCore::WebGPU::CommandBufferDescriptor& descriptor)
+RefPtr<WebCore::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const WebCore::WebGPU::CommandBufferDescriptor& descriptor)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
-    if (!convertedDescriptor) {
-        // FIXME: Implement error handling.
-        return RemoteCommandBufferProxy::create(m_parent, m_convertToBackingContext, WebGPUIdentifier::generate());
-    }
+    if (!convertedDescriptor)
+        return nullptr;
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteCommandEncoder::Finish(*convertedDescriptor, identifier));
-    UNUSED_VARIABLE(sendResult);
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
 
     auto result = RemoteCommandBufferProxy::create(m_parent, m_convertToBackingContext, identifier);
     result->setLabel(WTFMove(convertedDescriptor->label));

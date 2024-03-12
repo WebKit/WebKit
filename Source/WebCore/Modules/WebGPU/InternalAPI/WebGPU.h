@@ -54,9 +54,9 @@ public:
     virtual void ref() const = 0;
     virtual void deref() const = 0;
 
-    virtual Ref<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
+    virtual RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 
-    virtual Ref<CompositorIntegration> createCompositorIntegration() = 0;
+    virtual RefPtr<CompositorIntegration> createCompositorIntegration() = 0;
     virtual void paintToCanvas(WebCore::NativeImage&, const WebCore::IntSize&, WebCore::GraphicsContext&) = 0;
 
 protected:

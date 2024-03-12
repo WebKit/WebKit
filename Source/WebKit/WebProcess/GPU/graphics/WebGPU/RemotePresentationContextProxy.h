@@ -76,7 +76,7 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void configure(const WebCore::WebGPU::CanvasConfiguration&) final;
+    bool configure(const WebCore::WebGPU::CanvasConfiguration&) final;
     void unconfigure() final;
 
     RefPtr<WebCore::WebGPU::Texture> getCurrentTexture() final;

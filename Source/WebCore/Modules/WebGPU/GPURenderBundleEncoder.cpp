@@ -125,9 +125,12 @@ static WebGPU::RenderBundleDescriptor convertToBacking(const std::optional<GPURe
     return renderBundleDescriptor->convertToBacking();
 }
 
-Ref<GPURenderBundle> GPURenderBundleEncoder::finish(const std::optional<GPURenderBundleDescriptor>& renderBundleDescriptor)
+ExceptionOr<Ref<GPURenderBundle>> GPURenderBundleEncoder::finish(const std::optional<GPURenderBundleDescriptor>& renderBundleDescriptor)
 {
-    return GPURenderBundle::create(m_backing->finish(convertToBacking(renderBundleDescriptor)));
+    RefPtr bundle = m_backing->finish(convertToBacking(renderBundleDescriptor));
+    if (!bundle)
+        return Exception { ExceptionCode::InvalidStateError, "dynamic offsets overflowed"_s };
+    return GPURenderBundle::create(bundle.releaseNonNull());
 }
 
 }

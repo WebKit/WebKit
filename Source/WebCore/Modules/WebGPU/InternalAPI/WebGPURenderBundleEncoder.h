@@ -82,7 +82,7 @@ public:
     virtual void popDebugGroup() = 0;
     virtual void insertDebugMarker(String&& markerLabel) = 0;
 
-    virtual Ref<RenderBundle> finish(const RenderBundleDescriptor&) = 0;
+    virtual RefPtr<RenderBundle> finish(const RenderBundleDescriptor&) = 0;
 
 protected:
     RenderBundleEncoder() = default;

@@ -48,20 +48,19 @@ RemoteTextureProxy::~RemoteTextureProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-Ref<WebCore::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& descriptor)
+RefPtr<WebCore::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& descriptor)
 {
     std::optional<TextureViewDescriptor> convertedDescriptor;
     if (descriptor) {
         convertedDescriptor = m_convertToBackingContext->convertToBacking(*descriptor);
-        if (!convertedDescriptor) {
-            // FIXME: Implement error handling.
-            return RemoteTextureViewProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
-        }
+        if (!convertedDescriptor)
+            return nullptr;
     }
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteTexture::CreateView(*convertedDescriptor, identifier));
-    UNUSED_VARIABLE(sendResult);
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
 
     auto result = RemoteTextureViewProxy::create(*this, m_convertToBackingContext, identifier);
     result->setLabel(WTFMove(convertedDescriptor->label));

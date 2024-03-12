@@ -206,7 +206,9 @@ void PresentationContextIOSurface::unconfigure()
 
 void PresentationContextIOSurface::present()
 {
-    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    if (m_ioSurfaces.count != m_renderBuffers.size())
+        return;
+
     auto& textureRefPtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
     if (Texture* texturePtr = textureRefPtr.get(); texturePtr && m_computePipelineState) {
         MTLCommandBufferDescriptor *descriptor = [MTLCommandBufferDescriptor new];

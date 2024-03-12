@@ -56,8 +56,8 @@ public:
     String label() const;
     void setLabel(String&&);
 
-    Ref<GPURenderPassEncoder> beginRenderPass(const GPURenderPassDescriptor&);
-    Ref<GPUComputePassEncoder> beginComputePass(const std::optional<GPUComputePassDescriptor>&);
+    ExceptionOr<Ref<GPURenderPassEncoder>> beginRenderPass(const GPURenderPassDescriptor&);
+    ExceptionOr<Ref<GPUComputePassEncoder>> beginComputePass(const std::optional<GPUComputePassDescriptor>&);
 
     void copyBufferToBuffer(
         const GPUBuffer& source,
@@ -99,7 +99,7 @@ public:
         const GPUBuffer& destination,
         GPUSize64 destinationOffset);
 
-    Ref<GPUCommandBuffer> finish(const std::optional<GPUCommandBufferDescriptor>&);
+    ExceptionOr<Ref<GPUCommandBuffer>> finish(const std::optional<GPUCommandBufferDescriptor>&);
 
     WebGPU::CommandEncoder& backing() { return m_backing; }
     const WebGPU::CommandEncoder& backing() const { return m_backing; }

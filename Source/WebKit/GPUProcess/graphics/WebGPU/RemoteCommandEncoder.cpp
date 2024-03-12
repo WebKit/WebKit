@@ -63,12 +63,11 @@ void RemoteCommandEncoder::stopListeningForIPC()
 void RemoteCommandEncoder::beginRenderPass(const WebGPU::RenderPassDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
+    RELEASE_ASSERT(convertedDescriptor);
 
     auto renderPassEncoder = m_backing->beginRenderPass(*convertedDescriptor);
-    auto remoteRenderPassEncoder = RemoteRenderPassEncoder::create(renderPassEncoder, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    RELEASE_ASSERT(renderPassEncoder);
+    auto remoteRenderPassEncoder = RemoteRenderPassEncoder::create(*renderPassEncoder, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteRenderPassEncoder);
 }
 
@@ -77,14 +76,13 @@ void RemoteCommandEncoder::beginComputePass(const std::optional<WebGPU::ComputeP
     std::optional<WebCore::WebGPU::ComputePassDescriptor> convertedDescriptor;
     if (descriptor) {
         auto resultDescriptor = m_objectHeap.convertFromBacking(*descriptor);
-        ASSERT(resultDescriptor);
+        RELEASE_ASSERT(resultDescriptor);
         convertedDescriptor = WTFMove(resultDescriptor);
-        if (!convertedDescriptor)
-            return;
     }
 
     auto computePassEncoder = m_backing->beginComputePass(convertedDescriptor);
-    auto computeRenderPassEncoder = RemoteComputePassEncoder::create(computePassEncoder, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    RELEASE_ASSERT(computePassEncoder);
+    auto computeRenderPassEncoder = RemoteComputePassEncoder::create(*computePassEncoder, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, computeRenderPassEncoder);
 }
 
@@ -214,12 +212,11 @@ void RemoteCommandEncoder::resolveQuerySet(
 void RemoteCommandEncoder::finish(const WebGPU::CommandBufferDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
+    RELEASE_ASSERT(convertedDescriptor);
 
     auto commandBuffer = m_backing->finish(*convertedDescriptor);
-    auto remoteCommandBuffer = RemoteCommandBuffer::create(commandBuffer, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    RELEASE_ASSERT(commandBuffer);
+    auto remoteCommandBuffer = RemoteCommandBuffer::create(*commandBuffer, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteCommandBuffer);
 }
 

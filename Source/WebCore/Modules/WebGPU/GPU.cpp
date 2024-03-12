@@ -77,14 +77,20 @@ Ref<WGSLLanguageFeatures> GPU::wgslLanguageFeatures() const
     return m_wgslLanguageFeatures;
 }
 
-Ref<GPUPresentationContext> GPU::createPresentationContext(const GPUPresentationContextDescriptor& presentationContextDescriptor)
+RefPtr<GPUPresentationContext> GPU::createPresentationContext(const GPUPresentationContextDescriptor& presentationContextDescriptor)
 {
-    return GPUPresentationContext::create(m_backing->createPresentationContext(presentationContextDescriptor.convertToBacking()));
+    RefPtr context = m_backing->createPresentationContext(presentationContextDescriptor.convertToBacking());
+    if (!context)
+        return nullptr;
+    return GPUPresentationContext::create(context.releaseNonNull());
 }
 
-Ref<GPUCompositorIntegration> GPU::createCompositorIntegration()
+RefPtr<GPUCompositorIntegration> GPU::createCompositorIntegration()
 {
-    return GPUCompositorIntegration::create(m_backing->createCompositorIntegration());
+    RefPtr integration = m_backing->createCompositorIntegration();
+    if (!integration)
+        return nullptr;
+    return GPUCompositorIntegration::create(integration.releaseNonNull());
 }
 
 } // namespace WebCore

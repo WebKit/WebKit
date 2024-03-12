@@ -49,13 +49,8 @@ RemoteBufferProxy::~RemoteBufferProxy()
 void RemoteBufferProxy::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(bool)>&& callback)
 {
     auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), [callback = WTFMove(callback), mapModeFlags, protectedThis = Ref { *this }](auto data) mutable {
-
-        if (!data) {
-            // FIXME: Implement error handling.
-            callback(false);
-            return;
-        }
-
+        if (!data)
+            return callback(false);
         protectedThis->m_data = WTFMove(data);
         protectedThis->m_mapModeFlags = mapModeFlags;
         callback(true);

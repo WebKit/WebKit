@@ -49,7 +49,7 @@ PresentationContextImpl::PresentationContextImpl(WebGPUPtr<WGPUSurface>&& surfac
 
 PresentationContextImpl::~PresentationContextImpl() = default;
 
-void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
+bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
 {
     m_swapChain = nullptr;
 
@@ -69,6 +69,7 @@ void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
     };
 
     m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(canvasConfiguration.device), m_backing.get(), &backingDescriptor));
+    return true;
 }
 
 void PresentationContextImpl::unconfigure()

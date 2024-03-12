@@ -73,9 +73,9 @@ private:
 
     void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) final;
 
-    Ref<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) final;
+    RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) final;
 
-    Ref<CompositorIntegration> createCompositorIntegration() final;
+    RefPtr<CompositorIntegration> createCompositorIntegration() final;
 
     WebGPUPtr<WGPUInstance> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

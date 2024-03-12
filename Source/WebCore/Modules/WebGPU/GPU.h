@@ -58,9 +58,9 @@ public:
     GPUTextureFormat getPreferredCanvasFormat() const;
     Ref<WGSLLanguageFeatures> wgslLanguageFeatures() const;
 
-    Ref<GPUPresentationContext> createPresentationContext(const GPUPresentationContextDescriptor&);
+    RefPtr<GPUPresentationContext> createPresentationContext(const GPUPresentationContextDescriptor&);
 
-    Ref<GPUCompositorIntegration> createCompositorIntegration();
+    RefPtr<GPUCompositorIntegration> createCompositorIntegration();
 
     void paintToCanvas(NativeImage&, const IntSize&, GraphicsContext&);
 
