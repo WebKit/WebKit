@@ -2647,3 +2647,16 @@ webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 webkit.org/b/270195 [ Monterey+ Debug ] fast/text/emoji-num-glyphs.html [ Timeout ]
 
 webkit.org/b/270303 [ Ventura ] tables/mozilla/bugs/bug4527.html [ Failure ]
+
+# webkit.org/b/270860 REGRESSION (275949@main): [ MacOS iOS ] 11X imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break test are consistent/flaky failures
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-loose.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-loose.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-normal.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-loose.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-normal.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-normal.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-loose.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose.html [ Pass Failure ]

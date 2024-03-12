@@ -2401,3 +2401,16 @@ webkit.org/b/269321 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array
 webkit.org/b/269760 mathml/presentation/scripts-underover.html [ Failure ]
 
 webkit.org/b/270477 [ Debug ] accessibility/text-marker/text-marker-range-stale-node-crash.html [ Skip ]
+
+# webkit.org/b/270860 REGRESSION (275949@main): [ MacOS iOS ] 11X imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break test are consistent/flaky failures
+imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-loose.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-loose.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-normal.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-loose.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-normal.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-normal.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-loose.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose.html [ Pass Failure ]
