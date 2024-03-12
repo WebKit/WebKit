@@ -3013,6 +3013,7 @@ void WebExtensionContext::loadBackgroundWebViewDuringLoad()
     if (!extension().hasBackgroundContent())
         return;
 
+    m_safeToLoadBackgroundContent = true;
     m_shouldFireStartupEvent = extensionController()->isFreshlyCreated();
 
     queueStartupAndInstallEventsForExtensionIfNecessary();
@@ -3041,7 +3042,7 @@ void WebExtensionContext::loadBackgroundWebViewIfNeeded()
 {
     ASSERT(isLoaded());
 
-    if (!extension().hasBackgroundContent() || m_backgroundWebView)
+    if (!extension().hasBackgroundContent() || m_backgroundWebView || !safeToLoadBackgroundContent())
         return;
 
     loadBackgroundWebView();
@@ -3055,6 +3056,8 @@ void WebExtensionContext::loadBackgroundWebView()
         return;
 
     RELEASE_LOG_DEBUG(Extensions, "Loading background content");
+
+    ASSERT(safeToLoadBackgroundContent());
 
     ASSERT(!m_backgroundContentIsLoaded);
     m_backgroundContentIsLoaded = false;

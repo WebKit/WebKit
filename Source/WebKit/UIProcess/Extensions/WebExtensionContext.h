@@ -446,6 +446,7 @@ public:
 
     URL backgroundContentURL();
     WKWebView *backgroundWebView() const { return m_backgroundWebView.get(); }
+    bool safeToLoadBackgroundContent() const { return m_safeToLoadBackgroundContent; }
 
     bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
     void didFinishNavigation(WKWebView *, WKNavigation *);
@@ -878,6 +879,7 @@ private:
     std::unique_ptr<WebCore::Timer> m_unloadBackgroundWebViewTimer;
     MonotonicTime m_lastBackgroundPortActivityTime;
     bool m_backgroundContentIsLoaded { false };
+    bool m_safeToLoadBackgroundContent { false };
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WeakHashMap<WebInspectorUIProxy, TabIdentifierWebViewPair> m_inspectorBackgroundPageMap;
