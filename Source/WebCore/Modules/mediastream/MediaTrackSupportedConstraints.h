@@ -35,21 +35,21 @@
 namespace WebCore {
 
 struct MediaTrackSupportedConstraints {
-    bool width;
-    bool height;
-    bool aspectRatio;
-    bool frameRate;
-    bool facingMode;
-    bool volume;
-    bool sampleRate;
-    bool sampleSize;
-    bool echoCancellation;
-    bool deviceId;
-    bool groupId;
-    bool displaySurface;
-    bool whiteBalanceMode;
-    bool zoom;
-    bool torch;
+    bool width { true };
+    bool height { true };
+    bool aspectRatio { true };
+    bool frameRate { true };
+    bool facingMode { true };
+    bool volume { true };
+    bool sampleRate { true };
+    bool sampleSize { true };
+    bool echoCancellation { true };
+    bool deviceId { true };
+    bool groupId { true };
+    bool displaySurface { true };
+    bool whiteBalanceMode { true };
+    bool zoom { true };
+    bool torch { true };
 };
 
 } // namespace WebCore
