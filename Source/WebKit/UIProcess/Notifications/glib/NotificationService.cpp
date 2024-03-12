@@ -47,6 +47,12 @@
 #if USE(CAIRO)
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
+#elif USE(SKIA)
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
+#include <skia/core/SkStream.h>
+#include <skia/encode/SkPngEncoder.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -60,6 +66,48 @@
 namespace WebKit {
 
 static const Seconds s_dbusCallTimeout = 20_ms;
+
+#if USE(SKIA)
+
+// Alias to avoid conflicting with write() below.
+ssize_t (*writeToFD)(int, const void*, size_t) = write;
+
+// Simple stream that writes to an fd.
+class FileDescriptorWriteStream : public SkWStream {
+public:
+    explicit FileDescriptorWriteStream(int fd)
+        : m_fd(fd, UnixFileDescriptor::Adopt)
+    {
+    };
+
+    bool write(const void* buffer, size_t size) final
+    {
+        ssize_t written = writeToFD(m_fd.value(), buffer, size);
+        if (written < 0)
+            return false;
+
+        if (static_cast<size_t>(written) != size)
+            return false;
+
+        m_bytesWritten += written;
+        return true;
+    };
+
+    void flush() final
+    {
+        fsync(m_fd.value());
+    };
+
+    size_t bytesWritten() const final
+    {
+        return m_bytesWritten;
+    };
+
+private:
+    UnixFileDescriptor m_fd;
+    size_t m_bytesWritten { 0 };
+};
+#endif
 
 class IconCache {
     WTF_MAKE_FAST_ALLOCATED;
@@ -114,8 +162,14 @@ public:
             close(fd);
             return status == CAIRO_STATUS_SUCCESS ? filename.get() : CString();
 #elif USE(SKIA)
-            // FIXME: Add Skia implementation
-            return CString();
+            auto stream = FileDescriptorWriteStream(fd); // Transfers fd ownership.
+            SkPixmap pixmap;
+            if (!surface->peekPixels(&pixmap) || !SkPngEncoder::Encode(&stream, pixmap, { })) {
+                g_warning("Failed to encode notification icon to PNG");
+                return { };
+            }
+
+            return filename.get();
 #endif
         };
 
