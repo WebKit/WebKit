@@ -4061,48 +4061,54 @@ static NSString *computeStringHashForContentBlockerRules(NSString *rules)
 
 void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    NSArray<NSString *> *jsonDeserializationErrorStrings;
-    auto *allJSONObjects = [_WKWebExtensionDeclarativeNetRequestTranslator jsonObjectsFromData:rulesData errorStrings:&jsonDeserializationErrorStrings];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), makeBlockPtr([this, protectedThis = Ref { *this }, rulesData = RetainPtr { rulesData }, completionHandler = WTFMove(completionHandler)]() mutable {
+        NSArray<NSString *> *jsonDeserializationErrorStrings;
+        auto *allJSONObjects = [_WKWebExtensionDeclarativeNetRequestTranslator jsonObjectsFromData:rulesData.get() errorStrings:&jsonDeserializationErrorStrings];
 
-    NSArray<NSString *> *parsingErrorStrings;
-    auto *allConvertedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:allJSONObjects errorStrings:&parsingErrorStrings];
+        NSArray<NSString *> *parsingErrorStrings;
+        auto *allConvertedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:allJSONObjects errorStrings:&parsingErrorStrings];
 
-    auto *webKitRules = encodeJSONString(allConvertedRules, JSONOptions::FragmentsAllowed);
-    if (!webKitRules) {
-        completionHandler(false);
-        return;
-    }
-
-    auto *previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDeclarativeNetRequestHashStateKey);
-    auto *hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
-
-    API::ContentRuleListStore::defaultStore().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
-        if (foundRuleList) {
-            if ([previouslyLoadedHash isEqualToString:hashOfWebKitRules]) {
-                for (auto& userContentController : userContentControllers())
-                    userContentController.addContentRuleList(*foundRuleList, m_baseURL);
-
-                completionHandler(true);
-                return;
-            }
+        auto *webKitRules = encodeJSONString(allConvertedRules, JSONOptions::FragmentsAllowed);
+        if (!webKitRules) {
+            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler(false);
+            }).get());
+            return;
         }
 
-        API::ContentRuleListStore::defaultStore().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), String(webKitRules), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), hashOfWebKitRules = String { hashOfWebKitRules }](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
-            if (error) {
-                RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}s", error.message().c_str());
-                completionHandler(false);
-                return;
-            }
+        auto *previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDeclarativeNetRequestHashStateKey);
+        auto *hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
 
-            [m_state setObject:hashOfWebKitRules forKey:lastLoadedDeclarativeNetRequestHashStateKey];
-            writeStateToStorage();
+        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }]() mutable {
+            API::ContentRuleListStore::defaultStore().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash, hashOfWebKitRules, webKitRules](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
+                if (foundRuleList) {
+                    if ([previouslyLoadedHash isEqualToString:hashOfWebKitRules]) {
+                        for (auto& userContentController : userContentControllers())
+                            userContentController.addContentRuleList(*foundRuleList, m_baseURL);
 
-            for (auto& userContentController : userContentControllers())
-                userContentController.addContentRuleList(*ruleList, m_baseURL);
+                        completionHandler(true);
+                        return;
+                    }
+                }
 
-            completionHandler(true);
-        });
-    });
+                API::ContentRuleListStore::defaultStore().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), String(webKitRules), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), hashOfWebKitRules](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
+                    if (error) {
+                        RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}s", error.message().c_str());
+                        completionHandler(false);
+                        return;
+                    }
+
+                    [m_state setObject:hashOfWebKitRules forKey:lastLoadedDeclarativeNetRequestHashStateKey];
+                    writeStateToStorage();
+
+                    for (auto& userContentController : userContentControllers())
+                        userContentController.addContentRuleList(*ruleList, m_baseURL);
+
+                    completionHandler(true);
+                });
+            });
+        }).get());
+    }).get());
 }
 
 void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&& completionHandler)
