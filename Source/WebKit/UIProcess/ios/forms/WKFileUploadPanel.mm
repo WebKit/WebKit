@@ -646,6 +646,25 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     return availableMediaTypeUTIs;
 }
 
+#if HAVE(PHOTOS_UI)
+- (PHPickerConfigurationAssetRepresentationMode)_preferredAssetRepresentationMode
+{
+    // FIXME (270470): `PHPickerConfigurationAssetRepresentationModeCurrent` should always be used
+    // and transcoding should be done based on the value of the `accept` attribute
+
+    if (![_delegate respondsToSelector:@selector(fileUploadPanelPhotoPickerPrefersOriginalImageFormat:)] || ![_delegate fileUploadPanelPhotoPickerPrefersOriginalImageFormat:self])
+        return PHPickerConfigurationAssetRepresentationModeCompatible;
+
+    if (![_acceptedUTIs count])
+        return PHPickerConfigurationAssetRepresentationModeCurrent;
+
+    if ([_acceptedUTIs containsObject:UTTypeImage.identifier])
+        return PHPickerConfigurationAssetRepresentationModeCurrent;
+
+    return PHPickerConfigurationAssetRepresentationModeCompatible;
+}
+#endif
+
 #pragma mark - Source selection menu
 
 - (NSString *)_chooseFilesButtonLabel
@@ -855,7 +874,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 #if HAVE(PHOTOS_UI)
     auto configuration = adoptNS([allocPHPickerConfigurationInstance() init]);
     [configuration setSelectionLimit:_allowMultipleFiles ? 0 : 1];
-    [configuration setPreferredAssetRepresentationMode:PHPickerConfigurationAssetRepresentationModeCompatible];
+    [configuration setPreferredAssetRepresentationMode:[self _preferredAssetRepresentationMode]];
     [configuration _setAllowsDownscaling:YES];
 
     if (auto allowedImagePickerType = _allowedImagePickerTypes.toSingleValue()) {
@@ -944,7 +963,11 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
     [self _processPickerResults:results successBlock:^(NSArray<_WKFileUploadItem *> *items) {
         ensureOnMainRunLoop([self, strongSelf = retainPtr(self), items = retainPtr(items)] {
             [strongSelf->_view _removeTemporaryDirectoriesWhenDeallocated:std::exchange(strongSelf->_temporaryUploadedFileURLs, { })];
-            [self _chooseMediaItems:items.get()];
+
+            if ([self->_photoPicker configuration].preferredAssetRepresentationMode != PHPickerConfigurationAssetRepresentationModeCompatible)
+                [self _uploadMediaItemsTranscodingVideo:items.get()];
+            else
+                [self _chooseMediaItems:items.get()];
         });
     } failureBlock:^{
         ensureOnMainRunLoop([self, strongSelf = retainPtr(self)] {
