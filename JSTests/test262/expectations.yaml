@@ -959,6 +959,39 @@ test/language/expressions/class/elements/nested-direct-eval-err-contains-argumen
 test/language/expressions/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
+test/language/expressions/compound-assignment/S11.13.2_A7.10_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.11_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.1_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.2_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.3_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.4_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.5_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.6_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.7_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.8_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/expressions/compound-assignment/S11.13.2_A7.9_T4.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
 test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'

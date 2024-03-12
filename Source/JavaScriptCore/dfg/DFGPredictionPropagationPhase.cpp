@@ -1470,7 +1470,6 @@ private:
         case ToThis:
         case ToPrimitive: 
         case ToPropertyKey:
-        case ToPropertyKeyOrNumber:
         case NormalizeMapKey:
         case AtomicsAdd:
         case AtomicsAnd:

@@ -1012,12 +1012,6 @@ op :to_property_key,
         src: VirtualRegister,
     }
 
-op :to_property_key_or_number,
-    args: {
-        dst: VirtualRegister,
-        src: VirtualRegister,
-    }
-
 op :put_to_arguments,
     args: {
         arguments: VirtualRegister,

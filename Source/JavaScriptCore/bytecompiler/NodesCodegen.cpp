@@ -2581,7 +2581,7 @@ RegisterID* PostfixNode::emitBracket(BytecodeGenerator& generator, RegisterID* d
         // Never double-evaluate the subscript expression;
         // don't even evaluate it once if the base isn't subscriptable.
         generator.emitRequireObjectCoercible(base.get(), "Cannot access property of undefined or null"_s);
-        property = generator.emitToPropertyKeyOrNumber(generator.newTemporary(), property.get());
+        property = generator.emitToPropertyKey(generator.newTemporary(), property.get());
     }
 
     generator.emitExpressionInfo(bracketAccessor->divot(), bracketAccessor->divotStart(), bracketAccessor->divotEnd());
@@ -2877,7 +2877,7 @@ RegisterID* PrefixNode::emitBracket(BytecodeGenerator& generator, RegisterID* ds
         // Never double-evaluate the subscript expression;
         // don't even evaluate it once if the base isn't subscriptable.
         generator.emitRequireObjectCoercible(base.get(), "Cannot access property of undefined or null"_s);
-        property = generator.emitToPropertyKeyOrNumber(generator.newTemporary(), property.get());
+        property = generator.emitToPropertyKey(generator.newTemporary(), property.get());
     }
     RefPtr<RegisterID> propDst = generator.tempDestination(dst);
 
@@ -3952,12 +3952,6 @@ RegisterID* ReadModifyBracketNode::emitBytecode(BytecodeGenerator& generator, Re
 {
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments || m_rightHasAssignments, m_subscript->isPure(generator) && m_right->isPure(generator));
     RefPtr<RegisterID> property = generator.emitNodeForLeftHandSideForProperty(m_subscript, m_rightHasAssignments, m_right->isPure(generator));
-    if (!m_subscript->isNumber() && !m_subscript->isString()) {
-        // Never double-evaluate the subscript expression;
-        // don't even evaluate it once if the base isn't subscriptable.
-        generator.emitRequireObjectCoercible(base.get(), "Cannot access property of undefined or null"_s);
-        property = generator.emitToPropertyKeyOrNumber(generator.newTemporary(), property.get());
-    }
 
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
     RefPtr<RegisterID> value;
@@ -3985,14 +3979,8 @@ RegisterID* ShortCircuitReadModifyBracketNode::emitBytecode(BytecodeGenerator& g
 {
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments || m_rightHasAssignments, m_subscript->isPure(generator) && m_right->isPure(generator));
     RefPtr<RegisterID> property = generator.emitNodeForLeftHandSideForProperty(m_subscript, m_rightHasAssignments, m_right->isPure(generator));
-    if (!m_subscript->isNumber() && !m_subscript->isString()) {
-        // Never double-evaluate the subscript expression;
-        // don't even evaluate it once if the base isn't subscriptable.
-        generator.emitRequireObjectCoercible(base.get(), "Cannot access property of undefined or null"_s);
-        property = generator.emitToPropertyKeyOrNumber(generator.newTemporary(), property.get());
-    }
-
     RefPtr<RegisterID> thisValue;
+
     RefPtr<RegisterID> result = generator.tempDestination(dst);
 
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
@@ -5697,7 +5685,7 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
                         // And @copyDataProperties performs ToPropertyKey internally.
                         // And for Number case, passing it to GetByVal is better for performance.
                         if (!target.propertyExpression->isNumber() && !target.propertyExpression->isString())
-                            propertyName = generator.emitToPropertyKeyOrNumber(propertyName.get(), propertyName.get());
+                            propertyName = generator.emitToPropertyKey(propertyName.get(), propertyName.get());
                     } else
                         propertyName = generator.emitNodeForProperty(target.propertyExpression);
                     generator.emitGetByVal(temp.get(), rhs, propertyName.get());

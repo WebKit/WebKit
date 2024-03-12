@@ -2494,23 +2494,6 @@ llintOpWithReturn(op_to_property_key, OpToPropertyKey, macro (size, get, dispatc
     dispatch()
 end)
 
-llintOpWithReturn(op_to_property_key_or_number, OpToPropertyKeyOrNumber, macro (size, get, dispatch, return)
-    get(m_src, t2)
-    loadConstantOrVariable(size, t2, t1, t0)
-    addi 1, t2
-    bib t2, LowestTag + 1, .done
-    bineq t1, CellTag, .opToPropertyKeyOrNumberSlow
-    bbeq JSCell::m_type[t0], SymbolType, .done
-    bbneq JSCell::m_type[t0], StringType, .opToPropertyKeyOrNumberSlow
-
-.done:
-    return(t1, t0)
-
-.opToPropertyKeyOrNumberSlow:
-    callSlowPath(_slow_path_to_property_key_or_number)
-    dispatch()
-end)
-
 
 commonOp(llint_op_catch, macro() end, macro (size)
     # This is where we end up from the JIT's throw trampoline (because the

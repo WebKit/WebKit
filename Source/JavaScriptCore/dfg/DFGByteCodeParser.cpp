@@ -6914,13 +6914,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_to_property_key);
         }
 
-        case op_to_property_key_or_number: {
-            auto bytecode = currentInstruction->as<OpToPropertyKeyOrNumber>();
-            Node* value = get(bytecode.m_src);
-            set(bytecode.m_dst, addToGraph(ToPropertyKeyOrNumber, value));
-            NEXT_OPCODE(op_to_property_key_or_number);
-        }
-
         case op_strcat: {
             auto bytecode = currentInstruction->as<OpStrcat>();
             int startOperand = bytecode.m_src.offset();

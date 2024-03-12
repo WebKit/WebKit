@@ -3913,12 +3913,6 @@ RegisterID* BytecodeGenerator::emitToPropertyKey(RegisterID* dst, RegisterID* sr
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitToPropertyKeyOrNumber(RegisterID* dst, RegisterID* src)
-{
-    OpToPropertyKeyOrNumber::emit(this, dst, src);
-    return dst;
-}
-
 void BytecodeGenerator::emitGetScope()
 {
     OpGetScope::emit(this, scopeRegister());

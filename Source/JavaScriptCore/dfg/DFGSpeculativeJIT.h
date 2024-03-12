@@ -1625,7 +1625,6 @@ public:
     void compileNewInternalFieldObject(Node*);
     void compileToPrimitive(Node*);
     void compileToPropertyKey(Node*);
-    void compileToPropertyKeyOrNumber(Node*);
     void compileToNumeric(Node*);
     void compileCallNumberConstructor(Node*);
     void compileLogShadowChickenPrologue(Node*);

@@ -368,7 +368,6 @@ bool doesGC(Graph& graph, Node* node)
     case ToObject:
     case ToPrimitive:
     case ToPropertyKey:
-    case ToPropertyKeyOrNumber:
     case ToThis:
     case TryGetById:
     case CreateThis:

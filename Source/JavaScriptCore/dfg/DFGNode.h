@@ -788,7 +788,7 @@ public:
     
     void convertToToString()
     {
-        ASSERT(m_op == ToPrimitive || m_op == StringValueOf || m_op == ToPropertyKey || m_op == ToPropertyKeyOrNumber);
+        ASSERT(m_op == ToPrimitive || m_op == StringValueOf || m_op == ToPropertyKey);
         m_op = ToString;
     }
 

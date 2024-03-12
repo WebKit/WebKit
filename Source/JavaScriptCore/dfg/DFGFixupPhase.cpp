@@ -1732,18 +1732,11 @@ private:
             break;
         }
 
-        case ToPropertyKeyOrNumber: {
-            if (node->child1()->shouldSpeculateNumber()) {
-                fixEdge<NumberUse>(node->child1());
-                node->convertToIdentity();
-                return;
-            }
-            FALLTHROUGH;
-        }
         case ToPropertyKey: {
             if (node->child1()->shouldSpeculateString()) {
                 fixEdge<StringUse>(node->child1());
                 node->convertToIdentity();
+
                 return;
             }
 

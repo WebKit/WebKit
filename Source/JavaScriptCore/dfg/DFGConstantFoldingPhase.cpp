@@ -764,15 +764,6 @@ private:
                 break;
             }
 
-            case ToPropertyKeyOrNumber: {
-                if (m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecString | SpecSymbol))
-                    break;
-
-                node->convertToIdentity();
-                changed = true;
-                break;
-            }
-
             case ToThis: {
                 ToThisResult result = isToThisAnIdentity(node->ecmaMode(), m_state.forNode(node->child1()));
                 if (result == ToThisResult::Identity) {
