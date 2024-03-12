@@ -342,6 +342,9 @@ ExceptionOr<void> ViewTransition::captureOldState()
             if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
+
+                // FIXME: Skip fragmented content.
+
                 captureElements.append(element);
             }
             return { };
@@ -493,7 +496,11 @@ void ViewTransition::activateViewTransition()
     }
 
     setupTransitionPseudoElements();
-    updatePseudoElementStyles();
+    checkFailure = updatePseudoElementStyles();
+    if (checkFailure.hasException()) {
+        skipViewTransition(checkFailure.releaseException());
+        return;
+    }
 
     m_phase = ViewTransitionPhase::Animating;
     m_ready.second->resolve();
@@ -618,15 +625,19 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
 }
 
 // https://drafts.csswg.org/css-view-transitions-1/#update-pseudo-element-styles
-void ViewTransition::updatePseudoElementStyles()
+ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
 {
     auto& resolver = protectedDocument()->styleScope().resolver();
 
     for (auto& [name, capturedElement] : m_namedElements.map()) {
         RefPtr<MutableStyleProperties> properties;
-        if (capturedElement->newElement) {
-            CheckedPtr renderBox = dynamicDowncast<RenderBox>(capturedElement->newElement->renderer());
-            properties = copyElementBaseProperties(*capturedElement->newElement, renderBox ? renderBox->size() : LayoutSize { });
+        if (RefPtr newElement = capturedElement->newElement.get()) {
+            // FIXME: Also check fragmented content here.
+            CheckVisibilityOptions visibilityOptions { .contentVisibilityAuto = true };
+            if (!newElement->checkVisibility(visibilityOptions))
+                return Exception { ExceptionCode::InvalidStateError, "One of the transitioned elements has become hidden."_s };
+            CheckedPtr renderBox = dynamicDowncast<RenderBox>(newElement->renderer());
+            properties = copyElementBaseProperties(*newElement, renderBox ? renderBox->size() : LayoutSize { });
         } else
             properties = capturedElement->oldProperties;
 
@@ -641,6 +652,7 @@ void ViewTransition::updatePseudoElementStyles()
     }
 
     protectedDocument()->styleScope().didChangeStyleSheetContents();
+    return { };
 }
 
 }

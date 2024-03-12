@@ -6922,7 +6922,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/content-visibility-auto
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-transform-new-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/dialog-in-top-layer-during-transition-old.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/element-with-overflow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/exit-transition-with-anonymous-layout-object.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/far-away-capture.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-with-overflow-children-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]

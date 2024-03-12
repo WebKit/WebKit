@@ -157,7 +157,7 @@ private:
 
     Ref<MutableStyleProperties> copyElementBaseProperties(Element&, const LayoutSize&);
 
-    void updatePseudoElementStyles();
+    ExceptionOr<void> updatePseudoElementStyles();
     void setupDynamicStyleSheet(const AtomString&, const CapturedElement&);
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
