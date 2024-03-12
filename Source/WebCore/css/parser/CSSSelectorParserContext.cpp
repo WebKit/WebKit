@@ -34,6 +34,7 @@ namespace WebCore {
 
 CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& context)
     : mode(context.mode)
+    , cssNestingEnabled(context.cssNestingEnabled)
     , customStateSetEnabled(context.customStateSetEnabled)
     , focusVisibleEnabled(context.focusVisibleEnabled)
     , grammarAndSpellingPseudoElementsEnabled(context.grammarAndSpellingPseudoElementsEnabled)
@@ -50,6 +51,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
 
 CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     : mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
+    , cssNestingEnabled(document.settings().cssNestingEnabled())
     , customStateSetEnabled(document.settings().customStateSetEnabled())
     , focusVisibleEnabled(document.settings().focusVisibleEnabled())
     , grammarAndSpellingPseudoElementsEnabled(document.settings().grammarAndSpellingPseudoElementsEnabled())
@@ -68,6 +70,7 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
 {
     add(hasher,
         context.mode,
+        context.cssNestingEnabled,
         context.customStateSetEnabled,
         context.focusVisibleEnabled,
         context.grammarAndSpellingPseudoElementsEnabled,
