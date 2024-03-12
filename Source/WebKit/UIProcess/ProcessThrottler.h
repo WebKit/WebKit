@@ -50,9 +50,6 @@ enum ProcessSuppressionDisabledCounterType { };
 using ProcessSuppressionDisabledCounter = RefCounter<ProcessSuppressionDisabledCounterType>;
 using ProcessSuppressionDisabledToken = ProcessSuppressionDisabledCounter::Token;
 
-enum PageAllowedToRunInTheBackgroundCounterType { };
-using PageAllowedToRunInTheBackgroundCounter = RefCounter<PageAllowedToRunInTheBackgroundCounterType>;
-
 enum class IsSuspensionImminent : bool { No, Yes };
 enum class ProcessThrottleState : uint8_t { Suspended, Background, Foreground };
 enum class ProcessThrottlerActivityType : bool { Background, Foreground };
@@ -124,11 +121,6 @@ public:
     static bool isValidBackgroundActivity(const ActivityVariant&);
     static bool isValidForegroundActivity(const ActivityVariant&);
 
-    // If any page holds one of these tokens, we will never release the "suspended" assertion which
-    // means that the page will not be suspended when in the background, except if the application
-    // also gets backgrounded.
-    PageAllowedToRunInTheBackgroundCounter::Token pageAllowedToRunInTheBackgroundToken();
-
     using TimedActivity = ProcessThrottlerTimedActivity;
 
     void didConnectToProcess(AuxiliaryProcessProxy&);
@@ -168,7 +160,6 @@ private:
     void assertionWasInvalidated();
 
     void clearPendingRequestToSuspend();
-    void numberOfPagesAllowedToRunInTheBackgroundChanged();
     void clearAssertion();
 
     class ProcessAssertionCache;
@@ -186,7 +177,6 @@ private:
     WeakHashSet<Activity> m_backgroundActivities;
     std::optional<uint64_t> m_pendingRequestToSuspendID;
     ProcessThrottleState m_state { ProcessThrottleState::Suspended };
-    PageAllowedToRunInTheBackgroundCounter m_pageAllowedToRunInTheBackgroundCounter;
     bool m_shouldDropNearSuspendedAssertionAfterDelay { false };
     const bool m_shouldTakeUIBackgroundAssertion { false };
     bool m_shouldTakeNearSuspendedAssertion { true };
