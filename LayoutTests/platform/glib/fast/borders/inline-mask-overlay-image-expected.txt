@@ -5,7 +5,7 @@ layer at (0,0) size 785x1848
     RenderBody {BODY} at (8,8) size 769x1832
       RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 612x1824
-  RenderInline {SPAN} at (0,0) size 612x1824 [bgcolor=#800000]
+  RenderInline {SPAN} at (0,4) size 612x1824 [bgcolor=#800000]
     RenderText {#text} at (0,4) size 612x1824
       text run at (0,4) width 356: "This"
       text run at (0,233) width 590: "content"

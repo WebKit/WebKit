@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 323x17
           text run at (0,0) width 323: "The black outline box should stretch from the right "
-        RenderInline {SPAN} at (0,0) size 27x17 [color=#0000FF]
+        RenderInline {SPAN} at (323,0) size 27x17 [color=#0000FF]
           RenderText {#text} at (323,0) size 27x17
             text run at (323,0) width 27: "blue"
         RenderText {#text} at (350,0) size 214x17
           text run at (350,0) width 214: " border on the first line, to the left "
-        RenderInline {SPAN} at (0,0) size 43x17 [color=#FFA500]
+        RenderInline {SPAN} at (564,0) size 43x17 [color=#FFA500]
           RenderText {#text} at (564,0) size 43x17
             text run at (564,0) width 43: "orange"
         RenderText {#text} at (607,0) size 152x17
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           text run at (7,36) width 89 RTL: "duis aute irure"
           text run at (351,54) width 249 RTL: "dolor in reprehenderit in voluptate velit."
 layer at (8,42) size 597x55
-  RenderInline (relative positioned) {SPAN} at (0,0) size 597x55 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #0000FF) (1px solid #808080) (20px solid #FFA500)]
+  RenderInline (relative positioned) {SPAN} at (3,-1) size 597x55 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #0000FF) (1px solid #808080) (20px solid #FFA500)]
     RenderText {#text} at (43,0) size 557x35
       text run at (43,0) width 331 RTL: "con a pariatur. Excepteur sint occaecat cupidatat non"
       text run at (234,18) width 366 RTL: "proident, sunt in culp qui officia deserunt mollit animequs "

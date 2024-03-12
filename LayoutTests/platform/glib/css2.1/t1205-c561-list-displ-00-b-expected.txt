@@ -18,7 +18,7 @@ layer at (0,0) size 800x202
           RenderText {#text} at (0,0) size 94x17
             text run at (0,0) width 94: "3. This should "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {DIV} at (0,0) size 81x17 [color=#000080]
+        RenderInline {DIV} at (94,0) size 81x17 [color=#000080]
           RenderText {#text} at (94,0) size 81x17
             text run at (94,0) width 81: "be line three."
         RenderText {#text} at (0,0) size 0x0

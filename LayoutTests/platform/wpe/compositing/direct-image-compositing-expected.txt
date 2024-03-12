@@ -13,7 +13,7 @@ layer at (0,0) size 785x750
           text run at (0,18) width 681: "ACCELERATED_COMPOSITING and regular TOT should be identical. Running this test manually with "
           text run at (680,18) width 67: "the correct"
           text run at (0,36) width 442: "debug options will show which elements are directly composited. See "
-        RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
+        RenderInline {A} at (442,36) size 305x17 [color=#0000EE]
           RenderText {#text} at (442,36) size 305x17
             text run at (442,36) width 305: "https://bugs.webkit.org/show_bug.cgi?id=23361"
         RenderText {#text} at (0,0) size 0x0

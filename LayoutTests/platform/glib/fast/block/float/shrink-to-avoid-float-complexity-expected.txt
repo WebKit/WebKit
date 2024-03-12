@@ -35,13 +35,13 @@ layer at (208,67) size 469x162
     RenderBR {BR} at (140,0) size 0x17
     RenderText {#text} at (0,18) size 94x17
       text run at (0,18) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,18) size 193x17
       RenderText {#text} at (94,18) size 193x17
         text run at (94,18) width 193: "new block formating context"
-    RenderText {#text} at (287,18) size 404x35
+    RenderText {#text} at (0,18) size 404x35
       text run at (287,18) width 117: " thanks to the CSS"
       text run at (0,36) width 73: "declaration "
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (73,39) size 128x15
       RenderText {#text} at (73,39) size 128x15
         text run at (73,39) width 128: "overflow: hidden"
     RenderText {#text} at (201,36) size 4x17
@@ -56,13 +56,13 @@ layer at (208,67) size 469x162
     RenderBR {BR} at (140,90) size 0x17
     RenderText {#text} at (0,108) size 94x17
       text run at (0,108) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,108) size 193x17
       RenderText {#text} at (94,108) size 193x17
         text run at (94,108) width 193: "new block formating context"
-    RenderText {#text} at (287,108) size 404x35
+    RenderText {#text} at (0,108) size 404x35
       text run at (287,108) width 117: " thanks to the CSS"
       text run at (0,126) width 73: "declaration "
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (73,129) size 128x15
       RenderText {#text} at (73,129) size 128x15
         text run at (73,129) width 128: "overflow: hidden"
     RenderText {#text} at (201,126) size 4x17
@@ -86,13 +86,13 @@ layer at (208,412) size 569x162
     RenderBR {BR} at (140,0) size 0x17
     RenderText {#text} at (0,18) size 94x17
       text run at (0,18) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,18) size 193x17
       RenderText {#text} at (94,18) size 193x17
         text run at (94,18) width 193: "new block formating context"
     RenderText {#text} at (287,18) size 194x17
       text run at (287,18) width 194: " thanks to the CSS declaration "
-    RenderInline {CODE} at (0,0) size 553x33
-      RenderText {#text} at (481,21) size 553x33
+    RenderInline {CODE} at (0,21) size 553x33
+      RenderText {#text} at (0,21) size 553x33
         text run at (481,21) width 72: "overflow:"
         text run at (0,39) width 48: "hidden"
     RenderText {#text} at (48,36) size 4x17
@@ -107,13 +107,13 @@ layer at (208,412) size 569x162
     RenderBR {BR} at (140,90) size 0x17
     RenderText {#text} at (0,108) size 94x17
       text run at (0,108) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,108) size 193x17
       RenderText {#text} at (94,108) size 193x17
         text run at (94,108) width 193: "new block formating context"
     RenderText {#text} at (287,108) size 194x17
       text run at (287,108) width 194: " thanks to the CSS declaration "
-    RenderInline {CODE} at (0,0) size 553x33
-      RenderText {#text} at (481,111) size 553x33
+    RenderInline {CODE} at (0,111) size 553x33
+      RenderText {#text} at (0,111) size 553x33
         text run at (481,111) width 72: "overflow:"
         text run at (0,129) width 48: "hidden"
     RenderText {#text} at (48,126) size 4x17
@@ -138,13 +138,13 @@ layer at (308,757) size 369x162
     RenderBR {BR} at (140,0) size 0x17
     RenderText {#text} at (0,18) size 94x17
       text run at (0,18) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,18) size 193x17
       RenderText {#text} at (94,18) size 193x17
         text run at (94,18) width 193: "new block formating context"
-    RenderText {#text} at (287,18) size 348x35
+    RenderText {#text} at (0,18) size 348x35
       text run at (287,18) width 61: " thanks to"
       text run at (0,36) width 129: "the CSS declaration "
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (129,39) size 128x15
       RenderText {#text} at (129,39) size 128x15
         text run at (129,39) width 128: "overflow: hidden"
     RenderText {#text} at (257,36) size 4x17
@@ -159,13 +159,13 @@ layer at (308,757) size 369x162
     RenderBR {BR} at (140,90) size 0x17
     RenderText {#text} at (0,108) size 94x17
       text run at (0,108) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,108) size 193x17
       RenderText {#text} at (94,108) size 193x17
         text run at (94,108) width 193: "new block formating context"
-    RenderText {#text} at (287,108) size 348x35
+    RenderText {#text} at (0,108) size 348x35
       text run at (287,108) width 61: " thanks to"
       text run at (0,126) width 129: "the CSS declaration "
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (129,129) size 128x15
       RenderText {#text} at (129,129) size 128x15
         text run at (129,129) width 128: "overflow: hidden"
     RenderText {#text} at (257,126) size 4x17
@@ -194,13 +194,13 @@ layer at (208,1102) size 369x162
     RenderBR {BR} at (140,0) size 0x17
     RenderText {#text} at (0,18) size 94x17
       text run at (0,18) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,18) size 193x17
       RenderText {#text} at (94,18) size 193x17
         text run at (94,18) width 193: "new block formating context"
-    RenderText {#text} at (287,18) size 348x35
+    RenderText {#text} at (0,18) size 348x35
       text run at (287,18) width 61: " thanks to"
       text run at (0,36) width 129: "the CSS declaration "
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (129,39) size 128x15
       RenderText {#text} at (129,39) size 128x15
         text run at (129,39) width 128: "overflow: hidden"
     RenderText {#text} at (257,36) size 4x17
@@ -215,13 +215,13 @@ layer at (208,1102) size 369x162
     RenderBR {BR} at (140,90) size 0x17
     RenderText {#text} at (0,108) size 94x17
       text run at (0,108) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,108) size 193x17
       RenderText {#text} at (94,108) size 193x17
         text run at (94,108) width 193: "new block formating context"
-    RenderText {#text} at (287,108) size 348x35
+    RenderText {#text} at (0,108) size 348x35
       text run at (287,108) width 61: " thanks to"
       text run at (0,126) width 129: "the CSS declaration "
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (129,129) size 128x15
       RenderText {#text} at (129,129) size 128x15
         text run at (129,129) width 128: "overflow: hidden"
     RenderText {#text} at (257,126) size 4x17
@@ -250,13 +250,13 @@ layer at (208,1446) size 369x162
     RenderBR {BR} at (140,0) size 0x17
     RenderText {#text} at (0,18) size 94x17
       text run at (0,18) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,18) size 193x17
       RenderText {#text} at (94,18) size 193x17
         text run at (94,18) width 193: "new block formating context"
-    RenderText {#text} at (287,18) size 348x35
+    RenderText {#text} at (0,18) size 348x35
       text run at (287,18) width 61: " thanks to"
       text run at (0,36) width 129: "the CSS declaration "
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (129,39) size 128x15
       RenderText {#text} at (129,39) size 128x15
         text run at (129,39) width 128: "overflow: hidden"
     RenderText {#text} at (257,36) size 4x17
@@ -271,13 +271,13 @@ layer at (208,1446) size 369x162
     RenderBR {BR} at (140,90) size 0x17
     RenderText {#text} at (0,108) size 94x17
       text run at (0,108) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 193x17
+    RenderInline {STRONG} at (94,108) size 193x17
       RenderText {#text} at (94,108) size 193x17
         text run at (94,108) width 193: "new block formating context"
-    RenderText {#text} at (287,108) size 348x35
+    RenderText {#text} at (0,108) size 348x35
       text run at (287,108) width 61: " thanks to"
       text run at (0,126) width 129: "the CSS declaration "
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (129,129) size 128x15
       RenderText {#text} at (129,129) size 128x15
         text run at (129,129) width 128: "overflow: hidden"
     RenderText {#text} at (257,126) size 4x17
@@ -308,14 +308,14 @@ layer at (308,1791) size 169x270
     RenderBR {BR} at (140,0) size 0x17
     RenderText {#text} at (0,18) size 94x17
       text run at (0,18) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 163x35
-      RenderText {#text} at (94,18) size 163x35
+    RenderInline {STRONG} at (0,18) size 163x35
+      RenderText {#text} at (0,18) size 163x35
         text run at (94,18) width 69: "new block"
         text run at (0,36) width 120: "formating context"
-    RenderText {#text} at (120,36) size 165x35
+    RenderText {#text} at (0,36) size 165x35
       text run at (120,36) width 45: " thanks"
       text run at (0,54) width 141: "to the CSS declaration"
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (0,75) size 128x15
       RenderText {#text} at (0,75) size 128x15
         text run at (0,75) width 128: "overflow: hidden"
     RenderText {#text} at (128,72) size 4x17
@@ -331,14 +331,14 @@ layer at (308,1791) size 169x270
     RenderBR {BR} at (140,144) size 0x17
     RenderText {#text} at (0,162) size 94x17
       text run at (0,162) width 94: "\x{2013} establishes a "
-    RenderInline {STRONG} at (0,0) size 163x35
-      RenderText {#text} at (94,162) size 163x35
+    RenderInline {STRONG} at (0,162) size 163x35
+      RenderText {#text} at (0,162) size 163x35
         text run at (94,162) width 69: "new block"
         text run at (0,180) width 120: "formating context"
-    RenderText {#text} at (120,180) size 165x35
+    RenderText {#text} at (0,180) size 165x35
       text run at (120,180) width 45: " thanks"
       text run at (0,198) width 141: "to the CSS declaration"
-    RenderInline {CODE} at (0,0) size 128x15
+    RenderInline {CODE} at (0,219) size 128x15
       RenderText {#text} at (0,219) size 128x15
         text run at (0,219) width 128: "overflow: hidden"
     RenderText {#text} at (128,216) size 4x17

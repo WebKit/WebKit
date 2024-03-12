@@ -11,7 +11,7 @@ layer at (0,0) size 800x238
         RenderText {#text} at (415,2) size 216x18
           text run at (415,2) width 216: "), and the teal square on the right ("
         RenderImage {IMG} at (630,0) size 20x20
-        RenderText {#text} at (649,2) size 739x36
+        RenderText {#text} at (0,2) size 739x36
           text run at (649,2) width 90: "\x{21E8}) of the blue"
           text run at (0,20) width 61: "rectangle."
       RenderBlock {DIV} at (0,54) size 784x71

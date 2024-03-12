@@ -28,7 +28,7 @@ layer at (0,0) size 785x1217
       RenderBlock {DIV} at (1,226) size 767x20 [border: (1px solid #000000)]
         RenderText {#text} at (739,1) size 27x17
           text run at (739,1) width 27 RTL: "abc "
-        RenderInline {SPAN} at (0,0) size 23x17
+        RenderInline {SPAN} at (717,1) size 23x17
           RenderText {#text} at (717,1) size 23x17
             text run at (717,1) width 23 RTL: "abc"
       RenderBlock {P} at (0,262) size 769x18
@@ -45,7 +45,7 @@ layer at (0,0) size 785x1217
         RenderText {#text} at (0,0) size 417x17
           text run at (0,0) width 417: "The following 2 textes should be identical, ignorning whitespaces:"
       RenderBlock {DIV} at (1,384) size 767x20 [border: (1px solid #000000)]
-        RenderInline {SPAN} at (0,0) size 27x17
+        RenderInline {SPAN} at (739,1) size 27x17
           RenderText {#text} at (739,1) size 27x17
             text run at (739,1) width 27 RTL: "abc "
         RenderText {#text} at (717,1) size 23x17
@@ -54,7 +54,7 @@ layer at (0,0) size 785x1217
         RenderText {#text} at (0,0) size 73x17
           text run at (0,0) width 73: "Single span"
       RenderBlock (anonymous) at (0,454) size 769x18
-        RenderInline {SPAN} at (0,0) size 25x19 [border: (1px solid #000000)]
+        RenderInline {SPAN} at (1,-1) size 25x19 [border: (1px solid #000000)]
           RenderText {#text} at (2,0) size 23x17
             text run at (2,0) width 23 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
@@ -62,10 +62,10 @@ layer at (0,0) size 785x1217
         RenderText {#text} at (0,0) size 417x17
           text run at (0,0) width 417: "The following 2 textes should be identical, ignorning whitespaces:"
       RenderBlock (anonymous) at (0,522) size 769x18
-        RenderInline {SPAN} at (0,0) size 51x19 [border: (1px solid #000000)]
+        RenderInline {SPAN} at (1,-1) size 51x19 [border: (1px solid #000000)]
           RenderText {#text} at (24,0) size 27x17
             text run at (24,0) width 27 RTL: "abc "
-          RenderInline {SPAN} at (0,0) size 23x17
+          RenderInline {SPAN} at (2,0) size 23x17
             RenderText {#text} at (2,0) size 23x17
               text run at (2,0) width 23 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
@@ -73,8 +73,8 @@ layer at (0,0) size 785x1217
         RenderText {#text} at (0,0) size 417x17
           text run at (0,0) width 417: "The following 2 textes should be identical, ignorning whitespaces:"
       RenderBlock (anonymous) at (0,590) size 769x18
-        RenderInline {SPAN} at (0,0) size 51x19 [border: (1px solid #000000)]
-          RenderInline {SPAN} at (0,0) size 27x17
+        RenderInline {SPAN} at (1,-1) size 51x19 [border: (1px solid #000000)]
+          RenderInline {SPAN} at (24,0) size 27x17
             RenderText {#text} at (24,0) size 27x17
               text run at (24,0) width 27 RTL: "abc "
           RenderText {#text} at (2,0) size 23x17
@@ -84,7 +84,7 @@ layer at (0,0) size 785x1217
         RenderText {#text} at (0,0) size 417x17
           text run at (0,0) width 417: "The following 2 textes should be identical, ignorning whitespaces:"
       RenderBlock (anonymous) at (0,658) size 769x18
-        RenderInline {SPAN} at (0,0) size 23x19 [border: (1px solid #000000)]
+        RenderInline {SPAN} at (0,-1) size 23x19 [border: (1px solid #000000)]
           RenderText {#text} at (0,0) size 22x17
             text run at (0,0) width 22 RTL: "abc"
       RenderBlock (anonymous) at (0,676) size 769x18
@@ -92,19 +92,19 @@ layer at (0,0) size 785x1217
           RenderText {#text} at (747,0) size 22x17
             text run at (747,0) width 22: "cba"
       RenderBlock (anonymous) at (0,694) size 769x18
-        RenderInline {SPAN} at (0,0) size 2x19 [border: (1px solid #000000)]
+        RenderInline {SPAN} at (1,-1) size 2x19 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,728) size 769x18
         RenderText {#text} at (0,0) size 417x17
           text run at (0,0) width 417: "The following 2 textes should be identical, ignorning whitespaces:"
       RenderBlock (anonymous) at (0,762) size 769x18
-        RenderInline {SPAN} at (0,0) size 1x19 [border: (1px solid #000000)]
+        RenderInline {SPAN} at (0,-1) size 1x19 [border: (1px solid #000000)]
       RenderBlock (anonymous) at (0,780) size 769x18
         RenderBlock {DIV} at (0,0) size 769x18
           RenderText {#text} at (747,0) size 22x17
             text run at (747,0) width 22: "cba"
       RenderBlock (anonymous) at (0,798) size 769x18
-        RenderInline {SPAN} at (0,0) size 24x19 [border: (1px solid #000000)]
+        RenderInline {SPAN} at (1,-1) size 24x19 [border: (1px solid #000000)]
           RenderText {#text} at (2,0) size 23x17
             text run at (2,0) width 23 RTL: "abc"
         RenderText {#text} at (0,0) size 0x0
@@ -112,8 +112,8 @@ layer at (0,0) size 785x1217
         RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "ruby"
       RenderBlock {DIV} at (0,866) size 769x30 [border: (1px solid #000000)]
-        RenderInline {RUBY} at (0,0) size 23x17
-          RenderInline (generated) at (0,0) size 23x17
+        RenderInline {RUBY} at (2,11) size 23x17
+          RenderInline (generated) at (2,11) size 23x17
             RenderText {#text} at (2,11) size 23x17
               text run at (2,11) width 23: "abc"
           RenderBlock {RT} at (2,1) size 23x10
@@ -121,8 +121,8 @@ layer at (0,0) size 785x1217
               text run at (5,0) width 12: "def"
         RenderText {#text} at (25,11) size 5x17
           text run at (25,11) width 5: " "
-        RenderInline {RUBY} at (0,0) size 23x17
-          RenderInline (generated) at (0,0) size 23x17
+        RenderInline {RUBY} at (31,11) size 23x17
+          RenderInline (generated) at (31,11) size 23x17
             RenderText {#text} at (31,11) size 23x17
               text run at (31,11) width 23: "abc"
           RenderBlock {RT} at (31,1) size 23x10
@@ -130,28 +130,28 @@ layer at (0,0) size 785x1217
               text run at (5,0) width 12 RTL: "def"
         RenderText {#text} at (54,11) size 5x17
           text run at (54,11) width 5: " "
-        RenderInline {RUBY} at (0,0) size 23x17
-          RenderInline (generated) at (0,0) size 23x17
+        RenderInline {RUBY} at (60,11) size 23x17
+          RenderInline (generated) at (60,11) size 23x17
             RenderText {#text} at (60,11) size 23x17
               text run at (60,11) width 23: "abc"
         RenderText {#text} at (83,11) size 5x17
           text run at (83,11) width 5: " "
-        RenderInline {RUBY} at (0,0) size 13x17
-          RenderInline (generated) at (0,0) size 13x17
+        RenderInline {RUBY} at (89,11) size 13x17
+          RenderInline (generated) at (89,11) size 13x17
           RenderBlock {RT} at (89,1) size 13x10
             RenderText {#text} at (0,0) size 12x10
               text run at (0,0) width 12: "def"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {RUBY} at (0,0) size 23x17
-          RenderInline (generated) at (0,0) size 23x17
-            RenderInline {RB} at (0,0) size 23x17
+        RenderInline {RUBY} at (104,11) size 23x17
+          RenderInline (generated) at (104,11) size 23x17
+            RenderInline {RB} at (104,11) size 23x17
               RenderText {#text} at (104,11) size 23x17
                 text run at (104,11) width 23: "abc"
         RenderText {#text} at (127,11) size 5x17
           text run at (127,11) width 5: " "
-        RenderInline {RUBY} at (0,0) size 23x17
-          RenderInline (generated) at (0,0) size 23x17
-            RenderInline {RB} at (0,0) size 23x17
+        RenderInline {RUBY} at (133,11) size 23x17
+          RenderInline (generated) at (133,11) size 23x17
+            RenderInline {RB} at (133,11) size 23x17
               RenderText {#text} at (133,11) size 23x17
                 text run at (133,11) width 23: "abc"
           RenderBlock {RT} at (133,1) size 23x10
@@ -159,9 +159,9 @@ layer at (0,0) size 785x1217
               text run at (5,0) width 12: "def"
         RenderText {#text} at (156,11) size 5x17
           text run at (156,11) width 5: " "
-        RenderInline {RUBY} at (0,0) size 23x17
-          RenderInline (generated) at (0,0) size 23x17
-            RenderInline {RB} at (0,0) size 23x17
+        RenderInline {RUBY} at (162,11) size 23x17
+          RenderInline (generated) at (162,11) size 23x17
+            RenderInline {RB} at (162,11) size 23x17
               RenderText {#text} at (162,11) size 23x17
                 text run at (162,11) width 23: "abc"
           RenderBlock {RT} at (162,1) size 23x10

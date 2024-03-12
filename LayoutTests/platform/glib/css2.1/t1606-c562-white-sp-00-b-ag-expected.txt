@@ -29,7 +29,7 @@ layer at (0,0) size 800x154
             text run at (0,0) width 120: "x  x   x"
             text run at (120,0) width 0: " "
             text run at (0,15) width 90: " x    "
-          RenderInline {SPAN} at (0,0) size 105x15
+          RenderInline {SPAN} at (90,15) size 105x15
             RenderText {#text} at (90,15) size 105x15
               text run at (90,15) width 30: "x "
               text run at (120,15) width 30: "x "

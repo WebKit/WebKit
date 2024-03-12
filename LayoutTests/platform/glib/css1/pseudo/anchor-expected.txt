@@ -75,10 +75,10 @@ layer at (0,0) size 785x683
       RenderBlock {P} at (0,349) size 769x36
         RenderText {#text} at (0,0) size 120x17
           text run at (0,0) width 120: "The quoted word \""
-        RenderInline {A} at (0,0) size 43x17 [color=#008000]
+        RenderInline {A} at (120,0) size 43x17 [color=#008000]
           RenderText {#text} at (120,0) size 43x17
             text run at (120,0) width 43: "anchor"
-        RenderText {#text} at (163,0) size 731x35
+        RenderText {#text} at (0,0) size 731x35
           text run at (163,0) width 376: "\" should be green, NOT purple, since it's part of an anchor. "
           text run at (538,0) width 193: "It's a named anchor, and styles"
           text run at (0,18) width 350: "declared for the A tag are applied to them under CSS1. "
@@ -87,7 +87,7 @@ layer at (0,0) size 785x683
         RenderTableSection {TBODY} at (1,1) size 767x264
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 768x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x238
@@ -151,10 +151,10 @@ layer at (0,0) size 785x683
               RenderBlock {P} at (4,198) size 747x36
                 RenderText {#text} at (0,0) size 120x17
                   text run at (0,0) width 120: "The quoted word \""
-                RenderInline {A} at (0,0) size 43x17 [color=#008000]
+                RenderInline {A} at (120,0) size 43x17 [color=#008000]
                   RenderText {#text} at (120,0) size 43x17
                     text run at (120,0) width 43: "anchor"
-                RenderText {#text} at (163,0) size 731x35
+                RenderText {#text} at (0,0) size 731x35
                   text run at (163,0) width 376: "\" should be green, NOT purple, since it's part of an anchor. "
                   text run at (538,0) width 193: "It's a named anchor, and styles"
                   text run at (0,18) width 350: "declared for the A tag are applied to them under CSS1. "

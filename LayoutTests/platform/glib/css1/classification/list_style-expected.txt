@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderBlock {UL} at (0,95) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
           RenderListMarker at (0,0) size 20x17: "A"
-          RenderText {#text} at (20,0) size 730x35
+          RenderText {#text} at (0,0) size 730x35
             text run at (20,0) width 710: "The text in this item should not behave as expected; that is, it should line up with the capital-A on the left margin,"
             text run at (0,18) width 286: "leaving no blank space beneath the capital-A."
       RenderBlock {UL} at (0,147) size 784x37
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x139
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x113
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
               RenderBlock {UL} at (4,4) size 762x36
                 RenderListItem {LI} at (40,0) size 722x36
                   RenderListMarker at (0,0) size 20x17: "A"
-                  RenderText {#text} at (20,0) size 679x35
+                  RenderText {#text} at (0,0) size 679x35
                     text run at (20,0) width 659: "The text in this item should not behave as expected; that is, it should line up with the capital-A on the left"
                     text run at (0,18) width 338: "margin, leaving no blank space beneath the capital-A."
               RenderBlock {UL} at (4,56) size 762x37

@@ -9,7 +9,7 @@ layer at (0,0) size 800x510
             RenderBlock {b} at (0,0) size 160x70 [border: none (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
             RenderBlock {b} at (0,70) size 160x70 [border: (69px solid #CCCCCC) (40px solid #00000000) none (40px solid #00000000)]
             RenderBlock {span} at (8,61) size 144x19 [color=#000000]
-              RenderInline {abbr} at (0,0) size 35x17
+              RenderInline {abbr} at (18,0) size 35x17
                 RenderText {#text} at (18,0) size 35x17
                   text run at (18,0) width 35: "CSS"
               RenderText {#text} at (52,0) size 74x17
@@ -26,7 +26,7 @@ layer at (0,0) size 800x510
             RenderBlock {b} at (0,0) size 160x70 [border: none (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
             RenderBlock {b} at (0,70) size 160x70 [border: (69px solid #CCCCCC) (40px solid #00000000) none (40px solid #00000000)]
             RenderBlock {span} at (8,61) size 144x19 [color=#000000]
-              RenderInline {abbr} at (0,0) size 24x17
+              RenderInline {abbr} at (60,0) size 24x17
                 RenderText {#text} at (60,0) size 24x17
                   text run at (60,0) width 24: "CV"
         RenderListItem {li} at (0,190) size 284x72
@@ -43,7 +43,7 @@ layer at (0,0) size 800x510
             RenderBlock {span} at (8,61) size 144x19 [color=#000000]
               RenderText {#text} at (0,0) size 52x17
                 text run at (0,0) width 52: "simple "
-              RenderInline {abbr} at (0,0) size 56x17
+              RenderInline {abbr} at (51,0) size 56x17
                 RenderText {#text} at (51,0) size 56x17
                   text run at (51,0) width 56: "XHTML"
               RenderText {#text} at (106,0) size 38x17

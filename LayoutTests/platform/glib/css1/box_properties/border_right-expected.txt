@@ -19,15 +19,15 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 752x35
           text run at (0,0) width 752: "This paragraph has a background color of silver and a 20-pixel right margin, and it contains inline elements with classes"
           text run at (0,18) width 17: "of "
-        RenderInline {SPAN} at (0,0) size 67x17 [border: none (10px double #800080) none]
+        RenderInline {SPAN} at (17,18) size 67x17 [border: none (10px double #800080) none]
           RenderText {#text} at (17,18) size 57x17
             text run at (17,18) width 57: "class one"
         RenderText {#text} at (84,18) size 398x17
           text run at (84,18) width 398: ", which should have a 10-pixel purple double right border; and "
-        RenderInline {SPAN} at (0,0) size 59x17 [border: none (1px solid #800080) none]
+        RenderInline {SPAN} at (482,18) size 59x17 [border: none (1px solid #800080) none]
           RenderText {#text} at (482,18) size 58x17
             text run at (482,18) width 58: "class two"
-        RenderText {#text} at (541,18) size 741x35
+        RenderText {#text} at (0,18) size 741x35
           text run at (541,18) width 200: ", which should have a thin solid"
           text run at (0,36) width 126: "purple right border. "
           text run at (125,36) width 430: "The line-height of the parent element should not change on any line."
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x88
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x62
@@ -47,15 +47,15 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 705x35
                   text run at (0,0) width 705: "This paragraph has a background color of silver and a 20-pixel right margin, and it contains inline elements with"
                   text run at (0,18) width 64: "classes of "
-                RenderInline {SPAN} at (0,0) size 67x17 [border: none (10px double #800080) none]
+                RenderInline {SPAN} at (64,18) size 67x17 [border: none (10px double #800080) none]
                   RenderText {#text} at (64,18) size 57x17
                     text run at (64,18) width 57: "class one"
                 RenderText {#text} at (131,18) size 398x17
                   text run at (131,18) width 398: ", which should have a 10-pixel purple double right border; and "
-                RenderInline {SPAN} at (0,0) size 59x17 [border: none (1px solid #800080) none]
+                RenderInline {SPAN} at (529,18) size 59x17 [border: none (1px solid #800080) none]
                   RenderText {#text} at (529,18) size 58x17
                     text run at (529,18) width 58: "class two"
-                RenderText {#text} at (588,18) size 726x35
+                RenderText {#text} at (0,18) size 726x35
                   text run at (588,18) width 138: ", which should have a"
                   text run at (0,36) width 188: "thin solid purple right border. "
                   text run at (187,36) width 430: "The line-height of the parent element should not change on any line."

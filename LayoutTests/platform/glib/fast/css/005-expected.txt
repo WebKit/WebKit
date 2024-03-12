@@ -18,7 +18,7 @@ layer at (0,0) size 785x736
       RenderBlock {P} at (0,172) size 769x25 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 279x17
           text run at (3,3) width 279: "This paragraph should have a medium solid "
-        RenderInline {EM} at (0,0) size 34x17
+        RenderInline {EM} at (282,3) size 34x17
           RenderText {#text} at (282,3) size 34x17
             text run at (282,3) width 34: "black"
         RenderText {#text} at (316,3) size 49x17
@@ -32,7 +32,7 @@ layer at (0,0) size 785x736
       RenderBlock {P} at (0,280) size 769x25 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 279x17
           text run at (3,3) width 279: "This paragraph should have a medium solid "
-        RenderInline {EM} at (0,0) size 34x17
+        RenderInline {EM} at (282,3) size 34x17
           RenderText {#text} at (282,3) size 34x17
             text run at (282,3) width 34: "black"
         RenderText {#text} at (316,3) size 49x17
@@ -40,7 +40,7 @@ layer at (0,0) size 785x736
       RenderBlock {P} at (0,320) size 769x25 [bgcolor=#FFFFFF] [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 279x17
           text run at (3,3) width 279: "This paragraph should have a medium solid "
-        RenderInline {EM} at (0,0) size 34x17
+        RenderInline {EM} at (282,3) size 34x17
           RenderText {#text} at (282,3) size 34x17
             text run at (282,3) width 34: "black"
         RenderText {#text} at (316,3) size 49x17

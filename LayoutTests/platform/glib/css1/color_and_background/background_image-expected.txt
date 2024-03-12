@@ -21,24 +21,24 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,162) size 784x72
         RenderText {#text} at (0,0) size 596x17
           text run at (0,0) width 596: "This sentence should be backed by a repeated green-grid image, as should the last three words "
-        RenderInline {STRONG} at (0,0) size 102x17
-          RenderInline {SPAN} at (0,0) size 102x17
+        RenderInline {STRONG} at (596,0) size 102x17
+          RenderInline {SPAN} at (596,0) size 102x17
             RenderText {#text} at (596,0) size 102x17
               text run at (596,0) width 102: "in this sentence"
-        RenderText {#text} at (698,0) size 770x35
+        RenderText {#text} at (0,0) size 770x35
           text run at (698,0) width 8: ". "
           text run at (706,0) width 64: "If it is not,"
           text run at (0,18) width 31: "then "
-        RenderInline {CODE} at (0,0) size 32x15
+        RenderInline {CODE} at (31,21) size 32x15
           RenderText {#text} at (31,21) size 32x15
             text run at (31,21) width 32: "none"
         RenderText {#text} at (63,18) size 168x17
           text run at (63,18) width 163: " is interpreted incorrectly. "
           text run at (225,18) width 6: "("
-        RenderInline {CODE} at (0,0) size 33x15
+        RenderInline {CODE} at (230,21) size 33x15
           RenderText {#text} at (230,21) size 33x15
             text run at (230,21) width 33: "none"
-        RenderText {#text} at (262,18) size 771x53
+        RenderText {#text} at (0,18) size 771x53
           text run at (262,18) width 503: " means that the element has no background image, allowing the parent to \"shine"
           text run at (0,36) width 771: "through\" by default; since the parent of the words \"in this sentence\" is the paragraph, then the paragraph's image should be"
           text run at (0,54) width 50: "visible.)"
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x210
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x184
@@ -66,24 +66,24 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,56) size 762x72
                 RenderText {#text} at (0,0) size 596x17
                   text run at (0,0) width 596: "This sentence should be backed by a repeated green-grid image, as should the last three words "
-                RenderInline {STRONG} at (0,0) size 102x17
-                  RenderInline {SPAN} at (0,0) size 102x17
+                RenderInline {STRONG} at (596,0) size 102x17
+                  RenderInline {SPAN} at (596,0) size 102x17
                     RenderText {#text} at (596,0) size 102x17
                       text run at (596,0) width 102: "in this sentence"
-                RenderText {#text} at (698,0) size 742x35
+                RenderText {#text} at (0,0) size 742x35
                   text run at (698,0) width 8: ". "
                   text run at (706,0) width 36: "If it is"
                   text run at (0,18) width 59: "not, then "
-                RenderInline {CODE} at (0,0) size 32x15
+                RenderInline {CODE} at (59,21) size 32x15
                   RenderText {#text} at (59,21) size 32x15
                     text run at (59,21) width 32: "none"
                 RenderText {#text} at (91,18) size 168x17
                   text run at (91,18) width 163: " is interpreted incorrectly. "
                   text run at (253,18) width 6: "("
-                RenderInline {CODE} at (0,0) size 33x15
+                RenderInline {CODE} at (258,21) size 33x15
                   RenderText {#text} at (258,21) size 33x15
                     text run at (258,21) width 33: "none"
-                RenderText {#text} at (290,18) size 750x53
+                RenderText {#text} at (0,18) size 750x53
                   text run at (290,18) width 459: " means that the element has no background image, allowing the parent to"
                   text run at (0,36) width 750: "\"shine through\" by default; since the parent of the words \"in this sentence\" is the paragraph, then the paragraph's image"
                   text run at (0,54) width 115: "should be visible.)"

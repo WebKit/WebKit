@@ -26,13 +26,13 @@ layer at (0,0) size 785x816
           RenderText {#text} at (0,0) size 448x17
             text run at (0,0) width 448: "This sentence should be part of an inline element, as are the next three. "
         RenderInline {P} at (0,0) size 766x53
-          RenderText {#text} at (448,0) size 766x53
+          RenderText {#text} at (0,0) size 766x53
             text run at (448,0) width 274: "This sentence and the next two are part of a"
             text run at (0,18) width 144: "second inline element. "
             text run at (144,18) width 622: "They should therefore appear, along with the sentence above, to be all one paragraph which is four"
             text run at (0,36) width 100: "sentences long. "
             text run at (100,36) width 250: "If this is not the case, then the keyword "
-          RenderInline {CODE} at (0,0) size 48x15
+          RenderInline {CODE} at (350,39) size 48x15
             RenderText {#text} at (350,39) size 48x15
               text run at (350,39) width 48: "inline"
           RenderText {#text} at (398,36) size 109x17
@@ -43,10 +43,10 @@ layer at (0,0) size 785x816
         RenderText {#text} at (0,0) size 715x35
           text run at (0,0) width 715: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list items"
           text run at (0,18) width 18: "(if "
-        RenderInline {CODE} at (0,0) size 120x15
+        RenderInline {CODE} at (18,21) size 120x15
           RenderText {#text} at (18,21) size 120x15
             text run at (18,21) width 120: "list-style-type"
-        RenderText {#text} at (138,18) size 720x35
+        RenderText {#text} at (0,18) size 720x35
           text run at (138,18) width 359: " is supported, there will be a square for the item marker). "
           text run at (497,18) width 223: "A 3em left margin has been applied"
           text run at (0,36) width 376: "in order to ensure that there is space for the list-item marker."
@@ -71,7 +71,7 @@ layer at (0,0) size 785x816
         RenderTableSection {TBODY} at (1,1) size 767x346
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x320
@@ -87,13 +87,13 @@ layer at (0,0) size 785x816
                   RenderText {#text} at (0,0) size 448x17
                     text run at (0,0) width 448: "This sentence should be part of an inline element, as are the next three. "
                 RenderInline {P} at (0,0) size 736x53
-                  RenderText {#text} at (448,0) size 736x53
+                  RenderText {#text} at (0,0) size 736x53
                     text run at (448,0) width 274: "This sentence and the next two are part of a"
                     text run at (0,18) width 144: "second inline element. "
                     text run at (144,18) width 592: "They should therefore appear, along with the sentence above, to be all one paragraph which is"
                     text run at (0,36) width 130: "four sentences long. "
                     text run at (130,36) width 250: "If this is not the case, then the keyword "
-                  RenderInline {CODE} at (0,0) size 48x15
+                  RenderInline {CODE} at (380,39) size 48x15
                     RenderText {#text} at (380,39) size 48x15
                       text run at (380,39) width 48: "inline"
                   RenderText {#text} at (428,36) size 109x17
@@ -104,10 +104,10 @@ layer at (0,0) size 785x816
                 RenderText {#text} at (0,0) size 678x35
                   text run at (0,0) width 678: "This sentence should be treated as a list-item, and therefore be rendered however this user agent displays list"
                   text run at (0,18) width 55: "items (if "
-                RenderInline {CODE} at (0,0) size 120x15
+                RenderInline {CODE} at (55,21) size 120x15
                   RenderText {#text} at (55,21) size 120x15
                     text run at (55,21) width 120: "list-style-type"
-                RenderText {#text} at (175,18) size 673x35
+                RenderText {#text} at (0,18) size 673x35
                   text run at (175,18) width 359: " is supported, there will be a square for the item marker). "
                   text run at (534,18) width 139: "A 3em left margin has"
                   text run at (0,36) width 460: "been applied in order to ensure that there is space for the list-item marker."

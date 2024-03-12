@@ -52,17 +52,17 @@ layer at (0,0) size 800x420
           text run at (0,1) width 463: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1 agents"
           text run at (0,14) width 467: "should be able to render the document elements above this paragraph indistinguishably (to the pixel)"
           text run at (0,27) width 42: "from this "
-        RenderInline {A} at (0,0) size 94x11 [color=#999999]
+        RenderInline {A} at (42,27) size 94x11 [color=#999999]
           RenderText {#text} at (42,27) size 94x11
             text run at (42,27) width 94: "reference rendering,"
-        RenderText {#text} at (136,27) size 470x24
+        RenderText {#text} at (0,27) size 470x24
           text run at (136,27) width 3: " "
           text run at (139,27) width 331: "(except font rasterization and form widgets). All discrepancies should be"
           text run at (0,40) width 228: "traceable to CSS1 implementation shortcomings. "
           text run at (228,40) width 35: "Please "
-        RenderInline {A} at (0,0) size 76x11 [color=#CC0000]
+        RenderInline {A} at (263,40) size 76x11 [color=#CC0000]
           RenderText {#text} at (263,40) size 76x11
             text run at (263,40) width 76: "report any errors"
-        RenderText {#text} at (339,40) size 464x24
+        RenderText {#text} at (0,40) size 464x24
           text run at (339,40) width 125: " you find between the CSS"
           text run at (0,53) width 133: "and the reference rendering."

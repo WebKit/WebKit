@@ -11,7 +11,7 @@ layer at (8,8) size 300x54
     RenderText {#text} at (62,0) size 10x17
       text run at (62,0) width 10: "is"
     RenderImage {IMG} at (20,0) size 20x30
-    RenderText {#text} at (72,0) size 292x53
+    RenderText {#text} at (0,0) size 292x53
       text run at (72,0) width 208: "one run long long long long long"
       text run at (40,18) width 252: "long long long long long long long long"
       text run at (0,36) width 87: "long long text"
@@ -23,7 +23,7 @@ layer at (8,62) size 300x54
     RenderText {#text} at (42,0) size 10x17
       text run at (42,0) width 10: "is"
     RenderImage {IMG} at (260,0) size 20x30
-    RenderText {#text} at (52,0) size 292x53
+    RenderText {#text} at (8,0) size 292x53
       text run at (52,0) width 208: "one run long long long long long"
       text run at (8,18) width 252: "long long long long long long long long"
       text run at (213,36) width 87: "long long text"
@@ -35,7 +35,7 @@ layer at (8,116) size 300x54
     RenderText {#text} at (62,0) size 10x17
       text run at (62,0) width 10: "is"
     RenderImage {IMG} at (280,0) size 20x30
-    RenderText {#text} at (72,0) size 272x53
+    RenderText {#text} at (28,0) size 272x53
       text run at (72,0) width 208: "one run long long long long long"
       text run at (28,18) width 252: "long long long long long long long long"
       text run at (213,36) width 87: "long long text"
