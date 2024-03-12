@@ -46,7 +46,7 @@ namespace WebCore {
 
 class GPUDevice;
 
-class GPUBuffer : public RefCounted<GPUBuffer> {
+class GPUBuffer : public RefCounted<GPUBuffer>, CanMakeWeakPtr<GPUBuffer> {
 public:
     static Ref<GPUBuffer> create(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
     {
