@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-sk_sp<SkShader> Pattern::createPlatformPattern(const AffineTransform&) const
+sk_sp<SkShader> Pattern::createPlatformPattern(const AffineTransform&, const SkSamplingOptions& samplingOptions) const
 {
     auto nativeImage = tileNativeImage();
     if (!nativeImage)
@@ -45,8 +45,7 @@ sk_sp<SkShader> Pattern::createPlatformPattern(const AffineTransform&) const
     if (!platformImage)
         return nullptr;
 
-    // FIXME: image interpolation quality.
-    return platformImage->makeShader(repeatX() ? SkTileMode::kRepeat : SkTileMode::kDecal, repeatY() ? SkTileMode::kRepeat : SkTileMode::kDecal, { }, patternSpaceTransform());
+    return platformImage->makeShader(repeatX() ? SkTileMode::kRepeat : SkTileMode::kDecal, repeatY() ? SkTileMode::kRepeat : SkTileMode::kDecal, samplingOptions, patternSpaceTransform());
 }
 
 } // namespace WebCore

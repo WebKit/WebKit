@@ -72,7 +72,11 @@ public:
     const Parameters& parameters() const { return m_parameters; }
 
     // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransform'
+#if USE(SKIA)
+    PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform, const SkSamplingOptions&) const;
+#else
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform) const;
+#endif
 
     void setTileImage(SourceImage&& tileImage) { m_tileImage = WTFMove(tileImage); }
     void setPatternSpaceTransform(const AffineTransform&);

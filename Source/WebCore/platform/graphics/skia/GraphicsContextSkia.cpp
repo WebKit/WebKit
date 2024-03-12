@@ -411,7 +411,7 @@ SkPaint GraphicsContextSkia::createFillPaint(std::optional<Color> fillColor) con
     paint.setBlendMode(toSkiaBlendMode(state.compositeMode().operation, state.compositeMode().blendMode));
 
     if (auto fillPattern = state.fillBrush().pattern())
-        paint.setShader(fillPattern->createPlatformPattern({ }));
+        paint.setShader(fillPattern->createPlatformPattern({ }, toSkSamplingOptions(m_state.imageInterpolationQuality())));
     else if (auto fillGradient = state.fillBrush().gradient())
         paint.setShader(fillGradient->shader(state.alpha(), state.fillBrush().gradientSpaceTransform()));
     else
@@ -440,7 +440,7 @@ SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor)
     paint.setAntiAlias(true);
 
     if (auto strokePattern = state.strokeBrush().pattern())
-        paint.setShader(strokePattern->createPlatformPattern({ }));
+        paint.setShader(strokePattern->createPlatformPattern({ }, toSkSamplingOptions(m_state.imageInterpolationQuality())));
     else if (auto strokeGradient = state.strokeBrush().gradient())
         paint.setShader(strokeGradient->shader(state.alpha(), state.strokeBrush().gradientSpaceTransform()));
     else
