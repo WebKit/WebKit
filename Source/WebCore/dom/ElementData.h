@@ -264,11 +264,11 @@ inline const ImmutableStyleProperties* ElementData::presentationalHintStyle() co
 
 inline AttributeIteratorAccessor ElementData::attributesIterator() const
 {
-    if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this)) {
-        auto& attributeVector = uniqueData->m_attributeVector;
+    if (isUnique()) {
+        auto& attributeVector = uncheckedDowncast<UniqueElementData>(*this).m_attributeVector;
         return AttributeIteratorAccessor(attributeVector.data(), attributeVector.size());
     }
-    return AttributeIteratorAccessor(downcast<ShareableElementData>(*this).m_attributeArray, arraySize());
+    return AttributeIteratorAccessor(uncheckedDowncast<ShareableElementData>(*this).m_attributeArray, arraySize());
 }
 
 ALWAYS_INLINE const Attribute* ElementData::findAttributeByName(const AtomString& name, bool shouldIgnoreAttributeCase) const
