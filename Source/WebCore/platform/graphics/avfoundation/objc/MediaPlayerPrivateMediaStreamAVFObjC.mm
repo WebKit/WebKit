@@ -810,18 +810,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPri
     });
 }
 
-bool MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture() const
-{
-#if PLATFORM(IOS_FAMILY)
-    for (const auto& track : m_videoTrackMap.values()) {
-        if (track->streamTrack().isCaptureTrack())
-            return false;
-    }
-#endif
-    
-    return true;
-}
-
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 RetainPtr<PlatformLayer> MediaPlayerPrivateMediaStreamAVFObjC::createVideoFullscreenLayer()
 {
