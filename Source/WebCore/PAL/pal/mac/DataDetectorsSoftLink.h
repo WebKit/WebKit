@@ -45,11 +45,7 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, DDMacAction)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, DDAction)
 #endif
 
-#if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withButton, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped, CGFloat scale), (allocator, rects, count, globalVisibleRect, style, withButton, writingDirection, endsWithEOL, flipped, scale))
-#else
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withArrow, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped), (allocator, rects, count, globalVisibleRect, style, withArrow, writingDirection, endsWithEOL, flipped))
-#endif
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton))

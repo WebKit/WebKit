@@ -378,11 +378,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
         rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
 
         CGRect cgRect = rect;
-#if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
         auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
-#else
-        auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES));
-#endif
         auto highlight = DataDetectorHighlight::createForTelephoneNumber(page, *this, WTFMove(ddHighlight), WTFMove(range));
         m_highlights.add(highlight.get());
         newPotentialHighlights.add(WTFMove(highlight));
@@ -421,11 +417,7 @@ void ServicesOverlayController::buildSelectionHighlight()
 
         if (!cgRects.isEmpty()) {
             CGRect visibleRect = mainFrameView->visibleContentRect();
-#if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
             auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, static_cast<DDHighlightStyle>(DDHighlightStyleBubbleNone) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow) | static_cast<DDHighlightStyle>(DDHighlightStyleButtonShowAlways), YES, NSWritingDirectionNatural, NO, YES, 0));
-#else
-            auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, static_cast<DDHighlightStyle>(DDHighlightStyleBubbleNone) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow) | static_cast<DDHighlightStyle>(DDHighlightStyleButtonShowAlways), YES, NSWritingDirectionNatural, NO, YES));
-#endif
             auto highlight = DataDetectorHighlight::createForSelection(page, *this, WTFMove(ddHighlight), WTFMove(*selectionRange));
             m_highlights.add(highlight.get());
             newPotentialHighlights.add(WTFMove(highlight));

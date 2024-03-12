@@ -86,11 +86,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
         elementBounds.origin = mainFrameView->windowToContents(frameView->contentsToWindow(roundedIntPoint(elementBounds.origin)));
 
         // FIXME: We should teach DataDetectorHighlight to render quads instead of always falling back to axis-aligned bounding rects.
-#if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
         auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
-#else
-        auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES));
-#endif
         return ContainerAndHighlight { element, DataDetectorHighlight::createForImageOverlay(*protectedPage(), *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) };
     });
 }
