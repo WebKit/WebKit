@@ -109,7 +109,7 @@ RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const Str
 RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& scheme, const String& host, const String& path)
 {
     String resolvedScheme = !scheme.isEmpty() ? scheme : "*"_s;
-    String resolvedHost = !host.isEmpty() ? host : "*"_s;
+    String resolvedHost = !host.isEmpty() || equalLettersIgnoringASCIICase(scheme, "file"_s) ? host : "*"_s;
     String resolvedPath = !path.isEmpty() ? path : "/*"_s;
 
     String pattern = makeString(resolvedScheme, "://"_s, resolvedHost, resolvedPath);
@@ -117,6 +117,25 @@ RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const Str
     return patternCache().ensure(pattern, [&] {
         return create(resolvedScheme, resolvedHost, resolvedPath);
     }).iterator->value;
+}
+
+RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const URL& url, OptionSet<CreateOptions> options)
+{
+    ASSERT(!url.isEmpty());
+
+    String scheme = "*"_s;
+    if (options.contains(CreateOptions::MatchExactScheme) || !url.protocolIsInHTTPFamily())
+        scheme = url.protocol().toString();
+
+    String host = url.host().toString();
+    if (options.contains(CreateOptions::MatchSubdomains) && !host.isEmpty())
+        host = makeString("*."_s, host);
+
+    String path = "/*"_s;
+    if (!options.contains(CreateOptions::MatchAllPaths))
+        path = url.hasPath() ? url.path().toString() : "/"_s;
+
+    return getOrCreate(scheme, host, path);
 }
 
 Ref<WebExtensionMatchPattern> WebExtensionMatchPattern::allURLsMatchPattern()
@@ -439,7 +458,7 @@ HashSet<String> toStrings(const MatchPatternSet& matchPatterns)
     return stringsToReturn;
 }
 
-MatchPatternSet toPatterns(HashSet<String>& domains)
+MatchPatternSet toPatterns(const HashSet<String>& domains)
 {
     MatchPatternSet matchPatterns;
     matchPatterns.reserveInitialCapacity(domains.size());
@@ -450,7 +469,20 @@ MatchPatternSet toPatterns(HashSet<String>& domains)
     return matchPatterns;
 }
 
-NSSet *toAPI(MatchPatternSet& set)
+MatchPatternSet toPatterns(NSSet *set)
+{
+    MatchPatternSet matchPatterns;
+    matchPatterns.reserveInitialCapacity(set.count);
+
+    for (id object in set) {
+        if (auto *pattern = dynamic_objc_cast<_WKWebExtensionMatchPattern>(object))
+            matchPatterns.addVoid(pattern._webExtensionMatchPattern);
+    }
+
+    return matchPatterns;
+}
+
+NSSet *toAPI(const MatchPatternSet& set)
 {
     NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
     for (auto& element : set)

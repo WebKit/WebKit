@@ -180,18 +180,18 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsRequest)
     __block bool requestComplete = false;
 
     // Implement the delegate methods that're called when a call to permissions.request() is made.
-    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *)) {
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         EXPECT_EQ(requestedPermissions.count, permissions.count);
         EXPECT_TRUE([requestedPermissions isEqualToSet:permissions]);
-        callback(requestedPermissions);
+        callback(requestedPermissions, nil);
     };
 
-    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *)) {
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *, NSDate *)) {
         EXPECT_EQ(requestedMatchPatterns.count, matchPatterns.count);
         EXPECT_TRUE([requestedMatchPatterns isEqualToSet:matchPatterns]);
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            callback(requestedMatchPatterns);
+            callback(requestedMatchPatterns, nil);
             requestComplete = true;
         });
     };
@@ -234,13 +234,13 @@ TEST(WKWebExtensionAPIPermissions, DenyPermissionsRequest)
     __block bool requestComplete = false;
 
     // Implement the delegate methods, but don't grant the permissions.
-    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *)) {
-        callback(NSSet.set);
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        callback(NSSet.set, NSDate.distantPast);
     };
 
-    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *)) {
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *, NSDate *)) {
         requestComplete = true;
-        callback(NSSet.set);
+        callback(NSSet.set, NSDate.distantFuture);
     };
 
     manager.get().controllerDelegate = requestDelegate.get();
@@ -281,14 +281,14 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsDenyMatchPatternsRequest)
     __block bool requestComplete = false;
 
     // Grant the requested permissions.
-    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *)) {
-        callback(requestedPermissions);
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        callback(requestedPermissions, nil);
     };
 
     // Deny the requested match patterns.
-    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *)) {
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *, NSDate *)) {
         requestComplete = true;
-        callback(NSSet.set);
+        callback(NSSet.set, nil);
     };
 
     manager.get().controllerDelegate = requestDelegate.get();
@@ -329,15 +329,15 @@ TEST(WKWebExtensionAPIPermissions, RequestPermissionsOnly)
     __block bool requestComplete = false;
 
     // Grant the requested permissions.
-    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *)) {
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         dispatch_async(dispatch_get_main_queue(), ^{
             requestComplete = true;
-            callback(requestedPermissions);
+            callback(requestedPermissions, nil);
         });
     };
 
     // Match patterns method should not be called.
-    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *)) {
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *, NSDate *)) {
         ASSERT_NOT_REACHED();
     };
 
@@ -379,15 +379,15 @@ TEST(WKWebExtensionAPIPermissions, RequestMatchPatternsOnly)
     __block bool requestComplete = false;
 
     // Permissions method should not be called.
-    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *)) {
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         ASSERT_NOT_REACHED();
     };
 
     // Grant the requested match patterns.
-    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *)) {
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *, NSDate *)) {
         dispatch_async(dispatch_get_main_queue(), ^{
             requestComplete = true;
-            callback(requestedMatchPatterns);
+            callback(requestedMatchPatterns, [NSDate dateWithTimeIntervalSinceNow:10]);
         });
     };
 
@@ -429,15 +429,15 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomePermissions)
     __block bool requestComplete = false;
 
     // Grant the requested permissions.
-    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *)) {
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         dispatch_async(dispatch_get_main_queue(), ^{
             requestComplete = true;
-            callback(requestedPermissions);
+            callback(requestedPermissions, nil);
         });
     };
 
     // Match patterns method should not be called.
-    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *)) {
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *, NSDate *)) {
         ASSERT_NOT_REACHED();
     };
 
@@ -479,14 +479,14 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomeMatchPatterns)
     __block bool requestComplete = false;
 
     // Permissions method should not be called.
-    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *)) {
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         ASSERT_NOT_REACHED();
     };
 
     // Grant only one of the requested match patterns.
-    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *)) {
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<_WKWebExtensionTab> tab, NSSet<_WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<_WKWebExtensionMatchPattern *> *, NSDate *)) {
         requestComplete = true;
-        callback([NSSet setWithObject:requestedMatchPatterns.anyObject]);
+        callback([NSSet setWithObject:requestedMatchPatterns.anyObject], NSDate.distantFuture);
     };
 
     manager.get().controllerDelegate = requestDelegate.get();
@@ -678,11 +678,11 @@ TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithRequest)
 
     auto requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
 
-    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *grantedPermissions)) {
+    requestDelegate.get().promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         EXPECT_EQ(requestedPermissions.count, 1ul);
         EXPECT_TRUE([requestedPermissions containsObject:_WKWebExtensionPermissionClipboardWrite]);
 
-        callback(requestedPermissions);
+        callback(requestedPermissions, nil);
     };
 
     manager.get().controllerDelegate = requestDelegate.get();

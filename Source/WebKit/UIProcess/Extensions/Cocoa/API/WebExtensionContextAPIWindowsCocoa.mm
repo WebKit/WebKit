@@ -136,7 +136,15 @@ void WebExtensionContext::windowsGet(WebPageProxyIdentifier, WebExtensionWindowI
         return;
     }
 
-    completionHandler(window->parameters(populate));
+    URLVector tabURLs;
+    if (populate == PopulateTabs::Yes) {
+        for (Ref tab : window->tabs())
+            tabURLs.append(tab->url());
+    }
+
+    requestPermissionToAccessURLs(tabURLs, nullptr, [window, populate, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        completionHandler(window->parameters(populate));
+    });
 }
 
 void WebExtensionContext::windowsGetLastFocused(OptionSet<WindowTypeFilter> filter, PopulateTabs populate, CompletionHandler<void(Expected<WebExtensionWindowParameters, WebExtensionError>&&)>&& completionHandler)
@@ -154,20 +162,42 @@ void WebExtensionContext::windowsGetLastFocused(OptionSet<WindowTypeFilter> filt
         return;
     }
 
-    completionHandler(window->parameters(populate));
+    URLVector tabURLs;
+    if (populate == PopulateTabs::Yes) {
+        for (Ref tab : window->tabs())
+            tabURLs.append(tab->url());
+    }
+
+    requestPermissionToAccessURLs(tabURLs, nullptr, [window, populate, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        completionHandler(window->parameters(populate));
+    });
 }
 
 void WebExtensionContext::windowsGetAll(OptionSet<WindowTypeFilter> filter, PopulateTabs populate, CompletionHandler<void(Expected<Vector<WebExtensionWindowParameters>, WebExtensionError>&&)>&& completionHandler)
 {
-    Vector<WebExtensionWindowParameters> result;
-    for (auto& window : openWindows()) {
+    URLVector tabURLs;
+    WindowVector windows;
+    for (Ref window : openWindows()) {
         if (!window->matches(filter))
             continue;
 
-        result.append(window->parameters(populate));
+        windows.append(window);
+
+        if (populate != PopulateTabs::Yes)
+            continue;
+
+        for (Ref tab : window->tabs())
+            tabURLs.append(tab->url());
     }
 
-    completionHandler(WTFMove(result));
+    requestPermissionToAccessURLs(tabURLs, nullptr, [windows, populate, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        // Get the parameters after permission has been granted, so it can include the URLs and titles if allowed.
+        auto result = WTF::map(windows, [&](auto& window) {
+            return window->parameters(populate);
+        });
+
+        completionHandler(WTFMove(result));
+    });
 }
 
 void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdentifier, WebExtensionWindowParameters updateParameters, CompletionHandler<void(Expected<WebExtensionWindowParameters, WebExtensionError>&&)>&& completionHandler)

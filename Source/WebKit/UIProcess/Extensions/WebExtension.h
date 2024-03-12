@@ -384,13 +384,6 @@ private:
     bool m_parsedExternallyConnectable : 1 { false };
 };
 
-#ifdef __OBJC__
-
-NSSet<_WKWebExtensionPermission> *toAPI(const WebExtension::PermissionsSet&);
-NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebExtension::MatchPatternSet&);
-
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

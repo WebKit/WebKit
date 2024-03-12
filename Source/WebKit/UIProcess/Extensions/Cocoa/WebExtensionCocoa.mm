@@ -2113,26 +2113,6 @@ void WebExtension::populatePermissionsPropertiesIfNeeded()
     }
 }
 
-NSSet<_WKWebExtensionPermission> *toAPI(const WebExtension::PermissionsSet& permissions)
-{
-    NSMutableSet<_WKWebExtensionPermission> *result = [NSMutableSet setWithCapacity:permissions.size()];
-
-    for (auto& permission : permissions)
-        [result addObject:(NSString *)permission];
-
-    return [result copy];
-}
-
-NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebExtension::MatchPatternSet& patterns)
-{
-    NSMutableSet<_WKWebExtensionMatchPattern *> *result = [NSMutableSet setWithCapacity:patterns.size()];
-
-    for (auto& matchPattern : patterns)
-        [result addObject:matchPattern->wrapper()];
-
-    return [result copy];
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

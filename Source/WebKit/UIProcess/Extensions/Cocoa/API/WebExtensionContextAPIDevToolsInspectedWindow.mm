@@ -53,20 +53,33 @@ void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier web
 
     // FIXME: <https://webkit.org/b/269349> Implement `contextSecurityOrigin` and `useContentScriptContext` options for `devtools.inspectedWindow.eval` command
 
-    extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTFMove(completionHandler)](Inspector::ExtensionEvaluationResult&& result) mutable {
-        if (!result) {
-            RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", (NSString *)extensionErrorToString(result.error()));
-            completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector could not evaluate script"));
+    RefPtr tab = getTab(webPageProxyIdentifier, std::nullopt, IncludeExtensionViews::Yes);
+    if (!tab) {
+        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
+        return;
+    }
+
+    requestPermissionToAccessURLs({ tab->url() }, tab, [extension, tab, scriptSource, frameURL, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        if (!tab->extensionHasPermission()) {
+            completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
             return;
         }
 
-        if (!result.value()) {
-            Expected<std::span<const uint8_t>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(result.value().error());
-            completionHandler({ WTFMove(returnedValue) });
-            return;
-        }
+        extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTFMove(completionHandler)](Inspector::ExtensionEvaluationResult&& result) mutable {
+            if (!result) {
+                RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", (NSString *)extensionErrorToString(result.error()));
+                completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector could not evaluate script"));
+                return;
+            }
 
-        completionHandler({ result.value()->get().dataReference() });
+            if (!result.value()) {
+                Expected<std::span<const uint8_t>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(result.value().error());
+                completionHandler({ WTFMove(returnedValue) });
+                return;
+            }
+
+            completionHandler({ result.value()->get().dataReference() });
+        });
     });
 }
 

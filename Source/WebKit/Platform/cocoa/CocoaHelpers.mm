@@ -462,38 +462,39 @@ WallTime toImpl(NSDate *date)
     return WallTime::fromRawSeconds(date.timeIntervalSince1970);
 }
 
-NSSet *toAPI(HashSet<String>& set)
+NSSet *toAPI(const HashSet<URL>& set)
+{
+    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
+    for (auto& element : set)
+        [result addObject:static_cast<NSURL *>(element)];
+    return [result copy];
+}
+
+NSSet *toAPI(const HashSet<String>& set)
 {
     NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
     for (auto& element : set)
         [result addObject:static_cast<NSString *>(element)];
-
     return [result copy];
 }
 
-NSArray *toAPIArray(HashSet<String>& set)
+NSArray *toAPIArray(const HashSet<String>& set)
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:set.size()];
     for (auto& element : set)
         [result addObject:static_cast<NSString *>(element)];
-
     return [result copy];
 }
 
-Vector<String> toImpl(NSArray *array)
-{
-    return Vector<String>(array.count, [array](size_t i) {
-        return (NSString *)array[i];
-    });
-}
-
-HashSet<String> toImplSet(NSArray *array)
+HashSet<String> toImpl(NSSet *set)
 {
     HashSet<String> result;
-    result.reserveInitialCapacity(array.count);
+    result.reserveInitialCapacity(set.count);
 
-    for (NSString *element in array)
-        result.addVoid(element);
+    for (id element in set) {
+        if (auto *string = dynamic_objc_cast<NSString>(element))
+            result.addVoid(string);
+    }
 
     return result;
 }

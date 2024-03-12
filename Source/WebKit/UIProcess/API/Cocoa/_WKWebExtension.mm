@@ -30,6 +30,7 @@
 #import "config.h"
 #import "_WKWebExtensionInternal.h"
 
+#import "CocoaHelpers.h"
 #import "CocoaImage.h"
 #import "WebExtension.h"
 #import "_WKWebExtensionMatchPatternInternal.h"

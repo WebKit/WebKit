@@ -713,6 +713,73 @@ TEST(WKWebExtensionAPITabs, QueryWithPrivateAccess)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPITabs, QueryWithAccessPrompt)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const windowIdOne = allWindows?.[0]?.id",
+
+        @"const tabIdOne = allWindows?.[0]?.tabs?.[0]?.id",
+        @"const tabIdTwo = allWindows?.[0]?.tabs?.[1]?.id",
+
+        @"browser.test.assertTrue(allWindows?.[0]?.tabs?.[0]?.url.startsWith('http://localhost'), 'First tab URL should be localhost')",
+        @"browser.test.assertEq(allWindows?.[0]?.tabs?.[1]?.url, '', 'Second tab URL should be empty')",
+
+        @"const tabsInWindowOne = await browser.tabs.query({ windowId: windowIdOne })",
+
+        @"browser.test.assertTrue(tabsInWindowOne.length >= 2, 'There should be at least 2 tabs in window one')",
+        @"browser.test.assertTrue(tabsInWindowOne[0].url.startsWith('http://localhost'), 'First tab URL should be localhost')",
+        @"browser.test.assertEq(tabsInWindowOne[1].url, '', 'Second tab URL should be empty')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    __block bool firstPermissionRequest = true;
+    auto *localhostURL = server.requestWithLocalhost().URL;
+    auto *loopbackURL = server.request().URL;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<_WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        if (firstPermissionRequest) {
+            EXPECT_TRUE([requestedURLs containsObject:localhostURL]);
+            EXPECT_TRUE([requestedURLs containsObject:loopbackURL]);
+
+            // Only approve localhost for the first request.
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler([NSSet setWithObject:localhostURL], nil);
+            });
+
+            firstPermissionRequest = false;
+        } else {
+            // The second request should only have loopbackURL, as localhostURL was granted previously.
+            EXPECT_FALSE([requestedURLs containsObject:localhostURL]);
+            EXPECT_TRUE([requestedURLs containsObject:loopbackURL]);
+
+            // Approve nothing for the second request.
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(NSSet.set, nil);
+            });
+        }
+    };
+
+    auto *windowOne = manager.get().defaultWindow;
+    [windowOne openNewTab];
+
+    [windowOne.tabs.firstObject.mainWebView loadRequest:server.requestWithLocalhost()];
+    [windowOne.tabs.lastObject.mainWebView loadRequest:server.request()];
+
+    EXPECT_EQ(manager.get().windows.count, 1lu);
+    EXPECT_EQ(windowOne.tabs.count, 2lu);
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionAPITabs, Zoom)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -768,6 +835,10 @@ TEST(WKWebExtensionAPITabs, ToggleReaderMode)
 
 TEST(WKWebExtensionAPITabs, DetectLanguage)
 {
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
     auto *backgroundScript = Util::constructScript(@[
         @"const allWindows = await browser.windows.getAll({ populate: true })",
         @"const tabId = allWindows[0].tabs[0].id",
@@ -781,6 +852,10 @@ TEST(WKWebExtensionAPITabs, DetectLanguage)
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     __block bool detectWebpageLocaleCalled = false;
 

@@ -204,6 +204,8 @@ TEST(WKWebExtensionAPIDevTools, InspectedWindowEval)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:devToolsManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost().URL];
+
     [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
     [manager.get().defaultTab.mainWebView._inspector show];
 

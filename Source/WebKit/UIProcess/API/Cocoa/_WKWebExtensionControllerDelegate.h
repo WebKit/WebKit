@@ -113,14 +113,15 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called when an extension context requests permissions.
  @param controller The web extension controller that is managing the extension.
  @param permissions The set of permissions being requested by the extension.
- @param tab The tab in which the extension is running, or \c nil if the request are not specific to a tab.
+ @param tab The tab in which the extension is running, or \c nil if the request is not specific to a tab.
  @param extensionContext The context in which the web extension is running.
- @param completionHandler A block to be called with the set of allowed permissions.
+ @param completionHandler A block to be called with the set of allowed permissions and an optional expiration date.
  @discussion This method should be implemented by the app to prompt the user for permission and call the completion handler with the
- set of permissions that were granted. If not implemented or the completion handler is not called within a reasonable amount of time, the
- request is assumed to have been denied.
+ set of permissions that were granted and an optional expiration date. If not implemented or the completion handler is not called within a reasonable
+ amount of time, the request is assumed to have been denied. The expiration date can be used to specify when the permissions expire. If `nil`,
+ permissions are assumed to not expire.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissions:in:for:completionHandler:));
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions, NSDate * _Nullable expirationDate))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissions:in:for:completionHandler:));
 
 /*!
  @abstract Called when an extension context requests access to a set of URLs.
@@ -128,12 +129,13 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param urls The set of URLs that the extension is requesting access to.
  @param tab The tab in which the extension is running, or \c nil if the request is not specific to a tab.
  @param extensionContext The context in which the web extension is running.
- @param completionHandler A block to be called with the set of allowed URLs.
+ @param completionHandler A block to be called with the set of allowed URLs and an optional expiration date.
  @discussion This method should be implemented by the app to prompt the user for permission and call the completion handler with the
- set of URLs that were granted access to. If not implemented or the completion handler is not called within a reasonable amount of time, the
- request is assumed to have been denied.
+ set of URLs that were granted access to and an optional expiration date. If not implemented or the completion handler is not called within a
+ reasonable amount of time, the request is assumed to have been denied. The expiration date can be used to specify when the URLs expire.
+ If `nil`, URLs are assumed to not expire.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionToAccessURLs:(NSSet<NSURL *> *)urls inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<NSURL *> *allowedURLs))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionToAccess:in:for:completionHandler:));
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionToAccessURLs:(NSSet<NSURL *> *)urls inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<NSURL *> *allowedURLs, NSDate * _Nullable expirationDate))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionToAccess:in:for:completionHandler:));
 
 /*!
  @abstract Called when an extension context requests access to a set of match patterns.
@@ -141,12 +143,13 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param matchPatterns The set of match patterns that the extension is requesting access to.
  @param tab The tab in which the extension is running, or \c nil if the request is not specific to a tab.
  @param extensionContext The context in which the web extension is running.
- @param completionHandler A block to be called with the set of allowed match patterns.
+ @param completionHandler A block to be called with the set of allowed match patterns and an optional expiration date.
  @discussion This method should be implemented by the app to prompt the user for permission and call the completion handler with the
- set of match patterns that were granted access to. If not implemented or the completion handler is not called within a reasonable amount of time,
- the request is assumed to have been denied.
+ set of match patterns that were granted access to and an optional expiration date. If not implemented or the completion handler is not called
+ within a reasonable amount of time, the request is assumed to have been denied. The expiration date can be used to specify when the match
+ patterns expire. If `nil`, match patterns are assumed to not expire.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionMatchPatterns:in:for:completionHandler:));
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns, NSDate * _Nullable expirationDate))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionMatchPatterns:in:for:completionHandler:));
 
 /*!
  @abstract Called when a popup is requested to be displayed for a specific action.

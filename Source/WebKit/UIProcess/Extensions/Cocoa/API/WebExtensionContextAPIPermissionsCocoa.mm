@@ -49,9 +49,6 @@
 
 namespace WebKit {
 
-static NSString * const permissionsKey = @"permissions";
-static NSString * const originsKey = @"origins";
-
 void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String>&&, Vector<String>&&)>&& completionHandler)
 {
     Vector<String> permissions, origins;
@@ -100,57 +97,40 @@ void WebExtensionContext::permissionsRequest(HashSet<String> permissions, HashSe
 
         bool matchPatternsAreGranted { false };
         bool permissionsAreGranted { false };
+
+        MatchPatternSet neededMatchPatterns;
+        PermissionsSet neededPermissions;
+
+        WallTime matchPatternExpirationDate;
+        WallTime permissionExpirationDate;
     };
 
     Ref resultHolder = ResultHolder::create();
-
-    // Empty requests are automatically granted and don't call the delegate.
-    resultHolder->matchPatternsAreGranted = matchPatterns.isEmpty();
-    resultHolder->permissionsAreGranted = permissions.isEmpty();
-
     Ref callbackAggregator = CallbackAggregator::create([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), resultHolder, permissions, matchPatterns]() mutable {
         if (!resultHolder->matchPatternsAreGranted || !resultHolder->permissionsAreGranted) {
             completionHandler(false);
             return;
         }
 
-        grantPermissionMatchPatterns(WTFMove(matchPatterns));
-        grantPermissions(WTFMove(permissions));
+        grantPermissionMatchPatterns(WTFMove(resultHolder->neededMatchPatterns), resultHolder->matchPatternExpirationDate);
+        grantPermissions(WTFMove(resultHolder->neededPermissions), resultHolder->permissionExpirationDate);
 
         completionHandler(true);
     });
 
-    auto matchPatternsCompletionHandler = [callbackAggregator, resultHolder, matchPatterns](NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns) {
-        THROW_UNLESS([allowedMatchPatterns isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a set");
-
-        for (_WKWebExtensionMatchPattern *pattern in allowedMatchPatterns) {
-            THROW_UNLESS([pattern isKindOfClass:_WKWebExtensionMatchPattern.class], @"Object returned in set by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a _WKWebExtensionMatchPattern");
-            THROW_UNLESS(matchPatterns.contains(pattern._webExtensionMatchPattern), @"Set returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: doesn't contain the requested match patterns");
-        }
-
+    requestPermissionMatchPatterns(matchPatterns, nullptr, [callbackAggregator, resultHolder](MatchPatternSet&& neededMatchPatterns, MatchPatternSet&& allowedMatchPatterns, WallTime expirationDate) {
         // The permissions.request() API only allows granting all or none.
-        resultHolder->matchPatternsAreGranted = matchPatterns.size() == allowedMatchPatterns.count;
-    };
+        resultHolder->matchPatternsAreGranted = neededMatchPatterns.size() == allowedMatchPatterns.size();
+        resultHolder->neededMatchPatterns = WTFMove(neededMatchPatterns);
+        resultHolder->permissionExpirationDate = expirationDate;
+    }, GrantOnCompletion::No);
 
-    auto permissionsCompletionHandler = [callbackAggregator, resultHolder, permissions](NSSet<_WKWebExtensionPermission> *allowedPermissions) {
-        THROW_UNLESS([allowedPermissions isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a set");
-
-        for (_WKWebExtensionPermission permission in allowedPermissions) {
-            THROW_UNLESS([permission isKindOfClass:NSString.class], @"Object returned in set by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a _WKWebExtensionPermission");
-            THROW_UNLESS(permissions.contains(permission), @"Result returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: doesn't contain the requested permissions");
-        }
-
+    requestPermissions(permissions, nullptr, [callbackAggregator, resultHolder](PermissionsSet&& neededPermissions, PermissionsSet&& allowedPermissions, WallTime expirationDate) {
         // The permissions.request() API only allows granting all or none.
-        resultHolder->permissionsAreGranted = permissions.size() == allowedPermissions.count;
-    };
-
-    auto delegate = extensionController()->delegate();
-
-    if (!permissions.isEmpty() && [delegate respondsToSelector:@selector(webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler:)])
-        [delegate webExtensionController:extensionController()->wrapper() promptForPermissions:toAPI(permissions) inTab:nil forExtensionContext:wrapper() completionHandler:makeBlockPtr(WTFMove(permissionsCompletionHandler)).get()];
-
-    if (!matchPatterns.isEmpty() && [delegate respondsToSelector:@selector(webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler:)])
-        [delegate webExtensionController:extensionController()->wrapper() promptForPermissionMatchPatterns:toAPI(matchPatterns) inTab:nil forExtensionContext:wrapper() completionHandler:makeBlockPtr(WTFMove(matchPatternsCompletionHandler)).get()];
+        resultHolder->permissionsAreGranted = neededPermissions.size() == allowedPermissions.size();
+        resultHolder->neededPermissions = WTFMove(neededPermissions);
+        resultHolder->matchPatternExpirationDate = expirationDate;
+    }, GrantOnCompletion::No);
 }
 
 void WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&& completionHandler)

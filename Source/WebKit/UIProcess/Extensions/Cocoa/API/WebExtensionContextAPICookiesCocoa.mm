@@ -123,22 +123,24 @@ void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, co
     WebExtensionCookieFilterParameters filterParameters;
     filterParameters.name = name;
 
-    fetchCookies(*dataStore, url, filterParameters, [completionHandler = WTFMove(completionHandler), dataStore, name = name.isolatedCopy()](Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&& result) mutable {
-        if (!result) {
-            completionHandler(makeUnexpected(result.error()));
-            return;
-        }
+    requestPermissionToAccessURLs({ url }, nullptr, [this, protectedThis = Ref { *this }, dataStore, name, url, filterParameters = WTFMove(filterParameters), completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        fetchCookies(*dataStore, url, filterParameters, [completionHandler = WTFMove(completionHandler), dataStore, name](Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&& result) mutable {
+            if (!result) {
+                completionHandler(makeUnexpected(result.error()));
+                return;
+            }
 
-        auto& cookies = result.value();
-        if (cookies.isEmpty()) {
-            completionHandler({ });
-            return;
-        }
+            auto& cookies = result.value();
+            if (cookies.isEmpty()) {
+                completionHandler({ });
+                return;
+            }
 
-        ASSERT(cookies.size() == 1);
-        auto& cookieParameters = cookies[0];
+            ASSERT(cookies.size() == 1);
+            auto& cookieParameters = cookies[0];
 
-        completionHandler({ WTFMove(cookieParameters) });
+            completionHandler({ WTFMove(cookieParameters) });
+        });
     });
 }
 
@@ -150,7 +152,9 @@ void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID,
         return;
     }
 
-    fetchCookies(*dataStore, url, filterParameters, WTFMove(completionHandler));
+    requestPermissionToAccessURLs({ url }, nullptr, [this, protectedThis = Ref { *this }, dataStore, url, filterParameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        fetchCookies(*dataStore, url, filterParameters, WTFMove(completionHandler));
+    });
 }
 
 void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, const WebExtensionCookieParameters& cookieParameters, CompletionHandler<void(Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -161,13 +165,17 @@ void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, co
         return;
     }
 
-    if (!hasPermission(toURL(cookieParameters.cookie))) {
-        completionHandler(toWebExtensionError(@"cookies.set()", nil, @"host permissions are missing or not granted"));
-        return;
-    }
+    auto url = toURL(cookieParameters.cookie);
 
-    dataStore->cookieStore().setCookies({ cookieParameters.cookie }, [completionHandler = WTFMove(completionHandler), sessionID = dataStore->sessionID().isolatedCopy(), cookie = cookieParameters.cookie.isolatedCopy()]() mutable {
-        completionHandler({ WebExtensionCookieParameters { WTFMove(sessionID), WTFMove(cookie) } });
+    requestPermissionToAccessURLs({ url }, nullptr, [this, protectedThis = Ref { *this }, dataStore, url, cookieParameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        if (!hasPermission(url)) {
+            completionHandler(toWebExtensionError(@"cookies.set()", nil, @"host permissions are missing or not granted"));
+            return;
+        }
+
+        dataStore->cookieStore().setCookies({ cookieParameters.cookie }, [completionHandler = WTFMove(completionHandler), sessionID = dataStore->sessionID(), cookie = cookieParameters.cookie]() mutable {
+            completionHandler({ WebExtensionCookieParameters { WTFMove(sessionID), WTFMove(cookie) } });
+        });
     });
 }
 
@@ -179,31 +187,33 @@ void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID,
         return;
     }
 
-    if (!hasPermission(url)) {
-        completionHandler(toWebExtensionError(@"cookies.remove()", nil, @"host permissions are missing or not granted"));
-        return;
-    }
-
-    WebExtensionCookieFilterParameters filterParameters;
-    filterParameters.name = name;
-
-    fetchCookies(*dataStore, url, filterParameters, [completionHandler = WTFMove(completionHandler), dataStore](Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&& result) mutable {
-        if (!result) {
-            completionHandler(makeUnexpected(result.error()));
+    requestPermissionToAccessURLs({ url }, nullptr, [this, protectedThis = Ref { *this }, dataStore, name, url, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        if (!hasPermission(url)) {
+            completionHandler(toWebExtensionError(@"cookies.remove()", nil, @"host permissions are missing or not granted"));
             return;
         }
 
-        auto& cookies = result.value();
-        if (cookies.isEmpty()) {
-            completionHandler({ });
-            return;
-        }
+        WebExtensionCookieFilterParameters filterParameters;
+        filterParameters.name = name;
 
-        ASSERT(cookies.size() == 1);
-        auto& cookieParameters = cookies[0];
+        fetchCookies(*dataStore, url, filterParameters, [completionHandler = WTFMove(completionHandler), dataStore](Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&& result) mutable {
+            if (!result) {
+                completionHandler(makeUnexpected(result.error()));
+                return;
+            }
 
-        dataStore->cookieStore().deleteCookie(cookieParameters.cookie, [completionHandler = WTFMove(completionHandler), cookieParameters]() mutable {
-            completionHandler({ WTFMove(cookieParameters) });
+            auto& cookies = result.value();
+            if (cookies.isEmpty()) {
+                completionHandler({ });
+                return;
+            }
+
+            ASSERT(cookies.size() == 1);
+            auto& cookieParameters = cookies[0];
+
+            dataStore->cookieStore().deleteCookie(cookieParameters.cookie, [completionHandler = WTFMove(completionHandler), cookieParameters]() mutable {
+                completionHandler({ WTFMove(cookieParameters) });
+            });
         });
     });
 }

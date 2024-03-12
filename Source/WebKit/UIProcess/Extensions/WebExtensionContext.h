@@ -159,6 +159,8 @@ public:
     using MatchPatternSet = WebExtension::MatchPatternSet;
     using InjectedContentData = WebExtension::InjectedContentData;
     using InjectedContentVector = WebExtension::InjectedContentVector;
+    using URLSet = HashSet<URL>;
+    using URLVector = Vector<URL>;
 
     using WeakPageCountedSet = WeakHashCountedSet<WebPageProxy>;
     using EventListenerTypeCountedSet = HashCountedSet<WebExtensionEventListenerType>;
@@ -217,6 +219,7 @@ public:
     enum class UpdateWindowOrder : bool { No, Yes };
     enum class IgnoreExtensionAccess : bool { No, Yes };
     enum class IncludeExtensionViews : bool { No, Yes };
+    enum class GrantOnCompletion : bool { No, Yes };
 
     enum class Error : uint8_t {
         Unknown = 1,
@@ -323,6 +326,10 @@ public:
     bool removeDeniedPermissions(PermissionsSet&);
     bool removeDeniedPermissionMatchPatterns(MatchPatternSet&, EqualityOnly = EqualityOnly::Yes);
 
+    void requestPermissionMatchPatterns(const MatchPatternSet&, RefPtr<WebExtensionTab> = nullptr, CompletionHandler<void(MatchPatternSet&& neededMatchPatterns, MatchPatternSet&& allowedMatchPatterns, WallTime expirationDate)>&& = nullptr, GrantOnCompletion = GrantOnCompletion::Yes);
+    void requestPermissionToAccessURLs(const URLVector&, RefPtr<WebExtensionTab> = nullptr, CompletionHandler<void(URLSet&& neededURLs, URLSet&& allowedURLs, WallTime expirationDate)>&& = nullptr, GrantOnCompletion = GrantOnCompletion::Yes);
+    void requestPermissions(const PermissionsSet&, RefPtr<WebExtensionTab> = nullptr, CompletionHandler<void(PermissionsSet&& neededPermissions, PermissionsSet&& allowedPermissions, WallTime expirationDate)>&& = nullptr, GrantOnCompletion = GrantOnCompletion::Yes);
+
     PermissionsMap::KeysConstIteratorRange currentPermissions() { return grantedPermissions().keys(); }
     PermissionMatchPatternsMap::KeysConstIteratorRange currentPermissionMatchPatterns() { return grantedPermissionMatchPatterns().keys(); }
 
@@ -331,6 +338,8 @@ public:
 
     bool hasPermission(const String& permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
     bool hasPermission(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+    bool hasPermission(const WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+
     bool hasPermissions(PermissionsSet, MatchPatternSet);
 
     PermissionState permissionState(const String& permission, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { });
@@ -339,8 +348,8 @@ public:
     PermissionState permissionState(const URL&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
     void setPermissionState(PermissionState, const URL&, WallTime expirationDate = WallTime::infinity());
 
-    PermissionState permissionState(WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
-    void setPermissionState(PermissionState, WebExtensionMatchPattern&, WallTime expirationDate = WallTime::infinity());
+    PermissionState permissionState(const WebExtensionMatchPattern&, WebExtensionTab* = nullptr, OptionSet<PermissionStateOptions> = { PermissionStateOptions::RequestedWithTabsPermission });
+    void setPermissionState(PermissionState, const WebExtensionMatchPattern&, WallTime expirationDate = WallTime::infinity());
 
     void clearCachedPermissionStates();
 
@@ -849,6 +858,8 @@ private:
 
     ListHashSet<URL> m_cachedPermissionURLs;
     HashMap<URL, PermissionState> m_cachedPermissionStates;
+
+    size_t m_pendingPermissionRequests { 0 };
 
     bool m_requestedOptionalAccessToAllHosts { false };
     bool m_hasAccessInPrivateBrowsing { false };

@@ -81,6 +81,7 @@
 #import <WebCore/UserScript.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/EnumTraits.h>
 #import <wtf/FileSystem.h>
 #import <wtf/URLParser.h>
@@ -93,6 +94,8 @@
 
 // This number was chosen arbitrarily based on testing with some popular extensions.
 static constexpr size_t maximumCachedPermissionResults = 256;
+
+static constexpr auto permissionRequestTimeout = 2_min;
 
 static NSString * const backgroundContentEventListenersKey = @"BackgroundContentEventListeners";
 static NSString * const backgroundContentEventListenersVersionKey = @"BackgroundContentEventListenersVersion";
@@ -786,6 +789,8 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
 
 void WebExtensionContext::grantPermissions(PermissionsSet&& permissions, WallTime expirationDate)
 {
+    ASSERT(!expirationDate.isNaN());
+
     if (permissions.isEmpty())
         return;
 
@@ -802,6 +807,8 @@ void WebExtensionContext::grantPermissions(PermissionsSet&& permissions, WallTim
 
 void WebExtensionContext::denyPermissions(PermissionsSet&& permissions, WallTime expirationDate)
 {
+    ASSERT(!expirationDate.isNaN());
+
     if (permissions.isEmpty())
         return;
 
@@ -818,6 +825,8 @@ void WebExtensionContext::denyPermissions(PermissionsSet&& permissions, WallTime
 
 void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
 {
+    ASSERT(!expirationDate.isNaN());
+
     if (permissionMatchPatterns.isEmpty())
         return;
 
@@ -837,6 +846,8 @@ void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permiss
 
 void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
 {
+    ASSERT(!expirationDate.isNaN());
+
     if (permissionMatchPatterns.isEmpty())
         return;
 
@@ -1035,6 +1046,184 @@ WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::removeExpi
     return matchPatternMap;
 }
 
+void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& requestedMatchPatterns, RefPtr<WebExtensionTab> tab, CompletionHandler<void(MatchPatternSet&&, MatchPatternSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion)
+{
+    MatchPatternSet neededMatchPatterns;
+    for (auto& pattern : requestedMatchPatterns) {
+        if (!hasPermission(pattern, tab.get()))
+            neededMatchPatterns.addVoid(pattern);
+    }
+
+    if (!isLoaded() || neededMatchPatterns.isEmpty()) {
+        completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
+        return;
+    }
+
+    auto delegate = extensionController()->delegate();
+    if (![delegate respondsToSelector:@selector(webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler:)]) {
+        completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
+        return;
+    }
+
+    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededMatchPatterns, grantOnCompletion, completionHandler = WTFMove(completionHandler)](NSSet *allowedMatchPatterns, NSDate *expirationDate) mutable {
+        --m_pendingPermissionRequests;
+
+        THROW_UNLESS([allowedMatchPatterns isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a set");
+        THROW_UNLESS(!expirationDate || [expirationDate isKindOfClass:NSDate.class], @"Object returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a date");
+
+        for (_WKWebExtensionMatchPattern *pattern in allowedMatchPatterns) {
+            THROW_UNLESS([pattern isKindOfClass:_WKWebExtensionMatchPattern.class], @"Object returned in set by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: is not a _WKWebExtensionMatchPattern");
+            THROW_UNLESS(neededMatchPatterns.contains(pattern._webExtensionMatchPattern), @"Set returned by webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler: doesn't contain the requested match patterns");
+        }
+
+        auto matchPatterns = toPatterns(allowedMatchPatterns);
+        auto expirationTime = toImpl(expirationDate ?: NSDate.distantFuture);
+
+        if (grantOnCompletion == GrantOnCompletion::Yes && !matchPatterns.isEmpty())
+            grantPermissionMatchPatterns(MatchPatternSet(matchPatterns), expirationTime);
+
+        if (completionHandler)
+            completionHandler(WTFMove(neededMatchPatterns), WTFMove(matchPatterns), expirationTime);
+    };
+
+    ++m_pendingPermissionRequests;
+
+    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTFMove(internalCompletionHandler), nil, nil);
+
+    // Timeout the request after a delay, denying all the requested match patterns.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([callbackAggregator] {
+        callbackAggregator.get()(NSSet.set, nil);
+    }).get());
+
+    [delegate webExtensionController:extensionController()->wrapper() promptForPermissionMatchPatterns:toAPI(neededMatchPatterns) inTab:tab ? tab->delegate() : nil forExtensionContext:wrapper() completionHandler:makeBlockPtr([callbackAggregator](NSSet *allowedMatchPatterns, NSDate *expirationDate) {
+        callbackAggregator.get()(allowedMatchPatterns, expirationDate);
+    }).get()];
+}
+
+void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& requestedURLs, RefPtr<WebExtensionTab> tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion)
+{
+    URLSet neededURLs;
+    for (auto& url : requestedURLs) {
+        // Only HTTP family URLs are really valid to request. This avoids requesting for
+        // things like new tab pages, special tabs, other extensions, about:blank, etc.
+        if (url.protocolIsInHTTPFamily() && !hasPermission(url, tab.get()))
+            neededURLs.addVoid(url);
+    }
+
+    if (!isLoaded() || neededURLs.isEmpty()) {
+        completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
+        return;
+    }
+
+    auto delegate = extensionController()->delegate();
+    if (![delegate respondsToSelector:@selector(webExtensionController:promptForPermissionToAccessURLs:inTab:forExtensionContext:completionHandler:)]) {
+        completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
+        return;
+    }
+
+    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededURLs, grantOnCompletion, completionHandler = WTFMove(completionHandler)](NSSet *allowedURLs, NSDate *expirationDate) mutable {
+        --m_pendingPermissionRequests;
+
+        THROW_UNLESS([allowedURLs isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissionToAccessURLs:inTab:forExtensionContext:completionHandler: is not a set");
+        THROW_UNLESS(!expirationDate || [expirationDate isKindOfClass:NSDate.class], @"Object returned by webExtensionController:promptForPermissionToAccessURLs:inTab:forExtensionContext:completionHandler: is not a date");
+
+        for (NSURL *url in allowedURLs) {
+            THROW_UNLESS([url isKindOfClass:NSURL.class], @"Object returned in set by webExtensionController:promptForPermissionToAccessURLs:inTab:forExtensionContext:completionHandler: is not a URL");
+            THROW_UNLESS(neededURLs.contains(url), @"Result returned by webExtensionController:promptForPermissionToAccessURLs:inTab:forExtensionContext:completionHandler: doesn't contain the requested URLs");
+        }
+
+        auto expirationTime = toImpl(expirationDate ?: NSDate.distantFuture);
+
+        URLSet urls;
+        MatchPatternSet matchPatterns;
+
+        urls.reserveInitialCapacity(allowedURLs.count);
+        matchPatterns.reserveInitialCapacity(allowedURLs.count);
+
+        for (NSURL *url in allowedURLs) {
+            RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(url);
+            if (!matchPattern)
+                continue;
+
+            urls.addVoid(url);
+            matchPatterns.addVoid(matchPattern.releaseNonNull());
+        }
+
+        if (grantOnCompletion == GrantOnCompletion::Yes && !matchPatterns.isEmpty())
+            grantPermissionMatchPatterns(WTFMove(matchPatterns), expirationTime);
+
+        if (completionHandler)
+            completionHandler(WTFMove(neededURLs), WTFMove(urls), expirationTime);
+    };
+
+    ++m_pendingPermissionRequests;
+
+    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTFMove(internalCompletionHandler), nil, nil);
+
+    // Timeout the request after a delay, denying all the requested URLs.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([callbackAggregator] {
+        callbackAggregator.get()(NSSet.set, nil);
+    }).get());
+
+    [delegate webExtensionController:extensionController()->wrapper() promptForPermissionToAccessURLs:toAPI(neededURLs) inTab:tab ? tab->delegate() : nil forExtensionContext:wrapper() completionHandler:makeBlockPtr([callbackAggregator](NSSet *allowedURLs, NSDate *expirationDate) {
+        callbackAggregator.get()(allowedURLs, expirationDate);
+    }).get()];
+}
+
+void WebExtensionContext::requestPermissions(const PermissionsSet& requestedPermissions, RefPtr<WebExtensionTab> tab, CompletionHandler<void(PermissionsSet&&, PermissionsSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion)
+{
+    PermissionsSet neededPermissions;
+    for (auto& permission : requestedPermissions) {
+        if (!hasPermission(permission, tab.get()))
+            neededPermissions.addVoid(permission);
+    }
+
+    if (!isLoaded() || neededPermissions.isEmpty()) {
+        completionHandler(WTFMove(neededPermissions), { }, WallTime::infinity());
+        return;
+    }
+
+    auto delegate = extensionController()->delegate();
+    if (![delegate respondsToSelector:@selector(webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler:)]) {
+        completionHandler(WTFMove(neededPermissions), { }, WallTime::infinity());
+        return;
+    }
+
+    auto internalCompletionHandler = [this, protectedThis = Ref { *this }, neededPermissions, grantOnCompletion, completionHandler = WTFMove(completionHandler)](NSSet *allowedPermissions, NSDate *expirationDate) mutable {
+        --m_pendingPermissionRequests;
+
+        THROW_UNLESS([allowedPermissions isKindOfClass:NSSet.class], @"Object returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a set");
+        THROW_UNLESS(!expirationDate || [expirationDate isKindOfClass:NSDate.class], @"Object returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a date");
+
+        for (_WKWebExtensionPermission permission in allowedPermissions) {
+            THROW_UNLESS([permission isKindOfClass:NSString.class], @"Object returned in set by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: is not a _WKWebExtensionPermission");
+            THROW_UNLESS(neededPermissions.contains(permission), @"Result returned by webExtensionController:promptForPermissions:inTab:forExtensionContext:completionHandler: doesn't contain the requested permissions");
+        }
+
+        auto permissions = toImpl(allowedPermissions);
+        auto expirationTime = toImpl(expirationDate ?: NSDate.distantFuture);
+
+        if (grantOnCompletion == GrantOnCompletion::Yes && !permissions.isEmpty())
+            grantPermissions(PermissionsSet(permissions), expirationTime);
+
+        if (completionHandler)
+            completionHandler(WTFMove(neededPermissions), WTFMove(permissions), expirationTime);
+    };
+
+    ++m_pendingPermissionRequests;
+
+    Ref callbackAggregator = EagerCallbackAggregator<void(NSSet *, NSDate *)>::create(WTFMove(internalCompletionHandler), nil, nil);
+
+    // Timeout the request after a delay, denying all the requested permissions.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, permissionRequestTimeout.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([callbackAggregator] {
+        callbackAggregator.get()(NSSet.set, nil);
+    }).get());
+
+    [delegate webExtensionController:extensionController()->wrapper() promptForPermissions:toAPI(neededPermissions) inTab:tab ? tab->delegate() : nil forExtensionContext:wrapper() completionHandler:makeBlockPtr([callbackAggregator](NSSet *allowedPermissions, NSDate *expirationDate) {
+        callbackAggregator.get()(allowedPermissions, expirationDate);
+    }).get()];
+}
+
 bool WebExtensionContext::hasPermission(const String& permission, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
     ASSERT(!permission.isEmpty());
@@ -1060,6 +1249,24 @@ bool WebExtensionContext::hasPermission(const URL& url, WebExtensionTab* tab, Op
     options.add(PermissionStateOptions::SkipRequestedPermissions);
 
     switch (permissionState(url, tab, options)) {
+    case PermissionState::Unknown:
+    case PermissionState::DeniedImplicitly:
+    case PermissionState::DeniedExplicitly:
+    case PermissionState::RequestedImplicitly:
+    case PermissionState::RequestedExplicitly:
+        return false;
+
+    case PermissionState::GrantedImplicitly:
+    case PermissionState::GrantedExplicitly:
+        return true;
+    }
+}
+
+bool WebExtensionContext::hasPermission(const WebExtensionMatchPattern& pattern, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
+{
+    options.add(PermissionStateOptions::SkipRequestedPermissions);
+
+    switch (permissionState(pattern, tab, options)) {
     case PermissionState::Unknown:
     case PermissionState::DeniedImplicitly:
     case PermissionState::DeniedExplicitly:
@@ -1240,7 +1447,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     return cacheResultAndReturn(PermissionState::Unknown);
 }
 
-WebExtensionContext::PermissionState WebExtensionContext::permissionState(WebExtensionMatchPattern& pattern, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
+WebExtensionContext::PermissionState WebExtensionContext::permissionState(const WebExtensionMatchPattern& pattern, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
     if (!pattern.isValid())
         return PermissionState::Unknown;
@@ -1324,6 +1531,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(WebExt
 void WebExtensionContext::setPermissionState(PermissionState state, const String& permission, WallTime expirationDate)
 {
     ASSERT(!permission.isEmpty());
+    ASSERT(!expirationDate.isNaN());
 
     auto permissions = PermissionsSet { permission };
 
@@ -1354,6 +1562,7 @@ void WebExtensionContext::setPermissionState(PermissionState state, const String
 void WebExtensionContext::setPermissionState(PermissionState state, const URL& url, WallTime expirationDate)
 {
     ASSERT(!url.isEmpty());
+    ASSERT(!expirationDate.isNaN());
 
     auto pattern = WebExtensionMatchPattern::getOrCreate(url.protocol().toString(), url.host().toString(), url.path().toString());
     if (!pattern)
@@ -1362,11 +1571,12 @@ void WebExtensionContext::setPermissionState(PermissionState state, const URL& u
     setPermissionState(state, *pattern, expirationDate);
 }
 
-void WebExtensionContext::setPermissionState(PermissionState state, WebExtensionMatchPattern& pattern, WallTime expirationDate)
+void WebExtensionContext::setPermissionState(PermissionState state, const WebExtensionMatchPattern& pattern, WallTime expirationDate)
 {
     ASSERT(pattern.isValid());
+    ASSERT(!expirationDate.isNaN());
 
-    auto patterns = MatchPatternSet { pattern };
+    auto patterns = MatchPatternSet { const_cast<WebExtensionMatchPattern&>(pattern) };
     auto equalityOnly = pattern.matchesAllHosts() ? EqualityOnly::Yes : EqualityOnly::No;
 
     switch (state) {
@@ -1593,6 +1803,31 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
             goto finish;
         }
     }
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    // Search open inspector background pages.
+    for (auto entry : m_inspectorBackgroundPageMap) {
+        auto *webView = std::get<RetainPtr<WKWebView>>(entry.value).get();
+        if (webView._page->identifier() == webPageProxyIdentifier) {
+            if (includeExtensionViews == IncludeExtensionViews::No)
+                return nullptr;
+
+            result = m_tabMap.get(std::get<WebExtensionTabIdentifier>(entry.value));
+            goto finish;
+        }
+    }
+
+    // Search open inspectors.
+    for (auto [inspector, tab] : openInspectors()) {
+        if (inspector->inspectorPage()->identifier() == webPageProxyIdentifier) {
+            if (includeExtensionViews == IncludeExtensionViews::No)
+                return nullptr;
+
+            result = tab;
+            goto finish;
+        }
+    }
+#endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 finish:
     if (!result) {
@@ -2896,13 +3131,17 @@ void WebExtensionContext::unloadBackgroundContentIfPossible()
 
     static const auto delayForInactivePorts = isNotRunningInTestRunner() ? 2_min : 6_s;
 
+    if (m_pendingPermissionRequests) {
+        RELEASE_LOG_DEBUG(Extensions, "Not unloading background content because it has pending permission requests");
+        scheduleBackgroundContentToUnload();
+        return;
+    }
+
     if (pageHasOpenPorts(*m_backgroundWebView.get()._page) && MonotonicTime::now() - m_lastBackgroundPortActivityTime < delayForInactivePorts) {
         RELEASE_LOG_DEBUG(Extensions, "Not unloading background content because it has open, active ports");
         scheduleBackgroundContentToUnload();
         return;
     }
-
-    // FIXME: <https://webkit.org/b/262714> Don't unload the background page if there are pending permission requests.
 
     if (m_backgroundWebView.get()._isBeingInspected) {
         RELEASE_LOG_DEBUG(Extensions, "Not unloading background content because it is being inspected");

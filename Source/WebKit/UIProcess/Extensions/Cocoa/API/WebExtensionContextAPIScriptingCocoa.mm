@@ -70,22 +70,24 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
         return;
     }
 
-    auto *webView = tab->mainWebView();
-    if (!webView) {
-        completionHandler(toWebExtensionError(apiName, nil, @"could not execute script on this tab"));
-        return;
-    }
+    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        if (!tab->extensionHasPermission()) {
+            completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
+            return;
+        }
 
-    if (!hasPermission(webView.URL, tab.get())) {
-        completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
-        return;
-    }
+        auto *webView = tab->mainWebView();
+        if (!webView) {
+            completionHandler(toWebExtensionError(apiName, nil, @"could not execute script on this tab"));
+            return;
+        }
 
-    auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
-    Ref executionWorld = toContentWorld(parameters.world);
+        auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
+        Ref executionWorld = toContentWorld(parameters.world);
 
-    executeScript(scriptPairs, webView, executionWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
-        completionHandler(WTFMove(injectionResults));
+        executeScript(scriptPairs, webView, executionWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
+            completionHandler(WTFMove(injectionResults));
+        });
     });
 }
 
@@ -99,24 +101,26 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
         return;
     }
 
-    auto *webView = tab->mainWebView();
-    if (!webView) {
-        completionHandler(toWebExtensionError(apiName, nil, @"could not inject stylesheet on this tab"));
-        return;
-    }
+    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        if (!tab->extensionHasPermission()) {
+            completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
+            return;
+        }
 
-    if (!hasPermission(webView.URL, tab.get())) {
-        completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
-        return;
-    }
+        auto *webView = tab->mainWebView();
+        if (!webView) {
+            completionHandler(toWebExtensionError(apiName, nil, @"could not inject stylesheet on this tab"));
+            return;
+        }
 
-    // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
-    auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
+        // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
+        auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
-    auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
-    injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, injectedFrames, *this);
+        auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
+        injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, injectedFrames, *this);
 
-    completionHandler({ });
+        completionHandler({ });
+    });
 }
 
 void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -140,10 +144,8 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
         return;
     }
 
-    if (!hasPermission(webView.URL, tab.get())) {
-        completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
-        return;
-    }
+    // Allow removing CSS without permission, since it is not sensitive and the extension might have had permission before
+    // and permission has been revoked since it inserted CSS. This allows for the extension to clean up.
 
     // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
     auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;

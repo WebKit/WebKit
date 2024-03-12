@@ -88,20 +88,28 @@
         completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"runtime.openOptionsPage() not implemneted" }]);
 }
 
-- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(id<_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions))completionHandler
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(id<_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions, NSDate *expirationDate))completionHandler
 {
     if (_promptForPermissions)
         _promptForPermissions(tab, permissions, completionHandler);
     else
-        completionHandler(permissions);
+        completionHandler(permissions, nil);
 }
 
-- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(id<_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns))completionHandler
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(id<_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns, NSDate *expirationDate))completionHandler
 {
     if (_promptForPermissionMatchPatterns)
         _promptForPermissionMatchPatterns(tab, matchPatterns, completionHandler);
     else
-        completionHandler(matchPatterns);
+        completionHandler(matchPatterns, nil);
+}
+
+- (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionToAccessURLs:(NSSet<NSURL *> *)urls inTab:(id<_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<NSURL *> *allowedURLs, NSDate *expirationDate))completionHandler
+{
+    if (_promptForPermissionToAccessURLs)
+        _promptForPermissionToAccessURLs(tab, urls, completionHandler);
+    else
+        completionHandler(urls, nil);
 }
 
 - (void)webExtensionController:(_WKWebExtensionController *)controller sendMessage:(id)message toApplicationIdentifier:(NSString *)applicationIdentifier forExtensionContext:(_WKWebExtensionContext *)extensionContext replyHandler:(void (^)(id, NSError *))replyHandler
