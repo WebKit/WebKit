@@ -111,7 +111,7 @@ async function waitForVideoSize(video, width, height)
     const max = 200
     let counter = 0;
     while (++counter < max && video.videoWidth != width && video.videoHeight != height)
-        await waitFor(50);
+        await new Promise(resolve => setTimeout(resolve, 50));
 
     if (counter === max)
         return Promise.reject("Video size not expected : " + video.videoWidth + " " + video.videoHeight);
