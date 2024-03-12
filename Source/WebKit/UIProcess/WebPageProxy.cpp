@@ -1085,7 +1085,7 @@ void WebPageProxy::setResourceLoadClient(std::unique_ptr<API::ResourceLoadClient
 
 void WebPageProxy::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)
 {
-    ASSERT(m_process->connection() == &connection);
+    ASSERT(m_process->connection() == &connection || preferences().siteIsolationEnabled());
     handleMessageShared(m_process, messageName, messageBody);
 }
 
@@ -1099,7 +1099,7 @@ void WebPageProxy::handleMessageShared(const Ref<WebProcessProxy>& process, cons
 
 void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&& completionHandler)
 {
-    ASSERT(m_process->connection() == &connection);
+    ASSERT(m_process->connection() == &connection || preferences().siteIsolationEnabled());
 
     if (!m_injectedBundleClient)
         return completionHandler({ });
