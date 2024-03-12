@@ -55,7 +55,7 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObje
     if (oldChild.isInline())
         return false;
 
-    if (is<RenderBoxModelObject>(oldChild) && downcast<RenderBoxModelObject>(oldChild).continuation())
+    if (auto* boxModelObject = dynamicDowncast<RenderBoxModelObject>(oldChild); boxModelObject && boxModelObject->continuation())
         return false;
 
     if (previous) {

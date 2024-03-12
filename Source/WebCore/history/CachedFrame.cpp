@@ -184,7 +184,8 @@ CachedFrame::CachedFrame(Frame& frame)
         document->suspend(ReasonForSuspension::BackForwardCache);
     }
 
-    m_cachedFrameScriptData = is<LocalFrame>(frame) ? makeUnique<ScriptCachedFrameData>(downcast<LocalFrame>(frame)) : nullptr;
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+    m_cachedFrameScriptData = localFrame ? makeUnique<ScriptCachedFrameData>(*localFrame) : nullptr;
 
     if (document)
         document->protectedWindow()->suspendForBackForwardCache();
@@ -195,7 +196,6 @@ CachedFrame::CachedFrame(Frame& frame)
         localFrameView->resetLayoutMilestones();
 
     // The main frame is reused for the navigation and the opener link to its should thus persist.
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
     if (localFrame) {
         CheckedRef frameLoader = localFrame->loader();
         if (!frame.isMainFrame())

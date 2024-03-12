@@ -60,7 +60,11 @@ public:
 
     virtual void removeFlowChildInfo(RenderElement&);
 #ifndef NDEBUG
-    bool hasChildInfo(RenderObject* child) const { return is<RenderBox>(child) && m_fragmentRangeMap.contains(downcast<RenderBox>(child)); }
+    bool hasChildInfo(RenderObject* child) const
+    {
+        auto* renderBox = dynamicDowncast<RenderBox>(child);
+        return renderBox && m_fragmentRangeMap.contains(*renderBox);
+    }
 #endif
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
