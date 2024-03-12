@@ -32,14 +32,13 @@
 #include "WebGPURenderPassTimestampWrites.h"
 #include <optional>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore::WebGPU {
 
 struct RenderPassDescriptor : public ObjectDescriptorBase {
     Vector<std::optional<RenderPassColorAttachment>> colorAttachments;
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
-    WeakPtr<QuerySet> occlusionQuerySet;
+    QuerySet* occlusionQuerySet { nullptr };
     std::optional<RenderPassTimestampWrites> timestampWrites;
     std::optional<uint64_t> maxDrawCount;
 };

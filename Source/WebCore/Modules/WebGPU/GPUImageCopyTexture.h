@@ -47,7 +47,7 @@ struct GPUImageCopyTexture {
         };
     }
 
-    WeakPtr<GPUTexture> texture;
+    GPUTexture* texture { nullptr };
     GPUIntegerCoordinate mipLevel { 0 };
     std::optional<GPUOrigin3D> origin;
     GPUTextureAspect aspect { GPUTextureAspect::All };

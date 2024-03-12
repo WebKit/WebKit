@@ -32,16 +32,15 @@
 #include <variant>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 
 class TextureView;
 
 struct RenderPassColorAttachment {
-    WeakRef<TextureView> view;
+    TextureView& view;
     std::optional<IntegerCoordinate> depthSlice;
-    WeakPtr<TextureView> resolveTarget;
+    TextureView* resolveTarget { nullptr };
 
     std::optional<Color> clearValue;
     LoadOp loadOp { LoadOp::Load };

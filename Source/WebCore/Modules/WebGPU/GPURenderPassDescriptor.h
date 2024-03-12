@@ -56,7 +56,7 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
 
     Vector<std::optional<GPURenderPassColorAttachment>> colorAttachments;
     std::optional<GPURenderPassDepthStencilAttachment> depthStencilAttachment;
-    WeakPtr<GPUQuerySet> occlusionQuerySet;
+    GPUQuerySet* occlusionQuerySet { nullptr };
     GPURenderPassTimestampWrites timestampWrites;
     std::optional<GPUSize64> maxDrawCount;
 };

@@ -30,14 +30,13 @@
 #include "WebGPUStoreOp.h"
 #include <variant>
 #include <wtf/Ref.h>
-#include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 
 class TextureView;
 
 struct RenderPassDepthStencilAttachment {
-    WeakRef<TextureView> view;
+    TextureView& view;
 
     float depthClearValue { 0 };
     std::optional<LoadOp> depthLoadOp;

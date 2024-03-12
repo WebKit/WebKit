@@ -31,7 +31,6 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPURenderPassColorAttachment.h>
-#include <WebCore/WebGPUTextureView.h>
 
 namespace WebKit::WebGPU {
 

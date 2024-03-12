@@ -27,14 +27,13 @@
 
 #include "WebGPUImageDataLayout.h"
 #include <wtf/Ref.h>
-#include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 
 class Buffer;
 
 struct ImageCopyBuffer : public ImageDataLayout {
-    WeakRef<Buffer> buffer;
+    Buffer& buffer;
 };
 
 } // namespace WebCore::WebGPU

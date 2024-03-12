@@ -31,7 +31,6 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUProgrammableStage.h>
-#include <WebCore/WebGPUShaderModule.h>
 
 namespace WebKit::WebGPU {
 

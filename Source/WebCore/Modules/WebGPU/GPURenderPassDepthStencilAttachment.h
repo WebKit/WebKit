@@ -52,7 +52,7 @@ struct GPURenderPassDepthStencilAttachment {
         };
     }
 
-    WeakPtr<GPUTextureView> view;
+    GPUTextureView* view { nullptr };
 
     std::optional<float> depthClearValue;
     std::optional<GPULoadOp> depthLoadOp;

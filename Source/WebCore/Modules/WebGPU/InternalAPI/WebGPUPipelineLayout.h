@@ -27,12 +27,11 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
 
-class PipelineLayout : public RefCounted<PipelineLayout>, public CanMakeWeakPtr<PipelineLayout> {
+class PipelineLayout : public RefCounted<PipelineLayout> {
 public:
     virtual ~PipelineLayout() = default;
 

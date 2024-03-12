@@ -30,7 +30,6 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUQuerySet.h>
 #include <WebCore/WebGPURenderPassTimestampWrites.h>
 
 namespace WebKit::WebGPU {

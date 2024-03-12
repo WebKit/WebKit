@@ -31,7 +31,6 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUBindGroupDescriptor.h>
-#include <WebCore/WebGPUBindGroupLayout.h>
 
 namespace WebKit::WebGPU {
 

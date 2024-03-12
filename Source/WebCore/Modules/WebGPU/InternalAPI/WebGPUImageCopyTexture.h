@@ -30,14 +30,13 @@
 #include "WebGPUTextureAspect.h"
 #include <optional>
 #include <wtf/Ref.h>
-#include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 
 class Texture;
 
 struct ImageCopyTexture {
-    WeakRef<Texture> texture;
+    Texture& texture;
     IntegerCoordinate mipLevel { 0 };
     std::optional<Origin3D> origin;
     TextureAspect aspect { TextureAspect::All };

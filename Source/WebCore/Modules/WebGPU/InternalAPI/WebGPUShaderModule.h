@@ -29,14 +29,13 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
 
 class CompilationInfo;
 
-class ShaderModule : public RefCounted<ShaderModule>, public CanMakeWeakPtr<ShaderModule> {
+class ShaderModule : public RefCounted<ShaderModule> {
 public:
     virtual ~ShaderModule() = default;
 

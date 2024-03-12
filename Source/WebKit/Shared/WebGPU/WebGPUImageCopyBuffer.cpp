@@ -30,7 +30,6 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUBuffer.h>
 #include <WebCore/WebGPUImageCopyBuffer.h>
 
 namespace WebKit::WebGPU {

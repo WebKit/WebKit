@@ -44,7 +44,7 @@ struct GPUBufferBinding {
         };
     }
 
-    WeakPtr<GPUBuffer> buffer;
+    GPUBuffer* buffer { nullptr };
     GPUSize64 offset { 0 };
     std::optional<GPUSize64> size;
 };

@@ -32,12 +32,11 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
 
-class Buffer : public RefCounted<Buffer>, public CanMakeWeakPtr<Buffer> {
+class Buffer : public RefCounted<Buffer> {
 public:
     virtual ~Buffer() = default;
 

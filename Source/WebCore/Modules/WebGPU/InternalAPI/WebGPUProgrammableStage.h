@@ -28,7 +28,6 @@
 #include <wtf/KeyValuePair.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 
@@ -37,7 +36,7 @@ class ShaderModule;
 using PipelineConstantValue = double; // May represent WGSL’s bool, f32, i32, u32.
 
 struct ProgrammableStage {
-    WeakRef<ShaderModule> module;
+    ShaderModule& module;
     std::optional<String> entryPoint;
     Vector<KeyValuePair<String, PipelineConstantValue>> constants;
 };

@@ -28,14 +28,13 @@
 #include "WebGPUIntegralTypes.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore::WebGPU {
 
 class QuerySet;
 
 struct RenderPassTimestampWrites {
-    WeakPtr<QuerySet> querySet;
+    QuerySet* querySet { nullptr };
     Size32 beginningOfPassWriteIndex { 0 };
     Size32 endOfPassWriteIndex { 0 };
 };
