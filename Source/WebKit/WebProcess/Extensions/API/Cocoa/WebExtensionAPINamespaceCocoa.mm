@@ -41,13 +41,13 @@ namespace WebKit {
 bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage& page)
 {
     if (name == "action"_s)
-        return extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"action");
+        return extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"action", false);
 
     if (name == "commands"_s)
         return objectForKey<NSDictionary>(extensionContext().manifest(), @"commands");
 
     if (name == "browserAction"_s)
-        return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"browser_action");
+        return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"browser_action", false);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (name == "devtools"_s)
@@ -66,7 +66,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
     }
 
     if (name == "pageAction"_s)
-        return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"page_action");
+        return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"page_action", false);
 
     if (name == "test"_s)
         return extensionContext().inTestingMode();

@@ -1172,6 +1172,35 @@ TEST(WKWebExtensionAPIAction, NavigationOpensInNewTab)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIAction, EmptyAction)
+{
+    static auto *actionManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Action",
+        @"description": @"Test Action",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"action": @{ }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"if (browser.action) {",
+        @"  browser.test.notifyPass()",
+        @"} else {",
+        @"  browser.test.notifyFail('browser.action should be defined when it is empty.')",
+        @"}"
+    ]);
+
+    Util::loadAndRunExtension(actionManifest, @{ @"background.js": backgroundScript });
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

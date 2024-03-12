@@ -1029,17 +1029,17 @@ NSString *WebExtension::actionPopupPath()
 
 bool WebExtension::hasAction()
 {
-    return supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, actionManifestKey);
+    return supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, actionManifestKey, false);
 }
 
 bool WebExtension::hasBrowserAction()
 {
-    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, browserActionManifestKey);
+    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, browserActionManifestKey, false);
 }
 
 bool WebExtension::hasPageAction()
 {
-    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, pageActionManifestKey);
+    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, pageActionManifestKey, false);
 }
 
 void WebExtension::populateActionPropertiesIfNeeded()
@@ -1057,11 +1057,11 @@ void WebExtension::populateActionPropertiesIfNeeded()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/page_action
 
     if (supportsManifestVersion(3))
-        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, actionManifestKey);
+        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, actionManifestKey, false);
     else {
-        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, browserActionManifestKey);
+        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, browserActionManifestKey, false);
         if (!m_actionDictionary)
-            m_actionDictionary = objectForKey<NSDictionary>(m_manifest, pageActionManifestKey);
+            m_actionDictionary = objectForKey<NSDictionary>(m_manifest, pageActionManifestKey, false);
     }
 
     if (!m_actionDictionary)
