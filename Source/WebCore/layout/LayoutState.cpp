@@ -44,6 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
 LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer)
     : m_rootContainer(rootContainer)
+    , m_securityOrigin(document.securityOrigin())
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
     ASSERT(root().establishesFormattingContext());

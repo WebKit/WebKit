@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayoutElementBox.h"
+#include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
@@ -82,6 +83,7 @@ public:
     bool inQuirksMode() const { return m_quirksMode == QuirksMode::Yes; }
     bool inLimitedQuirksMode() const { return m_quirksMode == QuirksMode::Limited; }
     bool inStandardsMode() const { return m_quirksMode == QuirksMode::No; }
+    const SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
 
     const ElementBox& root() const { return m_rootContainer; }
 
@@ -101,6 +103,7 @@ private:
     QuirksMode m_quirksMode { QuirksMode::No };
 
     CheckedRef<const ElementBox> m_rootContainer;
+    Ref<SecurityOrigin> m_securityOrigin;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

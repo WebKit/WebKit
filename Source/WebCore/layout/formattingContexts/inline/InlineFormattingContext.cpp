@@ -299,7 +299,7 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
     auto floatingContext = this->floatingContext();
     auto& placedFloats = layoutState().placedFloats();
 
-    InlineItemsBuilder { inlineContentCache, root() }.build({ });
+    InlineItemsBuilder { inlineContentCache, root(), m_layoutState.securityOrigin() }.build({ });
 
     for (auto& inlineItem : inlineContentCache.inlineItems().content()) {
         if (inlineItem.isFloat()) {
@@ -494,7 +494,7 @@ bool InlineFormattingContext::rebuildInlineItemListIfNeeded(const InlineDamage* 
         return false;
 
     auto needsLayoutStartPosition = !lineDamage || !lineDamage->start() ? InlineItemPosition() : lineDamage->start()->inlineItemPosition;
-    InlineItemsBuilder { inlineContentCache, root() }.build(needsLayoutStartPosition);
+    InlineItemsBuilder { inlineContentCache, root(), m_layoutState.securityOrigin() }.build(needsLayoutStartPosition);
     return true;
 }
 

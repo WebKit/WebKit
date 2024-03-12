@@ -36,6 +36,7 @@
 #include "InlineDamage.h"
 #include "InlineFormattingContext.h"
 #include "InlineInvalidation.h"
+#include "InlineItemsBuilder.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
@@ -56,6 +57,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "ShapeOutsideInfo.h"
+#include "TextBreakingPositionCache.h"
 #include <wtf/Assertions.h>
 #include <wtf/Range.h>
 
@@ -123,6 +125,8 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
 
 LineLayout::~LineLayout()
 {
+    if (!isDamaged() && !flow().document().renderTreeBeingDestroyed())
+        Layout::InlineItemsBuilder::populateBreakingPositionCache(m_inlineContentCache.inlineItems().content(), flow().document());
     clearInlineContent();
     layoutState().destroyInlineContentCache(rootLayoutBox());
     layoutState().destroyBlockFormattingState(rootLayoutBox());

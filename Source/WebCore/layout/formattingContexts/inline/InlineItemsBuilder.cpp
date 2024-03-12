@@ -30,6 +30,7 @@
 #include "InlineSoftLineBreakItem.h"
 #include "RenderStyleInlines.h"
 #include "StyleResolver.h"
+#include "TextBreakingPositionCache.h"
 #include "TextUtil.h"
 #include "UnicodeBidi.h"
 #include <wtf/Scope.h>
@@ -80,9 +81,10 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBr
     return textLength - startPosition;
 }
 
-InlineItemsBuilder::InlineItemsBuilder(InlineContentCache& inlineContentCache, const ElementBox& root)
+InlineItemsBuilder::InlineItemsBuilder(InlineContentCache& inlineContentCache, const ElementBox& root, const SecurityOrigin& securityOrigin)
     : m_inlineContentCache(inlineContentCache)
     , m_root(root)
+    , m_securityOrigin(securityOrigin)
 {
 }
 
@@ -680,6 +682,51 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemL
     }
 }
 
+bool InlineItemsBuilder::buildInlineItemListForTextFromBreakingPositionsCache(const InlineTextBox& inlineTextBox, InlineItemList& inlineItemList)
+{
+    auto text = inlineTextBox.content();
+    auto* breakingPositions = TextBreakingPositionCache::singleton().get({ text, { inlineTextBox.style() }, m_securityOrigin.data() });
+    if (!breakingPositions)
+        return false;
+
+    auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
+    auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
+
+    auto intialSize = inlineItemList.size();
+    auto contentLength = text.length();
+    ASSERT(contentLength);
+    for (size_t index = 0; index < breakingPositions->size(); ++index) {
+        auto startPosition = index ? (*breakingPositions)[index - 1] : 0;
+        auto endPosition = (*breakingPositions)[index];
+        if (endPosition > contentLength || startPosition >= endPosition) {
+            ASSERT_NOT_REACHED();
+            if (inlineItemList.size() > intialSize) {
+                // Revert.
+                !intialSize ? inlineItemList.clear() : inlineItemList.remove(intialSize, inlineItemList.size() - intialSize);
+            }
+            return false;
+        }
+
+        auto character = text[startPosition];
+        if (character == newlineCharacter && shouldPreserveNewline) {
+            inlineItemList.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, startPosition));
+            continue;
+        }
+
+        auto isWhitespaceCharacter = character == space || character == newlineCharacter || character == tabCharacter;
+        if (isWhitespaceCharacter) {
+            auto isWordSeparator = character != tabCharacter || !shouldPreserveSpacesAndTabs;
+            inlineItemList.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, endPosition - startPosition, UBIDI_DEFAULT_LTR, isWordSeparator, { }));
+            continue;
+        }
+
+        ASSERT(endPosition);
+        auto hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
+        inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, endPosition - startPosition, UBIDI_DEFAULT_LTR, hasTrailingSoftHyphen, { }));
+    }
+    return true;
+}
+
 void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, InlineItemList& inlineItemList, std::optional<size_t> partialContentOffset)
 {
     auto text = inlineTextBox.content();
@@ -691,6 +738,9 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 
     if (inlineTextBox.isCombined())
         return inlineItemList.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, { }, contentLength, UBIDI_DEFAULT_LTR, false, { }));
+
+    if (!partialContentOffset && buildInlineItemListForTextFromBreakingPositionsCache(inlineTextBox, inlineItemList))
+        return;
 
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
@@ -813,6 +863,46 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemLi
     }
 
     ASSERT_NOT_REACHED();
+}
+
+void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inlineItemList, const Document& document)
+{
+    // Preserve breaking positions across content mutation.
+    auto& securityOrigin = document.securityOrigin();
+    auto& breakingPositionCache = TextBreakingPositionCache::singleton();
+    size_t index = 0;
+    while (index < inlineItemList.size()) {
+        auto* inlineTextBox = dynamicDowncast<InlineTextBox>(inlineItemList[index].layoutBox());
+        if (!inlineTextBox) {
+            ++index;
+            continue;
+        }
+
+        auto& style = inlineTextBox->style();
+        auto isInlineTextBoxEligibleForBreakingPositionCache = inlineTextBox->content().length() >= TextBreakingPositionCache::minimumRequiredTextLengthForContentBreakCache;
+        if (!isInlineTextBoxEligibleForBreakingPositionCache || breakingPositionCache.get({ inlineTextBox->content(), { style }, securityOrigin.data() })) {
+            // Jump to the end of this inline text box content.
+            for (; index < inlineItemList.size() && &inlineItemList[index].layoutBox() == inlineTextBox; ++index) { };
+            continue;
+        }
+
+        TextBreakingPositionCache::List breakingPositionList;
+        for (; index < inlineItemList.size() && &inlineItemList[index].layoutBox() == inlineTextBox; ++index) {
+            auto& inlineItem = inlineItemList[index];
+            if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem))
+                breakingPositionList.append(inlineTextItem->end());
+            else if (auto* softLineBreakItem = dynamicDowncast<InlineSoftLineBreakItem>(inlineItem))
+                breakingPositionList.append(softLineBreakItem->position() + 1);
+            else {
+                ASSERT_NOT_REACHED();
+                breakingPositionList.clear();
+                break;
+            }
+        }
+        ASSERT(!breakingPositionList.isEmpty());
+        if (breakingPositionList.size() >= TextBreakingPositionCache::minimumRequiredContentBreaks)
+            breakingPositionCache.set({ inlineTextBox->content(), { style }, securityOrigin.data() }, WTFMove(breakingPositionList));
+    }
 }
 
 }
