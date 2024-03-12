@@ -146,6 +146,8 @@ static constexpr CGFloat itemCellBaselineToBottom = 8;
 {
     [super viewDidLoad];
 
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+
     self.cancelButton.hidden = YES;
     self.showsAcceptButton = YES;
 
@@ -202,11 +204,6 @@ static constexpr CGFloat itemCellBaselineToBottom = 8;
     if (!indexPathsToReload.count)
         return;
 
-    if (self.listView) {
-        [self.listView reloadRowsAtIndexPaths:indexPathsToReload withRowAnimation:UITableViewRowAnimationNone];
-        return;
-    }
-
 #if HAVE(QUICKBOARD_COLLECTION_VIEWS)
     [self.collectionView reloadItemsAtIndexPaths:indexPathsToReload];
 #endif
@@ -220,33 +217,6 @@ static constexpr CGFloat itemCellBaselineToBottom = 8;
 - (CGFloat)heightForListItem:(NSInteger)itemNumber width:(CGFloat)width
 {
     return selectMenuItemCellHeight;
-}
-
-// FIXME: This method can be removed when <rdar://problem/57807445> lands in a build.
-- (PUICQuickboardListItemCell *)cellForListItem:(NSInteger)itemNumber
-{
-    auto reusableCell = retainPtr([self.listView dequeueReusableCellWithIdentifier:selectMenuCellReuseIdentifier]);
-    if (!reusableCell) {
-        reusableCell = adoptNS([[WKSelectMenuItemCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:selectMenuCellReuseIdentifier]);
-        [reusableCell itemLabel].numberOfLines = 1;
-        [reusableCell itemLabel].lineBreakMode = NSLineBreakByTruncatingTail;
-        [reusableCell itemLabel].allowsDefaultTighteningForTruncation = YES;
-        [reusableCell imageView].frame = UIRectInset([reusableCell contentView].bounds, 0, 0, 0, CGRectGetWidth([reusableCell contentView].bounds) - checkmarkImageViewWidth);
-    }
-
-    NSString *optionText = [self.delegate selectMenu:self displayTextForItemAtIndex:itemNumber];
-    [reusableCell configureForText:optionText width:CGRectGetWidth(self.listView.bounds)];
-    [reusableCell setRadioSectionCell:!_isMultipleSelect];
-
-    if ([_indicesOfCheckedOptions containsIndex:itemNumber]) {
-        [reusableCell itemLabel].frame = UIRectInset([reusableCell contentView].bounds, 0, selectMenuItemHorizontalMargin + checkmarkImageViewWidth, 0, selectMenuItemHorizontalMargin);
-        [reusableCell imageView].hidden = NO;
-    } else {
-        [reusableCell itemLabel].frame = UIRectInset([reusableCell contentView].bounds, 0, selectMenuItemHorizontalMargin, 0, selectMenuItemHorizontalMargin);
-        [reusableCell imageView].hidden = YES;
-    }
-
-    return reusableCell.autorelease();
 }
 
 - (NSString *)listItemCellReuseIdentifier
