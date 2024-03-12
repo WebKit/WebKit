@@ -76,8 +76,8 @@ void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> type
         return;
     }
 
-    auto recordHolder = WebExtensionDataRecordHolder::create();
-    auto aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTFMove(completionHandler)]() mutable {
+    Ref recordHolder = WebExtensionDataRecordHolder::create();
+    Ref aggregator = MainRunLoopCallbackAggregator::create([recordHolder, completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<Ref<WebExtensionDataRecord>> records;
         for (auto& entry : recordHolder->recordsMap)
             records.append(entry.value);
@@ -88,12 +88,11 @@ void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> type
     auto uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
     for (auto& uniqueIdentifier : uniqueIdentifiers) {
         String displayName;
-        URL lastBaseURL;
-        if (!WebExtensionContext::readDisplayNameAndLastBaseURLFromState(stateFilePath(uniqueIdentifier), displayName, lastBaseURL))
+        if (!WebExtensionContext::readDisplayNameFromState(stateFilePath(uniqueIdentifier), displayName))
             continue;
 
         for (auto type : types) {
-            auto *storage = sqliteStore(storageDirectory(uniqueIdentifier), type, this->extensionContext(lastBaseURL));
+            auto *storage = sqliteStore(storageDirectory(uniqueIdentifier), type, this->extensionContext(uniqueIdentifier));
             if (!storage)
                 continue;
 
@@ -116,14 +115,10 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> types
 
     String matchingUniqueIdentifier;
     String displayName;
-    URL lastBaseURL;
 
     auto uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
     for (auto& uniqueIdentifier : uniqueIdentifiers) {
-        if (!WebExtensionContext::readDisplayNameAndLastBaseURLFromState(stateFilePath(uniqueIdentifier), displayName, lastBaseURL))
-            continue;
-
-        if (this->extensionContext(lastBaseURL)->extension() == extensionContext.extension()) {
+        if (uniqueIdentifier == extensionContext.uniqueIdentifier() && WebExtensionContext::readDisplayNameFromState(stateFilePath(uniqueIdentifier), displayName)) {
             matchingUniqueIdentifier = uniqueIdentifier;
             break;
         }
@@ -140,7 +135,7 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> types
     });
 
     for (auto type : types) {
-        auto *storage = sqliteStore(storageDirectory(matchingUniqueIdentifier), type, this->extensionContext(lastBaseURL));
+        auto *storage = sqliteStore(storageDirectory(matchingUniqueIdentifier), type, this->extensionContext(matchingUniqueIdentifier));
         if (!storage)
             continue;
 
@@ -160,22 +155,22 @@ void WebExtensionController::removeData(OptionSet<WebExtensionDataType> types, c
         return;
     }
 
-    auto aggregator = MainRunLoopCallbackAggregator::create([completionHandler = WTFMove(completionHandler)]() mutable {
+    Ref aggregator = MainRunLoopCallbackAggregator::create([completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
     });
 
     for (auto& record : records) {
-        URL lastBaseURL;
         auto uniqueIdentifier = record.get().uniqueIdentifier();
-        if (!WebExtensionContext::readLastBaseURLFromState(stateFilePath(uniqueIdentifier), lastBaseURL))
-            continue;
-
         for (auto type : types) {
-            auto *storage = sqliteStore(storageDirectory(uniqueIdentifier), type, this->extensionContext(lastBaseURL));
+            RefPtr extensionContext = this->extensionContext(uniqueIdentifier);
+            auto *storage = sqliteStore(storageDirectory(uniqueIdentifier), type, extensionContext);
             if (!storage)
                 continue;
 
-            removeStorage(storage, type, makeBlockPtr([aggregator]() mutable { }));
+            removeStorage(storage, type, makeBlockPtr([aggregator, extensionContext = RefPtr { extensionContext }]() mutable {
+                if (extensionContext)
+                    extensionContext->invalidateStorage();
+            }));
         }
     }
 }
@@ -476,13 +471,10 @@ String WebExtensionController::storageDirectory(const String& uniqueIdentifier) 
     return FileSystem::pathByAppendingComponent(m_configuration->storageDirectory(), uniqueIdentifier);
 }
 
-_WKWebExtensionStorageSQLiteStore *WebExtensionController::sqliteStore(const String& storageDirectory, WebExtensionDataType type, std::optional<RefPtr<WebExtensionContext>> extensionContext)
+_WKWebExtensionStorageSQLiteStore *WebExtensionController::sqliteStore(const String& storageDirectory, WebExtensionDataType type, RefPtr<WebExtensionContext> extensionContext)
 {
-    if (type == WebExtensionDataType::Session) {
-        ASSERT(extensionContext.has_value());
-
-        return extensionContext.value()->isLoaded() ? extensionContext.value()->storageForType(WebExtensionDataType::Session) : nil;
-    }
+    if (type == WebExtensionDataType::Session)
+        return extensionContext ? extensionContext->storageForType(WebExtensionDataType::Session) : nil;
 
     auto uniqueIdentifier = FileSystem::lastComponentOfPathIgnoringTrailingSlash(storageDirectory);
     return [[_WKWebExtensionStorageSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier storageType:type directory:storageDirectory usesInMemoryDatabase:NO];

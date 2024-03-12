@@ -201,6 +201,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionControllerConfiguration, We
     return nil;
 }
 
+- (void)_setStorageDirectoryPath:(NSString *)path
+{
+    _webExtensionControllerConfiguration->setStorageDirectory(path);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -285,6 +290,10 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionControllerConfiguration, We
 - (NSString *)_storageDirectoryPath
 {
     return nil;
+}
+
+- (void)_setStorageDirectoryPath:(NSString *)path
+{
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -187,7 +187,7 @@ private:
     String storageDirectory(WebExtensionContext&) const;
 
     String stateFilePath(const String& uniqueIdentifier) const;
-    _WKWebExtensionStorageSQLiteStore* sqliteStore(const String& storageDirectory, WebExtensionDataType, std::optional<RefPtr<WebExtensionContext>>);
+    _WKWebExtensionStorageSQLiteStore* sqliteStore(const String& storageDirectory, WebExtensionDataType, RefPtr<WebExtensionContext>);
 
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
     void didCommitLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);

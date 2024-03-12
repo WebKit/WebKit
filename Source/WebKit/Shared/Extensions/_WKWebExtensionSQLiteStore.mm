@@ -213,8 +213,10 @@ using namespace WebKit;
         return @"Failed to delete extension storage database file.";
     }
 
-    if (!reopenDatabase)
+    if (!reopenDatabase) {
+        _database = nil;
         return errorMessage;
+    }
 
     // Only try to recover from errors opening the database by deleting the file once.
     return [self _openDatabase:databaseURL deleteDatabaseFileOnError:NO];

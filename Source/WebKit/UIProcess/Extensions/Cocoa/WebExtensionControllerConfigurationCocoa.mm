@@ -43,7 +43,7 @@ String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::opti
     String libraryPath = [NSFileManager.defaultManager URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nullptr].path;
     RELEASE_ASSERT(!libraryPath.isEmpty());
 
-    String identifierPath = identifier ? identifier->toString() : "Default"_s;
+    String identifierPath = identifier ? identifier->toString().convertToASCIIUppercase() : "Default"_s;
 
     if (processHasContainer())
         return FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebExtensions"_s, identifierPath });

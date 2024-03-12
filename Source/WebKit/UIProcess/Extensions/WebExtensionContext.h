@@ -141,7 +141,7 @@ public:
     static String plistFileName() { return "State.plist"_s; };
     static NSMutableDictionary *readStateFromPath(const String&);
     static bool readLastBaseURLFromState(const String& filePath, URL& outLastBaseURL);
-    static bool readDisplayNameAndLastBaseURLFromState(const String& filePath, String& outDisplayName, URL& outLastBaseURL);
+    static bool readDisplayNameFromState(const String& filePath, String& outDisplayName);
 
     static WebExtensionContext* get(WebExtensionContextIdentifier);
 
@@ -261,6 +261,8 @@ public:
 
     bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
     const String& storageDirectory() const { return m_storageDirectory; }
+
+    void invalidateStorage();
 
     _WKWebExtensionStorageSQLiteStore *storageForType(WebExtensionDataType);
 
@@ -537,8 +539,6 @@ private:
     void writeStateToStorage() const;
 
     void moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&&);
-
-    void invalidateStorage();
 
     void permissionsDidChange(const PermissionsSet&);
 

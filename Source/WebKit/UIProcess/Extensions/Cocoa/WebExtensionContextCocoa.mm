@@ -389,14 +389,14 @@ bool WebExtensionContext::readLastBaseURLFromState(const String& filePath, URL& 
     return outLastBaseURL.isValid();
 }
 
-bool WebExtensionContext::readDisplayNameAndLastBaseURLFromState(const String& filePath, String& outDisplayName, URL& outLastBaseURL)
+bool WebExtensionContext::readDisplayNameFromState(const String& filePath, String& outDisplayName)
 {
     auto *state = readStateFromPath(filePath);
 
     if (auto *displayName = objectForKey<NSString>(state, lastSeenDisplayNameStateKey))
         outDisplayName = displayName;
 
-    return !outDisplayName.isEmpty() && readLastBaseURLFromState(filePath, outLastBaseURL);
+    return !outDisplayName.isEmpty();
 }
 
 NSDictionary *WebExtensionContext::readStateFromStorage()
@@ -445,7 +445,6 @@ void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, C
 
 void WebExtensionContext::invalidateStorage()
 {
-    m_storageDirectory = nullString();
     m_registeredContentScriptsStorage = nullptr;
     m_localStorageStore = nullptr;
     m_sessionStorageStore = nullptr;
