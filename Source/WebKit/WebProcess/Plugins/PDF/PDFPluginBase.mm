@@ -36,6 +36,7 @@
 #import "WKAccessibilityPDFDocumentObject.h"
 #import "WebEventConversion.h"
 #import "WebFrame.h"
+#import "WebHitTestResultData.h"
 #import "WebLoaderStrategy.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
@@ -928,6 +929,63 @@ bool PDFPluginBase::showContextMenuAtPoint(const IntPoint& point)
     IntPoint contentsPoint = frameView->contentsToRootView(point);
     WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, WallTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
     return handleContextMenuEvent(event);
+}
+
+bool PDFPluginBase::performImmediateActionHitTestAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data)
+{
+    auto [text, selection] = textForImmediateActionHitTestAtPoint(locationInViewCoordinates, data);
+    if (!selection)
+        return false;
+
+    data.lookupText = text;
+    data.isTextNode = true;
+    data.isSelected = true;
+    data.dictionaryPopupInfo = dictionaryPopupInfoForSelection(selection.get(), TextIndicatorPresentationTransition::FadeIn);
+    return true;
+}
+
+DictionaryPopupInfo PDFPluginBase::dictionaryPopupInfoForSelection(PDFSelection *selection, WebCore::TextIndicatorPresentationTransition presentationTransition)
+{
+    DictionaryPopupInfo dictionaryPopupInfo;
+    if (!selection.string.length)
+        return dictionaryPopupInfo;
+
+#if PLATFORM(MAC)
+    NSRect rangeRect = rectForSelectionInRootView(selection);
+    NSAttributedString *nsAttributedString = selection.attributedString;
+    RetainPtr scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    CGFloat scaleFactor = contentScaleFactor();
+
+    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+        RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
+
+        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        if (font) {
+            font = [fontManager convertFont:font toSize:font.pointSize * scaleFactor];
+            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+        }
+
+        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
+    }];
+
+    rangeRect.size.height = nsAttributedString.size.height * scaleFactor;
+    rangeRect.size.width = nsAttributedString.size.width * scaleFactor;
+
+    TextIndicatorData dataForSelection;
+    dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
+    dataForSelection.textBoundingRectInRootViewCoordinates = rangeRect;
+    dataForSelection.contentImageScaleFactor = scaleFactor;
+    dataForSelection.presentationTransition = presentationTransition;
+
+    dictionaryPopupInfo.origin = rangeRect.origin;
+    dictionaryPopupInfo.textIndicator = dataForSelection;
+    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(scaledNSAttributedString);
+#else
+    UNUSED_PARAM(presentationTransition);
+#endif
+
+    return dictionaryPopupInfo;
 }
 
 WebCore::AXObjectCache* PDFPluginBase::axObjectCache() const

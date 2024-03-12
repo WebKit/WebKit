@@ -2301,10 +2301,11 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
     case ContextMenuItemTag::WebSearch:
         performWebSearch(selectionString());
         break;
-    case ContextMenuItemTag::DictionaryLookup:
-        searchInDictionary(m_currentSelection);
+    case ContextMenuItemTag::DictionaryLookup: {
+        RetainPtr selection = m_currentSelection;
+        showDefinitionForSelection(selection.get());
         break;
-    case ContextMenuItemTag::Copy:
+    } case ContextMenuItemTag::Copy:
         performCopyEditingOperation();
         break;
     case ContextMenuItemTag::CopyLink:
@@ -2834,9 +2835,15 @@ Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const IntRect&) co
     });
 }
 
-RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption> options, WebCore::TextIndicatorPresentationTransition transition)
+RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption> options, WebCore::TextIndicatorPresentationTransition transition)
 {
-    auto selectionBounds = selectionBoundsForFirstPageInDocumentSpace(m_currentSelection);
+    RetainPtr selection = m_currentSelection;
+    return textIndicatorForSelection(selection.get(), options, transition);
+}
+
+RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForSelection(PDFSelection *selection, OptionSet<WebCore::TextIndicatorOption> options, WebCore::TextIndicatorPresentationTransition transition)
+{
+    auto selectionBounds = selectionBoundsForFirstPageInDocumentSpace(selection);
     if (!selectionBounds)
         return nullptr;
 
@@ -2895,17 +2902,7 @@ bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint& rootV
     RetainPtr page = m_documentLayout.pageAtIndex(*pageIndex);
     auto pagePoint = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, documentPoint, *pageIndex);
     RetainPtr lookupSelection = [page selectionForWordAtPoint:pagePoint];
-    return searchInDictionary(WTFMove(lookupSelection));
-}
-
-bool UnifiedPDFPlugin::searchInDictionary(const RetainPtr<PDFSelection>& lookupSelection)
-{
-    RetainPtr scaledString = [lookupSelection attributedStringScaled:(contentScaleFactor())];
-
-    if (auto selectionBounds = selectionBoundsForFirstPageInDocumentSpace(lookupSelection))
-        return showDefinitionForAttributedString(WTFMove(scaledString), *selectionBounds);
-
-    return false;
+    return showDefinitionForSelection(lookupSelection.get());
 }
 
 std::optional<FloatRect> UnifiedPDFPlugin::selectionBoundsForFirstPageInDocumentSpace(const RetainPtr<PDFSelection>& selection) const
@@ -2924,31 +2921,27 @@ std::optional<FloatRect> UnifiedPDFPlugin::selectionBoundsForFirstPageInDocument
     return { };
 }
 
-bool UnifiedPDFPlugin::showDefinitionForAttributedString(RetainPtr<NSAttributedString>&& string, const FloatRect& rectInDocumentSpace)
+WebCore::DictionaryPopupInfo UnifiedPDFPlugin::dictionaryPopupInfoForSelection(PDFSelection *selection, WebCore::TextIndicatorPresentationTransition transition)
 {
-    auto pluginRect = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Plugin, rectInDocumentSpace);
-    auto rectInRootView = convertFromPluginToRootView(enclosingIntRect(pluginRect));
+    DictionaryPopupInfo dictionaryPopupInfo = PDFPluginBase::dictionaryPopupInfoForSelection(selection, transition);
+    if (auto textIndicator = textIndicatorForSelection(selection, { }, transition))
+        dictionaryPopupInfo.textIndicator = textIndicator->data();
 
-    DictionaryPopupInfo dictionaryPopupInfo;
-    dictionaryPopupInfo.origin = rectInRootView.location();
-    dictionaryPopupInfo.platformData.attributedString = WebCore::AttributedString::fromNSAttributedString(string.get());
+    return dictionaryPopupInfo;
+}
 
-    // FIXME: Consider merging with textIndicatorForSelection in order to get
-    // a PDF snapshot instead of an attributed string replica.
-    TextIndicatorData dataForSelection;
-    dataForSelection.selectionRectInRootViewCoordinates = rectInRootView;
-    dataForSelection.textBoundingRectInRootViewCoordinates = rectInRootView;
-    dataForSelection.presentationTransition = TextIndicatorPresentationTransition::FadeIn;
-    dictionaryPopupInfo.textIndicator = dataForSelection;
-
+bool UnifiedPDFPlugin::showDefinitionForSelection(PDFSelection *selection)
+{
     if (!m_frame || !m_frame->page())
         return false;
+    RefPtr page = m_frame->page();
 
-    m_frame->protectedPage()->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
+    auto dictionaryPopupInfo = dictionaryPopupInfoForSelection(selection, TextIndicatorPresentationTransition::Bounce);
+    page->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
     return true;
 }
 
-LookupTextResult UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint& rootViewPoint, WebHitTestResultData& data)
+std::pair<String, RetainPtr<PDFSelection>> UnifiedPDFPlugin::textForImmediateActionHitTestAtPoint(const WebCore::FloatPoint& rootViewPoint, WebHitTestResultData& data)
 {
     if (existingSelectionContainsPoint(rootViewPoint))
         return { selectionString(), m_currentSelection };

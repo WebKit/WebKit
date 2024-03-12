@@ -52,13 +52,7 @@ namespace WebKit {
 class PDFPluginBase;
 class WebFrame;
 class WebPage;
-
 struct WebHitTestResultData;
-
-struct LookupTextResult {
-    String text;
-    RetainPtr<PDFSelection> correspondingSelection;
-};
 
 class PluginView final : public WebCore::PluginViewBase {
 public:
@@ -103,14 +97,15 @@ public:
     bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount);
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const;
     bool drawsFindOverlay() const;
-    RefPtr<WebCore::TextIndicator> textIndicatorForSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
+    RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
 
     String selectionString() const;
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
-    bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
 
-    LookupTextResult lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
+    bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
+    bool performImmediateActionHitTestAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
+
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const;
     CGFloat contentScaleFactor() const;
     

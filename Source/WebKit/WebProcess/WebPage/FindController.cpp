@@ -441,7 +441,7 @@ bool FindController::updateFindIndicator(bool isShowingOverlay, bool shouldAnima
     auto [frame, indicator] = [&]() -> std::tuple<RefPtr<Frame>, RefPtr<TextIndicator>> {
 #if ENABLE(PDF_PLUGIN)
         if (RefPtr pluginView = mainFramePlugIn())
-            return { m_webPage->mainFrame(), pluginView->textIndicatorForSelection(textIndicatorOptions, presentationTransition) };
+            return { m_webPage->mainFrame(), pluginView->textIndicatorForCurrentSelection(textIndicatorOptions, presentationTransition) };
 #endif
         if (RefPtr selectedFrame = frameWithSelection(m_webPage->corePage())) {
             if (auto selectedRange = selectedFrame->selection().selection().range(); selectedRange && ImageOverlay::isInsideOverlay(*selectedRange))
