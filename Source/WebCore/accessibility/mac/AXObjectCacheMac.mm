@@ -506,7 +506,49 @@ static void createIsolatedObjectIfNeeded(AccessibilityObject& object, std::optio
 }
 #endif
 
-void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
+AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObject& object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
+{
+    if (!object.isTextControl() && !object.editableAncestor())
+        return originalIntent;
+
+    if (originalIntent.selection.direction != AXTextSelectionDirectionDiscontiguous || object.objectID() != m_lastTextFieldAXID || m_lastSelection == selection) {
+        m_lastTextFieldAXID = object.objectID();
+        m_lastSelection = selection;
+        return originalIntent;
+    }
+
+    auto intent = originalIntent;
+    if (m_lastSelection.isCaret() && selection.isCaret()) {
+        // Cursor movement
+        if (selection.visibleStart() == m_lastSelection.visibleStart().next(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeTypeSelectionMove;
+            intent.selection.direction = AXTextSelectionDirectionNext;
+            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+        } else if (selection.visibleStart() == m_lastSelection.visibleStart().previous(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeTypeSelectionMove;
+            intent.selection.direction = AXTextSelectionDirectionPrevious;
+            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+        }
+    } else if (selection.visibleBase() == m_lastSelection.visibleBase()) {
+        // Selection
+        if (selection.visibleExtent() == m_lastSelection.visibleExtent().next(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeTypeSelectionExtend;
+            intent.selection.direction = AXTextSelectionDirectionNext;
+            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+        } else if (selection.visibleExtent() == m_lastSelection.visibleExtent().previous(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeTypeSelectionExtend;
+            intent.selection.direction = AXTextSelectionDirectionPrevious;
+            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+        }
+    }
+
+    m_lastTextFieldAXID = object.objectID();
+    m_lastSelection = selection;
+
+    return intent;
+}
+
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
 {
     if (!object)
         object = rootWebArea();
@@ -518,6 +560,8 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
 #endif
+
+    auto intent = inferDirectionFromIntent(*object, originalIntent, selection);
 
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
     if (m_isSynchronizingSelection)
