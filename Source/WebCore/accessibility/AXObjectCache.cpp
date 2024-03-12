@@ -1714,12 +1714,30 @@ void AXObjectCache::onPageActivityStateChange(OptionSet<ActivityState> newState)
 #endif
 }
 
-void AXObjectCache::onFocusChange(Node* oldNode, Node* newNode)
+static bool shouldDeferFocusChange(Element* element)
 {
-    if (nodeAndRendererAreValid(newNode) && rendererNeedsDeferredUpdate(*newNode->renderer())) {
+    if (!element)
+        return false;
+
+    auto* renderer = element->renderer();
+    if (renderer && rendererNeedsDeferredUpdate(*renderer))
+        return true;
+
+    // We also want to defer handling focus changes for nodes that haven't yet attached their renderer.
+    if (const auto* style = element->existingComputedStyle())
+        return !renderer && element->rendererIsNeeded(*style);
+    // No existing style, so we can't easily determine whether this element will need a renderer.
+    // Resolving style is expensive and we don't want to do it now, so make this decision assuming
+    // a renderer just hasn't been attached yet, indicated by it being nullptr.
+    return !renderer;
+}
+
+void AXObjectCache::onFocusChange(Element* oldElement, Element* newElement)
+{
+    if (shouldDeferFocusChange(newElement)) {
         if (m_deferredFocusedNodeChange) {
             // If we got a focus change notification but haven't committed a previously deferred focus change:
-            if (m_deferredFocusedNodeChange->first == newNode) {
+            if (m_deferredFocusedNodeChange->first == newElement) {
                 // Cancel the focus change entirely if the new focused node will be the same as the old one (i.e. there is no effective focus change).
                 m_deferredFocusedNodeChange = std::nullopt;
                 return;
@@ -1729,14 +1747,16 @@ void AXObjectCache::onFocusChange(Node* oldNode, Node* newNode)
             // meaning it could be unignored solely because it was DOM focused.
             recomputeIsIgnored(m_deferredFocusedNodeChange->second.get());
             // And now we can update the new deferred focus node to be |newNode|.
-            m_deferredFocusedNodeChange->second = newNode;
+            m_deferredFocusedNodeChange->second = newElement;
         } else
-            m_deferredFocusedNodeChange = { oldNode, newNode };
+            m_deferredFocusedNodeChange = { oldElement, newElement };
 
-        if (!newNode->renderer()->needsLayout() && !m_performCacheUpdateTimer.isActive())
+        // Don't start the timer if a layout is pending, as the layout will trigger a cache update.
+        bool needsLayout = newElement->renderer() && newElement->renderer()->needsLayout();
+        if (!needsLayout && !m_performCacheUpdateTimer.isActive())
             m_performCacheUpdateTimer.startOneShot(0_s);
     } else
-        handleFocusedUIElementChanged(oldNode, newNode);
+        handleFocusedUIElementChanged(oldElement, newElement);
 }
 
 void AXObjectCache::onPopoverToggle(const HTMLElement& popover)

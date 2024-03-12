@@ -1,0 +1,13 @@
+This test ensures that the accessiblity tree properly handles focus for an element who has not yet attached a renderer.
+
+PASS: axButton && axButton.isValid === true
+	AXLabel: BUTTON
+PASS: axText.includes('BUTTON') === true
+PASS: axButton && axButton.isValid === true
+	AXLabel: BUTTON
+PASS: axText.includes('BUTTON') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+TEST
