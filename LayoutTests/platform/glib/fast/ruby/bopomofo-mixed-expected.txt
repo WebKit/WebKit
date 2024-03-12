@@ -3,102 +3,102 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x64
   RenderBlock {HTML} at (0,0) size 800x64
     RenderBody {BODY} at (8,8) size 784x48
-      RenderInline {RUBY} at (0,0) size 482x36
-        RenderInline (generated) at (0,0) size 50x36
+      RenderInline {RUBY} at (0,6) size 482x36
+        RenderInline (generated) at (0,6) size 50x36
           RenderText {#text} at (0,6) size 32x36
             text run at (0,6) width 32: "\x{4E16}"
         RenderBlock {RT} at (32,19) size 18x10
-          RenderInline {RUBY} at (0,0) size 9x9
-            RenderInline (generated) at (0,0) size 9x9
+          RenderInline {RUBY} at (9,0) size 9x9
+            RenderInline (generated) at (9,0) size 9x9
               RenderText {#text} at (0,0) size 9x9
                 text run at (0,0) width 9: "\x{3115}"
             RenderBlock {RT} at (9,0) size 9x9
               RenderText {#text} at (0,3) size 9x3
                 text run at (0,3) width 3: "\x{2CB}"
-        RenderInline (generated) at (0,0) size 50x36
+        RenderInline (generated) at (50,6) size 50x36
           RenderText {#text} at (50,6) size 32x36
             text run at (50,6) width 32: "\x{4E0A}"
         RenderBlock {RT} at (82,15) size 18x18
-          RenderInline {RUBY} at (0,0) size 9x18
-            RenderInline (generated) at (0,0) size 9x18
+          RenderInline {RUBY} at (9,0) size 9x18
+            RenderInline (generated) at (9,0) size 9x18
               RenderText {#text} at (0,0) size 9x18
                 text run at (0,0) width 18: "\x{3115}\x{3124}"
             RenderBlock {RT} at (9,0) size 9x18
               RenderText {#text} at (0,7) size 9x4
                 text run at (0,7) width 3: "\x{2CB}"
-        RenderInline (generated) at (0,0) size 50x36
+        RenderInline (generated) at (100,6) size 50x36
           RenderText {#text} at (100,6) size 32x36
             text run at (100,6) width 32: "\x{7121}"
         RenderBlock {RT} at (132,19) size 18x10
-          RenderInline {RUBY} at (0,0) size 9x9
-            RenderInline (generated) at (0,0) size 9x9
+          RenderInline {RUBY} at (9,0) size 9x9
+            RenderInline (generated) at (9,0) size 9x9
               RenderText {#text} at (0,0) size 9x9
                 text run at (0,0) width 9: "\x{3128}"
             RenderBlock {RT} at (9,0) size 9x9
               RenderText {#text} at (0,3) size 9x3
                 text run at (0,3) width 3: "\x{2CA}"
-        RenderInline (generated) at (0,0) size 50x36
+        RenderInline (generated) at (150,6) size 50x36
           RenderText {#text} at (150,6) size 32x36
             text run at (150,6) width 32: "\x{96E3}"
         RenderBlock {RT} at (182,15) size 18x18
-          RenderInline {RUBY} at (0,0) size 9x18
-            RenderInline (generated) at (0,0) size 9x18
+          RenderInline {RUBY} at (9,0) size 9x18
+            RenderInline (generated) at (9,0) size 9x18
               RenderText {#text} at (0,0) size 9x18
                 text run at (0,0) width 18: "\x{310B}\x{3122}"
             RenderBlock {RT} at (9,0) size 9x18
               RenderText {#text} at (0,7) size 9x4
                 text run at (0,7) width 3: "\x{2CA}"
-        RenderInline (generated) at (0,0) size 50x36
+        RenderInline (generated) at (200,6) size 50x36
           RenderText {#text} at (200,6) size 32x36
             text run at (200,6) width 32: "\x{4E8B}"
         RenderBlock {RT} at (232,19) size 18x10
-          RenderInline {RUBY} at (0,0) size 9x9
-            RenderInline (generated) at (0,0) size 9x9
+          RenderInline {RUBY} at (9,0) size 9x9
+            RenderInline (generated) at (9,0) size 9x9
               RenderText {#text} at (0,0) size 9x9
                 text run at (0,0) width 9: "\x{3115}"
             RenderBlock {RT} at (9,0) size 9x9
               RenderText {#text} at (0,3) size 9x3
                 text run at (0,3) width 3: "\x{2CB}"
-        RenderInline (generated) at (0,0) size 41x36
+        RenderInline (generated) at (250,6) size 41x36
           RenderText {#text} at (250,6) size 32x36
             text run at (250,6) width 32: "\x{53EA}"
         RenderBlock {RT} at (282,18) size 9x12
           RenderText {#text} at (0,0) size 9x12
             text run at (0,0) width 12: "\x{3113}\x{2C7}"
-        RenderInline (generated) at (0,0) size 50x36
+        RenderInline (generated) at (291,6) size 50x36
           RenderText {#text} at (291,6) size 32x36
             text run at (291,6) width 32: "\x{6015}"
         RenderBlock {RT} at (323,15) size 18x18
-          RenderInline {RUBY} at (0,0) size 9x18
-            RenderInline (generated) at (0,0) size 9x18
+          RenderInline {RUBY} at (9,0) size 9x18
+            RenderInline (generated) at (9,0) size 9x18
               RenderText {#text} at (0,0) size 9x18
                 text run at (0,0) width 18: "\x{3106}\x{311A}"
             RenderBlock {RT} at (9,0) size 9x18
               RenderText {#text} at (0,7) size 9x4
                 text run at (0,7) width 3: "\x{2CB}"
-        RenderInline (generated) at (0,0) size 50x36
+        RenderInline (generated) at (341,6) size 50x36
           RenderText {#text} at (341,6) size 32x36
             text run at (341,6) width 32: "\x{6709}"
         RenderBlock {RT} at (373,15) size 18x18
-          RenderInline {RUBY} at (0,0) size 9x18
-            RenderInline (generated) at (0,0) size 9x18
+          RenderInline {RUBY} at (9,0) size 9x18
+            RenderInline (generated) at (9,0) size 9x18
               RenderText {#text} at (0,0) size 9x18
                 text run at (0,0) width 18: "\x{3127}\x{3121}"
             RenderBlock {RT} at (9,0) size 9x18
               RenderText {#text} at (0,7) size 9x4
                 text run at (0,7) width 3: "\x{2C7}"
-        RenderInline (generated) at (0,0) size 41x36
+        RenderInline (generated) at (391,6) size 41x36
           RenderText {#text} at (391,6) size 32x36
             text run at (391,6) width 32: "\x{5FC3}"
         RenderBlock {RT} at (423,10) size 9x28
           RenderText {#text} at (0,0) size 9x27
             text run at (0,0) width 27: "\x{3112}\x{3127}\x{3123}"
-        RenderInline (generated) at (0,0) size 50x36
+        RenderInline (generated) at (432,6) size 50x36
           RenderText {#text} at (432,6) size 32x36
             text run at (432,6) width 32: "\x{4EBA}"
         RenderBlock {RT} at (464,15) size 18x18
-          RenderInline {RUBY} at (0,0) size 9x18
-            RenderInline (generated) at (0,0) size 9x18
+          RenderInline {RUBY} at (9,0) size 9x18
+            RenderInline (generated) at (9,0) size 9x18
               RenderText {#text} at (0,0) size 9x18
                 text run at (0,0) width 18: "\x{3116}\x{3123}"
             RenderBlock {RT} at (9,0) size 9x18

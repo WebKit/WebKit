@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 784x74
             RenderTableCell {TD} at (0,0) size 785x74 [r=0 c=0 rs=1 cs=4]
               RenderBR {BR} at (392,1) size 1x17
-              RenderInline {FONT} at (0,0) size 728x53
+              RenderInline {FONT} at (28,19) size 728x53
                 RenderText {#text} at (28,19) size 729x35
                   text run at (28,19) width 182: "The Supreme Court says "
                   text run at (209,19) width 548: "Wisconsin can continue using tuition vouchers to help poor parents send their"
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,74) size 784x20
             RenderTableCell {TD} at (0,75) size 558x18 [r=1 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 141x16
+              RenderInline {FONT} at (416,2) size 141x16
                 RenderText {#text} at (416,2) size 141x16
                   text run at (416,1) width 141: "I agree with the program"
               RenderText {#text} at (0,0) size 0x0
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
               RenderBlock {INPUT} at (3,4) size 12x12
           RenderTableRow {TR} at (0,94) size 784x20
             RenderTableCell {TD} at (0,95) size 558x18 [r=2 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 154x16
+              RenderInline {FONT} at (403,2) size 154x16
                 RenderText {#text} at (403,2) size 154x16
                   text run at (403,1) width 154: "I think vouchers are wrong"
               RenderText {#text} at (0,0) size 0x0
@@ -35,11 +35,11 @@ layer at (0,0) size 800x600
               RenderBlock {INPUT} at (3,4) size 12x12
           RenderTableRow {TR} at (0,114) size 784x29
             RenderTableCell {TD} at (0,120) size 623x17 [r=3 c=0 rs=1 cs=2]
-              RenderInline {A} at (0,0) size 76x17 [color=#0000EE]
-                RenderInline {FONT} at (0,0) size 76x15
+              RenderInline {A} at (273,5) size 76x17 [color=#0000EE]
+                RenderInline {FONT} at (273,7) size 76x15
                   RenderText {#text} at (273,7) size 76x15
                     text run at (273,1) width 76: "View Results"
-              RenderInline {FONT} at (0,0) size 0x15
+              RenderInline {FONT} at (348,7) size 0x15
                 RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (622,114) size 163x29 [r=3 c=2 rs=1 cs=2]
               RenderButton {INPUT} at (59,1) size 44x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

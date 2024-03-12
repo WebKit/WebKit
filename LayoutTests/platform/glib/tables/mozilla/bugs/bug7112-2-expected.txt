@@ -6,7 +6,7 @@ layer at (0,0) size 785x1000
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 134x17
           text run at (0,0) width 134: "This is a table with a "
-        RenderInline {CODE} at (0,0) size 120x15
+        RenderInline {CODE} at (134,3) size 120x15
           RenderText {#text} at (134,3) size 120x15
             text run at (134,3) width 120: "td align=center"
         RenderText {#text} at (254,0) size 182x17
@@ -30,10 +30,10 @@ layer at (0,0) size 785x1000
       RenderBlock {P} at (0,188) size 769x72
         RenderText {#text} at (0,0) size 181x17
           text run at (0,0) width 181: "This time the inner table has "
-        RenderInline {CODE} at (0,0) size 96x15
+        RenderInline {CODE} at (181,3) size 96x15
           RenderText {#text} at (181,3) size 96x15
             text run at (181,3) width 96: "width=\"100%\""
-        RenderText {#text} at (277,0) size 753x71
+        RenderText {#text} at (0,0) size 753x71
           text run at (277,0) width 386: ", so you can see that the CSS spec isn't quite being followed. "
           text run at (663,0) width 90: "The CSS spec"
           text run at (0,18) width 751: "says that the align=center carries down as text-align and never acts to move blocks. You're not moving the block for the"
@@ -144,7 +144,7 @@ layer at (0,0) size 785x1000
       RenderBlock {P} at (0,924) size 769x18
         RenderText {#text} at (0,0) size 60x17
           text run at (0,0) width 60: "See also: "
-        RenderInline {A} at (0,0) size 127x17 [color=#0000EE]
+        RenderInline {A} at (60,0) size 127x17 [color=#0000EE]
           RenderText {#text} at (60,0) size 127x17
             text run at (60,0) width 127: "Strict Mode Version"
         RenderText {#text} at (0,0) size 0x0

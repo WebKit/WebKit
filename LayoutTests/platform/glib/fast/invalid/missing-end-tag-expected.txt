@@ -20,4 +20,4 @@ layer at (0,0) size 800x187
           RenderText {#text} at (0,0) size 179x17
             text run at (0,0) width 179: "You should see errors above"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {p} at (0,0) size 0x17
+        RenderInline {p} at (178,0) size 0x17

@@ -47,7 +47,7 @@ layer at (0,0) size 800x155
             RenderSVGText {text} at (0,-45) size 44x56 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 44x56
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 44.00: "M"
-        RenderText {#text} at (721,33) size 784x89
+        RenderText {#text} at (0,33) size 784x89
           text run at (721,33) width 5: " "
           text run at (725,33) width 48: "this test"
           text run at (0,51) width 784: "case is specially constructed so that when the view is sized to 800x600 (the default for DumpRenderTree) the text wraps and"

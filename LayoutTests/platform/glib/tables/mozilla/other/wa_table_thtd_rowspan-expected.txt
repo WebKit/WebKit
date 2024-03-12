@@ -19,27 +19,27 @@ layer at (0,0) size 785x2324
       RenderBlock (anonymous) at (0,148) size 769x55
         RenderText {#text} at (0,0) size 270x17
           text run at (0,0) width 270: "This acceptance test case tests the optional "
-        RenderInline {B} at (0,0) size 41x17
+        RenderInline {B} at (270,0) size 41x17
           RenderText {#text} at (270,0) size 41x17
             text run at (270,0) width 41: "<TH>"
         RenderText {#text} at (311,0) size 20x17
           text run at (311,0) width 20: " & "
-        RenderInline {B} at (0,0) size 41x17
+        RenderInline {B} at (331,0) size 41x17
           RenderText {#text} at (331,0) size 41x17
             text run at (331,0) width 41: "<TD>"
         RenderText {#text} at (372,0) size 27x17
           text run at (372,0) width 27: " tag "
-        RenderInline {B} at (0,0) size 82x17
+        RenderInline {B} at (399,0) size 82x17
           RenderText {#text} at (399,0) size 82x17
             text run at (399,0) width 82: "ROWSPAN"
-        RenderText {#text} at (480,0) size 728x35
+        RenderText {#text} at (0,0) size 728x35
           text run at (480,0) width 107: " attribute which, "
           text run at (586,0) width 142: "when placed in a table"
           text run at (0,18) width 554: "header or data tag, specifies how many rows the table header or data cell will span. The "
-        RenderInline {B} at (0,0) size 82x17
+        RenderInline {B} at (554,18) size 82x17
           RenderText {#text} at (554,18) size 82x17
             text run at (554,18) width 82: "ROWSPAN"
-        RenderText {#text} at (635,18) size 761x35
+        RenderText {#text} at (0,18) size 761x35
           text run at (635,18) width 126: " attribute is set to an"
           text run at (0,36) width 465: "integer value equal the number of rows the table header or data cell spans."
       RenderBlock {P} at (0,218) size 769x19
@@ -57,32 +57,32 @@ layer at (0,0) size 785x2324
             RenderTableSection {TBODY} at (0,0) size 525x104
               RenderTableRow {TR} at (0,2) size 525x32
                 RenderTableCell {TD} at (2,2) size 95x32 [r=0 c=0 rs=1 cs=1]
-                  RenderInline {A} at (0,0) size 81x17 [color=#0000EE]
+                  RenderInline {A} at (7,7) size 81x17 [color=#0000EE]
                     RenderText {#text} at (7,7) size 81x17
                       text run at (7,7) width 81: "Test Case #1"
                 RenderTableCell {TD} at (98,2) size 425x32 [r=0 c=1 rs=1 cs=1]
-                  RenderInline {FONT} at (0,0) size 312x17 [color=#0000FF]
-                    RenderInline {B} at (0,0) size 312x17
+                  RenderInline {FONT} at (7,7) size 312x17 [color=#0000FF]
+                    RenderInline {B} at (7,7) size 312x17
                       RenderText {#text} at (7,7) size 312x17
                         text run at (7,7) width 312: "table with header cells spanning multiple rows"
               RenderTableRow {TR} at (0,36) size 525x32
                 RenderTableCell {TD} at (2,36) size 95x32 [r=1 c=0 rs=1 cs=1]
-                  RenderInline {A} at (0,0) size 81x17 [color=#0000EE]
+                  RenderInline {A} at (7,7) size 81x17 [color=#0000EE]
                     RenderText {#text} at (7,7) size 81x17
                       text run at (7,7) width 81: "Test Case #2"
                 RenderTableCell {TD} at (98,36) size 425x32 [r=1 c=1 rs=1 cs=1]
-                  RenderInline {FONT} at (0,0) size 295x17 [color=#0000FF]
-                    RenderInline {B} at (0,0) size 295x17
+                  RenderInline {FONT} at (7,7) size 295x17 [color=#0000FF]
+                    RenderInline {B} at (7,7) size 295x17
                       RenderText {#text} at (7,7) size 295x17
                         text run at (7,7) width 295: "table with data cells spanning multiple rows"
               RenderTableRow {TR} at (0,70) size 525x32
                 RenderTableCell {TD} at (2,70) size 95x32 [r=2 c=0 rs=1 cs=1]
-                  RenderInline {A} at (0,0) size 81x17 [color=#0000EE]
+                  RenderInline {A} at (7,7) size 81x17 [color=#0000EE]
                     RenderText {#text} at (7,7) size 81x17
                       text run at (7,7) width 81: "Test Case #3"
                 RenderTableCell {TD} at (98,70) size 425x32 [r=2 c=1 rs=1 cs=1]
-                  RenderInline {FONT} at (0,0) size 410x17 [color=#0000FF]
-                    RenderInline {B} at (0,0) size 410x17
+                  RenderInline {FONT} at (7,7) size 410x17 [color=#0000FF]
+                    RenderInline {B} at (7,7) size 410x17
                       RenderText {#text} at (7,7) size 410x17
                         text run at (7,7) width 410: "table with nested header & data cells spanning multiple rows"
         RenderBlock {P} at (40,154) size 729x0
@@ -90,7 +90,7 @@ layer at (0,0) size 785x2324
           RenderListMarker at (-20,0) size 16x17: "2"
           RenderText {#text} at (0,0) size 282x17
             text run at (0,0) width 282: "Verify that the table is maintained when you "
-          RenderInline {B} at (0,0) size 130x17
+          RenderInline {B} at (281,0) size 130x17
             RenderText {#text} at (281,0) size 130x17
               text run at (281,0) width 130: "minimize/maximize"
           RenderText {#text} at (410,0) size 72x17
@@ -99,7 +99,7 @@ layer at (0,0) size 785x2324
           RenderListMarker at (-20,0) size 16x17: "3"
           RenderText {#text} at (0,0) size 282x17
             text run at (0,0) width 282: "Verify that the table is maintained when you "
-          RenderInline {B} at (0,0) size 122x17
+          RenderInline {B} at (281,0) size 122x17
             RenderText {#text} at (281,0) size 122x17
               text run at (281,0) width 122: "re-size left & right"
           RenderText {#text} at (402,0) size 72x17
@@ -108,7 +108,7 @@ layer at (0,0) size 785x2324
           RenderListMarker at (-20,0) size 16x17: "4"
           RenderText {#text} at (0,0) size 282x17
             text run at (0,0) width 282: "Verify that the table is maintained when you "
-          RenderInline {B} at (0,0) size 138x17
+          RenderInline {B} at (281,0) size 138x17
             RenderText {#text} at (281,0) size 138x17
               text run at (281,0) width 138: "re-size top & bottom"
           RenderText {#text} at (418,0) size 72x17
@@ -126,17 +126,17 @@ layer at (0,0) size 785x2324
           RenderTableSection {TBODY} at (1,1) size 652x60
             RenderTableRow {TR} at (0,2) size 652x56
               RenderTableCell {TH} at (2,2) size 648x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x17
+                RenderInline {A} at (11,11) size 0x17
                 RenderText {#text} at (11,11) size 94x17
                   text run at (11,11) width 94: "Test Case #1: "
-                RenderInline {FONT} at (0,0) size 312x17 [color=#0000FF]
+                RenderInline {FONT} at (104,11) size 312x17 [color=#0000FF]
                   RenderText {#text} at (104,11) size 312x17
                     text run at (104,11) width 312: "table with header cells spanning multiple rows"
                 RenderText {#text} at (415,11) size 5x17
                   text run at (415,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 622x31
-                  RenderInline {I} at (0,0) size 622x31
-                    RenderText {#text} at (419,13) size 622x31
+                RenderInline {FONT} at (11,13) size 622x31
+                  RenderInline {I} at (11,13) size 622x31
+                    RenderText {#text} at (11,13) size 622x31
                       text run at (419,13) width 214: "(using <TH ROWSPAN=integer value>"
                       text run at (11,29) width 22: "tag)"
                 RenderText {#text} at (0,0) size 0x0
@@ -147,21 +147,21 @@ layer at (0,0) size 785x2324
           RenderTableSection {TBODY} at (1,1) size 691x98
             RenderTableRow {TR} at (0,2) size 691x94
               RenderTableCell {TD} at (2,2) size 687x94 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 664x71 [color=#FF0000]
-                  RenderInline {B} at (0,0) size 664x71
+                RenderInline {FONT} at (11,11) size 664x71 [color=#FF0000]
+                  RenderInline {B} at (11,11) size 664x71
                     RenderText {#text} at (11,11) size 356x17
                       text run at (11,11) width 356: "In the following sample table you should see that the "
-                    RenderInline {FONT} at (0,0) size 82x17 [color=#0000FF]
+                    RenderInline {FONT} at (367,11) size 82x17 [color=#0000FF]
                       RenderText {#text} at (367,11) size 82x17
                         text run at (367,11) width 82: "ROWSPAN"
-                    RenderText {#text} at (448,11) size 664x35
+                    RenderText {#text} at (11,11) size 664x35
                       text run at (448,11) width 5: " "
                       text run at (452,11) width 223: "attribute applies an integer value"
                       text run at (11,29) width 220: "equal to the number of rows the "
-                    RenderInline {FONT} at (0,0) size 71x17 [color=#0000FF]
+                    RenderInline {FONT} at (230,29) size 71x17 [color=#0000FF]
                       RenderText {#text} at (230,29) size 71x17
                         text run at (230,29) width 71: "HEADER"
-                    RenderText {#text} at (300,29) size 662x53
+                    RenderText {#text} at (11,29) size 662x53
                       text run at (300,29) width 136: " cell is to span. This "
                       text run at (435,29) width 231: "tells the browser to make the table"
                       text run at (11,47) width 603: "header cell occupy the same vertical space as the integer number of cells specified in rows "
@@ -175,7 +175,7 @@ layer at (0,0) size 785x2324
           RenderBlock {CAPTION} at (0,0) size 474x18
             RenderText {#text} at (98,0) size 40x17
               text run at (98,0) width 40: "Table "
-            RenderInline {B} at (0,0) size 88x17
+            RenderInline {B} at (137,0) size 88x17
               RenderText {#text} at (137,0) size 88x17
                 text run at (137,0) width 88: "Header Cells"
             RenderText {#text} at (224,0) size 152x17
@@ -485,17 +485,17 @@ layer at (0,0) size 785x2324
           RenderTableSection {TBODY} at (1,1) size 652x60
             RenderTableRow {TR} at (0,2) size 652x56
               RenderTableCell {TH} at (2,2) size 648x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x17
+                RenderInline {A} at (11,11) size 0x17
                 RenderText {#text} at (11,11) size 94x17
                   text run at (11,11) width 94: "Test Case #2: "
-                RenderInline {FONT} at (0,0) size 296x17 [color=#0000FF]
+                RenderInline {FONT} at (104,11) size 296x17 [color=#0000FF]
                   RenderText {#text} at (104,11) size 296x17
                     text run at (104,11) width 296: "table with data cells spanning multiple rows"
                 RenderText {#text} at (399,11) size 5x17
                   text run at (399,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 605x31
-                  RenderInline {I} at (0,0) size 605x31
-                    RenderText {#text} at (403,13) size 605x31
+                RenderInline {FONT} at (11,13) size 605x31
+                  RenderInline {I} at (11,13) size 605x31
+                    RenderText {#text} at (11,13) size 605x31
                       text run at (403,13) width 213: "(using <TD ROWSPAN=integer value>"
                       text run at (11,29) width 22: "tag)"
                 RenderText {#text} at (0,0) size 0x0
@@ -506,21 +506,21 @@ layer at (0,0) size 785x2324
           RenderTableSection {TBODY} at (1,1) size 691x98
             RenderTableRow {TR} at (0,2) size 691x94
               RenderTableCell {TD} at (2,2) size 687x94 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 664x71 [color=#FF0000]
-                  RenderInline {B} at (0,0) size 664x71
+                RenderInline {FONT} at (11,11) size 664x71 [color=#FF0000]
+                  RenderInline {B} at (11,11) size 664x71
                     RenderText {#text} at (11,11) size 356x17
                       text run at (11,11) width 356: "In the following sample table you should see that the "
-                    RenderInline {FONT} at (0,0) size 82x17 [color=#0000FF]
+                    RenderInline {FONT} at (367,11) size 82x17 [color=#0000FF]
                       RenderText {#text} at (367,11) size 82x17
                         text run at (367,11) width 82: "ROWSPAN"
-                    RenderText {#text} at (448,11) size 664x35
+                    RenderText {#text} at (11,11) size 664x35
                       text run at (448,11) width 5: " "
                       text run at (452,11) width 223: "attribute applies an integer value"
                       text run at (11,29) width 220: "equal to the number of rows the "
-                    RenderInline {FONT} at (0,0) size 46x17 [color=#0000FF]
+                    RenderInline {FONT} at (230,29) size 46x17 [color=#0000FF]
                       RenderText {#text} at (230,29) size 46x17
                         text run at (230,29) width 46: "DATA"
-                    RenderText {#text} at (275,29) size 664x53
+                    RenderText {#text} at (11,29) size 664x53
                       text run at (275,29) width 136: " cell is to span. This "
                       text run at (410,29) width 265: "tells the browser to make the table data"
                       text run at (11,47) width 553: "cell occupy the same vertical space as the integer number of cells specified in rows "
@@ -534,7 +534,7 @@ layer at (0,0) size 785x2324
           RenderBlock {CAPTION} at (0,0) size 474x18
             RenderText {#text} at (106,0) size 40x17
               text run at (106,0) width 40: "Table "
-            RenderInline {B} at (0,0) size 71x17
+            RenderInline {B} at (145,0) size 71x17
               RenderText {#text} at (145,0) size 71x17
                 text run at (145,0) width 71: "Data Cells"
             RenderText {#text} at (215,0) size 152x17
@@ -874,17 +874,17 @@ layer at (0,0) size 785x2324
           RenderTableSection {TBODY} at (1,1) size 652x60
             RenderTableRow {TR} at (0,2) size 652x56
               RenderTableCell {TH} at (2,2) size 648x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x17
+                RenderInline {A} at (11,11) size 0x17
                 RenderText {#text} at (11,11) size 94x17
                   text run at (11,11) width 94: "Test Case #3: "
-                RenderInline {FONT} at (0,0) size 410x17 [color=#0000FF]
+                RenderInline {FONT} at (104,11) size 410x17 [color=#0000FF]
                   RenderText {#text} at (104,11) size 410x17
                     text run at (104,11) width 410: "table with nested header & data cells spanning multiple rows"
                 RenderText {#text} at (513,11) size 5x17
                   text run at (513,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 569x31
-                  RenderInline {I} at (0,0) size 569x31
-                    RenderText {#text} at (517,13) size 569x31
+                RenderInline {FONT} at (11,13) size 569x31
+                  RenderInline {I} at (11,13) size 569x31
+                    RenderText {#text} at (11,13) size 569x31
                       text run at (517,13) width 63: "(using <TH"
                       text run at (11,29) width 352: "ROWSPAN=integer value> <TD ROWSPAN=integer value> tag)"
                 RenderText {#text} at (0,0) size 0x0
@@ -896,12 +896,12 @@ layer at (0,0) size 785x2324
           RenderBlock {CAPTION} at (0,0) size 474x18
             RenderText {#text} at (29,0) size 88x17
               text run at (29,0) width 88: "Nested Table "
-            RenderInline {B} at (0,0) size 88x17
+            RenderInline {B} at (116,0) size 88x17
               RenderText {#text} at (116,0) size 88x17
                 text run at (116,0) width 88: "Header Cells"
             RenderText {#text} at (203,0) size 21x17
               text run at (203,0) width 21: " & "
-            RenderInline {B} at (0,0) size 71x17
+            RenderInline {B} at (223,0) size 71x17
               RenderText {#text} at (223,0) size 71x17
                 text run at (223,0) width 71: "Data Cells"
             RenderText {#text} at (293,0) size 152x17
@@ -1317,7 +1317,7 @@ layer at (0,0) size 785x2324
         RenderImage {IMG} at (0,1) size 13x13
         RenderText {#text} at (13,0) size 129x17
           text run at (13,0) width 129: " Created 9/19/96 by "
-        RenderInline {A} at (0,0) size 82x17 [color=#0000EE]
+        RenderInline {A} at (142,0) size 82x17 [color=#0000EE]
           RenderText {#text} at (142,0) size 82x17
             text run at (142,0) width 82: "Ronald Greti"
         RenderBR {BR} at (224,0) size 0x17

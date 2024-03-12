@@ -6,7 +6,7 @@ layer at (0,0) size 800x158
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 106x17
           text run at (0,0) width 106: "There should be "
-        RenderInline {B} at (0,0) size 25x17
+        RenderInline {B} at (106,0) size 25x17
           RenderText {#text} at (106,0) size 25x17
             text run at (106,0) width 25: "two"
         RenderText {#text} at (131,0) size 135x17

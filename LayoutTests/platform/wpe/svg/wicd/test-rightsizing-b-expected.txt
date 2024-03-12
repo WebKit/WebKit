@@ -92,6 +92,6 @@ layer at (0,0) size 785x854
             text run at (0,17) width 42: "visible."
         RenderBlock {p} at (0,781) size 679x35
           RenderBR {br} at (0,0) size 0x16
-          RenderInline {a} at (0,0) size 29x16 [color=#000066]
+          RenderInline {a} at (0,17) size 29x16 [color=#000066]
             RenderText {#text} at (0,17) size 29x16
               text run at (0,17) width 29: "Back"

@@ -11,12 +11,12 @@ layer at (0,0) size 500x200
         RenderInline {text} at (0,0) size 80x17
           RenderText {#text} at (0,0) size 42x17
             text run at (0,0) width 42: "PASS "
-          RenderInline {tspan} at (0,0) size 39x17
+          RenderInline {tspan} at (41,0) size 39x17
             RenderText {#text} at (41,0) size 39x17
               text run at (41,0) width 39: "PASS"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {foreignObject} at (0,0) size 0x17
+        RenderInline {foreignObject} at (79,0) size 0x17
           RenderText {#text} at (0,0) size 0x0
     RenderBlock (anonymous) at (0,26) size 500x47
       RenderBody {body} at (8,0) size 484x47
@@ -36,17 +36,17 @@ layer at (0,0) size 500x200
             text run at (37,0) width 5: " "
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderInline {g} at (0,0) size 80x17
+      RenderInline {g} at (41,0) size 80x17
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {text} at (0,0) size 80x17
+        RenderInline {text} at (41,0) size 80x17
           RenderText {#text} at (41,0) size 43x17
             text run at (41,0) width 43: "PASS "
-          RenderInline {tspan} at (0,0) size 38x17
+          RenderInline {tspan} at (83,0) size 38x17
             RenderText {#text} at (83,0) size 38x17
               text run at (83,0) width 38: "PASS"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {foreignObject} at (0,0) size 0x17
+        RenderInline {foreignObject} at (120,0) size 0x17
           RenderText {#text} at (0,0) size 0x0
     RenderBlock (anonymous) at (0,107) size 500x47
       RenderBody {body} at (8,0) size 484x47
@@ -66,17 +66,17 @@ layer at (0,0) size 500x200
             text run at (37,0) width 5: " "
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-      RenderInline {g} at (0,0) size 80x17
+      RenderInline {g} at (41,0) size 80x17
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {text} at (0,0) size 80x17
+        RenderInline {text} at (41,0) size 80x17
           RenderText {#text} at (41,0) size 43x17
             text run at (41,0) width 43: "PASS "
-          RenderInline {tspan} at (0,0) size 38x17
+          RenderInline {tspan} at (83,0) size 38x17
             RenderText {#text} at (83,0) size 38x17
               text run at (83,0) width 38: "PASS"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {foreignObject} at (0,0) size 0x17
+        RenderInline {foreignObject} at (120,0) size 0x17
           RenderText {#text} at (0,0) size 0x0
     RenderBlock (anonymous) at (0,188) size 500x47
       RenderBody {body} at (8,0) size 484x47

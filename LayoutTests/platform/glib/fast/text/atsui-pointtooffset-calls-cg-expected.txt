@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 207x17
           text run at (0,0) width 207: "This tests for regressions against "
         RenderInline {I} at (0,0) size 777x35
-          RenderText {#text} at (207,0) size 777x35
+          RenderText {#text} at (0,0) size 777x35
             text run at (207,0) width 570: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5878 pointToOffset always takes the CG"
             text run at (0,18) width 62: "code path"
         RenderText {#text} at (62,18) size 632x17

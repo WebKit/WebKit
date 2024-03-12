@@ -250,7 +250,6 @@ webkit.org/b/258543 scrollingcoordinator/scrolling-tree/absolute-in-nested-overf
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-composite-04-f-manual.svg [ Failure ]
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-composite-05-f-manual.svg [ Failure ]
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-conv-03-f-manual.svg [ Failure ]
-webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual.svg [ Failure ]
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-image-01-b-manual.svg [ Failure ]
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-image-02-b-manual.svg [ Failure ]
 webkit.org/b/236430 imported/w3c/web-platform-tests/svg/import/filters-image-03-f-manual.svg [ Failure ]
@@ -1659,3 +1658,12 @@ compositing/visible-rect/scrolled.html [ Failure ]
 compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ ImageOnlyFailure ]
+
+# Tests timing out after 275888@main.
+fast/block/float/floats-wrap-inside-inline-006.html [ Timeout ]
+fast/block/float/previous-sibling-abspos-002.html [ Timeout ]
+fast/text/ruby-justify-tatechuyoko.html [ Timeout ]
+fast/text/text-emphasis.html [ Timeout ]
+fast/text/whitespace/pre-wrap-015.html [ Timeout ]
+imported/w3c/web-platform-tests/svg/text/reftests/lang-attribute-dynamic.svg [ Timeout ]
+imported/w3c/web-platform-tests/svg/text/reftests/xml-lang-attribute-dynamic.svg [ Timeout ]

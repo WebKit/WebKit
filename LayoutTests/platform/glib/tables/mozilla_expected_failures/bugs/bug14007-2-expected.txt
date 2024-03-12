@@ -505,7 +505,7 @@ layer at (0,0) size 785x1323
           RenderText {#text} at (4,18) size 761x17
             text run at (4,18) width 761: "Notice the scrollbars, they are rendered outside of the table columns, and the yellow day numbers are hidden under them."
         RenderBlock {P} at (0,1227) size 769x72
-          RenderText {#text} at (9,0) size 755x71
+          RenderText {#text} at (7,0) size 755x71
             text run at (9,0) width 751: "This is probably another bug already covered, or fixed, but day 3 & 16 should have no scrollbar, but the area where the"
             text run at (7,18) width 416: "other scrollbars are drawn is drawn funny. They are not rendered. "
             text run at (422,18) width 340: "They seem to be whatever was drawn there before, or"

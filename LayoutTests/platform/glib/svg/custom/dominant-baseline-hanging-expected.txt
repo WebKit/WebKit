@@ -28,28 +28,28 @@ layer at (0,0) size 400x400
             RenderText {#text} at (0,0) size 347x35
               text run at (0,0) width 347: "The piece of text above should be aligned with the top-"
               text run at (0,18) width 286: "left corner of the rectangle below it. Both the "
-            RenderInline {code} at (0,0) size 48x15
+            RenderInline {code} at (286,21) size 48x15
               RenderText {#text} at (286,21) size 48x15
                 text run at (286,21) width 48: "<text>"
-            RenderText {#text} at (334,18) size 361x35
+            RenderText {#text} at (0,18) size 361x35
               text run at (334,18) width 27: " and"
               text run at (0,36) width 23: "the "
-            RenderInline {code} at (0,0) size 48x15
+            RenderInline {code} at (23,39) size 48x15
               RenderText {#text} at (23,39) size 48x15
                 text run at (23,39) width 48: "<rect>"
             RenderText {#text} at (71,36) size 272x17
               text run at (71,36) width 272: " are located at the same coordinates and the"
-            RenderInline {code} at (0,0) size 48x15
+            RenderInline {code} at (0,57) size 48x15
               RenderText {#text} at (0,57) size 48x15
                 text run at (0,57) width 48: "<text>"
             RenderText {#text} at (48,54) size 111x17
               text run at (48,54) width 111: " element uses the "
-            RenderInline {code} at (0,0) size 56x15
+            RenderInline {code} at (159,57) size 56x15
               RenderText {#text} at (159,57) size 56x15
                 text run at (159,57) width 56: "hanging"
             RenderText {#text} at (215,54) size 78x17
               text run at (215,54) width 78: " value for its"
-            RenderInline {code} at (0,0) size 136x15
+            RenderInline {code} at (0,75) size 136x15
               RenderText {#text} at (0,75) size 136x15
                 text run at (0,75) width 136: "dominant-baseline"
             RenderText {#text} at (136,72) size 59x17

@@ -9,7 +9,7 @@ layer at (0,0) size 785x884
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 117x17
           text run at (0,0) width 117: "This tests tests the "
-        RenderInline {A} at (0,0) size 208x17 [color=#0000EE]
+        RenderInline {A} at (117,0) size 208x17 [color=#0000EE]
           RenderText {#text} at (117,0) size 208x17
             text run at (117,0) width 208: "CSS2 spec rules on table borders"
         RenderText {#text} at (325,0) size 180x17
@@ -97,7 +97,7 @@ layer at (0,0) size 785x884
                   text run at (41,50) width 80: "This margin "
                   text run at (41,129) width 10: "is"
                   text run at (59,6) width 121: "measured from the "
-                RenderInline {EM} at (0,0) size 17x43
+                RenderInline {EM} at (59,127) size 17x43
                   RenderText {#text} at (59,127) size 17x43
                     text run at (59,127) width 43: "middle"
                 RenderText {#text} at (77,6) size 17x80
@@ -151,7 +151,7 @@ layer at (0,0) size 785x884
                   text run at (33,155) width 28: "This"
                   text run at (51,-3) width 48: "margin "
                   text run at (51,44) width 131: "is measured from the"
-                RenderInline {EM} at (0,0) size 17x67
+                RenderInline {EM} at (69,6) size 17x67
                   RenderText {#text} at (69,6) size 17x67
                     text run at (69,-3) width 67: "outer edge"
                 RenderText {#text} at (69,73) size 17x84
@@ -209,8 +209,8 @@ layer at (0,0) size 785x884
                   text run at (60,32) width 80: "This margin "
                   text run at (60,111) width 10: "is"
                   text run at (78,-12) width 121: "measured from the "
-                RenderInline {EM} at (0,0) size 35x154
-                  RenderText {#text} at (78,127) size 35x154
+                RenderInline {EM} at (78,6) size 35x154
+                  RenderText {#text} at (78,6) size 35x154
                     text run at (78,109) width 33: "outer"
                     text run at (96,-12) width 30: "edge"
                 RenderText {#text} at (96,36) size 17x84
@@ -274,10 +274,10 @@ layer at (0,0) size 785x884
                   text run at (60,6) width 80: "This margin "
                   text run at (60,85) width 10: "is"
                   text run at (78,6) width 117: "measured from the"
-                RenderInline {EM} at (0,0) size 17x67
+                RenderInline {EM} at (96,6) size 17x67
                   RenderText {#text} at (96,6) size 17x67
                     text run at (96,6) width 67: "outer edge"
-                RenderText {#text} at (96,73) size 35x102
+                RenderText {#text} at (96,6) size 35x102
                   text run at (96,73) width 35: " of its"
                   text run at (114,6) width 45: "border."
               RenderTableCell {TD} at (136,323) size 138x192 [border: (1px solid #008000)] [r=2 c=2 rs=1 cs=1]
@@ -354,7 +354,7 @@ layer at (0,0) size 785x884
                   text run at (32,154) width 28: "This"
                   text run at (50,-4) width 48: "margin "
                   text run at (50,43) width 131: "is measured from the"
-                RenderInline {EM} at (0,0) size 17x67
+                RenderInline {EM} at (68,5) size 17x67
                   RenderText {#text} at (68,5) size 17x67
                     text run at (68,-4) width 67: "outer edge"
                 RenderText {#text} at (68,72) size 17x84

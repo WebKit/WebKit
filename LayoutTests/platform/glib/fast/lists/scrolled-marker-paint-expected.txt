@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,36) size 784x18
         RenderText {#text} at (0,0) size 131x17
           text run at (0,0) width 131: "This is a testcase for "
-        RenderInline {A} at (0,0) size 477x17 [color=#0000EE]
+        RenderInline {A} at (131,0) size 477x17 [color=#0000EE]
           RenderText {#text} at (131,0) size 477x17
             text run at (131,0) width 477: "REGRESSION: (r13028) Scrolling causes incomplete drawing of ul bullets"
         RenderText {#text} at (608,0) size 4x17

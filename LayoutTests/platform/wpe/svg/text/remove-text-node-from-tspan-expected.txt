@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 38: "PASS"
       RenderText {#text} at (37,0) size 5x17
         text run at (37,0) width 5: " "
-      RenderInline {tspan} at (0,0) size 39x17
+      RenderInline {tspan} at (41,0) size 39x17
         RenderText {#text} at (41,0) size 39x17
           text run at (41,0) width 39: "PASS"
       RenderText {#text} at (0,0) size 0x0

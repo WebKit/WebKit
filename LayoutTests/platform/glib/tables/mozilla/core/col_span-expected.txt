@@ -104,7 +104,7 @@ layer at (0,0) size 800x600
                 RenderInline {B} at (0,0) size 116x17
                   RenderText {#text} at (0,0) size 116x17
                     text run at (0,0) width 116: "This is colspan=3"
-                RenderText {#text} at (116,0) size 364x35
+                RenderText {#text} at (0,0) size 364x35
                   text run at (116,0) width 159: " blah blah blah blah blah "
                   text run at (275,0) width 89: "blah blah blah"
                   text run at (0,18) width 213: "blah blah blah blah blah blah blah"
@@ -128,7 +128,7 @@ layer at (0,0) size 800x600
                 RenderInline {B} at (0,0) size 116x17
                   RenderText {#text} at (0,0) size 116x17
                     text run at (0,0) width 116: "This is colspan=2"
-                RenderText {#text} at (116,0) size 364x35
+                RenderText {#text} at (0,0) size 364x35
                   text run at (116,0) width 159: " blah blah blah blah blah "
                   text run at (275,0) width 89: "blah blah blah"
                   text run at (0,18) width 213: "blah blah blah blah blah blah blah"

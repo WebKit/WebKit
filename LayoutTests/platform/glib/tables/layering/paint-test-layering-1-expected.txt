@@ -7,18 +7,18 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 782x35
           text run at (0,0) width 782: "This test checks the renderer's ability to layer multiple cells in a table on top of one another. This test has three cells that span"
           text run at (0,18) width 183: "multiple table grid slots. The "
-        RenderInline {SPAN} at (0,0) size 23x17 [color=#FF0000]
+        RenderInline {SPAN} at (183,18) size 23x17 [color=#FF0000]
           RenderText {#text} at (183,18) size 23x17
             text run at (183,18) width 23: "red"
         RenderText {#text} at (205,18) size 382x17
           text run at (205,18) width 382: " cell starts at row 1 and column 3 and spans three rows. The "
-        RenderInline {SPAN} at (0,0) size 30x17 [color=#0000FF]
+        RenderInline {SPAN} at (586,18) size 30x17 [color=#0000FF]
           RenderText {#text} at (586,18) size 30x17
             text run at (586,18) width 30: "blue"
-        RenderText {#text} at (615,18) size 765x35
+        RenderText {#text} at (0,18) size 765x35
           text run at (615,18) width 150: " cell starts at row 2, and"
           text run at (0,36) width 341: "column 2, and spans two columns and two rows. The "
-        RenderInline {SPAN} at (0,0) size 38x17 [color=#008000]
+        RenderInline {SPAN} at (341,36) size 38x17 [color=#008000]
           RenderText {#text} at (341,36) size 38x17
             text run at (341,36) width 38: "green"
         RenderText {#text} at (378,36) size 197x17

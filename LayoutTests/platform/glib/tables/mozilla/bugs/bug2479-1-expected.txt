@@ -9,13 +9,13 @@ layer at (0,0) size 785x942
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 50x17
           text run at (0,0) width 50: "See the "
-        RenderInline {A} at (0,0) size 156x17 [color=#0000EE]
+        RenderInline {A} at (50,0) size 156x17 [color=#0000EE]
           RenderText {#text} at (50,0) size 156x17
             text run at (50,0) width 54: "relevant "
             text run at (104,0) width 102: "section of CSS2"
         RenderText {#text} at (206,0) size 126x17
           text run at (206,0) width 126: " for an explanation. "
-        RenderInline {STRONG} at (0,0) size 270x17
+        RenderInline {STRONG} at (332,0) size 270x17
           RenderText {#text} at (332,0) size 270x17
             text run at (332,0) width 121: "This test does not "
             text run at (453,0) width 149: "test inline-tables at all."
@@ -272,17 +272,17 @@ layer at (0,0) size 785x942
               RenderText {#text} at (0,0) size 144x17
                 text run at (0,0) width 144: "Table 2, Row 3, Cell 4"
       RenderBlock {P} at (0,801) size 769x36
-        RenderInline {A} at (0,0) size 88x17 [color=#0000EE]
+        RenderInline {A} at (0,17) size 88x17 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 88x31
       RenderBlock {P} at (0,852) size 769x19
         RenderText {#text} at (0,0) size 58x17
           text run at (0,0) width 58: "(Back to "
-        RenderInline {A} at (0,0) size 157x17 [color=#0000EE]
+        RenderInline {A} at (58,0) size 157x17 [color=#0000EE]
           RenderText {#text} at (58,0) size 157x17
             text run at (58,0) width 157: "CSS Testing Information"
         RenderText {#text} at (214,0) size 9x17
           text run at (214,0) width 9: ", "
-        RenderInline {A} at (0,0) size 83x17 [color=#0000EE]
+        RenderInline {A} at (222,0) size 83x17 [color=#0000EE]
           RenderText {#text} at (222,0) size 83x17
             text run at (222,0) width 83: "David Baron"
         RenderText {#text} at (304,0) size 6x17
@@ -293,7 +293,7 @@ layer at (0,0) size 785x942
             text run at (0,0) width 33: "LDB"
         RenderText {#text} at (33,0) size 8x17
           text run at (33,0) width 8: ", "
-        RenderInline {A} at (0,0) size 156x17 [color=#0000EE]
+        RenderInline {A} at (41,0) size 156x17 [color=#0000EE]
           RenderText {#text} at (41,0) size 156x17
             text run at (41,0) width 156: "dbaron@fas.harvard.edu"
 layer at (8,805) size 769x2 clip at (0,0) size 0x0

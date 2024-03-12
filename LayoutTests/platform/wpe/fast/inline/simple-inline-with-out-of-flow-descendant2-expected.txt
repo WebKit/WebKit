@@ -10,6 +10,6 @@ layer at (8,8) size 202x202 clip at (9,9) size 200x200
     RenderText {#text} at (61,1) size 21x14
       text run at (61,1) width 21: "after"
 layer at (108,108) size 30x14
-  RenderInline (relative positioned) {SPAN} at (0,0) size 30x14
+  RenderInline (relative positioned) {SPAN} at (31,1) size 30x14
     RenderText {#text} at (31,1) size 30x14
       text run at (31,1) width 30: "nested"

@@ -3,48 +3,48 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x82
-        RenderInline {RUBY} at (0,0) size 144x53
-          RenderInline (generated) at (0,0) size 144x53
-            RenderText {#text} at (24,28) size 96x53
-              text run at (24,28) width 96: "\x{653B}\x{6BBB}"
-          RenderBlock {RT} at (0,1) size 144x27
+      RenderBlock {P} at (0,0) size 784x80
+        RenderInline {RUBY} at (0,26) size 144x53
+          RenderInline (generated) at (0,26) size 144x53
+            RenderText {#text} at (24,26) size 96x53
+              text run at (24,26) width 96: "\x{653B}\x{6BBB}"
+          RenderBlock {RT} at (0,0) size 144x26
             RenderText {#text} at (0,0) size 144x26
               text run at (0,0) width 144: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}\x{304D}"
-          RenderInline (generated) at (0,0) size 0x53
+          RenderInline (generated) at (144,26) size 0x53
             RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,98) size 784x82
-        RenderInline {RUBY} at (0,0) size 192x53
-          RenderInline (generated) at (0,0) size 192x53
-            RenderText {#text} at (24,28) size 144x53
-              text run at (24,28) width 144: "\x{6A5F}\x{52D5}\x{968A}"
-          RenderBlock {RT} at (0,1) size 192x27
+      RenderBlock {P} at (0,96) size 784x80
+        RenderInline {RUBY} at (0,26) size 192x53
+          RenderInline (generated) at (0,26) size 192x53
+            RenderText {#text} at (24,26) size 144x53
+              text run at (24,26) width 144: "\x{6A5F}\x{52D5}\x{968A}"
+          RenderBlock {RT} at (0,0) size 192x26
             RenderText {#text} at (0,0) size 192x26
               text run at (0,0) width 192: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}\x{304D}\x{3069}\x{3046}"
-          RenderInline (generated) at (0,0) size 0x53
+          RenderInline (generated) at (192,26) size 0x53
             RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,196) size 212x292
-        RenderBlock {P} at (16,0) size 82x292
-          RenderInline {RUBY} at (0,0) size 53x144
-            RenderInline (generated) at (0,0) size 53x144
-              RenderText {#text} at (28,24) size 53x96
-                text run at (28,24) width 96: "\x{653B}\x{6BBB}"
-            RenderBlock {RT} at (1,0) size 27x144
+      RenderBlock {DIV} at (0,192) size 208x292
+        RenderBlock {P} at (16,0) size 80x292
+          RenderInline {RUBY} at (26,0) size 53x144
+            RenderInline (generated) at (26,0) size 53x144
+              RenderText {#text} at (26,24) size 53x96
+                text run at (26,24) width 96: "\x{653B}\x{6BBB}"
+            RenderBlock {RT} at (0,0) size 26x144
               RenderText {#text} at (0,0) size 26x144
                 text run at (0,0) width 144: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}\x{304D}"
-            RenderInline (generated) at (0,0) size 53x0
+            RenderInline (generated) at (26,144) size 53x0
               RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {P} at (114,0) size 82x292
-          RenderInline {RUBY} at (0,0) size 53x192
-            RenderInline (generated) at (0,0) size 53x192
-              RenderText {#text} at (28,24) size 53x144
-                text run at (28,24) width 144: "\x{6A5F}\x{52D5}\x{968A}"
-            RenderBlock {RT} at (1,0) size 27x192
+        RenderBlock {P} at (112,0) size 80x292
+          RenderInline {RUBY} at (26,0) size 53x192
+            RenderInline (generated) at (26,0) size 53x192
+              RenderText {#text} at (26,24) size 53x144
+                text run at (26,24) width 144: "\x{6A5F}\x{52D5}\x{968A}"
+            RenderBlock {RT} at (0,0) size 26x192
               RenderText {#text} at (0,0) size 26x192
                 text run at (0,0) width 192: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}\x{304D}\x{3069}\x{3046}"
-            RenderInline (generated) at (0,0) size 53x0
+            RenderInline (generated) at (26,192) size 53x0
               RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

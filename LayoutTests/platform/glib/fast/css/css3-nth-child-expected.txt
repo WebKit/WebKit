@@ -63,6 +63,6 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 245: "This whole paragraph should be italic."
           RenderText {#text} at (245,0) size 4x17
             text run at (245,0) width 4: " "
-          RenderInline {SPAN} at (0,0) size 246x17
+          RenderInline {SPAN} at (249,0) size 246x17
             RenderText {#text} at (249,0) size 246x17
               text run at (249,0) width 246: "But only this sentence should be bold."

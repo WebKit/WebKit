@@ -162,7 +162,7 @@ layer at (340,440) size 80x80
     RenderInline {SPAN} at (0,0) size 35x17 [bgcolor=#FFFF00]
       RenderText {#text} at (0,0) size 35x17
         text run at (0,0) width 35: "inline"
-    RenderText {#text} at (35,0) size 74x53
+    RenderText {#text} at (0,0) size 74x53
       text run at (35,0) width 25: " has"
       text run at (0,18) width 74: "auto, parent"
       text run at (0,36) width 31: "none"
@@ -183,7 +183,7 @@ layer at (340,540) size 80x80
     RenderInline {SPAN} at (0,0) size 35x17 [bgcolor=#FFFF00]
       RenderText {#text} at (0,0) size 35x17
         text run at (0,0) width 35: "inline"
-    RenderText {#text} at (35,0) size 78x53
+    RenderText {#text} at (0,0) size 78x53
       text run at (35,0) width 25: " has"
       text run at (0,18) width 78: "none, parent"
       text run at (0,36) width 27: "auto"

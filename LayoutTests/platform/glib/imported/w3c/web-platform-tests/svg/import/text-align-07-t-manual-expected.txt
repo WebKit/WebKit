@@ -8,10 +8,10 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (50,55) size 156x56 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 92x56
             chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 3 width 91.80: "a\x{729C}\x{923}"
-          RenderSVGTSpan {tspan} at (0,0) size 47x28
+          RenderSVGTSpan {tspan} at (91,22) size 47x28
             RenderSVGInlineText {#text} at (91,22) size 46x28
               chunk 1 text run 1 at (141.80,100.00) startOffset 0 endOffset 3 width 45.60: "a\x{729C}\x{923}"
-          RenderSVGTSpan {tspan} at (0,0) size 19x12
+          RenderSVGTSpan {tspan} at (137,35) size 19x12
             RenderSVGInlineText {#text} at (137,35) size 18x12
               chunk 1 text run 1 at (187.40,100.00) startOffset 0 endOffset 3 width 18.00: "a\x{729C}\x{923}"
           RenderSVGInlineText {#text} at (0,0) size 0x0

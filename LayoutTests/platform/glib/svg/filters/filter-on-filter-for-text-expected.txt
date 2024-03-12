@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
       RenderSVGInlineText {#text} at (0,0) size 135x23
         [filter="filter"] RenderSVGResourceFilter {filter} at (16.50,9.96) size 162x26.58
         chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 19 width 135.00: "This is for filter "
-      RenderSVGTSpan {tspan} at (0,0) size 66x23
+      RenderSVGTSpan {tspan} at (135,0) size 66x23
         RenderSVGInlineText {#text} at (135,0) size 66x23
           [filter="filter"] RenderSVGResourceFilter {filter} at (158.40,9.96) size 79.20x26.58
           chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 9 width 66.00: "on filter"

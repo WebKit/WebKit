@@ -39,7 +39,7 @@ layer at (8,308) size 215x27
       text run at (0,0) width 215: "LTR-Left-Aligned"
 layer at (808,204) size 93x81
   RenderBlock (positioned) {FONT} at (808,204) size 93x81
-    RenderText {#text} at (33,0) size 93x80
+    RenderText {#text} at (0,0) size 93x80
       text run at (33,0) width 60: "LTR-"
       text run at (17,27) width 76: "Right-"
       text run at (0,54) width 93: "Aligned"

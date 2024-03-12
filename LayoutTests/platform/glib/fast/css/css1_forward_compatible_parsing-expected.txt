@@ -31,10 +31,10 @@ layer at (0,0) size 800x401
       RenderBlock {P} at (0,351) size 784x19
         RenderText {#text} at (0,0) size 27x17
           text run at (0,0) width 27: "See "
-        RenderInline {A} at (0,0) size 71x17 [color=#0000EE]
+        RenderInline {A} at (27,0) size 71x17 [color=#0000EE]
           RenderText {#text} at (27,0) size 71x17
             text run at (27,0) width 71: "Bug 14373"
-        RenderInline {A} at (0,0) size 4x17
+        RenderInline {A} at (98,0) size 4x17
           RenderText {#text} at (98,0) size 4x17
             text run at (98,0) width 4: "."
       RenderBlock (anonymous) at (0,385) size 784x0

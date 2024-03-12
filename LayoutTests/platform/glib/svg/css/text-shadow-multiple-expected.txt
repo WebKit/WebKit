@@ -14,12 +14,12 @@ layer at (0,0) size 800x408
                 chunk 1 text run 1 at (20.00,66.21) startOffset 0 endOffset 4 width 95.00: "This"
             RenderSVGInlineText {#text} at (95,0) size 14x56
               chunk 1 text run 1 at (115.00,66.21) startOffset 0 endOffset 1 width 14.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 81x56
+            RenderSVGTSpan {tspan} at (109,0) size 81x56
               RenderSVGInlineText {#text} at (109,0) size 81x56
                 chunk 1 text run 1 at (129.00,66.21) startOffset 0 endOffset 4 width 81.00: "text"
             RenderSVGInlineText {#text} at (190,0) size 14x56
               chunk 1 text run 1 at (210.00,66.21) startOffset 0 endOffset 1 width 14.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 304x56
+            RenderSVGTSpan {tspan} at (204,0) size 304x56
               RenderSVGInlineText {#text} at (204,0) size 304x56
                 chunk 1 text run 1 at (224.00,66.21) startOffset 0 endOffset 14 width 304.00: "casts multiple"
             RenderSVGInlineText {#text} at (508,0) size 212x56
@@ -37,12 +37,12 @@ layer at (0,0) size 800x408
                 chunk 1 text run 1 at (20.00,66.21) startOffset 0 endOffset 4 width 95.00: "This"
             RenderSVGInlineText {#text} at (95,0) size 14x56
               chunk 1 text run 1 at (115.00,66.21) startOffset 0 endOffset 1 width 14.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 81x56
+            RenderSVGTSpan {tspan} at (109,0) size 81x56
               RenderSVGInlineText {#text} at (109,0) size 81x56
                 chunk 1 text run 1 at (129.00,66.21) startOffset 0 endOffset 4 width 81.00: "text"
             RenderSVGInlineText {#text} at (190,0) size 14x56
               chunk 1 text run 1 at (210.00,66.21) startOffset 0 endOffset 1 width 14.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 304x56
+            RenderSVGTSpan {tspan} at (204,0) size 304x56
               RenderSVGInlineText {#text} at (204,0) size 304x56
                 chunk 1 text run 1 at (224.00,66.21) startOffset 0 endOffset 14 width 304.00: "casts multiple"
             RenderSVGInlineText {#text} at (508,0) size 212x56
@@ -51,17 +51,17 @@ layer at (0,0) size 800x408
         RenderText {#text} at (0,0) size 0x0
 layer at (20,50) size 720x58
   RenderBlock (positioned) {div} at (20,50) size 720x58
-    RenderInline {span} at (0,0) size 95x56 [textStrokeWidth=1.00]
+    RenderInline {span} at (0,1) size 95x56 [textStrokeWidth=1.00]
       RenderText {#text} at (0,1) size 95x56
         text run at (0,1) width 95: "This"
     RenderText {#text} at (95,1) size 14x56
       text run at (95,1) width 14: " "
-    RenderInline {span} at (0,0) size 81x56 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+    RenderInline {span} at (109,1) size 81x56 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
       RenderText {#text} at (109,1) size 81x56
         text run at (109,1) width 81: "text"
     RenderText {#text} at (190,1) size 14x56
       text run at (190,1) width 14: " "
-    RenderInline {span} at (0,0) size 304x56
+    RenderInline {span} at (204,1) size 304x56
       RenderText {#text} at (204,1) size 304x56
         text run at (204,1) width 304: "casts multiple"
     RenderText {#text} at (508,1) size 212x56
@@ -69,17 +69,17 @@ layer at (20,50) size 720x58
       text run at (522,1) width 198: "shadows"
 layer at (20,254) size 720x58
   RenderBlock (positioned) {div} at (20,254) size 720x58
-    RenderInline {span} at (0,0) size 95x56 [textStrokeWidth=1.00]
+    RenderInline {span} at (0,1) size 95x56 [textStrokeWidth=1.00]
       RenderText {#text} at (0,1) size 95x56
         text run at (0,1) width 95: "This"
     RenderText {#text} at (95,1) size 14x56
       text run at (95,1) width 14: " "
-    RenderInline {span} at (0,0) size 81x56 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+    RenderInline {span} at (109,1) size 81x56 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
       RenderText {#text} at (109,1) size 81x56
         text run at (109,1) width 81: "text"
     RenderText {#text} at (190,1) size 14x56
       text run at (190,1) width 14: " "
-    RenderInline {span} at (0,0) size 304x56
+    RenderInline {span} at (204,1) size 304x56
       RenderText {#text} at (204,1) size 304x56
         text run at (204,1) width 304: "casts multiple"
     RenderText {#text} at (508,1) size 212x56

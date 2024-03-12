@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 144x17
           text run at (0,0) width 144: "Testcase distilled from "
-        RenderInline {A} at (0,0) size 184x17 [color=#0000EE]
+        RenderInline {A} at (143,0) size 184x17 [color=#0000EE]
           RenderText {#text} at (143,0) size 184x17
             text run at (143,0) width 184: "http://webdeveloper.com/xml"
       RenderTable {TABLE} at (0,34) size 644x102 [border: (1px outset #808080)]
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
                       RenderBR {BR} at (121,14) size 0x17
                       RenderText {#text} at (25,28) size 5x17
                         text run at (25,28) width 5: "["
-                      RenderInline {I} at (0,0) size 64x17
+                      RenderInline {I} at (30,28) size 64x17
                         RenderText {#text} at (30,28) size 64x17
                           text run at (30,28) width 64: " Site Map "
                       RenderText {#text} at (94,28) size 5x17
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,152) size 784x18
         RenderText {#text} at (0,0) size 185x17
           text run at (0,0) width 185: "Same as above, but removed "
-        RenderInline {CODE} at (0,0) size 136x15
+        RenderInline {CODE} at (185,3) size 136x15
           RenderText {#text} at (185,3) size 136x15
             text run at (185,3) width 136: "<SCRIPT></SCRIPT>"
       RenderTable {TABLE} at (0,186) size 644x102 [border: (1px outset #808080)]
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
                       RenderBR {BR} at (121,14) size 0x17
                       RenderText {#text} at (25,28) size 5x17
                         text run at (25,28) width 5: "["
-                      RenderInline {I} at (0,0) size 64x17
+                      RenderInline {I} at (30,28) size 64x17
                         RenderText {#text} at (30,28) size 64x17
                           text run at (30,28) width 64: " Site Map "
                       RenderText {#text} at (94,28) size 5x17

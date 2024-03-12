@@ -9,23 +9,23 @@ layer at (0,0) size 800x600
         text run at (36,18) width 287: "and one with a ruby text longer than the base."
       RenderBR {BR} at (323,18) size 0x17
       RenderBR {BR} at (0,36) size 0x17
-      RenderText {#text} at (0,64) size 155x17
-        text run at (0,64) width 155: "<ruby> is defined in the "
-      RenderInline {RUBY} at (0,0) size 184x17
-        RenderInline (generated) at (0,0) size 184x17
-          RenderText {#text} at (155,64) size 184x17
-            text run at (155,64) width 184: "Hypertext Markup Language"
-        RenderBlock {RT} at (155,54) size 184x10
+      RenderText {#text} at (0,63) size 155x18
+        text run at (0,63) width 155: "<ruby> is defined in the "
+      RenderInline {RUBY} at (155,63) size 184x18
+        RenderInline (generated) at (155,63) size 184x18
+          RenderText {#text} at (155,63) size 184x18
+            text run at (155,63) width 184: "Hypertext Markup Language"
+        RenderBlock {RT} at (155,53) size 184x11
           RenderText {#text} at (76,0) size 32x10
             text run at (76,0) width 32: "HTML5"
-      RenderText {#text} at (339,64) size 31x17
-        text run at (339,64) width 31: " and "
-      RenderInline {RUBY} at (0,0) size 89x17
-        RenderInline (generated) at (0,0) size 90x17
-          RenderText {#text} at (391,64) size 38x17
-            text run at (391,64) width 38: "CSS3"
-        RenderBlock {RT} at (365,54) size 90x10
+      RenderText {#text} at (339,63) size 31x18
+        text run at (339,63) width 31: " and "
+      RenderInline {RUBY} at (370,63) size 89x18
+        RenderInline (generated) at (365,63) size 90x18
+          RenderText {#text} at (391,63) size 38x18
+            text run at (391,63) width 38: "CSS3"
+        RenderBlock {RT} at (365,53) size 90x11
           RenderText {#text} at (0,0) size 89x10
             text run at (0,0) width 89: "Cascading Style Sheets"
-      RenderText {#text} at (450,64) size 42x17
-        text run at (450,64) width 42: " specs."
+      RenderText {#text} at (450,63) size 42x18
+        text run at (450,63) width 42: " specs."

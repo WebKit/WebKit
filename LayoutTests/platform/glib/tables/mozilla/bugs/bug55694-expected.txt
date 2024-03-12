@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 251x17
           text run at (0,0) width 251: "The table below is inside a div tag with "
-        RenderInline {B} at (0,0) size 56x17
+        RenderInline {B} at (251,0) size 56x17
           RenderText {#text} at (251,0) size 56x17
             text run at (251,0) width 56: "absolute"
-        RenderText {#text} at (307,0) size 771x35
+        RenderText {#text} at (0,0) size 771x35
           text run at (307,0) width 151: " positioning for top and "
           text run at (458,0) width 138: "left but not for width. "
           text run at (596,0) width 175: "The table should push it out"
@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,140) size 784x36
         RenderText {#text} at (0,0) size 260x17
           text run at (0,0) width 260: "The next table is inside a div tag set with "
-        RenderInline {B} at (0,0) size 50x17
+        RenderInline {B} at (260,0) size 50x17
           RenderText {#text} at (260,0) size 50x17
             text run at (260,0) width 50: "relative"
         RenderText {#text} at (309,0) size 79x17

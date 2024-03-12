@@ -26,23 +26,23 @@ layer at (0,0) size 785x715
           text run at (0,150) width 520: "... and differ only in the value of 'padding:'. From top table to"
           text run at (520,150) width 0: " "
           text run at (0,165) width 424: "bottom: 0px, 10px, 19px, 20px, 25px. Note that for a "
-        RenderInline {U} at (0,0) size 608x30
-          RenderInline {I} at (0,0) size 608x30
-            RenderText {#text} at (424,165) size 608x30
+        RenderInline {U} at (0,165) size 608x30
+          RenderInline {I} at (0,165) size 608x30
+            RenderText {#text} at (0,165) size 608x30
               text run at (424,165) width 184: "table over-constrained "
               text run at (608,165) width 0: " "
               text run at (0,180) width 160: "within another table"
         RenderText {#text} at (160,180) size 16x15
           text run at (160,180) width 16: ", "
-        RenderInline {I} at (0,0) size 184x15
-          RenderInline {U} at (0,0) size 184x15
+        RenderInline {I} at (176,180) size 184x15
+          RenderInline {U} at (176,180) size 184x15
             RenderText {#text} at (176,180) size 184x15
               text run at (176,180) width 184: "when (padding >=margin)"
         RenderText {#text} at (360,180) size 128x15
           text run at (360,180) width 128: ", the margin is "
-        RenderInline {I} at (0,0) size 600x30
-          RenderInline {U} at (0,0) size 600x30
-            RenderText {#text} at (488,180) size 600x30
+        RenderInline {I} at (0,180) size 600x30
+          RenderInline {U} at (0,180) size 600x30
+            RenderText {#text} at (0,180) size 600x30
               text run at (488,180) width 112: "all allocated "
               text run at (600,180) width 0: " "
               text run at (0,195) width 176: "to the right hand side"

@@ -6,17 +6,17 @@ layer at (0,0) size 785x2270
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 165x17
           text run at (0,0) width 165: "This page is part of the "
-        RenderInline {A} at (0,0) size 73x17 [color=#0000EE]
+        RenderInline {A} at (165,0) size 73x17 [color=#0000EE]
           RenderText {#text} at (165,0) size 73x17
             text run at (165,0) width 73: "CSS3.info"
         RenderText {#text} at (238,0) size 4x17
           text run at (238,0) width 4: " "
-        RenderInline {A} at (0,0) size 131x17 [color=#0000EE]
+        RenderInline {A} at (242,0) size 131x17 [color=#0000EE]
           RenderText {#text} at (242,0) size 131x17
             text run at (242,0) width 131: "CSS selectors test"
         RenderText {#text} at (373,0) size 133x17
           text run at (373,0) width 133: ". See more info on "
-        RenderInline {A} at (0,0) size 111x17 [color=#0000EE]
+        RenderInline {A} at (506,0) size 111x17 [color=#0000EE]
           RenderText {#text} at (506,0) size 111x17
             text run at (506,0) width 111: "CSS3 selectors"
         RenderText {#text} at (617,0) size 4x17

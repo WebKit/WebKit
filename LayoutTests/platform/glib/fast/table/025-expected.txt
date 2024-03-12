@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
                               RenderImage {IMG} at (2,2) size 21x15 [bgcolor=#800080]
                               RenderText {#text} at (23,3) size 4x17
                                 text run at (23,3) width 4: " "
-                              RenderInline {B} at (0,0) size 89x17
+                              RenderInline {B} at (27,3) size 89x17
                                 RenderText {#text} at (27,3) size 89x17
                                   text run at (27,3) width 89: "Yellow Pages"
                               RenderText {#text} at (115,3) size 5x17
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
                               RenderImage {IMG} at (119,2) size 22x15 [bgcolor=#800080]
                               RenderText {#text} at (140,3) size 5x17
                                 text run at (140,3) width 5: " "
-                              RenderInline {B} at (0,0) size 85x17
+                              RenderInline {B} at (144,3) size 85x17
                                 RenderText {#text} at (144,3) size 85x17
                                   text run at (144,3) width 85: "White Pages"
                               RenderText {#text} at (228,3) size 5x17
@@ -67,7 +67,7 @@ layer at (0,0) size 800x600
                               RenderImage {IMG} at (2,2) size 21x15 [bgcolor=#800080]
                               RenderText {#text} at (23,3) size 4x17
                                 text run at (23,3) width 4: " "
-                              RenderInline {B} at (0,0) size 89x17
+                              RenderInline {B} at (27,3) size 89x17
                                 RenderText {#text} at (27,3) size 89x17
                                   text run at (27,3) width 89: "Yellow Pages"
                               RenderText {#text} at (115,3) size 5x17
@@ -75,7 +75,7 @@ layer at (0,0) size 800x600
                               RenderImage {IMG} at (119,2) size 22x15 [bgcolor=#800080]
                               RenderText {#text} at (140,3) size 5x17
                                 text run at (140,3) width 5: " "
-                              RenderInline {B} at (0,0) size 85x17
+                              RenderInline {B} at (144,3) size 85x17
                                 RenderText {#text} at (144,3) size 85x17
                                   text run at (144,3) width 85: "White Pages"
                               RenderText {#text} at (228,3) size 5x17

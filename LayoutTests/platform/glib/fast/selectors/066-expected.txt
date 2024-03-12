@@ -9,7 +9,7 @@ layer at (0,0) size 800x172
           text run at (225,0) width 457: "The background of the following paragraph should become green when "
           text run at (682,0) width 73: "you follow "
         RenderInline {A} at (0,0) size 777x35 [color=#0000EE]
-          RenderText {#text} at (755,0) size 777x35
+          RenderText {#text} at (0,0) size 777x35
             text run at (755,0) width 22: "this"
             text run at (0,18) width 24: "link"
         RenderText {#text} at (24,18) size 4x17
@@ -19,7 +19,7 @@ layer at (0,0) size 800x172
           text run at (0,0) width 276: "This paragraph should initially be unstyled. "
           text run at (276,0) width 463: "It should become green when you select the link above. When you select "
         RenderInline {A} at (0,0) size 761x35 [color=#0000EE]
-          RenderText {#text} at (739,0) size 761x35
+          RenderText {#text} at (0,0) size 761x35
             text run at (739,0) width 22: "this"
             text run at (0,18) width 24: "link"
         RenderText {#text} at (24,18) size 636x17
@@ -30,7 +30,7 @@ layer at (0,0) size 800x172
           text run at (0,0) width 276: "This paragraph should initially be unstyled. "
           text run at (276,0) width 469: "It should become green when you select the link above. When you follow "
         RenderInline {A} at (0,0) size 767x35 [color=#0000EE]
-          RenderText {#text} at (745,0) size 767x35
+          RenderText {#text} at (0,0) size 767x35
             text run at (745,0) width 22: "this"
             text run at (0,18) width 24: "link"
         RenderText {#text} at (24,18) size 357x17

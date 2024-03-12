@@ -35,11 +35,11 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (-8,51) size 202x112 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 202x112
             RenderSVGInlineText {#text} at (0,0) size 0x0
-            RenderSVGTSpan {tspan} at (0,0) size 53x53
+            RenderSVGTSpan {tspan} at (0,40) size 53x53
               RenderSVGInlineText {#text} at (0,40) size 53x53
                 chunk 1 text run 1 at (37.54,135.47) startOffset 0 endOffset 1 width 22.20: "T"
                 chunk 1 text run 2 at (45.81,119.55) startOffset 1 endOffset 2 width 13.69: "e"
-            RenderSVGTSpan {tspan} at (0,0) size 43x40
+            RenderSVGTSpan {tspan} at (31,28) size 43x40
               RenderSVGInlineText {#text} at (31,28) size 43x39
                 chunk 1 text run 1 at (54.72,106.46) startOffset 0 endOffset 1 width 18.00: "x"
             RenderSVGInlineText {#text} at (45,0) size 156x112

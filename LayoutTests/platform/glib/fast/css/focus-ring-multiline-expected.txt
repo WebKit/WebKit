@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 102x146 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 29x17
                 text run at (1,1) width 29: "The "
-              RenderInline {A} at (0,0) size 97x143 [color=#0000EE]
-                RenderText {#text} at (30,1) size 97x143
+              RenderInline {A} at (1,1) size 97x143 [color=#0000EE]
+                RenderText {#text} at (1,1) size 97x143
                   text run at (30,1) width 65: "text in this"
                   text run at (1,19) width 96: "anchor element"
                   text run at (1,37) width 87: "should spawn"

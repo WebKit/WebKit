@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
         RenderInline {I} at (0,0) size 753x35
-          RenderInline {A} at (0,0) size 347x17 [color=#0000EE]
+          RenderInline {A} at (104,0) size 347x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 347x17
               text run at (104,0) width 347: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8118"
-          RenderText {#text} at (450,0) size 753x35
+          RenderText {#text} at (0,0) size 753x35
             text run at (450,0) width 303: " REGRESSION (r13595): Inline block's clipped"
             text run at (0,18) width 224: "overflow increases table row height"
         RenderText {#text} at (223,18) size 5x17

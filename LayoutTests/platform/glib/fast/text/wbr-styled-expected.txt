@@ -6,17 +6,17 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 90x17
           text run at (0,0) width 90: "This tests that "
-        RenderInline {TT} at (0,0) size 24x15
+        RenderInline {TT} at (90,3) size 24x15
           RenderText {#text} at (90,3) size 24x15
             text run at (90,3) width 24: "WBR"
         RenderText {#text} at (114,0) size 300x17
           text run at (114,0) width 300: " elements cannot be styled and that setting their "
-        RenderInline {TT} at (0,0) size 64x15
+        RenderInline {TT} at (414,3) size 64x15
           RenderText {#text} at (414,3) size 64x15
             text run at (414,3) width 64: "position"
         RenderText {#text} at (478,0) size 20x17
           text run at (478,0) width 20: " to "
-        RenderInline {TT} at (0,0) size 64x15
+        RenderInline {TT} at (498,3) size 64x15
           RenderText {#text} at (498,3) size 64x15
             text run at (498,3) width 64: "absolute"
         RenderText {#text} at (562,0) size 151x17

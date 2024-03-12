@@ -12,7 +12,7 @@ layer at (0,0) size 800x76
             text run at (0,0) width 156: "This address should also"
         RenderText {#text} at (155,0) size 5x17
           text run at (155,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 505x17
+        RenderInline {SPAN} at (159,0) size 505x17
           RenderText {#text} at (159,0) size 505x17
             text run at (159,0) width 418: "have green background because the language of the inner SPANs "
             text run at (576,0) width 88: "is not French."

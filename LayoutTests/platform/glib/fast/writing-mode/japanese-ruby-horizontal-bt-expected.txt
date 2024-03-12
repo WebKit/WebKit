@@ -5,14 +5,14 @@ layer at (0,496) size 800x104
     RenderBody {BODY} at (18,18) size 764x68
       RenderText {#text} at (0,1) size 220x45
         text run at (0,1) width 220: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
-      RenderInline {RUBY} at (0,0) size 200x45
-        RenderInline (generated) at (0,0) size 80x45
+      RenderInline {RUBY} at (220,22) size 200x45
+        RenderInline (generated) at (220,22) size 80x45
           RenderText {#text} at (220,1) size 80x45
             text run at (220,1) width 80: "\x{653B}\x{6BBB}"
         RenderBlock {RT} at (220,46) size 80x22
           RenderText {#text} at (0,0) size 80x22
             text run at (0,0) width 80: "\x{3053}\x{3046}\x{304B}\x{304F}"
-        RenderInline (generated) at (0,0) size 120x45
+        RenderInline (generated) at (300,22) size 120x45
           RenderText {#text} at (300,1) size 120x45
             text run at (300,1) width 120: "\x{6A5F}\x{52D5}\x{968A}"
         RenderBlock {RT} at (300,46) size 120x22

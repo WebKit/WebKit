@@ -8,11 +8,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 128x32
             text run at (0,0) width 128: "1111"
           RenderBR {BR} at (128,0) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32
+          RenderInline {SPAN} at (0,32) size 128x32
             RenderText {#text} at (0,32) size 128x32
               text run at (0,32) width 128: "2222"
           RenderBR {BR} at (128,32) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32 [color=#0000FF]
+          RenderInline {SPAN} at (0,80) size 128x32 [color=#0000FF]
             RenderText {#text} at (0,80) size 128x32
               text run at (0,80) width 128: "3333"
           RenderBR {BR} at (128,80) size 0x32
@@ -24,11 +24,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 128x32
             text run at (0,0) width 128: "1111"
           RenderBR {BR} at (128,0) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32 [color=#008000]
+          RenderInline {SPAN} at (0,32) size 128x32 [color=#008000]
             RenderText {#text} at (0,32) size 128x32
               text run at (0,32) width 128: "2222"
           RenderBR {BR} at (128,32) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32
+          RenderInline {SPAN} at (0,80) size 128x32
             RenderText {#text} at (0,80) size 128x32
               text run at (0,80) width 128: "3333"
           RenderBR {BR} at (128,80) size 0x32
@@ -40,11 +40,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 128x32
             text run at (0,0) width 128: "1111"
           RenderBR {BR} at (128,0) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32 [color=#008000]
+          RenderInline {SPAN} at (0,32) size 128x32 [color=#008000]
             RenderText {#text} at (0,32) size 128x32
               text run at (0,32) width 128: "2222"
           RenderBR {BR} at (128,32) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32 [color=#0000FF]
+          RenderInline {SPAN} at (0,96) size 128x32 [color=#0000FF]
             RenderText {#text} at (0,96) size 128x32
               text run at (0,96) width 128: "3333"
           RenderBR {BR} at (128,96) size 0x32
@@ -56,11 +56,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 128x32
             text run at (0,0) width 128: "1111"
           RenderBR {BR} at (128,0) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32
+          RenderInline {SPAN} at (0,32) size 128x32
             RenderText {#text} at (0,32) size 128x32
               text run at (0,32) width 128: "2222"
           RenderBR {BR} at (128,32) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32 [color=#008000]
+          RenderInline {SPAN} at (0,64) size 128x32 [color=#008000]
             RenderText {#text} at (0,80) size 128x32
               text run at (0,80) width 128: "3333"
           RenderBR {BR} at (128,80) size 0x32
@@ -72,11 +72,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 128x32
             text run at (0,0) width 128: "1111"
           RenderBR {BR} at (128,0) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32 [color=#0000FF]
+          RenderInline {SPAN} at (0,48) size 128x32 [color=#0000FF]
             RenderText {#text} at (0,32) size 128x32
               text run at (0,32) width 128: "2222"
           RenderBR {BR} at (128,32) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32
+          RenderInline {SPAN} at (0,80) size 128x32
             RenderText {#text} at (0,80) size 128x32
               text run at (0,80) width 128: "3333"
           RenderBR {BR} at (128,80) size 0x32
@@ -88,11 +88,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 128x32
             text run at (0,0) width 128: "1111"
           RenderBR {BR} at (128,0) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32 [color=#0000FF]
+          RenderInline {SPAN} at (0,48) size 128x32 [color=#0000FF]
             RenderText {#text} at (0,32) size 128x32
               text run at (0,32) width 128: "2222"
           RenderBR {BR} at (128,32) size 0x32
-          RenderInline {SPAN} at (0,0) size 128x32 [color=#008000]
+          RenderInline {SPAN} at (0,80) size 128x32 [color=#008000]
             RenderText {#text} at (0,96) size 128x32
               text run at (0,96) width 128: "3333"
           RenderBR {BR} at (128,96) size 0x32

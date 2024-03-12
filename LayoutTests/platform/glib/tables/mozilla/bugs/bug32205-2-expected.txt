@@ -44,13 +44,13 @@ layer at (0,0) size 785x1299
           RenderBR {BR} at (109,0) size 1x17
           RenderText {#text} at (0,18) size 129x17
             text run at (0,18) width 129: "First Row : 1 or 1% "
-          RenderInline {I} at (0,0) size 216x17
+          RenderInline {I} at (129,18) size 216x17
             RenderText {#text} at (129,18) size 216x17
               text run at (129,18) width 216: "(i.e. expand to minimum required)"
           RenderBR {BR} at (344,18) size 1x17
           RenderText {#text} at (0,36) size 170x17
             text run at (0,36) width 170: "Second Row : unspecified "
-          RenderInline {I} at (0,0) size 306x17
+          RenderInline {I} at (170,36) size 306x17
             RenderText {#text} at (170,36) size 306x17
               text run at (170,36) width 306: "(i.e. table height - height of other rows+borders)"
           RenderText {#text} at (0,0) size 0x0
