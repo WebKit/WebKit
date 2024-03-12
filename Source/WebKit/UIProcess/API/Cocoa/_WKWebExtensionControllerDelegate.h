@@ -29,6 +29,8 @@
 
 #import <WebKit/_WKWebExtensionPermission.h>
 
+#define HAVE_UPDATED_WEB_EXTENSION_PROMPT_COMPLETION_HANDLER 1
+
 @class _WKWebExtensionAction;
 @class _WKWebExtensionContext;
 @class _WKWebExtensionController;
