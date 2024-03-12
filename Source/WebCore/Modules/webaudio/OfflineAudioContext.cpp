@@ -30,6 +30,7 @@
 #include "OfflineAudioContext.h"
 
 #include "AudioBuffer.h"
+#include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "Document.h"
 #include "JSAudioBuffer.h"
@@ -51,7 +52,7 @@ OfflineAudioContext::OfflineAudioContext(Document& document, const OfflineAudioC
     if (!renderTarget())
         document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Failed to construct internal AudioBuffer with ", options.numberOfChannels, " channel(s), a sample rate of ", options.sampleRate, " and a length of ", options.length, "."));
     else if (noiseInjectionPolicy() == NoiseInjectionPolicy::Minimal)
-        renderTarget()->setNeedsAdditionalNoise();
+        renderTarget()->increaseNoiseInjectionMultiplier();
 }
 
 ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, const OfflineAudioContextOptions& options)
@@ -74,6 +75,43 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
 ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, unsigned length, float sampleRate)
 {
     return create(context, { numberOfChannels, length, sampleRate });
+}
+
+void OfflineAudioContext::lazyInitialize()
+{
+    BaseAudioContext::lazyInitialize();
+
+    increaseNoiseMultiplierIfNeeded();
+}
+
+void OfflineAudioContext::increaseNoiseMultiplierIfNeeded()
+{
+    if (noiseInjectionPolicy() == NoiseInjectionPolicy::None)
+        return;
+
+    Locker locker { graphLock() };
+
+    RefPtr target = renderTarget();
+    if (!target)
+        return;
+
+    Vector<AudioConnectionRefPtr<AudioNode>, 1> remainingNodes;
+    for (auto& node : referencedSourceNodes())
+        remainingNodes.append(node.copyRef());
+
+    while (!remainingNodes.isEmpty()) {
+        auto node = remainingNodes.takeLast();
+        target->increaseNoiseInjectionMultiplier(node->noiseInjectionMultiplier());
+        for (unsigned i = 0; i < node->numberOfOutputs(); ++i) {
+            auto* output = node->output(i);
+            if (!output)
+                continue;
+
+            output->forEachInputNode([&](auto& inputNode) {
+                remainingNodes.append(&inputNode);
+            });
+        }
+    }
 }
 
 void OfflineAudioContext::uninitialize()

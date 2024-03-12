@@ -88,6 +88,8 @@ private:
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
 
+    float noiseInjectionMultiplier() const final;
+
     ExceptionOr<void> startPlaying(double when, double grainOffset, std::optional<double> grainDuration);
     void adjustGrainParameters() WTF_REQUIRES_LOCK(m_processLock);
 
