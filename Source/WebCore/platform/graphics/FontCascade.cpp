@@ -326,28 +326,19 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
         *cacheEntry = result;
     return result;
 }
-
-template<typename CharacterType>
-static void addGlyphsFromText(GlyphBuffer& glyphBuffer, const Font& font, const CharacterType* characters, unsigned length)
+NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDirection textDirection, float* cacheEntry) const
 {
-    for (unsigned i = 0; i < length; ++i) {
-        auto glyph = font.glyphForCharacter(characters[i]);
-        glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
-    }
-}
-
-float FontCascade::widthForSimpleText(StringView text, TextDirection textDirection) const
-{
-    if (text.isNull() || text.isEmpty())
-        return 0;
-    ASSERT(codePath(TextRun(text)) != CodePath::Complex);
-    float* cacheEntry = protectedFonts()->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
-    if (cacheEntry && !std::isnan(*cacheEntry))
-        return *cacheEntry;
-
     GlyphBuffer glyphBuffer;
     Ref font = primaryFont();
     ASSERT(!font->syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
+
+    auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, const auto* characters, unsigned length) {
+        for (unsigned i = 0; i < length; ++i) {
+            auto glyph = font.glyphForCharacter(characters[i]);
+            glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
+        }
+    };
+
     if (text.is8Bit())
         addGlyphsFromText(glyphBuffer, font, text.characters8(), text.length());
     else
