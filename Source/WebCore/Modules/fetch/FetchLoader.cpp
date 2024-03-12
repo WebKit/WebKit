@@ -94,6 +94,8 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     if (context.settingsValues().fetchPriorityEnabled)
         options.fetchPriorityHint = request.fetchPriorityHint();
 
+    options.shouldEnableContentExtensionsCheck = request.shouldEnableContentExtensionsCheck() ? ShouldEnableContentExtensionsCheck::Yes : ShouldEnableContentExtensionsCheck::No;
+
     ResourceRequest fetchRequest = request.resourceRequest();
 
     ASSERT(context.contentSecurityPolicy());

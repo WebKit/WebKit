@@ -225,6 +225,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     m_options = input.m_options;
     m_referrer = input.m_referrer;
     m_fetchPriorityHint = input.m_fetchPriorityHint;
+    m_enableContentExtensionsCheck = input.m_enableContentExtensionsCheck;
 
     auto optionsResult = initializeOptions(init);
     if (optionsResult.hasException())
@@ -352,6 +353,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
     clone->suspendIfNeeded();
     clone->cloneBody(*this);
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
+    clone->m_enableContentExtensionsCheck = m_enableContentExtensionsCheck;
     clone->protectedSignal()->signalFollow(m_signal);
     return clone;
 }

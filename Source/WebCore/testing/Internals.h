@@ -1178,6 +1178,7 @@ public:
     String ongoingLoadsDescriptions() const;
 
     void reloadWithoutContentExtensions();
+    void disableContentExtensionsChecks();
 
     void setUseSystemAppearance(bool);
 

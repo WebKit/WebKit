@@ -1185,6 +1185,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
 
     undefined reloadWithoutContentExtensions();
+    undefined disableContentExtensionsChecks();
 
     undefined setUseSystemAppearance(boolean value);
 

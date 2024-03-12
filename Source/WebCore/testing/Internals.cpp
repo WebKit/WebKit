@@ -6440,6 +6440,14 @@ void Internals::reloadWithoutContentExtensions()
         frame->loader().reload(ReloadOption::DisableContentBlockers);
 }
 
+void Internals::disableContentExtensionsChecks()
+{
+    RefPtr frame = this->frame();
+    RefPtr loader = frame ? frame->loader().documentLoader() : nullptr;
+    if (loader)
+        loader->setContentExtensionEnablement({ ContentExtensionDefaultEnablement::Disabled, { } });
+}
+
 void Internals::setUseSystemAppearance(bool value)
 {
     if (!contextDocument() || !contextDocument()->page())

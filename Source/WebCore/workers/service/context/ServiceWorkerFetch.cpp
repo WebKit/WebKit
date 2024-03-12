@@ -188,6 +188,9 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     URL requestURL = request.url();
     auto fetchRequest = FetchRequest::create(globalScope, WTFMove(body), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), WTFMove(referrer));
 
+    // The request has already passed content extension checks, no need to reapply them if service worker does the fetch itself.
+    fetchRequest->disableContentExtensionsCheck();
+
     // If service worker navigation preload is not enabled, we do not want to reuse any preload directly.
     if (!isServiceWorkerNavigationPreloadEnabled)
         fetchRequest->setNavigationPreloadIdentifier(fetchIdentifier);
