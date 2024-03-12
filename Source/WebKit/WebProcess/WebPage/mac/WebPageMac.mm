@@ -104,7 +104,9 @@
 #import <wtf/SortedArrayMap.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import "MediaPlaybackTargetContextSerialized.h"
+#import <WebCore/MediaPlaybackTargetCocoa.h>
+#import <WebCore/MediaPlaybackTargetContext.h>
+#import <WebCore/MediaPlaybackTargetMock.h>
 #endif
 
 #import "PDFKitSoftLink.h"
@@ -1023,9 +1025,19 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo&, Mon
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier contextId, MediaPlaybackTargetContextSerialized&& targetContext) const
+void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier contextId, WebCore::MediaPlaybackTargetContext&& targetContext) const
 {
-    m_page->setPlaybackTarget(contextId, MediaPlaybackTargetSerialized::create(WTFMove(targetContext)));
+    switch (targetContext.type()) {
+    case MediaPlaybackTargetContext::Type::AVOutputContext:
+        m_page->setPlaybackTarget(contextId, MediaPlaybackTargetCocoa::create(WTFMove(targetContext)));
+        break;
+    case MediaPlaybackTargetContext::Type::Mock:
+        m_page->setPlaybackTarget(contextId, MediaPlaybackTargetMock::create(targetContext.deviceName(), targetContext.mockState()));
+        break;
+    case MediaPlaybackTargetContext::Type::None:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 void WebPage::playbackTargetAvailabilityDidChange(PlaybackTargetClientContextIdentifier contextId, bool changed)

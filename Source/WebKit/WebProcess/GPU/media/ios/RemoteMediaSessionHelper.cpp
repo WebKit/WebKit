@@ -30,11 +30,12 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessages.h"
-#include "MediaPlaybackTargetContextSerialized.h"
 #include "RemoteMediaSessionHelperMessages.h"
 #include "RemoteMediaSessionHelperProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/MediaPlaybackTargetCocoa.h>
+#include <WebCore/MediaPlaybackTargetContext.h>
+#include <WebCore/MediaPlaybackTargetMock.h>
 
 namespace WebKit {
 
@@ -77,13 +78,13 @@ void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid, ShouldOv
     ensureConnection().send(Messages::RemoteMediaSessionHelperProxy::ProvidePresentingApplicationPID(pid), { });
 }
 
-void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, MediaPlaybackTargetContextSerialized&& targetContext)
+void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, MediaPlaybackTargetContext&& targetContext)
 {
-    WTF::switchOn(targetContext.platformContext(), [](WebCore::MediaPlaybackTargetContextMock&&) {
+    ASSERT(targetContext.type() != MediaPlaybackTargetContext::Type::AVOutputContext);
+    if (targetContext.type() == MediaPlaybackTargetContext::Type::AVOutputContext)
         return;
-    }, [&](WebCore::MediaPlaybackTargetContextCocoa&& context) {
-        WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, WebCore::MediaPlaybackTargetCocoa::create(WTFMove(context)));
-    });
+
+    WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, WebCore::MediaPlaybackTargetCocoa::create(WTFMove(targetContext)));
 }
 
 void RemoteMediaSessionHelper::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialAudioPlayback)

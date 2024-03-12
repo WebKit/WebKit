@@ -37,7 +37,7 @@ class MediaPlaybackTarget : public RefCounted<MediaPlaybackTarget> {
 public:
     virtual ~MediaPlaybackTarget() = default;
 
-    enum class TargetType : uint8_t { AVFoundation, Mock, Serialized };
+    enum class TargetType : uint8_t { AVFoundation, Mock };
     virtual TargetType targetType() const = 0;
     virtual const MediaPlaybackTargetContext& targetContext() const = 0;
 

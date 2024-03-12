@@ -30,7 +30,6 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
-#include "MediaPlaybackTargetContextSerialized.h"
 #include "RemoteMediaSessionHelperMessages.h"
 #include "WebCoreArgumentCoders.h"
 
@@ -116,7 +115,8 @@ void RemoteMediaSessionHelperProxy::activeAudioRouteDidChange(ShouldPause should
 
 void RemoteMediaSessionHelperProxy::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, Ref<WebCore::MediaPlaybackTarget>&& target)
 {
-    m_gpuConnection.connection().send(Messages::RemoteMediaSessionHelper::ActiveVideoRouteDidChange(supportsAirPlayVideo, MediaPlaybackTargetContextSerialized { target->targetContext() }), { });
+    auto context = target->targetContext();
+    m_gpuConnection.connection().send(Messages::RemoteMediaSessionHelper::ActiveVideoRouteDidChange(supportsAirPlayVideo, context), { });
 }
 
 void RemoteMediaSessionHelperProxy::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialPlayback)

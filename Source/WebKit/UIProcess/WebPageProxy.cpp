@@ -301,7 +301,7 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-#include "MediaPlaybackTargetContextSerialized.h"
+#include <WebCore/MediaPlaybackTarget.h>
 #include <WebCore/WebMediaSessionManager.h>
 #endif
 
@@ -11788,7 +11788,7 @@ void WebPageProxy::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     protectedPageClient()->mediaSessionManager().setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
-void WebPageProxy::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetContextMockState state)
+void WebPageProxy::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetContext::MockState state)
 {
     protectedPageClient()->mediaSessionManager().setMockMediaPlaybackTargetPickerState(name, state);
 }
@@ -11803,7 +11803,8 @@ void WebPageProxy::Internals::setPlaybackTarget(PlaybackTargetClientContextIdent
     if (!page.hasRunningProcess())
         return;
 
-    page.send(Messages::WebPage::PlaybackTargetSelected(contextId, MediaPlaybackTargetContextSerialized { target->targetContext() }));
+    auto context = target->targetContext();
+    page.send(Messages::WebPage::PlaybackTargetSelected(contextId, context));
 }
 
 void WebPageProxy::Internals::externalOutputDeviceAvailableDidChange(PlaybackTargetClientContextIdentifier contextId, bool available)

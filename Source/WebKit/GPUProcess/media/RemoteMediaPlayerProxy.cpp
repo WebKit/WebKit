@@ -61,7 +61,9 @@
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#include "MediaPlaybackTargetContextSerialized.h"
+#include <WebCore/MediaPlaybackTargetCocoa.h>
+#include <WebCore/MediaPlaybackTargetContext.h>
+#include <WebCore/MediaPlaybackTargetMock.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -812,14 +814,26 @@ void RemoteMediaPlayerProxy::setShouldPlayToPlaybackTarget(bool shouldPlay)
     m_player->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
-void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(MediaPlaybackTargetContextSerialized&& targetContext)
+#if PLATFORM(MAC)
+void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(MediaPlaybackTargetContext&& targetContext)
 {
-    WTF::switchOn(targetContext.platformContext(), [&](WebCore::MediaPlaybackTargetContextMock&& context) {
-        m_player->setWirelessPlaybackTarget(MediaPlaybackTargetMock::create(WTFMove(context)));
-    }, [&](WebCore::MediaPlaybackTargetContextCocoa&& context) {
-        m_player->setWirelessPlaybackTarget(MediaPlaybackTargetCocoa::create(WTFMove(context)));
-    });
+    switch (targetContext.type()) {
+    case MediaPlaybackTargetContext::Type::Mock:
+        m_player->setWirelessPlaybackTarget(MediaPlaybackTargetMock::create(targetContext.deviceName(), targetContext.mockState()));
+        break;
+    case MediaPlaybackTargetContext::Type::AVOutputContext:
+    case MediaPlaybackTargetContext::Type::None:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
+#else
+NO_RETURN_DUE_TO_ASSERT void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(MediaPlaybackTargetContext&&)
+{
+    ASSERT_NOT_REACHED();
+}
+#endif // PLATFORM(MAC)
+
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreen() const
