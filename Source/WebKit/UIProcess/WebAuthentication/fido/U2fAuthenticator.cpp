@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "CtapDriver.h"
+#include "Logging.h"
 #include <WebCore/ApduResponse.h>
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/ExceptionData.h>
