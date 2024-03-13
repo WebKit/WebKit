@@ -78,6 +78,7 @@ class LocalFrameLoaderClient;
 class NavigationAction;
 class NetworkingContext;
 class Node;
+class Page;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -228,7 +229,7 @@ public:
     void detachViewsAndDocumentLoader();
 
     static void addHTTPOriginIfNeeded(ResourceRequest&, const String& origin);
-    static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
+    static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr, const Page* = nullptr);
 
     const LocalFrameLoaderClient& client() const { return m_client.get(); }
     LocalFrameLoaderClient& client() { return m_client.get(); }
