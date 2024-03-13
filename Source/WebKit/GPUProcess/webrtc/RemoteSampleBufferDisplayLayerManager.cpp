@@ -47,16 +47,16 @@ RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager(GPU
 
 void RemoteSampleBufferDisplayLayerManager::startListeningForIPC()
 {
-    m_connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), m_queue, *this);
-    m_connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), m_queue, *this);
+    m_connectionToWebProcess->connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), m_queue, *this);
+    m_connectionToWebProcess->connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), m_queue, *this);
 }
 
 RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager() = default;
 
 void RemoteSampleBufferDisplayLayerManager::close()
 {
-    m_connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
-    m_connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
+    m_connectionToWebProcess->connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
+    m_connectionToWebProcess->connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
     m_queue->dispatch([this, protectedThis = Ref { *this }] {
         Locker lock(m_layersLock);
         callOnMainRunLoop([layers = WTFMove(m_layers)] { });

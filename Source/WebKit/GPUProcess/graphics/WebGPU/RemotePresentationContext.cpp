@@ -56,7 +56,7 @@ void RemotePresentationContext::stopListeningForIPC()
 
 void RemotePresentationContext::configure(const WebGPU::CanvasConfiguration& canvasConfiguration)
 {
-    auto convertedConfiguration = m_objectHeap.convertFromBacking(canvasConfiguration);
+    auto convertedConfiguration = m_objectHeap->convertFromBacking(canvasConfiguration);
     ASSERT(convertedConfiguration);
     if (!convertedConfiguration)
         return;
@@ -86,7 +86,7 @@ void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier)
     // The Web Process should already be caching these current textures internally, so it's unlikely that we'll
     // actually run into a problem here.
     auto remoteTexture = RemoteTexture::create(*texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteTexture);
+    m_objectHeap->addObject(identifier, remoteTexture);
 }
 
 } // namespace WebKit

@@ -84,10 +84,10 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
 }
 #endif
 
-void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage&)> completion)
+void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)> completion)
 {
     if (!m_renderBuffers.size() || bufferIndex >= m_renderBuffers.size())
-        return;
+        return completion(nullptr);
 
     RefPtr<NativeImage> displayImage;
 
@@ -98,10 +98,10 @@ void CompositorIntegrationImpl::withDisplayBufferAsNativeImage(uint32_t bufferIn
         displayImage = NativeImage::create(renderBuffer->createImage(cgContext.get()));
 
     if (!displayImage)
-        return;
+        return completion(nullptr);
 
     CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
-    completion(*displayImage);
+    completion(displayImage.get());
 }
 
 void CompositorIntegrationImpl::paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t)

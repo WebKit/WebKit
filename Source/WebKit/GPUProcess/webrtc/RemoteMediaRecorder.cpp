@@ -37,7 +37,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&m_gpuConnectionToWebProcess.connection()))
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&m_gpuConnectionToWebProcess->connection()))
 
 namespace WebKit {
 using namespace WebCore;

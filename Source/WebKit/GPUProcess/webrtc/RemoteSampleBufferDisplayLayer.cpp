@@ -51,7 +51,7 @@ RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(GPUConnectionToWe
     , m_identifier(identifier)
     , m_connection(WTFMove(connection))
     , m_sampleBufferDisplayLayer(LocalSampleBufferDisplayLayer::create(*this))
-    , m_sharedVideoFrameReader(Ref { m_gpuConnection.videoFrameObjectHeap() }, m_gpuConnection.webProcessIdentity())
+    , m_sharedVideoFrameReader(Ref { m_gpuConnection->videoFrameObjectHeap() }, m_gpuConnection->webProcessIdentity())
 {
     ASSERT(m_sampleBufferDisplayLayer);
 }

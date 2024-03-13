@@ -32,6 +32,7 @@
 #include "WebGPUIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 class Adapter;
@@ -80,9 +81,9 @@ private:
     void destruct();
 
     Ref<WebCore::WebGPU::Adapter> m_backing;
-    WebGPU::ObjectHeap& m_objectHeap;
+    WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WebGPUIdentifier m_identifier;
 };
 

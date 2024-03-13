@@ -214,7 +214,7 @@ void RemoteAudioSessionProxyManager::updatePresentingProcesses()
 
     Vector<audit_token_t> presentingProcesses;
 
-    if (auto token = m_gpuProcess.parentProcessConnection()->getAuditToken())
+    if (auto token = m_gpuProcess->parentProcessConnection()->getAuditToken())
         presentingProcesses.append(*token);
 
     // AVAudioSession will take out an assertion on all the "presenting applications"

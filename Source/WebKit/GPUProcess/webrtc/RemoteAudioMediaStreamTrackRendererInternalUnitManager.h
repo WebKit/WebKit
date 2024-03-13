@@ -69,7 +69,7 @@ private:
     void setAudioOutputDevice(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&);
 
     HashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, UniqueRef<Unit>> m_units;
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 
 } // namespace WebKit;

@@ -50,7 +50,7 @@ RemoteComputePipeline::~RemoteComputePipeline() = default;
 
 void RemoteComputePipeline::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteComputePipeline::stopListeningForIPC()
@@ -63,7 +63,7 @@ void RemoteComputePipeline::getBindGroupLayout(uint32_t index, WebGPUIdentifier 
     // "A new GPUBindGroupLayout wrapper is returned each time"
     auto bindGroupLayout = m_backing->getBindGroupLayout(index);
     auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteBindGroupLayout);
+    m_objectHeap->addObject(identifier, remoteBindGroupLayout);
 }
 
 void RemoteComputePipeline::setLabel(String&& label)

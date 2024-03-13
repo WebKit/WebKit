@@ -74,7 +74,7 @@ public:
         m_onSubmittedWorkScheduledCallback = WTFMove(onSubmittedWorkScheduledCallback);
     }
 
-    void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage&)>) final;
+    void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)>) final;
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
 
 private:

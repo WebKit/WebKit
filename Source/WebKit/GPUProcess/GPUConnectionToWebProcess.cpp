@@ -183,10 +183,10 @@ public:
     }
 
 private:
-    Logger& logger() final { return m_process.logger(); }
+    Logger& logger() final { return m_process->logger(); }
     void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&) final { }
     void removeMessageReceiver(IPC::ReceiverName messageReceiverName) final { }
-    IPC::Connection& connection() final { return m_process.connection(); }
+    IPC::Connection& connection() final { return m_process->connection(); }
     bool willStartCapture(CaptureDevice::DeviceType type) const final
     {
         switch (type) {
@@ -195,9 +195,9 @@ private:
         case CaptureDevice::DeviceType::Speaker:
             return false;
         case CaptureDevice::DeviceType::Microphone:
-            return m_process.allowsAudioCapture();
+            return m_process->allowsAudioCapture();
         case CaptureDevice::DeviceType::Camera:
-            if (!m_process.allowsVideoCapture())
+            if (!m_process->allowsVideoCapture())
                 return false;
 #if PLATFORM(IOS) || PLATFORM(VISION)
             MediaSessionManageriOS::providePresentingApplicationPID();
@@ -205,28 +205,28 @@ private:
             return true;
             break;
         case CaptureDevice::DeviceType::Screen:
-            return m_process.allowsDisplayCapture();
+            return m_process->allowsDisplayCapture();
         case CaptureDevice::DeviceType::Window:
-            return m_process.allowsDisplayCapture();
+            return m_process->allowsDisplayCapture();
         }
     }
     
     bool setCaptureAttributionString() final
     {
-        return m_process.setCaptureAttributionString();
+        return m_process->setCaptureAttributionString();
     }
 
 #if ENABLE(APP_PRIVACY_REPORT)
     void setTCCIdentity() final
     {
-        m_process.setTCCIdentity();
+        m_process->setTCCIdentity();
     }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     bool setCurrentMediaEnvironment(WebCore::PageIdentifier pageIdentifier) final
     {
-        auto mediaEnvironment = m_process.mediaEnvironment(pageIdentifier);
+        auto mediaEnvironment = m_process->mediaEnvironment(pageIdentifier);
         bool result = !mediaEnvironment.isEmpty();
         WebCore::RealtimeMediaSourceCenter::singleton().setCurrentMediaEnvironment(WTFMove(mediaEnvironment));
         return result;
@@ -236,21 +236,21 @@ private:
     void startProducingData(CaptureDevice::DeviceType type) final
     {
         if (type == CaptureDevice::DeviceType::Microphone)
-            m_process.startCapturingAudio();
+            m_process->startCapturingAudio();
 #if PLATFORM(IOS)
         else if (type == CaptureDevice::DeviceType::Camera)
-            m_process.overridePresentingApplicationPIDIfNeeded();
+            m_process->overridePresentingApplicationPIDIfNeeded();
 #endif
     }
 
     const ProcessIdentity& resourceOwner() const final
     {
-        return m_process.webProcessIdentity();
+        return m_process->webProcessIdentity();
     }
 
-    RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() final { return &m_process.videoFrameObjectHeap(); }
+    RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() final { return &m_process->videoFrameObjectHeap(); }
 
-    GPUConnectionToWebProcess& m_process;
+    WeakRef<GPUConnectionToWebProcess> m_process;
 };
 
 #endif

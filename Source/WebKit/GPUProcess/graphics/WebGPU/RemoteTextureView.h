@@ -30,6 +30,7 @@
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
 #include <wtf/Ref.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
@@ -76,7 +77,7 @@ private:
     void destruct();
 
     Ref<WebCore::WebGPU::TextureView> m_backing;
-    WebGPU::ObjectHeap& m_objectHeap;
+    WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
 };

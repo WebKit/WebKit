@@ -67,7 +67,7 @@ void RemoteMediaRecorderManager::releaseRecorder(MediaRecorderIdentifier identif
 {
     m_recorders.remove(identifier);
     if (allowsExitUnderMemoryPressure())
-        m_gpuConnectionToWebProcess.gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+        m_gpuConnectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 bool RemoteMediaRecorderManager::allowsExitUnderMemoryPressure() const

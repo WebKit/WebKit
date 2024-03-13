@@ -35,6 +35,7 @@
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaRecorderPrivateWriterCocoa.h>
 #include <wtf/MediaTime.h>
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 class Connection;
@@ -76,7 +77,7 @@ private:
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaRecorderPrivateWriter> m_writer;
 

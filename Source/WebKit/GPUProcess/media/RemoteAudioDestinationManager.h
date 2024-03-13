@@ -34,6 +34,7 @@
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -76,7 +77,7 @@ private:
 #endif
 
     HashMap<RemoteAudioDestinationIdentifier, UniqueRef<RemoteAudioDestination>> m_audioDestinations;
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 
 } // namespace WebKit;

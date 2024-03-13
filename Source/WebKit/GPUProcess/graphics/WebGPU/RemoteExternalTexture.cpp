@@ -58,7 +58,7 @@ void RemoteExternalTexture::undestroy()
 
 void RemoteExternalTexture::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteExternalTexture::stopListeningForIPC()

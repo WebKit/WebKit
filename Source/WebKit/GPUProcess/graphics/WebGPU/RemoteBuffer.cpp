@@ -98,7 +98,7 @@ void RemoteBuffer::destroy()
 
 void RemoteBuffer::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteBuffer::setLabel(String&& label)
