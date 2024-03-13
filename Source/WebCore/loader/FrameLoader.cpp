@@ -3241,7 +3241,7 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
     applyUserAgentIfNeeded(request);
 
     if (isMainResource)
-        request.setHTTPHeaderField(HTTPHeaderName::Accept, CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type::MainResource, request, protectedFrame().ptr()));
+        request.setHTTPHeaderField(HTTPHeaderName::Accept, CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type::MainResource));
 
     if (RefPtr document = m_frame->document(); document && frame().settings().privateTokenUsageByThirdPartyEnabled() && !frame().loader().client().isRemoteWorkerFrameLoaderClient())
         request.setIsPrivateTokenUsageByThirdPartyAllowed(isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::PrivateToken, *document, LogFeaturePolicyFailure::No));

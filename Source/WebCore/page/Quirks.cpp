@@ -1722,20 +1722,6 @@ bool Quirks::shouldDisableNavigatorStandaloneQuirk() const
     return false;
 }
 
-// booking.com https://webkit.org/b/269875
-// FIXME: booking.com https://webkit.org/b/269876 when outreach has been successful.
-bool Quirks::shouldSendLongerAcceptHeaderQuirk(const URL& url, LocalFrame* frame)
-{
-    if (frame && !frame->settings().needsSiteSpecificQuirks())
-        return false;
-
-    auto host = url.host();
-    if (host == "booking.com"_s || host.endsWith(".booking.com"_s))
-        return true;
-
-    return false;
-}
-
 // This section is dedicated to UA override for iPad. iPads (but iPad Mini) are sending a desktop user agent
 // to websites. In some cases, the website breaks in some ways, not expecting a touch interface for the website.
 // Controls not active or too small, form factor, etc. In this case it is better to send the iPad Mini UA.

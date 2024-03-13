@@ -910,7 +910,7 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
             request.setSelectedServiceWorkerRegistrationIdentifierIfNeeded(activeServiceWorker->registrationIdentifier());
     }
 
-    request.setAcceptHeaderIfNone(type, protectedFrame().get());
+    request.setAcceptHeaderIfNone(type);
 
     // Accept-Language value is handled in underlying port-specific code.
     // FIXME: Decide whether to support client hints

@@ -167,14 +167,10 @@ static String acceptHeaderValueForImageResource()
     return builder.toString();
 }
 
-String CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type type, ResourceRequest& request, LocalFrame* frame)
+String CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type type)
 {
-    auto url = request.url();
-
     switch (type) {
     case CachedResource::Type::MainResource:
-        if (Quirks::shouldSendLongerAcceptHeaderQuirk(url, frame))
-            return "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"_s;
         return "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"_s;
     case CachedResource::Type::ImageResource:
         return acceptHeaderValueForImageResource();
@@ -192,10 +188,10 @@ String CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type typ
     }
 }
 
-void CachedResourceRequest::setAcceptHeaderIfNone(CachedResource::Type type, LocalFrame* frame)
+void CachedResourceRequest::setAcceptHeaderIfNone(CachedResource::Type type)
 {
     if (!m_resourceRequest.hasHTTPHeader(HTTPHeaderName::Accept))
-        m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::Accept, acceptHeaderValueFromType(type, m_resourceRequest, frame));
+        m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::Accept, acceptHeaderValueFromType(type));
 }
 
 void CachedResourceRequest::disableCachingIfNeeded()

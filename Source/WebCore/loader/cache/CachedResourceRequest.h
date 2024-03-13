@@ -86,7 +86,7 @@ public:
     void updateReferrerAndOriginHeaders(FrameLoader&);
     void updateUserAgentHeader(FrameLoader&);
     void upgradeInsecureRequestIfNeeded(Document&, ContentSecurityPolicy::AlwaysUpgradeRequest = ContentSecurityPolicy::AlwaysUpgradeRequest::No);
-    void setAcceptHeaderIfNone(CachedResource::Type, LocalFrame*);
+    void setAcceptHeaderIfNone(CachedResource::Type);
     void updateAccordingCacheMode();
     void updateAcceptEncodingHeader();
     void updateCacheModeIfNeeded(CachePolicy);
@@ -113,7 +113,7 @@ public:
     void clearFragmentIdentifier() { m_fragmentIdentifier = { }; }
 
     static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
-    static String acceptHeaderValueFromType(CachedResource::Type, ResourceRequest&, LocalFrame*);
+    static String acceptHeaderValueFromType(CachedResource::Type);
 
     void setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
     void setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);

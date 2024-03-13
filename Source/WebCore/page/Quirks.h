@@ -84,7 +84,6 @@ public:
     bool shouldExposeShowModalDialog() const;
     bool shouldNavigatorPluginsBeEmpty() const;
     bool shouldDisableNavigatorStandaloneQuirk() const;
-    static bool shouldSendLongerAcceptHeaderQuirk(const URL&, LocalFrame*);
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const;
