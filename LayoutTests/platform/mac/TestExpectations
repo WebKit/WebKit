@@ -2667,3 +2667,5 @@ imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyph
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-normal.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-loose.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html [ Pass Failure ]
+
+webkit.org/b/270939 [ Ventura ] tables/mozilla/bugs/bug12384.html [ Failure ]
