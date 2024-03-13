@@ -558,7 +558,11 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
 
                     for (uint32_t x = 0; x < widthForMetal; x += maxRowBytes) {
                         newDestination.origin.x = destination.origin.x + x;
-                        writeTexture(newDestination, static_cast<uint8_t*>(data) + x + y * bytesPerRow + z * bytesPerImage, bytesPerRow * newSize.height, newDataLayout, newSize);
+                        auto offset = x + y * bytesPerRow + z * bytesPerImage;
+                        auto size = bytesPerRow * newSize.height;
+                        if (offset + size > dataSize)
+                            return;
+                        writeTexture(newDestination, static_cast<uint8_t*>(data) + offset, size, newDataLayout, newSize);
                     }
                 }
             }
