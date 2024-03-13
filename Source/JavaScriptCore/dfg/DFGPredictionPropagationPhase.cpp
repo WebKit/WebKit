@@ -715,6 +715,13 @@ private:
             break;
         }
 
+        case ToPropertyKeyOrNumber: {
+            SpeculatedType child = node->child1()->prediction();
+            if (child)
+                changed |= mergePrediction(resultOfToPropertyKeyOrNumber(child));
+            break;
+        }
+
         case NormalizeMapKey: {
             SpeculatedType prediction = node->child1()->prediction();
             if (prediction)
@@ -1470,6 +1477,7 @@ private:
         case ToThis:
         case ToPrimitive: 
         case ToPropertyKey:
+        case ToPropertyKeyOrNumber:
         case NormalizeMapKey:
         case AtomicsAdd:
         case AtomicsAnd:
@@ -1703,6 +1711,18 @@ private:
             return mergeSpeculations(type & SpecSymbol, SpecString);
 
         return SpecString | SpecSymbol;
+    }
+
+    SpeculatedType resultOfToPropertyKeyOrNumber(SpeculatedType type)
+    {
+        // Propagate the prediction of the source directly if already proven to be a property key or number.
+        if (type && !(type & ~(SpecFullNumber | SpecString | SpecSymbol)))
+            return type;
+
+        if (type & SpecStringObject && m_graph.canOptimizeStringObjectAccess(m_currentNode->origin.semantic))
+            return mergeSpeculations(type & SpecSymbol, SpecString);
+
+        return SpecFullNumber | SpecString | SpecSymbol;
     }
 
     Vector<Node*> m_dependentNodes;

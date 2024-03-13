@@ -259,6 +259,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MultiDeleteByOffset:
     case ToPrimitive:
     case ToPropertyKey:
+    case ToPropertyKeyOrNumber:
     case Throw:
     case ThrowStaticError:
     case Unreachable:

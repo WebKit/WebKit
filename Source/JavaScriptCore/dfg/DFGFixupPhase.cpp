@@ -1732,11 +1732,32 @@ private:
             break;
         }
 
+        case ToPropertyKeyOrNumber: {
+            if (node->child1()->shouldSpeculateInt32()) {
+                fixEdge<Int32Use>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateInt52()) {
+                fixEdge<Int52RepUse>(node->child1());
+                node->convertToIdentity();
+                node->setResult(NodeResultInt52);
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateNumber()) {
+                fixEdge<DoubleRepUse>(node->child1());
+                node->convertToIdentity();
+                node->setResult(NodeResultDouble);
+                return;
+            }
+            FALLTHROUGH;
+        }
         case ToPropertyKey: {
             if (node->child1()->shouldSpeculateString()) {
                 fixEdge<StringUse>(node->child1());
                 node->convertToIdentity();
-
                 return;
             }
 

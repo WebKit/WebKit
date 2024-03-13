@@ -4215,6 +4215,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ToPropertyKeyOrNumber: {
+        compileToPropertyKeyOrNumber(node);
+        break;
+    }
+
     case ToNumber: {
         switch (node->child1().useKind()) {
         case StringUse: {

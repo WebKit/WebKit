@@ -429,6 +429,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_getter_by_val)
         DEFINE_OP(op_put_setter_by_val)
         DEFINE_OP(op_to_property_key)
+        DEFINE_OP(op_to_property_key_or_number)
 
         DEFINE_OP(op_get_internal_field)
         DEFINE_OP(op_put_internal_field)
@@ -618,6 +619,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_SLOW_OP(get_prototype_of)
         DEFINE_SLOWCASE_SLOW_OP(check_tdz)
         DEFINE_SLOWCASE_SLOW_OP(to_property_key)
+        DEFINE_SLOWCASE_SLOW_OP(to_property_key_or_number)
         DEFINE_SLOWCASE_SLOW_OP(typeof_is_function)
         default:
             RELEASE_ASSERT_NOT_REACHED();
