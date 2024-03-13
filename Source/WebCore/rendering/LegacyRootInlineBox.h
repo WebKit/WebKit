@@ -28,7 +28,6 @@
 namespace WebCore {
 
 class HitTestResult;
-class LegacyEllipsisBox;
 class LogicalSelectionOffsetCaches;
 class RenderBlockFlow;
 class RenderFragmentContainer;
@@ -43,8 +42,6 @@ public:
     virtual ~LegacyRootInlineBox();
 
     RenderBlockFlow& blockFlow() const;
-
-    void detachEllipsisBox();
 
     LegacyRootInlineBox* nextRootBox() const;
     LegacyRootInlineBox* prevRootBox() const;
@@ -105,26 +102,10 @@ public:
 
     void childRemoved(LegacyInlineBox*);
 
-    bool lineCanAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth);
-    // Return the truncatedWidth, the width of the truncated text + ellipsis.
-    float placeEllipsis(const AtomString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, LegacyInlineBox* markupBox = nullptr);
-    // Return the position of the LegacyEllipsisBox or -1.
-    float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) final;
-
-    using LegacyInlineBox::hasEllipsisBox;
-    LegacyEllipsisBox* ellipsisBox() const;
-
-    void paintEllipsisBox(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) const;
-
-    void clearTruncation() final;
-
     bool isHyphenated() const;
 
     LayoutUnit baselinePosition(FontBaseline baselineType) const final;
     LayoutUnit lineHeight() const final;
-
-    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
     RenderObject::HighlightState selectionState() const final;
     const LegacyInlineBox* firstSelectedBox() const;

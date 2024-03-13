@@ -372,9 +372,6 @@ public:
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    // Public for LegacyEllipsisBox
-    Node* nodeForHitTest() const override;
-
 protected:
     virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset);
 
@@ -426,6 +423,8 @@ private:
     void paintSelection(PaintInfo&, const LayoutPoint&);
     void paintCaret(PaintInfo&, const LayoutPoint&, CaretType);
     void paintCarets(PaintInfo&, const LayoutPoint&);
+
+    Node* nodeForHitTest() const override;
 
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     // FIXME-BLOCKFLOW: Remove virtualization when all callers have moved to RenderBlockFlow

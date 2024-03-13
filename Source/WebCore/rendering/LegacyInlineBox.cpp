@@ -22,7 +22,6 @@
 
 #include "FontMetrics.h"
 #include "HitTestResult.h"
-#include "LegacyEllipsisBox.h"
 #include "LegacyInlineFlowBox.h"
 #include "LegacyRootInlineBox.h"
 #include "LocalFrame.h"
@@ -250,26 +249,7 @@ LegacyInlineBox* LegacyInlineBox::previousLeafOnLine() const
 
 RenderObject::HighlightState LegacyInlineBox::selectionState() const
 {
-    ASSERT(!is<LegacyEllipsisBox>(*this));
     return renderer().selectionState();
-}
-
-bool LegacyInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
-{
-    // Non-replaced elements can always accommodate an ellipsis.
-    if (!renderer().isReplacedOrInlineBlock())
-        return true;
-    
-    IntRect boxRect(left(), 0, m_logicalWidth, 10);
-    IntRect ellipsisRect(ltr ? blockEdge - ellipsisWidth : blockEdge, 0, ellipsisWidth, 10);
-    return !(boxRect.intersects(ellipsisRect));
-}
-
-float LegacyInlineBox::placeEllipsisBox(bool, float, float, float, float& truncatedWidth, bool&)
-{
-    // Use -1 to mean "we didn't set the position."
-    truncatedWidth += logicalWidth();
-    return -1;
 }
 
 void LegacyInlineBox::clearKnownToHaveNoOverflow()

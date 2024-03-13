@@ -41,7 +41,6 @@
 #include "InlineIteratorTextBoxInlines.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LegacyEllipsisBox.h"
 #include "LineSelection.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"

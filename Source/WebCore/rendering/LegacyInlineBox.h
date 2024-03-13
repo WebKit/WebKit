@@ -90,7 +90,6 @@ public:
     virtual bool isInlineElementBox() const { return false; }
     virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() const { return false; }
-    virtual bool isEllipsisBox() const { return false; }
     virtual bool isRootInlineBox() const { return false; }
     virtual bool isSVGInlineTextBox() const { return false; }
     virtual bool isSVGInlineFlowBox() const { return false; }
@@ -214,18 +213,12 @@ public:
     int caretLeftmostOffset() const { return isLeftToRightDirection() ? caretMinOffset() : caretMaxOffset(); }
     int caretRightmostOffset() const { return isLeftToRightDirection() ? caretMaxOffset() : caretMinOffset(); }
 
-    virtual void clearTruncation() { }
-
     bool isDirty() const { return m_bitfields.dirty(); }
     virtual void markDirty(bool dirty = true) { m_bitfields.setDirty(dirty); }
 
     WEBCORE_EXPORT virtual void dirtyLineBoxes();
     
     WEBCORE_EXPORT virtual RenderObject::HighlightState selectionState() const;
-
-    WEBCORE_EXPORT virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const;
-    // visibleLeftEdge, visibleRightEdge are in the parent's coordinate system.
-    WEBCORE_EXPORT virtual float placeEllipsisBox(bool ltr, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool&);
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     void setHasBadParent();
@@ -382,8 +375,6 @@ protected:
     // For RootInlineBox
     bool endsWithBreak() const { return m_bitfields.endsWithBreak(); }
     void setEndsWithBreak(bool endsWithBreak) { m_bitfields.setEndsWithBreak(endsWithBreak); }
-    bool hasEllipsisBox() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
-    void setHasEllipsisBox(bool hasEllipsisBox) { m_bitfields.setHasEllipsisBoxOrHyphen(hasEllipsisBox); }
 
     // For LegacyInlineTextBox
     bool hasHyphen() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }

@@ -27,8 +27,8 @@
 
 #include "InlineIteratorBoxLegacyPath.h"
 #include "LayoutIntegrationInlineContent.h"
-#include "LegacyEllipsisBox.h"
 #include "LegacyRootInlineBox.h"
+#include "RenderBlockFlow.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -56,17 +56,17 @@ public:
     float scrollableOverflowTop() const { return m_rootInlineBox->logicalTopLayoutOverflow(); }
     float scrollableOverflowBottom() const { return m_rootInlineBox->logicalBottomLayoutOverflow(); }
 
-    bool hasEllipsis() const { return !!m_rootInlineBox->ellipsisBox(); }
+    bool hasEllipsis() const { return false; }
     FloatRect ellipsisVisualRectIgnoringBlockDirection() const
     {
-        ASSERT(hasEllipsis());
-        return m_rootInlineBox->ellipsisBox()->frameRect();
+        ASSERT_NOT_REACHED();
+        return { };
     }
 
     TextRun ellipsisText() const
     {
-        ASSERT(hasEllipsis());
-        return m_rootInlineBox->ellipsisBox()->createTextRun();
+        ASSERT_NOT_REACHED();
+        return TextRun { emptyString() };
     }
 
     float contentLogicalLeft() const { return m_rootInlineBox->logicalLeft(); }

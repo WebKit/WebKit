@@ -1585,20 +1585,6 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
     if (isFullLayout)
         lineBoxes().deleteLineBoxes();
 
-    // Text truncation kicks in in two cases:
-    //     1) If your overflow isn't visible and your text-overflow-mode isn't clip.
-    //     2) If you're an anonymous block with a block parent that satisfies #1.
-    // FIXME: CSS3 says that descendants that are clipped must also know how to truncate. This is insanely
-    // difficult to figure out in general (especially in the middle of doing layout), so we only handle the
-    // simple case of an anonymous block truncating when it's parent is clipped.
-    auto* parent = m_flow.parent();
-    bool hasTextOverflow = (style().textOverflow() == TextOverflow::Ellipsis && m_flow.hasNonVisibleOverflow())
-        || (m_flow.isAnonymousBlock() && parent && parent->isRenderBlock() && parent->style().textOverflow() == TextOverflow::Ellipsis && parent->hasNonVisibleOverflow());
-
-    // Walk all the lines and delete our ellipsis line boxes if they exist.
-    if (hasTextOverflow)
-        deleteEllipsisLineBoxes();
-
     if (m_flow.firstChild()) {
         // In full layout mode, clear the line boxes of children upfront. Otherwise,
         // siblings can run into stale root lineboxes during layout. Then layout
@@ -1681,11 +1667,6 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
 
     if (!firstRootBox() && m_flow.hasLineIfEmpty())
         m_flow.setLogicalHeight(m_flow.logicalHeight() + m_flow.lineHeight(true, m_flow.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
-
-    // See if we have any lines that spill out of our block. If we do, then we will possibly need to
-    // truncate text.
-    if (hasTextOverflow)
-        checkLinesForTextOverflow();
 }
 
 void LegacyLineLayout::checkFloatInCleanLine(LegacyRootInlineBox& cleanLine, RenderBox& floatBoxOnCleanLine, FloatWithRect& matchingFloatWithRect,
@@ -2041,75 +2022,6 @@ size_t LegacyLineLayout::lineCountUntil(const LegacyRootInlineBox* stopRootInlin
     }
 
     return count;
-}
-
-void LegacyLineLayout::deleteEllipsisLineBoxes()
-{
-    TextAlignMode textAlign = style().textAlign();
-    bool ltr = style().isLeftToRightDirection();
-    IndentTextOrNot shouldIndentText = IndentText;
-    for (auto* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        if (curr->hasEllipsisBox()) {
-            curr->clearTruncation();
-
-            // Shift the line back where it belongs if we cannot accomodate an ellipsis.
-            float logicalLeft = m_flow.logicalLeftOffsetForLine(curr->lineTop(), shouldIndentText);
-            float availableLogicalWidth = m_flow.logicalRightOffsetForLine(curr->lineTop(), DoNotIndentText) - logicalLeft;
-            float totalLogicalWidth = curr->logicalWidth();
-            updateLogicalWidthForAlignment(m_flow, textAlign, curr, 0, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
-
-            if (ltr)
-                curr->adjustLogicalPosition((logicalLeft - curr->logicalLeft()), 0);
-            else
-                curr->adjustLogicalPosition(-(curr->logicalLeft() - logicalLeft), 0);
-        }
-        shouldIndentText = DoNotIndentText;
-    }
-}
-
-void LegacyLineLayout::checkLinesForTextOverflow()
-{
-    // Determine the width of the ellipsis using the current font.
-    // FIXME: CSS3 says this is configurable, also need to use 0x002E (FULL STOP) if horizontal ellipsis is "not renderable"
-    const FontCascade& font = style().fontCascade();
-    static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
-    const FontCascade& firstLineFont = m_flow.firstLineStyle().fontCascade();
-    float firstLineEllipsisWidth = firstLineFont.width(m_flow.constructTextRun(&horizontalEllipsis, 1, m_flow.firstLineStyle()));
-    float ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(m_flow.constructTextRun(&horizontalEllipsis, 1, style()));
-
-    // For LTR text truncation, we want to get the right edge of our padding box, and then we want to see
-    // if the right edge of a line box exceeds that. For RTL, we use the left edge of the padding box and
-    // check the left edge of the line box to see if it is less
-    // Include the scrollbar for overflow blocks, which means we want to use "contentWidth()"
-    bool ltr = style().isLeftToRightDirection();
-    TextAlignMode textAlign = style().textAlign();
-    bool firstLine = true;
-    for (auto* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        IndentTextOrNot shouldIndentText = firstLine ? IndentText : DoNotIndentText;
-        LayoutUnit blockRightEdge = m_flow.logicalRightOffsetForLine(curr->lineTop(), shouldIndentText);
-        LayoutUnit blockLeftEdge = m_flow.logicalLeftOffsetForLine(curr->lineTop(), shouldIndentText);
-        LayoutUnit lineBoxEdge { ltr ? curr->x() + curr->logicalWidth() : curr->x() };
-        if ((ltr && lineBoxEdge > blockRightEdge) || (!ltr && lineBoxEdge < blockLeftEdge)) {
-            // This line spills out of our box in the appropriate direction. Now we need to see if the line
-            // can be truncated. In order for truncation to be possible, the line must have sufficient space to
-            // accommodate our truncation string, and no replaced elements (images, tables) can overlap the ellipsis
-            // space.
-            LayoutUnit width { firstLine ? firstLineEllipsisWidth : ellipsisWidth };
-            LayoutUnit blockEdge { ltr ? blockRightEdge : blockLeftEdge };
-            if (curr->lineCanAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width)) {
-                float totalLogicalWidth = curr->placeEllipsis(ellipsisStr, ltr, blockLeftEdge, blockRightEdge, width);
-
-                float logicalLeft = 0; // We are only interested in the delta from the base position.
-                float truncatedWidth = m_flow.availableLogicalWidthForLine(curr->lineTop(), shouldIndentText);
-                updateLogicalWidthForAlignment(m_flow, textAlign, curr, nullptr, logicalLeft, totalLogicalWidth, truncatedWidth, 0);
-                if (ltr)
-                    curr->adjustLogicalPosition(logicalLeft, 0);
-                else
-                    curr->adjustLogicalPosition(-(truncatedWidth - (logicalLeft + totalLogicalWidth)), 0);
-            }
-        }
-        firstLine = false;
-    }
 }
 
 bool LegacyLineLayout::positionNewFloatOnLine(const FloatingObject& newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo& lineInfo, LineWidth& width)

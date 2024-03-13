@@ -100,8 +100,6 @@ private:
     bool checkPaginationAndFloatsAtEndLine(LineLayoutState&);
     bool lineWidthForPaginatedLineChanged(LegacyRootInlineBox* rootBox, LayoutUnit lineDelta, RenderFragmentedFlow*) const;
     bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const LegacyInlineIterator& endLineStart, const BidiStatus& endLineStatus);
-    void deleteEllipsisLineBoxes();
-    void checkLinesForTextOverflow();
     void updateFragmentForLine(LegacyRootInlineBox*) const;
 
     const RenderStyle& style() const;

@@ -176,7 +176,6 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 {
     ASSERT(paintInfo.shouldPaintWithinRoot(renderer()));
     ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
-    ASSERT(!truncation());
 
     if (renderer().style().visibility() != Visibility::Visible)
         return;
@@ -232,7 +231,6 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 {
     ASSERT(paintInfo.shouldPaintWithinRoot(renderer()));
     ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
-    ASSERT(!truncation());
 
     if (renderer().style().visibility() != Visibility::Visible)
         return;

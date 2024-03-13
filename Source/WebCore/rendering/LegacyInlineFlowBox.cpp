@@ -26,7 +26,6 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineBoxPainter.h"
-#include "LegacyEllipsisBox.h"
 #include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
@@ -1051,23 +1050,6 @@ bool LegacyInlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
     if (!renderer().visibleToHitTesting(request))
         return false;
 
-    // Do not hittest content beyond the ellipsis box.
-    if (isRootInlineBox() && hasEllipsisBox()) {
-        const LegacyEllipsisBox* ellipsisBox = root().ellipsisBox();
-        FloatRect boundsRect(frameRect());
-
-        if (isHorizontal())
-            renderer().style().isLeftToRightDirection() ? boundsRect.shiftXEdgeTo(ellipsisBox->right()) : boundsRect.setWidth(ellipsisBox->left() - left());
-        else
-            boundsRect.shiftYEdgeTo(ellipsisBox->right());
-
-        flipForWritingMode(boundsRect);
-        boundsRect.moveBy(accumulatedOffset);
-        // We are beyond the ellipsis box.
-        if (locationInContainer.intersects(boundsRect))
-            return false;
-    }
-
     // Move x/y to our coordinates.
     FloatRect rect(frameRect());
     flipForWritingMode(rect);
@@ -1135,50 +1117,6 @@ LegacyInlineBox* LegacyInlineFlowBox::lastLeafDescendant() const
 RenderObject::HighlightState LegacyInlineFlowBox::selectionState() const
 {
     return RenderObject::HighlightState::None;
-}
-
-bool LegacyInlineFlowBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
-{
-    for (auto* box = firstChild(); box; box = box->nextOnLine()) {
-        if (!box->canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth))
-            return false;
-    }
-    return true;
-}
-
-float LegacyInlineFlowBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
-{
-    float result = -1;
-    // We iterate over all children, the foundBox variable tells us when we've found the
-    // box containing the ellipsis. All boxes after that one in the flow are hidden.
-    // If our flow is ltr then iterate over the boxes from left to right, otherwise iterate
-    // from right to left. Varying the order allows us to correctly hide the boxes following the ellipsis.
-    LegacyInlineBox* box = ltr ? firstChild() : lastChild();
-
-    // NOTE: these will cross after foundBox = true.
-    int visibleLeftEdge = blockLeftEdge;
-    int visibleRightEdge = blockRightEdge;
-
-    while (box) {
-        int currResult = box->placeEllipsisBox(ltr, visibleLeftEdge, visibleRightEdge, ellipsisWidth, truncatedWidth, foundBox);
-        if (currResult != -1 && result == -1)
-            result = currResult;
-
-        if (ltr) {
-            visibleLeftEdge += box->logicalWidth();
-            box = box->nextOnLine();
-        } else {
-            visibleRightEdge -= box->logicalWidth();
-            box = box->previousOnLine();
-        }
-    }
-    return result;
-}
-
-void LegacyInlineFlowBox::clearTruncation()
-{
-    for (auto* box = firstChild(); box; box = box->nextOnLine())
-        box->clearTruncation();
 }
 
 LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosition) const

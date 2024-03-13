@@ -111,8 +111,6 @@ public:
     virtual void attachLineBoxToRenderObject();
     virtual void removeLineBoxFromRenderObject();
 
-    void clearTruncation() override;
-
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
@@ -175,9 +173,6 @@ public:
     void removeChild(LegacyInlineBox* child);
 
     RenderObject::HighlightState selectionState() const override;
-
-    bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const final;
-    float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool&) override;
 
     bool hasTextChildren() const { return m_hasTextChildren; }
     bool hasTextDescendants() const { return m_hasTextDescendants; }

@@ -2327,7 +2327,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/HitTestResult.h
     rendering/LayerAncestorClippingStack.h
     rendering/LayerFragment.h
-    rendering/LegacyEllipsisBox.h
     rendering/LegacyInlineBox.h
     rendering/LegacyInlineElementBox.h
     rendering/LegacyInlineFlowBox.h

@@ -132,7 +132,6 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     , m_renderBlockHasMarginBeforeQuirk(false)
     , m_renderBlockHasMarginAfterQuirk(false)
     , m_renderBlockShouldForceRelayoutChildren(false)
-    , m_renderBlockFlowHasMarkupTruncation(false)
     , m_renderBlockFlowLineLayoutPath(RenderBlockFlow::UndeterminedPath)
     , m_isRegisteredForVisibleInViewportCallback(false)
     , m_visibleInViewportState(static_cast<unsigned>(VisibleInViewportState::Unknown))

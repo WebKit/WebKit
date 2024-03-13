@@ -40,7 +40,6 @@
 #include "InlineIteratorTextBox.h"
 #include "InlineIteratorTextBoxInlines.h"
 #include "InlineTextBoxStyle.h"
-#include "LegacyEllipsisBox.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -72,7 +71,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineTextBox);
 struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
     void* pointers[2];
     unsigned variables[2];
-    unsigned short variables2;
 };
 
 static_assert(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), "LegacyInlineTextBox should stay small");
@@ -233,75 +231,6 @@ void LegacyInlineTextBox::attachLine()
     renderer().attachTextBox(*this);
 }
 
-float LegacyInlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
-{
-    if (foundBox) {
-        m_truncation = 0;
-        return -1;
-    }
-
-    // For LTR this is the left edge of the box, for RTL, the right edge in parent coordinates.
-    float ellipsisX = flowIsLTR ? visibleRightEdge - ellipsisWidth : visibleLeftEdge + ellipsisWidth;
-    
-    // Criteria for full truncation:
-    // LTR: the left edge of the ellipsis is to the left of our text run.
-    // RTL: the right edge of the ellipsis is to the right of our text run.
-    bool ltrFullTruncation = flowIsLTR && ellipsisX <= left();
-    bool rtlFullTruncation = !flowIsLTR && ellipsisX >= left() + logicalWidth();
-    if (ltrFullTruncation || rtlFullTruncation) {
-        // Too far. Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
-        m_truncation = 0;
-        foundBox = true;
-        return -1;
-    }
-
-    bool ltrEllipsisWithinBox = flowIsLTR && (ellipsisX < right());
-    bool rtlEllipsisWithinBox = !flowIsLTR && (ellipsisX > left());
-    if (ltrEllipsisWithinBox || rtlEllipsisWithinBox) {
-        foundBox = true;
-
-        // The inline box may have different directionality than it's parent. Since truncation
-        // behavior depends both on both the parent and the inline block's directionality, we
-        // must keep track of these separately.
-        bool ltr = isLeftToRightDirection();
-        if (ltr != flowIsLTR) {
-            // Width in pixels of the visible portion of the box, excluding the ellipsis.
-            int visibleBoxWidth = visibleRightEdge - visibleLeftEdge  - ellipsisWidth;
-            ellipsisX = ltr ? left() + visibleBoxWidth : right() - visibleBoxWidth;
-        }
-
-        auto textBox = InlineIterator::textBoxFor(this);
-        auto offset = lineFont().offsetForPosition(textBox->textRun(InlineIterator::TextRunMode::Editing), ellipsisX - textBox->logicalLeftIgnoringInlineDirection(), false);
-        if (!offset) {
-            // No characters should be rendered. Set ourselves to full truncation and place the ellipsis at the min of our start
-            // and the ellipsis edge.
-            m_truncation = 0;
-            truncatedWidth += ellipsisWidth;
-            return flowIsLTR ? std::min(ellipsisX, x()) : std::max(ellipsisX, right() - ellipsisWidth);
-        }
-
-        // Set the truncation index on the text run.
-        m_truncation = offset;
-
-        // If we got here that means that we were only partially truncated and we need to return the pixel offset at which
-        // to place the ellipsis.
-        float widthOfVisibleText = renderer().width(m_start, offset, textPos(), isFirstLine());
-
-        // The ellipsis needs to be placed just after the last visible character.
-        // Where "after" is defined by the flow directionality, not the inline
-        // box directionality.
-        // e.g. In the case of an LTR inline box truncated in an RTL flow then we can
-        // have a situation such as |Hello| -> |...He|
-        truncatedWidth += widthOfVisibleText + ellipsisWidth;
-        if (flowIsLTR)
-            return left() + widthOfVisibleText;
-
-        return right() - widthOfVisibleText - ellipsisWidth;
-    }
-    truncatedWidth += logicalWidth();
-    return -1;
-}
-
 bool LegacyInlineTextBox::isLineBreak() const
 {
     return renderer().style().preserveNewline() && len() == 1 && renderer().text()[start()] == '\n';
@@ -316,20 +245,7 @@ bool LegacyInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
     if (isLineBreak())
         return false;
 
-    if (m_truncation && !*m_truncation)
-        return false;
-
     FloatRect rect(locationIncludingFlipping(), size());
-    // Make sure truncated text is ignored while hittesting.
-    if (m_truncation) {
-        LayoutUnit widthOfVisibleText { renderer().width(m_start, *m_truncation, textPos(), isFirstLine()) };
-
-        if (isHorizontal())
-            renderer().style().isLeftToRightDirection() ? rect.setWidth(widthOfVisibleText) : rect.shiftXEdgeTo(right() - widthOfVisibleText);
-        else
-            rect.setHeight(widthOfVisibleText);
-    }
-
     rect.moveBy(accumulatedOffset);
 
     if (locationInContainer.intersects(rect)) {
@@ -343,7 +259,7 @@ bool LegacyInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
 void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible
-        || (m_truncation && !*m_truncation) || paintInfo.phase == PaintPhase::Outline || !hasTextContent())
+        || paintInfo.phase == PaintPhase::Outline || !hasTextContent())
         return;
 
     ASSERT(paintInfo.phase != PaintPhase::SelfOutline && paintInfo.phase != PaintPhase::ChildOutlines);
@@ -380,8 +296,7 @@ TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const
         m_start,
         m_len,
         additionalLengthAtEnd,
-        isLineBreak(),
-        m_truncation
+        isLineBreak()
     };
 }
 

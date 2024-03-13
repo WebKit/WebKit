@@ -72,8 +72,6 @@ public:
 
     void offsetRun(int d) { ASSERT(!isDirty()); ASSERT(d > 0 || m_start >= static_cast<unsigned>(-d)); m_start += d; }
 
-    auto truncation() const { return m_truncation; }
-
     TextBoxSelectableRange selectableRange() const;
 
     void markDirty(bool dirty = true) final;
@@ -130,10 +128,6 @@ private:
 public:
     RenderObject::HighlightState selectionState() const final;
 
-private:
-    void clearTruncation() final { m_truncation = { }; }
-    float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) final;
-
 public:
     bool isLineBreak() const final;
 
@@ -165,9 +159,6 @@ private:
 
     LegacyInlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
     LegacyInlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject
-
-    // Where to truncate when text overflow is applied.
-    std::optional<unsigned short> m_truncation;
 
     unsigned m_start { 0 };
     unsigned m_len { 0 };

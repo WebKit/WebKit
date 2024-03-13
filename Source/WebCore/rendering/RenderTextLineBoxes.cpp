@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RenderTextLineBoxes.h"
 
-#include "LegacyEllipsisBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"

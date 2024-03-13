@@ -347,9 +347,6 @@ public:
 
     int lineCount() const;
 
-    void setHasMarkupTruncation(bool b) { setRenderBlockFlowHasMarkupTruncation(b); }
-    bool hasMarkupTruncation() const { return renderBlockFlowHasMarkupTruncation(); }
-
     bool containsNonZeroBidiLevel() const;
 
     const LegacyLineLayout* legacyLineLayout() const;

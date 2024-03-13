@@ -27,7 +27,6 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "LegacyEllipsisBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LocalFrame.h"
 #include "LogicalSelectionOffsetCaches.h"
@@ -57,9 +56,6 @@ static_assert(sizeof(LegacyRootInlineBox) == sizeof(SameSizeAsLegacyRootInlineBo
 static_assert(sizeof(SingleThreadWeakPtr<RenderObject>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
-typedef HashMap<const LegacyRootInlineBox*, std::unique_ptr<LegacyEllipsisBox>> EllipsisBoxMap;
-static EllipsisBoxMap* gEllipsisBoxMap;
-
 static ContainingFragmentMap& containingFragmentMap(RenderBlockFlow& block)
 {
     ASSERT(block.enclosingFragmentedFlow());
@@ -74,27 +70,8 @@ LegacyRootInlineBox::LegacyRootInlineBox(RenderBlockFlow& block)
 
 LegacyRootInlineBox::~LegacyRootInlineBox()
 {
-    detachEllipsisBox();
-
     if (!renderer().document().renderTreeBeingDestroyed() && blockFlow().enclosingFragmentedFlow())
         containingFragmentMap(blockFlow()).remove(this);
-}
-
-void LegacyRootInlineBox::detachEllipsisBox()
-{
-    if (hasEllipsisBox()) {
-        auto box = gEllipsisBoxMap->take(this);
-        box->setParent(nullptr);
-        setHasEllipsisBox(false);
-    }
-}
-
-void LegacyRootInlineBox::clearTruncation()
-{
-    if (hasEllipsisBox()) {
-        detachEllipsisBox();
-        LegacyInlineFlowBox::clearTruncation();
-    }
 }
 
 bool LegacyRootInlineBox::isHyphenated() const
@@ -117,75 +94,6 @@ LayoutUnit LegacyRootInlineBox::lineHeight() const
     return renderer().lineHeight(isFirstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
 }
 
-bool LegacyRootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth)
-{
-    // First sanity-check the unoverflowed width of the whole line to see if there is sufficient room.
-    int delta = ltr ? lineBoxEdge - blockEdge : blockEdge - lineBoxEdge;
-    if (logicalWidth() - delta < ellipsisWidth)
-        return false;
-
-    // Next iterate over all the line boxes on the line. If we find a replaced element that intersects
-    // then we refuse to accommodate the ellipsis. Otherwise we're ok.
-    return LegacyInlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
-}
-
-float LegacyRootInlineBox::placeEllipsis(const AtomString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, LegacyInlineBox* markupBox)
-{
-    if (!gEllipsisBoxMap)
-        gEllipsisBoxMap = new EllipsisBoxMap();
-
-    ASSERT(!hasEllipsisBox());
-    auto* ellipsisBox = gEllipsisBoxMap->set(this, makeUnique<LegacyEllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox)).iterator->value.get();
-    setHasEllipsisBox(true);
-    // FIXME: Do we need an RTL version of this?
-    if (ltr && (x() + logicalWidth() + ellipsisWidth) <= blockRightEdge) {
-        ellipsisBox->setX(x() + logicalWidth());
-        return logicalWidth() + ellipsisWidth;
-    }
-
-    // Now attempt to find the nearest glyph horizontally and place just to the right (or left in RTL)
-    // of that glyph. Mark all of the objects that intersect the ellipsis box as not painting (as being
-    // truncated).
-    bool foundBox = false;
-    float truncatedWidth = 0;
-    float position = placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, truncatedWidth, foundBox);
-    ellipsisBox->setX(position);
-    return truncatedWidth;
-}
-
-float LegacyRootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
-{
-    float result = LegacyInlineFlowBox::placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, truncatedWidth, foundBox);
-    if (result == -1) {
-        result = ltr ? blockRightEdge - ellipsisWidth : blockLeftEdge;
-        truncatedWidth = blockRightEdge - blockLeftEdge;
-    }
-    return result;
-}
-
-void LegacyRootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom) const
-{
-    if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(renderer()) && renderer().style().visibility() == Visibility::Visible && paintInfo.phase == PaintPhase::Foreground)
-        ellipsisBox()->paint(paintInfo, paintOffset, lineTop, lineBottom);
-}
-
-void LegacyRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
-{
-    LegacyInlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
-    paintEllipsisBox(paintInfo, paintOffset, lineTop, lineBottom);
-}
-
-bool LegacyRootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
-{
-    if (hasEllipsisBox() && renderer().visibleToHitTesting(request)) {
-        if (ellipsisBox()->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction)) {
-            renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-            return true;
-        }
-    }
-    return LegacyInlineFlowBox::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction);
-}
-
 void LegacyRootInlineBox::adjustPosition(float dx, float dy)
 {
     LegacyInlineFlowBox::adjustPosition(dx, dy);
@@ -194,8 +102,6 @@ void LegacyRootInlineBox::adjustPosition(float dx, float dy)
     m_lineBottom += blockDirectionDelta;
     m_lineBoxTop += blockDirectionDelta;
     m_lineBoxBottom += blockDirectionDelta;
-    if (hasEllipsisBox())
-        ellipsisBox()->adjustPosition(dx, dy);
 }
 
 void LegacyRootInlineBox::childRemoved(LegacyInlineBox* box)
@@ -549,13 +455,6 @@ void LegacyRootInlineBox::setLineBreakInfo(RenderObject* object, unsigned breakP
     m_lineBreakBidiStatusLastStrong = status.lastStrong;
     m_lineBreakBidiStatusLast = status.last;
     m_lineBreakContext = status.context;
-}
-
-LegacyEllipsisBox* LegacyRootInlineBox::ellipsisBox() const
-{
-    if (!hasEllipsisBox())
-        return nullptr;
-    return gEllipsisBoxMap->get(this);
 }
 
 void LegacyRootInlineBox::removeLineBoxFromRenderObject()

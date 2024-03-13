@@ -26,7 +26,6 @@
 #include "EllipsisBoxPainter.h"
 
 #include "InlineIteratorTextBox.h"
-#include "LegacyEllipsisBox.h"
 #include "LineSelection.h"
 #include "PaintInfo.h"
 #include "RenderView.h"
