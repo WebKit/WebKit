@@ -116,7 +116,7 @@ layer at (50,330.94) size 161x22
   RenderSVGText {text} at (0,272) size 161x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 121x12
       chunk 1 text run 1 at (50.00,340.00) startOffset 0 endOffset 26 width 120.53: "<tspan x=\"50 60 70 80 90\" "
-    RenderSVGTSpan {tspan} at (0,0) size 128x12
+    RenderSVGTSpan {tspan} at (33,11) size 128x12
       RenderSVGInlineText {#text} at (33,11) size 128x12
         chunk 1 text run 1 at (83.00,351.00) startOffset 0 endOffset 27 width 127.91: "dx=\"0 10 20 30 40\" y=\"320\">"
 layer at (240,298.27) size 133x27
@@ -132,7 +132,7 @@ layer at (240,330.94) size 184x22
   RenderSVGText {text} at (190,272) size 184x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 158x12
       chunk 1 text run 1 at (240.00,340.00) startOffset 0 endOffset 34 width 157.93: "<tspan x=\"240\" dx=\"0 10 10 10 10\" "
-    RenderSVGTSpan {tspan} at (0,0) size 151x12
+    RenderSVGTSpan {tspan} at (33,11) size 151x12
       RenderSVGInlineText {#text} at (33,11) size 151x12
         chunk 1 text run 1 at (273.00,351.00) startOffset 0 endOffset 34 width 150.67: "y=\"320\" style=\"letter-spacing:10\">"
 layer at (-0.05,-0.36) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500

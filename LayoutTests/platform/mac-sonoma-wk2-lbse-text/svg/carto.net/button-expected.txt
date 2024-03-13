@@ -107,10 +107,10 @@ layer at (228.98,311.33) size 92x40
     RenderSVGTSpan {tspan} at (0,0) size 93x14
       RenderSVGInlineText {#text} at (0,0) size 93x14
         chunk 1 (middle anchor) text run 1 at (228.99,322.20) startOffset 0 endOffset 19 width 92.03: "This is a multiline"
-    RenderSVGTSpan {tspan} at (0,0) size 78x14
+    RenderSVGTSpan {tspan} at (7,13) size 78x14
       RenderSVGInlineText {#text} at (7,13) size 78x14
         chunk 1 (middle anchor) text run 1 at (236.31,335.40) startOffset 0 endOffset 15 width 77.38: "textbutton with"
-    RenderSVGTSpan {tspan} at (0,0) size 76x14
+    RenderSVGTSpan {tspan} at (8,26) size 76x14
       RenderSVGInlineText {#text} at (8,26) size 75x14
         chunk 1 (middle anchor) text run 1 at (237.98,348.60) startOffset 0 endOffset 13 width 74.04: "round corners"
 layer at (-3,-7) size 379x178 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600

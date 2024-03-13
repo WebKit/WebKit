@@ -62,7 +62,7 @@ layer at (25,99) size 43x16
   RenderSVGText {text} at (0,128) size 43x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (25.00,112.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 18x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 18x17
       RenderSVGInlineText {#text} at (8,0) size 17x17
         chunk 1 text run 1 at (33.57,112.00) startOffset 0 endOffset 2 width 16.56: "bc"
     RenderSVGInlineText {#text} at (25,0) size 18x17
@@ -71,7 +71,7 @@ layer at (25,117) size 43x16
   RenderSVGText {text} at (0,146) size 43x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (25.00,130.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 18x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 18x17
       RenderSVGInlineText {#text} at (8,0) size 17x17
         chunk 1 text run 1 at (33.57,130.00) startOffset 0 endOffset 2 width 16.56: "bc"
     RenderSVGInlineText {#text} at (25,0) size 18x17
@@ -80,7 +80,7 @@ layer at (25,135) size 43x16
   RenderSVGText {text} at (0,164) size 43x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (25.00,148.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 18x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 18x17
       RenderSVGInlineText {#text} at (8,0) size 17x17
         chunk 1 text run 1 at (33.57,148.00) startOffset 0 endOffset 2 width 16.56: "bc"
     RenderSVGInlineText {#text} at (25,0) size 18x17
@@ -89,7 +89,7 @@ layer at (25,153) size 43x16
   RenderSVGText {text} at (0,182) size 43x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (25.00,166.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 18x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 18x17
       RenderSVGInlineText {#text} at (8,0) size 17x17
         chunk 1 text run 1 at (33.57,166.00) startOffset 0 endOffset 2 width 16.56: "bc"
     RenderSVGInlineText {#text} at (25,0) size 18x17
@@ -98,7 +98,7 @@ layer at (25,171) size 43x16
   RenderSVGText {text} at (0,200) size 43x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (25.00,184.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 18x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 18x17
       RenderSVGInlineText {#text} at (8,0) size 17x17
         chunk 1 text run 1 at (33.57,184.00) startOffset 0 endOffset 2 width 16.56: "bc"
     RenderSVGInlineText {#text} at (25,0) size 18x17
@@ -107,7 +107,7 @@ layer at (25,189) size 43x16
   RenderSVGText {text} at (0,218) size 43x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (25.00,202.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 18x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 18x17
       RenderSVGInlineText {#text} at (8,0) size 17x17
         chunk 1 text run 1 at (33.57,202.00) startOffset 0 endOffset 2 width 16.56: "bc"
     RenderSVGInlineText {#text} at (25,0) size 18x17
@@ -136,7 +136,7 @@ layer at (250,27) size 35x16
   RenderSVGText {text} at (225,56) size 35x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (250.00,40.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 10x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 10x17
       RenderSVGInlineText {#text} at (8,0) size 9x17
         chunk 1 text run 1 at (258.57,40.00) startOffset 0 endOffset 1 width 8.88: "b"
     RenderSVGInlineText {#text} at (17,0) size 18x17
@@ -145,7 +145,7 @@ layer at (250,45) size 35x16
   RenderSVGText {text} at (225,74) size 35x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (250.00,58.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 10x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 10x17
       RenderSVGInlineText {#text} at (8,0) size 9x17
         chunk 1 text run 1 at (258.57,58.00) startOffset 0 endOffset 1 width 8.88: "b"
     RenderSVGInlineText {#text} at (17,0) size 18x17
@@ -154,7 +154,7 @@ layer at (250,63) size 35x16
   RenderSVGText {text} at (225,92) size 35x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (250.00,76.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 10x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 10x17
       RenderSVGInlineText {#text} at (8,0) size 9x17
         chunk 1 text run 1 at (258.57,76.00) startOffset 0 endOffset 1 width 8.88: "b"
     RenderSVGInlineText {#text} at (17,0) size 18x17
@@ -163,7 +163,7 @@ layer at (250,81) size 35x16
   RenderSVGText {text} at (225,110) size 35x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (250.00,94.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 10x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 10x17
       RenderSVGInlineText {#text} at (8,0) size 9x17
         chunk 1 text run 1 at (258.57,94.00) startOffset 0 endOffset 1 width 8.88: "b"
     RenderSVGInlineText {#text} at (17,0) size 18x17
@@ -172,7 +172,7 @@ layer at (250,99) size 35x16
   RenderSVGText {text} at (225,128) size 35x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (250.00,112.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 10x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 10x17
       RenderSVGInlineText {#text} at (8,0) size 9x17
         chunk 1 text run 1 at (258.57,112.00) startOffset 0 endOffset 1 width 8.88: "b"
     RenderSVGInlineText {#text} at (17,0) size 18x17
@@ -181,7 +181,7 @@ layer at (250,117) size 35x16
   RenderSVGText {text} at (225,146) size 35x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (250.00,130.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {altGlyph} at (0,0) size 10x17
+    RenderSVGTSpan {altGlyph} at (8,0) size 10x17
       RenderSVGInlineText {#text} at (8,0) size 9x17
         chunk 1 text run 1 at (258.57,130.00) startOffset 0 endOffset 1 width 8.88: "b"
     RenderSVGInlineText {#text} at (17,0) size 18x17
@@ -253,7 +253,7 @@ layer at (115,98.86) size 44x16
   RenderSVGText {text} at (90,127) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (115.00,112.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (123.57,112.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -262,7 +262,7 @@ layer at (115,116.86) size 44x16
   RenderSVGText {text} at (90,145) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (115.00,130.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (123.57,130.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -271,7 +271,7 @@ layer at (115,134.86) size 44x16
   RenderSVGText {text} at (90,163) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (115.00,148.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (123.57,148.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -280,7 +280,7 @@ layer at (115,152.86) size 44x16
   RenderSVGText {text} at (90,181) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (115.00,166.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (123.57,166.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -289,7 +289,7 @@ layer at (115,170.86) size 44x16
   RenderSVGText {text} at (90,199) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (115.00,184.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (123.57,184.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -327,7 +327,7 @@ layer at (340,26.86) size 44x16
   RenderSVGText {text} at (315,55) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (340.00,40.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (348.57,40.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -336,7 +336,7 @@ layer at (340,44.86) size 44x16
   RenderSVGText {text} at (315,73) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (340.00,58.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (348.57,58.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -345,7 +345,7 @@ layer at (340,62.86) size 44x16
   RenderSVGText {text} at (315,91) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (340.00,76.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (348.57,76.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -354,7 +354,7 @@ layer at (340,80.86) size 44x16
   RenderSVGText {text} at (315,109) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (340.00,94.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (348.57,94.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17
@@ -363,7 +363,7 @@ layer at (340,98.86) size 44x16
   RenderSVGText {text} at (315,127) size 45x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 9x17
       chunk 1 text run 1 at (340.00,112.00) startOffset 0 endOffset 1 width 8.57: "a"
-    RenderSVGTSpan {tspan} at (0,0) size 19x17
+    RenderSVGTSpan {tspan} at (8,0) size 19x17
       RenderSVGInlineText {#text} at (8,0) size 19x17
         chunk 1 text run 1 at (348.57,112.00) startOffset 0 endOffset 2 width 18.30: "bc"
     RenderSVGInlineText {#text} at (26,0) size 18x17

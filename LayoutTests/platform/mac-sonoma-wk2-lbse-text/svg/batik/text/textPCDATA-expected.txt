@@ -48,7 +48,7 @@ layer at (-254.02,6) size 508x18 backgroundClip at (0,0) size 450x500 clip at (0
       chunk 1 (middle anchor) text run 1 at (-222.02,20.00) startOffset 0 endOffset 23 width 166.91: "CDATA section in <text>"
     RenderSVGInlineText {#text} at (198,0) size 8x18
       chunk 1 (middle anchor) text run 1 at (-55.10,20.00) startOffset 0 endOffset 2 width 8.00: ", "
-    RenderSVGTSpan {tspan} at (0,0) size 232x18
+    RenderSVGTSpan {tspan} at (206,0) size 232x18
       RenderSVGInlineText {#text} at (206,0) size 54x18
         chunk 1 (middle anchor) text run 1 at (-47.10,20.00) startOffset 0 endOffset 8 width 53.77: "tspan w/"
       RenderSVGInlineText {#cdata-section} at (260,0) size 177x18

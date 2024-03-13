@@ -16,7 +16,7 @@ layer at (135.78,172.09) size 208x35
   RenderSVGText {text} at (0,100) size 209x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 62x35
       chunk 1 (middle anchor) text run 1 at (135.78,200.00) startOffset 0 endOffset 4 width 61.71: "Bon "
-    RenderSVGTSpan {tspan} at (0,0) size 140x35
+    RenderSVGTSpan {tspan} at (61,0) size 140x35
       RenderSVGInlineText {#text} at (61,0) size 139x35
         chunk 1 (middle anchor) text run 1 at (197.50,200.00) startOffset 0 endOffset 10 width 138.38: "avant-midi"
     RenderSVGInlineText {#text} at (200,0) size 9x35

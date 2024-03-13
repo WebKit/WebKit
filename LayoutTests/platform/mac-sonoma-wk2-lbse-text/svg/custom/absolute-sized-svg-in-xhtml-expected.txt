@@ -2,16 +2,16 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x104
   RenderBlock {html} at (0,0) size 800x104
-    RenderInline {body} at (0,0) size 226x18
+    RenderInline {body} at (0,86) size 226x18
       RenderText {#text} at (0,0) size 0x0
-      RenderInline {h1} at (0,0) size 55x18
+      RenderInline {h1} at (0,86) size 55x18
         RenderText {#text} at (0,86) size 55x18
           text run at (0,86) width 55: "Test 123"
       RenderText {#text} at (54,86) size 5x18
         text run at (54,86) width 5: " "
       RenderText {#text} at (158,86) size 5x18
         text run at (158,86) width 5: " "
-      RenderInline {h1} at (0,0) size 64x18
+      RenderInline {h1} at (162,86) size 64x18
         RenderText {#text} at (162,86) size 64x18
           text run at (162,86) width 64: "Test ABC"
       RenderText {#text} at (0,0) size 0x0

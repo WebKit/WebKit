@@ -86,7 +86,7 @@ layer at (131,81.98) size 179x256
   RenderSVGTransformableContainer {g} at (131,81.98) size 178.41x254.97
 layer at (131,81.98) size 178x255
   RenderSVGText {text} at (0,0) size 179x255 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 133x19
+    RenderSVGTSpan {tspan} at (0,118) size 133x19
       RenderSVGInlineText {#text} at (0,118) size 19x133
         chunk 1 (vertical) text run 1 at (134.68,200.00) startOffset 0 endOffset 1 height 18.40: "L"
         chunk 1 (vertical) text run 2 at (134.68,208.90) startOffset 1 endOffset 2 height 18.40: "o"
@@ -107,7 +107,7 @@ layer at (131,81.98) size 178x255
         chunk 1 (vertical) text run 17 at (134.68,327.17) startOffset 16 endOffset 17 height 18.40: "r"
     RenderSVGInlineText {#text} at (0,250) size 19x5
       chunk 1 (vertical) text run 1 at (134.68,332.50) startOffset 0 endOffset 1 height 18.40: " "
-    RenderSVGTSpan {tspan} at (0,0) size 148x19
+    RenderSVGTSpan {tspan} at (80,35) size 148x19
       RenderSVGInlineText {#text} at (80,35) size 19x148
         chunk 1 (middle anchor, vertical) text run 1 at (214.68,116.99) startOffset 0 endOffset 1 height 18.40: "s"
         chunk 1 (middle anchor, vertical) text run 2 at (214.68,124.99) startOffset 1 endOffset 2 height 18.40: "i"
@@ -132,7 +132,7 @@ layer at (131,81.98) size 178x255
         chunk 1 (middle anchor, vertical) text run 21 at (214.68,259.28) startOffset 20 endOffset 21 height 18.40: "r"
     RenderSVGInlineText {#text} at (80,182) size 19x5
       chunk 1 (vertical) text run 1 at (214.68,264.61) startOffset 0 endOffset 1 height 18.40: " "
-    RenderSVGTSpan {tspan} at (0,0) size 105x19
+    RenderSVGTSpan {tspan} at (160,0) size 105x19
       RenderSVGInlineText {#text} at (160,0) size 19x105
         chunk 1 (end anchor, vertical) text run 1 at (294.68,81.99) startOffset 0 endOffset 1 height 18.40: "a"
         chunk 1 (end anchor, vertical) text run 2 at (294.68,90.89) startOffset 1 endOffset 2 height 18.40: "d"

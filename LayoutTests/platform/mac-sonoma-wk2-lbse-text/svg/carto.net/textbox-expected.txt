@@ -56,7 +56,7 @@ layer at (350,301.19) size 235x41
   RenderSVGText {text} at (250,265) size 236x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 236x18
       chunk 1 text run 1 at (350.00,315.00) startOffset 0 endOffset 39 width 235.37: "This textbox (textbox 3) is transformed"
-    RenderSVGTSpan {tspan} at (0,0) size 224x18
+    RenderSVGTSpan {tspan} at (0,23) size 224x18
       RenderSVGInlineText {#text} at (0,23) size 224x18
         chunk 1 text run 1 at (350.00,338.00) startOffset 0 endOffset 38 width 223.23: "and accepts all characters (up to 300)"
 layer at (620,301.19) size 291x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600

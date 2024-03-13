@@ -37,7 +37,7 @@ layer at (10,45.66) size 88x18
       chunk 1 text run 1 at (30.00,60.00) startOffset 0 endOffset 1 width 6.23: "s"
       chunk 1 text run 1 at (40.00,60.00) startOffset 0 endOffset 1 width 4.45: "t"
       chunk 1 text run 1 at (50.00,60.00) startOffset 0 endOffset 1 width 4.00: " "
-    RenderSVGTSpan {tspan} at (0,0) size 44x19
+    RenderSVGTSpan {tspan} at (45,0) size 44x19
       RenderSVGInlineText {#text} at (45,0) size 44x19
         chunk 1 text run 1 at (55.00,60.00) startOffset 0 endOffset 1 width 11.39 RTL: "\x{5D4}"
         chunk 1 text run 1 at (64.00,60.00) startOffset 0 endOffset 1 width 8.02 RTL: "\x{5D3}"
