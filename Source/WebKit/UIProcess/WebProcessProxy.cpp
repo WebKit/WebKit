@@ -2005,6 +2005,7 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
 
     String domain;
     bool wasPrivateRelayed = false;
+    bool hasAllowedToRunInTheBackgroundActivity = false;
 
     for (auto& page : this->pages()) {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
@@ -2015,6 +2016,7 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
             domain = "multiple"_s;
 
         wasPrivateRelayed = wasPrivateRelayed || page->pageLoadState().wasPrivateRelayed();
+        hasAllowedToRunInTheBackgroundActivity = hasAllowedToRunInTheBackgroundActivity || page->hasAllowedToRunInTheBackgroundActivity();
 #endif
     }
 
@@ -2022,7 +2024,7 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
         domain = "unknown"_s;
 
     auto activeTime = totalForegroundTime() + totalBackgroundTime() + totalSuspendedTime();
-    dataStore->client().didExceedMemoryFootprintThreshold(footprint, domain, pageCount(), activeTime, throttler().currentState() == ProcessThrottleState::Foreground, wasPrivateRelayed ? WebCore::WasPrivateRelayed::Yes : WebCore::WasPrivateRelayed::No);
+    dataStore->client().didExceedMemoryFootprintThreshold(footprint, domain, pageCount(), activeTime, throttler().currentState() == ProcessThrottleState::Foreground, wasPrivateRelayed ? WebCore::WasPrivateRelayed::Yes : WebCore::WasPrivateRelayed::No, hasAllowedToRunInTheBackgroundActivity ? WebsiteDataStoreClient::CanSuspend::No : WebsiteDataStoreClient::CanSuspend::Yes);
 }
 
 void WebProcessProxy::didExceedCPULimit()

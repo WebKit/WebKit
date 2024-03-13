@@ -2401,6 +2401,7 @@ public:
 #endif
 
     bool hasValidAudibleActivity() const;
+    bool hasAllowedToRunInTheBackgroundActivity() const;
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

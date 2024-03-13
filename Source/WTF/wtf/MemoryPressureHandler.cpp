@@ -235,8 +235,8 @@ void MemoryPressureHandler::measurementTimerFired()
 #endif
 
     while (m_memoryFootprintNotificationThresholds.size() && footprint > m_memoryFootprintNotificationThresholds.last()) {
-        m_memoryFootprintNotificationThresholds.removeLast();
-        m_memoryFootprintNotificationHandler(footprint);
+        auto notificationThreshold = m_memoryFootprintNotificationThresholds.takeLast();
+        m_memoryFootprintNotificationHandler(notificationThreshold);
     }
 
     auto killThreshold = thresholdForMemoryKill();
