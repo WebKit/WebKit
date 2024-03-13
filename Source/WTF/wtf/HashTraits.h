@@ -94,6 +94,13 @@ template<typename T> struct FloatHashTraits : GenericHashTraits<T> {
     static bool isDeletedValue(T value) { return value == -std::numeric_limits<T>::infinity(); }
 };
 
+template<typename T> struct FloatWithZeroEmptyKeyHashTraits : GenericHashTraits<T> {
+    static constexpr bool emptyValueIsZero = true;
+    static T emptyValue() { return static_cast<T>(0); }
+    static void constructDeletedValue(T& slot) { slot = -std::numeric_limits<T>::infinity(); }
+    static bool isDeletedValue(T value) { return value == -std::numeric_limits<T>::infinity(); }
+};
+
 template<> struct HashTraits<float> : FloatHashTraits<float> { };
 template<> struct HashTraits<double> : FloatHashTraits<double> { };
 
