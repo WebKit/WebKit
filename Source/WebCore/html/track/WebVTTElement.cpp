@@ -31,8 +31,6 @@
 #include "ElementInlines.h"
 #include "HTMLSpanElement.h"
 #include "RenderTreePosition.h"
-#include "RubyElement.h"
-#include "RubyTextElement.h"
 #include "TextTrack.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -113,10 +111,10 @@ Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
         htmlElement = HTMLElement::create(HTMLNames::uTag, document);
         break;
     case WebVTTNodeTypeRuby:
-        htmlElement = RubyElement::create(document);
+        htmlElement = HTMLElement::create(HTMLNames::rubyTag, document);
         break;
     case WebVTTNodeTypeRubyText:
-        htmlElement = RubyTextElement::create(document);
+        htmlElement = HTMLElement::create(HTMLNames::rtTag, document);
         break;
     case WebVTTNodeTypeNone:
         ASSERT_NOT_REACHED();

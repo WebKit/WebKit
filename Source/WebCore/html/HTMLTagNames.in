@@ -103,9 +103,9 @@ progress interfaceName=HTMLProgressElement
 q interfaceName=HTMLQuoteElement
 rb interfaceName=HTMLElement
 rp interfaceName=HTMLElement
-rt interfaceName=RubyTextElement, JSInterfaceName=HTMLElement
+rt interfaceName=HTMLElement
 rtc interfaceName=HTMLElement
-ruby interfaceName=RubyElement, JSInterfaceName=HTMLElement
+ruby interfaceName=HTMLElement
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser

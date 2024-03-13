@@ -28,8 +28,6 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLElement.h"
-#include "RubyElement.h"
-#include "RubyTextElement.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
