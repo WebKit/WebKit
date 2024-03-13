@@ -310,13 +310,13 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
     } while (current != &targetNode);
 }
 
-String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
+std::pair<String, MarkupAccumulator::IsCreatedByURLReplacement> MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
 {
     if (RefPtr link = dynamicDowncast<HTMLLinkElement>(element); link && !m_replacementURLStringsForCSSStyleSheet.isEmpty()) {
         if (RefPtr cssStyleSheet = link->sheet()) {
             auto replacementURLString = m_replacementURLStringsForCSSStyleSheet.get(cssStyleSheet);
             if (!replacementURLString.isEmpty())
-                return replacementURLString;
+                return { replacementURLString, IsCreatedByURLReplacement::Yes };
         }
     }
 
@@ -324,16 +324,16 @@ String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const Strin
         if (auto frame = frameForAttributeReplacement(element)) {
             auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
             if (!replacementURLString.isEmpty())
-                return replacementURLString;
+                return { replacementURLString, IsCreatedByURLReplacement::Yes };
         }
 
         auto resolvedURLString = element.resolveURLStringIfNeeded(urlString);
         auto replacementURLString = m_replacementURLStrings.get(resolvedURLString);
         if (!replacementURLString.isEmpty())
-            return replacementURLString;
+            return { replacementURLString, IsCreatedByURLReplacement::Yes };
     }
 
-    return element.resolveURLStringIfNeeded(urlString, m_resolveURLs);
+    return { element.resolveURLStringIfNeeded(urlString, m_resolveURLs), IsCreatedByURLReplacement::No };
 }
 
 RefPtr<Element> MarkupAccumulator::replacementElement(const Node& node)
@@ -525,23 +525,41 @@ static void appendDocumentType(StringBuilder& result, const DocumentType& docume
     );
 }
 
+static bool isURLAttributeForElement(const Element& element, const Attribute& attribute)
+{
+    return element.isURLAttribute(attribute) || element.isHTMLContentAttribute(attribute);
+}
+
 void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
     appendOpenTag(result, element, namespaces);
 
     bool hasURLAttribute = false;
+    bool isURLReplaced = false;
+    Vector<Attribute> attributesToAppendIfURLNotReplaced;
+
     if (element.hasAttributes()) {
         for (const Attribute& attribute : element.attributesIterator()) {
-            if (!hasURLAttribute && (element.isURLAttribute(attribute) || element.isHTMLContentAttribute(attribute)))
+            if (attribute.name() == crossoriginAttr || attribute.name() == integrityAttr) {
+                attributesToAppendIfURLNotReplaced.append(attribute);
+                continue;
+            }
+
+            if (!hasURLAttribute && isURLAttributeForElement(element, attribute))
                 hasURLAttribute = true;
             auto updatedAttribute = replaceAttributeIfNecessary(element, attribute);
-            appendAttribute(result, element, updatedAttribute, namespaces);
+            if (appendAttribute(result, element, updatedAttribute, namespaces))
+                isURLReplaced = true;
         }
     }
 
-    if (!hasURLAttribute)
-        appendURLAttributeIfNecessary(result, element, namespaces);
+    if (!hasURLAttribute && appendURLAttributeForReplacementIfNecessary(result, element, namespaces))
+        isURLReplaced = true;
 
+    if (!isURLReplaced) {
+        for (auto& attribute : attributesToAppendIfURLNotReplaced)
+            appendAttribute(result, element, attribute, namespaces);
+    }
     // Give an opportunity to subclasses to add their own attributes.
     appendCustomAttributes(result, element, namespaces);
 
@@ -660,18 +678,21 @@ Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element,
     return element.replaceURLsInAttributeValue(attribute, m_replacementURLStrings);
 }
 
-void MarkupAccumulator::appendURLAttributeIfNecessary(StringBuilder& result, const Element& element, Namespaces* namespaces)
+bool MarkupAccumulator::appendURLAttributeForReplacementIfNecessary(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
     auto frame = frameForAttributeReplacement(element);
     if (!frame)
-        return;
+        return false;
 
     auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
-    if (!replacementURLString.isNull())
-        appendAttribute(result, element, Attribute { srcAttr, AtomString { replacementURLString } }, namespaces);
+    if (!replacementURLString)
+        return false;
+
+    appendAttribute(result, element, Attribute { srcAttr, AtomString { replacementURLString } }, namespaces);
+    return true;
 }
 
-void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& element, const Attribute& attribute, Namespaces* namespaces)
+bool MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& element, const Attribute& attribute, Namespaces* namespaces)
 {
     bool isSerializingHTML = !inXMLFragmentSerialization();
 
@@ -694,13 +715,18 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
     result.append('=');
 
     result.append('"');
+    bool isURLAttributeValueReplaced = false;
     if (element.isURLAttribute(attribute)) {
         // FIXME: This does not fully match other browsers. Firefox percent-escapes
         // non-ASCII characters for innerHTML.
-        appendAttributeValue(result, resolveURLIfNeeded(element, attribute.value()), isSerializingHTML);
+        auto [resolvedURL, isCreatedByURLReplacement] = resolveURLIfNeeded(element, attribute.value());
+        appendAttributeValue(result, resolvedURL, isSerializingHTML);
+        isURLAttributeValueReplaced = isCreatedByURLReplacement == IsCreatedByURLReplacement::Yes;
     } else
         appendAttributeValue(result, attribute.value(), isSerializingHTML);
     result.append('"');
+
+    return isURLAttributeValueReplaced;
 }
 
 void MarkupAccumulator::appendNonElementNode(StringBuilder& result, const Node& node, Namespaces* namespaces)

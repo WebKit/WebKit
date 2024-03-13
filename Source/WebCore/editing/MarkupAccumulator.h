@@ -96,7 +96,7 @@ protected:
     void appendNonElementNode(StringBuilder&, const Node&, Namespaces*);
 
     static void appendAttributeValue(StringBuilder&, const String&, bool isSerializingHTML);
-    void appendAttribute(StringBuilder&, const Element&, const Attribute&, Namespaces*);
+    bool appendAttribute(StringBuilder&, const Element&, const Attribute&, Namespaces*);
 
     OptionSet<EntityMask> entityMaskForText(const Text&) const;
 
@@ -104,14 +104,15 @@ protected:
 
 private:
     void appendNamespace(StringBuilder&, const AtomString& prefix, const AtomString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
-    String resolveURLIfNeeded(const Element&, const String&) const;
+    enum class IsCreatedByURLReplacement : bool { No, Yes };
+    std::pair<String, IsCreatedByURLReplacement> resolveURLIfNeeded(const Element&, const String&) const;
     void serializeNodesWithNamespaces(Node& targetNode, SerializedNodes, const Namespaces*);
     bool inXMLFragmentSerialization() const { return m_serializationSyntax == SerializationSyntax::XML; }
     void generateUniquePrefix(QualifiedName&, const Namespaces&);
     QualifiedName xmlAttributeSerialization(const Attribute&, Namespaces*);
     LocalFrame* frameForAttributeReplacement(const Element&) const;
     Attribute replaceAttributeIfNecessary(const Element&, const Attribute&);
-    void appendURLAttributeIfNecessary(StringBuilder&, const Element&, Namespaces*);
+    bool appendURLAttributeForReplacementIfNecessary(StringBuilder&, const Element&, Namespaces*);
     RefPtr<Element> replacementElement(const Node&);
     bool shouldExcludeElement(const Element&);
 

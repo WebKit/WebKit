@@ -1918,6 +1918,103 @@ TEST(WebArchive, SaveResourcesExclusionRules)
     Util::run(&saved);
 }
 
+static const char* htmlDataBytesForExcludeCrossOriginAttribute = R"TESTRESOURCE(
+<head>
+<link href="webarchivetest://resource.com/style.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<div id="console"></div>
+<script src="webarchivetest://resource.com/script.js" integrity="sha256-whXcIuErT+KLyiIBuDxrli97oBljDS1fLlyogfljnnM=" crossorigin="anonymous"></script>
+<script>
+div = document.getElementById("console");
+div.innerHTML += getComputedStyle(div).width;
+window.webkit.messageHandlers.testHandler.postMessage("done");
+</script>
+)TESTRESOURCE";
+
+static const char* scriptDataBytesForExcludeCrossOriginAttribute = R"TESTRESOURCE(document.getElementById("console").innerHTML = "ScriptRuns";)TESTRESOURCE";
+static const char* cssDataBytesForExcludeCrossOriginAttribute = R"TESTRESOURCE(div { width: 10px; })TESTRESOURCE";
+
+TEST(WebArchive, SaveResourcesExcludeCrossOriginAttribute)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForExcludeCrossOriginAttribute length:strlen(htmlDataBytesForExcludeCrossOriginAttribute)];
+    NSData *scriptData = [NSData dataWithBytes:scriptDataBytesForExcludeCrossOriginAttribute length:strlen(scriptDataBytesForExcludeCrossOriginAttribute)];
+    NSData *cssData = [NSData dataWithBytes:cssDataBytesForExcludeCrossOriginAttribute length:strlen(cssDataBytesForExcludeCrossOriginAttribute)];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        bool shouldAddAccessControlHeader = false;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://resource.com/script.js"]) {
+            mimeType = @"application/javascript";
+            data = scriptData;
+            shouldAddAccessControlHeader = true;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://resource.com/style.css"]) {
+            mimeType = @"text/css";
+            data = cssData;
+            shouldAddAccessControlHeader = true;
+        }
+        EXPECT_TRUE(data);
+
+        RetainPtr<NSMutableDictionary> headerFields = adoptNS(@{
+            @"Content-Length": [NSString stringWithFormat:@"%zu", (size_t)data.length],
+            @"Content-Type": mimeType,
+        }.mutableCopy);
+        if (shouldAddAccessControlHeader)
+            [headerFields setObject:@"*" forKey:@"Access-Control-Allow-Origin"];
+
+        auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:task.request.URL statusCode:200 HTTPVersion:nil headerFields:headerFields.get()]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
+        EXPECT_TRUE([savedMainResource containsString:@"ScriptRuns"]);
+        EXPECT_TRUE([savedMainResource containsString:@"10px"]);
+        EXPECT_FALSE([savedMainResource containsString:@"integrity"]);
+        EXPECT_FALSE([savedMainResource containsString:@"crossorigin"]);
+
+        NSString *resourceDirectoryName = @"host_files";
+        NSString *scriptFile = @"script.js";
+        NSString *scriptResourceRelativePath = [resourceDirectoryName stringByAppendingPathComponent:scriptFile];
+        EXPECT_TRUE([savedMainResource containsString:scriptResourceRelativePath]);
+        NSString *scriptResourcePath = [directoryURL URLByAppendingPathComponent:scriptResourceRelativePath].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:scriptResourcePath]);
+
+        NSString *cssFile = @"style.css";
+        NSString *cssResourceRelativePath = [resourceDirectoryName stringByAppendingPathComponent:cssFile];
+        EXPECT_TRUE([savedMainResource containsString:cssResourceRelativePath]);
+        NSString *cssResourcePath = [directoryURL URLByAppendingPathComponent:scriptResourceRelativePath].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:cssResourcePath]);
+
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
