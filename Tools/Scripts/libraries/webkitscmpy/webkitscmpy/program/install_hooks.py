@@ -108,7 +108,7 @@ class InstallHooks(Command):
         for name, rmt in remotes_by_name.items():
             match = cls.REMOTE_RE.match(rmt)
             if match:
-                result['{}:{}'.format(match.group('host'), match.group('path'))] = levels_by_name.get(name, None)
+                result['{}:{}'.format(match.group('host'), match.group('path')).lower()] = levels_by_name.get(name, None)
 
         proc = run(
             [local.Git.executable(), 'config', '--get-regexp', 'remote.+url'],
@@ -122,7 +122,7 @@ class InstallHooks(Command):
             match = cls.REMOTE_RE.match(value)
             if not match:
                 continue
-            key = '{}:{}'.format(match.group('host'), match.group('path'))
+            key = '{}:{}'.format(match.group('host'), match.group('path')).lower()
             if key in result:
                 continue
             repo = 'https://{}/{}'.format(match.group('host'), match.group('path'))
@@ -131,7 +131,7 @@ class InstallHooks(Command):
             parent = ((remote.GitHub(repo).request() or {}).get('parent') or {}).get('full_name')
             if not parent:
                 continue
-            parent_key = '{}:{}'.format(match.group('host'), parent)
+            parent_key = '{}:{}'.format(match.group('host'), parent).lower()
             if parent_key in result:
                 result[key] = result[parent_key]
         return result
@@ -168,15 +168,15 @@ class InstallHooks(Command):
                 sys.stderr.write("'{}' is not a valid security level\n".format(value))
                 continue
             value = int(value)
-            if key in security_levels:
-                exisiting_level = security_levels.get(key, None)
+            if key.lower() in security_levels:
+                exisiting_level = security_levels.get(key.lower(), None)
                 if exisiting_level is None:
                     sys.stderr.write("'{}' is already specified, but with an unknown security level\n".format(key))
                 if exisiting_level != value:
                     sys.stderr.write("'{}' already has a security level of '{}'\n".format(key, exisiting_level))
                     early_exit = True
                     continue
-            security_levels[key] = value
+            security_levels[key.lower()] = value
         if early_exit:
             return 1
 

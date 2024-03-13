@@ -99,7 +99,7 @@ def security_level_for_remote(remote):
     match = REMOTE_RE.match(remote)
     if not match:
         return None
-    return SECURITY_LEVELS.get('{}:{}'.format(match.group('host'), match.group('path')), None)
+    return SECURITY_LEVELS.get('{}:{}'.format(match.group('host'), match.group('path')).lower(), None)
 
 
 def security_level_for_remotes(remotes, name_to_remote=None):
