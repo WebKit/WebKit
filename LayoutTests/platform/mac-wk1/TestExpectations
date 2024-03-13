@@ -2817,3 +2817,5 @@ webkit.org/b/270310 [ Sonoma+ ] imported/w3c/web-platform-tests/html/semantics/i
 webkit.org/b/270380 [ Ventura+ ] fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/270385 [ Sonoma+ ] fast/images/jpegxl-with-color-profile.html [ ImageOnlyFailure ]
+
+webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues.html [ Skip ]
