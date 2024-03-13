@@ -116,7 +116,7 @@ private:
         virtual cairo_surface_t* surface() const { return nullptr; }
 
         uint64_t id() const { return m_id; }
-        const WebCore::IntSize size() const { return m_size; }
+        const WebCore::IntSize& size() const { return m_size; }
         float deviceScaleFactor() const { return m_deviceScaleFactor; }
         float unscaledWidth() const { return static_cast<float>(m_size.width() / m_deviceScaleFactor); }
         float unscaledHeight() const { return static_cast<float>(m_size.height() / m_deviceScaleFactor); }

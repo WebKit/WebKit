@@ -377,10 +377,15 @@ void AcceleratedBackingStoreDMABuf::BufferSHM::didUpdateContents()
 {
 #if USE(CAIRO)
     m_surface = m_bitmap->createCairoSurface();
-    cairo_surface_set_device_scale(m_surface.get(), m_deviceScaleFactor, m_deviceScaleFactor);
 #elif USE(SKIA)
-    notImplemented();
+    m_surface = cairo_image_surface_create_for_data(static_cast<unsigned char*>(m_bitmap->data()), CAIRO_FORMAT_ARGB32, m_size.width(), m_size.height(), m_bitmap->bytesPerRow());
+    m_bitmap->ref();
+    static cairo_user_data_key_t s_surfaceDataKey;
+    cairo_surface_set_user_data(m_surface.get(), &s_surfaceDataKey, m_bitmap.get(), [](void* userData) {
+        static_cast<WebCore::ShareableBitmap*>(userData)->deref();
+    });
 #endif
+    cairo_surface_set_device_scale(m_surface.get(), m_deviceScaleFactor, m_deviceScaleFactor);
 }
 
 #if USE(GTK4)
