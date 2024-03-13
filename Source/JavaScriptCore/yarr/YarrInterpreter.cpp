@@ -285,7 +285,8 @@ public:
                     return errorCodePoint;
                 next();
                 return U16_GET_SUPPLEMENTARY(result, input[p + 1]);
-            }
+            } else if (decodeSurrogatePairs && p > 0 && U16_IS_TRAIL(result) && U16_IS_LEAD(input[p - 1]))
+                return errorCodePoint;
             return result;
         }
 

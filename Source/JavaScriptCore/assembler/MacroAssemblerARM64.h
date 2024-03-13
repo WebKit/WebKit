@@ -3568,6 +3568,12 @@ public:
         m_assembler.csel<64>(dest, src, dest, ARM64Condition(cond));
     }
 
+    void moveConditionallyTest32(ResultCondition cond, RegisterID testReg, TrustedImm32 mask, RegisterID src, RegisterID dest)
+    {
+        test32(testReg, mask);
+        m_assembler.csel<64>(dest, src, dest, ARM64Condition(cond));
+    }
+
     void moveConditionallyTest32(ResultCondition cond, RegisterID left, RegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
         m_assembler.tst<32>(left, right);
@@ -4610,6 +4616,11 @@ public:
     {
         test32(src, mask);
         m_assembler.cset<32>(dest, ARM64Condition(cond));
+    }
+
+    void addOneConditionally32(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        m_assembler.cinc<32>(dest, src, ARM64Condition(cond));
     }
 
     void test32(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
