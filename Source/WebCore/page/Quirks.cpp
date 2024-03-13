@@ -426,6 +426,7 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
         m_shouldDisableElementFullscreen = isDomain("vimeo.com"_s)
             || isDomain("instagram.com"_s)
             || (PAL::currentUserInterfaceIdiomIsSmallScreen() && isDomain("digitaltrends.com"_s))
+            || (PAL::currentUserInterfaceIdiomIsSmallScreen() && isDomain("as.com"_s))
             || isEmbedDomain("twitter.com"_s)
             || (PAL::currentUserInterfaceIdiomIsSmallScreen() && (isDomain("youtube.com"_s) || isYoutubeEmbedDomain()));
     }
