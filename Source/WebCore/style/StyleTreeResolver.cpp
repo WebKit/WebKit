@@ -261,8 +261,10 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     Styleable styleable { element, { } };
     auto resolvedStyle = styleForStyleable(styleable, resolutionType, resolutionContext);
 
-    if (!affectsRenderedSubtree(element, *resolvedStyle.style))
+    if (!affectsRenderedSubtree(element, *resolvedStyle.style)) {
+        styleable.setLastStyleChangeEventStyle(nullptr);
         return { };
+    }
 
     auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext);
     auto descendantsToResolve = computeDescendantsToResolve(update, existingStyle, element.styleValidity());
