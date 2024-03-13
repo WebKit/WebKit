@@ -41,7 +41,7 @@ public:
     SkiaAcceleratedBufferPool();
     ~SkiaAcceleratedBufferPool();
 
-    Ref<Nicosia::Buffer> acquireBuffer(const IntSize&, bool supportsAlpha);
+    RefPtr<Nicosia::Buffer> acquireBuffer(const IntSize&, bool supportsAlpha);
 
 private:
     struct Entry {
@@ -57,7 +57,7 @@ private:
         MonotonicTime m_lastUsedTime;
     };
 
-    Ref<Nicosia::Buffer> createAcceleratedBuffer(const IntSize&, bool supportsAlpha);
+    RefPtr<Nicosia::Buffer> createAcceleratedBuffer(const IntSize&, bool supportsAlpha);
     void scheduleReleaseUnusedBuffers();
 
     void releaseUnusedBuffersTimerFired();

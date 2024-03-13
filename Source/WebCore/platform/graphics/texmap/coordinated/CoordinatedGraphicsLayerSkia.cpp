@@ -77,9 +77,10 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
     // Skia/GPU - accelerated rendering.
     if (auto* acceleratedBufferPool = m_coordinator->skiaAcceleratedBufferPool()) {
         PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent();
-        auto buffer = acceleratedBufferPool->acquireBuffer(tileRect.size(), !contentsOpaque());
-        paintBuffer(buffer.get());
-        return buffer;
+        if (auto buffer = acceleratedBufferPool->acquireBuffer(tileRect.size(), !contentsOpaque())) {
+            paintBuffer(*buffer);
+            return Ref { *buffer };
+        }
     }
 
     // Skia/CPU - unaccelerated rendering.

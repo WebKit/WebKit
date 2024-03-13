@@ -69,14 +69,22 @@ static sk_sp<const GrGLInterface> skiaGLInterface()
 
 GLContext* PlatformDisplay::skiaGLContext()
 {
-    if (m_skiaGLContext)
-        return m_skiaGLContext.get();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [this] {
+        const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
+        if (enableCPURendering && strcmp(enableCPURendering, "0"))
+            return;
 
-    m_skiaGLContext = GLContext::createOffscreen(*this);
-    if (m_skiaGLContext && m_skiaGLContext->makeContextCurrent()) {
+        auto skiaGLContext = GLContext::createOffscreen(*this);
+        if (!skiaGLContext || !skiaGLContext->makeContextCurrent())
+            return;
+
         // FIXME: add GrContextOptions, shader cache, etc.
-        m_skiaGrContext = GrDirectContexts::MakeGL(skiaGLInterface());
-    }
+        if (auto skiaGrContext = GrDirectContexts::MakeGL(skiaGLInterface())) {
+            m_skiaGLContext = WTFMove(skiaGLContext);
+            m_skiaGrContext = WTFMove(skiaGrContext);
+        }
+    });
     return m_skiaGLContext.get();
 }
 

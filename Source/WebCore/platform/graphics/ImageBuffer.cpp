@@ -85,14 +85,9 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
 #endif
 
 #if USE(SKIA)
-    static const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
-    if (!enableCPURendering || !strcmp(enableCPURendering, "0")) {
-        static const char* disableAccelerated2DCanvas = getenv("WEBKIT_DISABLE_ACCELERATED_2D_CANVAS");
-        if (!disableAccelerated2DCanvas || !strcmp(disableAccelerated2DCanvas, "0")) {
-            // FIXME: check options.contains(ImageBufferOptions::Accelerated) too.
-            if (auto imageBuffer = ImageBuffer::create<ImageBufferSkiaAcceleratedBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { }))
-                return imageBuffer;
-        }
+    if (options.contains(ImageBufferOptions::Accelerated)) {
+        if (auto imageBuffer = ImageBuffer::create<ImageBufferSkiaAcceleratedBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { }))
+            return imageBuffer;
     }
 #endif
 

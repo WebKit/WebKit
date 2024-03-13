@@ -307,14 +307,15 @@ bool CanvasBase::shouldAccelerate(const IntSize& size) const
 
 bool CanvasBase::shouldAccelerate(uint64_t area) const
 {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
     if (!scriptExecutionContext()->settingsValues().canvasUsesAcceleratedDrawing)
         return false;
     if (area < scriptExecutionContext()->settingsValues().minimumAccelerated2DContextArea)
         return false;
-    return true;
-#elif USE(SKIA)
-    UNUSED_PARAM(area);
+#if PLATFORM(GTK)
+    if (!scriptExecutionContext()->settingsValues().acceleratedCompositingEnabled)
+        return false;
+#endif
     return true;
 #else
     UNUSED_PARAM(area);

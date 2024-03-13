@@ -61,17 +61,6 @@ namespace WebKit {
 using namespace WebCore;
 
 #if USE(SKIA)
-static bool skiaForceUseCpuRendering()
-{
-    static std::optional<bool> forceUseCpuRendering;
-    if (!forceUseCpuRendering.has_value()) {
-        const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
-        forceUseCpuRendering = enableCPURendering && strcmp(enableCPURendering, "0");
-    }
-
-    return forceUseCpuRendering.value();
-}
-
 static unsigned skiaNumberOfCpuPaintingThreads()
 {
     static std::optional<unsigned> numberOfCpuPaintingThreads;
@@ -99,11 +88,10 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
 #endif
 {
 #if USE(SKIA)
-    if (skiaForceUseCpuRendering()) {
-        if (auto numberOfThreads = skiaNumberOfCpuPaintingThreads(); numberOfThreads > 0)
-            m_skiaUnacceleratedThreadedRenderingPool = WorkerPool::create("SkiaPaintingThread"_s, numberOfThreads);
-    } else
+    if (PlatformDisplay::sharedDisplayForCompositing().skiaGLContext())
         m_skiaAcceleratedBufferPool = makeUnique<SkiaAcceleratedBufferPool>();
+    else if (auto numberOfThreads = skiaNumberOfCpuPaintingThreads(); numberOfThreads > 0)
+        m_skiaUnacceleratedThreadedRenderingPool = WorkerPool::create("SkiaPaintingThread"_s, numberOfThreads);
 #endif
 
     m_nicosia.scene = Nicosia::Scene::create();

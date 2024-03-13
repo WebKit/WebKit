@@ -305,6 +305,7 @@ MinimumAccelerated2DContextArea:
   type: uint64_t
   defaultValue:
     WebCore:
+      USE(SKIA): 128 * 129
       default: 0
 
 NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:

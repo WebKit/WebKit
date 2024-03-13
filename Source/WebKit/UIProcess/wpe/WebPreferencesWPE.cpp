@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,26 +26,10 @@
 #include "config.h"
 #include "WebPreferences.h"
 
-#include "HardwareAccelerationManager.h"
-#include <WebCore/NotImplemented.h>
-
 namespace WebKit {
 
 void WebPreferences::platformInitializeStore()
 {
-    struct {
-        bool acceleratedCompositingEnabled { true };
-        bool forceCompositingMode { false };
-    } compositingState;
-
-    if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
-        compositingState = { false, false };
-    else if (HardwareAccelerationManager::singleton().forceHardwareAcceleration())
-        compositingState = { true, true };
-
-    setAcceleratedCompositingEnabled(compositingState.acceleratedCompositingEnabled);
-    setForceCompositingMode(compositingState.forceCompositingMode);
-    setThreadedScrollingEnabled(compositingState.forceCompositingMode);
 #if USE(SKIA)
     // FIXME: Expose this as a setting when we switch to Skia.
     static const char* disableAccelerated2DCanvas = getenv("WEBKIT_DISABLE_ACCELERATED_2D_CANVAS");

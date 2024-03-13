@@ -258,6 +258,7 @@ UIProcess/soup/WebProcessPoolSoup.cpp
 UIProcess/wpe/AcceleratedBackingStoreDMABuf.cpp
 UIProcess/wpe/ScreenManagerWPE.cpp
 UIProcess/wpe/WebPageProxyWPE.cpp
+UIProcess/wpe/WebPreferencesWPE.cpp
 
 WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
 

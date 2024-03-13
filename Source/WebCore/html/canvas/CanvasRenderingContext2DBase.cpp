@@ -252,7 +252,7 @@ CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
 
 bool CanvasRenderingContext2DBase::isAccelerated() const
 {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
     auto* context = canvasBase().existingDrawingContext();
     return context && context->renderingMode() == RenderingMode::Accelerated;
 #else

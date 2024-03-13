@@ -54,27 +54,34 @@ SkiaAcceleratedBufferPool::~SkiaAcceleratedBufferPool()
     m_buffers.clear();
 }
 
-Ref<Nicosia::Buffer> SkiaAcceleratedBufferPool::acquireBuffer(const IntSize& size, bool supportsAlpha)
+RefPtr<Nicosia::Buffer> SkiaAcceleratedBufferPool::acquireBuffer(const IntSize& size, bool supportsAlpha)
 {
     Entry* selectedEntry = std::find_if(m_buffers.begin(), m_buffers.end(), [&](Entry& entry) {
         return entry.m_buffer->refCount() == 1 && entry.m_buffer->size() == size && entry.m_buffer->supportsAlpha() == supportsAlpha;
     });
 
     if (selectedEntry == m_buffers.end()) {
-        m_buffers.append(Entry(createAcceleratedBuffer(size, supportsAlpha)));
+        auto buffer = createAcceleratedBuffer(size, supportsAlpha);
+        if (!buffer)
+            return nullptr;
+
+        m_buffers.append(Entry(Ref { *buffer }));
         selectedEntry = &m_buffers.last();
     }
 
     scheduleReleaseUnusedBuffers();
     selectedEntry->markIsInUse();
-    return selectedEntry->m_buffer.copyRef();
+    return selectedEntry->m_buffer.ptr();
 }
 
-Ref<Nicosia::Buffer> SkiaAcceleratedBufferPool::createAcceleratedBuffer(const IntSize& size, bool supportsAlpha)
+RefPtr<Nicosia::Buffer> SkiaAcceleratedBufferPool::createAcceleratedBuffer(const IntSize& size, bool supportsAlpha)
 {
     auto* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+    RELEASE_ASSERT(grContext);
     auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height());
     auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, nullptr);
+    if (!surface)
+        return nullptr;
     return Nicosia::AcceleratedBuffer::create(WTFMove(surface), supportsAlpha ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
 }
 

@@ -56,6 +56,9 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
     RELEASE_ASSERT(grContext);
     auto imageInfo = SkImageInfo::MakeN32Premul(backendSize.width(), backendSize.height());
     auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, nullptr);
+    if (!surface)
+        return nullptr;
+
     return std::unique_ptr<ImageBufferSkiaAcceleratedBackend>(new ImageBufferSkiaAcceleratedBackend(parameters, WTFMove(surface)));
 }
 
