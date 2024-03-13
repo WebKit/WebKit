@@ -3374,10 +3374,8 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
       "PLATFORM(IOS_FAMILY)": WebKit::defaultInlineMediaPlaybackRequiresPlaysInlineAttribute()
       default: false
     WebKit:
-      "PLATFORM(IOS_FAMILY)": true
       default: false
     WebCore:
-      "PLATFORM(IOS_FAMILY)": true
       default: false
 
 InlinePredictionsInAllEditableElementsEnabled:
