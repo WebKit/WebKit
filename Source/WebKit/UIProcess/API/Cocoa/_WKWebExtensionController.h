@@ -226,9 +226,10 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Should be called by the app when a tab is moved to fire appropriate events with all loaded web extensions.
  @param movedTab The tab that was moved.
  @param index The old index of the tab within the window.
- @param oldWindow The window that the tab was moved from, or \c nil if the window stayed the same.
+ @param oldWindow The window that the tab was moved from, or \c nil if the tab is moving from no open window.
  @discussion This method informs all loaded extensions of the movement of a tab, ensuring consistent understanding across extensions.
- If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
+ If the window is staying the same, the current window should be specified. If the intention is to inform only a specific extension,
+ use the respective method on that extension's context instead.
  */
 - (void)didMoveTab:(id <_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(nullable id <_WKWebExtensionWindow>)oldWindow NS_SWIFT_NAME(didMoveTab(_:from:in:));
 

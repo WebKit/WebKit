@@ -1201,6 +1201,98 @@ TEST(WKWebExtensionAPITabs, DetachedAndAttachedEvent)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, DetachAndAttachToWindowIDNone)
+{
+    auto backgroundScript = Util::constructScript(@[
+        @"let detachedTabId",
+
+        @"const currentWindow = await browser.windows.getCurrent()",
+        @"const currentWindowId = currentWindow.id",
+
+        @"browser.tabs.onDetached.addListener((tabId, detachInfo) => {",
+        @"  detachedTabId = tabId",
+        @"  browser.test.assertEq(detachInfo.oldWindowId, currentWindowId, 'Tab should have been detached from the current window')",
+        @"  browser.test.assertEq(detachInfo.oldPosition, 1, 'Tab should have been detached from index 1')",
+        @"})",
+
+        @"browser.tabs.onAttached.addListener((tabId, attachInfo) => {",
+        @"  browser.test.assertEq(detachedTabId, tabId, 'The detached and attached tab ids should match')",
+        @"  browser.test.assertEq(attachInfo.newWindowId, browser.windows.WINDOW_ID_NONE, 'Tab should have been attached to WINDOW_ID_NONE')",
+        @"  browser.test.assertTrue(isNaN(attachInfo.newPosition), 'Tab should have been attached at index NaN')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Detach Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *tabToMove = [manager.get().defaultWindow openNewTab];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2ul);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Detach Tab");
+
+    tabToMove.window = nil;
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 1ul);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, DetachAndAttachFromWindowIDNone)
+{
+    auto backgroundScript = Util::constructScript(@[
+        @"let detachedTabId",
+
+        @"const currentWindow = await browser.windows.getCurrent()",
+        @"const currentWindowId = currentWindow.id",
+
+        @"browser.tabs.onDetached.addListener((tabId, detachInfo) => {",
+        @"  detachedTabId = tabId",
+        @"  browser.test.assertEq(detachInfo.oldWindowId, browser.windows.WINDOW_ID_NONE, 'Tab should have been detached from WINDOW_ID_NONE')",
+        @"  browser.test.assertTrue(isNaN(detachInfo.oldPosition), 'Tab should have been detached from index NaN')",
+        @"})",
+
+        @"browser.tabs.onAttached.addListener((tabId, attachInfo) => {",
+        @"  browser.test.assertEq(detachedTabId, tabId, 'The detached and attached tab ids should match')",
+        @"  browser.test.assertEq(attachInfo.newWindowId, currentWindowId, 'Tab should have been attached to the current window')",
+        @"  browser.test.assertEq(attachInfo.newPosition, 1, 'Tab should have been attached to index 1')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Attach Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *tabToMove = [manager.get().defaultWindow openNewTab];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2ul);
+
+    // Detach before loading the extension.
+    tabToMove.window = nil;
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 1ul);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Attach Tab");
+
+    tabToMove.window = manager.get().defaultWindow;
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2ul);
+
+    [manager run];
+}
+
+
 TEST(WKWebExtensionAPITabs, ActivatedEvent)
 {
     auto *backgroundScript = Util::constructScript(@[
