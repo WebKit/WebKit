@@ -40,6 +40,12 @@ RemoteScrollbarsController::RemoteScrollbarsController(WebCore::ScrollableArea& 
 {
 }
 
+void RemoteScrollbarsController::scrollbarLayoutDirectionChanged(WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection)
+{
+    if (RefPtr scrollingCoordinator = m_coordinator.get())
+        scrollingCoordinator->setScrollbarLayoutDirection(scrollableArea(), scrollbarLayoutDirection);
+}
+
 void RemoteScrollbarsController::mouseEnteredContentArea()
 {
     if (auto scrollingCoordinator = m_coordinator.get())

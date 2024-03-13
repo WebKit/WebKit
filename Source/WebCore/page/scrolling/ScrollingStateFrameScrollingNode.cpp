@@ -61,6 +61,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     MouseLocationState&& mouseLocationState,
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
+    UserInterfaceLayoutDirection scrollbarLayoutDirection,
     RequestedKeyboardScrollData&& keyboardScrollData,
     float frameScaleFactor,
     EventTrackingRegions&& eventTrackingRegions,
@@ -110,6 +111,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     WTFMove(mouseLocationState),
     WTFMove(scrollbarHoverState),
     WTFMove(scrollbarEnabledState),
+    scrollbarLayoutDirection,
     WTFMove(keyboardScrollData))
     , m_rootContentsLayer(rootContentsLayer.value_or(PlatformLayerIdentifier()))
     , m_counterScrollingLayer(counterScrollingLayer.value_or(PlatformLayerIdentifier()))

@@ -1065,6 +1065,9 @@ static String scrollbarState(Scrollbar* scrollbar)
     if (scrollerImp.knobAlpha > 0)
         result.append(",visible_thumb"_s);
 
+    if (scrollerImp.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft)
+        result.append(",RTL"_s);
+
     return result.toString();
 }
 

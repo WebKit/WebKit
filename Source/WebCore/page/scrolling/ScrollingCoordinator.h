@@ -33,6 +33,7 @@
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinatorTypes.h"
+#include "UserInterfaceLayoutDirection.h"
 #include "WheelEventTestMonitor.h"
 #include <variant>
 #include <wtf/Forward.h>
@@ -212,6 +213,8 @@ public:
     WEBCORE_EXPORT virtual void setMouseIsOverScrollbar(Scrollbar*, bool) { }
     WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
     WEBCORE_EXPORT virtual void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) { }
+    WEBCORE_EXPORT virtual void setScrollbarLayoutDirection(ScrollableArea&, UserInterfaceLayoutDirection) { }
+
     FrameIdentifier mainFrameIdentifier() const;
 
 protected:

@@ -29,6 +29,7 @@
 
 #include <WebCore/NSScrollerImpDetails.h>
 #include <WebCore/ScrollbarsController.h>
+#include <WebCore/UserInterfaceLayoutDirection.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -55,6 +56,7 @@ public:
     bool shouldRegisterScrollbars() const final;
     int minimumThumbLength(WebCore::ScrollbarOrientation) final;
     void updateScrollbarEnabledState(WebCore::Scrollbar&) final;
+    void scrollbarLayoutDirectionChanged(WebCore::UserInterfaceLayoutDirection) final;
 
 private:
     bool m_horizontalOverlayScrollbarIsVisible { false };

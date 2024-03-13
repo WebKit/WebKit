@@ -73,6 +73,7 @@ public:
     void updateMinimumKnobLength(int);
     void detach();
     void setEnabled(bool flag) { m_isEnabled = flag; }
+    void setScrollbarLayoutDirection(UserInterfaceLayoutDirection);
 
 private:
     int m_minimumKnobLength { 0 };
