@@ -661,7 +661,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
 
     auto lineLogicalTop = isHorizontalWritingMode ? m_displayLine.top() : m_displayLine.left();
     auto lineLogicalLeft = isHorizontalWritingMode ? m_displayLine.left() : m_displayLine.top();
-    auto contentStartInInlineDirectionVisualOrder = lineLogicalLeft + m_displayLine.contentLogicalLeftIgnoringInlineDirection();
+    // Note that hangable punctuation does not contribute to contentLogicalLeftIgnoringInlineDirection() as it is considered more of an overflow.
+    auto contentStartInInlineDirectionVisualOrder = lineLogicalLeft + m_displayLine.contentLogicalLeftIgnoringInlineDirection() - (rootStyle().isLeftToRightDirection() ? lineLayoutResult.hangingContent.hangablePunctuationStartWidth : 0.f);
     auto hasInlineBox = false;
     auto createDisplayBoxesInVisualOrder = [&] {
 

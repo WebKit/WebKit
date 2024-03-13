@@ -66,6 +66,7 @@ struct LineLayoutResult {
     struct HangingContent {
         bool shouldContributeToScrollableOverflow { false };
         InlineLayoutUnit logicalWidth { 0.f };
+        InlineLayoutUnit hangablePunctuationStartWidth { 0.f };
     };
     HangingContent hangingContent { };
 

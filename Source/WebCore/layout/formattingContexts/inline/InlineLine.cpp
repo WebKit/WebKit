@@ -92,6 +92,7 @@ Line::Result Line::close()
         , contentLogicalRight
         , !!m_hangingContent.trailingWhitespaceLength()
         , m_hangingContent.trailingWidth()
+        , m_hangingContent.leadingPunctuationWidth()
         , m_hasNonDefaultBidiLevelRun
         , m_nonSpanningInlineLevelBoxCount
     };

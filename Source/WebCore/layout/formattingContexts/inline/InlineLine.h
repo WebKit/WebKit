@@ -207,6 +207,7 @@ public:
         InlineLayoutUnit contentLogicalRight { 0.f };
         bool isHangingTrailingContentWhitespace { false };
         InlineLayoutUnit hangingTrailingContentWidth { 0.f };
+        InlineLayoutUnit hangablePunctuationStartWidth { 0.f };
         bool contentNeedsBidiReordering { false };
         size_t nonSpanningInlineLevelBoxCount { 0 };
     };
@@ -269,6 +270,7 @@ private:
         InlineLayoutUnit trailingWidth() const { return m_trailingContent ? m_trailingContent->width : 0.f; }
         InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingContent && m_trailingContent->type == TrailingContent::Type::Whitespace ? m_trailingContent->width : 0.f; }
 
+        InlineLayoutUnit leadingPunctuationWidth() const { return m_leadingPunctuationWidth; }
         InlineLayoutUnit width() const { return m_leadingPunctuationWidth + trailingWidth(); }
 
         size_t length() const;
