@@ -1273,6 +1273,13 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
 
     checkedHistory()->updateForSameDocumentNavigation();
 
+    if (document->settings().navigationAPIEnabled() && !url.isAboutBlank()) {
+        if (RefPtr domWindow = document->domWindow()) {
+            if (RefPtr currentItem = checkedHistory()->currentItem())
+                domWindow->protectedNavigation()->updateForNavigation(currentItem.releaseNonNull(), policyChecker().loadType());
+        }
+    }
+
     // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor
     if (hashChange)
         protectedFrame()->checkedEventHandler()->stopAutoscrollTimer();

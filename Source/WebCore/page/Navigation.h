@@ -38,6 +38,8 @@ namespace WebCore {
 class HistoryItem;
 class SerializedScriptValue;
 
+enum class FrameLoadType : uint8_t;
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-method-tracker
 struct NavigationAPIMethodTracker {
     NavigationAPIMethodTracker(uint64_t id, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
@@ -122,6 +124,8 @@ public:
     Result forward(Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
     ExceptionOr<void> updateCurrentEntry(JSDOMGlobalObject&, UpdateCurrentEntryOptions&&);
+
+    void updateForNavigation(Ref<HistoryItem>&&, FrameLoadType);
 
 private:
     Navigation(ScriptExecutionContext*, LocalDOMWindow&);

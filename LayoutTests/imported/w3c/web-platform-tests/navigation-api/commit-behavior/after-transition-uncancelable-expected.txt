@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Cannot go back
 
 
-FAIL { commit: 'after-transition' } for an uncancelable traverse navigation promise_test: Unhandled rejection with value: object "InvalidStateError: Cannot go back"
+PASS { commit: 'after-transition' } for an uncancelable traverse navigation
 

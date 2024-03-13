@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Navigation.h"
 
+#include "EventNames.h"
 #include "Exception.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
@@ -314,6 +315,64 @@ bool Navigation::hasEntriesAndEventsDisabled() const
     if (window()->securityOrigin() && window()->securityOrigin()->isOpaque())
         return true;
     return false;
+}
+
+static NavigationNavigationType determineNavigationType(FrameLoadType frameLoadType)
+{
+    switch (frameLoadType) {
+    case FrameLoadType::Standard:
+        return NavigationNavigationType::Push;
+    case FrameLoadType::Back:
+    case FrameLoadType::Forward:
+    case FrameLoadType::IndexedBackForward:
+        return NavigationNavigationType::Traverse;
+    case FrameLoadType::Reload:
+    case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::ReloadExpiredOnly:
+    case FrameLoadType::Same:
+        return NavigationNavigationType::Reload;
+    case FrameLoadType::RedirectWithLockedBackForwardList:
+    case FrameLoadType::Replace:
+        return NavigationNavigationType::Replace;
+    };
+    RELEASE_ASSERT_NOT_REACHED();
+    return NavigationNavigationType::Push;
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#update-the-navigation-api-entries-for-a-same-document-navigation
+void Navigation::updateForNavigation(Ref<HistoryItem>&& item, FrameLoadType frameLoadType)
+{
+    if (hasEntriesAndEventsDisabled())
+        return;
+
+    auto oldCurrentEntry = currentEntry();
+    ASSERT(oldCurrentEntry);
+
+    Vector<Ref<NavigationHistoryEntry>> disposedEntries;
+
+    auto navigationType = determineNavigationType(frameLoadType);
+
+    // FIXME: handle NavigationNavigationType::Traverse
+    if (navigationType == NavigationNavigationType::Push) {
+        m_currentEntryIndex = *m_currentEntryIndex + 1;
+        for (size_t i = *m_currentEntryIndex; i < m_entries.size(); i++)
+            disposedEntries.append(m_entries[i]);
+        m_entries.resize(*m_currentEntryIndex + 1);
+    } else if (navigationType == NavigationNavigationType::Replace)
+        disposedEntries.append(*oldCurrentEntry);
+
+    if (navigationType == NavigationNavigationType::Push || navigationType == NavigationNavigationType::Replace)
+        m_entries[*m_currentEntryIndex] = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), item);
+
+    // FIXME: implement Step 8 Handle API method tracker.
+
+    auto currentEntryChangeEvent = NavigationCurrentEntryChangeEvent::create({ "currententrychange"_s }, {
+        { false, false, false }, navigationType, oldCurrentEntry
+    });
+    dispatchEvent(currentEntryChangeEvent);
+
+    for (auto& disposedEntry : disposedEntries)
+        disposedEntry->dispatchEvent(Event::create(eventNames().disposeEvent, { }));
 }
 
 } // namespace WebCore
