@@ -1,1 +1,5 @@
 webkit.org/b/267710 imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
+
+# webkit.org/b/270915 [ Ventura WK1 ] 2x imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode are constant crashes
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html [ Skip ]
