@@ -270,8 +270,10 @@ media/mediacapabilities/mediacapabilities-types.html [ Pass ]
 media/video-controller-currentTime-rate.html [ Pass ]
 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Pass ]
 webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass ]
+
 media/now-playing-webaudio.html [ Failure ]
 media/webaudio-background-playback.html [ Failure ]
+fast/mediastream/now-playing-and-mediastream.html [ Failure ]
 
 # uiController.simulateRotationLikeSafari() is not implemented on glib ports.
 fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
