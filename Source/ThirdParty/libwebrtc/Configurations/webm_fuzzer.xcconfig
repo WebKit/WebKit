@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2024 Apple Inc. All rights reserved.
+// Copyright (C) 2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -23,11 +23,6 @@
 
 #include "BaseTarget-libwebm.xcconfig"
 
-PRODUCT_NAME = webm;
+PRODUCT_NAME = webm_fuzzer;
 
-INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_INSTALL_PATH);
-PUBLIC_HEADERS_FOLDER_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/webm;
-
-GCC_PREPROCESSOR_DEFINITIONS = WEBRTC_WEBKIT_BUILD $(inherited);
-
-OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);
+GCC_ENABLE_CPP_EXCEPTIONS = YES;
