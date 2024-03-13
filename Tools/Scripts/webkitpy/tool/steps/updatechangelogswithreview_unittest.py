@@ -28,8 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture
 
 from webkitpy.tool.mocktool import MockOptions, MockTool
@@ -38,7 +38,10 @@ from webkitpy.tool.steps.updatechangelogswithreviewer import (
 )
 
 
-class UpdateChangeLogsWithReviewerTest(unittest.TestCase):
+class UpdateChangeLogsWithReviewerTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_guess_reviewer_from_bug(self):
         step = UpdateChangeLogsWithReviewer(MockTool(), MockOptions())
         with OutputCapture(level=logging.INFO) as captured:

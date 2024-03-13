@@ -28,15 +28,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture, mocks
 
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.closebugforlanddiff import CloseBugForLandDiff
 
 
-class CloseBugForLandDiffTest(unittest.TestCase):
+class CloseBugForLandDiffTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_empty_state(self):
         with mocks.Requests('commits.webkit.org', **{
             'r49824/json': mocks.Response.fromJson(dict(

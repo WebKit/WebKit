@@ -27,17 +27,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import string_utils
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.w3c.wpt_github import WPTGitHub
 
 
-class WPTGitHubTest(unittest.TestCase):
-
+class WPTGitHubTest(fake_filesystem_unittest.TestCase):
     def setUp(self):
+        self.setUpPyfakefs()
         self.wpt_github = WPTGitHub(MockHost(), user='rutabaga', token='decafbad')
 
     def test_init(self):

@@ -21,7 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import unittest
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
@@ -44,7 +45,10 @@ class TestDriver:
         """do nothing"""
 
 
-class SingleTestRunnerTest(unittest.TestCase):
+class SingleTestRunnerTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     def _add_file(self, port, file_path, contents):
         filesystem = port.host.filesystem

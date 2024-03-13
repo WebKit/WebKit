@@ -28,16 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.checkout.scm import CommitMessage
-from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.executive_mock import MockExecutive
 
 
 class MockSCM(object):
-    def __init__(self, filesystem=None, executive=None):
+    def __init__(self, filesystem, executive):
         self.checkout_root = "/mock-checkout"
         self.added_paths = set()
-        self._filesystem = filesystem or MockFileSystem()
-        self._executive = executive or MockExecutive()
+        self._filesystem = filesystem
+        self._executive = executive
         self._mockChangedFiles = ["MockFile1"]
 
     def add(self, destination_path):

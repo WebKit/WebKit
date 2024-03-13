@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.net import resultsjsonparser_unittest
@@ -36,7 +36,10 @@ from webkitpy.tool.commands.rebaselineserver import RebaselineServer, TestConfig
 from webkitpy.tool.servers import rebaselineserver
 
 
-class RebaselineTestTest(unittest.TestCase):
+class RebaselineTestTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_text_rebaseline_update(self):
         self._assertRebaseline(
             test_files=(
@@ -225,7 +228,10 @@ class RebaselineTestTest(unittest.TestCase):
         self.assertEqual(expected_success, success)
 
 
-class GetActualResultFilesTest(unittest.TestCase):
+class GetActualResultFilesTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test(self):
         test_config = get_test_config(result_files=(
             'fast/text-actual.txt',
@@ -239,7 +245,10 @@ class GetActualResultFilesTest(unittest.TestCase):
                 'fast/text.html', test_config))
 
 
-class GetBaselinesTest(unittest.TestCase):
+class GetBaselinesTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_no_baselines(self):
         self._assertBaselines(
             test_files=(),

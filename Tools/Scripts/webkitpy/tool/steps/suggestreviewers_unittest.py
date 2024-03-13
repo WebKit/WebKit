@@ -28,15 +28,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture
 
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.suggestreviewers import SuggestReviewers
 
 
-class SuggestReviewersTest(unittest.TestCase):
+class SuggestReviewersTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_disabled(self):
         step = SuggestReviewers(MockTool(), MockOptions(suggest_reviewers=False))
         with OutputCapture(level=logging.INFO) as captured:

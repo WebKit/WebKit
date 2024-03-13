@@ -27,20 +27,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.port.leakdetector import LeakDetector
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
 
 from webkitcorepy import OutputCapture
 
 
-class LeakDetectorTest(unittest.TestCase):
+class LeakDetectorTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def _mock_port(self):
         class MockPort(object):
             def __init__(self):
-                self._filesystem = MockFileSystem()
+                self._filesystem = MockCompatibleFileSystem()
                 self._executive = MockExecutive()
 
             def results_directory(self):
@@ -121,7 +124,7 @@ Binary Images:
     def test_leaks_files_in_directory(self):
         detector = self._make_detector()
         self.assertEqual(detector.leaks_files_in_directory('/bogus-directory'), [])
-        detector._filesystem = MockFileSystem({
+        detector._filesystem = MockCompatibleFileSystem({
             '/mock-results/DumpRenderTree-1234-leaks.txt': '',
             '/mock-results/DumpRenderTree-23423-leaks.txt': '',
             '/mock-results/DumpRenderTree-823-leaks.txt': '',
@@ -151,7 +154,7 @@ total: 5,888 bytes (0 bytes excluded)."""
 
     def test_count_total_leaks(self):
         detector = self._make_detector()
-        detector._filesystem = MockFileSystem({
+        detector._filesystem = MockCompatibleFileSystem({
             # The \xff is some non-utf8 characters to make sure we don't blow up trying to parse the file.
             '/mock-results/DumpRenderTree-1234-leaks.txt': '\xff\nProcess 1234: 12 leaks for 40 total leaked bytes.\n\xff\n',
             '/mock-results/DumpRenderTree-23423-leaks.txt': 'Process 1235: 12341 leaks for 27934 total leaked bytes.\n',

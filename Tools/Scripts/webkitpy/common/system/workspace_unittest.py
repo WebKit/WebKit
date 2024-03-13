@@ -26,16 +26,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.workspace import Workspace
 
 
-class WorkspaceTest(unittest.TestCase):
+class WorkspaceTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     def test_find_unused_filename(self):
-        filesystem = MockFileSystem({
+        filesystem = MockCompatibleFileSystem({
             "dir/foo.jpg": "",
             "dir/foo-1.jpg": "",
             "dir/foo-2.jpg": "",

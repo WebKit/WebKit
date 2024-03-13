@@ -31,7 +31,6 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 # FIXME: These imports are wrong, we should use a shared MockCommittersList.
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.bugzilla.bugzilla_mock import _mock_reviewers
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 
 class MockCommitMessage(object):
@@ -98,10 +97,10 @@ mock_revisions = {
 
 
 class MockCheckout(object):
-    def __init__(self):
+    def __init__(self, filesystem):
         # FIXME: It's unclear if a MockCheckout is very useful.  A normal Checkout
         # with a MockSCM/MockFileSystem/MockExecutive is probably better.
-        self._filesystem = MockFileSystem()
+        self._filesystem = filesystem
 
     def commit_info_for_revision(self, svn_revision):
         if isinstance(svn_revision, str) and svn_revision.startswith('r'):

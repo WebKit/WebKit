@@ -28,8 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture
 
 from webkitpy.common.config.ports import DeprecatedPort
@@ -37,9 +37,10 @@ from webkitpy.tool import steps
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
 
-class StepsTest(unittest.TestCase):
-
+class StepsTest(fake_filesystem_unittest.TestCase):
     def setUp(self):
+        self.setUpPyfakefs()
+
         # Port._build_path() calls Tools/Scripts/webkit-build-directory and caches the result. When capturing output,
         # this can cause the first invocation of Port._build_path() to have more output than subsequent invocations.
         # This may cause test flakiness when test order changes. By explicitly calling Port._build_path() before running

@@ -30,11 +30,14 @@
 
 import json
 import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitcorepy import StringIO, OutputCapture
 
 from webkitpy.common.system import path
 from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_darwin
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
@@ -164,8 +167,10 @@ class StreamTestingMixin(object):
         self.assertTrue(stream.getvalue())
 
 
-class RunTest(unittest.TestCase, StreamTestingMixin):
+class RunTest(fake_filesystem_unittest.TestCase, StreamTestingMixin):
     def setUp(self):
+        self.setUpPyfakefs()
+
         # A real PlatformInfo object is used here instead of a
         # MockPlatformInfo because we need to actually check for
         # Windows and Mac to skip some tests.
@@ -173,7 +178,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         # FIXME: Remove this when we fix test-webkitpy to work
         # properly on cygwin (bug 63846).
-        self.should_test_processes = not self._platform.is_win()
+        self.should_test_processes = True
 
     def serial_test_basic(self):
         options, args = parse_args(tests_included=True)
@@ -205,7 +210,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
         self.assertEqual(json.loads(json_to_eval), details.summarized_results)
 
-        self.assertEqual(host.user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
+        self.assertEqual(host.user.opened_urls, [path.abspath_to_uri(host.platform, '/tmp/layout-test-results/results.html')])
 
     def serial_test_batch_size(self):
         batch_tests_run = get_test_batches(['--batch-size', '2'])
@@ -213,16 +218,28 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
     def test_child_processes_2(self):
+        # We need to disable pyfakefs so we can run multiple processes.
+        self.pause()
+
         if self.should_test_processes:
             _, regular_output, _ = logging_run(
-                ['--debug-rwt-logging', '--child-processes', '2'], shared_port=False)
+                ["--debug-rwt-logging", "--child-processes", "2"],
+                shared_port=False,
+                host=MockHost(filesystem=MockFileSystem()),
+            )
             self.assertTrue(any(['Running 2 ' in line for line in regular_output.getvalue().splitlines()]))
 
     def test_child_processes_min(self):
+        # We need to disable pyfakefs so we can run multiple processes.
+        self.pause()
+
         if self.should_test_processes:
             _, regular_output, _ = logging_run(
                 ['--debug-rwt-logging', '--child-processes', '2', '-i', 'passes/passes', '-i', 'platform', 'passes'],
-                tests_included=True, shared_port=False)
+                tests_included=True,
+                shared_port=False,
+                host=MockHost(filesystem=MockFileSystem()),
+            )
             self.assertTrue(any(['Running 1 ' in line for line in regular_output.getvalue().splitlines()]))
 
     def serial_test_dryrun(self):
@@ -246,8 +263,17 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             ['failures/expected/exception.html', '--child-processes', '1'], tests_included=True)
 
         if self.should_test_processes:
-            self.assertRaises(BaseException, logging_run,
-                ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True, shared_port=False)
+            # We need to disable pyfakefs so we can run multiple processes.
+            self.pause()
+
+            self.assertRaises(
+                BaseException,
+                logging_run,
+                ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'],
+                tests_included=True,
+                shared_port=False,
+                host=MockHost(filesystem=MockFileSystem()),
+            )
 
     def serial_test_full_results_html(self):
         # FIXME: verify html?
@@ -261,7 +287,15 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(details.exit_code, INTERRUPTED_EXIT_STATUS)
 
         if self.should_test_processes:
-            _, regular_output, _ = logging_run(['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'], tests_included=True, shared_port=False)
+            # We need to disable pyfakefs so we can run multiple processes.
+            self.pause()
+
+            _, regular_output, _ = logging_run(
+                ['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'],
+                tests_included=True,
+                shared_port=False,
+                host=MockHost(filesystem=MockFileSystem()),
+            )
             self.assertTrue(any(['Interrupted, exiting' in line for line in regular_output.getvalue().splitlines()]))
 
     def test_all_tests_skipped(self):
@@ -796,6 +830,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
         host = MockHost()
+        host.filesystem.remove('/tmp')  # Remove the /tmp symlink.
         host.filesystem.maybe_make_directory('/tmp/cwd')
         host.filesystem.chdir('/tmp/cwd')
         _, _, user = logging_run(['--results-directory=foo'], tests_included=True, host=host)
@@ -994,6 +1029,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(full_results['has_pretty_patch'], False)
 
     def test_unsupported_platform(self):
+        # We need to disable pyfakefs so we can run a non-test platform.
+        self.pause()
+
         stdout = StringIO()
         stderr = StringIO()
         res = run_webkit_tests.main(['--platform', 'foo'], stdout, stderr)
@@ -1012,8 +1050,11 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         if not self.should_test_processes:
             return
 
+        # We need to disable pyfakefs so we can run multiple processes.
+        self.pause()
+
         options, parsed_args = parse_args(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True, print_nothing=False)
-        host = MockHost()
+        host = MockHost(filesystem=MockFileSystem())
         port_obj = host.port_factory.get(port_name=options.platform, options=options)
         logging_stream = StringIO()
         run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
@@ -1116,7 +1157,10 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(3, len(by_type[DeviceType.from_string('iPad (9th generation)')]))
 
 
-class RebaselineTest(unittest.TestCase, StreamTestingMixin):
+class RebaselineTest(fake_filesystem_unittest.TestCase, StreamTestingMixin):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def assertBaselines(self, file_list, file, extensions, err):
         """assert that the file_list contains the baselines."""
         for ext in extensions:
@@ -1175,6 +1219,12 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
                 "/tmp/layout-test-results/full_results.json",
                 "/tmp/layout-test-results/layout_test_perf_metrics.json",
                 "/tmp/layout-test-results/stats.json",
+                "/tmp/layout-test-results/failures/unexpected/missing_image-actual.png",
+                "/tmp/layout-test-results/failures/unexpected/missing_render_tree_dump-actual.txt",
+                "/tmp/layout-test-results/failures/unexpected/missing_text-actual.txt",
+                "/tmp/layout-test-results/full_results.json",
+                "/tmp/layout-test-results/layout_test_perf_metrics.json",
+                "/tmp/layout-test-results/stats.json",
             },
             set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
         )
@@ -1211,7 +1261,10 @@ class PortTest(unittest.TestCase):
         self.assert_mock_port_works('mac-lion')
 
 
-class MainTest(unittest.TestCase):
+class MainTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_exception_handling(self):
         orig_run_fn = run_webkit_tests.run
 
@@ -1233,7 +1286,7 @@ class MainTest(unittest.TestCase):
         stderr = StringIO()
         try:
             run_webkit_tests.run = interrupting_run
-            res = run_webkit_tests.main([], stdout, stderr)
+            res = run_webkit_tests.main(['--platform', 'test'], stdout, stderr)
             self.assertEqual(res, INTERRUPTED_EXIT_STATUS)
 
             run_webkit_tests.run = successful_run
@@ -1241,7 +1294,7 @@ class MainTest(unittest.TestCase):
             self.assertEqual(res, -1)
 
             run_webkit_tests.run = exception_raising_run
-            res = run_webkit_tests.main([], stdout, stderr)
+            res = run_webkit_tests.main(['--platform', 'test'], stdout, stderr)
             self.assertEqual(res, run_webkit_tests.EXCEPTIONAL_EXIT_STATUS)
         finally:
             run_webkit_tests.run = orig_run_fn

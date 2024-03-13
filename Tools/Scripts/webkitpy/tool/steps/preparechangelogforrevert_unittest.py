@@ -26,16 +26,32 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 # Do not import changelog_unittest.ChangeLogTest directly as that will cause it to be run again.
 from webkitpy.common.checkout import changelog_unittest
 from webkitpy.common.checkout.changelog import ChangeLog
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.tool.steps.preparechangelogforrevert import *
 
 
-class UpdateChangeLogsForRevertTest(unittest.TestCase):
+class UpdateChangeLogsForRevertTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+
+        # Find the path to the (real) contributors.json file
+        webkit_finder = WebKitFinder(FileSystem())
+        contributors_path = webkit_finder.path_from_webkit_base(
+            "metadata", "contributors.json"
+        )
+
+        self.setUpPyfakefs()
+
+        # Map the (real) contributors.json file into the fake filesystem
+        self.fs.add_real_file(contributors_path)
+
+
     _revert_entry = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, reverting r12345.
@@ -157,7 +173,7 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
     def _assert_message_for_revert_output(self, args, expected_entry):
         changelog_contents = u"%s\n%s" % (changelog_unittest.ChangeLogTest._new_entry_boilerplate, changelog_unittest.ChangeLogTest._example_changelog)
         changelog_path = "ChangeLog"
-        fs = MockFileSystem({changelog_path: changelog_contents.encode("utf-8")})
+        fs = MockCompatibleFileSystem({changelog_path: changelog_contents.encode("utf-8")})
         changelog = ChangeLog(changelog_path, fs)
         changelog.update_with_unreviewed_message(PrepareChangeLogForRevert._message_for_revert(*args))
         actual_entry = changelog.latest_entry()

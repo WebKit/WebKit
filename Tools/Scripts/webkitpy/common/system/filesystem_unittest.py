@@ -329,7 +329,9 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
         fs = FileSystem()
         parentDir = fs.normpath(fs.join(self._this_dir, ".."))
 
-        self.assertTrue(self._this_dir in fs.dirs_under(parentDir))
+        self.assertIn(self._this_dir, fs.dirs_under(parentDir))
+
+        self.assertNotIn(parentDir, fs.dirs_under(fs.join(parentDir, "")))
 
         def filter_no_dir(fs, dirpath):
             return False

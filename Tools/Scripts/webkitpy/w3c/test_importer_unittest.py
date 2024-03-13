@@ -28,10 +28,10 @@
 
 import json
 import os
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.port.test import TestPort
 from webkitpy.w3c.test_downloader import TestDownloader
@@ -66,7 +66,10 @@ MINIMAL_TESTHARNESS = '''
 '''
 
 
-class TestImporterTest(unittest.TestCase):
+class TestImporterTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def _parse_options(self, args):
         options, args = parse_args(args)
         return options
@@ -413,7 +416,7 @@ class TestImporterTest(unittest.TestCase):
 
         host = MockHost()
         host.executive = MockExecutive2()
-        host.filesystem = MockFileSystem(files=FAKE_FILES)
+        host.filesystem = MockCompatibleFileSystem(files=FAKE_FILES)
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
 
@@ -434,7 +437,7 @@ class TestImporterTest(unittest.TestCase):
 
         host = MockHost()
         host.executive = MockExecutive2()
-        host.filesystem = MockFileSystem(files=FAKE_FILES)
+        host.filesystem = MockCompatibleFileSystem(files=FAKE_FILES)
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
 
@@ -452,7 +455,7 @@ class TestImporterTest(unittest.TestCase):
 
         host = MockHost()
         host.executive = MockExecutive2()
-        host.filesystem = MockFileSystem(files=FAKE_FILES)
+        host.filesystem = MockCompatibleFileSystem(files=FAKE_FILES)
 
         fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
         self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/new-manual.html'))

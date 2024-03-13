@@ -28,8 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture
 
 from webkitpy.common.system.executive import ScriptError
@@ -38,7 +38,10 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.commit import Commit
 
 
-class CommitTest(unittest.TestCase):
+class CommitTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def _test_check_test_expectations(self, filename):
         options = MockOptions()
         options.git_commit = ""

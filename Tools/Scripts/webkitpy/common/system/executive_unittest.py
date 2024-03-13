@@ -45,11 +45,16 @@ if third_party_py not in sys.path:
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import string_utils
 
 
-class ScriptErrorTest(unittest.TestCase):
+class ScriptErrorTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_message_with_output(self):
         error = ScriptError('My custom message!', '', -1)
         self.assertEqual(error.message_with_output(), 'My custom message!')
@@ -78,9 +83,12 @@ def command_line(cmd, *args):
     return [sys.executable, __file__, '--' + cmd] + list(args)
 
 
-class ExecutiveTest(unittest.TestCase):
+class FakefsExecutiveTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def assert_interpreter_for_content(self, intepreter, content):
-        fs = MockFileSystem()
+        fs = MockCompatibleFileSystem()
 
         tempfile, temp_name = fs.open_binary_tempfile('')
         tempfile.write(content)
@@ -90,20 +98,36 @@ class ExecutiveTest(unittest.TestCase):
         self.assertEqual(file_interpreter, intepreter)
 
     def test_interpreter_for_script(self):
-        self.assert_interpreter_for_content(None, '')
-        self.assert_interpreter_for_content(None, 'abcd\nefgh\nijklm')
-        self.assert_interpreter_for_content(None, '##/usr/bin/perl')
-        self.assert_interpreter_for_content('perl', '#!/usr/bin/env perl')
-        self.assert_interpreter_for_content('perl', '#!/usr/bin/env perl\nfirst\nsecond')
-        self.assert_interpreter_for_content('perl', '#!/usr/bin/perl')
-        self.assert_interpreter_for_content('perl', '#!/usr/bin/perl -w')
-        self.assert_interpreter_for_content(sys.executable, '#!/usr/bin/env python')
-        self.assert_interpreter_for_content(sys.executable, '#!/usr/bin/env python\nfirst\nsecond')
-        self.assert_interpreter_for_content(sys.executable, '#!/usr/bin/python')
-        self.assert_interpreter_for_content('ruby', '#!/usr/bin/env ruby')
-        self.assert_interpreter_for_content('ruby', '#!/usr/bin/env ruby\nfirst\nsecond')
-        self.assert_interpreter_for_content('ruby', '#!/usr/bin/ruby')
+        self.assert_interpreter_for_content(None, b'')
+        self.assert_interpreter_for_content(None, b'abcd\nefgh\nijklm')
+        self.assert_interpreter_for_content(None, b'##/usr/bin/perl')
+        self.assert_interpreter_for_content('perl', b'#!/usr/bin/env perl')
+        self.assert_interpreter_for_content('perl', b'#!/usr/bin/env perl\nfirst\nsecond')
+        self.assert_interpreter_for_content('perl', b'#!/usr/bin/perl')
+        self.assert_interpreter_for_content('perl', b'#!/usr/bin/perl -w')
+        self.assert_interpreter_for_content(sys.executable, b'#!/usr/bin/env python')
+        self.assert_interpreter_for_content(sys.executable, b'#!/usr/bin/env python\nfirst\nsecond')
+        self.assert_interpreter_for_content(sys.executable, b'#!/usr/bin/python')
+        self.assert_interpreter_for_content('ruby', b'#!/usr/bin/env ruby')
+        self.assert_interpreter_for_content('ruby', b'#!/usr/bin/env ruby\nfirst\nsecond')
+        self.assert_interpreter_for_content('ruby', b'#!/usr/bin/ruby')
 
+    def _assert_windows_image_name(self, name, expected_windows_name):
+        executive = Executive()
+        windows_name = executive._windows_image_name(name)
+        self.assertEqual(windows_name, expected_windows_name)
+
+    def test_windows_image_name(self):
+        self._assert_windows_image_name("foo", "foo.exe")
+        self._assert_windows_image_name("foo.exe", "foo.exe")
+        self._assert_windows_image_name("foo.com", "foo.com")
+        # If the name looks like an extension, even if it isn't
+        # supposed to, we have no choice but to return the original name.
+        self._assert_windows_image_name("foo.baz", "foo.baz")
+        self._assert_windows_image_name("foo.baz.exe", "foo.baz.exe")
+
+
+class ExecutiveTest(unittest.TestCase):
     def test_run_command_with_bad_command(self):
         self.assertRaises(OSError, lambda: Executive().run_command(["foo_bar_command_blah"], ignore_errors=True, return_exit_code=True))
         self.assertRaises(OSError, lambda: Executive().run_and_throw_if_fail(["foo_bar_command_blah"], quiet=True))
@@ -210,20 +234,6 @@ class ExecutiveTest(unittest.TestCase):
                 self.assertEqual(process.wait(), expected_exit_code)
             # Killing again should fail silently.
             executive.kill_all(never_ending_command()[0])
-
-    def _assert_windows_image_name(self, name, expected_windows_name):
-        executive = Executive()
-        windows_name = executive._windows_image_name(name)
-        self.assertEqual(windows_name, expected_windows_name)
-
-    def test_windows_image_name(self):
-        self._assert_windows_image_name("foo", "foo.exe")
-        self._assert_windows_image_name("foo.exe", "foo.exe")
-        self._assert_windows_image_name("foo.com", "foo.com")
-        # If the name looks like an extension, even if it isn't
-        # supposed to, we have no choice but to return the original name.
-        self._assert_windows_image_name("foo.baz", "foo.baz")
-        self._assert_windows_image_name("foo.baz.exe", "foo.baz.exe")
 
     def serial_test_check_running_pid(self):
         executive = Executive()

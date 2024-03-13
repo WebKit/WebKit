@@ -20,14 +20,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.config.ports_mock import MockPort
 from webkitpy.common.host_mock import MockHost
 from webkitpy.w3c.wpt_runner import WPTRunner, parse_args
 
 
-class WPTRunnerTest(unittest.TestCase):
+class WPTRunnerTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     class MockTestDownloader(object):
         @staticmethod

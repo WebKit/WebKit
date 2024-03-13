@@ -28,9 +28,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from pyfakefs import fake_filesystem_unittest
+
 from webkitpy.common.system.executive_mock import MockProcess
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import Port
@@ -43,7 +43,10 @@ from webkitcorepy import OutputCapture
 _log = logging.getLogger(__name__)
 
 
-class XvfbDriverTest(unittest.TestCase):
+class XvfbDriverTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def assertRaisesRegex(self, *args, **kwargs):
         try:
             return super(XvfbDriverTest, self).assertRaisesRegex(*args, **kwargs)

@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.models import test_expectations
@@ -119,8 +119,9 @@ def summarized_results(port, expected, passing, flaky, include_passes=False):
         enabled_pixel_tests_in_retry=False, include_passes=include_passes)
 
 
-class InterpretTestFailuresTest(unittest.TestCase):
+class InterpretTestFailuresTest(fake_filesystem_unittest.TestCase):
     def setUp(self):
+        self.setUpPyfakefs()
         host = MockHost()
         self.port = host.port_factory.get(port_name='test')
 
@@ -149,8 +150,9 @@ class InterpretTestFailuresTest(unittest.TestCase):
         self.assertIn('is_missing_image', test_dict)
 
 
-class SummarizedResultsTest(unittest.TestCase):
+class SummarizedResultsTest(fake_filesystem_unittest.TestCase):
     def setUp(self):
+        self.setUpPyfakefs()
         host = MockHost(initialize_scm_by_default=False, create_stub_repository_files=True)
         self.port = host.port_factory.get(port_name='test', options=MockOptions(http=True, pixel_tests=False, world_leaks=False))
 
@@ -159,30 +161,50 @@ class SummarizedResultsTest(unittest.TestCase):
         self.assertNotIn('revision', summary)
 
     def test_git_revision_identifier(self):
+        self.fs.pause()
+        mocks.add_datafiles_to_pyfakefs(self.fs)
+        self.fs.resume()
+
         with mocks.local.Git(path='/'), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
             self.assertEqual(summary['revision'], '5@main')
 
     def test_summarized_results_wontfix(self):
+        self.fs.pause()
+        mocks.add_datafiles_to_pyfakefs(self.fs)
+        self.fs.resume()
+
         with mocks.local.Git(path='/'), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
             self.assertTrue(summary['tests']['failures']['expected']['hang.html']['wontfix'])
 
     def test_summarized_results_include_passes(self):
+        self.fs.pause()
+        mocks.add_datafiles_to_pyfakefs(self.fs)
+        self.fs.resume()
+
         with mocks.local.Git(path='/'), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
             self.assertEqual(summary['tests']['passes']['text.html']['expected'], 'PASS')
 
     def test_summarized_results_world_leaks_disabled(self):
+        self.fs.pause()
+        mocks.add_datafiles_to_pyfakefs(self.fs)
+        self.fs.resume()
+
         with mocks.local.Git(path='/'), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
             self.assertEqual(summary['tests']['failures']['expected']['leak.html']['expected'], 'PASS')
 
     def test_summarized_run_metadata(self):
+        self.fs.pause()
+        mocks.add_datafiles_to_pyfakefs(self.fs)
+        self.fs.resume()
+
         with mocks.local.Git(path='/'), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)

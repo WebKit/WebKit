@@ -28,8 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture
 
 from webkitpy.thirdparty.mock import Mock
@@ -37,7 +37,10 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.validatechangelogs import ValidateChangeLogs
 
 
-class ValidateChangeLogsTest(unittest.TestCase):
+class ValidateChangeLogsTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     def _assert_start_line_produces_output(self, start_line, should_fail=False, non_interactive=False):
         tool = MockTool()

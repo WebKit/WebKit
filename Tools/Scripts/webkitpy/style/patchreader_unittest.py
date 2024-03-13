@@ -29,14 +29,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.style.patchreader import PatchReader
 
 
-class PatchReaderTest(unittest.TestCase):
-
+class PatchReaderTest(fake_filesystem_unittest.TestCase):
     """Test the PatchReader class."""
 
     class MockTextFileReader(object):
@@ -57,6 +56,8 @@ class PatchReaderTest(unittest.TestCase):
             pass
 
     def setUp(self):
+        self.setUpPyfakefs()
+
         file_reader = self.MockTextFileReader()
         self._file_reader = file_reader
         self._patch_checker = PatchReader(file_reader)
@@ -94,7 +95,7 @@ index ef65bee..e3db70e 100644
         self._assert_checked([], 1)
 
     def test_check_patch_with_png_deletion(self):
-        fs = MockFileSystem()
+        fs = MockCompatibleFileSystem()
         diff_text = """Index: LayoutTests/platform/mac/foo-expected.png
 ===================================================================
 Cannot display: file marked as a binary type.

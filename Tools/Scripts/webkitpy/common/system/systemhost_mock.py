@@ -29,7 +29,7 @@
 
 from webkitpy.common.system.environment import Environment
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
 from webkitpy.common.system.user_mock import MockUser
 from webkitpy.common.system.workspace_mock import MockWorkspace
@@ -40,7 +40,7 @@ from webkitcorepy import mocks
 class MockSystemHost(object):
     def __init__(self, log_executive=False, executive_throws_when_run=None, os_name=None, os_version=None, executive=None, filesystem=None):
         self.executive = executive or MockExecutive(should_log=log_executive, should_throw_when_run=executive_throws_when_run)
-        self.filesystem = filesystem or MockFileSystem()
+        self.filesystem = filesystem or MockCompatibleFileSystem()
         self.user = MockUser()
         self.platform = MockPlatformInfo()
         if os_name:

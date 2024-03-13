@@ -26,17 +26,20 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
 import sys
-import unittest
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.port import test
-from webkitpy.layout_tests.servers.websocket_server import PyWebSocket
 from webkitpy.layout_tests.servers.http_server_base import ServerError
+from webkitpy.layout_tests.servers.websocket_server import PyWebSocket
+from webkitpy.port import test
 
 
-class TestWebsocketServer(unittest.TestCase):
+class TestWebsocketServer(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_start_cmd(self):
         # Fails on win - see https://bugs.webkit.org/show_bug.cgi?id=84726
         if sys.platform.startswith('win') or sys.platform == 'cygwin':

@@ -21,16 +21,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.test.finder import Finder
 
 from webkitcorepy import OutputCapture
 
 
-class FinderTest(unittest.TestCase):
+class FinderTest(fake_filesystem_unittest.TestCase):
     def setUp(self):
+        self.setUpPyfakefs()
+
         files = {
           '/foo/bar/baz.py': '',
           '/foo/bar/baz_unittest.py': '',
@@ -42,8 +44,8 @@ class FinderTest(unittest.TestCase):
           '/foo2/bar2/missing.pyc': '',
           '/tmp/another_unittest.py': '',
         }
-        self.fs = MockFileSystem(files)
-        self.finder = Finder(self.fs)
+        self.mock_fs = MockCompatibleFileSystem(files)
+        self.finder = Finder(self.mock_fs)
         self.finder.add_tree('/foo', 'bar')
         self.finder.add_tree('/foo2', 'bar2')
         self.finder.add_tree('/foo/libraries', 'corelib')
@@ -79,9 +81,9 @@ class FinderTest(unittest.TestCase):
         self.assertEqual(self.finder.to_module('/foo/bar/pytest.py'), 'bar.pytest')
 
     def test_clean(self):
-        self.assertTrue(self.fs.exists('/foo2/bar2/missing.pyc'))
+        self.assertTrue(self.mock_fs.exists('/foo2/bar2/missing.pyc'))
         self.finder.clean_trees()
-        self.assertFalse(self.fs.exists('/foo2/bar2/missing.pyc'))
+        self.assertFalse(self.mock_fs.exists('/foo2/bar2/missing.pyc'))
 
     def check_names(self, names, expected_names, find_all=True):
         self.assertEqual(self.finder.find_names(names, find_all), expected_names)
@@ -94,14 +96,14 @@ class FinderTest(unittest.TestCase):
         self.check_names(['foobar'], ['foobar'], find_all=False)
 
     def test_paths(self):
-        self.fs.chdir('/foo/bar')
+        self.mock_fs.chdir('/foo/bar')
         self.check_names(['baz_unittest.py'], ['bar.baz_unittest'])
         self.check_names(['./baz_unittest.py'], ['bar.baz_unittest'])
         self.check_names(['/foo/bar/baz_unittest.py'], ['bar.baz_unittest'])
         self.check_names(['.'], ['bar.baz_unittest'])
         self.check_names(['../../foo2/bar2'], ['bar2.baz2_integrationtest'])
 
-        self.fs.chdir('/')
+        self.mock_fs.chdir('/')
         self.check_names(['bar'], ['bar.baz_unittest'])
         self.check_names(['/foo/bar/'], ['bar.baz_unittest'])
         self.check_names(['corelib'], ['corelib.baz_unittest'])
@@ -123,7 +125,7 @@ class FinderTest(unittest.TestCase):
         self.check_names(['bar.notexist_unittest'], ['bar.notexist_unittest'])
 
     def test_non_package(self):
-        finder = Finder(self.fs)
+        finder = Finder(self.mock_fs)
         finder.add_tree('/foo/bar', '')
         expected_names = ['baz_unittest']
         self.assertEqual(finder.find_names([], True), expected_names)

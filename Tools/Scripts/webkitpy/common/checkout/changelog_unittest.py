@@ -27,14 +27,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.checkout.changelog import ChangeLog, ChangeLogEntry, CommitterList, parse_bug_id_from_changelog
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
+from webkitpy.common.webkit_finder import WebKitFinder
+
 from webkitcorepy import StringIO
 
 
-class ChangeLogTest(unittest.TestCase):
+class ChangeLogTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
+        self.pause()
+        webkit_finder = WebKitFinder(FileSystem())
+        contributors_path = webkit_finder.path_from_webkit_base(
+            "metadata", "contributors.json"
+        )
+        self.resume()
+
+        self.fs.add_real_file(contributors_path)
 
     _changelog_path = 'Tools/ChangeLog'
 
@@ -711,7 +725,7 @@ class ChangeLogTest(unittest.TestCase):
 '''
 
     def test_set_reviewer(self):
-        fs = MockFileSystem()
+        fs = MockCompatibleFileSystem()
 
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate_with_bugurl, self._example_changelog)
         reviewer_name = 'Test Reviewer'
@@ -742,7 +756,7 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
     def test_set_short_description_and_bug_url(self):
-        fs = MockFileSystem()
+        fs = MockCompatibleFileSystem()
 
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate_with_bugurl, self._example_changelog)
         fs.write_text_file(self._changelog_path, changelog_contents)
@@ -764,7 +778,7 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
     def test_delete_entries(self):
-        fs = MockFileSystem()
+        fs = MockCompatibleFileSystem()
         fs.write_text_file(self._changelog_path, self._example_changelog)
         ChangeLog(self._changelog_path, fs).delete_entries(8)
         actual_contents = fs.read_text_file(self._changelog_path)
@@ -789,7 +803,7 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
     def test_prepend_text(self):
-        fs = MockFileSystem()
+        fs = MockCompatibleFileSystem()
         fs.write_text_file(self._changelog_path, self._example_changelog)
         ChangeLog(self._changelog_path, fs).prepend_text(self._example_entry + "\n")
         actual_contents = fs.read_text_file(self._changelog_path)

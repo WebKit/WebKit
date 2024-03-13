@@ -27,13 +27,14 @@
 
 import io
 import json
-import unittest
 import zipfile
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.net.bugzilla.test_expectation_updater import TestExpectationUpdater
 from webkitpy.common.system.executive_mock import MockExecutive2
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.thirdparty import mock
 
 
@@ -572,7 +573,10 @@ class MockRequestsGet:
         return json.loads(self.content)
 
 
-class TestExpectationUpdaterTest(unittest.TestCase):
+class TestExpectationUpdaterTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def _exists(self, host, filename):
         return host.filesystem.exists("/mock-checkout/LayoutTests/" + filename)
 
@@ -583,7 +587,7 @@ class TestExpectationUpdaterTest(unittest.TestCase):
         host = MockHost()
         port = host.port_factory.get()
         host.executive = MockExecutive2(exception=OSError())
-        host.filesystem = MockFileSystem(files={
+        host.filesystem = MockCompatibleFileSystem(files={
             '/mock-checkout/LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-expected.txt': 'e-wk1',
             '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt': "g",
             '/mock-checkout/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-001-expected.txt': "h",

@@ -23,10 +23,10 @@
 
 """Unit test for png.py."""
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.style.checkers.png import PNGChecker
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 
@@ -43,7 +43,10 @@ class MockSCMDetector(object):
         return self._prop
 
 
-class PNGCheckerTest(unittest.TestCase):
+class PNGCheckerTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     """Tests PNGChecker class."""
 
     def test_init(self):
@@ -63,7 +66,7 @@ class PNGCheckerTest(unittest.TestCase):
             error = (line_number, category, confidence, message)
             errors.append(error)
 
-        fs = MockFileSystem()
+        fs = MockCompatibleFileSystem()
         file_path = "foo-expected.png"
         fs.write_binary_file(file_path, "Dummy binary data")
         scm = MockSCMDetector('git')

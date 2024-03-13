@@ -22,12 +22,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import time
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import string_utils
 
 from webkitpy.common.system.crashlogs import CrashLogs
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
@@ -295,7 +296,10 @@ quit:
 """.format(process_name=process_name, pid=pid)
 
 
-class CrashLogsTest(unittest.TestCase):
+class CrashLogsTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     DARWIN_MOCK_CRASH_DIRECTORY = '/Users/mock/Library/Logs/DiagnosticReports'
 
     def create_crash_logs_darwin(self):
@@ -321,7 +325,7 @@ class CrashLogsTest(unittest.TestCase):
 
         self.files = {key: string_utils.encode(value) for key, value in self.files.items()}
 
-        self.filesystem = MockFileSystem(self.files)
+        self.filesystem = MockCompatibleFileSystem(self.files)
         crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem), CrashLogsTest.DARWIN_MOCK_CRASH_DIRECTORY)
         logs = self.filesystem.files_under('/Users/mock/Library/Logs/DiagnosticReports/')
         for path in reversed(sorted(logs)):
@@ -368,7 +372,7 @@ class CrashLogsTest(unittest.TestCase):
         self.assertMultiLineEqual(log, self.mock_crash_report)
         log = crash_logs.find_newest_log("DumpRenderTree", 28531)
         self.assertIsNone(log)
-        log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0)
+        log = crash_logs.find_newest_log("DumpRenderTree", newer_than=time.time() + 86400)
         self.assertIsNone(log)
 
         def bad_read(path):
@@ -381,7 +385,7 @@ class CrashLogsTest(unittest.TestCase):
         log = crash_logs.find_newest_log("DumpRenderTree", 28531, include_errors=True)
         self.assertIn('IOError: No such file or directory', log)
 
-        self.filesystem = MockFileSystem(self.files)
+        self.filesystem = MockCompatibleFileSystem(self.files)
         crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem), CrashLogsTest.DARWIN_MOCK_CRASH_DIRECTORY)
         self.filesystem.mtime = bad_mtime
         log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0, include_errors=True)
@@ -403,7 +407,7 @@ class CrashLogsTest(unittest.TestCase):
         files['~/CrashLog_31a0_2013-06-03_12-24-22-119.txt'] = None
         files['~/CrashLog_01a3_2013-06-03_12-25-23-120.txt'] = other_process_mock_crash_report
         files['~/CrashLog_aadd_2013-06-03_12-26-24-121.txt'] = misformatted_mock_crash_report
-        filesystem = MockFileSystem(files)
+        filesystem = MockCompatibleFileSystem(files)
         mock_host = MockSystemHost(os_name='win', filesystem=filesystem)
         crash_logs = CrashLogs(mock_host, "~")
 

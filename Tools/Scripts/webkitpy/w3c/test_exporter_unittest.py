@@ -20,17 +20,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.w3c.test_exporter import WebPlatformTestExporter, parse_args
 from webkitpy.w3c.wpt_github_mock import MockWPTGitHub
 
 mock_linter = None
 
-class TestExporterTest(unittest.TestCase):
+
+class TestExporterTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     maxDiff = None
 
     class MockBugzilla(object):
@@ -100,7 +104,7 @@ class TestExporterTest(unittest.TestCase):
         def __init__(self):
             MockHost.__init__(self)
             self.executive = MockExecutive2(exception=OSError())
-            self.filesystem = MockFileSystem()
+            self.filesystem = MockCompatibleFileSystem()
             self._mockSCM = TestExporterTest.MockGit(None, None, None, None)
 
         def scm(self):

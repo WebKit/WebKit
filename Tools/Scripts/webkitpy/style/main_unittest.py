@@ -24,11 +24,13 @@
 import logging
 import optparse
 import unittest
+from pyfakefs import fake_filesystem_unittest
 
 import webkitpy.style.checker as checker
 
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.logtesting import LogTesting
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
@@ -37,13 +39,15 @@ from webkitpy.style.main import change_directory
 from webkitcorepy import OutputCapture
 
 
-class ChangeDirectoryTest(unittest.TestCase):
+class ChangeDirectoryTest(fake_filesystem_unittest.TestCase):
     _original_directory = "/original"
     _checkout_root = "/WebKit"
 
     def setUp(self):
+        self.setUpPyfakefs()
+
         self._log = LogTesting.setUp(self)
-        self.filesystem = MockFileSystem(dirs=[self._original_directory, self._checkout_root], cwd=self._original_directory)
+        self.filesystem = MockCompatibleFileSystem(dirs=[self._original_directory, self._checkout_root], cwd=self._original_directory)
 
     def tearDown(self):
         self._log.tearDown()

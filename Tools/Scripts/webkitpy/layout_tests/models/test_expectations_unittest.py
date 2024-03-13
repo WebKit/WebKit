@@ -27,12 +27,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from collections import OrderedDict
 
+from pyfakefs import fake_filesystem_unittest
+from webkitcorepy import OutputCapture
 from collections import OrderedDict
 
 from webkitpy.common.host_mock import MockHost
-
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_configuration import *
@@ -40,15 +41,15 @@ from webkitpy.layout_tests.models.test_configuration import *
 from webkitcorepy import OutputCapture
 
 
-class Base(unittest.TestCase):
+class Base(fake_filesystem_unittest.TestCase):
     # Note that all of these tests are written assuming the configuration
     # being tested is Windows XP, Release build.
 
-    def __init__(self, testFunc):
+    def setUp(self):
+        self.setUpPyfakefs()
         host = MockHost()
         self._port = host.port_factory.get('test-win-xp', None)
         self._exp = None
-        unittest.TestCase.__init__(self, testFunc)
 
     def get_basic_tests(self):
         return ['failures/expected/text.html',
@@ -590,12 +591,12 @@ class RebaseliningTest(Base):
         self.assertEqual(len(self._exp.get_rebaselining_failures()), 0)
 
 
-class TestExpectationSerializationTests(unittest.TestCase):
-    def __init__(self, testFunc):
+class TestExpectationSerializationTests(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
         host = MockHost()
         test_port = host.port_factory.get('test-win-xp', None)
         self._converter = TestConfigurationConverter(test_port.all_test_configurations(), test_port.configuration_specifier_macros())
-        unittest.TestCase.__init__(self, testFunc)
 
     def _tokenize(self, line):
         return TestExpectationParser._tokenize_line('path', line, 0)

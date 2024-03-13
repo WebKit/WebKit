@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.style.checkers.test_expectations import TestExpectationsChecker
@@ -54,10 +54,11 @@ class ErrorCollector(object):
         self.turned_off_filtering = False
 
 
-class TestExpectationsTestCase(unittest.TestCase):
+class TestExpectationsTestCase(fake_filesystem_unittest.TestCase):
     """TestCase for test_expectations.py"""
 
     def setUp(self):
+        self.setUpPyfakefs()
         self._error_collector = ErrorCollector()
         self._test_file = 'passes/text.html'
 

@@ -26,14 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.config.ports import MacPort, MacWK2Port
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.update import Update
 
 
-class UpdateTest(unittest.TestCase):
+class UpdateTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     def test_update_command_non_interactive(self):
         tool = MockTool()

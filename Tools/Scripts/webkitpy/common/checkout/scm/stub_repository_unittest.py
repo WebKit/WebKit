@@ -20,9 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.checkout.scm.stub_repository import StubRepository
@@ -36,12 +36,15 @@ FAKE_FILES = {
 }
 
 
-class StubRepositoryTest(unittest.TestCase):
+class StubRepositoryTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     @staticmethod
     def mock_host_for_stub_repository():
         host = MockHost(create_stub_repository_files=True)
-        host.filesystem = MockFileSystem(files=FAKE_FILES)
+        host.filesystem = MockCompatibleFileSystem(files=FAKE_FILES)
         host.executive = MockExecutive()
         return host
 

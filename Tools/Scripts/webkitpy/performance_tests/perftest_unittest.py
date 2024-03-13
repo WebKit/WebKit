@@ -28,7 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.port.driver import DriverOutput
@@ -46,7 +47,10 @@ class MockPort(TestPort):
         super(MockPort, self).__init__(host=MockHost(), custom_run_test=custom_run_test)
 
 
-class TestPerfTestMetric(unittest.TestCase):
+class TestPerfTestMetric(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_init_set_missing_unit(self):
         self.assertEqual(PerfTestMetric(['some', 'test'], 'some/test.html', 'Time', iterations=[1, 2, 3, 4, 5]).unit(), 'ms')
         self.assertEqual(PerfTestMetric(['some', 'test'], 'some/test.html', 'Malloc', iterations=[1, 2, 3, 4, 5]).unit(), 'bytes')
@@ -87,7 +91,10 @@ class TestPerfTestMetric(unittest.TestCase):
         self.assertEqual(metric.flattened_iteration_values(), [1, 2, 4, 5])
 
 
-class TestPerfTest(unittest.TestCase):
+class TestPerfTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def _assert_results_are_correct(self, test, output):
         test.run_single = lambda driver, path, time_out_ms: output
         self.assertTrue(test.run(10))
@@ -284,7 +291,10 @@ median= 2324.0 ms, stdev= 12.1326007105 ms, min= 2312.0 ms, max= 2345.0 ms
 """)
 
 
-class TestSingleProcessPerfTest(unittest.TestCase):
+class TestSingleProcessPerfTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_use_only_one_process(self):
         called = [0]
 
@@ -301,7 +311,10 @@ Description: this is a test description.
         self.assertEqual(called[0], 1)
 
 
-class TestPerfTestFactory(unittest.TestCase):
+class TestPerfTestFactory(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_regular_test(self):
         test = PerfTestFactory.create_perf_test(MockPort(), 'some-dir/some-test', '/path/some-dir/some-test')
         self.assertEqual(test.__class__, PerfTest)

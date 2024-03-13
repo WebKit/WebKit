@@ -20,7 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.test_expectations import TestExpectations
@@ -41,7 +41,10 @@ class MockTestExpectations(TestExpectations):
         return subtest in self.skipped_subtests(test)
 
 
-class ExpectationsTest(unittest.TestCase):
+class ExpectationsTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     BASIC = """
 {

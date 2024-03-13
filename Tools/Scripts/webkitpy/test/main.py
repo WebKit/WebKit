@@ -180,6 +180,7 @@ def main():
         "webkitpy.common.system.environment_unittest",
         "webkitpy.common.system.executive_unittest",
         "webkitpy.common.system.filesystem_mock_unittest",
+        "webkitpy.common.system.filesystem_mockcompatible_unittest",
         "webkitpy.common.system.filesystem_unittest",
         "webkitpy.common.system.logutils_unittest",
         "webkitpy.common.system.outputtee_unittest",
