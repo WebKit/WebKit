@@ -62,9 +62,14 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
     paint(context, 1, dstPoint, srcRect);
 }
 
-void ShareableBitmap::paint(GraphicsContext&, float /*scaleFactor*/, const IntPoint&, const IntRect&)
+void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    notImplemented();
+    FloatRect scaledSrcRect(srcRect);
+    scaledSrcRect.scale(scaleFactor);
+    FloatRect scaledDestRect(dstPoint, srcRect.size());
+    scaledDestRect.scale(scaleFactor);
+    auto image = createPlatformImage(BackingStoreCopy::DontCopyBackingStore);
+    context.platformContext()->drawImageRect(image.get(), scaledSrcRect, scaledDestRect, { }, nullptr, { });
 }
 
 RefPtr<Image> ShareableBitmap::createImage()
