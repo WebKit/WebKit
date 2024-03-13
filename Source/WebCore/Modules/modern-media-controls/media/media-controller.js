@@ -265,6 +265,15 @@ class MediaController
         return true;
     }
 
+    deinitialize()
+    {
+        this.media = null;
+        this.shadowRoot.removeChild(this.container);
+        this.shadowRoot = null;
+        iconService.shadowRoot = null;
+        return true;
+    }
+
     // Private
 
     _supportingObjectClasses()
