@@ -703,7 +703,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
             break;
 
         auto language = !m_languageStack.isEmpty() ? m_languageStack.last() : emptyAtom();
-        auto child = WebVTTElementImpl::create(nodeType, language, document);
+        auto child = WebVTTElement::create(nodeType, language, document);
         if (!m_token.classes().isEmpty())
             child->setAttributeWithoutSynchronization(classAttr, m_token.classes());
 

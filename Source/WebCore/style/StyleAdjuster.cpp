@@ -387,9 +387,10 @@ static bool hasUnsupportedRubyDisplay(DisplayType display, const Element* elemen
     switch (display) {
     case DisplayType::Ruby:
     case DisplayType::RubyBlock:
-        return !element || !element->hasTagName(rubyTag);
+        // Test for localName so this also allows WebVTT ruby elements.
+        return !element || !element->hasLocalName(rubyTag->localName());
     case DisplayType::RubyAnnotation:
-        return !element || !element->hasTagName(rtTag);
+        return !element || !element->hasLocalName(rtTag->localName());
     case DisplayType::RubyBase:
         ASSERT_NOT_REACHED();
         return false;

@@ -1362,7 +1362,7 @@ area:any-link {
 }
 
 /* HTML5 ruby elements */
-
+/* Note that text-tracks.css contains a subset of this ruby styling for WebVTT elements. It should be kept in sync. */
 ruby {
     display: ruby;
 }

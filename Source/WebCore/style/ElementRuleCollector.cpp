@@ -400,8 +400,7 @@ void ElementRuleCollector::collectMatchingUserAgentPartRules(const MatchRequest&
 
     auto& rules = matchRequest.ruleSet;
 #if ENABLE(VIDEO)
-    // FXIME: WebVTT should not be done by styling UA shadow trees like this.
-    if (element().isWebVTTElement() || element().isWebVTTRubyElement() || element().isWebVTTRubyTextElement())
+    if (element().isWebVTTElement())
         collectMatchingRulesForList(&rules.cuePseudoRules(), matchRequest);
 #endif
     if (auto& part = element().userAgentPart(); !part.isEmpty())

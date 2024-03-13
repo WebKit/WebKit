@@ -277,5 +277,13 @@ video::cue(:future) {
 [useragentpart="-webkit-media-text-track-display"] u { text-decoration: underline; }
 [useragentpart="-webkit-media-text-track-display"] i { font-style: italic; }
 [useragentpart="-webkit-media-text-track-display"] .hidden { display: none; }
+[useragentpart="-webkit-media-text-track-display"] ruby { display: ruby; }
+[useragentpart="-webkit-media-text-track-display"] ruby > rt {
+    display: ruby-text;
+    font-size: -webkit-ruby-text;
+    text-align: start;
+    line-height: normal;
+}
+[useragentpart="-webkit-media-text-track-display"] ruby > :not(ruby) { white-space: nowrap; }
 
 #endif

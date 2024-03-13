@@ -46,17 +46,16 @@ enum WebVTTNodeType {
     WebVTTNodeTypeVoice
 };
 
-class WebVTTElement;
-
-class WebVTTElementImpl {
+class WebVTTElement final : public Element {
+    WTF_MAKE_ISO_ALLOCATED(WebVTTElement);
 public:
     static Ref<Element> create(const WebVTTNodeType, AtomString language, Document&);
     Ref<HTMLElement> createEquivalentHTMLElement(Document&);
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&);
 
-    void setWebVTTNodeType(WebVTTNodeType type) { m_webVTTNodeType = static_cast<unsigned>(type); }
-    WebVTTNodeType webVTTNodeType() const { return static_cast<WebVTTNodeType>(m_webVTTNodeType); }
+    void setWebVTTNodeType(WebVTTNodeType type) { m_webVTTNodeType = type; }
+    WebVTTNodeType webVTTNodeType() const { return m_webVTTNodeType; }
 
     bool isPastNode() const { return m_isPastNode; }
     void setIsPastNode(bool value) { m_isPastNode = value; }
@@ -77,81 +76,19 @@ public:
     }
 
 protected:
-    WebVTTElementImpl(WebVTTNodeType nodeType, AtomString language)
-        : m_isPastNode { false }
-        , m_webVTTNodeType { static_cast<unsigned>(nodeType) }
-        , m_language { language }
-    {
-    }
-    virtual ~WebVTTElementImpl() = default;
-    virtual Element& toElement() = 0;
-
-    unsigned m_isPastNode : 1;
-    unsigned m_webVTTNodeType : 4;
-
-    AtomString m_language;
-};
-
-class WebVTTElement final : public WebVTTElementImpl, public Element {
-    WTF_MAKE_ISO_ALLOCATED(WebVTTElement);
-public:
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document& document) final { return WebVTTElementImpl::cloneElementWithoutAttributesAndChildren(document); }
-
-private:
-    friend class WebVTTElementImpl;
     WebVTTElement(WebVTTNodeType, AtomString language, Document&);
 
     bool isWebVTTElement() const final { return true; }
-    Element& toElement() final { return *this; }
+
+    bool m_isPastNode { false };
+    WebVTTNodeType m_webVTTNodeType;
+    AtomString m_language;
 };
-
-class WebVTTRubyElement final : public WebVTTElementImpl, public RubyElement {
-    WTF_MAKE_ISO_ALLOCATED(WebVTTRubyElement);
-public:
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document& document) final { return WebVTTElementImpl::cloneElementWithoutAttributesAndChildren(document); }
-
-private:
-    friend class WebVTTElementImpl;
-    WebVTTRubyElement(AtomString language, Document& document)
-        : WebVTTElementImpl(WebVTTNodeTypeRuby, language)
-        , RubyElement(HTMLNames::rubyTag, document)
-    {
-    }
-
-    bool isWebVTTRubyElement() const final { return true; }
-    Element& toElement() final { return *this; }
-};
-
-class WebVTTRubyTextElement final : public WebVTTElementImpl, public RubyTextElement {
-    WTF_MAKE_ISO_ALLOCATED(WebVTTRubyTextElement);
-public:
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document& document) final { return WebVTTElementImpl::cloneElementWithoutAttributesAndChildren(document); }
-
-private:
-    friend class WebVTTElementImpl;
-    WebVTTRubyTextElement(AtomString language, Document& document)
-        : WebVTTElementImpl(WebVTTNodeTypeRubyText, language)
-        , RubyTextElement(HTMLNames::rtTag, document)
-    {
-    }
-
-    bool isWebVTTRubyTextElement() const final { return true; }
-    Element& toElement() final { return *this; }
-};
-
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebVTTElement)
     static bool isType(const WebCore::Node& node) { return node.isWebVTTElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebVTTRubyElement)
-    static bool isType(const WebCore::Node& node) { return node.isWebVTTRubyElement(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebVTTRubyTextElement)
-    static bool isType(const WebCore::Node& node) { return node.isWebVTTRubyTextElement(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO)

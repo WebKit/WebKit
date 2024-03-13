@@ -1008,10 +1008,6 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
         
         if (auto* childElement = dynamicDowncast<WebVTTElement>(*child))
             childElement->setIsPastNode(isPastNode);
-        else if (auto* childElement = dynamicDowncast<WebVTTRubyElement>(*child))
-            childElement->setIsPastNode(isPastNode);
-        else if (auto* childElement = dynamicDowncast<WebVTTRubyTextElement>(*child))
-            childElement->setIsPastNode(isPastNode);
 
         // Make an element id match a cue id for style matching purposes.
         if (auto* childElement = dynamicDowncast<Element>(*child); !id().isEmpty() && childElement)
