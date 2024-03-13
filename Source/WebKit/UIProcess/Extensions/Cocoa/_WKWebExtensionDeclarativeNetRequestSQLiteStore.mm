@@ -54,7 +54,7 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
         return nil;
 
     _storageType = storageType == _WKWebExtensionDeclarativeNetRequestStorageType::Dynamic ? @"dynamic" : @"session";
-    _tableName = @"rules";
+    _tableName = [NSString stringWithFormat:@"%@_rules", _storageType];
     return self;
 }
 
@@ -264,7 +264,7 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
 
     ASSERT([_storageType isEqualToString:@"dynamic"]);
 
-    NSString *databaseName = @"DeclarativeNetRequestDynamicRules.db";
+    NSString *databaseName = @"DeclarativeNetRequestRules.db";
     return [_directory URLByAppendingPathComponent:databaseName isDirectory:NO];
 }
 
