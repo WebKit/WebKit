@@ -6059,11 +6059,11 @@ struct WebCore::AnimationEffectTiming {
     WebCore::PlaybackDirection direction;
     double iterationStart;
     double iterations;
-    WTF::Seconds delay;
-    WTF::Seconds endDelay;
-    WTF::Seconds iterationDuration;
-    WTF::Seconds activeDuration;
-    WTF::Seconds endTime;
+    Seconds delay;
+    Seconds endDelay;
+    Seconds iterationDuration;
+    Seconds activeDuration;
+    Seconds endTime;
 };
 
 header: <WebCore/AcceleratedEffect.h>
@@ -6084,8 +6084,8 @@ header: <WebCore/AcceleratedEffect.h>
     OptionSet<WebCore::AcceleratedEffectProperty> animatedProperties();
     bool paused();
     double playbackRate();
-    std::optional<WTF::Seconds> startTime();
-    std::optional<WTF::Seconds> holdTime();
+    std::optional<Seconds> startTime();
+    std::optional<Seconds> holdTime();
 };
 #endif // ENABLE(THREADED_ANIMATION_RESOLUTION)
 
@@ -7113,7 +7113,7 @@ enum class WebCore::RepaintRectCalculation : bool;
 };
 
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ByteArrayPixelBuffer {
-    WebCore:: PixelBufferFormat format();
+    WebCore::PixelBufferFormat format();
     WebCore::IntSize size();
     std::span<const uint8_t> dataSpan();
 }

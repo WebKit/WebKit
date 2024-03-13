@@ -105,9 +105,7 @@ template<> struct VirtualTableAndRefCountOverhead<true, false> {
 };
 template<> struct VirtualTableAndRefCountOverhead<false, false> { };
 
-#if COMPILER(GCC)
 IGNORE_WARNINGS_BEGIN("invalid-offsetof")
-#endif
 
 namespace IPC {
 
@@ -1585,6 +1583,4 @@ template<> bool isValidEnum<EnumNamespace::InnerEnumType, void>(uint8_t value)
 
 } // namespace WTF
 
-#if COMPILER(GCC)
 IGNORE_WARNINGS_END
-#endif

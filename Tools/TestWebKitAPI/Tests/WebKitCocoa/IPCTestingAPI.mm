@@ -493,14 +493,20 @@ TEST(IPCTestingAPI, CanInterceptFindString)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
-static NSSet<NSString *> *splitTypeFromList(NSString *input, bool firstTypeOnly)
+static NSSet<NSString *> *splitTypeFromList(NSString *container, NSString *list)
 {
+    bool firstTypeOnly = [container isEqualToString:@"std::span"]
+        || [container isEqualToString:@"Vector"]
+        || [container isEqualToString:@"std::array"]
+        || [container isEqualToString:@"HashSet"];
+    bool firstTwoTypesOnly = [container isEqualToString:@"HashMap"];
+
     NSMutableSet *set = NSMutableSet.set;
     size_t nestedTypeDepth { 0 };
     bool atComma { false };
     size_t previousTypeEnd { 0 };
-    for (size_t i = 0; i < input.length; i++) {
-        auto c = [input characterAtIndex:i];
+    for (size_t i = 0; i < list.length; i++) {
+        auto c = [list characterAtIndex:i];
         if (c == '<')
             nestedTypeDepth++;
         if (c == '>')
@@ -510,14 +516,16 @@ static NSSet<NSString *> *splitTypeFromList(NSString *input, bool firstTypeOnly)
             continue;
         }
         if (c == ' ' && !nestedTypeDepth && atComma) {
-            [set addObject:[input substringWithRange:NSMakeRange(previousTypeEnd, i - 1 - previousTypeEnd)]];
+            [set addObject:[list substringWithRange:NSMakeRange(previousTypeEnd, i - 1 - previousTypeEnd)]];
             if (firstTypeOnly)
+                return set;
+            if ([set count] == 2 && firstTwoTypesOnly)
                 return set;
             previousTypeEnd = i + 1;
         }
         atComma = false;
     }
-    [set addObject:[input substringWithRange:NSMakeRange(previousTypeEnd, input.length - previousTypeEnd)]];
+    [set addObject:[list substringWithRange:NSMakeRange(previousTypeEnd, list.length - previousTypeEnd)]];
     return set;
 }
 
@@ -529,29 +537,41 @@ static NSMutableSet<NSString *> *extractTypesFromContainers(NSSet<NSString *> *i
         NSArray<NSString *> *containerTypes = @[
             @"Expected",
             @"HashMap",
+            @"MemoryCompactRobinHoodHashMap",
+            @"MemoryCompactLookupOnlyRobinHoodHashSet",
             @"std::pair",
             @"IPC::ArrayReferenceTuple",
             @"std::span",
+            @"std::array",
+            @"std::tuple",
             @"std::variant",
             @"std::unique_ptr",
+            @"UniqueRef",
             @"Vector",
             @"HashSet",
             @"Ref",
             @"RefPtr",
             @"std::optional",
             @"OptionSet",
+            @"OptionalTuple",
+            @"KeyValuePair",
+            @"Markable",
             @"RetainPtr",
+            @"HashCountedSet",
+            @"IPC::CoreIPCRetainPtr",
             @"WebCore::RectEdges"
         ];
         for (NSString *container in containerTypes) {
             if ([input hasPrefix:[container stringByAppendingString:@"<"]]
                 && [input hasSuffix:@">"]) {
                 NSString *containedTypes = [input substringWithRange:NSMakeRange(container.length + 1, input.length - container.length - 2)];
-                for (NSString *type : extractTypesFromContainers(splitTypeFromList(containedTypes, [container isEqualToString:@"std::span"])))
+                for (NSString *type : extractTypesFromContainers(splitTypeFromList(container, containedTypes)))
                     [outputSet addObject:type];
                 foundContainer = YES;
             }
         }
+        if ([input hasPrefix:@"const "])
+            input = [input substringWithRange:NSMakeRange(6, input.length - 6)];
         if (!foundContainer)
             [outputSet addObject:input];
     }
@@ -616,8 +636,43 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     for (NSString *objectIdentifier in objectIdentifiers)
         [typesHavingDescriptions addObject:objectIdentifier];
 
-    [typesNeedingDescriptions minusSet:typesHavingDescriptions];
+    NSSet *fundamentalTypes = [NSSet setWithArray:@[
+        @"char",
+        @"short",
+        @"float",
+        @"bool",
+        @"NSUInteger",
+        @"size_t",
+        @"std::nullptr_t",
+        @"uint32_t",
+        @"int32_t",
+        @"uint8_t",
+        @"UInt32",
+        @"long",
+        @"unsigned",
+        @"unsigned long long",
+        @"unsigned long",
+        @"unsigned char",
+        @"unsigned short",
+        @"void",
+        @"double",
+        @"uint16_t",
+        @"int64_t",
+        @"pid_t",
+        @"CGFloat",
+        @"String",
+        @"uint32_t",
+        @"int16_t",
+        @"uint64_t",
+        @"int",
+        @"long long",
+        @"GCGLint",
+        @"GCGLenum",
+    ]];
 
+    [typesNeedingDescriptions minusSet:typesHavingDescriptions];
+    [typesNeedingDescriptions minusSet:fundamentalTypes];
+    EXPECT_LT(typesNeedingDescriptions.count, 250u); // FIXME: This should eventually be 0.
 }
 
 #endif

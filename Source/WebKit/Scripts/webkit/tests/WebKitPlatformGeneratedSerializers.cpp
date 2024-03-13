@@ -54,9 +54,7 @@ template<> struct VirtualTableAndRefCountOverhead<true, false> {
 };
 template<> struct VirtualTableAndRefCountOverhead<false, false> { };
 
-#if COMPILER(GCC)
 IGNORE_WARNINGS_BEGIN("invalid-offsetof")
-#endif
 
 namespace IPC {
 
@@ -320,6 +318,4 @@ namespace WTF {
 
 } // namespace WTF
 
-#if COMPILER(GCC)
 IGNORE_WARNINGS_END
-#endif

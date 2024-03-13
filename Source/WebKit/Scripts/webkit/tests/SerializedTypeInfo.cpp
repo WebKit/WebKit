@@ -96,6 +96,7 @@ namespace WebKit {
 Vector<SerializedTypeInfo> allSerializedTypes()
 {
     return {
+#if ENABLE(TEST_FEATURE)
         { "Namespace::Subnamespace::StructName"_s, {
             {
                 "FirstMemberType"_s,
@@ -112,6 +113,7 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "nullableTestMember"_s
             },
         } },
+#endif // ENABLE(TEST_FEATURE)
         { "Namespace::OtherClass"_s, {
             {
                 "int"_s,
@@ -256,12 +258,14 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 ", WebCore::SpringTimingFunction"
             ">"_s, "subclasses"_s }
         } },
+#if ENABLE(TEST_FEATURE)
         { "Namespace::ConditionalCommonClass"_s, {
             {
                 "int"_s,
                 "value"_s
             },
         } },
+#endif // ENABLE(TEST_FEATURE)
         { "Namespace::CommonClass"_s, {
             {
                 "int"_s,
@@ -368,10 +372,15 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "request"_s
             },
         } },
+#if USE(AVFOUNDATION)
         { "WebKit::CoreIPCAVOutputContext"_s, {
             { "RetainPtr<NSString>"_s , "AVOutputContextSerializationKeyContextID"_s },
             { "RetainPtr<NSString>"_s , "AVOutputContextSerializationKeyContextType"_s },
         } },
+        { "AVOutputContext"_s, {
+            { "WebKit::CoreIPCAVOutputContext"_s, "wrapper"_s }
+        } },
+#endif // USE(AVFOUNDATION)
         { "WebKit::CoreIPCNSSomeFoundationType"_s, {
             { "RetainPtr<NSString>"_s , "StringKey"_s },
             { "RetainPtr<NSNumber>"_s , "NumberKey"_s },
@@ -381,6 +390,10 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             { "RetainPtr<NSDictionary>"_s , "DictionaryKey"_s },
             { "RetainPtr<NSDictionary>"_s , "OptionalDictionaryKey"_s },
         } },
+        { "NSSomeFoundationType"_s, {
+            { "WebKit::CoreIPCNSSomeFoundationType"_s, "wrapper"_s }
+        } },
+#if ENABLE(DATA_DETECTION)
         { "WebKit::CoreIPCDDScannerResult"_s, {
             { "RetainPtr<NSString>"_s , "StringKey"_s },
             { "RetainPtr<NSNumber>"_s , "NumberKey"_s },
@@ -392,6 +405,18 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             { "Vector<RetainPtr<NSData>>"_s , "DataArrayKey"_s },
             { "Vector<RetainPtr<SecTrustRef>>"_s , "SecTrustArrayKey"_s },
         } },
+        { "DDScannerResult"_s, {
+            { "WebKit::CoreIPCDDScannerResult"_s, "wrapper"_s }
+        } },
+#endif // ENABLE(DATA_DETECTION)
+        { "CFFooRef"_s, {
+            { "WebKit::FooWrapper"_s, "wrapper"_s }
+        } },
+#if USE(CFBAR)
+        { "CFBarRef"_s, {
+            { "WebKit::BarWrapper"_s, "wrapper"_s }
+        } },
+#endif // USE(CFBAR)
         { "WebKit::RValueWithFunctionCalls"_s, {
             {
                 "SandboxExtensionHandle"_s,
@@ -418,18 +443,23 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "pendingReads()"_s
             },
         } },
+#if ENABLE(OUTER_CONDITION)
         { "Namespace::OuterClass"_s, {
             {
                 "int"_s,
                 "outerValue"_s
             },
         } },
+#endif // ENABLE(OUTER_CONDITION)
+#if !(ENABLE(OUTER_CONDITION))
         { "Namespace::OtherOuterClass"_s, {
             {
                 "int"_s,
                 "outerValue"_s
             },
         } },
+#endif // !(ENABLE(OUTER_CONDITION))
+#if USE(APPKIT)
         { "WebCore::AppKitControlSystemImage"_s, {
             {
                 "WebCore::Color"_s,
@@ -440,6 +470,7 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "m_useDarkAppearance"_s
             },
         } },
+#endif // USE(APPKIT)
         { "WebCore::SharedStringHash"_s, {
             { "uint32_t"_s, "alias"_s }
         } },

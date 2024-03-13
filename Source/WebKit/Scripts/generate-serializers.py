@@ -1238,8 +1238,8 @@ def generate_optional_tuple_type_info(type):
 
 def generate_one_serialized_type_info(type):
     result = []
-    if type.cf_type is not None:
-        return result
+    if type.condition is not None:
+        result.append('#if ' + type.condition)
     result.append('        { "' + type.name_declaration_for_serialized_type_info() + '"_s, {')
     if type.members_are_subclasses:
         result.append('            { "std::variant<"')
@@ -1252,12 +1252,30 @@ def generate_one_serialized_type_info(type):
                 result.append('#endif')
         result.append('            ">"_s, "subclasses"_s }')
         result.append('        } },')
+        if type.condition is not None:
+            result.append('#endif // ' + type.condition)
+        return result
+
+    if type.cf_type is not None:
+        result.append('            { "WebKit::' + type.cpp_struct_or_class_name() + '"_s, "wrapper"_s }')
+        result.append('        } },')
+        if type.condition is not None:
+            result.append('#endif // ' + type.condition)
         return result
 
     if type.is_webkit_secure_coding_type():
         for member in type.dictionary_members:
+            if member.condition is not None:
+                result.append('#if ' + member.condition)
             result.append('            { "' + member.dictionary_type() + '"_s , "' + member.type + '"_s },')
+            if member.condition is not None:
+                result.append('#endif // ' + member.condition)
         result.append('        } },')
+        result.append('        { "' + type.name + '"_s, {')
+        result.append('            { "WebKit::' + type.cpp_struct_or_class_name() + '"_s, "wrapper"_s }')
+        result.append('        } },')
+        if type.condition is not None:
+            result.append('#endif // ' + type.condition)
         return result
 
     serialized_members = type.members_for_serialized_type_info()
@@ -1295,6 +1313,8 @@ def generate_one_serialized_type_info(type):
         result.append('                "optionalTuple"_s')
         result.append('            },')
     result.append('        } },')
+    if type.condition is not None:
+        result.append('#endif // ' + type.condition)
     return result
 
 
