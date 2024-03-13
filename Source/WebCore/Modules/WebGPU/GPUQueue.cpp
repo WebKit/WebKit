@@ -321,10 +321,11 @@ static void imageBytesForSource(const auto& source, const auto& destination, Ima
 #endif
     }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
 #if PLATFORM(COCOA)
-        if (RefPtr player = videoElement->player(); player->isVideoPlayer())
+        if (RefPtr player = videoElement ? videoElement->player() : nullptr; player && player->isVideoPlayer())
             return getImageBytesFromVideoFrame(player->videoFrameForCurrentTime(), WTFMove(callback));
-#endif
+#else
         UNUSED_PARAM(videoElement);
+#endif
         return callback(nullptr, 0, 0);
     }, [&](const RefPtr<WebCodecsVideoFrame> webCodecsFrame) -> ResultType {
 #if PLATFORM(COCOA)
@@ -719,7 +720,9 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
     if (!isOriginClean(source.source, context))
         return Exception { ExceptionCode::SecurityError, "GPUQueue.copyExternalImageToTexture: Cross origin external images are not allowed in WebGPU"_s };
 
+    bool callbackScopeIsSafe { true };
     imageBytesForSource(source.source, destination, [&](const uint8_t* imageBytes, size_t sizeInBytes, size_t rows) {
+        RELEASE_ASSERT(callbackScopeIsSafe);
         auto destinationTexture = destination.texture;
         if (!imageBytes || !sizeInBytes || !destinationTexture)
             return;
@@ -738,6 +741,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         if (newImageBytes)
             free(newImageBytes);
     });
+    callbackScopeIsSafe = false;
 
     return { };
 }
