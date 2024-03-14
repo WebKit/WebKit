@@ -31,7 +31,7 @@
 namespace WebKit {
 
 struct FullScreenMediaDetails {
-    enum class Type : uint8_t { None, Video, Image };
+    enum class Type : uint8_t { None, Video, ElementWithVideo, Image };
 
     Type type { Type::None };
     WebCore::FloatSize videoDimensions { };

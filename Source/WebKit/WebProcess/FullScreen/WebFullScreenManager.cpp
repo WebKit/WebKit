@@ -266,9 +266,9 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
     updateMainVideoElement();
 
 #if PLATFORM(VISION)
-    if (m_mainVideoElement && is<HTMLVideoElement>(element)) {
+    if (m_mainVideoElement) {
         mediaDetails = {
-            FullScreenMediaDetails::Type::Video,
+            is<HTMLVideoElement>(element) ? FullScreenMediaDetails::Type::Video : FullScreenMediaDetails::Type::ElementWithVideo,
             FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight())
         };
     }

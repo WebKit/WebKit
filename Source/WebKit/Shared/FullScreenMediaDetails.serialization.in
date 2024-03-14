@@ -24,6 +24,7 @@
 [Nested] enum class WebKit::FullScreenMediaDetails::Type : uint8_t {
     None,
     Video,
+    ElementWithVideo,
     Image
 };
 
