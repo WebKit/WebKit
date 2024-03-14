@@ -749,6 +749,16 @@ class Parser
                 name = @tokens[@idx].string
                 @idx += 1
                 Label.setAsUnalignedGlobal(codeOrigin, name)
+            elsif @tokens[@idx] == "aligned"
+                codeOrigin = @tokens[@idx].codeOrigin
+                @idx += 1
+                skipNewLine
+                parseError unless isLabel(@tokens[@idx])
+                name = @tokens[@idx].string
+                @idx += 1
+                align = @tokens[@idx].string
+                @idx += 1
+                Label.setAsAligned(codeOrigin, name, align)
             elsif @tokens[@idx] == "unalignedglobalexport"
                 codeOrigin = @tokens[@idx].codeOrigin
                 @idx += 1
