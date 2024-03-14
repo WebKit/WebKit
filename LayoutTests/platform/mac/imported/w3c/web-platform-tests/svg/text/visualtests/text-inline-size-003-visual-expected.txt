@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (90,166) size 620x232
       RenderSVGContainer {g} at (90,166) size 577x32
         RenderSVGText {text} at (54,100) size 346x19 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 224x19
+          RenderSVGTSpan {tspan} at (122,0) size 224x19
             RenderSVGInlineText {#text} at (122,0) size 224x19
               chunk 1 text run 1 at (176.88,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
           RenderSVGInlineText {#text} at (117,0) size 5x19
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGContainer {g} at (112,266) size 576x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
         RenderSVGText {text} at (67,100) size 346x19 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 224x19
+          RenderSVGTSpan {tspan} at (122,0) size 224x19
             RenderSVGInlineText {#text} at (122,0) size 224x19
               chunk 1 (middle anchor) text run 1 at (189.60,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
           RenderSVGInlineText {#text} at (117,0) size 5x19
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGContainer {g} at (133,366) size 577x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
         RenderSVGText {text} at (80,100) size 346x19 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 224x19
+          RenderSVGTSpan {tspan} at (122,0) size 224x19
             RenderSVGInlineText {#text} at (122,0) size 224x19
               chunk 1 (end anchor) text run 1 at (202.32,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
           RenderSVGInlineText {#text} at (117,0) size 5x19
