@@ -111,7 +111,7 @@ bool SQLiteStorageArea::isEmpty()
 
     auto statement = cachedStatement(StatementType::CountItems);
     if (!statement || statement->step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::isEmpty failed on executing statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::isEmpty failed on executing statement (%d) - %{%public}s", m_database->lastError(), m_database->lastErrorMsg());
         return true;
     }
 
@@ -166,7 +166,7 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
     m_database = makeUnique<WebCore::SQLiteDatabase>();
     FileSystem::makeAllDirectories(FileSystem::parentPath(m_path));
     auto openResult  = m_database->open(m_path, WebCore::SQLiteDatabase::OpenMode::ReadWriteCreate, WebCore::SQLiteDatabase::OpenOptions::CanSuspendWhileLocked);
-    if (!openResult && handleDatabaseCorruptionIfNeeded(m_database->lastError())) {
+    if (!openResult && handleDatabaseErrorIfNeeded(m_database->lastError()) == IsDatabaseDeleted::Yes) {
         databaseExists = false;
         if (shouldCreateIfNotExists == ShouldCreateIfNotExists::No)
             return true;
@@ -264,7 +264,7 @@ Expected<String, StorageError> SQLiteStorageArea::getItemFromDatabase(const Stri
         return statement->columnBlobAsString(0);
     if (result != SQLITE_DONE) {
         RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getItemFromDatabase failed on stepping statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
-        handleDatabaseCorruptionIfNeeded(result);
+        handleDatabaseErrorIfNeeded(result);
 
         return makeUnexpected(StorageError::Database);
     }
@@ -318,7 +318,7 @@ HashMap<String, String> SQLiteStorageArea::allItems()
 
     if (result != SQLITE_DONE) {
         RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::allItems failed on executing statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
-        handleDatabaseCorruptionIfNeeded(result);
+        handleDatabaseErrorIfNeeded(result);
     }
 
     return items;
@@ -348,7 +348,7 @@ Expected<void, StorageError> SQLiteStorageArea::setItem(IPC::Connection::UniqueI
     const auto result = statement->step();
     if (result != SQLITE_DONE) {
         RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::setItem failed on stepping statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
-        handleDatabaseCorruptionIfNeeded(result);
+        handleDatabaseErrorIfNeeded(result);
         return makeUnexpected(StorageError::Database);
     }
 
@@ -377,14 +377,14 @@ Expected<void, StorageError> SQLiteStorageArea::removeItem(IPC::Connection::Uniq
 
     auto statement = cachedStatement(StatementType::DeleteItem);
     if (!statement || statement->bindText(1, key)) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on creating statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
         return makeUnexpected(StorageError::Database);
     }
 
     const auto result = statement->step();
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on executing statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
-        handleDatabaseCorruptionIfNeeded(result);
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::removeItem failed on executing statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        handleDatabaseErrorIfNeeded(result);
 
         return makeUnexpected(StorageError::Database);
     }
@@ -416,14 +416,14 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
     startTransactionIfNecessary();
     auto statement = cachedStatement(StatementType::DeleteAllItems);
     if (!statement) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on creating statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
         return makeUnexpected(StorageError::Database);
     }
 
     const auto result = statement->step();
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on executing statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
-        handleDatabaseCorruptionIfNeeded(result);
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::clear failed on executing statement (%d) - %{public}s", m_database->lastError(), m_database->lastErrorMsg());
+        handleDatabaseErrorIfNeeded(result);
 
         return makeUnexpected(StorageError::Database);
     }
@@ -450,16 +450,22 @@ void SQLiteStorageArea::handleLowMemoryWarning()
         m_database->releaseMemory();
 }
 
-bool SQLiteStorageArea::handleDatabaseCorruptionIfNeeded(int databaseError)
+SQLiteStorageArea::IsDatabaseDeleted SQLiteStorageArea::handleDatabaseErrorIfNeeded(int databaseError)
 {
-    if (databaseError != SQLITE_CORRUPT && databaseError != SQLITE_NOTADB)
-        return false;
+    if ((databaseError & 0XFF) == SQLITE_IOERR) {
+        close();
+        return IsDatabaseDeleted::No;
+    }
 
-    close();
+    if (databaseError == SQLITE_CORRUPT || databaseError == SQLITE_NOTADB) {
+        close();
 
-    RELEASE_LOG(Storage, "SQLiteStorageArea::handleDatabaseCorruption deletes corrupted database file '%s'", m_path.utf8().data());
-    WebCore::SQLiteFileSystem::deleteDatabaseFile(m_path);
-    return true;
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::handleDatabaseCorruption deletes corrupted database file '%s'", m_path.utf8().data());
+        WebCore::SQLiteFileSystem::deleteDatabaseFile(m_path);
+        return IsDatabaseDeleted::Yes;
+    }
+
+    return IsDatabaseDeleted::No;
 }
 
 void SQLiteStorageArea::updateCacheIfNeeded(const String& key, const String& value)
