@@ -650,35 +650,6 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
 } // extern "C"
 
 #if (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
-#if CPU(X86_64)
-
-#define CRASH_INST "int3"
-
-// This ordering was chosen to be consistent with JSC's JIT asserts. We probably shouldn't change this ordering
-// since it would make tooling crash reports much harder. If, for whatever reason, we decide to change the ordering
-// here we should update the abortWithuint64_t functions.
-#define CRASH_GPR0 "r11"
-#define CRASH_GPR1 "r10"
-#define CRASH_GPR2 "r9"
-#define CRASH_GPR3 "r8"
-#define CRASH_GPR4 "r15"
-#define CRASH_GPR5 "r14"
-#define CRASH_GPR6 "r13"
-
-#elif CPU(ARM64) // CPU(X86_64)
-
-#define CRASH_INST "brk #0xc471"
-
-// See comment above on the ordering.
-#define CRASH_GPR0 "x16"
-#define CRASH_GPR1 "x17"
-#define CRASH_GPR2 "x19" // We skip x18, which is reserved on ARM64 for platform use.
-#define CRASH_GPR3 "x20"
-#define CRASH_GPR4 "x21"
-#define CRASH_GPR5 "x22"
-#define CRASH_GPR6 "x23"
-
-#endif // CPU(ARM64)
 
 void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6)
 {
