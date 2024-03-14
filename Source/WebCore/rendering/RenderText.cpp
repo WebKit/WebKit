@@ -1770,13 +1770,6 @@ std::unique_ptr<LegacyInlineTextBox> RenderText::createTextBox()
     return makeUnique<LegacyInlineTextBox>(*this);
 }
 
-void RenderText::positionLineBox(LegacyInlineTextBox& textBox)
-{
-    if (!textBox.hasTextContent())
-        return;
-    m_needsVisualReordering |= !textBox.isLeftToRightDirection();
-}
-
 bool RenderText::usesLegacyLineLayoutPath() const
 {
     return !LayoutIntegration::LineLayout::containing(*this);

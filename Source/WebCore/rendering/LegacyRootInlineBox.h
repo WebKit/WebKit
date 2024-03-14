@@ -78,7 +78,6 @@ public:
     LayoutUnit selectionTopAdjustedForPrecedingBlock() const;
     LayoutUnit selectionHeightAdjustedForPrecedingBlock() const { return std::max<LayoutUnit>(0, selectionBottom() - selectionTopAdjustedForPrecedingBlock()); }
 
-    LayoutUnit alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void setLineTopBottomPositions(LayoutUnit top, LayoutUnit bottom, LayoutUnit lineBoxTop, LayoutUnit lineBoxBottom)
     { 
         m_lineTop = top; 
@@ -136,15 +135,7 @@ public:
     
     FontBaseline baselineType() const { return static_cast<FontBaseline>(m_baselineType); }
 
-    bool hasAnnotationsBefore() const { return m_hasAnnotationsBefore; }
-    bool hasAnnotationsAfter() const { return m_hasAnnotationsAfter; }
-
     LayoutRect paddedLayoutOverflowRect(LayoutUnit endPadding) const;
-
-    void ascentAndDescentForBox(LegacyInlineBox&, GlyphOverflowAndFallbackFontsMap&, LayoutUnit& ascent, LayoutUnit& descent, bool& affectsAscent, bool& affectsDescent) const;
-    LayoutUnit verticalPositionForBox(LegacyInlineBox*, VerticalPositionCache&);
-    bool fitsToGlyphs() const;
-    bool includesRootLineBoxFontOrLeading() const;
     
     LayoutUnit logicalTopVisualOverflow() const
     {
@@ -170,15 +161,7 @@ public:
 private:
     bool isRootInlineBox() const final { return true; }
 
-    bool includeLeadingForBox(LegacyInlineBox&) const;
-    bool includeFontForBox(LegacyInlineBox&) const;
-    bool includeGlyphsForBox(LegacyInlineBox&) const;
-    bool includeInitialLetterForBox(LegacyInlineBox&) const;
-    bool includeMarginForBox(LegacyInlineBox&) const;
-
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0_lu) const;
-
-    LayoutUnit beforeAnnotationsAdjustment() const;
 
     unsigned m_lineBreakPos { 0 };
 

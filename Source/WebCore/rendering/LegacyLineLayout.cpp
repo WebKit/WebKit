@@ -50,7 +50,6 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGRootInlineBox.h"
 #include "Settings.h"
-#include "VerticalPositionCache.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -414,28 +413,13 @@ static void updateLogicalWidthForCenterAlignedBlock(bool isLeftToRightDirection,
         logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
 }
 
-static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiRun* run, RenderText& renderer, float xPos, const LineInfo& lineInfo,
-    GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
+static inline void setLogicalWidthForTextRun(BidiRun* run, RenderText& renderer, float xPos, const LineInfo& lineInfo,
+    GlyphOverflowAndFallbackFontsMap& textBoxDataMap, WordMeasurements& wordMeasurements)
 {
     SingleThreadWeakHashSet<const Font> fallbackFonts;
     GlyphOverflow glyphOverflow;
 
     const FontCascade& font = lineStyle(*renderer.parent(), lineInfo).fontCascade();
-    // Always compute glyph overflow if the block's line-box-contain value is "glyphs".
-    if (lineBox->fitsToGlyphs()) {
-        // If we don't stick out of the root line's font box, then don't bother computing our glyph overflow. This optimization
-        // will keep us from computing glyph bounds in nearly all cases.
-        bool includeRootLine = lineBox->includesRootLineBoxFontOrLeading();
-        int ascent = font.metricsOfPrimaryFont().intAscent();
-        int descent = font.metricsOfPrimaryFont().intDescent();
-        int baselineShift = lineBox->verticalPositionForBox(run->box(), verticalPositionCache);
-        int rootDescent = includeRootLine ? descent : 0;
-        int rootAscent = includeRootLine ? ascent : 0;
-        int boxAscent = ascent - baselineShift;
-        int boxDescent = descent + baselineShift;
-        if (boxAscent > rootDescent ||  boxDescent > rootAscent)
-            glyphOverflow.computeBounds = true; 
-    }
     
     LayoutUnit hyphenWidth;
     if (downcast<LegacyInlineTextBox>(*run->box()).hasHyphen())
@@ -448,7 +432,7 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
     
     // Since we don't cache glyph overflows, we need to re-measure the run if
     // the style is linebox-contain: glyph.
-    if (!lineBox->fitsToGlyphs() && canUseSimpleFontCodePath) {
+    if (canUseSimpleFontCodePath) {
         unsigned lastEndOffset = run->m_start;
         bool atFirstWordMeasurement = true;
         for (size_t i = 0, size = wordMeasurements.size(); i < size && lastEndOffset < run->m_stop; ++i) {
@@ -607,7 +591,7 @@ static void updateLogicalInlinePositions(RenderBlockFlow& block, float& lineLogi
     availableLogicalWidth = lineLogicalRight - lineLogicalLeft;
 }
 
-void LegacyLineLayout::computeInlineDirectionPositionsForLine(LegacyRootInlineBox* lineBox, const LineInfo& lineInfo, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
+void LegacyLineLayout::computeInlineDirectionPositionsForLine(LegacyRootInlineBox* lineBox, const LineInfo& lineInfo, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, WordMeasurements& wordMeasurements)
 {
     TextAlignMode textAlign = textAlignmentForLine(!reachedEnd && !lineBox->endsWithBreak());
 
@@ -629,7 +613,7 @@ void LegacyLineLayout::computeInlineDirectionPositionsForLine(LegacyRootInlineBo
         updateLogicalInlinePositions(m_flow, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, renderBox.logicalHeight());
     }
 
-    computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, lineLogicalLeft, availableLogicalWidth, firstRun, trailingSpaceRun, textBoxDataMap, verticalPositionCache, wordMeasurements);
+    computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, lineLogicalLeft, availableLogicalWidth, firstRun, trailingSpaceRun, textBoxDataMap, wordMeasurements);
     // The widths of all runs are now known. We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).
     needsWordSpacing = false;
@@ -714,7 +698,7 @@ static bool isLastInFlowRun(BidiRun& runToCheck)
 }
 
 BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootInlineBox* lineBox, const LineInfo& lineInfo, TextAlignMode textAlign, float& lineLogicalLeft,
-    float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache,
+    float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap,
     WordMeasurements& wordMeasurements)
 {
     bool needsWordSpacing = false;
@@ -815,7 +799,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
                 needsWordSpacing = run->m_stop == length && !deprecatedIsSpaceOrNewline(renderText->characterAt(run->m_stop - 1));
             }
             auto currentLogicalLeftPosition = logicalSpacingForInlineTextBoxes.get(&textBox) + contentWidth;
-            setLogicalWidthForTextRun(lineBox, run, *renderText, currentLogicalLeftPosition, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
+            setLogicalWidthForTextRun(run, *renderText, currentLogicalLeftPosition, lineInfo, textBoxDataMap, wordMeasurements);
         } else {
             canHangPunctuationAtStart = false;
             isAfterExpansion = false;
@@ -877,33 +861,18 @@ void LegacyLineLayout::removeInlineBox(BidiRun& run, const LegacyRootInlineBox& 
     }
 }
 
-void LegacyLineLayout::computeBlockDirectionPositionsForLine(LegacyRootInlineBox* lineBox, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
+void LegacyLineLayout::removeEmptyTextBoxesAndUpdateVisualReordering(LegacyRootInlineBox* lineBox, BidiRun* firstRun)
 {
-    m_flow.setLogicalHeight(lineBox->alignBoxesInBlockDirection(m_flow.logicalHeight(), textBoxDataMap, verticalPositionCache));
-
-    // Now make sure we place replaced render objects correctly.
     for (auto* run = firstRun; run; run = run->next()) {
-        ASSERT(run->box());
-        if (!run->box())
-            continue; // Skip runs with no line boxes.
-
-        // Align positioned boxes with the top of the line box. This is
-        // a reasonable approximation of an appropriate y position.
-        auto& renderer = run->renderer();
-        if (renderer.isOutOfFlowPositioned())
-            run->box()->setLogicalTop(m_flow.logicalHeight());
-
-        // Position is used to properly position both replaced elements and
-        // to update the static normal flow x/y of positioned elements.
-        bool inlineBoxIsRedundant = false;
-        if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(renderer)) {
-            auto& inlineTextBox = downcast<LegacyInlineTextBox>(*run->box());
-            textRenderer->positionLineBox(inlineTextBox);
-            inlineBoxIsRedundant = !inlineTextBox.hasTextContent();
+        if (auto* inlineTextBox = dynamicDowncast<LegacyInlineTextBox>(*run->box())) {
+            auto& renderer = inlineTextBox->renderer();
+            if (!inlineTextBox->hasTextContent()) {
+                removeInlineBox(*run, *lineBox);
+                continue;
+            }
+            if (!inlineTextBox->isLeftToRightDirection())
+                renderer.setNeedsVisualReordering();
         }
-        // Check if we need to keep this box on the line at all.
-        if (inlineBoxIsRedundant)
-            removeInlineBox(*run, *lineBox);
     }
 }
 
@@ -1075,7 +1044,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
 }
 
 // This function constructs line boxes for all of the text runs in the resolver and computes their position.
-LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo& lineInfo, VerticalPositionCache& verticalPositionCache, BidiRun* trailingSpaceRun, WordMeasurements& wordMeasurements)
+LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo& lineInfo, BidiRun* trailingSpaceRun, WordMeasurements& wordMeasurements)
 {
     if (!bidiRuns.runCount())
         return nullptr;
@@ -1096,11 +1065,10 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
     
     // Now we position all of our text runs horizontally.
     if (!isSVGRootInlineBox)
-        computeInlineDirectionPositionsForLine(lineBox, lineInfo, bidiRuns.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, verticalPositionCache, wordMeasurements);
+        computeInlineDirectionPositionsForLine(lineBox, lineInfo, bidiRuns.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, wordMeasurements);
     
-    // Now position our text runs vertically.
-    computeBlockDirectionPositionsForLine(lineBox, bidiRuns.firstRun(), textBoxDataMap, verticalPositionCache);
-    
+    removeEmptyTextBoxesAndUpdateVisualReordering(lineBox, bidiRuns.firstRun());
+
     // SVG text layout code computes vertical & horizontal positions on its own.
     // Note that we still need to execute computeVerticalPositionsForLine() as
     // it calls LegacyInlineTextBox::positionLineBox(), which tracks whether the box
@@ -1240,7 +1208,6 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
     LegacyInlineIterator end = resolver.position();
     bool checkForEndLineMatch = layoutState.endLine();
     RenderTextInfo renderTextInfo;
-    VerticalPositionCache verticalPositionCache;
 
     LineBreaker lineBreaker(m_flow);
 
@@ -1310,7 +1277,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
             // inline flow boxes.
 
             LayoutUnit oldLogicalHeight = m_flow.logicalHeight();
-            LegacyRootInlineBox* lineBox = createLineBoxesFromBidiRuns(resolver.status().context->level(), bidiRuns, end, layoutState.lineInfo(), verticalPositionCache, trailingSpaceRun, wordMeasurements);
+            LegacyRootInlineBox* lineBox = createLineBoxesFromBidiRuns(resolver.status().context->level(), bidiRuns, end, layoutState.lineInfo(), trailingSpaceRun, wordMeasurements);
 
             bidiRuns.clear();
             resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).
@@ -1504,45 +1471,6 @@ void LegacyLineLayout::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             // Delete all the remaining lines.
             deleteLineRange(layoutState, layoutState.endLine());
         }
-    }
-    
-    if (m_flow.floatingObjects() && (layoutState.checkForFloatsFromLastLine() || m_flow.positionNewFloats()) && lastRootBox()) {
-        // In case we have a float on the last line, it might not be positioned up to now.
-        // This has to be done before adding in the bottom border/padding, or the float will
-        // include the padding incorrectly. -dwh
-        if (layoutState.checkForFloatsFromLastLine()) {
-            LayoutUnit bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
-            LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
-            auto newLineBox = makeUnique<LegacyRootInlineBox>(m_flow);
-            newLineBox->setIsForTrailingFloats();
-            auto trailingFloatsLineBox = newLineBox.get();
-            m_lineBoxes.appendLineBox(WTFMove(newLineBox));
-            trailingFloatsLineBox->setConstructed();
-            GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-            VerticalPositionCache verticalPositionCache;
-            LayoutUnit blockLogicalHeight = m_flow.logicalHeight();
-            trailingFloatsLineBox->alignBoxesInBlockDirection(blockLogicalHeight, textBoxDataMap, verticalPositionCache);
-            trailingFloatsLineBox->setLineTopBottomPositions(blockLogicalHeight, blockLogicalHeight, blockLogicalHeight, blockLogicalHeight);
-            trailingFloatsLineBox->setPaginatedLineWidth(m_flow.availableLogicalWidthForContent(blockLogicalHeight));
-            LayoutRect logicalLayoutOverflow(0_lu, blockLogicalHeight, 1_lu, bottomLayoutOverflow - blockLogicalHeight);
-            LayoutRect logicalVisualOverflow(0_lu, blockLogicalHeight, 1_lu, bottomVisualOverflow - blockLogicalHeight);
-            trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
-            if (layoutState.fragmentedFlow())
-                updateFragmentForLine(trailingFloatsLineBox);
-        }
-
-        const FloatingObjectSet& floatingObjectSet = m_flow.floatingObjects()->set();
-        auto it = floatingObjectSet.begin();
-        auto end = floatingObjectSet.end();
-        if (auto* lastFloat = layoutState.floatList().lastFloat()) {
-            auto lastFloatIterator = floatingObjectSet.find(lastFloat);
-            ASSERT(lastFloatIterator != end);
-            ++lastFloatIterator;
-            it = lastFloatIterator;
-        }
-        for (; it != end; ++it)
-            appendFloatingObjectToLastLine(**it);
-        layoutState.floatList().setLastFloat(!floatingObjectSet.isEmpty() ? floatingObjectSet.last().get() : nullptr);
     }
 }
 

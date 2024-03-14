@@ -99,8 +99,6 @@ LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, Layout
 
 LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    // mathml.css sets math { -webkit-line-box-contain: glyphs replaced; line-height: 0; }, so when linePositionMode == PositionOfInteriorLineBoxes we want to
-    // return 0 here to match our line-height. This matters when LegacyRootInlineBox::ascentAndDescentForBox is called on a RootInlineBox for an inline-block.
     if (linePositionMode == PositionOfInteriorLineBoxes)
         return 0;
 

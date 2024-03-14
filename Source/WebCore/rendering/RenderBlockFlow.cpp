@@ -70,7 +70,6 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "TextAutoSizing.h"
-#include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>
 

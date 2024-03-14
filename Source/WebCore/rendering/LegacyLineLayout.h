@@ -44,7 +44,6 @@ class LocalFrameViewLayoutContext;
 class RenderBlockFlow;
 class RenderObject;
 class LegacyRootInlineBox;
-class VerticalPositionCache;
 struct BidiStatus;
 struct WordMeasurement;
 
@@ -82,13 +81,13 @@ private:
     LegacyInlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, LegacyInlineBox*);
     TextAlignMode textAlignmentForLine(bool endsWithSoftBreak) const;
     void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth);
-    void computeInlineDirectionPositionsForLine(LegacyRootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);
-    BidiRun* computeInlineDirectionPositionsForSegment(LegacyRootInlineBox*, const LineInfo&, TextAlignMode, float& logicalLeft, float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);
+    void computeInlineDirectionPositionsForLine(LegacyRootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, WordMeasurements&);
+    BidiRun* computeInlineDirectionPositionsForSegment(LegacyRootInlineBox*, const LineInfo&, TextAlignMode, float& logicalLeft, float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap&, WordMeasurements&);
     void removeInlineBox(BidiRun&, const LegacyRootInlineBox&) const;
-    void computeBlockDirectionPositionsForLine(LegacyRootInlineBox*, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache&);
+    void removeEmptyTextBoxesAndUpdateVisualReordering(LegacyRootInlineBox*, BidiRun* firstRun);
     inline BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns, BidiContext* currentContext);
     void appendFloatingObjectToLastLine(FloatingObject&);
-    LegacyRootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun, WordMeasurements&);
+    LegacyRootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo&, BidiRun* trailingSpaceRun, WordMeasurements&);
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
     inline const LegacyInlineIterator& restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight, FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver&,  const LegacyInlineIterator& oldEnd);
     void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const LegacyInlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
