@@ -147,9 +147,7 @@ MediaDocument::MediaDocument(LocalFrame* frame, const Settings& settings, const 
         m_outgoingReferrer = frame->loader().outgoingReferrer();
 }
 
-MediaDocument::~MediaDocument()
-{
-}
+MediaDocument::~MediaDocument() = default;
 
 Ref<DocumentParser> MediaDocument::createParser()
 {

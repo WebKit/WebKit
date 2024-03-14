@@ -43,9 +43,7 @@ TextTrackList::TextTrackList(ScriptExecutionContext* context)
 {
 }
 
-TextTrackList::~TextTrackList()
-{
-}
+TextTrackList::~TextTrackList() = default;
 
 unsigned TextTrackList::length() const
 {

@@ -44,9 +44,7 @@ TrackListBase::TrackListBase(ScriptExecutionContext* context, Type type)
 {
 }
 
-TrackListBase::~TrackListBase()
-{
-}
+TrackListBase::~TrackListBase() = default;
 
 WebCoreOpaqueRoot TrackListBase::opaqueRoot()
 {
