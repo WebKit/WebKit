@@ -168,8 +168,6 @@ JSC_SEC_LD_FLAGS[sdk=iphoneos17.0*] = ;
 JSC_SEC_LD_FLAGS[sdk=iphoneos17.1*] = ;
 JSC_SEC_LD_FLAGS[sdk=iphoneos17.2*] = ;
 JSC_SEC_LD_FLAGS[sdk=iphoneos17.3*] = ;
-JSC_SEC_LD_FLAGS[sdk=iphoneos17.3*] = ;
-JSC_SEC_LD_FLAGS[sdk=iphoneos18*] = ;
 JSC_SEC_LD_FLAGS[sdk=appletv*] = ;
 JSC_SEC_LD_FLAGS[sdk=watch*] = ;
 JSC_SEC_LD_FLAGS[sdk=xr*] = ;
