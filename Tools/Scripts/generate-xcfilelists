@@ -50,7 +50,10 @@
 # does this in order to establish the context in which builds occur. In
 # particular, it does this in order to set needed environment variables.
 
+import os
 import sys
+
+os.environ['DISABLE_WEBKITCOREPY_AUTOINSTALLER'] = '1'
 
 from webkitpy.generate_xcfilelists_lib.application import Application
 from webkitpy.port.config import apple_additions
