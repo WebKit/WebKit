@@ -649,6 +649,11 @@ class Tracker(GenericTracker):
                     self.radar_importer.name,
                     issue.references[0] if issue.references else '?',
                 ))
+                response = Terminal.choose(
+                    'Double-check you have the correct bug. Would you like to continue?', options=('Yes', 'No'), default='Yes',
+                )
+                if response == 'No':
+                    raise ValueError('Radar is tracking a different bug')
 
         did_modify_cc = False
         if user_to_cc or keyword_to_add:
