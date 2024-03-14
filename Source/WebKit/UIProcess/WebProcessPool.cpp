@@ -313,12 +313,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     m_storageAccessUserAgentStringQuirksDataUpdateObserver = StorageAccessUserAgentStringQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get()) {
-            if (StorageAccessUserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
-                return;
-            // FIXME: Filter by process's site when site isolation is enabled
+        // FIXME: Filter by process's site when site isolation is enabled
+        if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedQuirks()));
-        }
     });
 
     m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
@@ -331,6 +328,10 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));
         }
     });
+    if (StorageAccessPromptQuirkController::shared().cachedQuirks().isEmpty())
+        StorageAccessPromptQuirkController::shared().initialize();
+    if (StorageAccessUserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
+        StorageAccessUserAgentStringQuirkController::shared().initialize();
 #endif
 
 }

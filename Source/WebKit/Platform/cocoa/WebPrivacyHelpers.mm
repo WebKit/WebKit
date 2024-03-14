@@ -306,6 +306,7 @@ void StorageAccessPromptQuirkController::setCachedQuirks(Vector<WebCore::Organiz
 
 void StorageAccessPromptQuirkController::setCachedQuirksForTesting(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&& quirks)
 {
+    m_wasInitialized = true;
     setCachedQuirks(WTFMove(quirks));
     m_observers.forEach([](auto& observer) {
         observer.invokeCallback();
@@ -325,11 +326,24 @@ static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> d
     return map;
 }
 
+void StorageAccessPromptQuirkController::initialize()
+{
+    if (m_wasInitialized)
+        return;
+
+    updateQuirks([this] {
+        m_observers.forEach([](auto& observer) {
+            observer.invokeCallback();
+        });
+    });
+    m_wasInitialized = true;
+}
+
 void StorageAccessPromptQuirkController::updateQuirks(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     if (!WebKit::canUseWebPrivacyFramework() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
-        completionHandler();
+        RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
     }
 
@@ -392,13 +406,27 @@ void StorageAccessUserAgentStringQuirkController::setCachedQuirksForTesting(Hash
     m_observers.forEach([](auto& observer) {
         observer.invokeCallback();
     });
+    m_wasInitialized = true;
+}
+
+void StorageAccessUserAgentStringQuirkController::initialize()
+{
+    if (m_wasInitialized)
+        return;
+
+    updateQuirks([this] {
+        m_observers.forEach([](auto& observer) {
+            observer.invokeCallback();
+        });
+    });
+    m_wasInitialized = true;
 }
 
 void StorageAccessUserAgentStringQuirkController::updateQuirks(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     if (!WebKit::canUseWebPrivacyFramework() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
-        completionHandler();
+        RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
     }
 

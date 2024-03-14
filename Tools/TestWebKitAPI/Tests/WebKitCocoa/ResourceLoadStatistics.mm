@@ -1460,6 +1460,7 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithQuirk)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
     [configuration setWebsiteDataStore:dataStore.get()];
+
     [dataStore _setResourceLoadStatisticsEnabled:YES];
 
     __block bool done = false;
@@ -1467,6 +1468,7 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithQuirk)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+    done = false;
 
     [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] completionHandler:^{
         done = true;
