@@ -65,7 +65,6 @@ public:
     virtual ~AccessibilityObject();
 
     AXID treeID() const final;
-    ProcessID processID() const override;
     String dbg() const final;
 
     // After constructing an AccessibilityObject, it must be given a

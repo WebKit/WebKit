@@ -56,7 +56,6 @@ public:
     ~AXIsolatedObject();
 
     AXID treeID() const final { return tree()->treeID(); }
-    ProcessID processID() const final { return tree()->processID(); }
     String dbg() const final;
 
     AccessibilityRole roleValue() const final { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::RoleValue)); }

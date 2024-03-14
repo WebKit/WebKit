@@ -85,7 +85,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
-#include "RuntimeApplicationChecks.h"
 #include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
@@ -117,11 +116,6 @@ AXID AccessibilityObject::treeID() const
 {
     auto* cache = axObjectCache();
     return cache ? cache->treeID() : AXID();
-}
-
-inline ProcessID AccessibilityObject::processID() const
-{
-    return presentingApplicationPID();
 }
 
 String AccessibilityObject::dbg() const

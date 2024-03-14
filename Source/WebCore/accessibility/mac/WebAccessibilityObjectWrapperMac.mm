@@ -72,6 +72,7 @@
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
+#import "RuntimeApplicationChecks.h"
 #import "ScrollView.h"
 #import "TextIterator.h"
 #import "VisibleUnits.h"
@@ -759,12 +760,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return actions;
 }
 
-- (NSArray*)additionalAccessibilityAttributeNames
+- (NSArray*)_additionalAccessibilityAttributeNames:(const RefPtr<AXCoreObject>&)backingObject
 {
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    if (!backingObject)
-        return nil;
-
     NSMutableArray *additional = [NSMutableArray array];
     if (backingObject->supportsARIAOwns())
         [additional addObject:NSAccessibilityOwnsAttribute];
@@ -1245,7 +1242,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     else if (backingObject->isVideo())
         objectAttributes = videoAttrs.get().get();
 
-    NSArray *additionalAttributes = [self additionalAccessibilityAttributeNames];
+    NSArray *additionalAttributes = [self _additionalAccessibilityAttributeNames:backingObject];
     if ([additionalAttributes count])
         objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:additionalAttributes];
 
@@ -1312,9 +1309,15 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
     return range;
 }
 
-- (id)associatedPluginParent
+- (id)_associatedPluginParent
 {
-    if (!self.axBackingObject || !self.axBackingObject->hasApplePDFAnnotationAttribute())
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
+    return [self _associatedPluginParentWith:self.axBackingObject];
+}
+
+- (id)_associatedPluginParentWith:(const RefPtr<AXCoreObject>&)backingObject
+{
+    if (!backingObject || !backingObject->hasApplePDFAnnotationAttribute())
         return nil;
 
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
@@ -1388,22 +1391,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return NSAccessibilityUnknownRole;
 }
 
-- (BOOL)isEmptyGroup
+- (BOOL)_isEmptyGroup:(const RefPtr<AXCoreObject>&)object
 {
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    if (!backingObject)
-        return false;
-
 #if ENABLE(MODEL_ELEMENT)
-    if (backingObject->isModel())
+    if (object->isModel())
         return false;
 #endif
 
-    if (backingObject->isRemoteFrame())
+    if (object->isRemoteFrame())
         return false;
 
     return [[self role] isEqual:NSAccessibilityGroupRole]
-        && backingObject->children().isEmpty()
+        && object->children().isEmpty()
         && ![[self renderWidgetChildren] count];
 }
 
@@ -1414,7 +1413,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!backingObject)
         return nil;
 
-    if ([self isEmptyGroup])
+    if ([self _isEmptyGroup:backingObject])
         return @"AXEmptyGroup";
 
     auto subrole = backingObject->subrolePlatformString();
@@ -2184,7 +2183,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     
     // This allows us to connect to a plugin that creates a shadow node for editing (like PDFs).
     if ([attributeName isEqualToString:@"_AXAssociatedPluginParent"])
-        return [self associatedPluginParent];
+        return [self _associatedPluginParentWith:backingObject];
 
     // this is used only by DumpRenderTree for testing
     if ([attributeName isEqualToString:@"AXClickPoint"])
@@ -3839,8 +3838,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 // until it finds something that responds to this method.
 - (pid_t)accessibilityPresenterProcessIdentifier
 {
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    return backingObject ? backingObject->processID() : 0;
+    return presentingApplicationPID();
 }
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount
@@ -3883,11 +3881,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
             // The attachment view should be returned, otherwise AX palindrome errors occur.
             id attachmentView = nil;
-            if ([wrapper isKindOfClass:[WebAccessibilityObjectWrapper class]] && wrapper.axBackingObject) {
-                if (wrapper.axBackingObject->isAttachment())
+            if (RefPtr childObject = [wrapper isKindOfClass:[WebAccessibilityObjectWrapper class]] ? wrapper.axBackingObject : nullptr) {
+                if (childObject->isAttachment())
                     attachmentView = [wrapper attachmentView];
-                else if (wrapper.axBackingObject->isRemoteFrame())
-                    attachmentView = wrapper.axBackingObject->remoteFramePlatformElement().get();
+                else if (childObject->isRemoteFrame())
+                    attachmentView = childObject->remoteFramePlatformElement().get();
             }
 
             [subarray addObject:attachmentView ? attachmentView : wrapper];

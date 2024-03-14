@@ -500,6 +500,8 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
 
 void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType)
 {
+    ASSERT(!isMainThread());
+
     for (const auto& childID : m_childrenIDs) {
         if (RefPtr child = tree()->objectForID(childID))
             child->detachFromParent();
@@ -1070,7 +1072,8 @@ void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName
 
 void AXIsolatedObject::updateBackingStore()
 {
-    // This method can be called on either the main or the AX threads.
+    ASSERT(!isMainThread());
+
     if (RefPtr tree = this->tree())
         tree->applyPendingChanges();
     // AXIsolatedTree::applyPendingChanges can cause this object and / or the AXIsolatedTree to be destroyed.
