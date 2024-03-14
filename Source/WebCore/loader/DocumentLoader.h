@@ -554,6 +554,8 @@ private:
     bool maybeLoadEmpty();
     void loadErrorDocument();
 
+    bool shouldClearContentSecurityPolicyForResponse(const ResourceResponse&) const;
+
     bool isMultipartReplacingLoad() const;
     bool isPostOrRedirectAfterPost(const ResourceRequest&, const ResourceResponse&);
 

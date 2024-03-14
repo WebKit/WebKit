@@ -899,19 +899,26 @@ static URL microsoftTeamsRedirectURL()
     return URL { "https://www.microsoft.com/en-us/microsoft-365/microsoft-teams/"_str };
 }
 
+bool DocumentLoader::shouldClearContentSecurityPolicyForResponse(const ResourceResponse& response) const
+{
+    return response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull() && !m_isLoadingMultipartContent;
+}
+
 void DocumentLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, m_mainResource == &resource);
 
-    if (!response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull()) {
+    if (shouldClearContentSecurityPolicyForResponse(response))
+        m_contentSecurityPolicy = nullptr;
+    else {
         ReportingClient* reportingClient = nullptr;
         if (m_frame && m_frame->document())
             reportingClient = m_frame->document();
 
-        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr, reportingClient);
+        if (!m_contentSecurityPolicy)
+            m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr, reportingClient);
         m_contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
-    } else
-        m_contentSecurityPolicy = nullptr;
+    }
     if (m_frame && m_frame->document() && m_frame->document()->settings().crossOriginOpenerPolicyEnabled())
         m_responseCOOP = obtainCrossOriginOpenerPolicy(response);
 
