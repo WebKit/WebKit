@@ -1,24 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x8
-  RenderBlock {HTML} at (0,0) size 800x8
-    RenderBody {BODY} at (8,8) size 784x0
+  RenderBlock {html} at (0,0) size 800x8
+    RenderBody {body} at (8,8) size 784x0
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (10,62) size 308x375
-    RenderSVGText {text} at (0,1) size 31x38 contains 1 chunk(s)
-      RenderSVGTSpan {tspan} at (0,0) size 28x14
-        RenderSVGInlineText {#text} at (0,0) size 15x14
-          chunk 1 text run 1 at (0.00,12.00) startOffset 0 endOffset 2 width 14.30: "PA"
-        RenderSVGInlineText {#text} at (14,0) size 14x14
-          chunk 1 text run 1 at (14.30,12.00) startOffset 0 endOffset 2 width 13.40: "SS"
-      RenderSVGInlineText {#text} at (27,0) size 3x14
-        chunk 1 text run 1 at (27.70,12.00) startOffset 0 endOffset 1 width 3.00: " "
-      RenderSVGTSpan {tspan} at (0,0) size 28x14
-        RenderSVGInlineText {#text} at (0,12) size 28x14
-          chunk 1 text run 1 at (0.00,24.00) startOffset 0 endOffset 4 width 27.70: "PASS"
-      RenderSVGInlineText {#text} at (27,12) size 3x14
-        chunk 1 text run 1 at (27.70,24.00) startOffset 0 endOffset 1 width 3.00: " "
-      RenderSVGTSpan {tspan} at (0,0) size 28x14
-        RenderSVGInlineText {#text} at (0,24) size 28x14
-          chunk 1 text run 1 at (0.00,36.00) startOffset 0 endOffset 4 width 27.70: "PASS"
-      RenderSVGInlineText {#text} at (0,0) size 0x0
+  RenderBlock (positioned) {svg} at (0,0) size 800x600
+    RenderInline {text} at (0,0) size 121x17
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {tspan} at (0,0) size 38x17
+        RenderText {#text} at (0,0) size 20x17
+          text run at (0,0) width 20: "PA"
+        RenderText {#text} at (19,0) size 19x17
+          text run at (19,0) width 19: "SS"
+      RenderText {#text} at (37,0) size 5x17
+        text run at (37,0) width 5: " "
+      RenderInline {tspan} at (41,0) size 39x17
+        RenderText {#text} at (41,0) size 39x17
+          text run at (41,0) width 39: "PASS"
+      RenderText {#text} at (79,0) size 5x17
+        text run at (79,0) width 5: " "
+      RenderInline {tspan} at (83,0) size 38x17
+        RenderText {#text} at (83,0) size 38x17
+          text run at (83,0) width 38: "PASS"
+      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0

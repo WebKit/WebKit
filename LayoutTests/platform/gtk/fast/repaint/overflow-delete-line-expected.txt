@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 151x17
           text run at (0,0) width 151: "This is a repaint test for "
         RenderInline {I} at (0,0) size 753x35
-          RenderInline {A} at (0,0) size 300x17 [color=#0000EE]
+          RenderInline {A} at (151,0) size 300x17 [color=#0000EE]
             RenderText {#text} at (151,0) size 300x17
               text run at (151,0) width 300: "http://bugs.webkit.org/show_bug.cgi?id=11277"
-          RenderText {#text} at (450,0) size 753x35
+          RenderText {#text} at (0,0) size 753x35
             text run at (450,0) width 5: " "
             text run at (454,0) width 299: "REGRESSION: Incomplete repaint of overflow"
             text run at (0,18) width 127: "areas when deleting"

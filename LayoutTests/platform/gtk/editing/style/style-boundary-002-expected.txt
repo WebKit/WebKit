@@ -23,14 +23,14 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (182,0) size 1x26
           RenderText {#text} at (0,27) size 442x26
             text run at (0,27) width 442: "Should see this content in the red box below: "
-          RenderInline {B} at (0,0) size 26x26
+          RenderInline {B} at (441,27) size 26x26
             RenderText {#text} at (441,27) size 26x26
               text run at (441,27) width 26: "ab"
           RenderText {#text} at (466,27) size 12x26
             text run at (466,27) width 12: "c"
       RenderBlock {DIV} at (0,176) size 784x31
         RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
-          RenderInline {B} at (0,0) size 25x26
+          RenderInline {B} at (2,2) size 25x26
             RenderText {#text} at (2,2) size 25x26
               text run at (2,2) width 25: "ab"
           RenderText {#text} at (27,2) size 11x26

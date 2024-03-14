@@ -26,15 +26,15 @@ layer at (0,0) size 800x600
               RenderText {#text} at (139,11) size 30x17
                 text run at (139,2) width 30: "City"
             RenderTableCell {TH} at (468,26) size 104x40 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (34,2) size 68x35
+              RenderText {#text} at (18,2) size 68x35
                 text run at (34,2) width 36: "ABC"
                 text run at (18,20) width 68: "Company"
             RenderTableCell {TH} at (573,26) size 102x40 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-              RenderText {#text} at (34,2) size 68x35
+              RenderText {#text} at (17,2) size 68x35
                 text run at (34,2) width 34: "EFG"
                 text run at (17,20) width 68: "Company"
             RenderTableCell {TH} at (676,26) size 105x40 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-              RenderText {#text} at (34,2) size 68x35
+              RenderText {#text} at (18,2) size 68x35
                 text run at (34,2) width 36: "XYZ"
                 text run at (18,20) width 68: "Company"
           RenderTableRow {TR} at (0,68) size 782x22

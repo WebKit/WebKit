@@ -16,7 +16,7 @@ layer at (0,0) size 800x490
         RenderListBox {SELECT} at (92,0) size 81x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (173,52) size 4x17
           text run at (173,52) width 4: " "
-        RenderInline {SPAN} at (0,0) size 118x17
+        RenderInline {SPAN} at (177,52) size 118x17
           RenderText {#text} at (177,52) size 118x17
             text run at (177,52) width 118: "HELLO WORLD"
         RenderText {#text} at (0,0) size 0x0
@@ -30,7 +30,7 @@ layer at (0,0) size 800x490
         RenderListBox {SELECT} at (86,0) size 75x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (161,52) size 4x17
           text run at (161,52) width 4: " "
-        RenderInline {SPAN} at (0,0) size 102x17
+        RenderInline {SPAN} at (165,52) size 102x17
           RenderText {#text} at (165,52) size 102x17
             text run at (165,52) width 102: "HeLLo WoRLd"
         RenderText {#text} at (0,0) size 0x0
@@ -44,7 +44,7 @@ layer at (0,0) size 800x490
         RenderListBox {SELECT} at (71,0) size 60x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (131,52) size 4x17
           text run at (131,52) width 4: " "
-        RenderInline {SPAN} at (0,0) size 72x17
+        RenderInline {SPAN} at (135,52) size 72x17
           RenderText {#text} at (135,52) size 72x17
             text run at (135,52) width 72: "hello world"
         RenderText {#text} at (0,0) size 0x0
@@ -58,7 +58,7 @@ layer at (0,0) size 800x490
         RenderListBox {SELECT} at (76,0) size 65x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (141,52) size 4x17
           text run at (141,52) width 4: " "
-        RenderInline {SPAN} at (0,0) size 58x17
+        RenderInline {SPAN} at (145,52) size 58x17
           RenderText {#text} at (145,52) size 58x17
             text run at (145,52) width 58: "SS SSSS"
         RenderText {#text} at (0,0) size 0x0
@@ -72,7 +72,7 @@ layer at (0,0) size 800x490
         RenderListBox {SELECT} at (52,0) size 41x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (93,52) size 4x17
           text run at (93,52) width 4: " "
-        RenderInline {SPAN} at (0,0) size 28x17
+        RenderInline {SPAN} at (97,52) size 28x17
           RenderText {#text} at (97,52) size 28x17
             text run at (97,52) width 28: "\x{DF} \x{DF}\x{DF}"
         RenderText {#text} at (0,0) size 0x0
@@ -86,7 +86,7 @@ layer at (0,0) size 800x490
         RenderListBox {SELECT} at (52,0) size 41x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (93,52) size 4x17
           text run at (93,52) width 4: " "
-        RenderInline {SPAN} at (0,0) size 28x17
+        RenderInline {SPAN} at (97,52) size 28x17
           RenderText {#text} at (97,52) size 28x17
             text run at (97,52) width 28: "\x{DF} \x{DF}\x{DF}"
         RenderText {#text} at (0,0) size 0x0

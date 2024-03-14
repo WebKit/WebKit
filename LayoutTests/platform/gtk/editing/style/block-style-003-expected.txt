@@ -62,7 +62,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x55 [border: (2px solid #FF0000)]
         RenderText {#text} at (202,14) size 285x26
           text run at (202,14) width 285: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 90x26
+        RenderInline {B} at (486,14) size 90x26
           RenderText {#text} at (486,14) size 90x26
             text run at (486,14) width 90: "centered"
         RenderText {#text} at (575,14) size 7x26
@@ -70,7 +70,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,55) size 784x55 [border: (2px solid #FF0000)]
         RenderText {#text} at (202,14) size 285x26
           text run at (202,14) width 285: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 90x26
+        RenderInline {B} at (486,14) size 90x26
           RenderText {#text} at (486,14) size 90x26
             text run at (486,14) width 90: "centered"
         RenderText {#text} at (575,14) size 7x26

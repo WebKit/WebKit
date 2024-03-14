@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 206x17
           text run at (0,0) width 206: "This text is inside an editable div"
-        RenderInline {SPAN} at (0,0) size 4x17
+        RenderInline {SPAN} at (206,0) size 4x17
           RenderText {#text} at (206,0) size 4x17
             text run at (206,0) width 4: " "
 layer at (8,94) size 784x18

@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 646x17
                 text run at (1,1) width 646: "This tests that a style can be applied to a selection that contains both editable and non-editable content. "
             RenderTableCell {TD} at (648,2) size 108x20 [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 106x17
-                RenderInline {B} at (0,0) size 106x17
+              RenderInline {SPAN} at (1,1) size 106x17
+                RenderInline {B} at (1,1) size 106x17
                   RenderText {#text} at (1,1) size 106x17
                     text run at (1,1) width 106: "Editable - line 1"
               RenderText {#text} at (107,1) size 4x17
@@ -29,8 +29,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 598x17
                 text run at (1,1) width 598: "The test passes if the editable content is bold, and the non editable content remains unchanged. "
             RenderTableCell {TD} at (600,2) size 108x20 [r=0 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 106x17
-                RenderInline {B} at (0,0) size 106x17
+              RenderInline {SPAN} at (1,1) size 106x17
+                RenderInline {B} at (1,1) size 106x17
                   RenderText {#text} at (1,1) size 106x17
                     text run at (1,1) width 106: "Editable - line 2"
               RenderText {#text} at (107,1) size 4x17

@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 151x17
           text run at (0,0) width 151: "This is a repaint test for "
-        RenderInline {I} at (0,0) size 578x17
-          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
+        RenderInline {I} at (151,0) size 578x17
+          RenderInline {A} at (151,0) size 307x17 [color=#0000EE]
             RenderText {#text} at (151,0) size 307x17
               text run at (151,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=22159"
           RenderText {#text} at (457,0) size 272x17

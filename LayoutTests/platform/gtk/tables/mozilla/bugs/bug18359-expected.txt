@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 784x82
             RenderTableRow {TR} at (0,2) size 784x38
               RenderTableCell {TD} at (2,2) size 71x38 [r=0 c=0 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 51x35
+                RenderInline {B} at (1,1) size 51x35
                   RenderText {#text} at (1,1) size 51x35
                     text run at (1,1) width 51: "Trigger"
                     text run at (1,19) width 40: "URL:"
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 51: "Trigger"
             RenderTableRow {TR} at (0,42) size 784x38
               RenderTableCell {TD} at (2,42) size 71x38 [r=1 c=0 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 62x35
+                RenderInline {B} at (1,1) size 62x35
                   RenderText {#text} at (1,1) size 62x35
                     text run at (1,1) width 62: "Run Test"
                     text run at (1,19) width 38: "Case:"

@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 35: "Both "
         RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 53x21
-  RenderInline (relative positioned) {A} at (0,0) size 53x21 [color=#0000EE] [border: (2px solid #FF0000)]
+  RenderInline (relative positioned) {A} at (35,-2) size 53x21 [color=#0000EE] [border: (2px solid #FF0000)]
     RenderText {#text} at (37,0) size 49x17
       text run at (37,0) width 49: "this and"
 layer at (45,168) size 283x22
