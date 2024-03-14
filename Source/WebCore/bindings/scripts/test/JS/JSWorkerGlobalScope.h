@@ -104,6 +104,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSWorkerGlobalScopePrototype, JSWorkerGlobalScopePrototype::Base);
 

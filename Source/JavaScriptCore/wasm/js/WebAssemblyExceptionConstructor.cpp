@@ -36,19 +36,12 @@
 #include "JSWebAssemblyTag.h"
 #include "WebAssemblyExceptionPrototype.h"
 
-#include "WebAssemblyExceptionConstructor.lut.h"
-
 namespace JSC {
 
-const ClassInfo WebAssemblyExceptionConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionConstructor) };
+const ClassInfo WebAssemblyExceptionConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyException);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyException);
-
-/* Source for WebAssemblyExceptionConstructor.lut.h
- @begin constructorTableWebAssemblyException
- @end
- */
 
 JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

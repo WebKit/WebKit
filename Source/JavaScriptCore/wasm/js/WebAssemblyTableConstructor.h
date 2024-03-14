@@ -37,7 +37,7 @@ class WebAssemblyTablePrototype;
 class WebAssemblyTableConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyTableConstructor* create(VM&, Structure*, WebAssemblyTablePrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

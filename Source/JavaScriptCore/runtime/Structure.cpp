@@ -130,6 +130,13 @@ void Structure::dumpStatistics()
 #if ASSERT_ENABLED
 void Structure::validateFlags()
 {
+    bool hasStaticPropertyTable = false;
+    for (const ClassInfo* ci = classInfoForCells(); ci; ci = ci->parentClass) {
+        if (ci->staticPropHashTable)
+            hasStaticPropertyTable = true;
+    }
+    RELEASE_ASSERT(hasStaticPropertyTable == typeInfo().hasStaticPropertyTable());
+
     const MethodTable& methodTable = m_classInfo->methodTable;
 
     bool overridesGetCallData = methodTable.getCallData != JSCell::getCallData;

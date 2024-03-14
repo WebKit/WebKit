@@ -37,7 +37,7 @@ class WebAssemblyExceptionPrototype;
 class WebAssemblyExceptionConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyExceptionConstructor* create(VM&, Structure*, WebAssemblyExceptionPrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

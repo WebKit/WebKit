@@ -7978,7 +7978,7 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "\n");
     push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
 
-    $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if PrototypeHasStaticPropertyTable($interface) && IsGlobalInterface($interface);
+    $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if !ShouldUseOrdinaryObjectPrototype($interface) && IsDOMGlobalObject($interface);
     $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObjectOnPrototype};
 
     # structure flags

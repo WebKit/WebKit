@@ -987,7 +987,7 @@ static const struct JSC::HashTable staticDontDeleteDontEnumTable =
 
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut | HasStaticPropertyTable;
 public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)

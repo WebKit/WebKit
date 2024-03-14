@@ -33,19 +33,12 @@
 #include "JSWebAssemblyModule.h"
 #include "WebAssemblyInstancePrototype.h"
 
-#include "WebAssemblyInstanceConstructor.lut.h"
-
 namespace JSC {
 
-const ClassInfo WebAssemblyInstanceConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyInstance, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstanceConstructor) };
+const ClassInfo WebAssemblyInstanceConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstanceConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyInstance);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyInstance);
-
-/* Source for WebAssemblyInstanceConstructor.lut.h
- @begin constructorTableWebAssemblyInstance
- @end
- */
 
 using Wasm::Plan;
 
