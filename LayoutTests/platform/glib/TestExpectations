@@ -1083,8 +1083,6 @@ webkit.org/b/265919 media/track/media-source-audio-track.html [ Failure ]
 media/media-source/media-managedmse-memorypressure.html [ Timeout ]
 media/media-source/media-managedmse-memorypressure-inactive.html [ Timeout ]
 media/media-source/media-managedmse-eviction.html [ Timeout ]
-# No AirPlay on glib platforms.
-media/media-source/media-managedmse-airplay.html [ Skip ]
 
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
@@ -1098,7 +1096,8 @@ webkit.org/b/234352 media/track/track-webvtt-snap-to-lines-inline-style.html [ I
 webkit.org/b/234352 media/track/track-webvtt-snap-to-lines-left-right.html [ ImageOnlyFailure Pass ]
 webkit.org/b/234352 media/video-with-alpha.html [ ImageOnlyFailure Pass ]
 
-# Race conditions from missing this patch: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/3471
+# Race conditions from missing this patch:
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/3471 (still flaky with GStreamer 1.24)
 webkit.org/b/254514 media/media-source/media-source-current-time.html [ Failure Pass ]
 webkit.org/b/254514 media/media-source/media-source-seek-unbuffered.html [ Failure Pass Timeout ]
 
@@ -1226,11 +1225,6 @@ imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ 
 imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass DumpJSConsoleLogInStdErr ]
 http/wpt/webcodecs/encoder-task-failing.html [ Pass ]
-
-# This test is flaky crashing with the current GStreamer version of the SDK (1.22), raising a
-# critical warning in GStreamer, but the issue is not happening with GStreamer 1.23. So this test is
-# expected to pass again once we update to GStreamer 1.24.
-fast/mediastream/play-newly-added-audio-track.html [ Pass Crash ]
 
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-webgl.html [ Pass Failure ]
 
@@ -1904,8 +1898,7 @@ webrtc/video-maxBitrate-vp8.html [ Failure ]
 # Times out waiting for DTLS transport setup. Some bug related with data-channel, pending investigation.
 webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
 
-# Pass Slow Failure with GStreamer 1.23. Skip (too many bugs) with GStreamer 1.22.
-webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Skip ]
+webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Failure ]
 
 # This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
 fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
@@ -1986,12 +1979,10 @@ imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpTransceiver-headerExtens
 # GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented and also hitting srtpenc errors.
 webkit.org/b/235885 webrtc/video-addTransceiver.html [ Skip ]
 
-# GstWebRTC (< 1.24) doesn't support transceiver direction changes.
-webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html [ Failure ]
-webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Skip ]
-webkit.org/b/235885 webrtc/direction-change.html [ Skip ]
-# This test calls pc.removeTrack() which implies a transceiver direction change.
-webkit.org/b/235885 webrtc/remove-track.html [ Skip ] # Timeout
+# Transceiver direction change support is incomplete.
+webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Timeout ]
+webkit.org/b/235885 webrtc/direction-change.html [ Failure ]
+webkit.org/b/235885 webrtc/remove-track.html [ Failure ]
 
 # Specific to LibWebRTC:
 webkit.org/b/235885 webrtc/disable-encryption.html [ Skip ]
@@ -2077,6 +2068,15 @@ imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates.html [ Pass ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-parameterless.https.html [ Pass ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-timing.https.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/RTCPeerConnection-payloadTypes.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/dtls-certificates.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/handover.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/jsep-initial-offer.https.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/sctp-format.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/sdes-dont-dont-dont.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/split.https.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/unknown-mediatypes.html [ Pass ]
+imported/w3c/web-platform-tests/webrtc/protocol/rtx-codecs.https.html [ Pass ]
 
 # Missing support for ICE restarts
 webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Skip ]
@@ -2287,6 +2287,7 @@ webkit.org/b/158923 media/airplay-allows-buffering.html [ Skip ]
 webkit.org/b/158923 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen-no-controls.html [ Skip ]
 webkit.org/b/158923 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Skip ]
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback [ Skip ]
+media/media-source/media-managedmse-airplay.html [ Skip ]
 
 # LEGACY_ENCRYPTED_MEDIA is deprecated
 fast/events/webkit-media-key-events-constructor.html [ Skip ]
