@@ -229,6 +229,7 @@ private:
     std::optional<MediaTimePromise::AutoRejectProducer> m_seekTargetPromise;
     bool m_openDeferred { false };
     bool m_sourceopenPending { false };
+    bool m_isAttached { false };
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     RefPtr<MediaSourceHandle> m_handle;
 #endif

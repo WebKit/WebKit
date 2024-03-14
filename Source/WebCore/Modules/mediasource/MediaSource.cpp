@@ -1179,6 +1179,7 @@ void MediaSource::detachFromElement()
 
     m_private = nullptr;
     m_mediaElement = nullptr;
+    m_isAttached = false;
 
     if (m_seekTargetPromise) {
         m_seekTargetPromise->reject(PlatformMediaError::Cancelled);
@@ -1193,12 +1194,14 @@ void MediaSource::sourceBufferDidChangeActiveState(SourceBuffer&, bool)
 
 bool MediaSource::attachToElement(WeakPtr<HTMLMediaElement>&& element)
 {
-    if (m_mediaElement || !scriptExecutionContext())
+    if (m_isAttached || !scriptExecutionContext())
         return false;
 
     ASSERT(isClosed());
 
     m_mediaElement = WTFMove(element);
+    m_isAttached = true;
+
     return true;
 }
 
@@ -1250,8 +1253,9 @@ void MediaSource::stop()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (m_mediaElement)
-        m_mediaElement->detachMediaSource();
+    ensureWeakOnHTMLMediaElementContext([](auto& mediaElement) {
+        mediaElement.detachMediaSource();
+    });
     m_seekTargetPromise.reset();
     m_private = nullptr;
 }
