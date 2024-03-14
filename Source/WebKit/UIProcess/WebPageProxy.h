@@ -2323,6 +2323,8 @@ public:
 
     void addConsoleMessage(WebCore::FrameIdentifier, JSC::MessageSource, JSC::MessageLevel, const String&, std::optional<WebCore::ResourceLoaderIdentifier> = std::nullopt);
 
+    bool hasValidAudibleActivity() const;
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
