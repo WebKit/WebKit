@@ -335,6 +335,7 @@ inline void CustomElementQueue::invokeAll()
     // Invoke callbacks slightly later here instead of crashing / ignoring those cases.
     for (unsigned i = 0; i < m_elements.size(); ++i) {
         Ref element = m_elements[i].get();
+        element->clearIsInCustomElementReactionQueue();
         auto* queue = element->reactionQueue();
         ASSERT(queue);
         queue->invokeAll(element);
@@ -369,7 +370,7 @@ void CustomElementQueue::processQueue(JSC::JSGlobalObject* state)
     }
 }
 
-Vector<GCReachableRef<Element>, 4> CustomElementQueue::takeElements()
+Vector<Ref<Element>, 4> CustomElementQueue::takeElements()
 {
     RELEASE_ASSERT(!m_invoking);
     return std::exchange(m_elements, { });
@@ -385,6 +386,7 @@ void CustomElementReactionQueue::enqueueElementsOnAppropriateElementQueue(const 
 void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element& element)
 {
     ASSERT(element.reactionQueue());
+    element.setIsInCustomElementReactionQueue();
     if (!CustomElementReactionStack::s_currentProcessingStack) {
         element.document().windowEventLoop().backupElementQueue().add(element);
         return;

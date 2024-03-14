@@ -107,12 +107,12 @@ public:
     void add(Element&);
     WEBCORE_EXPORT void processQueue(JSC::JSGlobalObject*);
 
-    Vector<GCReachableRef<Element>, 4> takeElements();
+    Vector<Ref<Element>, 4> takeElements();
 
 private:
     void invokeAll();
 
-    Vector<GCReachableRef<Element>, 4> m_elements;
+    Vector<Ref<Element>, 4> m_elements;
     bool m_invoking { false };
 };
 
@@ -231,7 +231,7 @@ public:
         s_currentProcessingStack = m_previousProcessingStack;
     }
 
-    Vector<GCReachableRef<Element>, 4> takeElements() { return m_queue.takeElements(); }
+    Vector<Ref<Element>, 4> takeElements() { return m_queue.takeElements(); }
 
 private:
     CustomElementQueue m_queue;
