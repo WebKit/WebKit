@@ -1201,6 +1201,44 @@ TEST(WKWebExtensionAPIAction, EmptyAction)
     Util::loadAndRunExtension(actionManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIAction, ClickedEventAndPermissionsRequest)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.action.setPopup({ popup: '' })",
+
+        @"browser.action.onClicked.addListener(async (tab) => {",
+        @"  try {",
+        @"    const result = await browser.permissions.request({ 'permissions': [ 'webNavigation' ] })",
+        @"    if (result)",
+        @"      browser.test.notifyPass()",
+        @"    else",
+        @"      browser.test.notifyFail('Permissions request was rejected')",
+        @"  } catch (error) {",
+        @"    browser.test.notifyFail('Permissions request failed')",
+        @"  }",
+        @"})",
+
+        @"browser.test.yield('Test Action')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        EXPECT_EQ(requestedPermissions.count, 1lu);
+        EXPECT_TRUE([requestedPermissions isEqualToSet:[NSSet setWithObject:@"webNavigation"]]);
+        callback(requestedPermissions, nil);
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Action");
+
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+
+    [manager run];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

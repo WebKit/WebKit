@@ -549,10 +549,13 @@ WebExtensionAPIEvent& WebExtensionAPIAction::onClicked()
 
 void WebExtensionContextProxy::dispatchActionClickedEvent(const std::optional<WebExtensionTabParameters>& tabParameters)
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action/onClicked
+
     auto *tab = tabParameters ? toWebAPI(tabParameters.value()) : nil;
 
-    enumerateNamespaceObjects([&](auto& namespaceObject) {
-        // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action/onClicked
+    enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
+        RefPtr coreFrame = frame.protectedCoreLocalFrame();
+        WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, coreFrame ? coreFrame->document() : nullptr);
         namespaceObject.action().onClicked().invokeListenersWithArgument(tab);
     });
 }
