@@ -4042,6 +4042,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     if (hasSimpleOutOfFlowContentOnly) {
         // Shortcut the layout.
+        m_lineLayout = std::monostate();
+
         setStaticPositionsForSimpleOutOfFlowContent();
         setLogicalHeight(borderAndPaddingBefore() + borderAndPaddingAfter() + scrollbarLogicalHeight());
         return;

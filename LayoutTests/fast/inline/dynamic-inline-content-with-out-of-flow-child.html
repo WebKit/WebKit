@@ -1,0 +1,19 @@
+<style>
+img {
+  position: absolute;
+}
+</style>
+<div><img id=img></div>
+<div id=move_here>remove</div>
+<div id=result></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.execCommand("selectAll", false);
+let selection = document.getSelection();
+move_here.appendChild(img);
+document.body.offsetHeight;
+selection.deleteFromDocument();
+document.body.offsetHeight;
+result.innerText = "PASS if no crash or assert";
+</script>
