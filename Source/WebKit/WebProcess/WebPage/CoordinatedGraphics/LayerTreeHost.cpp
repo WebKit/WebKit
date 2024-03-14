@@ -274,7 +274,6 @@ GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory()
 void LayerTreeHost::contentsSizeChanged(const IntSize& newSize)
 {
     m_viewportController.didChangeContentsSize(newSize);
-    didChangeViewport();
 }
 
 void LayerTreeHost::didChangeViewportAttributes(ViewportAttributes&& attr)
