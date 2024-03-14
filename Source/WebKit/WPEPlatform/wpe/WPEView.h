@@ -52,6 +52,9 @@ struct _WPEViewClass
                                                    WPEBuffer    *buffer,
                                                    GError      **error);
     WPEMonitor *(* get_monitor)                   (WPEView      *view);
+    gboolean    (* resize)                        (WPEView      *view,
+                                                   int           width,
+                                                   int           height);
     gboolean    (* set_fullscreen)                (WPEView      *view,
                                                    gboolean      fullscreen);
     gboolean    (* set_maximized)                 (WPEView      *view,
@@ -105,15 +108,14 @@ WPE_API WPEView     *wpe_view_new                           (WPEDisplay   *displ
 WPE_API WPEDisplay  *wpe_view_get_display                   (WPEView      *view);
 WPE_API int          wpe_view_get_width                     (WPEView      *view);
 WPE_API int          wpe_view_get_height                    (WPEView      *view);
-WPE_API void         wpe_view_set_width                     (WPEView      *view,
-                                                             int           width);
-WPE_API void         wpe_view_set_height                    (WPEView      *view,
+WPE_API gboolean     wpe_view_resize                        (WPEView      *view,
+                                                             int           width,
                                                              int           height);
-WPE_API void         wpe_view_resize                        (WPEView      *view,
+WPE_API void         wpe_view_resized                       (WPEView      *view,
                                                              int           width,
                                                              int           height);
 WPE_API gdouble      wpe_view_get_scale                     (WPEView      *view);
-WPE_API void         wpe_view_set_scale                     (WPEView      *view,
+WPE_API void         wpe_view_scale_changed                 (WPEView      *view,
                                                              gdouble       scale);
 WPE_API void         wpe_view_set_cursor_from_name          (WPEView      *view,
                                                              const char   *name);
@@ -125,7 +127,7 @@ WPE_API void         wpe_view_set_cursor_from_bytes         (WPEView      *view,
                                                              guint         hotspot_x,
                                                              guint         hotspot_y);
 WPE_API WPEViewState wpe_view_get_state                     (WPEView      *view);
-WPE_API void         wpe_view_set_state                     (WPEView      *view,
+WPE_API void         wpe_view_state_changed                 (WPEView      *view,
                                                              WPEViewState  state);
 WPE_API WPEMonitor  *wpe_view_get_monitor                   (WPEView      *view);
 WPE_API gboolean     wpe_view_fullscreen                    (WPEView      *view);

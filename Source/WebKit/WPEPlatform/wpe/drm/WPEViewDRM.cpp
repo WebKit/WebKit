@@ -78,9 +78,9 @@ static void wpeViewDRMConstructed(GObject* object)
     auto* mode = wpeMonitorDRMGetMode(WPE_MONITOR_DRM(monitor));
     double scale = wpe_monitor_get_scale(monitor);
     auto* wpeView = WPE_VIEW(view);
-    wpe_view_resize(wpeView, mode->hdisplay / scale, mode->vdisplay / scale);
-    wpe_view_set_scale(wpeView, scale);
-    wpe_view_set_state(wpeView, WPE_VIEW_STATE_FULLSCREEN);
+    wpe_view_resized(wpeView, mode->hdisplay / scale, mode->vdisplay / scale);
+    wpe_view_scale_changed(wpeView, scale);
+    wpe_view_state_changed(wpeView, WPE_VIEW_STATE_FULLSCREEN);
 
     priv->refreshDuration = Seconds(1 / (wpe_monitor_get_refresh_rate(monitor) / 1000.));
 

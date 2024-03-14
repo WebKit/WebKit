@@ -111,6 +111,12 @@ static gboolean wpeViewHeadlessRenderBuffer(WPEView* view, WPEBuffer* buffer, GE
     return TRUE;
 }
 
+static gboolean wpeViewHeadlessResize(WPEView* view, int width, int height)
+{
+    wpe_view_resized(view, width, height);
+    return TRUE;
+}
+
 static gboolean wpeViewHeadlessSetFullscreen(WPEView* view, gboolean fullscreen)
 {
     auto state = wpe_view_get_state(view);
@@ -118,11 +124,10 @@ static gboolean wpeViewHeadlessSetFullscreen(WPEView* view, gboolean fullscreen)
         state = static_cast<WPEViewState>(state | WPE_VIEW_STATE_FULLSCREEN);
     else
         state = static_cast<WPEViewState>(state & ~WPE_VIEW_STATE_FULLSCREEN);
-    wpe_view_set_state(view, state);
+    wpe_view_state_changed(view, state);
 
     return TRUE;
 }
-
 
 static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass)
 {
@@ -132,6 +137,7 @@ static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewHeadlessClass);
     viewClass->render_buffer = wpeViewHeadlessRenderBuffer;
+    viewClass->resize = wpeViewHeadlessResize;
     viewClass->set_fullscreen = wpeViewHeadlessSetFullscreen;
 }
 

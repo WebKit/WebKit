@@ -197,10 +197,10 @@ const struct xdg_surface_listener xdgSurfaceListener = {
         if (width.has_value() && height.has_value()) {
             if (!useSavedSize)
                 wpeViewWaylandSaveSize(view);
-            wpe_view_resize(view, width.value(), height.value());
+            wpe_view_resized(view, width.value(), height.value());
         }
 
-        wpe_view_set_state(view, priv->pendingState.state);
+        wpe_view_state_changed(view, priv->pendingState.state);
         priv->pendingState = { };
         xdg_surface_ack_configure(surface, serial);
     },
@@ -265,7 +265,7 @@ static void wpeViewWaylandUpdateScale(WPEViewWayland* view)
     if (wl_surface_get_version(view->priv->wlSurface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
         wl_surface_set_buffer_scale(view->priv->wlSurface, scale);
 
-    wpe_view_set_scale(WPE_VIEW(view), scale);
+    wpe_view_scale_changed(WPE_VIEW(view), scale);
 }
 
 static const struct wl_surface_listener surfaceListener = {
@@ -414,7 +414,7 @@ static void wpeViewWaylandConstructed(GObject* object)
         auto scale = wpe_monitor_get_scale(priv->currentMonitor.get());
         if (wl_surface_get_version(priv->wlSurface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
             wl_surface_set_buffer_scale(priv->wlSurface, scale);
-        wpe_view_set_scale(view, scale);
+        wpe_view_scale_changed(view, scale);
     }
 
     // The web view default background color is opaque white, so set the whole view region as opaque initially.
@@ -645,6 +645,16 @@ static WPEMonitor* wpeViewWaylandGetMonitor(WPEView* view)
     return priv->currentMonitor.get();
 }
 
+static gboolean wpeViewWaylandResize(WPEView* view, int width, int height)
+{
+    auto* priv = WPE_VIEW_WAYLAND(view)->priv;
+    if (!priv->xdgToplevel)
+        return FALSE;
+
+    wpe_view_resized(view, width, height);
+    return TRUE;
+}
+
 static gboolean wpeViewWaylandSetFullscreen(WPEView* view, gboolean fullscreen)
 {
     auto* priv = WPE_VIEW_WAYLAND(view)->priv;
@@ -754,6 +764,7 @@ static void wpe_view_wayland_class_init(WPEViewWaylandClass* viewWaylandClass)
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewWaylandClass);
     viewClass->render_buffer = wpeViewWaylandRenderBuffer;
     viewClass->get_monitor = wpeViewWaylandGetMonitor;
+    viewClass->resize = wpeViewWaylandResize;
     viewClass->set_fullscreen = wpeViewWaylandSetFullscreen;
     viewClass->set_maximized = wpeViewWaylandSetMaximized;
     viewClass->get_preferred_dma_buf_formats = wpeViewWaylandGetPreferredDMABufFormats;
