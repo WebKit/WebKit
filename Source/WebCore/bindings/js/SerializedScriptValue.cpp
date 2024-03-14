@@ -3673,6 +3673,9 @@ private:
             return true;
         };
 
+        if (!ArrayBufferView::verifySubRangeLength(arrayBuffer->byteLength(), byteOffset, length.value_or(0), 1))
+            return false;
+
         switch (arrayBufferViewSubtag) {
         case DataViewTag:
             return makeArrayBufferView(DataView::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
