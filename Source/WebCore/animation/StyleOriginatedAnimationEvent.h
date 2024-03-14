@@ -30,18 +30,18 @@
 
 namespace WebCore {
 
-class DeclarativeAnimationEvent : public AnimationEventBase {
-    WTF_MAKE_ISO_ALLOCATED(DeclarativeAnimationEvent);
+class StyleOriginatedAnimationEvent : public AnimationEventBase {
+    WTF_MAKE_ISO_ALLOCATED(StyleOriginatedAnimationEvent);
 public:
-    virtual ~DeclarativeAnimationEvent();
+    virtual ~StyleOriginatedAnimationEvent();
 
     double elapsedTime() const { return m_elapsedTime; }
     const String& pseudoElement();
     PseudoId pseudoId() const { return m_pseudoId; }
 
 protected:
-    DeclarativeAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, PseudoId);
-    DeclarativeAnimationEvent(const AtomString&, const EventInit&, IsTrusted, double, const String&);
+    StyleOriginatedAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, PseudoId);
+    StyleOriginatedAnimationEvent(const AtomString&, const EventInit&, IsTrusted, double, const String&);
 
 private:
     double m_elapsedTime;

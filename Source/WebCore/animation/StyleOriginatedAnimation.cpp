@@ -24,26 +24,26 @@
  */
 
 #include "config.h"
-#include "DeclarativeAnimation.h"
+#include "StyleOriginatedAnimation.h"
 
 #include "Animation.h"
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
-#include "DeclarativeAnimationEvent.h"
 #include "DocumentTimeline.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "KeyframeEffect.h"
 #include "Logging.h"
 #include "RenderStyle.h"
+#include "StyleOriginatedAnimationEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimation);
+WTF_MAKE_ISO_ALLOCATED_IMPL(StyleOriginatedAnimation);
 
-DeclarativeAnimation::DeclarativeAnimation(const Styleable& styleable, const Animation& backingAnimation)
+StyleOriginatedAnimation::StyleOriginatedAnimation(const Styleable& styleable, const Animation& backingAnimation)
     : WebAnimation(styleable.element.document())
     , m_owningElement(styleable.element)
     , m_owningPseudoId(styleable.pseudoId)
@@ -51,27 +51,27 @@ DeclarativeAnimation::DeclarativeAnimation(const Styleable& styleable, const Ani
 {
 }
 
-DeclarativeAnimation::~DeclarativeAnimation()
+StyleOriginatedAnimation::~StyleOriginatedAnimation()
 {
 }
 
-const std::optional<const Styleable> DeclarativeAnimation::owningElement() const
+const std::optional<const Styleable> StyleOriginatedAnimation::owningElement() const
 {
     if (m_owningElement)
         return Styleable(*m_owningElement, m_owningPseudoId);
     return std::nullopt;
 }
 
-void DeclarativeAnimation::tick()
+void StyleOriginatedAnimation::tick()
 {
-    LOG_WITH_STREAM(Animations, stream << "DeclarativeAnimation::tick for element " << m_owningElement);
+    LOG_WITH_STREAM(Animations, stream << "StyleOriginatedAnimation::tick for element " << m_owningElement);
 
     bool wasRelevant = isRelevant();
     
     WebAnimation::tick();
     invalidateDOMEvents(shouldFireDOMEvents());
 
-    // If a declarative animation transitions from a non-idle state to an idle state, it means it was
+    // If a style-originated animation transitions from a non-idle state to an idle state, it means it was
     // canceled using the Web Animations API and it should be disassociated from its owner element.
     // From this point on, this animation is like any other animation and should not appear in the
     // maps containing running CSS Transitions and CSS Animations for a given element.
@@ -79,7 +79,7 @@ void DeclarativeAnimation::tick()
         disassociateFromOwningElement();
 }
 
-bool DeclarativeAnimation::canHaveGlobalPosition()
+bool StyleOriginatedAnimation::canHaveGlobalPosition()
 {
     // https://drafts.csswg.org/css-animations-2/#animation-composite-order
     // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
@@ -90,22 +90,22 @@ bool DeclarativeAnimation::canHaveGlobalPosition()
     return !m_owningElement && playState() != WebAnimation::PlayState::Idle;
 }
 
-void DeclarativeAnimation::disassociateFromOwningElement()
+void StyleOriginatedAnimation::disassociateFromOwningElement()
 {
     if (!m_owningElement)
         return;
 
-    owningElement()->removeDeclarativeAnimationFromListsForOwningElement(*this);
+    owningElement()->removeStyleOriginatedAnimationFromListsForOwningElement(*this);
     m_owningElement = nullptr;
 }
 
-void DeclarativeAnimation::setBackingAnimation(const Animation& backingAnimation)
+void StyleOriginatedAnimation::setBackingAnimation(const Animation& backingAnimation)
 {
     m_backingAnimation = const_cast<Animation&>(backingAnimation);
     syncPropertiesWithBackingAnimation();
 }
 
-void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
+void StyleOriginatedAnimation::initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext& resolutionContext)
 {
     WebAnimation::initialize();
 
@@ -118,7 +118,7 @@ void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderS
 
     setEffect(KeyframeEffect::create(*m_owningElement, m_owningPseudoId));
     setTimeline(&m_owningElement->document().timeline());
-    downcast<KeyframeEffect>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
+    downcast<KeyframeEffect>(effect())->computeStyleOriginatedAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
     syncPropertiesWithBackingAnimation();
     if (backingAnimation().playState() == AnimationPlayState::Playing)
         play();
@@ -128,65 +128,65 @@ void DeclarativeAnimation::initialize(const RenderStyle* oldStyle, const RenderS
     unsuspendEffectInvalidation();
 }
 
-void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
+void StyleOriginatedAnimation::syncPropertiesWithBackingAnimation()
 {
 }
 
-std::optional<double> DeclarativeAnimation::bindingsStartTime() const
+std::optional<double> StyleOriginatedAnimation::bindingsStartTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsStartTime();
 }
 
-std::optional<double> DeclarativeAnimation::bindingsCurrentTime() const
+std::optional<double> StyleOriginatedAnimation::bindingsCurrentTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsCurrentTime();
 }
 
-WebAnimation::PlayState DeclarativeAnimation::bindingsPlayState() const
+WebAnimation::PlayState StyleOriginatedAnimation::bindingsPlayState() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsPlayState();
 }
 
-WebAnimation::ReplaceState DeclarativeAnimation::bindingsReplaceState() const
+WebAnimation::ReplaceState StyleOriginatedAnimation::bindingsReplaceState() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsReplaceState();
 }
 
-bool DeclarativeAnimation::bindingsPending() const
+bool StyleOriginatedAnimation::bindingsPending() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsPending();
 }
 
-WebAnimation::ReadyPromise& DeclarativeAnimation::bindingsReady()
+WebAnimation::ReadyPromise& StyleOriginatedAnimation::bindingsReady()
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsReady();
 }
 
-WebAnimation::FinishedPromise& DeclarativeAnimation::bindingsFinished()
+WebAnimation::FinishedPromise& StyleOriginatedAnimation::bindingsFinished()
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsFinished();
 }
 
-ExceptionOr<void> DeclarativeAnimation::bindingsPlay()
+ExceptionOr<void> StyleOriginatedAnimation::bindingsPlay()
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsPlay();
 }
 
-ExceptionOr<void> DeclarativeAnimation::bindingsPause()
+ExceptionOr<void> StyleOriginatedAnimation::bindingsPause()
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsPause();
 }
 
-void DeclarativeAnimation::flushPendingStyleChanges() const
+void StyleOriginatedAnimation::flushPendingStyleChanges() const
 {
     if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(effect())) {
         if (auto* target = keyframeEffect->target())
@@ -194,7 +194,7 @@ void DeclarativeAnimation::flushPendingStyleChanges() const
     }
 }
 
-void DeclarativeAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)
+void StyleOriginatedAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)
 {
     if (timeline() && !newTimeline)
         cancel();
@@ -202,7 +202,7 @@ void DeclarativeAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)
     WebAnimation::setTimeline(WTFMove(newTimeline));
 }
 
-void DeclarativeAnimation::cancel()
+void StyleOriginatedAnimation::cancel()
 {
     auto cancelationTime = 0_s;
 
@@ -219,13 +219,13 @@ void DeclarativeAnimation::cancel()
     invalidateDOMEvents(shouldFireEvents, cancelationTime);
 }
 
-void DeclarativeAnimation::cancelFromStyle()
+void StyleOriginatedAnimation::cancelFromStyle()
 {
     cancel();
     disassociateFromOwningElement();
 }
 
-AnimationEffectPhase DeclarativeAnimation::phaseWithoutEffect() const
+AnimationEffectPhase StyleOriginatedAnimation::phaseWithoutEffect() const
 {
     // This shouldn't be called if we actually have an effect.
     ASSERT(!effect());
@@ -238,28 +238,28 @@ AnimationEffectPhase DeclarativeAnimation::phaseWithoutEffect() const
     return *animationCurrentTime < 0_s ? AnimationEffectPhase::Before : AnimationEffectPhase::After;
 }
 
-Seconds DeclarativeAnimation::effectTimeAtStart() const
+Seconds StyleOriginatedAnimation::effectTimeAtStart() const
 {
     if (auto* effect = this->effect())
         return effect->delay();
     return 0_s;
 }
 
-Seconds DeclarativeAnimation::effectTimeAtIteration(double iteration) const
+Seconds StyleOriginatedAnimation::effectTimeAtIteration(double iteration) const
 {
     if (auto* effect = this->effect())
         return effect->delay() + effect->iterationDuration() * iteration;
     return 0_s;
 }
 
-Seconds DeclarativeAnimation::effectTimeAtEnd() const
+Seconds StyleOriginatedAnimation::effectTimeAtEnd() const
 {
     if (auto* effect = this->effect())
         return effect->endTime();
     return 0_s;
 }
 
-auto DeclarativeAnimation::shouldFireDOMEvents() const -> ShouldFireEvents
+auto StyleOriginatedAnimation::shouldFireDOMEvents() const -> ShouldFireEvents
 {
     if (!m_owningElement)
         return ShouldFireEvents::No;
@@ -276,7 +276,7 @@ auto DeclarativeAnimation::shouldFireDOMEvents() const -> ShouldFireEvents
     return ShouldFireEvents::No;
 }
 
-void DeclarativeAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents, Seconds elapsedTime)
+void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents, Seconds elapsedTime)
 {
     if (!m_owningElement)
         return;
@@ -379,7 +379,7 @@ void DeclarativeAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents
     m_previousIteration = iteration;
 }
 
-void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds elapsedTime, Seconds scheduledEffectTime)
+void StyleOriginatedAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds elapsedTime, Seconds scheduledEffectTime)
 {
     if (!m_owningElement)
         return;

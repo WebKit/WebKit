@@ -32,10 +32,10 @@
 #include "BlendingKeyframes.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
-#include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "KeyframeEffect.h"
 #include "LayoutSize.h"
+#include "StyleOriginatedAnimation.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
 #include <wtf/IsoMallocInlines.h>
@@ -203,8 +203,8 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
         ASSERT(animation->holdTime() || animation->startTime());
         m_holdTime = animation->holdTime();
         m_startTime = animation->startTime();
-        if (is<DeclarativeAnimation>(animation)) {
-            if (auto* defaultKeyframeTimingFunction = downcast<DeclarativeAnimation>(*animation).backingAnimation().timingFunction())
+        if (is<StyleOriginatedAnimation>(animation)) {
+            if (auto* defaultKeyframeTimingFunction = downcast<StyleOriginatedAnimation>(*animation).backingAnimation().timingFunction())
                 m_defaultKeyframeTimingFunction = defaultKeyframeTimingFunction;
         }
     }

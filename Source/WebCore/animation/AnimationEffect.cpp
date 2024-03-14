@@ -59,8 +59,8 @@ void AnimationEffect::setAnimation(WebAnimation* animation)
 
 EffectTiming AnimationEffect::getBindingsTiming() const
 {
-    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation()))
-        declarativeAnimation->flushPendingStyleChanges();
+    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
+        styleOriginatedAnimation->flushPendingStyleChanges();
 
     EffectTiming timing;
     timing.delay = secondsToWebAnimationsAPITime(m_timing.delay);
@@ -102,8 +102,8 @@ BasicEffectTiming AnimationEffect::getBasicTiming(std::optional<Seconds> startTi
 
 ComputedEffectTiming AnimationEffect::getBindingsComputedTiming() const
 {
-    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation()))
-        declarativeAnimation->flushPendingStyleChanges();
+    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
+        styleOriginatedAnimation->flushPendingStyleChanges();
     return getComputedTiming();
 }
 

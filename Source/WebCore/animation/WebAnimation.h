@@ -65,7 +65,7 @@ public:
 
     WEBCORE_EXPORT static HashSet<WebAnimation*>& instances();
 
-    virtual bool isDeclarativeAnimation() const { return false; }
+    virtual bool isStyleOriginatedAnimation() const { return false; }
     virtual bool isCSSAnimation() const { return false; }
     virtual bool isCSSTransition() const { return false; }
 

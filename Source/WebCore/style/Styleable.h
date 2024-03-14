@@ -175,12 +175,12 @@ struct Styleable {
     void elementWasRemoved() const;
 
     void willChangeRenderer() const;
-    void cancelDeclarativeAnimations() const;
+    void cancelStyleOriginatedAnimations() const;
 
     void animationWasAdded(WebAnimation&) const;
     void animationWasRemoved(WebAnimation&) const;
 
-    void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&) const;
+    void removeStyleOriginatedAnimationFromListsForOwningElement(WebAnimation&) const;
 
     void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&) const;
     void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle) const;

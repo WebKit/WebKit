@@ -35,7 +35,6 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
 #include "CommonAtomStrings.h"
-#include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "DocumentTimeline.h"
@@ -48,6 +47,7 @@
 #include "RenderListMarker.h"
 #include "RenderStyleInlines.h"
 #include "StyleCustomPropertyData.h"
+#include "StyleOriginatedAnimation.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -221,9 +221,9 @@ static inline bool removeCSSTransitionFromMap(CSSTransition& transition, Animata
     return true;
 }
 
-void Styleable::removeDeclarativeAnimationFromListsForOwningElement(WebAnimation& animation) const
+void Styleable::removeStyleOriginatedAnimationFromListsForOwningElement(WebAnimation& animation) const
 {
-    ASSERT(is<DeclarativeAnimation>(animation));
+    ASSERT(is<StyleOriginatedAnimation>(animation));
 
     if (auto* transition = dynamicDowncast<CSSTransition>(animation)) {
         if (!removeCSSTransitionFromMap(*transition, ensureRunningTransitionsByProperty()))
@@ -240,12 +240,12 @@ void Styleable::animationWasRemoved(WebAnimation& animation) const
     // function to be called, but they should remain associated with their owning element until this is changed via a call
     // to the JS API or changing the target element's animation-name property.
     if (is<CSSTransition>(animation))
-        removeDeclarativeAnimationFromListsForOwningElement(animation);
+        removeStyleOriginatedAnimationFromListsForOwningElement(animation);
 }
 
 void Styleable::elementWasRemoved() const
 {
-    cancelDeclarativeAnimations();
+    cancelStyleOriginatedAnimations();
 }
 
 void Styleable::willChangeRenderer() const
@@ -256,12 +256,12 @@ void Styleable::willChangeRenderer() const
     }
 }
 
-void Styleable::cancelDeclarativeAnimations() const
+void Styleable::cancelStyleOriginatedAnimations() const
 {
     if (auto* animations = this->animations()) {
         for (auto& animation : *animations) {
-            if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation.get()))
-                declarativeAnimation->cancelFromStyle();
+            if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.get()))
+                styleOriginatedAnimation->cancelFromStyle();
         }
     }
 
@@ -481,8 +481,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     auto* animation = keyframeEffect ? keyframeEffect->animation() : nullptr;
 
     bool isDeclarative = false;
-    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation)) {
-        if (auto owningElement = declarativeAnimation->owningElement())
+    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation)) {
+        if (auto owningElement = styleOriginatedAnimation->owningElement())
             isDeclarative = *owningElement == styleable;
     }
 

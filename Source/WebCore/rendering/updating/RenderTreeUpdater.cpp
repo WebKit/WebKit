@@ -710,11 +710,11 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
                 break;
             case TeardownType::Full:
-                styleable.cancelDeclarativeAnimations();
+                styleable.cancelStyleOriginatedAnimations();
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
                 break;
             case TeardownType::RendererUpdateCancelingAnimations:
-                styleable.cancelDeclarativeAnimations();
+                styleable.cancelStyleOriginatedAnimations();
                 break;
             case TeardownType::RendererUpdate:
                 styleable.willChangeRenderer();
@@ -730,7 +730,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                 // we cannot create a Styleable with a PseudoElement.
                 if (auto* renderListItem = dynamicDowncast<RenderListItem>(element.renderer())) {
                     if (renderListItem->markerRenderer())
-                        Styleable(element, PseudoId::Marker).cancelDeclarativeAnimations();
+                        Styleable(element, PseudoId::Marker).cancelStyleOriginatedAnimations();
                 }
             }
 

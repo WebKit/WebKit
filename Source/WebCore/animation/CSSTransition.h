@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "DeclarativeAnimation.h"
+#include "StyleOriginatedAnimation.h"
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Markable.h>
@@ -39,7 +39,7 @@ namespace WebCore {
 class Animation;
 class RenderStyle;
 
-class CSSTransition final : public DeclarativeAnimation {
+class CSSTransition final : public StyleOriginatedAnimation {
     WTF_MAKE_ISO_ALLOCATED(CSSTransition);
 public:
     static Ref<CSSTransition> create(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
@@ -57,7 +57,7 @@ public:
 private:
     CSSTransition(const Styleable&, const AnimatableCSSProperty&, MonotonicTime generationTime, const Animation&, const RenderStyle& oldStyle, const RenderStyle& targetStyle, const RenderStyle& reversingAdjustedStartStyle, double);
     void setTimingProperties(Seconds delay, Seconds duration);
-    Ref<DeclarativeAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) final;
+    Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, PseudoId) final;
     void resolve(RenderStyle& targetStyle, const Style::ResolutionContext&, std::optional<Seconds>) final;
     void animationDidFinish() final;
     bool isCSSTransition() const final { return true; }
