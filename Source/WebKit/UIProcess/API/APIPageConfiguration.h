@@ -202,6 +202,20 @@ public:
     void setHTTPSUpgradeEnabled(bool enabled) { m_data.httpsUpgradeEnabled = enabled; }
     bool httpsUpgradeEnabled() const { return m_data.httpsUpgradeEnabled; }
 
+#if PLATFORM(MAC)
+    bool showsURLsInToolTips() const { return m_data.showsURLsInToolTips; }
+    void setShowsURLsInToolTips(bool shows) { m_data.showsURLsInToolTips = shows; }
+
+    bool serviceControlsEnabled() const { return m_data.serviceControlsEnabled; }
+    void setServiceControlsEnabled(bool enabled) { m_data.serviceControlsEnabled = enabled; }
+
+    bool imageControlsEnabled() const { return m_data.imageControlsEnabled; }
+    void setImageControlsEnabled(bool enabled) { m_data.imageControlsEnabled = enabled; }
+
+    bool contextMenuQRCodeDetectionEnabled() const { return m_data.contextMenuQRCodeDetectionEnabled; }
+    void setContextMenuQRCodeDetectionEnabled(bool enabled) { m_data.contextMenuQRCodeDetectionEnabled = enabled; }
+#endif
+
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_data.shouldRelaxThirdPartyCookieBlocking; }
 
@@ -298,6 +312,13 @@ private:
 
         bool mediaCaptureEnabled { false };
         bool httpsUpgradeEnabled { true };
+
+#if PLATFORM(MAC)
+        bool showsURLsInToolTips { false };
+        bool serviceControlsEnabled { false };
+        bool imageControlsEnabled { false };
+        bool contextMenuQRCodeDetectionEnabled { false };
+#endif
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
         WTF::String attributedBundleIdentifier { };

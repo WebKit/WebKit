@@ -159,12 +159,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     Class _attachmentFileWrapperClass;
     BOOL _mainContentUserGestureOverrideEnabled;
 
-#if PLATFORM(MAC)
-    BOOL _showsURLsInToolTips;
-    BOOL _serviceControlsEnabled;
-    BOOL _imageControlsEnabled;
-    BOOL _contextMenuQRCodeDetectionEnabled;
-#endif
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
 
@@ -226,12 +220,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _attachmentElementEnabled = NO;
     _attachmentWideLayoutEnabled = NO;
 
-#if PLATFORM(MAC)
-    _showsURLsInToolTips = NO;
-    _serviceControlsEnabled = NO;
-    _imageControlsEnabled = NO;
-    _contextMenuQRCodeDetectionEnabled = NO;
-#endif
     _waitsForPaintAfterViewDidMoveToWindow = YES;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -437,13 +425,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_longPressActionsEnabled = self->_longPressActionsEnabled;
     configuration->_systemPreviewEnabled = self->_systemPreviewEnabled;
     configuration->_shouldDecidePolicyBeforeLoadingQuickLookPreview = self->_shouldDecidePolicyBeforeLoadingQuickLookPreview;
-#endif
-#if PLATFORM(MAC)
-    configuration->_userInterfaceDirectionPolicy = self->_userInterfaceDirectionPolicy;
-    configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
-    configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
-    configuration->_imageControlsEnabled = self->_imageControlsEnabled;
-    configuration->_contextMenuQRCodeDetectionEnabled = self->_contextMenuQRCodeDetectionEnabled;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     configuration->_dataDetectorTypes = self->_dataDetectorTypes;
@@ -1239,42 +1220,42 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 #if PLATFORM(MAC)
 - (BOOL)_showsURLsInToolTips
 {
-    return _showsURLsInToolTips;
+    return _pageConfiguration->showsURLsInToolTips();
 }
 
 - (void)_setShowsURLsInToolTips:(BOOL)showsURLsInToolTips
 {
-    _showsURLsInToolTips = showsURLsInToolTips;
+    _pageConfiguration->setShowsURLsInToolTips(showsURLsInToolTips);
 }
 
 - (BOOL)_serviceControlsEnabled
 {
-    return _serviceControlsEnabled;
+    return _pageConfiguration->serviceControlsEnabled();
 }
 
 - (void)_setServiceControlsEnabled:(BOOL)serviceControlsEnabled
 {
-    _serviceControlsEnabled = serviceControlsEnabled;
+    _pageConfiguration->setServiceControlsEnabled(serviceControlsEnabled);
 }
 
 - (BOOL)_imageControlsEnabled
 {
-    return _imageControlsEnabled;
+    return _pageConfiguration->imageControlsEnabled();
 }
 
 - (void)_setImageControlsEnabled:(BOOL)imageControlsEnabled
 {
-    _imageControlsEnabled = imageControlsEnabled;
+    _pageConfiguration->setImageControlsEnabled(imageControlsEnabled);
 }
 
 - (BOOL)_contextMenuQRCodeDetectionEnabled
 {
-    return _contextMenuQRCodeDetectionEnabled;
+    return _pageConfiguration->contextMenuQRCodeDetectionEnabled();
 }
 
 - (void)_setContextMenuQRCodeDetectionEnabled:(BOOL)contextMenuQRCodeDetectionEnabled
 {
-    _contextMenuQRCodeDetectionEnabled = contextMenuQRCodeDetectionEnabled;
+    _pageConfiguration->setContextMenuQRCodeDetectionEnabled(contextMenuQRCodeDetectionEnabled);
 }
 
 - (BOOL)_requiresUserActionForEditingControlsManager
