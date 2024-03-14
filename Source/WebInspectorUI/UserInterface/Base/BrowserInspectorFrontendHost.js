@@ -226,13 +226,34 @@ if (!window.InspectorFrontendHost) {
 
         canSave(saveMode)
         {
-            return false;
+            // Support single file mode only.
+            return saveMode === WI.FileUtilities.SaveMode.SingleFile;
         }
 
         save(saveDatas, forceSaveAs)
         {
-            // FIXME: Create a Blob from the content, get an object URL, open it to trigger a download.
-            throw "unimplemented";
+            console.assert(saveDatas.length === 1, saveDatas);
+
+            let saveData = saveDatas[0];
+
+            // If we can't guess the type of content that's being downloaded from the file extension,
+            // fallback to application/octet-stream.
+            let mimeType = WI.mimeTypeForFileExtension(saveData.url);
+            if (!mimeType)
+                mimeType = "application/octet-stream";
+
+            let blob = WI.BlobUtilities.blobForContent(saveData.content, saveData.base64Encoded, mimeType);
+            let blobURL = URL.createObjectURL(blob);
+
+            let a = document.createElement("a");
+            a.href = blobURL;
+            a.style.display = "none";
+            // Get the filename from the url, which has the format "web-inspector:///file.ext".
+            a.download = saveData.url.split("/").pop();
+            a.click();
+            setTimeout(() => {
+                URL.revokeObjectURL(blobURL);
+            });
         }
 
         canLoad()
