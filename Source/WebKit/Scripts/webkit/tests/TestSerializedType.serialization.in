@@ -273,6 +273,11 @@ additional_forward_declaration: typedef struct __CFBar * CFBarRef
 }
 #endif
 
+#if USE(CFSTRING)
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
+}
+#endif
+
 [RValue] class WebKit::RValueWithFunctionCalls {
     SandboxExtensionHandle callFunction()
 }
@@ -325,3 +330,8 @@ header: <WebCore/ScrollbarTrackCornerSystemImageMac.h>
     bool m_useDarkAppearance;
 }
 #endif // USE(APPKIT)
+
+#if USE(PASSKIT)
+PKPaymentMethod wrapped by CoreIPCPKPaymentMethod
+#endif
+NSNull wrapped by CoreIPCNull

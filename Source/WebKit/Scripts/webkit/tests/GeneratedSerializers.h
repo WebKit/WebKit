@@ -341,6 +341,24 @@ template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
 };
 #endif
 
+#if USE(CFSTRING)
+template<> struct ArgumentCoder<CFStringRef> {
+    static void encode(Encoder&, CFStringRef);
+    static void encode(StreamConnectionEncoder&, CFStringRef);
+};
+template<> struct ArgumentCoder<RetainPtr<CFStringRef>> {
+    static void encode(Encoder& encoder, const RetainPtr<CFStringRef>& retainPtr)
+    {
+        ArgumentCoder<CFStringRef>::encode(encoder, retainPtr.get());
+    }
+    static void encode(StreamConnectionEncoder& encoder, const RetainPtr<CFStringRef>& retainPtr)
+    {
+        ArgumentCoder<CFStringRef>::encode(encoder, retainPtr.get());
+    }
+    static std::optional<RetainPtr<CFStringRef>> decode(Decoder&);
+};
+#endif
+
 template<> struct ArgumentCoder<WebKit::RValueWithFunctionCalls> {
     static void encode(Encoder&, WebKit::RValueWithFunctionCalls&&);
     static std::optional<WebKit::RValueWithFunctionCalls> decode(Decoder&);

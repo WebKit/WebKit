@@ -417,6 +417,11 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             { "WebKit::BarWrapper"_s, "wrapper"_s }
         } },
 #endif // USE(CFBAR)
+#if USE(CFSTRING)
+        { "CFStringRef"_s, {
+            { "String"_s, "wrapper"_s }
+        } },
+#endif // USE(CFSTRING)
         { "WebKit::RValueWithFunctionCalls"_s, {
             {
                 "SandboxExtensionHandle"_s,
@@ -471,6 +476,14 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             },
         } },
 #endif // USE(APPKIT)
+#if USE(PASSKIT)
+        { "PKPaymentMethod"_s, {
+            { "WebKit::CoreIPCPKPaymentMethod"_s, "wrapper"_s }
+        } },
+#endif // USE(PASSKIT)
+        { "NSNull"_s, {
+            { "WebKit::CoreIPCNull"_s, "wrapper"_s }
+        } },
         { "WebCore::SharedStringHash"_s, {
             { "uint32_t"_s, "alias"_s }
         } },

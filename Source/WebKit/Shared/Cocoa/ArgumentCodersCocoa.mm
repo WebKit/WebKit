@@ -671,21 +671,6 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
 #endif
 #endif
 
-#define ENCODE_WITH_COREIPC_WRAPPER_NAMED(c, wrapper) \
-template<> void encodeObjectDirectly<c>(IPC::Encoder& encoder, c *instance) \
-{ \
-    encoder << (instance ? std::optional(WebKit::wrapper(instance)) : std::nullopt); \
-} \
-template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<c>(IPC::Decoder& decoder) \
-{ \
-    auto result = decoder.decode<std::optional<WebKit::wrapper>>(); \
-    if (!result) \
-        return std::nullopt; \
-    return *result ? (*result)->toID() : nullptr; \
-}
-
-#define ENCODE_WITH_COREIPC_WRAPPER(c) ENCODE_WITH_COREIPC_WRAPPER_NAMED(c, CoreIPC##c)
-
 #define ENCODE_AS_SECURE_CODING(c) \
 template<> void encodeObjectDirectly<c>(IPC::Encoder& encoder, c *instance) \
 { \
@@ -699,49 +684,12 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
     return *result ? (*result)->toID() : nullptr; \
 }
 
-#if USE(AVFOUNDATION)
-ENCODE_WITH_COREIPC_WRAPPER(AVOutputContext);
-#endif
-#if USE(PASSKIT)
-ENCODE_WITH_COREIPC_WRAPPER(PKPaymentMethod);
-ENCODE_WITH_COREIPC_WRAPPER(PKPaymentMerchantSession);
-ENCODE_WITH_COREIPC_WRAPPER(PKContact);
-ENCODE_WITH_COREIPC_WRAPPER(PKPayment);
-ENCODE_WITH_COREIPC_WRAPPER(PKPaymentToken);
-ENCODE_WITH_COREIPC_WRAPPER(PKShippingMethod);
-ENCODE_WITH_COREIPC_WRAPPER(PKDateComponentsRange);
-ENCODE_WITH_COREIPC_WRAPPER(CNContact);
-ENCODE_WITH_COREIPC_WRAPPER(CNPhoneNumber);
-ENCODE_WITH_COREIPC_WRAPPER(CNPostalAddress);
-#endif
-ENCODE_WITH_COREIPC_WRAPPER(NSURLProtectionSpace);
-ENCODE_WITH_COREIPC_WRAPPER(NSShadow);
-ENCODE_WITH_COREIPC_WRAPPER(NSValue);
-ENCODE_WITH_COREIPC_WRAPPER(NSURLCredential);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSPersonNameComponents, CoreIPCPersonNameComponents);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDateComponents, CoreIPCDateComponents);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(PlatformColor, CoreIPCColor);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSData, CoreIPCData);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSURL, CoreIPCURL);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSNull, CoreIPCNull);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(WebCore::CocoaFont, CoreIPCFont);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDate, CoreIPCDate);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSArray, CoreIPCArray);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSError, CoreIPCError);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSLocale, CoreIPCLocale);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSNumber, CoreIPCNumber);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSString, CoreIPCString);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSDictionary, CoreIPCDictionary);
-ENCODE_WITH_COREIPC_WRAPPER_NAMED(NSPresentationIntent, CoreIPCPresentationIntent);
-
 ENCODE_AS_SECURE_CODING(NSURLRequest);
 ENCODE_AS_SECURE_CODING(NSParagraphStyle);
 #if USE(PASSKIT)
 ENCODE_AS_SECURE_CODING(PKSecureElementPass);
 #endif
 
-#undef ENCODE_WITH_COREIPC_WRAPPER
-#undef ENCODE_WITH_COREIPC_WRAPPER_NAMED
 #undef ENCODE_AS_SECURE_CODING
 
 #pragma mark - CF

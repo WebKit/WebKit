@@ -173,6 +173,8 @@ class SerializedType(object):
         return self.namespace + '::' + self.name
 
     def name_declaration_for_serialized_type_info(self):
+        if self.cf_type is not None:
+            return self.cf_type + 'Ref'
         if self.namespace == 'WTF':
             if self.name != "UUID":
                 return self.name
@@ -199,43 +201,6 @@ class SerializedType(object):
 
     def members_for_serialized_type_info(self):
         return self.serialized_members()
-
-        result = []
-        for member in self.dictionary_members:
-            member = copy.copy(member)
-            outer_type = None
-            collection_key_type = None
-            collection_value_type = None
-            optional = False
-            if member.name.endswith('?'):
-                optional = True
-            match = re.search(r'(.*)<(.*), (.*)>', member.name)
-            if match:
-                outer_type, collection_key_type, collection_value_type = match.groups()
-            else:
-                match = re.search(r'(.*)<(.*)>', member.name)
-                if match:
-                    outer_type, collection_value_type = match.groups()
-                else:
-                    outer_type = member.name
-
-            outer_type = 'WebKit::CoreIPC' + outer_type
-            if outer_type.endswith('?'):
-                outer_type = outer_type[:-1]
-
-            if collection_key_type is not None:
-                member.name = outer_type + '<WebKit::CoreIPC' + collection_key_type + ', WebKit::CoreIPC' + collection_value_type + '>'
-            elif collection_value_type is not None:
-                member.name = outer_type + '<WebKit::CoreIPC' + collection_value_type + '>'
-            else:
-                member.name = outer_type
-
-            if optional:
-                member.name = member.name + '?'
-            result.append(member)
-
-        return result
-
 
     def serialized_members(self):
         return list(filter(lambda member: 'NotSerialized' not in member.attributes, self.members))
@@ -482,6 +447,13 @@ class UsingStatement(object):
     def __init__(self, name, alias, condition):
         self.name = name
         self.alias = alias
+        self.condition = condition
+
+
+class ObjCWrappedType(object):
+    def __init__(self, ns_type, wrapper, condition):
+        self.ns_type = ns_type
+        self.wrapper = wrapper
         self.condition = condition
 
 
@@ -1093,7 +1065,7 @@ def generate_one_impl(type, template_argument):
     return result
 
 
-def generate_impl(serialized_types, serialized_enums, headers, generating_webkit_platform_impl):
+def generate_impl(serialized_types, serialized_enums, headers, generating_webkit_platform_impl, objc_wrapped_types):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -1141,6 +1113,26 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('')
     result.append('namespace IPC {')
     result.append('')
+
+    for type in objc_wrapped_types:
+        if type.condition is not None:
+            result.append('#if ' + type.condition)
+        result.append('template<> void encodeObjectDirectly<' + type.ns_type + '>(IPC::Encoder& encoder, ' + type.ns_type + ' *instance)')
+        result.append('{')
+        result.append('    encoder << (instance ? std::optional(WebKit::' + type.wrapper + '(instance)) : std::nullopt);')
+        result.append('}')
+        result.append('')
+        result.append('template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<' + type.ns_type + '>(IPC::Decoder& decoder)')
+        result.append('{')
+        result.append('    auto result = decoder.decode<std::optional<WebKit::' + type.wrapper + '>>();')
+        result.append('    if (!result)')
+        result.append('        return std::nullopt;')
+        result.append('    return *result ? (*result)->toID() : nullptr;')
+        result.append('}')
+        if type.condition is not None:
+            result.append('#endif // ' + type.condition)
+        result.append('')
+
     if not generating_webkit_platform_impl:
         result = result + argument_coder_declarations(serialized_types, False)
         result.append('')
@@ -1336,7 +1328,7 @@ def output_sorted_headers(sorted_headers):
     return result
 
 
-def generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements):
+def generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -1367,6 +1359,14 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
     for type in serialized_types:
         result.extend(generate_one_serialized_type_info(type))
 
+    for type in objc_wrapped_types:
+        if type.condition is not None:
+            result.append('#if ' + type.condition)
+        result.append('        { "' + type.ns_type + '"_s, {')
+        result.append('            { "WebKit::' + type.wrapper + '"_s, "wrapper"_s }')
+        result.append('        } },')
+        if type.condition is not None:
+            result.append('#endif // ' + type.condition)
     for using_statement in using_statements:
         if using_statement.condition is not None:
             result.append('#if ' + using_statement.condition)
@@ -1436,6 +1436,7 @@ def parse_serialized_types(file):
     serialized_types = []
     serialized_enums = []
     using_statements = []
+    objc_wrapped_types = []
     additional_forward_declarations = []
     headers = []
 
@@ -1588,6 +1589,11 @@ def parse_serialized_types(file):
         if match:
             cf_type, namespace, name = match.groups()
             continue
+        match = re.search(r'(.*) wrapped by (.*)', line)
+        if match:
+            objc_wrapped_type, objc_wrapper = match.groups()
+            objc_wrapped_types.append(ObjCWrappedType(objc_wrapped_type, objc_wrapper, type_condition))
+            continue
         match = re.search(r'additional_forward_declaration: (.*)', line)
         if match:
             declaration = match.groups()[0]
@@ -1641,7 +1647,7 @@ def parse_serialized_types(file):
                     dictionary_members.append(MemberVariable(member_type, member_name, member_condition, []))
                 else:
                     members.append(MemberVariable(member_type, member_name, member_condition, []))
-    return [serialized_types, serialized_enums, headers, using_statements, additional_forward_declarations]
+    return [serialized_types, serialized_enums, headers, using_statements, additional_forward_declarations, objc_wrapped_types]
 
 
 def generate_webkit_secure_coding_impl(serialized_types, headers):
@@ -1880,6 +1886,7 @@ def main(argv):
     serialized_types = []
     serialized_enums = []
     using_statements = []
+    objc_wrapped_types = []
     headers = []
     header_set = set()
     header_set.add(ConditionalHeader('"FormDataReference.h"', None))
@@ -1897,7 +1904,7 @@ def main(argv):
             continue
         path = os.path.sep.join([directory, argv[i]])
         with open(path) as file:
-            new_types, new_enums, new_headers, new_using_statements, new_additional_forward_declarations = parse_serialized_types(file)
+            new_types, new_enums, new_headers, new_using_statements, new_additional_forward_declarations, new_objc_wrapped_types = parse_serialized_types(file)
             for type in new_types:
                 serialized_types.append(type)
             for enum in new_enums:
@@ -1908,6 +1915,8 @@ def main(argv):
                 header_set.add(header)
             for declaration in new_additional_forward_declarations:
                 additional_forward_declarations_list.append(declaration)
+            for objc_wrapped_type in new_objc_wrapped_types:
+                objc_wrapped_types.append(objc_wrapped_type)
     headers = sorted(header_set)
 
     serialized_types = resolve_inheritance(serialized_types)
@@ -1915,11 +1924,11 @@ def main(argv):
     with open('GeneratedSerializers.h', "w+") as output:
         output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list))
     with open('GeneratedSerializers.%s' % file_extension, "w+") as output:
-        output.write(generate_impl(serialized_types, serialized_enums, headers, False))
+        output.write(generate_impl(serialized_types, serialized_enums, headers, False, []))
     with open('WebKitPlatformGeneratedSerializers.%s' % file_extension, "w+") as output:
-        output.write(generate_impl(serialized_types, serialized_enums, headers, True))
+        output.write(generate_impl(serialized_types, serialized_enums, headers, True, objc_wrapped_types))
     with open('SerializedTypeInfo.%s' % file_extension, "w+") as output:
-        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements))
+        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types))
     with open('GeneratedWebKitSecureCoding.h', "w+") as output:
         output.write(generate_webkit_secure_coding_header(serialized_types))
     with open('GeneratedWebKitSecureCoding.%s' % file_extension, "w+") as output:

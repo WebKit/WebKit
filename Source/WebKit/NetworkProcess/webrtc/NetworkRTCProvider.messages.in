@@ -23,8 +23,8 @@
 #if USE(LIBWEBRTC)
 
 messages -> NetworkRTCProvider {
-    CreateUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain)
-    CreateClientTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, String userAgent, int options, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain)
+    CreateUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTC::Network::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain)
+    CreateClientTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTC::Network::SocketAddress localAddress, WebKit::RTC::Network::SocketAddress remoteAddress, String userAgent, int options, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain)
     WrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier)
 
     void SetPlatformTCPSocketsEnabled(bool enabled)
@@ -33,7 +33,7 @@ messages -> NetworkRTCProvider {
     CreateResolver(WebKit::LibWebRTCResolverIdentifier identifier, String address)
     StopResolver(WebKit::LibWebRTCResolverIdentifier identifier)
 
-    void SendToSocket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, WebKit::RTCNetwork::SocketAddress address, struct WebKit::RTCPacketOptions options)
+    void SendToSocket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, WebKit::RTC::Network::SocketAddress address, struct WebKit::RTCPacketOptions options)
     void CloseSocket(WebCore::LibWebRTCSocketIdentifier identifier)
     void SetSocketOption(WebCore::LibWebRTCSocketIdentifier identifier, int option, int value)
 }
