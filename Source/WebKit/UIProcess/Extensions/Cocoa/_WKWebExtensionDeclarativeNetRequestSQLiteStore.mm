@@ -156,7 +156,7 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
             return;
 
         NSString *errorMessage;
-        if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
+        if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage createIfNecessary:NO]) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completionHandler(errorMessage);
             });
@@ -203,7 +203,7 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
 {
     dispatch_assert_queue(_databaseQueue);
 
-    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage])
+    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage createIfNecessary:NO])
         return @[ ];
 
     ASSERT(!(*outErrorMessage).length);

@@ -112,7 +112,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
         }
 
         // Return storage size for all keys if no keys are specified.
-        if (![self _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
+        if (![self _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage createIfNecessary:NO]) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completionHandler(0, errorMessage);
             });
@@ -211,7 +211,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
         }
 
         NSString *errorMessage;
-        if (![self _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
+        if (![self _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage createIfNecessary:NO]) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completionHandler(errorMessage);
             });
@@ -274,7 +274,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 {
     dispatch_assert_queue(_databaseQueue);
 
-    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage])
+    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage createIfNecessary:NO])
         return @{ };
 
     ASSERT(!(*outErrorMessage).length);
@@ -301,7 +301,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 {
     dispatch_assert_queue(_databaseQueue);
 
-    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage])
+    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage createIfNecessary:NO])
         return [NSSet set];
 
     ASSERT(!(*outErrorMessage).length);
@@ -317,7 +317,8 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 - (NSDictionary<NSString *, NSString *> *)_getValuesForKeys:(NSArray<NSString *> *)keys outErrorMessage:(NSString **)outErrorMessage
 {
     dispatch_assert_queue(_databaseQueue);
-    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage])
+
+    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage createIfNecessary:NO])
         return @{ };
 
     ASSERT(!(*outErrorMessage).length);
