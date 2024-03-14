@@ -1120,8 +1120,11 @@ void CommandEncoder::clearTexture(const WGPUImageCopyTexture& destination, NSUIn
     auto depth = texture.dimension() == WGPUTextureDimension_3D ? logicalSize.depthOrArrayLayers : 1;
     NSUInteger sourceBytesPerRow = 16 * logicalSize.width;
     NSUInteger sourceBytesPerImage = sourceBytesPerRow * logicalSize.height;
-    Vector<uint8_t> zeroData(sourceBytesPerImage * depth, 0);
-    id<MTLBuffer> temporaryBuffer = [device newBufferWithBytes:zeroData.data() length:zeroData.size() options:MTLResourceStorageModeShared];
+    NSUInteger bufferLength = sourceBytesPerImage * depth;
+    id<MTLBuffer> temporaryBuffer = [device newBufferWithLength:bufferLength options:MTLResourceStorageModeShared];
+    if (!temporaryBuffer)
+        return;
+
     MTLSize sourceSize;
     switch (texture.dimension()) {
     case WGPUTextureDimension_1D:
