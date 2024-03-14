@@ -37,6 +37,11 @@ AVIFImageReader::AVIFImageReader(RefPtr<AVIFImageDecoder>&& decoder)
     : m_decoder(WTFMove(decoder))
     , m_avifDecoder(avifDecoderCreate())
 {
+    // Allow the PixelInformationProperty ('pixi') to be missing in AV1 image
+    // items. libheif v1.11.0 or older does not add the 'pixi' item property to
+    // AV1 image items. (This issue has been corrected in libheif v1.12.0.).
+    // See the definition of AVIF_STRICT_PIXI_REQUIRED in avif.h.
+    m_avifDecoder->strictFlags &= ~AVIF_STRICT_PIXI_REQUIRED;
 }
 
 AVIFImageReader::~AVIFImageReader() = default;
