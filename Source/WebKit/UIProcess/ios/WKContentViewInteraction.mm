@@ -1597,7 +1597,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self _resetPanningPreventionFlags];
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
-    [self _cancelPendingKeyEventHandler];
+    [self _cancelPendingKeyEventHandlers:NO];
 
 #if HAVE(UI_PASTE_CONFIGURATION)
     self.pasteConfiguration = nil;
@@ -1612,17 +1612,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _removeContainerForContextMenuHintPreviews];
 }
 
-- (void)_cancelPendingKeyEventHandler
+- (void)_cancelPendingKeyEventHandlers:(BOOL)handled
 {
-    if (!_page)
-        return;
-
-    ASSERT_IMPLIES(_keyWebEventHandler, _page->hasQueuedKeyEvent());
-    if (!_page->hasQueuedKeyEvent())
-        return;
-
-    if (auto keyEventHandler = std::exchange(_keyWebEventHandler, nil))
-        keyEventHandler(_page->firstQueuedKeyEvent().nativeEvent(), NO);
+    for (auto [event, keyEventHandler] : std::exchange(_keyWebEventHandlers, { }))
+        keyEventHandler(event.get(), handled);
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -2004,23 +1997,12 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         _isHandlingActiveKeyEvent = NO;
         _isHandlingActivePressesEvent = NO;
 
-        if (_keyWebEventHandler) {
-            RunLoop::main().dispatch([weakHandler = WeakObjCPtr<id>(_keyWebEventHandler.get()), weakSelf = WeakObjCPtr<WKContentView>(self)] {
-                auto strongSelf = weakSelf.get();
+        if (!_keyWebEventHandlers.isEmpty()) {
+            RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKContentView>(self)] {
+                RetainPtr strongSelf = weakSelf.get();
                 if (!strongSelf || [strongSelf isFirstResponder])
                     return;
-                auto strongHandler = weakHandler.get();
-                if (!strongHandler)
-                    return;
-                if (strongSelf->_keyWebEventHandler.get() != strongHandler.get())
-                    return;
-                auto keyEventHandler = std::exchange(strongSelf->_keyWebEventHandler, nil);
-                auto page = strongSelf->_page;
-                if (!page)
-                    return;
-                if (!page->hasQueuedKeyEvent())
-                    return;
-                keyEventHandler(page->firstQueuedKeyEvent().nativeEvent(), YES);
+                [strongSelf _cancelPendingKeyEventHandlers:YES];
             });
         }
     }
@@ -7231,7 +7213,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     }
 
     if (_page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::No)))
-        _keyWebEventHandler = makeBlockPtr(completionHandler);
+        _keyWebEventHandlers.append({ event, makeBlockPtr(completionHandler) });
     else
         completionHandler(event, NO);
 }
@@ -7247,10 +7229,12 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if (event.type == WebEventKeyUp)
         _isHandlingActiveKeyEvent = NO;
 
-    if (auto handler = WTFMove(_keyWebEventHandler)) {
-        handler(event, eventWasHandled);
-        return;
-    }
+    _keyWebEventHandlers.removeFirstMatching([&](auto& entry) {
+        if (entry.event != event)
+            return false;
+        entry.completionBlock(event, eventWasHandled);
+        return true;
+    });
 }
 
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent

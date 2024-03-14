@@ -276,6 +276,11 @@ struct WKAutoCorrectionData {
     CGRect textLastRect;
 };
 
+struct KeyEventAndCompletionBlock {
+    RetainPtr<::WebEvent> event;
+    BlockPtr<void(::WebEvent *, BOOL)> completionBlock;
+};
+
 enum class RequestAutocorrectionContextResult : bool { Empty, LastContext };
 
 struct RemoveBackgroundData {
@@ -448,7 +453,8 @@ struct ImageAnalysisContextMenuActionData {
     std::optional<WebCore::TextIndicatorData> _positionInformationLinkIndicator;
     WebKit::FocusedElementInformation _focusedElementInformation;
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
-    BlockPtr<void(::WebEvent *, BOOL)> _keyWebEventHandler;
+
+    Vector<WebKit::KeyEventAndCompletionBlock, 1> _keyWebEventHandlers;
 
     CGPoint _lastInteractionLocation;
     WebKit::TransactionID _layerTreeTransactionIdAtLastInteractionStart;
