@@ -2669,3 +2669,5 @@ imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iter
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html [ Pass Failure ]
 
 webkit.org/b/270939 [ Ventura ] tables/mozilla/bugs/bug12384.html [ Failure ]
+
+webkit.org/b/270941 [ Ventura ] tables/mozilla/bugs/bug1188.html [ Failure ]
