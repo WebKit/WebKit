@@ -63,7 +63,7 @@ public:
         virtual Vector<String> copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)  { return { }; }
     };
 
-    enum class OverlayType {
+    enum class OverlayType : bool {
         View, // Fixed to the view size; does not scale or scroll with the document, repaints on scroll.
         Document, // Scales and scrolls with the document.
     };
@@ -102,7 +102,7 @@ public:
 
     Client& client() const { return m_client; }
 
-    enum class FadeMode { DoNotFade, Fade };
+    enum class FadeMode : bool { DoNotFade, Fade };
 
     OverlayType overlayType() { return m_overlayType; }
     AlwaysTileOverlayLayer alwaysTileOverlayLayer() { return m_alwaysTileOverlayLayer; }

@@ -386,7 +386,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    auto updatedLiveRange = createLiveRange({ *extendedSelectedTextRangeStartPoint, *extendedSelectionTextRangeEndPoint });
+    auto updatedLiveRange = WebCore::createLiveRange({ *extendedSelectedTextRangeStartPoint, *extendedSelectionTextRangeEndPoint });
 
     m_contextRanges.set(uuid, updatedLiveRange);
 }

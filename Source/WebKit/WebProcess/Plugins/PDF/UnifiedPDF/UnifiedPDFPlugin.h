@@ -31,6 +31,7 @@
 #include "PDFPluginBase.h"
 #include <WebCore/ElementIdentifier.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/Page.h>
 #include <wtf/OptionSet.h>
 
 OBJC_CLASS PDFAction;

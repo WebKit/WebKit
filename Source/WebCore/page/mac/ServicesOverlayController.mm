@@ -379,7 +379,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
         CGRect cgRect = rect;
         auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
-        auto highlight = DataDetectorHighlight::createForTelephoneNumber(page, *this, WTFMove(ddHighlight), WTFMove(range));
+        auto highlight = DataDetectorHighlight::createForTelephoneNumber(*this, WTFMove(ddHighlight), WTFMove(range));
         m_highlights.add(highlight.get());
         newPotentialHighlights.add(WTFMove(highlight));
     }
@@ -418,7 +418,7 @@ void ServicesOverlayController::buildSelectionHighlight()
         if (!cgRects.isEmpty()) {
             CGRect visibleRect = mainFrameView->visibleContentRect();
             auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, cgRects.begin(), cgRects.size(), visibleRect, static_cast<DDHighlightStyle>(DDHighlightStyleBubbleNone) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow) | static_cast<DDHighlightStyle>(DDHighlightStyleButtonShowAlways), YES, NSWritingDirectionNatural, NO, YES, 0));
-            auto highlight = DataDetectorHighlight::createForSelection(page, *this, WTFMove(ddHighlight), WTFMove(*selectionRange));
+            auto highlight = DataDetectorHighlight::createForSelection(*this, WTFMove(ddHighlight), WTFMove(*selectionRange));
             m_highlights.add(highlight.get());
             newPotentialHighlights.add(WTFMove(highlight));
         }
@@ -657,6 +657,27 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
     } else if (highlight.type() == DataDetectorHighlight::Type::TelephoneNumber)
         page->chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, frameView->contentsToWindow(focusedOrMainFrame->editor().firstRectForRange(highlight.range())));
 }
+
+#pragma mark - DataDetectorHighlightClient
+
+#if ENABLE(DATA_DETECTION)
+
+void ServicesOverlayController::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
+{
+    protectedPage()->scheduleRenderingUpdate(requestedSteps);
+}
+
+float ServicesOverlayController::deviceScaleFactor() const
+{
+    return protectedPage()->deviceScaleFactor();
+}
+
+RefPtr<GraphicsLayer> ServicesOverlayController::createGraphicsLayer(GraphicsLayerClient& client)
+{
+    return GraphicsLayer::create(protectedPage()->chrome().client().graphicsLayerFactory(), client);
+}
+
+#endif
 
 } // namespace WebKit
 

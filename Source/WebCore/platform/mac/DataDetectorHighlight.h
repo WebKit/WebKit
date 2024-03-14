@@ -36,7 +36,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakPtr.h>
 
-typedef struct __DDHighlight *DDHighlightRef;
+using DDHighlightRef = struct __DDHighlight*;
 
 namespace WebCore {
 
@@ -44,28 +44,31 @@ class DataDetectorHighlight;
 class FloatRect;
 class GraphicsContext;
 class GraphicsLayer;
-class Page;
+
+enum class RenderingUpdateStep : uint32_t;
 
 class DataDetectorHighlightClient : public CanMakeWeakPtr<DataDetectorHighlightClient> {
 public:
-    virtual ~DataDetectorHighlightClient() = default;
-
-    virtual DataDetectorHighlight* activeHighlight() const = 0;
+    WEBCORE_EXPORT virtual ~DataDetectorHighlightClient() = default;
+    WEBCORE_EXPORT virtual DataDetectorHighlight* activeHighlight() const = 0;
+    WEBCORE_EXPORT virtual void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep>) = 0;
+    WEBCORE_EXPORT virtual float deviceScaleFactor() const = 0;
+    WEBCORE_EXPORT virtual RefPtr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&) = 0;
 };
 
 class DataDetectorHighlight : public RefCounted<DataDetectorHighlight>, private GraphicsLayerClient, public CanMakeWeakPtr<DataDetectorHighlight> {
     WTF_MAKE_NONCOPYABLE(DataDetectorHighlight);
 public:
-    static Ref<DataDetectorHighlight> createForSelection(Page&, DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
-    static Ref<DataDetectorHighlight> createForTelephoneNumber(Page&, DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
-    static Ref<DataDetectorHighlight> createForImageOverlay(Page&, DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
+    static Ref<DataDetectorHighlight> createForSelection(DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
+    static Ref<DataDetectorHighlight> createForTelephoneNumber(DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
+    static Ref<DataDetectorHighlight> createForImageOverlay(DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
 
     ~DataDetectorHighlight();
 
     void invalidate();
 
     DDHighlightRef highlight() const { return m_highlight.get(); }
-    const SimpleRange& range() const { return m_range; }
+    const SimpleRange& range() const;
     GraphicsLayer& layer() const { return m_graphicsLayer.get(); }
 
     enum class Type : uint8_t {
@@ -76,6 +79,7 @@ public:
     };
 
     Type type() const { return m_type; }
+    bool isRangeSupportingType() const;
 
     void fadeIn();
     void fadeOut();
@@ -83,7 +87,7 @@ public:
     void setHighlight(DDHighlightRef);
 
 private:
-    DataDetectorHighlight(Page&, DataDetectorHighlightClient&, Type, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
+    DataDetectorHighlight(DataDetectorHighlightClient&, Type, RetainPtr<DDHighlightRef>&&, std::optional<SimpleRange>&&);
 
     // GraphicsLayerClient
     void notifyFlushRequired(const GraphicsLayer*) override;
@@ -95,9 +99,8 @@ private:
     void didFinishFadeOutAnimation();
 
     WeakPtr<DataDetectorHighlightClient> m_client;
-    SingleThreadWeakPtr<Page> m_page;
     RetainPtr<DDHighlightRef> m_highlight;
-    SimpleRange m_range;
+    std::optional<SimpleRange> m_range;
     Ref<GraphicsLayer> m_graphicsLayer;
     Type m_type { Type::None };
 
