@@ -300,8 +300,8 @@ public:
 #endif
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 
-    DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
-    Ref<DeviceIdHashSaltStorage> protectedDeviceIdHashSaltStorage();
+    DeviceIdHashSaltStorage& ensureDeviceIdHashSaltStorage();
+    Ref<DeviceIdHashSaltStorage> ensureProtectedDeviceIdHashSaltStorage();
 
     WebsiteDataStoreParameters parameters();
     static Vector<WebsiteDataStoreParameters> parametersFromEachWebsiteDataStore();
@@ -549,7 +549,7 @@ private:
     Ref<WebsiteDataStoreConfiguration> m_resolvedConfiguration;
     Ref<const WebsiteDataStoreConfiguration> m_configuration;
     bool m_hasResolvedDirectories { false };
-    const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
+    RefPtr<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
 #if PLATFORM(IOS_FAMILY)
     String m_resolvedContainerCachesWebContentDirectory;
     String m_resolvedContainerCachesNetworkingDirectory;
