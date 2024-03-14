@@ -769,17 +769,6 @@ private:
         return jsConstant(m_graph.freeze(constantValue));
     }
 
-    // Helper functions to get/set the this value.
-    Node* getThis()
-    {
-        return get(m_inlineStackTop->m_codeBlock->thisRegister());
-    }
-
-    void setThis(Node* value)
-    {
-        set(m_inlineStackTop->m_codeBlock->thisRegister(), value);
-    }
-
     InlineCallFrame* inlineCallFrame()
     {
         return m_inlineStackTop->m_inlineCallFrame;
@@ -6232,8 +6221,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_to_this: {
-            Node* op1 = getThis();
             auto bytecode = currentInstruction->as<OpToThis>();
+            Node* op1 = get(VirtualRegister(bytecode.m_srcDst));
             auto& metadata = bytecode.metadata(codeBlock);
             StructureID cachedStructureID = metadata.m_cachedStructureID;
             Structure* cachedStructure = nullptr;
@@ -6245,7 +6234,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 || cachedStructure->classInfoForCells()->isSubClassOf(JSScope::info())
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                 || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
-                setThis(addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));
+                set(bytecode.m_srcDst, addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));
             } else {
                 addToGraph(
                     CheckStructure,

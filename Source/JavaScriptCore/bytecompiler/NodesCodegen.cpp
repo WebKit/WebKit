@@ -2023,6 +2023,15 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toObject(BytecodeGenerator& ge
     return generator.move(dst, generator.emitToObject(temp.get(), src.get(), generator.vm().propertyNames->emptyIdentifier));
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toThis(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> src = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitToThis(src.get()));
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_idWithProfile(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
