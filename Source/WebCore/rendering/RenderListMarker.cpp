@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
-#include "LegacyInlineElementBox.h"
 #include "ListStyleType.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
@@ -76,12 +75,8 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
     if (oldStyle) {
         if (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType())
             setNeedsLayoutAndPrefWidthsRecalc();
-        if (oldStyle->isDisplayInlineType() && !style().isDisplayInlineType()) {
+        if (oldStyle->isDisplayInlineType() && !style().isDisplayInlineType())
             setNeedsLayoutAndPrefWidthsRecalc();
-            if (m_inlineBoxWrapper)
-                m_inlineBoxWrapper->dirtyLineBoxes();
-            m_inlineBoxWrapper = nullptr;
-        }
     }
 
     if (m_image != style().listStyleImage()) {
@@ -93,13 +88,6 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
     }
 }
 
-std::unique_ptr<LegacyInlineElementBox> RenderListMarker::createInlineBox()
-{
-    auto box = RenderBox::createInlineBox();
-    box->setBehavesLikeText(!isImage());
-    return box;
-}
-
 bool RenderListMarker::isImage() const
 {
     return m_image && !m_image->errorOccurred();
@@ -107,14 +95,7 @@ bool RenderListMarker::isImage() const
 
 LayoutRect RenderListMarker::localSelectionRect()
 {
-    LegacyInlineBox* box = inlineBoxWrapper();
-    if (!box)
-        return LayoutRect(LayoutPoint(), size());
-    const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
-    LayoutUnit newLogicalTop { rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop() };
-    if (rootBox.blockFlow().style().isHorizontalWritingMode())
-        return LayoutRect(0_lu, newLogicalTop, width(), rootBox.selectionHeight());
-    return LayoutRect(newLogicalTop, 0_lu, rootBox.selectionHeight(), height());
+    return LayoutRect(LayoutPoint(), size());
 }
 
 static String reversed(StringView string)
@@ -254,102 +235,6 @@ RenderBox* RenderListMarker::parentBox(RenderBox& box)
     auto* placeholder = multiColumnFlow->findColumnSpannerPlaceholder(&box);
     return placeholder ? placeholder->parentBox() : box.parentBox();
 };
-
-void RenderListMarker::addOverflowFromListMarker()
-{
-    ASSERT(m_listItem);
-    if (!parent() || !parent()->isRenderBox())
-        return;
-
-    if (isInside() || !inlineBoxWrapper())
-        return;
-
-    LayoutUnit markerOldLogicalLeft = logicalLeft();
-    LayoutUnit blockOffset;
-    LayoutUnit lineOffset;
-    for (auto* ancestor = parentBox(*this); ancestor && ancestor != m_listItem.get(); ancestor = parentBox(*ancestor)) {
-        blockOffset += ancestor->logicalTop();
-        lineOffset += ancestor->logicalLeft();
-    }
-
-    bool adjustOverflow = false;
-    LayoutUnit markerLogicalLeft;
-    bool hitSelfPaintingLayer = false;
-
-    const LegacyRootInlineBox& rootBox = inlineBoxWrapper()->root();
-    LayoutUnit lineTop = rootBox.lineTop();
-    LayoutUnit lineBottom = rootBox.lineBottom();
-
-    // FIXME: Need to account for relative positioning in the layout overflow.
-    if (m_listItem->style().isLeftToRightDirection()) {
-        markerLogicalLeft = m_lineOffsetForListItem - lineOffset - m_listItem->paddingStart() - m_listItem->borderStart() + marginStart();
-        inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
-        for (auto* box = inlineBoxWrapper()->parent(); box; box = box->parent()) {
-            auto newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
-            auto newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
-            if (markerLogicalLeft < newLogicalVisualOverflowRect.x() && !hitSelfPaintingLayer) {
-                newLogicalVisualOverflowRect.setWidth(newLogicalVisualOverflowRect.maxX() - markerLogicalLeft);
-                newLogicalVisualOverflowRect.setX(markerLogicalLeft);
-                if (box == &rootBox)
-                    adjustOverflow = true;
-            }
-            if (markerLogicalLeft < newLogicalLayoutOverflowRect.x()) {
-                newLogicalLayoutOverflowRect.setWidth(newLogicalLayoutOverflowRect.maxX() - markerLogicalLeft);
-                newLogicalLayoutOverflowRect.setX(markerLogicalLeft);
-                if (box == &rootBox)
-                    adjustOverflow = true;
-            }
-            box->setOverflowFromLogicalRects(newLogicalLayoutOverflowRect, newLogicalVisualOverflowRect, lineTop, lineBottom);
-            if (box->renderer().hasSelfPaintingLayer())
-                hitSelfPaintingLayer = true;
-        }
-    } else {
-        markerLogicalLeft = m_lineOffsetForListItem - lineOffset + m_listItem->paddingStart() + m_listItem->borderStart() + marginEnd();
-        inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
-        for (auto* box = inlineBoxWrapper()->parent(); box; box = box->parent()) {
-            auto newLogicalVisualOverflowRect = box->logicalVisualOverflowRect(lineTop, lineBottom);
-            auto newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
-            if (markerLogicalLeft + logicalWidth() > newLogicalVisualOverflowRect.maxX() && !hitSelfPaintingLayer) {
-                newLogicalVisualOverflowRect.setWidth(markerLogicalLeft + logicalWidth() - newLogicalVisualOverflowRect.x());
-                if (box == &rootBox)
-                    adjustOverflow = true;
-            }
-            if (markerLogicalLeft + logicalWidth() > newLogicalLayoutOverflowRect.maxX()) {
-                newLogicalLayoutOverflowRect.setWidth(markerLogicalLeft + logicalWidth() - newLogicalLayoutOverflowRect.x());
-                if (box == &rootBox)
-                    adjustOverflow = true;
-            }
-            box->setOverflowFromLogicalRects(newLogicalLayoutOverflowRect, newLogicalVisualOverflowRect, lineTop, lineBottom);
-            if (box->renderer().hasSelfPaintingLayer())
-                hitSelfPaintingLayer = true;
-        }
-    }
-
-    if (adjustOverflow) {
-        LayoutRect markerRect(markerLogicalLeft + lineOffset, blockOffset, width(), height());
-        if (!m_listItem->style().isHorizontalWritingMode())
-            markerRect = markerRect.transposedRect();
-        RenderBox* markerAncestor = this;
-        bool propagateVisualOverflow = true;
-        bool propagateLayoutOverflow = true;
-        do {
-            markerAncestor = parentBox(*markerAncestor);
-            if (markerAncestor->hasNonVisibleOverflow())
-                propagateVisualOverflow = false;
-            if (CheckedPtr markerAncestorBlock = dynamicDowncast<RenderBlock>(*markerAncestor)) {
-                if (propagateVisualOverflow)
-                    markerAncestorBlock->addVisualOverflow(markerRect);
-                if (propagateLayoutOverflow)
-                    markerAncestorBlock->addLayoutOverflow(markerRect);
-            }
-            if (markerAncestor->hasNonVisibleOverflow())
-                propagateLayoutOverflow = false;
-            if (markerAncestor->hasSelfPaintingLayer())
-                propagateVisualOverflow = false;
-            markerRect.moveBy(-markerAncestor->location());
-        } while (markerAncestor != m_listItem.get() && propagateVisualOverflow && propagateLayoutOverflow);
-    }
-}
 
 void RenderListMarker::layout()
 {
@@ -561,19 +446,11 @@ FloatRect RenderListMarker::relativeMarkerRect()
     return relativeRect;
 }
 
-LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
+LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObject*, bool)
 {
     ASSERT(!needsLayout());
 
-    if (selectionState() == HighlightState::None || !inlineBoxWrapper())
-        return LayoutRect();
-
-    LegacyRootInlineBox& rootBox = inlineBoxWrapper()->root();
-    LayoutRect rect(0_lu, rootBox.selectionTop() - y(), width(), rootBox.selectionHeight());
-            
-    if (clipToVisibleContent)
-        return computeRectForRepaint(rect, repaintContainer);
-    return localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
+    return LayoutRect();
 }
 
 StringView RenderListMarker::textWithoutSuffix() const

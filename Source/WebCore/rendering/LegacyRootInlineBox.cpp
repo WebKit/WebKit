@@ -512,20 +512,6 @@ void LegacyRootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOver
 {
     bool ascentDescentSet = false;
 
-    // Replaced boxes will return 0 for the line-height if line-box-contain says they are
-    // not to be included.
-    if (box.renderer().isReplacedOrInlineBlock()) {
-        if (lineStyle().lineBoxContain().contains(LineBoxContain::Replaced)) {
-            ascent = box.baselinePosition(baselineType());
-            descent = roundToInt(box.lineHeight()) - ascent;
-            
-            // Replaced elements always affect both the ascent and descent.
-            affectsAscent = true;
-            affectsDescent = true;
-        }
-        return;
-    }
-
     Vector<SingleThreadWeakPtr<const Font>>* usedFonts = nullptr;
     GlyphOverflow* glyphOverflow = nullptr;
     if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(box)) {
@@ -671,9 +657,7 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
             verticalPosition = (verticalPosition - LayoutUnit(fontMetrics.xHeight().value_or(0) / 2) - renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType(), firstLine, lineDirection));
         else if (verticalAlign == VerticalAlign::TextBottom) {
             verticalPosition += fontMetrics.intDescent(baselineType());
-            // lineHeight - baselinePosition is always 0 for replaced elements (except inline blocks), so don't bother wasting time in that case.
-            if (!renderer->isReplacedOrInlineBlock() || renderer->isInlineBlockOrInlineTable())
-                verticalPosition -= (renderer->lineHeight(firstLine, lineDirection) - renderer->baselinePosition(baselineType(), firstLine, lineDirection));
+            verticalPosition -= (renderer->lineHeight(firstLine, lineDirection) - renderer->baselinePosition(baselineType(), firstLine, lineDirection));
         } else if (verticalAlign == VerticalAlign::BaselineMiddle)
             verticalPosition += -renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType(), firstLine, lineDirection);
         else if (verticalAlign == VerticalAlign::Length) {
@@ -696,21 +680,14 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
 
 bool LegacyRootInlineBox::includeLeadingForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isRenderTextOrLineBreak() && !box.behavesLikeText()))
-        return false;
-
     auto lineBoxContain = renderer().style().lineBoxContain();
     return lineBoxContain.contains(LineBoxContain::Inline) || (&box == this && lineBoxContain.contains(LineBoxContain::Block));
 }
 
 bool LegacyRootInlineBox::includeFontForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isRenderTextOrLineBreak() && !box.behavesLikeText()))
-        return false;
-    
-    if (!box.behavesLikeText()) {
-        auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(box);
-        if (flowBox && !flowBox->hasTextChildren())
+    if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(box)) {
+        if (!flowBox->hasTextChildren())
             return false;
     }
 
@@ -719,37 +696,24 @@ bool LegacyRootInlineBox::includeFontForBox(LegacyInlineBox& box) const
 
 bool LegacyRootInlineBox::includeGlyphsForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isRenderTextOrLineBreak() && !box.behavesLikeText()))
-        return false;
-    
-    if (!box.behavesLikeText()) {
-        auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(box);
-        if (flowBox && !flowBox->hasTextChildren())
+    if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(box)) {
+        if (!flowBox->hasTextChildren())
             return false;
     }
-
     return renderer().style().lineBoxContain().contains(LineBoxContain::Glyphs);
 }
 
 bool LegacyRootInlineBox::includeInitialLetterForBox(LegacyInlineBox& box) const
 {
-    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isRenderTextOrLineBreak() && !box.behavesLikeText()))
-        return false;
-    
-    if (!box.behavesLikeText()) {
-        auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(box);
-        if (flowBox && !flowBox->hasTextChildren())
+    if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(box)) {
+        if (!flowBox->hasTextChildren())
             return false;
     }
-
     return renderer().style().lineBoxContain().contains(LineBoxContain::InitialLetter);
 }
 
-bool LegacyRootInlineBox::includeMarginForBox(LegacyInlineBox& box) const
+bool LegacyRootInlineBox::includeMarginForBox(LegacyInlineBox&) const
 {
-    if (box.renderer().isReplacedOrInlineBlock() || (box.renderer().isRenderTextOrLineBreak() && !box.behavesLikeText()))
-        return false;
-
     return renderer().style().lineBoxContain().contains(LineBoxContain::InlineBox);
 }
 

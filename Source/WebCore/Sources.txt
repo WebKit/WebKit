@@ -2602,7 +2602,6 @@ rendering/LayerOverlapMap.cpp
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
 rendering/LegacyInlineBox.cpp
-rendering/LegacyInlineElementBox.cpp
 rendering/LegacyInlineFlowBox.cpp
 rendering/LegacyInlineIterator.cpp
 rendering/LegacyLineLayout.cpp

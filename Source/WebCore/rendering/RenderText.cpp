@@ -472,15 +472,6 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
         bool isFixed = false;
         auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed);
         bool boxIsHorizontal = !is<SVGInlineTextBox>(textBox->legacyInlineBox()) ? textBox->isHorizontal() : !style().isVerticalWritingMode();
-        // If the containing block is an inline element, we want to check the inlineBoxWrapper orientation
-        // to determine the orientation of the block. In this case we also use the inlineBoxWrapper to
-        // determine if the element is the last on the line.
-        if (containingBlock->inlineBoxWrapper()) {
-            if (containingBlock->inlineBoxWrapper()->isHorizontal() != boxIsHorizontal) {
-                boxIsHorizontal = containingBlock->inlineBoxWrapper()->isHorizontal();
-                isLastOnLine = !containingBlock->inlineBoxWrapper()->nextOnLineExists();
-            }
-        }
 
         rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
     }

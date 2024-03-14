@@ -346,14 +346,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     // Early exit if the element touches the edges.
     LayoutUnit top = paintRect.y();
     LayoutUnit bottom = paintRect.maxY();
-    if (isSelected() && m_inlineBoxWrapper) {
-        const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
-        LayoutUnit selTop = paintOffset.y() + rootBox.selectionTop();
-        LayoutUnit selBottom = paintOffset.y() + selTop + rootBox.selectionHeight();
-        top = std::min(selTop, top);
-        bottom = std::max(selBottom, bottom);
-    }
-    
+
     LayoutRect localRepaintRect = paintInfo.rect;
     if (paintRect.x() >= localRepaintRect.maxX() || paintRect.maxX() <= localRepaintRect.x())
         return false;
@@ -786,15 +779,7 @@ LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
     if (checkWhetherSelected && !isSelected())
         return LayoutRect();
 
-    if (!m_inlineBoxWrapper)
-        // We're a block-level replaced element.  Just return our own dimensions.
-        return LayoutRect(LayoutPoint(), size());
-    
-    const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
-    LayoutUnit newLogicalTop { rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop() };
-    if (rootBox.blockFlow().style().isHorizontalWritingMode())
-        return LayoutRect(0_lu, newLogicalTop, width(), rootBox.selectionHeight());
-    return LayoutRect(newLogicalTop, 0_lu, rootBox.selectionHeight(), height());
+    return LayoutRect(LayoutPoint(), size());
 }
 
 bool RenderReplaced::isSelected() const

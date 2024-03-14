@@ -34,7 +34,6 @@
 #include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
 #include "InlineWalker.h"
-#include "LegacyInlineElementBox.h"
 #include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineIterator.h"
 #include "LegacyInlineTextBox.h"
@@ -161,7 +160,7 @@ LegacyRootInlineBox* LegacyLineLayout::createAndAppendRootInlineBox()
     return rootBox;
 }
 
-LegacyInlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* renderer, bool isOnlyRun)
+LegacyInlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* renderer)
 {
     if (renderer == &m_flow)
         return createAndAppendRootInlineBox();
@@ -169,31 +168,19 @@ LegacyInlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* rend
     if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*renderer))
         return textRenderer->createInlineTextBox();
 
-    if (CheckedPtr box = dynamicDowncast<RenderBox>(*renderer)) {
-        // FIXME: This is terrible. This branch returns an *owned* pointer!
-        return box->createInlineBox().release();
-    }
+    if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(renderer))
+        return renderInline->createAndAppendInlineFlowBox();
 
-    if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(*renderer)) {
-        // FIXME: This is terrible. This branch returns an *owned* pointer!
-        auto inlineBox = lineBreak->createInlineBox().release();
-        // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
-        // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
-        inlineBox->setBehavesLikeText(isOnlyRun || renderer->document().inNoQuirksMode() || lineBreak->isWBR());
-        return inlineBox;
-    }
-
-    return downcast<RenderInline>(*renderer).createAndAppendInlineFlowBox();
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 static inline void dirtyLineBoxesForRenderer(RenderObject& renderer, bool fullLayout)
 {
     if (CheckedPtr renderText = dynamicDowncast<RenderText>(renderer))
         renderText->dirtyLineBoxes(fullLayout);
-    else if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(renderer))
-        lineBreak->dirtyLineBoxes(fullLayout);
-    else
-        downcast<RenderInline>(renderer).dirtyLineBoxes(fullLayout);
+    else if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(renderer))
+        renderInline->dirtyLineBoxes(fullLayout);
 }
 
 static bool parentIsConstructedOrHaveNext(LegacyInlineFlowBox* parentBox)
@@ -294,18 +281,11 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
     ASSERT(bidiRuns.firstRun());
 
     LegacyInlineFlowBox* parentBox = 0;
-    int runCount = bidiRuns.runCount() - lineInfo.runsFromLeadingWhitespace();
-    
     for (BidiRun* r = bidiRuns.firstRun(); r; r = r->next()) {
-        // Create a box for our object.
-        bool isOnlyRun = (runCount == 1);
-        if (runCount == 2 && !r->renderer().isRenderListMarker())
-            isOnlyRun = (!style().isLeftToRightDirection() ? bidiRuns.lastRun() : bidiRuns.firstRun())->renderer().isRenderListMarker();
-
         if (lineInfo.isEmpty())
             continue;
 
-        LegacyInlineBox* box = createInlineBoxForRenderer(&r->renderer(), isOnlyRun);
+        LegacyInlineBox* box = createInlineBoxForRenderer(&r->renderer());
         r->setBox(box);
 
         // If we have no parent box yet, or if the run is not simply a sibling,
@@ -510,7 +490,7 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
 
     run->box()->setLogicalWidth(measuredWidth + hyphenWidth);
     if (!fallbackFonts.isEmptyIgnoringNullReferences()) {
-        ASSERT(run->box()->behavesLikeText());
+        ASSERT(run->box()->isInlineTextBox());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<SingleThreadWeakPtr<const Font>>(), GlyphOverflow())).iterator;
         ASSERT(it->value.first.isEmpty());
         it->value.first = copyToVector(fallbackFonts);
@@ -524,7 +504,7 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
     }
 
     if (!glyphOverflow.isEmpty()) {
-        ASSERT(run->box()->behavesLikeText());
+        ASSERT(run->box()->isInlineTextBox());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<SingleThreadWeakPtr<const Font>>(), GlyphOverflow())).iterator;
         it->value.second = glyphOverflow;
         run->box()->clearKnownToHaveNoOverflow();
@@ -920,11 +900,7 @@ void LegacyLineLayout::computeBlockDirectionPositionsForLine(LegacyRootInlineBox
             auto& inlineTextBox = downcast<LegacyInlineTextBox>(*run->box());
             textRenderer->positionLineBox(inlineTextBox);
             inlineBoxIsRedundant = !inlineTextBox.hasTextContent();
-        } else if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer)) {
-            box->positionLineBox(downcast<LegacyInlineElementBox>(*run->box()));
-            inlineBoxIsRedundant = renderer.isOutOfFlowPositioned();
-        } else if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(renderer))
-            lineBreak->replaceInlineBoxWrapper(downcast<LegacyInlineElementBox>(*run->box()));
+        }
         // Check if we need to keep this box on the line at all.
         if (inlineBoxIsRedundant)
             removeInlineBox(*run, *lineBox);
@@ -1616,7 +1592,6 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
                     layoutState.floatList().append(FloatWithRect::create(box));
                 else if (isFullLayout || box.needsLayout()) {
                     // Replaced element.
-                    box.dirtyLineBoxes(isFullLayout);
                     if (isFullLayout)
                         replacedChildren.append(&box);
                     else

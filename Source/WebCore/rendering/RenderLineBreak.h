@@ -25,7 +25,6 @@
 
 namespace WebCore {
 
-class LegacyInlineElementBox;
 class HTMLElement;
 class Position;
 
@@ -37,13 +36,6 @@ public:
 
     // FIXME: The lies here keep render tree dump based test results unchanged.
     ASCIILiteral renderName() const final { return isWBR() ? "RenderWordBreak"_s : "RenderBR"_s; }
-
-    std::unique_ptr<LegacyInlineElementBox> createInlineBox();
-    LegacyInlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
-    void setInlineBoxWrapper(LegacyInlineElementBox*);
-    void deleteInlineBoxWrapper();
-    void replaceInlineBoxWrapper(LegacyInlineElementBox&);
-    void dirtyLineBoxes(bool fullLayout);
 
     IntRect linesBoundingBox() const;
 
@@ -88,7 +80,6 @@ private:
     void updateFromStyle() final;
     bool requiresLayer() const final { return false; }
 
-    LegacyInlineElementBox* m_inlineBoxWrapper { nullptr };
     mutable std::optional<LayoutUnit> m_cachedLineHeight { };
 };
 

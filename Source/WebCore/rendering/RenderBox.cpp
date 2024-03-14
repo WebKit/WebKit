@@ -107,7 +107,7 @@ struct SameSizeAsRenderBox : public RenderBoxModelObject {
     LayoutRect frameRect;
     LayoutBoxExtent marginBox;
     LayoutUnit preferredLogicalWidths[2];
-    void* pointers[2];
+    void* pointers[1];
 };
 
 static_assert(sizeof(RenderBox) == sizeof(SameSizeAsRenderBox), "RenderBox should stay small");
@@ -2478,65 +2478,6 @@ LayoutSize RenderBox::offsetFromContainer(RenderElement& container, const Layout
         *offsetDependsOnPoint |= is<RenderFragmentedFlow>(container);
 
     return offset;
-}
-
-std::unique_ptr<LegacyInlineElementBox> RenderBox::createInlineBox()
-{
-    return makeUnique<LegacyInlineElementBox>(*this);
-}
-
-void RenderBox::dirtyLineBoxes(bool fullLayout)
-{
-    if (!m_inlineBoxWrapper)
-        return;
-    
-    if (fullLayout) {
-        delete m_inlineBoxWrapper;
-        m_inlineBoxWrapper = nullptr;
-    } else
-        m_inlineBoxWrapper->dirtyLineBoxes();
-}
-
-void RenderBox::positionLineBox(LegacyInlineElementBox& box)
-{
-    if (isOutOfFlowPositioned()) {
-        // Cache the x position only if we were an DisplayType::Inline type originally.
-        bool wasInline = style().isOriginalDisplayInlineType();
-        if (wasInline) {
-            // The value is cached in the xPos of the box.  We only need this value if
-            // our object was inline originally, since otherwise it would have ended up underneath
-            // the inlines.
-            LegacyRootInlineBox& rootBox = box.root();
-            rootBox.blockFlow().setStaticInlinePositionForChild(*this, rootBox.lineBoxTop(), LayoutUnit::fromFloatRound(box.logicalLeft()));
-            if (style().hasStaticInlinePosition(box.isHorizontal()))
-                setChildNeedsLayout(MarkOnlyThis); // Just mark the positioned object as needing layout, so it will update its position properly.
-        } else {
-            // Our object was a block originally, so we make our normal flow position be
-            // just below the line box (as though all the inlines that came before us got
-            // wrapped in an anonymous block, which is what would have happened had we been
-            // in flow).  This value was cached in the y() of the box.
-            layer()->setStaticBlockPosition(LayoutUnit(box.logicalTop()));
-            if (style().hasStaticBlockPosition(box.isHorizontal()))
-                setChildNeedsLayout(MarkOnlyThis); // Just mark the positioned object as needing layout, so it will update its position properly.
-        }
-        return;
-    }
-
-    if (isReplacedOrInlineBlock()) {
-        setLocation(LayoutPoint(box.topLeft()));
-        setInlineBoxWrapper(&box);
-    }
-}
-
-void RenderBox::deleteLineBoxWrapper()
-{
-    if (!m_inlineBoxWrapper)
-        return;
-    
-    if (!renderTreeBeingDestroyed())
-        m_inlineBoxWrapper->removeFromParent();
-    delete m_inlineBoxWrapper;
-    m_inlineBoxWrapper = nullptr;
 }
 
 auto RenderBox::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects

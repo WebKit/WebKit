@@ -1004,15 +1004,12 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
     }
 
     bool shouldUpdateOverflow = false;
-    ListHashSet<CheckedPtr<LegacyRootInlineBox>> lineBoxes;
     for (InlineWalker walker(*this); !walker.atEnd(); walker.advance()) {
         RenderObject& renderer = *walker.current();
         if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrInlineBlock() || renderer.isFloating())) {
             RenderBox& box = downcast<RenderBox>(renderer);
             box.layoutIfNeeded();
             shouldUpdateOverflow = true;
-            if (box.inlineBoxWrapper())
-                lineBoxes.add(&box.inlineBoxWrapper()->root());
         } else if (is<RenderText>(renderer) || is<RenderInline>(renderer))
             renderer.clearNeedsLayout();
     }
@@ -1023,12 +1020,6 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
     if (auto* lineLayout = modernLineLayout()) {
         lineLayout->updateOverflow();
         return;
-    }
-
-    GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-    for (auto& lineBox : lineBoxes) {
-        auto* box = lineBox.get();
-        box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
     }
 }
 

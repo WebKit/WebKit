@@ -34,7 +34,6 @@
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LegacyInlineElementBox.h"
 #include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderBlock.h"

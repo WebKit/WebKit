@@ -32,7 +32,6 @@
 
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
-#include "LegacyInlineElementBox.h"
 #include "Node.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
@@ -597,13 +596,6 @@ bool RenderFragmentedFlow::computedFragmentRangeForBox(const RenderBox& box, Ren
     // Search the fragment range using the information provided by the containing block chain.
     auto* containingBlock = const_cast<RenderBox*>(&box);
     while (!containingBlock->isRenderFragmentedFlow()) {
-        LegacyInlineElementBox* boxWrapper = containingBlock->inlineBoxWrapper();
-        if (boxWrapper && boxWrapper->root().containingFragment()) {
-            startFragment = endFragment = boxWrapper->root().containingFragment();
-            ASSERT(m_fragmentList.contains(*startFragment));
-            return true;
-        }
-
         // FIXME: Use the containingBlock() value once we patch all the layout systems to be fragment range aware
         // (e.g. if we use containingBlock() the shadow controls of a video element won't get the range from the
         // video box because it's not a block; they need to be patched separately).

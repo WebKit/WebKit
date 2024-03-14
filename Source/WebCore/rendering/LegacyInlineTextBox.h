@@ -42,7 +42,6 @@ public:
     explicit LegacyInlineTextBox(RenderText& renderer)
         : LegacyInlineBox(renderer)
     {
-        setBehavesLikeText(true);
     }
 
     virtual ~LegacyInlineTextBox();
@@ -154,8 +153,6 @@ private:
     TextRun createTextRun(bool ignoreCombinedText = false, bool ignoreHyphen = false) const;
 
     ExpansionBehavior expansionBehavior() const;
-
-    void behavesLikeText() const = delete;
 
     LegacyInlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
     LegacyInlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject

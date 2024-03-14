@@ -55,7 +55,6 @@ RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
 
 RenderLineBreak::~RenderLineBreak()
 {
-    delete m_inlineBoxWrapper;
 }
 
 LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
@@ -76,45 +75,6 @@ LayoutUnit RenderLineBreak::baselinePosition(FontBaseline baselineType, bool fir
     auto& style = firstLine ? firstLineStyle() : this->style();
     auto& fontMetrics = style.metricsOfPrimaryFont();
     return LayoutUnit { (fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2) };
-}
-
-std::unique_ptr<LegacyInlineElementBox> RenderLineBreak::createInlineBox()
-{
-    return makeUnique<LegacyInlineElementBox>(*this);
-}
-
-void RenderLineBreak::setInlineBoxWrapper(LegacyInlineElementBox* inlineBox)
-{
-    ASSERT(!inlineBox || !m_inlineBoxWrapper);
-    m_inlineBoxWrapper = inlineBox;
-}
-
-void RenderLineBreak::replaceInlineBoxWrapper(LegacyInlineElementBox& inlineBox)
-{
-    deleteInlineBoxWrapper();
-    setInlineBoxWrapper(&inlineBox);
-}
-
-void RenderLineBreak::deleteInlineBoxWrapper()
-{
-    if (!m_inlineBoxWrapper)
-        return;
-    if (!renderTreeBeingDestroyed())
-        m_inlineBoxWrapper->removeFromParent();
-    delete m_inlineBoxWrapper;
-    m_inlineBoxWrapper = nullptr;
-}
-
-void RenderLineBreak::dirtyLineBoxes(bool fullLayout)
-{
-    if (!m_inlineBoxWrapper)
-        return;
-    if (fullLayout) {
-        delete m_inlineBoxWrapper;
-        m_inlineBoxWrapper = nullptr;
-        return;
-    }
-    m_inlineBoxWrapper->dirtyLineBoxes();
 }
 
 int RenderLineBreak::caretMinOffset() const
@@ -217,15 +177,6 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     bool isFixed = false;
     auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed);
     bool boxIsHorizontal = !is<SVGInlineTextBox>(run->legacyInlineBox()) ? run->isHorizontal() : !style().isVerticalWritingMode();
-    // If the containing block is an inline element, we want to check the inlineBoxWrapper orientation
-    // to determine the orientation of the block. In this case we also use the inlineBoxWrapper to
-    // determine if the element is the last on the line.
-    if (containingBlock->inlineBoxWrapper()) {
-        if (containingBlock->inlineBoxWrapper()->isHorizontal() != boxIsHorizontal) {
-            boxIsHorizontal = containingBlock->inlineBoxWrapper()->isHorizontal();
-            isLastOnLine = !containingBlock->inlineBoxWrapper()->nextOnLineExists();
-        }
-    }
 
     rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(element()), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
 }

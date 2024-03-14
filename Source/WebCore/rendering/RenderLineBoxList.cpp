@@ -30,7 +30,6 @@
 #include "RenderLineBoxList.h"
 
 #include "HitTestResult.h"
-#include "LegacyInlineElementBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "PaintInfo.h"
@@ -339,13 +338,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         if (current->isFloatingOrOutOfFlowPositioned())
             continue;
 
-        if (current->isReplacedOrInlineBlock()) {
-            if (auto wrapper = downcast<RenderBox>(*current).inlineBoxWrapper())
-                box = &wrapper->root();
-        } if (auto* lineBreak = dynamicDowncast<RenderLineBreak>(*current)) {
-            if (auto wrapper = lineBreak->inlineBoxWrapper())
-                box = &wrapper->root();
-        } else if (auto* textRenderer = dynamicDowncast<RenderText>(*current)) {
+        if (auto* textRenderer = dynamicDowncast<RenderText>(*current)) {
             if (auto* textBox = textRenderer->lastTextBox())
                 box = &textBox->root();
         } else if (auto* renderInline = dynamicDowncast<RenderInline>(*current)) {

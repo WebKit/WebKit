@@ -78,7 +78,7 @@ public:
 private:
     std::unique_ptr<LegacyRootInlineBox> createRootInlineBox();
     LegacyRootInlineBox* createAndAppendRootInlineBox();
-    LegacyInlineBox* createInlineBoxForRenderer(RenderObject*, bool isOnlyRun = false);
+    LegacyInlineBox* createInlineBoxForRenderer(RenderObject*);
     LegacyInlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, LegacyInlineBox*);
     TextAlignMode textAlignmentForLine(bool endsWithSoftBreak) const;
     void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth);

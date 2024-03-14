@@ -84,10 +84,6 @@ public:
     WEBCORE_EXPORT virtual const char* boxName() const;
 #endif
 
-    bool behavesLikeText() const { return m_bitfields.behavesLikeText(); }
-    void setBehavesLikeText(bool behavesLikeText) { m_bitfields.setBehavesLikeText(behavesLikeText); }
-
-    virtual bool isInlineElementBox() const { return false; }
     virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() const { return false; }
     virtual bool isRootInlineBox() const { return false; }
@@ -300,7 +296,6 @@ private:
             , m_canHaveRightExpansion(false)
             , m_knownToHaveNoOverflow(true)  
             , m_hasEllipsisBoxOrHyphen(false)
-            , m_behavesLikeText(false)
             , m_forceRightExpansion(false)
             , m_forceLeftExpansion(false)
             , m_determinedIfNextOnLineExists(false)
@@ -332,7 +327,6 @@ private:
         ADD_BOOLEAN_BITFIELD(knownToHaveNoOverflow, KnownToHaveNoOverflow);
         ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
         // for LegacyInlineTextBox
-        ADD_BOOLEAN_BITFIELD(behavesLikeText, BehavesLikeText); // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes, br.
         ADD_BOOLEAN_BITFIELD(forceRightExpansion, ForceRightExpansion);
         ADD_BOOLEAN_BITFIELD(forceLeftExpansion, ForceLeftExpansion);
         ADD_BOOLEAN_BITFIELD(isInGlyphDisplayListCache, IsInGlyphDisplayListCache);

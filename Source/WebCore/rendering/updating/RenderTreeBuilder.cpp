@@ -929,11 +929,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     }
 
     // If we have a line box wrapper, delete it.
-    if (CheckedPtr box = dynamicDowncast<RenderBox>(child))
-        box->deleteLineBoxWrapper();
-    else if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(child))
-        lineBreak->deleteInlineBoxWrapper();
-    else if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
+    if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
         textRenderer->removeAndDestroyTextBoxes();
 
     if (!parent.renderTreeBeingDestroyed()) {

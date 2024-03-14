@@ -162,14 +162,14 @@ LeafBoxIterator boxFor(const RenderLineBreak& renderer)
 {
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderer))
         return lineLayout->boxFor(renderer);
-    return { BoxLegacyPath(renderer.inlineBoxWrapper()) };
+    return { };
 }
 
 LeafBoxIterator boxFor(const RenderBox& renderer)
 {
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(renderer))
         return lineLayout->boxFor(renderer);
-    return { BoxLegacyPath(renderer.inlineBoxWrapper()) };
+    return { };
 }
 
 LeafBoxIterator boxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)

@@ -294,13 +294,6 @@ void RenderListItem::layout()
     RenderBlockFlow::layout();
 }
 
-void RenderListItem::addOverflowFromChildren()
-{
-    if (m_marker)
-        m_marker->addOverflowFromListMarker();
-    RenderBlockFlow::addOverflowFromChildren();
-}
-
 void RenderListItem::computePreferredLogicalWidths()
 {
     // FIXME: RenderListMarker::updateMargins() mutates margin style which affects preferred widths.
