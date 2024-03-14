@@ -49,7 +49,7 @@ static auto *scriptingManifest = @{
     },
 };
 
-TEST(WKWebExtensionAPIScripting, Errors)
+TEST(WKWebExtensionAPIScripting, ErrorsExecuteScript)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertThrows(() => browser.scripting.executeScript(), /a required argument is missing/i)",
@@ -76,6 +76,15 @@ TEST(WKWebExtensionAPIScripting, Errors)
 
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, world: 'world', files: ['path/to/file']}), /it must specify either 'ISOLATED' or 'MAIN'./i)",
 
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(scriptingManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIScripting, ErrorsCSS)
+{
+    auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertThrows(() => browser.scripting.insertCSS(), /a required argument is missing./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({}), /missing required keys: 'target'./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({ target: {} }), /missing required keys: 'tabId'./i)",
@@ -90,6 +99,15 @@ TEST(WKWebExtensionAPIScripting, Errors)
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 0 } }), /it must specify either 'css' or 'files'./i)",
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: '0' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
 
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(scriptingManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIScripting, ErrorsRegisteredContentScript)
+{
+    auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts(), /a required argument is missing/i)",
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts({}), /an array is expected/i)",
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{}]), /it is missing required keys: 'id'/i)",

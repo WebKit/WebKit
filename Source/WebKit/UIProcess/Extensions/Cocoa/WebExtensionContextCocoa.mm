@@ -3191,7 +3191,14 @@ void WebExtensionContext::scheduleBackgroundContentToUnload()
     if (!m_backgroundWebView || extension().backgroundContentIsPersistent())
         return;
 
-    static const auto delayBeforeUnloading = isNotRunningInTestRunner() ? 30_s : 3_s;
+
+#ifdef NDEBUG
+    static const auto testRunnerDelayBeforeUnloading = 3_s;
+#else
+    static const auto testRunnerDelayBeforeUnloading = 6_s;
+#endif
+
+    static const auto delayBeforeUnloading = isNotRunningInTestRunner() ? 30_s : testRunnerDelayBeforeUnloading;
 
     RELEASE_LOG_DEBUG(Extensions, "Scheduling background content to unload in %{public}.0f seconds", delayBeforeUnloading.seconds());
 

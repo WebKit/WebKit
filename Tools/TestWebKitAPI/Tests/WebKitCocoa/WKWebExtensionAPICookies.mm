@@ -50,7 +50,7 @@ static auto *cookiesManifest = @{
     @"permissions": @[ @"cookies" ],
 };
 
-TEST(WKWebExtensionAPICookies, Errors)
+TEST(WKWebExtensionAPICookies, ErrorsRead)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertThrows(() => browser.cookies.get({ url: 123, name: 'Test' }), /'url' is expected to be a string, but a number was provided/i)",
@@ -70,6 +70,15 @@ TEST(WKWebExtensionAPICookies, Errors)
         @"browser.test.assertThrows(() => browser.cookies.getAll({ session: 'bad' }), /'session' is expected to be a boolean, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.cookies.getAll({ storeId: 123 }), /'storeId' is expected to be a string, but a number was provided/i)",
 
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(cookiesManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPICookies, ErrorsWrite)
+{
+    auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertThrows(() => browser.cookies.set({ url: 123 }), /'url' is expected to be a string, but a number was provided/i)",
         @"browser.test.assertThrows(() => browser.cookies.set({ url: '' }), /'url' value is invalid, because it must not be empty/i)",
         @"browser.test.assertThrows(() => browser.cookies.set({ url: 'bad' }), /'url' value is invalid, because 'bad' is not a valid URL/i)",
