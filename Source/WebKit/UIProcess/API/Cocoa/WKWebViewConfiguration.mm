@@ -133,12 +133,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
     std::optional<RetainPtr<NSString>> _applicationNameForUserAgent;
-    NSTimeInterval _incrementalRenderingSuppressionTimeout;
-    BOOL _allowsJavaScriptMarkup;
-    BOOL _convertsPositionStyleOnCopy;
-    BOOL _allowsMetaRefresh;
-    BOOL _allowUniversalAccessFromFileURLs;
-    BOOL _allowTopNavigationToDataURLs;
 
 #if PLATFORM(IOS_FAMILY)
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
@@ -165,7 +159,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(APPLE_PAY)
     BOOL _applePayEnabled;
 #endif
-    BOOL _needsStorageAccessFromFileURLsQuirk;
     BOOL _legacyEncryptedMediaAPIEnabled;
     BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback;
     BOOL _colorFilterEnabled;
@@ -225,14 +218,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     _allowsAirPlayForMediaPlayback = YES;
 #endif
-
-    _incrementalRenderingSuppressionTimeout = 5;
-    _allowsJavaScriptMarkup = YES;
-    _convertsPositionStyleOnCopy = NO;
-    _allowsMetaRefresh = YES;
-    _allowUniversalAccessFromFileURLs = NO;
-    _allowTopNavigationToDataURLs = NO;
-    _needsStorageAccessFromFileURLsQuirk = YES;
 
 #if PLATFORM(IOS_FAMILY)
     _selectionGranularity = WKSelectionGranularityDynamic;
@@ -396,13 +381,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
     configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
 
-    configuration->_incrementalRenderingSuppressionTimeout = self->_incrementalRenderingSuppressionTimeout;
-    configuration->_allowsJavaScriptMarkup = self->_allowsJavaScriptMarkup;
-    configuration->_convertsPositionStyleOnCopy = self->_convertsPositionStyleOnCopy;
-    configuration->_allowsMetaRefresh = self->_allowsMetaRefresh;
-    configuration->_allowUniversalAccessFromFileURLs = self->_allowUniversalAccessFromFileURLs;
-    configuration->_allowTopNavigationToDataURLs = self->_allowTopNavigationToDataURLs;
-
     configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
     configuration->_attachmentElementEnabled = self->_attachmentElementEnabled;
@@ -435,7 +413,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(APPLE_PAY)
     configuration->_applePayEnabled = self->_applePayEnabled;
 #endif
-    configuration->_needsStorageAccessFromFileURLsQuirk = self->_needsStorageAccessFromFileURLsQuirk;
 
     configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
     configuration->_additionalSupportedImageTypes = adoptNS([self->_additionalSupportedImageTypes copyWithZone:zone]);
@@ -735,62 +712,62 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (NSTimeInterval)_incrementalRenderingSuppressionTimeout
 {
-    return _incrementalRenderingSuppressionTimeout;
+    return _pageConfiguration->incrementalRenderingSuppressionTimeout();
 }
 
 - (void)_setIncrementalRenderingSuppressionTimeout:(NSTimeInterval)incrementalRenderingSuppressionTimeout
 {
-    _incrementalRenderingSuppressionTimeout = incrementalRenderingSuppressionTimeout;
+    _pageConfiguration->setIncrementalRenderingSuppressionTimeout(incrementalRenderingSuppressionTimeout);
 }
 
 - (BOOL)_allowsJavaScriptMarkup
 {
-    return _allowsJavaScriptMarkup;
+    return _pageConfiguration->allowsJavaScriptMarkup();
 }
 
 - (void)_setAllowsJavaScriptMarkup:(BOOL)allowsJavaScriptMarkup
 {
-    _allowsJavaScriptMarkup = allowsJavaScriptMarkup;
+    _pageConfiguration->setAllowsJavaScriptMarkup(allowsJavaScriptMarkup);
 }
 
 - (BOOL)_allowUniversalAccessFromFileURLs
 {
-    return _allowUniversalAccessFromFileURLs;
+    return _pageConfiguration->allowUniversalAccessFromFileURLs();
 }
 
 - (void)_setAllowUniversalAccessFromFileURLs:(BOOL)allowUniversalAccessFromFileURLs
 {
-    _allowUniversalAccessFromFileURLs = allowUniversalAccessFromFileURLs;
+    _pageConfiguration->setAllowUniversalAccessFromFileURLs(allowUniversalAccessFromFileURLs);
 }
 
 - (BOOL)_allowTopNavigationToDataURLs
 {
-    return _allowTopNavigationToDataURLs;
+    return _pageConfiguration->allowTopNavigationToDataURLs();
 }
 
 - (void)_setAllowTopNavigationToDataURLs:(BOOL)allowTopNavigationToDataURLs
 {
-    _allowTopNavigationToDataURLs = allowTopNavigationToDataURLs;
+    _pageConfiguration->setAllowTopNavigationToDataURLs(allowTopNavigationToDataURLs);
 }
 
 - (BOOL)_convertsPositionStyleOnCopy
 {
-    return _convertsPositionStyleOnCopy;
+    return _pageConfiguration->convertsPositionStyleOnCopy();
 }
 
 - (void)_setConvertsPositionStyleOnCopy:(BOOL)convertsPositionStyleOnCopy
 {
-    _convertsPositionStyleOnCopy = convertsPositionStyleOnCopy;
+    _pageConfiguration->setConvertsPositionStyleOnCopy(convertsPositionStyleOnCopy);
 }
 
 - (BOOL)_allowsMetaRefresh
 {
-    return _allowsMetaRefresh;
+    return _pageConfiguration->allowsMetaRefresh();
 }
 
 - (void)_setAllowsMetaRefresh:(BOOL)allowsMetaRefresh
 {
-    _allowsMetaRefresh = allowsMetaRefresh;
+    _pageConfiguration->setAllowsMetaRefresh(allowsMetaRefresh);
 }
 
 - (BOOL)_clientNavigationsRunAtForegroundPriority
@@ -1307,12 +1284,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_needsStorageAccessFromFileURLsQuirk
 {
-    return _needsStorageAccessFromFileURLsQuirk;
+    return _pageConfiguration->needsStorageAccessFromFileURLsQuirk();
 }
 
 - (void)_setNeedsStorageAccessFromFileURLsQuirk:(BOOL)needsLocalStorageQuirk
 {
-    _needsStorageAccessFromFileURLsQuirk = needsLocalStorageQuirk;
+    _pageConfiguration->setNeedsStorageAccessFromFileURLsQuirk(needsLocalStorageQuirk);
 }
 
 - (NSString *)_overrideContentSecurityPolicy

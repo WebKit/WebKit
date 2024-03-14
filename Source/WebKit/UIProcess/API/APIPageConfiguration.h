@@ -216,6 +216,27 @@ public:
     void setContextMenuQRCodeDetectionEnabled(bool enabled) { m_data.contextMenuQRCodeDetectionEnabled = enabled; }
 #endif
 
+    double incrementalRenderingSuppressionTimeout() const { return m_data.incrementalRenderingSuppressionTimeout; }
+    void setIncrementalRenderingSuppressionTimeout(double timeout) { m_data.incrementalRenderingSuppressionTimeout = timeout; }
+
+    bool allowsJavaScriptMarkup() const { return m_data.allowsJavaScriptMarkup; }
+    void setAllowsJavaScriptMarkup(bool allows) { m_data.allowsJavaScriptMarkup = allows; }
+
+    bool convertsPositionStyleOnCopy() const { return m_data.convertsPositionStyleOnCopy; }
+    void setConvertsPositionStyleOnCopy(bool converts) { m_data.convertsPositionStyleOnCopy = converts; }
+
+    bool allowsMetaRefresh() const { return m_data.allowsMetaRefresh; }
+    void setAllowsMetaRefresh(bool allows) { m_data.allowsMetaRefresh = allows; }
+
+    bool allowUniversalAccessFromFileURLs() const { return m_data.allowUniversalAccessFromFileURLs; }
+    void setAllowUniversalAccessFromFileURLs(bool allow) { m_data.allowUniversalAccessFromFileURLs = allow; }
+
+    bool allowTopNavigationToDataURLs() const { return m_data.allowTopNavigationToDataURLs; }
+    void setAllowTopNavigationToDataURLs(bool allow) { m_data.allowTopNavigationToDataURLs = allow; }
+
+    bool needsStorageAccessFromFileURLsQuirk() const { return m_data.needsStorageAccessFromFileURLsQuirk; }
+    void setNeedsStorageAccessFromFileURLsQuirk(bool needs) { m_data.needsStorageAccessFromFileURLsQuirk = needs; }
+
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_data.shouldRelaxThirdPartyCookieBlocking; }
 
@@ -319,6 +340,14 @@ private:
         bool imageControlsEnabled { false };
         bool contextMenuQRCodeDetectionEnabled { false };
 #endif
+
+        double incrementalRenderingSuppressionTimeout { 5 };
+        bool allowsJavaScriptMarkup { true };
+        bool convertsPositionStyleOnCopy { false };
+        bool allowsMetaRefresh { true };
+        bool allowUniversalAccessFromFileURLs { false };
+        bool allowTopNavigationToDataURLs { false };
+        bool needsStorageAccessFromFileURLsQuirk { true };
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
         WTF::String attributedBundleIdentifier { };
