@@ -289,9 +289,9 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
             [regionLayer setCornerRadius:region.cornerRadius];
             if (region.cornerRadius)
                 [regionLayer setCornerCurve:kCACornerCurveCircular];
-
+#if PLATFORM(VISION)
             reconfigureLayerContentHint(regionLayer.get(), region.contentHint);
-
+#endif
             constexpr CACornerMask allCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner | kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
             if (region.maskedCorners.isEmpty())
                 [regionLayer setMaskedCorners:allCorners];
