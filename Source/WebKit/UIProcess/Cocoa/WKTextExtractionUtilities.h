@@ -27,7 +27,7 @@
 
 #import <wtf/RetainPtr.h>
 
-@class WKTextExtractionItem;
+OBJC_CLASS WKTextExtractionItem;
 
 namespace WebCore {
 namespace TextExtraction {
@@ -37,7 +37,7 @@ struct Item;
 
 namespace WebKit {
 
-void prepareTextExtractionSupport();
+void prepareTextExtractionSupportIfNeeded();
 RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&);
 
 } // namespace WebKit

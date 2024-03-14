@@ -385,6 +385,10 @@
 #include "WebExtensionController.h"
 #endif
 
+#if ENABLE(TEXT_EXTRACTION)
+#import "WKTextExtractionUtilities.h"
+#endif
+
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_COMPLETION(process, assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process->connection(), completion)
@@ -6319,6 +6323,11 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaPermissionRequestManager)
         m_userMediaPermissionRequestManager->didCommitLoadForFrame(frameID);
+#endif
+
+#if ENABLE(TEXT_EXTRACTION)
+    if (frame->isMainFrame() && preferences().textExtractionEnabled())
+        prepareTextExtractionSupportIfNeeded();
 #endif
 }
 
