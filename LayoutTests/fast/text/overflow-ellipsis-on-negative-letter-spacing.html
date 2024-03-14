@@ -1,0 +1,20 @@
+<style>
+div {
+  width: 0px;
+  overflow: auto;
+  padding: 100%;
+  text-overflow: ellipsis;
+  letter-spacing: -100px;
+}
+.inline-block {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+</style>
+PASS if no assert in debug.
+<div><span class=inline-block></span></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
