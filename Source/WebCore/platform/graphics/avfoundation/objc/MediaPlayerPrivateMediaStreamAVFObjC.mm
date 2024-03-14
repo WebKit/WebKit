@@ -1159,6 +1159,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::CurrentFramePainter::reset()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()
 {
+    if (!m_isMediaLayerRehosting)
+        return;
+
     Locker locker { m_sampleBufferDisplayLayerLock };
     if (m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds);
@@ -1198,6 +1201,8 @@ LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() c
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
+    m_isMediaLayerRehosting = false;
+
     if (!m_sampleBufferDisplayLayer || size.isEmpty())
         return;
 
