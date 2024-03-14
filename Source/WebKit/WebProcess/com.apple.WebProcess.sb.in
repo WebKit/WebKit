@@ -1817,8 +1817,13 @@
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry) (kernel-mig-routine
     thread_info
+#if defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
+    task_register_hardened_exception_handler
+    thread_adopt_exception_handler
+#else
 #if !ENABLE(BLOCK_SET_EXCEPTION_PORTS)
     thread_set_exception_ports
+#endif
 #endif
 ))
 
@@ -1839,7 +1844,11 @@
 #endif
 #if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
             (with-filter (require-not (webcontent-process-launched))
+#if defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
+                (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler)))
+#else
                 (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+#endif
 #endif
 
             (allow mach-message-send (kernel-mig-routines-in-use))

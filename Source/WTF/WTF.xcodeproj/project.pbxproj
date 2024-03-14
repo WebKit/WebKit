@@ -4058,6 +4058,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				OTHER_MIGFLAGS = "-DMACH_EXC_SERVER_TASKIDTOKEN_STATE";
 			};
 			name = Debug;
 		};
@@ -4065,6 +4066,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				OTHER_MIGFLAGS = "-DMACH_EXC_SERVER_TASKIDTOKEN_STATE";
 			};
 			name = Release;
 		};
@@ -4086,6 +4088,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D247B6E14689C4700E78B76 /* Base.xcconfig */;
 			buildSettings = {
+				OTHER_MIGFLAGS = "-DMACH_EXC_SERVER_TASKIDTOKEN_STATE";
 			};
 			name = Production;
 		};
