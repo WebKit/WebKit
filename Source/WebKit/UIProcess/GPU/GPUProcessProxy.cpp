@@ -644,8 +644,7 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
 {
     GPUProcessSessionParameters parameters;
 
-    auto& resolvedDirectories = const_cast<WebsiteDataStore&>(store).resolvedDirectories();
-    parameters.mediaCacheDirectory = resolvedDirectories.mediaCacheDirectory;
+    parameters.mediaCacheDirectory = store.resolvedMediaCacheDirectory();
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     if (!parameters.mediaCacheDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::Type::ReadWrite))
@@ -653,7 +652,7 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
     }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    parameters.mediaKeysStorageDirectory = resolvedDirectories.mediaKeysStorageDirectory;
+    parameters.mediaKeysStorageDirectory = store.resolvedMediaKeysDirectory();
     SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
     if (!parameters.mediaKeysStorageDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeysStorageDirectory, SandboxExtension::Type::ReadWrite))

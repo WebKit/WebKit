@@ -175,8 +175,8 @@ public:
     void setPrivateClickMeasurementDebugMode(bool);
     void storePrivateClickMeasurement(const WebCore::PrivateClickMeasurement&);
 
-    uint64_t perOriginStorageQuota() const { return m_configuration->perOriginStorageQuota(); }
-    std::optional<double> originQuotaRatio() { return m_configuration->originQuotaRatio(); }
+    uint64_t perOriginStorageQuota() const { return m_resolvedConfiguration->perOriginStorageQuota(); }
+    std::optional<double> originQuotaRatio() { return m_resolvedConfiguration->originQuotaRatio(); }
 
     void didAllowPrivateTokenUsageByThirdPartyForTesting(bool wasAllowed, URL&& resourceURL);
 
@@ -273,8 +273,24 @@ public:
     void storeServiceWorkerRegistrations(CompletionHandler<void()>&&);
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
-    void waitForDirectoriesToResolveIfNecessary();
-    const WebsiteDataStoreConfiguration::Directories& resolvedDirectories() const;
+    void resolveDirectoriesIfNecessary();
+    const String& resolvedCacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
+    const String& resolvedLocalStorageDirectory() const { return m_resolvedConfiguration->localStorageDirectory(); }
+    const String& resolvedNetworkCacheDirectory() const { return m_resolvedConfiguration->networkCacheDirectory(); }
+    const String& resolvedAlternativeServicesStorageDirectory() const { return m_resolvedConfiguration->alternativeServicesDirectory(); }
+    const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration->mediaCacheDirectory(); }
+    const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration->mediaKeysStorageDirectory(); }
+    const String& resolvedJavaScriptConfigurationDirectory() const { return m_resolvedConfiguration->javaScriptConfigurationDirectory(); }
+    const String& resolvedCookieStorageFile() const { return m_resolvedConfiguration->cookieStorageFile(); }
+    const String& resolvedIndexedDBDatabaseDirectory() const { return m_resolvedConfiguration->indexedDBDatabaseDirectory(); }
+    const String& resolvedServiceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
+    const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration->resourceLoadStatisticsDirectory(); }
+    const String& resolvedHSTSStorageDirectory() const { return m_resolvedConfiguration->hstsStorageDirectory(); }
+    const String& resolvedGeneralStorageDirectory() const { return m_resolvedConfiguration->generalStorageDirectory(); }
+    const String& resolvedSearchFieldHistoryDirectory() const { return m_resolvedConfiguration->searchFieldHistoryDirectory(); }
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+    const String& resolvedModelElementCacheDirectory() const { return m_resolvedConfiguration->modelElementCacheDirectory(); }
+#endif
     FileSystem::Salt mediaKeysStorageSalt() const;
 
     static void setCachedProcessSuspensionDelayForTesting(Seconds);
@@ -468,7 +484,6 @@ public:
     void setRestrictedOpenerTypeForDomainForTesting(const WebCore::RegistrableDomain&, RestrictedOpenerType);
 
     bool operator==(const WebsiteDataStore& other) const { return (m_sessionID == other.sessionID()); }
-    void resolveDirectoriesAsynchronously();
 
 private:
     enum class ForceReinitialization : bool { No, Yes };
@@ -526,16 +541,14 @@ private:
     String resolvedContainerCachesNetworkingDirectory();
     String parentBundleDirectory() const;
 #endif
-    void handleResolvedDirectoriesAsynchronously(const WebsiteDataStoreConfiguration::Directories&, bool);
+
+    String migrateMediaKeysStorageIfNecessary(const String& directory);
 
     const PAL::SessionID m_sessionID;
 
-    mutable Lock m_resolveDirectoriesLock;
-    Condition m_resolveDirectoriesCondition;
-    bool m_hasDispatchedResolveDirectories { false };
-    std::optional<WebsiteDataStoreConfiguration::Directories> m_resolvedDirectories WTF_GUARDED_BY_LOCK(m_resolveDirectoriesLock);
-    FileSystem::Salt m_mediaKeysStorageSalt WTF_GUARDED_BY_LOCK(m_resolveDirectoriesLock);
+    Ref<WebsiteDataStoreConfiguration> m_resolvedConfiguration;
     Ref<const WebsiteDataStoreConfiguration> m_configuration;
+    bool m_hasResolvedDirectories { false };
     const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
 #if PLATFORM(IOS_FAMILY)
     String m_resolvedContainerCachesWebContentDirectory;
@@ -599,6 +612,8 @@ private:
     CompletionHandler<void(String&&)> m_completionHandlerForRemovalFromNetworkProcess;
 
     bool m_inspectionForServiceWorkersAllowed { true };
+    FileSystem::Salt m_mediaKeysStorageSalt;
+
     bool m_isBlobRegistryPartitioningEnabled { false };
 
     HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypesForTesting;

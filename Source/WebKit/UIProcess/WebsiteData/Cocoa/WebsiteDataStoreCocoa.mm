@@ -179,10 +179,9 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     if (!httpsProxy.isValid() && (isSafari || isMiniBrowser))
         httpsProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey] };
 
-    auto& directories = resolvedDirectories();
 #if HAVE(ALTERNATIVE_SERVICE)
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
-    String alternativeServiceStorageDirectory = directories.alternativeServicesDirectory;
+    String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
     createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
 #endif
 
@@ -204,7 +203,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.standaloneApplicationDomain = WebCore::RegistrableDomain { m_configuration->standaloneApplicationURL() };
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource = WTFMove(resourceLoadStatisticsManualPrevalentResource);
 
-    auto cookieFile = directories.cookieStorageFile;
+    auto cookieFile = resolvedCookieStorageFile();
     createHandleFromResolvedPathIfPossible(FileSystem::parentPath(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
     if (m_uiProcessCookieStorageIdentifier.isEmpty()) {
@@ -947,14 +946,14 @@ void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, Comple
 
 void WebsiteDataStore::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
-    m_queue->dispatch([name = name.isolatedCopy(), searchItems = crossThreadCopy(searchItems), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy()] {
+    m_queue->dispatch([name = name.isolatedCopy(), searchItems = crossThreadCopy(searchItems), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy()] {
         WebCore::saveRecentSearchesToFile(name, searchItems, directory);
     });
 }
 
 void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
-    m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTFMove(completionHandler), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy()]() mutable {
+    m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTFMove(completionHandler), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy()]() mutable {
         auto result = WebCore::loadRecentSearchesFromFile(name, directory);
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(result)]() mutable {
             completionHandler(WTFMove(result));
@@ -964,7 +963,7 @@ void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<
 
 void WebsiteDataStore::removeRecentSearches(WallTime oldestTimeToRemove, CompletionHandler<void()>&& completionHandler)
 {
-    m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         WebCore::removeRecentlyModifiedRecentSearchesFromFile(time, directory);
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });

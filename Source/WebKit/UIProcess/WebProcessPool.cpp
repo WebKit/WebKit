@@ -819,10 +819,9 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
 
 WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
 {
-    websiteDataStore.waitForDirectoriesToResolveIfNecessary();
+    websiteDataStore.resolveDirectoriesIfNecessary();
 
-    auto& resolvedDirectories = websiteDataStore.resolvedDirectories();
-    String mediaCacheDirectory = resolvedDirectories.mediaCacheDirectory;
+    String mediaCacheDirectory = websiteDataStore.resolvedMediaCacheDirectory();
 #if !ENABLE(GPU_PROCESS)
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     if (!mediaCacheDirectory.isEmpty()) {
@@ -831,7 +830,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     }
 #endif
 
-    String mediaKeyStorageDirectory = resolvedDirectories.mediaKeysStorageDirectory;
+    String mediaKeyStorageDirectory = websiteDataStore.resolvedMediaKeysDirectory();
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     if (!mediaKeyStorageDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite))
@@ -843,7 +842,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     if (!m_javaScriptConfigurationDirectory.isEmpty())
         javaScriptConfigurationDirectory = resolvePathForSandboxExtension(m_javaScriptConfigurationDirectory);
     else if (javaScriptConfigurationFileEnabled())
-        javaScriptConfigurationDirectory = resolvedDirectories.javaScriptConfigurationDirectory;
+        javaScriptConfigurationDirectory = websiteDataStore.resolvedJavaScriptConfigurationDirectory();
 
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
     if (!javaScriptConfigurationDirectory.isEmpty()) {
@@ -852,7 +851,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-    auto modelElementCacheDirectory = resolvedDirectories.modelElementCacheDirectory;
+    auto modelElementCacheDirectory = websiteDataStore.resolvedModelElementCacheDirectory();
     SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;
     if (!modelElementCacheDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(modelElementCacheDirectory, SandboxExtension::Type::ReadWrite))
