@@ -52,7 +52,7 @@ static constexpr auto longTextString = "Here's to the crazy ones. The misfits. T
     EXPECT_TRUE([actual isKindOfClass:[NSAttributedString class]]); \
     EXPECT_WK_STREQ(expected, [(NSAttributedString *)actual string]);
 
-static UITextDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGranularity granularity, NSInteger granularityCount, CGRect documentRect = CGRectZero, id<NSCopying> inputElementIdentifier = nil)
+static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGranularity granularity, NSInteger granularityCount, CGRect documentRect = CGRectZero, id<NSCopying> inputElementIdentifier = nil)
 {
     auto request = adoptNS([[UIWKDocumentRequest alloc] init]);
     [request setFlags:flags];
@@ -76,12 +76,12 @@ static UITextDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UIText
 
 @end
 
-@interface UITextDocumentContext (TestRunner)
+@interface UIWKDocumentContext (TestRunner)
 @property (nonatomic, readonly) NSArray<NSValue *> *markedTextRects;
 @property (nonatomic, readonly) NSArray<NSValue *> *textRects;
 @end
 
-@implementation UITextDocumentContext (TestRunner)
+@implementation UIWKDocumentContext (TestRunner)
 
 - (NSArray<NSValue *> *)markedTextRects
 {
@@ -147,16 +147,25 @@ static UITextDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UIText
 
 @implementation TestWKWebView (SynchronousDocumentContext)
 
-- (UITextDocumentContext *)synchronouslyRequestDocumentContext:(UITextDocumentRequest *)request
+- (UIWKDocumentContext *)synchronouslyRequestDocumentContext:(UIWKDocumentRequest *)request
 {
     __block bool finished = false;
-    __block RetainPtr<UITextDocumentContext> result;
-    [self.textInputContentView requestDocumentContext:request completionHandler:^(UITextDocumentContext *context) {
+    __block RetainPtr<id> result;
+    [self.textInputContentView requestDocumentContext:request completionHandler:^(UIWKDocumentContext *context) {
         result = context;
         finished = true;
     }];
     TestWebKitAPI::Util::run(&finished);
-    return result.autorelease();
+
+#if USE(BROWSERENGINEKIT)
+    if (RetainPtr context = dynamic_objc_cast<BETextDocumentContext>(result.get()))
+        return [context _uikitDocumentContext];
+#endif
+
+    if (RetainPtr context = dynamic_objc_cast<UIWKDocumentContext>(result.get()))
+        return context.autorelease();
+
+    return nil;
 }
 
 - (UITextPlaceholder *)synchronouslyInsertTextPlaceholderWithSize:(CGSize)size
@@ -213,7 +222,7 @@ TEST(DocumentEditingContext, Simple)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    UITextDocumentContext *context;
+    UIWKDocumentContext *context;
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"];

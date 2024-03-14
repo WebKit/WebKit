@@ -1676,24 +1676,29 @@ static VisiblePosition nextWordBoundaryInDirection(const VisiblePosition& vp, Se
 static VisiblePosition nextSentenceBoundaryInDirection(const VisiblePosition& vp, SelectionDirection direction)
 {
     bool useDownstream = directionIsDownstream(direction);
-    bool withinUnitOfGranularity = withinTextUnitOfGranularity(vp, TextGranularity::SentenceGranularity, direction);
-    VisiblePosition result;
+    VisiblePosition result = vp;
 
-    if (withinUnitOfGranularity)
-        result = useDownstream ? endOfSentence(vp) : startOfSentence(vp);
-    else {
-        result = useDownstream ? nextSentencePosition(vp) : previousSentencePosition(vp);
-        if (result.isNull() || result == vp)
-            return VisiblePosition();
+    do {
+        if (withinTextUnitOfGranularity(result, TextGranularity::SentenceGranularity, direction))
+            result = useDownstream ? endOfSentence(result) : startOfSentence(result);
+        else {
+            auto nextPosition = useDownstream ? nextSentencePosition(result) : previousSentencePosition(result);
+            if (nextPosition.isNull() || nextPosition == result)
+                return VisiblePosition();
 
-        result = useDownstream ? startOfSentence(result) : endOfSentence(result);
-    }
+            auto newResult = useDownstream ? startOfSentence(nextPosition) : endOfSentence(nextPosition);
+            if (areVisiblePositionsInSameTreeScope(newResult, result) && (useDownstream ? newResult < result : newResult > result))
+                newResult = useDownstream ? endOfSentence(nextPosition) : startOfSentence(nextPosition);
+
+            if (newResult == result)
+                break;
+
+            result = WTFMove(newResult);
+        }
+    } while (areVisiblePositionsInSameTreeScope(result, vp) && (useDownstream ? (result < vp) : (result > vp)));
 
     if (result == vp)
         return VisiblePosition();
-
-    // Positions can only be compared if they are in the same tree scope.
-    ASSERT_IMPLIES(areVisiblePositionsInSameTreeScope(result, vp), useDownstream ? (result > vp) : (result < vp));
 
     return result;
 }

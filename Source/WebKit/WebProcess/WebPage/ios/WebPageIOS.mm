@@ -4900,10 +4900,8 @@ static VisiblePosition moveByGranularityRespectingWordBoundary(const VisiblePosi
         if (atBoundaryOfGranularity(currentPosition, granularity, direction))
             --granularityCount;
     } while (granularityCount);
-    if (granularity == TextGranularity::SentenceGranularity) {
-        ASSERT(atBoundaryOfGranularity(currentPosition, TextGranularity::SentenceGranularity, direction));
+    if (granularity == TextGranularity::SentenceGranularity)
         return currentPosition;
-    }
     // Note that this rounds to the nearest word, which may cross a line boundary when using line granularity.
     // For example, suppose the text is laid out as follows and the insertion point is at |:
     //     |This is the first sen
