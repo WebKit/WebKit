@@ -225,10 +225,11 @@ minFilter: 'linear',
 mipmapFilter: 'linear',
 }
 );
+let videoFrame2 = new VideoFrame(await createImageBitmap(canvas0), {timestamp: 0});
 let externalTexture1 = device0.importExternalTexture(
 {
 label: 'a',
-source: new VideoFrame(await createImageBitmap(canvas0), {timestamp: 0}),
+source: videoFrame2,
 colorSpace: 'srgb',
 }
 );
@@ -576,6 +577,8 @@ buffer0,
 new ArrayBuffer(3659080)
 );
 } catch {}
+try { videoFrame0.close(); } catch {}
+try { videoFrame2.close(); } catch {}
   } catch { }
   if (window.testRunner) { testRunner.notifyDone() }
 };

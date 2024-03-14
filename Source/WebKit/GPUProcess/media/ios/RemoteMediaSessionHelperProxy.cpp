@@ -81,47 +81,56 @@ void RemoteMediaSessionHelperProxy::overridePresentingApplicationPIDIfNeeded()
 
 void RemoteMediaSessionHelperProxy::applicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::ApplicationWillEnterForeground(suspendedUnderLock), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::ApplicationWillEnterForeground(suspendedUnderLock), { });
 }
 
 void RemoteMediaSessionHelperProxy::applicationDidEnterBackground(SuspendedUnderLock suspendedUnderLock)
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::ApplicationDidEnterBackground(suspendedUnderLock), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::ApplicationDidEnterBackground(suspendedUnderLock), { });
 }
 
 void RemoteMediaSessionHelperProxy::applicationWillBecomeInactive()
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::ApplicationWillBecomeInactive(), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::ApplicationWillBecomeInactive(), { });
 }
 
 void RemoteMediaSessionHelperProxy::applicationDidBecomeActive()
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::ApplicationDidBecomeActive(), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::ApplicationDidBecomeActive(), { });
 }
 
 void RemoteMediaSessionHelperProxy::externalOutputDeviceAvailableDidChange(HasAvailableTargets hasAvailableTargets)
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::ExternalOutputDeviceAvailableDidChange(hasAvailableTargets), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::ExternalOutputDeviceAvailableDidChange(hasAvailableTargets), { });
 }
 
 void RemoteMediaSessionHelperProxy::isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit playing)
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::IsPlayingToAutomotiveHeadUnitDidChange(playing), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::IsPlayingToAutomotiveHeadUnitDidChange(playing), { });
 }
 
 void RemoteMediaSessionHelperProxy::activeAudioRouteDidChange(ShouldPause shouldPause)
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteDidChange(shouldPause), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteDidChange(shouldPause), { });
 }
 
 void RemoteMediaSessionHelperProxy::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, Ref<WebCore::MediaPlaybackTarget>&& target)
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::ActiveVideoRouteDidChange(supportsAirPlayVideo, MediaPlaybackTargetContextSerialized { target->targetContext() }), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::ActiveVideoRouteDidChange(supportsAirPlayVideo, MediaPlaybackTargetContextSerialized { target->targetContext() }), { });
 }
 
 void RemoteMediaSessionHelperProxy::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialPlayback)
 {
-    m_gpuConnection->connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback), { });
+    if (auto connection = m_gpuConnection.get())
+        connection->connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback), { });
 }
 
 }

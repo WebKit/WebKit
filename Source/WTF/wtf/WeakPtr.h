@@ -184,6 +184,14 @@ public:
     {
     }
 
+    void prepareForUseOnlyOnNonMainThread()
+    {
+#if ASSERT_ENABLED
+        ASSERT(m_wasConstructedOnMainThread);
+        m_wasConstructedOnMainThread = false;
+#endif
+    }
+
     ~WeakPtrFactory()
     {
         if (m_impl)

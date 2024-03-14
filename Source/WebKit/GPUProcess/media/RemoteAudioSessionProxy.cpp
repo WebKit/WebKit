@@ -54,14 +54,14 @@ RemoteAudioSessionProxy::RemoteAudioSessionProxy(GPUConnectionToWebProcess& gpuC
 
 RemoteAudioSessionProxy::~RemoteAudioSessionProxy() = default;
 
-GPUConnectionToWebProcess& RemoteAudioSessionProxy::gpuConnectionToWebProcess() const
+RefPtr<GPUConnectionToWebProcess> RemoteAudioSessionProxy::gpuConnectionToWebProcess() const
 {
     return m_gpuConnection.get();
 }
 
 WebCore::ProcessIdentifier RemoteAudioSessionProxy::processIdentifier()
 {
-    return m_gpuConnection->webProcessIdentifier();
+    return m_gpuConnection.get()->webProcessIdentifier();
 }
 
 RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
@@ -150,28 +150,30 @@ void RemoteAudioSessionProxy::endInterruptionRemote(AudioSession::MayResume mayR
 
 RemoteAudioSessionProxyManager& RemoteAudioSessionProxy::audioSessionManager()
 {
-    return m_gpuConnection->gpuProcess().audioSessionManager();
+    return m_gpuConnection.get()->gpuProcess().audioSessionManager();
 }
 
 bool RemoteAudioSessionProxy::allowTestOnlyIPC()
 {
-    return m_gpuConnection->allowTestOnlyIPC();
+    if (auto connection = m_gpuConnection.get())
+        return connection->allowTestOnlyIPC();
+    return false;
 }
 
 IPC::Connection& RemoteAudioSessionProxy::connection()
 {
-    return m_gpuConnection->connection();
+    return m_gpuConnection.get()->connection();
 }
 
 void RemoteAudioSessionProxy::triggerBeginInterruptionForTesting()
 {
-    MESSAGE_CHECK(m_gpuConnection->allowTestOnlyIPC());
+    MESSAGE_CHECK(m_gpuConnection.get()->allowTestOnlyIPC());
     AudioSession::sharedSession().beginInterruptionForTesting();
 }
 
 void RemoteAudioSessionProxy::triggerEndInterruptionForTesting()
 {
-    MESSAGE_CHECK(m_gpuConnection->allowTestOnlyIPC());
+    MESSAGE_CHECK(m_gpuConnection.get()->allowTestOnlyIPC());
     AudioSession::sharedSession().endInterruptionForTesting();
 }
 

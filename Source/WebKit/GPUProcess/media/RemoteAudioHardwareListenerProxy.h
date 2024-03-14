@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include <WebCore/AudioHardwareListener.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -53,7 +54,7 @@ private:
     void audioHardwareDidBecomeInactive() final;
     void audioOutputDeviceChanged() final;
 
-    WeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     RemoteAudioHardwareListenerIdentifier m_identifier;
     Ref<WebCore::AudioHardwareListener> m_listener;
 };

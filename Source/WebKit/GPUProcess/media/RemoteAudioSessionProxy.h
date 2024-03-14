@@ -31,6 +31,7 @@
 #include "RemoteAudioSessionConfiguration.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WeakRef.h>
 
@@ -68,7 +69,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
-    GPUConnectionToWebProcess& gpuConnectionToWebProcess() const;
+    RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() const;
 
 private:
     friend UniqueRef<RemoteAudioSessionProxy> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSessionProxy>(GPUConnectionToWebProcess&);
@@ -91,7 +92,7 @@ private:
     RemoteAudioSessionProxyManager& audioSessionManager();
     IPC::Connection& connection();
 
-    WeakRef<GPUConnectionToWebProcess> m_gpuConnection;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
     WebCore::AudioSession::Mode m_mode { WebCore::AudioSession::Mode::Default };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };

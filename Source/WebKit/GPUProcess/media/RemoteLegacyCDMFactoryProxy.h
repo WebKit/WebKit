@@ -33,6 +33,7 @@
 #include "RemoteLegacyCDMIdentifier.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -64,7 +65,7 @@ public:
     void removeSession(RemoteLegacyCDMSessionIdentifier);
     RemoteLegacyCDMSessionProxy* getSession(const RemoteLegacyCDMSessionIdentifier&) const;
 
-    GPUConnectionToWebProcess* gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
+    RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
     bool allowsExitUnderMemoryPressure() const;
 
@@ -82,7 +83,7 @@ private:
     void createCDM(const String& keySystem, std::optional<WebCore::MediaPlayerIdentifier>&&, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&&);
     void supportsKeySystem(const String& keySystem, std::optional<String> mimeType, CompletionHandler<void(bool)>&&);
 
-    WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     HashMap<RemoteLegacyCDMIdentifier, std::unique_ptr<RemoteLegacyCDMProxy>> m_proxies;
     HashMap<RemoteLegacyCDMSessionIdentifier, std::unique_ptr<RemoteLegacyCDMSessionProxy>> m_sessions;
 

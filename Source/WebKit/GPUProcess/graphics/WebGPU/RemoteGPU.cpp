@@ -59,6 +59,7 @@ RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpu
     , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
 {
+    weakPtrFactory().prepareForUseOnlyOnNonMainThread();
 }
 
 RemoteGPU::~RemoteGPU() = default;
@@ -127,13 +128,13 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
         return;
     }
 
-    m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), objectHeap = m_objectHeap.copyRef(), streamConnection = Ref { *m_streamConnection }, identifier, &gpuConnectionToWebProcess = m_gpuConnectionToWebProcess] (RefPtr<WebCore::WebGPU::Adapter>&& adapter) mutable {
+    m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), objectHeap = m_objectHeap.copyRef(), streamConnection = Ref { *m_streamConnection }, identifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get()] (RefPtr<WebCore::WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
             callback(std::nullopt);
             return;
         }
 
-        auto remoteAdapter = RemoteAdapter::create(gpuConnectionToWebProcess, *adapter, objectHeap, WTFMove(streamConnection), identifier);
+        auto remoteAdapter = RemoteAdapter::create(*gpuConnectionToWebProcess, *adapter, objectHeap, WTFMove(streamConnection), identifier);
         objectHeap->addObject(identifier, remoteAdapter);
 
         auto name = adapter->name();

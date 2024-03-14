@@ -178,10 +178,12 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
         if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(*sharedVideoFrame)))
             pixelBuffer = videoFrame->pixelBuffer();
     } else if (descriptor.mediaIdentifier) {
-        m_gpuConnectionToWebProcess->performWithMediaPlayerOnMainThread(*descriptor.mediaIdentifier, [&] (auto& player) mutable {
-            auto videoFrame = player.videoFrameForCurrentTime();
-            pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
-        });
+        if (auto connection = m_gpuConnectionToWebProcess.get()) {
+            connection->performWithMediaPlayerOnMainThread(*descriptor.mediaIdentifier, [&] (auto& player) mutable {
+                auto videoFrame = player.videoFrameForCurrentTime();
+                pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
+            });
+        }
     }
 
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor, pixelBuffer);

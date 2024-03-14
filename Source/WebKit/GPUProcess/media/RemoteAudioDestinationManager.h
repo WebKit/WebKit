@@ -34,6 +34,7 @@
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
@@ -77,7 +78,7 @@ private:
 #endif
 
     HashMap<RemoteAudioDestinationIdentifier, UniqueRef<RemoteAudioDestination>> m_audioDestinations;
-    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 
 } // namespace WebKit;

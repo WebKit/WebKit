@@ -49,7 +49,7 @@ RemoteAudioTrackProxy::RemoteAudioTrackProxy(GPUConnectionToWebProcess& connecti
         ensureOnMainThread(WTFMove(task));
     }, *this);
 
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(configuration()), m_mediaPlayerIdentifier);
+    connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteAudioTrackProxy::~RemoteAudioTrackProxy()
@@ -75,10 +75,10 @@ AudioTrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()
 
 void RemoteAudioTrackProxy::configurationChanged()
 {
-    if (!m_connectionToWebProcess)
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
         return;
-
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::RemoteAudioTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
+    connection->connection().send(Messages::MediaPlayerPrivateRemote::RemoteAudioTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
 }
 
 void RemoteAudioTrackProxy::willRemove()

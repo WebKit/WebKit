@@ -34,6 +34,7 @@
 #include <WebCore/MediaSourcePrivateClient.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -88,7 +89,7 @@ private:
     void setTimeFudgeFactor(const MediaTime&);
     void disconnect();
 
-    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     RemoteMediaSourceIdentifier m_identifier;
     bool m_webMParserEnabled { false };
     RefPtr<WebCore::MediaSourcePrivate> m_private;

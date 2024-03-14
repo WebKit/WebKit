@@ -40,6 +40,7 @@
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/ThreadAssertions.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -148,7 +149,7 @@ private:
     void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
 
 protected:
-    WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
 #if PLATFORM(COCOA)

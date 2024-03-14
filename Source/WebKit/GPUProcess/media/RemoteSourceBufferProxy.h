@@ -35,6 +35,7 @@
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -114,7 +115,7 @@ private:
     void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
     void disconnect();
 
-    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     RemoteSourceBufferIdentifier m_identifier;
     Ref<WebCore::SourceBufferPrivate> m_sourceBufferPrivate;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;

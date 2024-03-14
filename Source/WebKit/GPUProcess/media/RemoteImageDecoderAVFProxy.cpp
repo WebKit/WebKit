@@ -75,17 +75,23 @@ void RemoteImageDecoderAVFProxy::deleteDecoder(ImageDecoderIdentifier identifier
         return;
 
     m_imageDecoders.take(identifier);
-    if (m_connectionToWebProcess && allowsExitUnderMemoryPressure())
-        m_connectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return;
+    if (allowsExitUnderMemoryPressure())
+        connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteImageDecoderAVFProxy::encodedDataStatusChanged(ImageDecoderIdentifier identifier)
 {
-    if (!m_connectionToWebProcess || !m_imageDecoders.contains(identifier))
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return;
+    if (!m_imageDecoders.contains(identifier))
         return;
 
     auto imageDecoder = m_imageDecoders.get(identifier);
-    m_connectionToWebProcess->connection().send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
+    connection->connection().send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
 }
 
 void RemoteImageDecoderAVFProxy::setExpectedContentSize(ImageDecoderIdentifier identifier, long long expectedContentSize)

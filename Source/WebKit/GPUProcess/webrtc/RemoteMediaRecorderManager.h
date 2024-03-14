@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
 
 namespace IPC {
@@ -65,7 +66,7 @@ private:
     void createRecorder(MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&, CompletionHandler<void(std::optional<WebCore::ExceptionData>&&, String&&, unsigned, unsigned)>&&);
     void releaseRecorder(MediaRecorderIdentifier);
 
-    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     HashMap<MediaRecorderIdentifier, std::unique_ptr<RemoteMediaRecorder>> m_recorders;
 };
 

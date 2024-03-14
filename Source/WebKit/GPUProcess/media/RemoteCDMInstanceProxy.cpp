@@ -74,7 +74,7 @@ void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String&
     if (!factory)
         return;
 
-    auto* gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return;
 

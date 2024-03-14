@@ -32,6 +32,7 @@
 #include "SharedCARingBuffer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace IPC {
 class Semaphore;
@@ -69,7 +70,7 @@ private:
     void setAudioOutputDevice(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&);
 
     HashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, UniqueRef<Unit>> m_units;
-    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 
 } // namespace WebKit;

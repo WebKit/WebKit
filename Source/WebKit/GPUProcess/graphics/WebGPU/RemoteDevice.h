@@ -38,6 +38,7 @@
 #include <WebCore/WebGPUErrorFilter.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -158,7 +159,7 @@ private:
     SharedVideoFrameReader m_sharedVideoFrameReader;
 #endif
 #endif
-    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 
 } // namespace WebKit

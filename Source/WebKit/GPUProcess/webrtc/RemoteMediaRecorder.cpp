@@ -37,7 +37,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&m_gpuConnectionToWebProcess->connection()))
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (connection ? &connection->connection() : nullptr))
 
 namespace WebKit {
 using namespace WebCore;
@@ -67,6 +67,7 @@ RemoteMediaRecorder::~RemoteMediaRecorder()
 
 void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
+    auto connection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(m_recordAudio);
     m_audioBufferList = nullptr;
     m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
@@ -78,6 +79,7 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer:
 
 void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
+    auto connection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(m_ringBuffer);
     MESSAGE_CHECK(m_audioBufferList);
     MESSAGE_CHECK(m_description && WebAudioBufferList::isSupportedDescription(*m_description, numberOfFrames));

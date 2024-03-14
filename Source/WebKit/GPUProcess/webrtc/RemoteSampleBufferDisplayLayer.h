@@ -90,7 +90,7 @@ private:
     // WebCore::SampleBufferDisplayLayer::Client
     void sampleBufferDisplayLayerStatusDidFail() final;
 
-    WeakRef<GPUConnectionToWebProcess> m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
     RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;

@@ -51,6 +51,7 @@
 #include <wtf/Logger.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #include "SampleBufferDisplayLayerIdentifier.h"
@@ -128,7 +129,7 @@ class RemoteGraphicsContextGL;
 #endif
 
 class GPUConnectionToWebProcess
-    : public ThreadSafeRefCounted<GPUConnectionToWebProcess, WTF::DestructionThread::Main>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUConnectionToWebProcess, WTF::DestructionThread::Main>
     , public WebCore::NowPlayingManager::Client
     , IPC::Connection::Client {
 public:

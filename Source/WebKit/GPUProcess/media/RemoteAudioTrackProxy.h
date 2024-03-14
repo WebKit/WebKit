@@ -33,6 +33,7 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/TrackBase.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -80,7 +81,7 @@ private:
     AudioTrackPrivateRemoteConfiguration configuration();
     void configurationChanged();
 
-    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     Ref<WebCore::AudioTrackPrivate> m_trackPrivate;
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;

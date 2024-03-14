@@ -42,6 +42,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadAssertions.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore::WebGPU {
@@ -114,7 +115,7 @@ private:
 
     void createCompositorIntegration(WebGPUIdentifier);
 
-    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<WebCore::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());

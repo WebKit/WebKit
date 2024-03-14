@@ -72,14 +72,14 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
         return;
     }
 
-    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap.get() }, streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier, &gpuConnectionToWebProcess = m_gpuConnectionToWebProcess] (RefPtr<WebCore::WebGPU::Device>&& devicePtr) mutable {
-        if (!devicePtr.get()) {
+    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap.get() }, streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get()] (RefPtr<WebCore::WebGPU::Device>&& devicePtr) mutable {
+        if (!devicePtr.get() || !gpuConnectionToWebProcess) {
             callback({ }, { });
             return;
         }
 
         auto device = devicePtr.releaseNonNull();
-        auto remoteDevice = RemoteDevice::create(gpuConnectionToWebProcess, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier);
+        auto remoteDevice = RemoteDevice::create(*gpuConnectionToWebProcess, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier);
         objectHeap->addObject(identifier, remoteDevice);
         objectHeap->addObject(queueIdentifier, remoteDevice->queue());
         const auto& features = device->features();

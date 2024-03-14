@@ -32,6 +32,7 @@
 #include "WebGPUIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
@@ -83,7 +84,7 @@ private:
     Ref<WebCore::WebGPU::Adapter> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
-    WeakRef<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WebGPUIdentifier m_identifier;
 };
 

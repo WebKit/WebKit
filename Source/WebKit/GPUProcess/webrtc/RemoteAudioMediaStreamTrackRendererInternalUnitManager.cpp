@@ -110,7 +110,8 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager::~RemoteAudioMediaStreamT
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&& callback)
 {
     ASSERT(!m_units.contains(identifier));
-    m_units.add(identifier, makeUniqueRef<RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit>(identifier, m_gpuConnectionToWebProcess->connection(), m_gpuConnectionToWebProcess->isLastToCaptureAudio(), WTFMove(callback)));
+    if (auto connection = m_gpuConnectionToWebProcess.get())
+        m_units.add(identifier, makeUniqueRef<RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit>(identifier, connection->connection(), connection->isLastToCaptureAudio(), WTFMove(callback)));
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::deleteUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
@@ -118,8 +119,10 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::deleteUnit(AudioMed
     if (!m_units.remove(identifier))
         return;
 
-    if (m_units.isEmpty())
-        m_gpuConnectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+    if (m_units.isEmpty()) {
+        if (auto connection = m_gpuConnectionToWebProcess.get())
+            connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+    }
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::startUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, IPC::Semaphore&& semaphore)
@@ -143,8 +146,11 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::setAudioOutputDevic
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::notifyLastToCaptureAudioChanged()
 {
     // FIXME: When supporting multiple units to different speakers, we should only select the unit matching the VPIO output device.
+    auto connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return;
     for (auto& unit : m_units.values())
-        unit->setShouldRegisterAsSpeakerSamplesProducer(m_gpuConnectionToWebProcess->isLastToCaptureAudio());
+        unit->setShouldRegisterAsSpeakerSamplesProducer(connection->isLastToCaptureAudio());
 }
 
 RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::Unit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, Ref<IPC::Connection>&& connection, bool shouldRegisterAsSpeakerSamplesProducer, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&& callback)

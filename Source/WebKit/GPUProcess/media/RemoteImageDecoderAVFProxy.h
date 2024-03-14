@@ -35,6 +35,7 @@
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -66,7 +67,7 @@ private:
 
     void encodedDataStatusChanged(WebCore::ImageDecoderIdentifier);
 
-    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     HashMap<WebCore::ImageDecoderIdentifier, RefPtr<WebCore::ImageDecoderAVFObjC>> m_imageDecoders;
     WebCore::ProcessIdentity m_resourceOwner;
 };
