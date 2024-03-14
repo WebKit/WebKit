@@ -506,9 +506,10 @@ IntRect GraphicsContextSkia::clipBounds() const
     return enclosingIntRect(canvas().getLocalClipBounds());
 }
 
-void GraphicsContextSkia::clipToImageBuffer(ImageBuffer&, const FloatRect& /*destRect*/)
+void GraphicsContextSkia::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
 {
-    notImplemented();
+    if (auto nativeImage = nativeImageForDrawing(buffer))
+        canvas().clipShader(nativeImage->platformImage()->makeShader(SkTileMode::kDecal, SkTileMode::kDecal, { }, SkMatrix::Translate(SkFloatToScalar(destRect.x()), SkFloatToScalar(destRect.y()))));
 }
 
 void GraphicsContextSkia::drawFocusRing(const Path& path, float, const Color& color)
