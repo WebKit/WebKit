@@ -267,9 +267,17 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 
 #if PLATFORM(VISION)
     if (m_mainVideoElement) {
+        bool fullscreenElementIsVideoElement = is<HTMLVideoElement>(element);
+
+        auto mainVideoElementSize = [&]() -> FloatSize {
+            if (!fullscreenElementIsVideoElement && element->document().quirks().shouldDisableFullscreenVideoAspectRatioAdaptiveSizing())
+                return { };
+            return FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight());
+        }();
+
         mediaDetails = {
-            is<HTMLVideoElement>(element) ? FullScreenMediaDetails::Type::Video : FullScreenMediaDetails::Type::ElementWithVideo,
-            FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight())
+            fullscreenElementIsVideoElement ? FullScreenMediaDetails::Type::Video : FullScreenMediaDetails::Type::ElementWithVideo,
+            mainVideoElementSize
         };
     }
 #endif

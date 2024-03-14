@@ -1493,6 +1493,17 @@ bool Quirks::allowLayeredFullscreenVideos() const
 }
 #endif
 
+#if PLATFORM(VISION)
+// twitter.com: rdar://124180748
+bool Quirks::shouldDisableFullscreenVideoAspectRatioAdaptiveSizing() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return isDomain("twitter.com"_s);
+}
+#endif
+
 bool Quirks::shouldEnableApplicationCacheQuirk() const
 {
     // FIXME: Remove this when deleting ApplicationCache APIs.

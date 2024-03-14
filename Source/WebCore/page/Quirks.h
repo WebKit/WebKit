@@ -160,6 +160,10 @@ public:
     bool shouldEnableFontLoadingAPIQuirk() const;
     bool needsVideoShouldMaintainAspectRatioQuirk() const;
 
+#if PLATFORM(VISION)
+    WEBCORE_EXPORT bool shouldDisableFullscreenVideoAspectRatioAdaptiveSizing() const;
+#endif
+
     bool shouldDisableLazyIframeLoadingQuirk() const;
 
     bool shouldDisableFetchMetadata() const;
