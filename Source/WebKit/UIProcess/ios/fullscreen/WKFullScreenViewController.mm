@@ -404,6 +404,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // PLATFORM(VISION)
 
++ (NSSet<NSString *> *)keyPathsForValuesAffectingAdditionalSafeAreaInsets
+{
+    return [NSSet setWithObjects:@"prefersStatusBarHidden", @"view.window.windowScene.statusBarManager.statusBarHidden", @"view.window.safeAreaInsets", nil];
+}
+
 - (UIEdgeInsets)additionalSafeAreaInsets
 {
     // When the status bar hides, the resulting changes to safeAreaInsets cause
@@ -411,6 +416,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Do not add additional insets if the status bar is not hidden.
     if (!self.view.window.windowScene.statusBarManager.statusBarHidden)
+        return UIEdgeInsetsZero;
+
+    // If the status bar is hidden while would would prefer it not be,
+    // we should not reserve space as it likely won't re-appear.
+    if (!self.prefersStatusBarHidden)
         return UIEdgeInsetsZero;
 
     // Additionally, hiding the status bar does not reduce safeAreaInsets when
