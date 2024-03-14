@@ -584,9 +584,74 @@ void GraphicsContextSkia::drawLinesForText(const FloatPoint& point, float thickn
         fillRect(dash, localStrokeColor);
 }
 
-void GraphicsContextSkia::drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle)
+// Creates a path comprising of two triangle waves separated by some empty space in Y axis.
+// The empty space can be filled using SkPaint::kFill_Style thus forming an elegant triangle wave.
+// Such triangle wave can be used e.g. as an error underline for text.
+static SkPath createErrorUnderlinePath(const FloatRect& boundaries)
 {
-    notImplemented();
+    const double y = boundaries.y();
+    double width = boundaries.width();
+    const double height = boundaries.height();
+    static const double heightSquares = 2.5;
+
+    const double square = height / heightSquares;
+    const double halfSquare = 0.5 * square;
+
+    const double unitWidth = (heightSquares - 1.0) * square;
+    const int widthUnits = static_cast<int>((width + 0.5 * unitWidth) / unitWidth);
+
+    double x = boundaries.x() + 0.5 * (width - widthUnits * unitWidth);
+    width = widthUnits * unitWidth;
+
+    const double bottom = y + height;
+    const double top = y;
+
+    SkPath path;
+
+    // Bottom triangle wave, left to right.
+    path.moveTo(SkDoubleToScalar(x - halfSquare), SkDoubleToScalar(top + halfSquare));
+
+    int i = 0;
+    for (i = 0; i < widthUnits; i += 2) {
+        const double middle = x + (i + 1) * unitWidth;
+        const double right = x + (i + 2) * unitWidth;
+
+        path.lineTo(SkDoubleToScalar(middle), SkDoubleToScalar(bottom));
+
+        if (i + 2 == widthUnits)
+            path.lineTo(SkDoubleToScalar(right + halfSquare), SkDoubleToScalar(top + halfSquare));
+        else if (i + 1 != widthUnits)
+            path.lineTo(SkDoubleToScalar(right), SkDoubleToScalar(top + square));
+    }
+
+    // Top triangle wave, right to left.
+    for (i -= 2; i >= 0; i -= 2) {
+        const double left = x + i * unitWidth;
+        const double middle = x + (i + 1) * unitWidth;
+        const double right = x + (i + 2) * unitWidth;
+
+        if (i + 1 == widthUnits)
+            path.lineTo(SkDoubleToScalar(middle + halfSquare), SkDoubleToScalar(bottom - halfSquare));
+        else {
+            if (i + 2 == widthUnits)
+                path.lineTo(SkDoubleToScalar(right), SkDoubleToScalar(top));
+
+            path.lineTo(SkDoubleToScalar(middle), SkDoubleToScalar(bottom - halfSquare));
+        }
+
+        path.lineTo(SkDoubleToScalar(left), SkDoubleToScalar(top));
+    }
+
+    return path;
+}
+
+void GraphicsContextSkia::drawDotsForDocumentMarker(const FloatRect& boundaries, DocumentMarkerLineStyle style)
+{
+    if (style.mode != DocumentMarkerLineStyleMode::Spelling
+        && style.mode != DocumentMarkerLineStyleMode::Grammar)
+        return;
+
+    canvas().drawPath(createErrorUnderlinePath(boundaries), createFillPaint(style.color));
 }
 
 void GraphicsContextSkia::translate(float x, float y)
