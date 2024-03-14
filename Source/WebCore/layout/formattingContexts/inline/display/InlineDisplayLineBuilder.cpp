@@ -294,7 +294,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAft
         case LineEndingEllipsisPolicy::NoEllipsis:
             return false;
         case LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
-            return displayLine.contentLogicalWidth() > displayLine.lineBoxLogicalRect().width();
+            return displayLine.contentLogicalWidth() && displayLine.contentLogicalWidth() > displayLine.lineBoxLogicalRect().width();
         case LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
             if (isLastLineWithInlineContent)
                 return false;

@@ -1,0 +1,16 @@
+<style>
+.outer {
+  width: 100px;
+  text-indent: 101px hanging;
+}
+.inner {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+</style>
+PASS if no assert in debug.
+<div class=outer><div class=inner><span><div></div></span></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
