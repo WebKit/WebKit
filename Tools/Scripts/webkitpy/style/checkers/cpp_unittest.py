@@ -2353,6 +2353,10 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('foo (Foo::*bar)(',
                          'Extra space before ( in function call'
                          '  [whitespace/parens] [4]')
+        self.assert_lint('void foo(int bar, Function<void (std::optional<double>)>&&);',
+                         '')
+        self.assert_lint('void foo(int bar, std::function<void (dummy)>&&);',
+                         '')
         self.assert_lint('typedef foo (Foo::*bar)(', '')
         self.assert_lint('(foo)(bar)', '')
         self.assert_lint('Foo (*foo)(bar)', '')
