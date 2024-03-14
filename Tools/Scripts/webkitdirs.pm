@@ -3320,6 +3320,18 @@ sub runMacWebKitApp($;$)
     return system { $appPath } $appPath, argumentsForRunAndDebugMacWebKitApp();
 }
 
+sub runUnixWebKitApp($)
+{
+    my ($appPath) = @_;
+    my $productDir = productDir();
+    print "Starting @{[basename($appPath)]} with built WebKit in $productDir.\n";
+
+    local %ENV = %ENV;
+    setupUnixWebKitEnvironment($productDir);
+
+    return system { $appPath } $appPath, @ARGV;
+}
+
 sub execMacWebKitAppForDebugging($)
 {
     my ($appPath) = @_;
@@ -3352,7 +3364,7 @@ sub execUnixAppForDebugging($)
     my @cmdline = wrapperPrefixIfNeeded();
     push @cmdline, $debuggerPath, "--args", $appPath;
 
-    print "Starting @{[basename($appPath)]} under gdb with build WebKit in $productDir.\n";
+    print "Starting @{[basename($appPath)]} under gdb with built WebKit in $productDir.\n";
     exec @cmdline, @ARGV or die;
 }
 
@@ -3403,6 +3415,8 @@ sub runWebKitTestRunner
 {
     if (isAppleMacWebKit()) {
         return runMacWebKitApp(File::Spec->catfile(productDir(), "WebKitTestRunner"));
+    } elsif (isGtk() or isWPE()) {
+        return runUnixWebKitApp(File::Spec->catfile(productDir(), "bin", "WebKitTestRunner"));
     }
 
     return 1;
