@@ -172,7 +172,7 @@ class Configuration {
             result += ' ' + this.platform
         if (this.version_name != null)
             result += ' ' + this.version_name;
-        else if (this.version != null)
+        if (this.version != null && (this.version_name == null || this.sdk != null))
             result += ' ' + Configuration.integerToVersion(this.version);
         if (this.sdk != null)
             result += ' (' + this.sdk + ')';
