@@ -92,4 +92,7 @@ messages -> WebProcessProxy LegacyReceiver {
     GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
     SetAppBadge(std::optional<WebKit::WebPageProxyIdentifier> pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
     SetClientBadge(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    
+    WrapCryptoKey(Vector<uint8_t> key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
+    UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
 }

@@ -204,8 +204,8 @@ private:
 
     bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }
 
-    bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) final;
-    bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) final;
+    std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>& key) final;
+    std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& wrappedKey) final;
 
     void stopIndexedDatabase();
 

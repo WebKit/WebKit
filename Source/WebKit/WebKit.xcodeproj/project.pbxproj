@@ -1822,6 +1822,7 @@
 		93E799DB276121080074008A /* MemoryStorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799D5276121070074008A /* MemoryStorageArea.h */; };
 		93E799DC276121080074008A /* StorageAreaBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799D6276121080074008A /* StorageAreaBase.h */; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9440457B2B8CE78700613886 /* WebCryptoClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 944045792B8CE78700613886 /* WebCryptoClient.h */; };
 		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
 		950FECF1285027110002DE4E /* AutomaticReloadPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 950FECF0285026EA0002DE4E /* AutomaticReloadPaymentRequest.h */; };
 		950FECF4285027200002DE4E /* RecurringPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 950FECF22850271E0002DE4E /* RecurringPaymentRequest.h */; };
@@ -6854,6 +6855,8 @@
 		93E799D8276121080074008A /* MemoryStorageArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryStorageArea.cpp; sourceTree = "<group>"; };
 		93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSnapshotConfiguration.h; sourceTree = "<group>"; };
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
+		944045782B8CE78700613886 /* WebCryptoClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCryptoClient.cpp; sourceTree = "<group>"; };
+		944045792B8CE78700613886 /* WebCryptoClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = WebCryptoClient.h; sourceTree = "<group>"; };
 		950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseDeviceObserver.h; path = ios/WKMouseDeviceObserver.h; sourceTree = "<group>"; };
 		950F287F252414EA00B74F1C /* WKMouseDeviceObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseDeviceObserver.mm; path = ios/WKMouseDeviceObserver.mm; sourceTree = "<group>"; };
 		950FECF0285026EA0002DE4E /* AutomaticReloadPaymentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutomaticReloadPaymentRequest.h; sourceTree = "<group>"; };
@@ -13614,6 +13617,8 @@
 				3F87B9BB15893F630090FF62 /* WebColorChooser.h */,
 				BC111A54112F4FBB00337BAB /* WebContextMenuClient.cpp */,
 				BC032D6210F4378D0058C15A /* WebContextMenuClient.h */,
+				944045782B8CE78700613886 /* WebCryptoClient.cpp */,
+				944045792B8CE78700613886 /* WebCryptoClient.h */,
 				E52CF55120A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp */,
 				E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */,
 				E55CD1F424CF747D0042DB9C /* WebDateTimeChooser.cpp */,
@@ -16670,6 +16675,7 @@
 				330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
+				9440457B2B8CE78700613886 /* WebCryptoClient.h in Headers */,
 				1AA83F6D1A5B63FF00026EC6 /* WebDatabaseProvider.h in Headers */,
 				E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */,
 				E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */,

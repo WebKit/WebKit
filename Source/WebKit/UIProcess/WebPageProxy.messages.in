@@ -410,8 +410,8 @@ messages -> WebPageProxy {
 
     DidUpdateActivityState() CanDispatchOutOfOrder
 
-    WrapCryptoKey(Vector<uint8_t> key) -> (bool succeeded, Vector<uint8_t> wrappedKey) Synchronous
-    UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (bool succeeded, Vector<uint8_t> key) Synchronous
+    WrapCryptoKey(Vector<uint8_t> key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
+    UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
 
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)

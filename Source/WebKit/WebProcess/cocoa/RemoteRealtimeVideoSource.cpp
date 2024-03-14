@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "UserMediaCaptureManager.h"
+#include "UserMediaCaptureManagerProxyMessages.h"
 
 namespace WebKit {
 using namespace WebCore;

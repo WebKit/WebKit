@@ -102,6 +102,7 @@
 #include <JavaScriptCore/WasmModule.h>
 #include <JavaScriptCore/YarrFlags.h>
 #include <limits>
+#include <optional>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/DataLog.h>
@@ -941,16 +942,22 @@ protected:
 #endif
 };
 
-static bool wrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
+static std::optional<Vector<uint8_t>> wrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<uint8_t>& key)
 {
     auto context = executionContext(lexicalGlobalObject);
-    return context && context->wrapCryptoKey(key, wrappedKey);
+    if (!context)
+        return std::nullopt;
+
+    return context->wrapCryptoKey(key);
 }
 
-static bool unwrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
+static std::optional<Vector<uint8_t>> unwrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<uint8_t>& wrappedKey)
 {
     auto context = executionContext(lexicalGlobalObject);
-    return context && context->unwrapCryptoKey(wrappedKey, key);
+    if (!context)
+        return std::nullopt;
+
+    return context->unwrapCryptoKey(wrappedKey);
 }
 
 #if ASSUME_LITTLE_ENDIAN
@@ -2038,10 +2045,12 @@ private:
 #endif
                     dummyBlobHandles, serializedKey, SerializationContext::Default, dummySharedBuffers, m_forStorage);
                 rawKeySerializer.write(key);
-                Vector<uint8_t> wrappedKey;
-                if (!wrapCryptoKey(m_lexicalGlobalObject, serializedKey, wrappedKey))
+
+                auto wrappedKey = wrapCryptoKey(m_lexicalGlobalObject, serializedKey);
+                if (!wrappedKey)
                     return false;
-                write(wrappedKey);
+
+                write(*wrappedKey);
                 return true;
             }
 #if ENABLE(WEB_RTC)
@@ -5152,15 +5161,16 @@ private:
                 fail();
                 return JSValue();
             }
-            Vector<uint8_t> serializedKey;
-            if (!unwrapCryptoKey(m_lexicalGlobalObject, wrappedKey, serializedKey)) {
+            auto serializedKey = unwrapCryptoKey(m_lexicalGlobalObject, wrappedKey);
+            if (!serializedKey) {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();
                 return JSValue();
             }
+
             JSValue cryptoKey;
             Vector<RefPtr<MessagePort>> dummyMessagePorts;
-            CloneDeserializer rawKeyDeserializer(m_lexicalGlobalObject, m_globalObject, dummyMessagePorts, nullptr, { }, serializedKey);
+            CloneDeserializer rawKeyDeserializer(m_lexicalGlobalObject, m_globalObject, dummyMessagePorts, nullptr, { }, *serializedKey);
             if (!rawKeyDeserializer.readCryptoKey(cryptoKey)) {
                 SERIALIZE_TRACE("FAIL deserialize");
                 fail();

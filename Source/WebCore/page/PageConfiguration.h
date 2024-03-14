@@ -59,6 +59,7 @@ class CacheStorageProvider;
 class ChromeClient;
 class ContextMenuClient;
 class CookieJar;
+class CryptoClient;
 class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragClient;
@@ -117,7 +118,8 @@ public:
 #if ENABLE(APPLE_PAY)
         UniqueRef<PaymentCoordinatorClient>&&,
 #endif
-        UniqueRef<ChromeClient>&&
+        UniqueRef<ChromeClient>&&,
+        UniqueRef<CryptoClient>&&
     );
     WEBCORE_EXPORT ~PageConfiguration();
     PageConfiguration(PageConfiguration&&);
@@ -199,6 +201,7 @@ public:
     Ref<HistoryItemClient> historyItemClient;
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
+    UniqueRef<CryptoClient> cryptoClient;
 };
 
 }

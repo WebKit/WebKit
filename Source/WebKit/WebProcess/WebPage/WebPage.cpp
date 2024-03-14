@@ -95,6 +95,7 @@
 #include "WebContextMenuClient.h"
 #include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebCryptoClient.h"
 #include "WebDataListSuggestionPicker.h"
 #include "WebDatabaseProvider.h"
 #include "WebDateTimeChooser.h"
@@ -676,7 +677,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(APPLE_PAY)
         makeUniqueRef<WebPaymentCoordinator>(*this),
 #endif
-        makeUniqueRef<WebChromeClient>(*this)
+        makeUniqueRef<WebChromeClient>(*this),
+        makeUniqueRef<WebCryptoClient>(this->identifier())
     );
 
 #if ENABLE(DRAG_SUPPORT)

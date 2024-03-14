@@ -1448,28 +1448,6 @@ void WebChromeClient::handleAutoplayEvent(AutoplayEvent event, OptionSet<Autopla
     protectedPage()->send(Messages::WebPageProxy::HandleAutoplayEvent(event, flags));
 }
 
-bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
-{
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::WrapCryptoKey(key), page().identifier());
-    if (!sendResult.succeeded())
-        return false;
-
-    bool succeeded;
-    std::tie(succeeded, wrappedKey) = sendResult.takeReply();
-    return succeeded;
-}
-
-bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) const
-{
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::UnwrapCryptoKey(wrappedKey), page().identifier());
-    if (!sendResult.succeeded())
-        return false;
-
-    bool succeeded;
-    std::tie(succeeded, key) = sendResult.takeReply();
-    return succeeded;
-}
-
 #if ENABLE(APP_HIGHLIGHTS)
 void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&& highlight) const
 {

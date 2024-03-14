@@ -815,6 +815,7 @@ WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp
 WebProcess/WebCoreSupport/WebChromeClient.cpp
 WebProcess/WebCoreSupport/WebColorChooser.cpp
 WebProcess/WebCoreSupport/WebContextMenuClient.cpp
+WebProcess/WebCoreSupport/WebCryptoClient.cpp
 WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp
 WebProcess/WebCoreSupport/WebDateTimeChooser.cpp
 WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp

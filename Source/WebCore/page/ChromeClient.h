@@ -548,9 +548,6 @@ public:
     virtual void isPlayingMediaDidChange(MediaProducerMediaStateFlags) { }
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 
-    virtual bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const { return false; }
-    virtual bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const { return false; }
-
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
     virtual void handleTelephoneNumberClick(const String&, const IntPoint&, const IntRect&) { }
 #endif

@@ -470,38 +470,38 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
     InspectorInstrumentation::addMessageToConsole(*this, WTFMove(message));
 }
 
-bool WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
+std::optional<Vector<uint8_t>> WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>& key)
 {
     Ref protectedThis { *this };
     auto* workerLoaderProxy = thread().workerLoaderProxy();
     if (!workerLoaderProxy)
-        return false;
+        return std::nullopt;
 
-    bool success = false;
     BinarySemaphore semaphore;
-    workerLoaderProxy->postTaskToLoader([&semaphore, &success, &key, &wrappedKey](auto& context) {
-        success = context.wrapCryptoKey(key, wrappedKey);
+    std::optional<Vector<uint8_t>> wrappedKey;
+    workerLoaderProxy->postTaskToLoader([&semaphore, &key, &wrappedKey](auto& context) {
+        wrappedKey = context.wrapCryptoKey(key);
         semaphore.signal();
     });
     semaphore.wait();
-    return success;
+    return wrappedKey;
 }
 
-bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
+std::optional<Vector<uint8_t>> WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey)
 {
     Ref protectedThis { *this };
     auto* workerLoaderProxy = thread().workerLoaderProxy();
     if (!workerLoaderProxy)
-        return false;
+        return std::nullopt;
 
-    bool success = false;
     BinarySemaphore semaphore;
-    workerLoaderProxy->postTaskToLoader([&semaphore, &success, &key, &wrappedKey](auto& context) {
-        success = context.unwrapCryptoKey(wrappedKey, key);
+    std::optional<Vector<uint8_t>> key;
+    workerLoaderProxy->postTaskToLoader([&semaphore, &key, &wrappedKey](auto& context) {
+        key = context.unwrapCryptoKey(wrappedKey);
         semaphore.signal();
     });
     semaphore.wait();
-    return success;
+    return key;
 }
 
 Crypto& WorkerGlobalScope::crypto()

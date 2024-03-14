@@ -41,6 +41,7 @@
 #include "WebCompiledContentRuleListData.h"
 #include "WebCookieJar.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebCryptoClient.h"
 #include "WebDatabaseProvider.h"
 #include "WebLocalFrameLoaderClient.h"
 #include "WebMessagePortChannelProvider.h"
@@ -161,6 +162,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         pageConfiguration.broadcastChannelRegistry = WebProcess::singleton().broadcastChannelRegistry();
         pageConfiguration.userContentProvider = m_userContentController;
         pageConfiguration.cookieJar = WebCookieJar::create();
+        pageConfiguration.cryptoClient = makeUniqueRef<WebCryptoClient>();
 #if ENABLE(WEB_RTC)
         pageConfiguration.webRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();
 #endif

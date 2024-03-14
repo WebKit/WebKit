@@ -1067,38 +1067,6 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 
 #endif // ENABLE(FULLSCREEN_API)
 
-bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
-{
-    SEL selector = @selector(webCryptoMasterKeyForWebView:);
-    if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        NSData *keyData = CallUIDelegate(m_webView, selector);
-        Vector<uint8_t> masterKey;
-        masterKey.append(static_cast<uint8_t*>(const_cast<void*>([keyData bytes])), [keyData length]);
-        return wrapSerializedCryptoKey(masterKey, key, wrappedKey);
-    }
-    
-    auto masterKey = defaultWebCryptoMasterKey();
-    if (!masterKey)
-        return false;
-    return wrapSerializedCryptoKey(WTFMove(*masterKey), key, wrappedKey);
-}
-
-bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) const
-{
-    SEL selector = @selector(webCryptoMasterKeyForWebView:);
-    if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        Vector<uint8_t> masterKey;
-        NSData *keyData = CallUIDelegate(m_webView, selector);
-        masterKey.append(static_cast<uint8_t*>(const_cast<void*>([keyData bytes])), [keyData length]);
-        return unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
-    }
-
-    auto masterKey = defaultWebCryptoMasterKey();
-    if (!masterKey)
-        return false;
-    return unwrapSerializedCryptoKey(WTFMove(*masterKey), wrappedKey, key);
-}
-
 #if ENABLE(SERVICE_CONTROLS)
 
 void WebChromeClient::handleSelectionServiceClick(WebCore::FrameSelection& selection, const Vector<String>& telephoneNumbers, const WebCore::IntPoint& point)

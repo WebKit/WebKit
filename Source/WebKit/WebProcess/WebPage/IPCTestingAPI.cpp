@@ -62,6 +62,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScriptController.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/PageBlock.h>
 #include <wtf/Scope.h>
 
@@ -70,6 +71,7 @@ namespace WebKit {
 namespace IPCTestingAPI {
 
 class JSIPC;
+using WebCore::SharedMemory;
 
 static constexpr auto processTargetNameUI = "UI"_s;
 #if ENABLE(GPU_PROCESS)

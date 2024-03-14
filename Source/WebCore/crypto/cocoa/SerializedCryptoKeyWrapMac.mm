@@ -211,6 +211,8 @@ bool deleteDefaultWebCryptoMasterKey()
 
 bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result)
 {
+    if (masterKey.isEmpty())
+        return false;
     Vector<uint8_t> kek(16);
     auto rc = CCRandomGenerateBytes(kek.data(), kek.size());
     RELEASE_ASSERT(rc == kCCSuccess);
@@ -259,6 +261,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
 {
+    if (masterKey.isEmpty())
+        return false;
     NSDictionary* dictionary = [NSPropertyListSerialization propertyListWithData:[NSData dataWithBytesNoCopy:(void*)wrappedKey.data() length:wrappedKey.size() freeWhenDone:NO] options:0 format:nullptr error:nullptr];
     if (!dictionary)
         return false;

@@ -1586,8 +1586,8 @@ public:
 
     void setVisualUpdatesAllowedByClient(bool);
 
-    bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) final;
-    bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) final;
+    std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>&) final;
+    std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final;
 
     void setHasStyleWithViewportUnits() { m_hasStyleWithViewportUnits = true; }
     bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }

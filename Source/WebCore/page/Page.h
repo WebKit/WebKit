@@ -102,6 +102,7 @@ class CacheStorageProvider;
 class Chrome;
 class ContextMenuController;
 class CookieJar;
+class CryptoClient;
 class DOMRectList;
 class DatabaseProvider;
 class DeviceOrientationUpdateProvider;
@@ -367,6 +368,8 @@ public:
 
     Chrome& chrome() { return m_chrome.get(); }
     const Chrome& chrome() const { return m_chrome.get(); }
+    CryptoClient& cryptoClient() { return m_cryptoClient.get(); }
+    const CryptoClient& cryptoClient() const { return m_cryptoClient.get(); }
     DragCaretController& dragCaretController() { return m_dragCaretController.get(); }
     const DragCaretController& dragCaretController() const { return m_dragCaretController.get(); }
 #if ENABLE(DRAG_SUPPORT)
@@ -1176,6 +1179,7 @@ private:
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
     const RefPtr<Settings> m_settings;
+    UniqueRef<CryptoClient> m_cryptoClient;
     UniqueRef<ProgressTracker> m_progress;
 
     UniqueRef<BackForwardController> m_backForwardController;

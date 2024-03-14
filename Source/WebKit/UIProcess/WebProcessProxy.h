@@ -475,6 +475,8 @@ public:
     void setCaptionLanguage(const String&);
 #endif
     void getNotifications(const URL&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
+    void wrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
+    void unwrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
 
     void setAppBadge(std::optional<WebPageProxyIdentifier>, const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
     void setClientBadge(WebPageProxyIdentifier, const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);

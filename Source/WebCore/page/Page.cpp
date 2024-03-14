@@ -45,6 +45,7 @@
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "CookieJar.h"
+#include "CryptoClient.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DatabaseProvider.h"
@@ -307,6 +308,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_pointerLockController(makeUniqueRef<PointerLockController>(*this))
 #endif
     , m_settings(Settings::create(this))
+    , m_cryptoClient(WTFMove(pageConfiguration.cryptoClient))
     , m_progress(makeUniqueRef<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
     , m_backForwardController(makeUniqueRef<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))

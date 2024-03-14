@@ -48,6 +48,7 @@
 #import "WebBroadcastChannelRegistry.h"
 #import "WebCache.h"
 #import "WebChromeClient.h"
+#import "WebCryptoClient.h"
 #import "WebDOMOperationsPrivate.h"
 #import "WebDataSourceInternal.h"
 #import "WebDatabaseManagerPrivate.h"
@@ -1525,10 +1526,11 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         makeUniqueRef<WebPaymentCoordinatorClient>(),
 #endif
 #if !PLATFORM(IOS_FAMILY)
-        makeUniqueRef<WebChromeClient>(self)
+        makeUniqueRef<WebChromeClient>(self),
 #else
-        makeUniqueRef<WebChromeClientIOS>(self)
+        makeUniqueRef<WebChromeClientIOS>(self),
 #endif
+        makeUniqueRef<WebCryptoClient>(self)
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
@@ -1784,7 +1786,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 #if ENABLE(APPLE_PAY)
         makeUniqueRef<WebPaymentCoordinatorClient>(),
 #endif
-        makeUniqueRef<WebChromeClientIOS>(self)
+        makeUniqueRef<WebChromeClientIOS>(self),
+        makeUniqueRef<WebCryptoClient>(self)
     );
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);

@@ -89,6 +89,7 @@
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/SuddenTermination.h>
 #include <pal/system/Sound.h>
 #include <stdio.h>
@@ -2552,6 +2553,25 @@ void WebProcessProxy::getNotifications(const URL& registrationURL, const String&
     WebNotificationManagerProxy::sharedServiceWorkerManager().getNotifications(registrationURL, tag, sessionID(), WTFMove(callback));
 }
 
+void WebProcessProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+{
+    Vector<uint8_t> wrappedKey;
+    if (wrapSerializedCryptoKey(m_websiteDataStore->client().webCryptoMasterKey(), key, wrappedKey)) {
+        completionHandler(WTFMove(wrappedKey));
+        return;
+    }
+    completionHandler(std::nullopt);
+}
+
+void WebProcessProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
+{
+    Vector<uint8_t> key;
+    if (unwrapSerializedCryptoKey(m_websiteDataStore->client().webCryptoMasterKey(), wrappedKey, key)) {
+        completionHandler(WTFMove(key));
+        return;
+    }
+    completionHandler(std::nullopt);
+}
 void WebProcessProxy::setAppBadge(std::optional<WebPageProxyIdentifier> pageIdentifier, const SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
     if (!pageIdentifier) {

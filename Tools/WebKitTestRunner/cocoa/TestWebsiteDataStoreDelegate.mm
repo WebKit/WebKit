@@ -151,4 +151,12 @@
     [_windowProxyAccessDomains removeAllObjects];
 }
 
+- (NSData *)webCryptoMasterKey
+{
+    // Not so random key
+    constexpr size_t keyLength = 16;
+    uint8_t keyBytes[keyLength] = { 1 };
+    NSData *key = [NSData dataWithBytes:keyBytes length:(keyLength)];
+    return key;
+}
 @end

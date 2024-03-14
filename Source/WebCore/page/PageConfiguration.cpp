@@ -36,6 +36,7 @@
 #include "ChromeClient.h"
 #include "ContextMenuClient.h"
 #include "CookieJar.h"
+#include "CryptoClient.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
 #include "DragClient.h"
@@ -96,7 +97,8 @@ PageConfiguration::PageConfiguration(
 #if ENABLE(APPLE_PAY)
     UniqueRef<PaymentCoordinatorClient>&& paymentCoordinatorClient,
 #endif
-    UniqueRef<ChromeClient>&& chromeClient
+    UniqueRef<ChromeClient>&& chromeClient,
+    UniqueRef<CryptoClient>&& cryptoClient
 )
     : identifier(identifier)
     , sessionID(sessionID)
@@ -125,6 +127,7 @@ PageConfiguration::PageConfiguration(
     , modelPlayerProvider(WTFMove(modelPlayerProvider))
     , badgeClient(WTFMove(badgeClient))
     , historyItemClient(WTFMove(historyItemClient))
+    , cryptoClient(WTFMove(cryptoClient))
 {
 }
 

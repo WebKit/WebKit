@@ -56,6 +56,7 @@
 #include "ContentVisibilityDocumentState.h"
 #include "ContentfulPaintChecker.h"
 #include "CookieJar.h"
+#include "CryptoClient.h"
 #include "CustomEffect.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
@@ -8845,16 +8846,20 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
     m_hasInjectedPlugInsScript = true;
 }
 
-bool Document::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
+std::optional<Vector<uint8_t>> Document::wrapCryptoKey(const Vector<uint8_t>& key)
 {
     RefPtr page = this->page();
-    return page && page->chrome().client().wrapCryptoKey(key, wrappedKey);
+    if (!page)
+        return std::nullopt;
+    return page->cryptoClient().wrapCryptoKey(key);
 }
 
-bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
+std::optional<Vector<uint8_t>>Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey)
 {
     RefPtr page = this->page();
-    return page && page->chrome().client().unwrapCryptoKey(wrappedKey, key);
+    if (!page)
+        return std::nullopt;
+    return page->cryptoClient().unwrapCryptoKey(wrappedKey);
 }
 
 Element* Document::activeElement()

@@ -54,10 +54,12 @@
 #import <WebCore/Credential.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/ResourceResponse.h>
+#import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/ServiceWorkerClientData.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
+#import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
@@ -83,10 +85,29 @@ public:
         , m_hasWindowProxyPropertyAccessSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:domain:didOpenDomainViaWindowOpen:withProperty:directly:)])
         , m_hasDidAllowPrivateTokenUsageByThirdPartyForTestingSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:didAllowPrivateTokenUsageByThirdPartyForTesting:forResourceURL:)])
         , m_hasDidExceedMemoryFootprintThresholdSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:domain:didExceedMemoryFootprintThreshold:withPageCount:processLifetime:inForeground:wasPrivateRelayed:canSuspend:)])
+        , m_hasWebCryptoMasterKeySelector([m_delegate.get() respondsToSelector:@selector(webCryptoMasterKey)])
     {
     }
 
 private:
+
+    Vector<uint8_t> webCryptoMasterKey() final
+    {
+        if (!m_hasWebCryptoMasterKeySelector || !m_delegate) {
+            auto masterKey = WebCore::defaultWebCryptoMasterKey();
+            if (!masterKey)
+                return { };
+            return *masterKey;
+        }
+
+        RetainPtr<NSData> result = [m_delegate webCryptoMasterKey];
+        if (!result)
+            return  { };
+        Vector<uint8_t> key;
+        key.append(static_cast<const uint8_t *>([result.get() bytes]), result.get().length);
+        return key;
+    }
+
     void requestStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler) final
     {
         if (!m_hasRequestStorageSpaceSelector || !m_delegate) {
@@ -325,6 +346,7 @@ private:
     bool m_hasWindowProxyPropertyAccessSelector { false };
     bool m_hasDidAllowPrivateTokenUsageByThirdPartyForTestingSelector { false };
     bool m_hasDidExceedMemoryFootprintThresholdSelector { false };
+    bool m_hasWebCryptoMasterKeySelector { false };
 };
 
 @implementation WKWebsiteDataStore {

@@ -11235,7 +11235,7 @@ void WebPageProxy::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOver
         send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyleForMessage), internals().webPageID);
 }
 
-void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(bool, Vector<uint8_t>&&)>&& completionHandler)
+void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
     Ref protectedPageClient { pageClient() };
 
@@ -11245,11 +11245,14 @@ void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<v
         masterKey = Vector(keyData->dataReference());
 
     Vector<uint8_t> wrappedKey;
-    bool succeeded = wrapSerializedCryptoKey(masterKey, key, wrappedKey);
-    completionHandler(succeeded, WTFMove(wrappedKey));
+    if (wrapSerializedCryptoKey(masterKey, key, wrappedKey)) {
+        completionHandler(WTFMove(wrappedKey));
+        return;
+    }
+    completionHandler(std::optional<Vector<uint8_t>>());
 }
 
-void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, CompletionHandler<void(bool, Vector<uint8_t>&&)>&& completionHandler)
+void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
     Ref protectedPageClient { pageClient() };
 
@@ -11259,8 +11262,11 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Completion
         masterKey = Vector(keyData->dataReference());
 
     Vector<uint8_t> key;
-    bool succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
-    completionHandler(succeeded, WTFMove(key));
+    if (unwrapSerializedCryptoKey(masterKey, wrappedKey, key)) {
+        completionHandler(WTFMove(key));
+        return;
+    }
+    completionHandler(std::optional<Vector<uint8_t>>());
 }
 
 void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
