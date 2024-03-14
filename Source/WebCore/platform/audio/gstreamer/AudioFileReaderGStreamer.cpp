@@ -24,6 +24,7 @@
 
 #include "AudioBus.h"
 #include "GStreamerCommon.h"
+#include "GStreamerQuirks.h"
 #include <gio/gio.h>
 #include <gst/app/gstappsink.h>
 #include <gst/audio/audio-info.h>
@@ -76,11 +77,11 @@ private:
     bool m_errorOccurred { false };
 };
 
-#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM) || PLATFORM(REALTEK)
 int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer)
 {
     static int GST_AUTOPLUG_SELECT_SKIP;
     static int GST_AUTOPLUG_SELECT_TRY;
+    static Vector<String> pluginsToSkip;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         GEnumClass* enumClass = G_ENUM_CLASS(g_type_class_ref(g_type_from_name("GstAutoplugSelectResult")));
@@ -89,24 +90,10 @@ int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFa
         value = g_enum_get_value_by_name(enumClass, "GST_AUTOPLUG_SELECT_TRY");
         GST_AUTOPLUG_SELECT_TRY = value->value;
         g_type_class_unref(enumClass);
+
+        pluginsToSkip = GStreamerQuirksManager::singleton().disallowedWebAudioDecoders();
     });
 
-    const Vector<String> pluginsToSkip = {
-#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM)
-        "brcmaudfilter"_s,
-#endif
-#if PLATFORM(REALTEK)
-        "omxaacdec"_s,
-        "omxac3dec"_s,
-        "omxac4dec"_s,
-        "omxeac3dec"_s,
-        "omxflacdec"_s,
-        "omxlpcmdec"_s,
-        "omxmp3dec"_s,
-        "omxopusdec"_s,
-        "omxvorbisdec"_s,
-#endif
-    };
     auto factoryName = StringView::fromLatin1(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory)));
     for (const auto& pluginToSkip : pluginsToSkip) {
         if (pluginToSkip == factoryName)
@@ -114,7 +101,6 @@ int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFa
     }
     return GST_AUTOPLUG_SELECT_TRY;
 }
-#endif
 
 static void copyGstreamerBuffersToAudioChannel(const GRefPtr<GstBufferList>& buffers, AudioChannel* audioChannel)
 {
@@ -166,9 +152,7 @@ AudioFileReader::~AudioFileReader()
 
     if (m_decodebin) {
         g_signal_handlers_disconnect_matched(m_decodebin.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM) || PLATFORM(REALTEK)
         g_signal_handlers_disconnect_matched(m_decodebin.get(), G_SIGNAL_MATCH_FUNC, 0, 0, nullptr, reinterpret_cast<gpointer>(decodebinAutoplugSelectCallback), nullptr);
-#endif
         m_decodebin = nullptr;
     }
 
@@ -424,9 +408,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     g_object_set(source, "stream", memoryStream.get(), nullptr);
 
     m_decodebin = makeGStreamerElement("decodebin", "decodebin");
-#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM) || PLATFORM(REALTEK)
     g_signal_connect(m_decodebin.get(), "autoplug-select", G_CALLBACK(decodebinAutoplugSelectCallback), nullptr);
-#endif
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);
 
     gst_bin_add_many(GST_BIN(m_pipeline.get()), source, m_decodebin.get(), nullptr);

@@ -759,6 +759,8 @@ public:
     double elementEffectivePlaybackRate(const HTMLMediaElement&);
 
     ExceptionOr<void> setOverridePreferredDynamicRangeMode(HTMLMediaElement&, const String&);
+
+    void enableGStreamerHolePunching(HTMLVideoElement&);
 #endif
 
     ExceptionOr<void> setIsPlayingToBluetoothOverride(std::optional<bool>);

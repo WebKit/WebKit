@@ -29,31 +29,32 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "GraphicsContext.h"
+#include "AudioTrackPrivateGStreamer.h"
 #include "GStreamerAudioMixer.h"
 #include "GStreamerCommon.h"
+#include "GStreamerQuirks.h"
 #include "GStreamerRegistryScanner.h"
+#include "GraphicsContext.h"
 #include "HTTPHeaderNames.h"
 #include "ImageGStreamer.h"
 #include "ImageOrientation.h"
+#include "InbandMetadataTextTrackPrivateGStreamer.h"
+#include "InbandTextTrackPrivateGStreamer.h"
 #include "IntRect.h"
 #include "Logging.h"
-#include "MediaPlayer.h"
 #include "MIMETypeRegistry.h"
+#include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "OriginAccessPatterns.h"
 #include "SecurityOrigin.h"
-#include "TimeRanges.h"
-#include "VideoSinkGStreamer.h"
-#include "WebKitAudioSinkGStreamer.h"
-#include "WebKitWebSourceGStreamer.h"
-#include "AudioTrackPrivateGStreamer.h"
-#include "InbandMetadataTextTrackPrivateGStreamer.h"
-#include "InbandTextTrackPrivateGStreamer.h"
 #include "TextCombinerGStreamer.h"
 #include "TextSinkGStreamer.h"
+#include "TimeRanges.h"
 #include "VideoFrameMetadataGStreamer.h"
+#include "VideoSinkGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"
+#include "WebKitAudioSinkGStreamer.h"
+#include "WebKitWebSourceGStreamer.h"
 
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerMediaStreamSource.h"
@@ -85,21 +86,21 @@
 #include <gst/video/gstvideometa.h>
 #include <limits>
 #include <wtf/FileSystem.h>
-#include <wtf/glib/GUniquePtr.h>
-#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/URL.h>
+#include <wtf/UniStdExtras.h>
+#include <wtf/WallTime.h>
+#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
-#include <wtf/UniStdExtras.h>
-#include <wtf/URL.h>
-#include <wtf/WallTime.h>
 
 #if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
@@ -139,9 +140,7 @@ GST_DEBUG_CATEGORY(webkit_media_player_debug);
 namespace WebCore {
 using namespace std;
 
-#if USE(GSTREAMER_HOLEPUNCH)
 static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
-#endif
 
 MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
@@ -172,17 +171,22 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 #endif
     m_isPlayerShuttingDown.store(false);
 
+    if (player->isGStreamerHolePunchingEnabled()) {
+        m_quirksManagerForTesting = GStreamerQuirksManager::createForTesting();
+        m_quirksManagerForTesting->setHolePunchEnabledForTesting(true);
+    }
+
 #if USE(TEXTURE_MAPPER) && USE(NICOSIA)
     m_nicosiaLayer = Nicosia::ContentLayer::create(*this,
         [&]() -> Ref<TextureMapperPlatformLayerProxy> {
+            if (isHolePunchRenderingEnabled())
+                return adoptRef(*new TextureMapperPlatformLayerProxyGL(true));
+
 #if USE(TEXTURE_MAPPER_DMABUF)
             if (webKitDMABufVideoSinkIsEnabled() && webKitDMABufVideoSinkProbePlatform())
                 return adoptRef(*new TextureMapperPlatformLayerProxyDMABuf);
 #endif
-#if USE(GSTREAMER_HOLEPUNCH)
-            return adoptRef(*new TextureMapperPlatformLayerProxyGL(true));
-#endif
-            return adoptRef(*new TextureMapperPlatformLayerProxyGL);
+            return adoptRef(*new TextureMapperPlatformLayerProxyGL(false));
         }());
 #endif
 
@@ -255,7 +259,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         unregisterPipeline(m_pipeline);
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
     }
-
 
     m_player = nullptr;
     m_notifier->invalidate();
@@ -1031,7 +1034,7 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
     g_object_set(m_pipeline.get(), "uri", m_url.string().utf8().data(), nullptr);
 }
 
-static void setSyncOnClock(GstElement *element, bool sync)
+static void setSyncOnClock(GstElement* element, bool sync)
 {
     if (!element)
         return;
@@ -1051,10 +1054,12 @@ static void setSyncOnClock(GstElement *element, bool sync)
 
 void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
 {
-#if !USE(WESTEROS_SINK)
+    auto& quirksManager = GStreamerQuirksManager::singleton();
+    if (quirksManager.supportsVideoHolePunchRendering() && !quirksManager.sinksRequireClockSynchronization())
+        return;
+
     setSyncOnClock(videoSink(), sync);
     setSyncOnClock(audioSink(), sync);
-#endif
 }
 
 template <typename TrackPrivateType>
@@ -1337,11 +1342,12 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState networ
 
 GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 {
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
+    auto& quirksManager = GStreamerQuirksManager::singleton();
+
     // If audio is being controlled by an another pipeline, creating sink here may interfere with
     // audio playback. Instead, check if an audio sink was setup in handleMessage and use it.
-    return nullptr;
-#endif
+    if (quirksManager.isEnabled())
+        return nullptr;
 
     RefPtr player = m_player.get();
     if (!player)
@@ -1706,12 +1712,11 @@ FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!m_videoSize.isEmpty())
         return m_videoSize;
 
-#if USE(GSTREAMER_HOLEPUNCH)
-    // When using the holepuch we may not be able to get the video frames size, so we can't use
+    // When using the holepunch we may not be able to get the video frames size, so we can't use
     // it. But we need to report some non empty naturalSize for the player's GraphicsLayer
     // to be properly created.
-    return s_holePunchDefaultFrameSize;
-#endif
+    if (isHolePunchRenderingEnabled())
+        return s_holePunchDefaultFrameSize;
 
     return m_videoSize;
 }
@@ -1946,8 +1951,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         GstState newState;
         gst_message_parse_state_changed(message, &currentState, &newState, nullptr);
 
-#if USE(GSTREAMER_HOLEPUNCH) && (USE(WPEWEBKIT_PLATFORM_BCM_NEXUS) || USE(WESTEROS_SINK))
-        if (currentState <= GST_STATE_READY && newState >= GST_STATE_READY) {
+        if (isHolePunchRenderingEnabled() && currentState <= GST_STATE_READY && newState >= GST_STATE_READY) {
             // If we didn't create a video sink, store a reference to the created one.
             if (!m_videoSink) {
                 // Detect the videoSink element. Getting the video-sink property of the pipeline requires
@@ -1965,10 +1969,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 }
             }
         }
-#endif
 
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
-        if (currentState <= GST_STATE_READY && newState >= GST_STATE_READY) {
+        auto& quirksManager = GStreamerQuirksManager::singleton();
+        if (quirksManager.isEnabled() && currentState <= GST_STATE_READY && newState >= GST_STATE_READY) {
             // Detect an audio sink element and store reference to it if it supersedes what we currently have.
             GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
             if (GST_OBJECT_FLAG_IS_SET(element, GST_ELEMENT_FLAG_SINK)) {
@@ -1978,7 +1981,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     m_audioSink = element;
             }
         }
-#endif
 
         if (!messageSourceIsPlaybin || m_isDelayingLoad)
             break;
@@ -2316,9 +2318,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 
 void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
 {
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
     configureElementPlatformQuirks(element);
-#endif
 
     GUniquePtr<char> elementName(gst_element_get_name(element));
     auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
@@ -2365,86 +2365,22 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
         g_object_set(G_OBJECT(element), "high-watermark", 0.10, nullptr);
 }
 
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
 void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* element)
 {
     GST_DEBUG_OBJECT(pipeline(), "Element set-up for %s", GST_ELEMENT_NAME(element));
 
-#if PLATFORM(AMLOGIC)
-    if (!g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstAmlHalAsink")) {
-        GST_INFO_OBJECT(pipeline(), "Set property disable-xrun to TRUE");
-        g_object_set(element, "disable-xrun", TRUE, nullptr);
-        if (hasVideo())
-            g_object_set(G_OBJECT(element), "wait-video", TRUE, nullptr);
-    }
-#endif
+    OptionSet<ElementRuntimeCharacteristics> characteristics;
+    if (isMediaStreamPlayer())
+        characteristics.add({ ElementRuntimeCharacteristics::IsMediaStream });
+    if (hasVideo())
+        characteristics.add({ ElementRuntimeCharacteristics::HasVideo });
+    if (hasAudio())
+        characteristics.add({ ElementRuntimeCharacteristics::HasAudio });
+    if (m_isLiveStream.value_or(false))
+        characteristics.add({ ElementRuntimeCharacteristics::IsLiveStream });
 
-#if PLATFORM(BROADCOM)
-    if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiosink"))
-        g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
-    else if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiodecoder")) {
-        if (m_isLiveStream.value_or(false)) {
-            // Limit BCM audio decoder buffering to 1sec so live progressive playback can start faster.
-            g_object_set(G_OBJECT(element), "limit_buffering_ms", 1000, nullptr);
-        }
-    }
-#if ENABLE(MEDIA_STREAM)
-    if (m_streamPrivate && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstBrcmPCMSink") && gstObjectHasProperty(element, "low_latency")) {
-        GST_DEBUG_OBJECT(pipeline(), "Set 'low_latency' in brcmpcmsink");
-        g_object_set(element, "low_latency", TRUE, "low_latency_max_queued_ms", 60, nullptr);
-    }
-#endif
-#endif
-
-#if USE(WESTEROS_SINK)
-    static GstCaps* westerosSinkCaps = nullptr;
-    static GType westerosSinkType = G_TYPE_INVALID;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        GRefPtr<GstElementFactory> westerosfactory = adoptGRef(gst_element_factory_find("westerossink"));
-        if (westerosfactory) {
-            gst_object_unref(gst_plugin_feature_load(GST_PLUGIN_FEATURE(westerosfactory.get())));
-            westerosSinkType = gst_element_factory_get_element_type(westerosfactory.get());
-            for (auto* t = gst_element_factory_get_static_pad_templates(westerosfactory.get()); t; t = g_list_next(t)) {
-                GstStaticPadTemplate* padtemplate = static_cast<GstStaticPadTemplate*>(t->data);
-                if (padtemplate->direction != GST_PAD_SINK)
-                    continue;
-                if (westerosSinkCaps)
-                    westerosSinkCaps = gst_caps_merge(westerosSinkCaps, gst_static_caps_get(&padtemplate->static_caps));
-                else
-                    westerosSinkCaps = gst_static_caps_get(&padtemplate->static_caps);
-            }
-        }
-    });
-#if ENABLE(MEDIA_STREAM)
-    if (m_streamPrivate && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstWesterosSink") && gstObjectHasProperty(element, "immediate-output")) {
-        GST_DEBUG_OBJECT(pipeline(), "Enable 'immediate-output' in WesterosSink");
-        g_object_set(element, "immediate-output", TRUE, nullptr);
-    }
-#endif
-    if (!m_isLegacyPlaybin && westerosSinkCaps && g_str_has_prefix(GST_ELEMENT_NAME(element), "uridecodebin3")) {
-        GRefPtr<GstCaps> defaultCaps;
-        g_object_get(element, "caps", &defaultCaps.outPtr(), NULL);
-        defaultCaps = adoptGRef(gst_caps_merge(gst_caps_ref(westerosSinkCaps), defaultCaps.leakRef()));
-        g_object_set(element, "caps", defaultCaps.get(), NULL);
-        GST_INFO_OBJECT(pipeline(), "setting stop caps tp %" GST_PTR_FORMAT, defaultCaps.get());
-    }
-#endif
-
-#if ENABLE(MEDIA_STREAM) && PLATFORM(REALTEK)
-    if (m_streamPrivate) {
-        if (gstObjectHasProperty(element, "media-tunnel")) {
-            GST_INFO_OBJECT(pipeline(), "Enable 'immediate-output' in rtkaudiosink");
-            g_object_set(element, "media-tunnel", FALSE, "audio-service", TRUE, "lowdelay-sync-mode", TRUE, nullptr);
-        }
-        if (gstObjectHasProperty(element, "lowdelay-mode")) {
-            GST_INFO_OBJECT(pipeline(), "Enable 'lowdelay-mode' in rtk omx decoder");
-            g_object_set(element, "lowdelay-mode", TRUE, nullptr);
-        }
-    }
-#endif
+    GStreamerQuirksManager::singleton().configureElement(element, WTFMove(characteristics));
 }
-#endif
 
 void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
 {
@@ -3159,19 +3095,14 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     if (!player->isVideoPlayer())
         return;
 
-#if !USE(GSTREAMER_HOLEPUNCH)
+    if (isHolePunchRenderingEnabled())
+        return;
+
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
     if (videoSinkPad)
         g_signal_connect(videoSinkPad.get(), "notify::caps", G_CALLBACK(+[](GstPad* videoSinkPad, GParamSpec*, MediaPlayerPrivateGStreamer* player) {
             player->videoSinkCapsChanged(videoSinkPad);
         }), this);
-#endif
-
-#if USE(WESTEROS_SINK)
-    // Configure Westeros sink before it allocates resources.
-    if (m_videoSink)
-        configureElementPlatformQuirks(m_videoSink.get());
-#endif
 }
 
 void MediaPlayerPrivateGStreamer::setupCodecProbe(GstElement* element)
@@ -3361,9 +3292,8 @@ RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateGStreamer::proxy() con
 
 void MediaPlayerPrivateGStreamer::swapBuffersIfNeeded()
 {
-#if USE(GSTREAMER_HOLEPUNCH)
-    pushNextHolePunchBuffer();
-#endif
+    if (isHolePunchRenderingEnabled())
+        pushNextHolePunchBuffer();
 }
 #endif
 
@@ -4184,59 +4114,59 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 }
 #endif // USE(GSTREAMER_GL)
 
-#if USE(GSTREAMER_HOLEPUNCH)
-static void setRectangleToVideoSink(GstElement* videoSink, const IntRect& rect)
-{
-    // Here goes the platform-dependant code to set to the videoSink the size
-    // and position of the video rendering window. Mark them unused as default.
-
-    if (!videoSink)
-        return;
-
-#if USE(WESTEROS_SINK) || USE(WPEWEBKIT_PLATFORM_BCM_NEXUS)
-    // Valid for brcmvideosink and westerossink.
-    GUniquePtr<gchar> rectString(g_strdup_printf("%d,%d,%d,%d", rect.x(), rect.y(), rect.width(), rect.height()));
-    g_object_set(videoSink, "rectangle", rectString.get(), nullptr);
-    return;
-#endif
-
-    UNUSED_PARAM(rect);
-}
-
 class GStreamerHolePunchClient : public TextureMapperPlatformLayerBuffer::HolePunchClient {
 public:
-    GStreamerHolePunchClient(GRefPtr<GstElement>&& videoSink) : m_videoSink(WTFMove(videoSink)) { };
-    void setVideoRectangle(const IntRect& rect) final { setRectangleToVideoSink(m_videoSink.get(), rect); }
+    GStreamerHolePunchClient(GRefPtr<GstElement>&& videoSink, RefPtr<GStreamerQuirksManager>&& quirksManagerForTesting)
+        : m_videoSink(WTFMove(videoSink))
+        , m_quirksManagerForTesting(WTFMove(quirksManagerForTesting))
+    { };
+    void setVideoRectangle(const IntRect& rect) final
+    {
+        if (!m_videoSink)
+            return;
+
+        if (m_quirksManagerForTesting) {
+            m_quirksManagerForTesting->setHolePunchVideoRectangle(m_videoSink.get(), rect);
+            return;
+        }
+
+        auto& quirksManager = GStreamerQuirksManager::singleton();
+        quirksManager.setHolePunchVideoRectangle(m_videoSink.get(), rect);
+    }
+
 private:
     GRefPtr<GstElement> m_videoSink;
+    RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
 };
+
+bool MediaPlayerPrivateGStreamer::isHolePunchRenderingEnabled() const
+{
+    if (m_quirksManagerForTesting)
+        return m_quirksManagerForTesting->supportsVideoHolePunchRendering();
+
+    auto& quirksManager = GStreamerQuirksManager::singleton();
+    return quirksManager.supportsVideoHolePunchRendering();
+}
 
 GstElement* MediaPlayerPrivateGStreamer::createHolePunchVideoSink()
 {
-    // Here goes the platform-dependant code to create the videoSink. As a default
-    // we use a fakeVideoSink so nothing is drawn to the page.
-
-#if USE(WESTEROS_SINK)
-    AtomString val;
-    RefPtr player = m_player.get();
-    bool isPIPRequested =
-        player && player->doesHaveAttribute("pip"_s, &val) && equalLettersIgnoringASCIICase(val, "true"_s);
-    if (m_isLegacyPlaybin && !isPIPRequested)
+    if (!isHolePunchRenderingEnabled())
         return nullptr;
-    // Westeros using holepunch.
-    GstElement* videoSink = makeGStreamerElement("westerossink", "WesterosVideoSink");
-    g_object_set(G_OBJECT(videoSink), "zorder", 0.0f, nullptr);
-    if (isPIPRequested)
-        g_object_set(G_OBJECT(videoSink), "res-usage", 0u, nullptr);
-    return videoSink;
-#endif
 
-#if USE(WPEWEBKIT_PLATFORM_BCM_NEXUS)
-    // Nexus boxes use autovideosink.
-    return nullptr;
-#endif
+    auto player = m_player.get();
+    if (!player)
+        return nullptr;
 
-    return makeGStreamerElement("fakevideosink", nullptr);
+    GstElement* sink = nullptr;
+    if (m_quirksManagerForTesting)
+        sink = m_quirksManagerForTesting->createHolePunchVideoSink(m_isLegacyPlaybin, player.get());
+    else
+        sink = GStreamerQuirksManager::singleton().createHolePunchVideoSink(m_isLegacyPlaybin, player.get());
+
+    // Configure sink before it allocates resources.
+    if (sink)
+        configureElement(sink);
+    return sink;
 }
 
 void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
@@ -4246,11 +4176,12 @@ void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
         {
             Locker locker { proxy.lock() };
             std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperFlags::ShouldNotBlend, GL_DONT_CARE);
-            std::unique_ptr<GStreamerHolePunchClient> holePunchClient = makeUnique<GStreamerHolePunchClient>(m_videoSink.get());
+            std::unique_ptr<GStreamerHolePunchClient> holePunchClient = makeUnique<GStreamerHolePunchClient>(m_videoSink.get(), RefPtr { m_quirksManagerForTesting });
             layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
             proxy.pushNextBuffer(WTFMove(layerBuffer));
         };
 
+    ASSERT(isHolePunchRenderingEnabled());
 #if USE(NICOSIA)
     auto& proxy = m_nicosiaLayer->proxy();
     ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
@@ -4259,7 +4190,11 @@ void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
     proxyOperation(*m_platformLayerProxy);
 #endif
 }
-#endif
+
+bool MediaPlayerPrivateGStreamer::shouldIgnoreIntrinsicSize()
+{
+    return isHolePunchRenderingEnabled();
+}
 
 GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 {
@@ -4297,11 +4232,13 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
         return m_videoSink.get();
     }
 
-#if USE(GSTREAMER_HOLEPUNCH)
-    m_videoSink = createHolePunchVideoSink();
-    pushNextHolePunchBuffer();
-    return m_videoSink.get();
-#endif
+    if (isHolePunchRenderingEnabled()) {
+        m_videoSink = createHolePunchVideoSink();
+        if (m_videoSink) {
+            pushNextHolePunchBuffer();
+            return m_videoSink.get();
+        }
+    }
 
 #if USE(TEXTURE_MAPPER_DMABUF)
     if (!m_videoSink && m_canRenderingBeAccelerated)

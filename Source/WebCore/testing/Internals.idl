@@ -888,6 +888,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=VIDEO] undefined setOverridePreferredDynamicRangeMode(HTMLMediaElement media, DOMString mode);
     [Conditional=VIDEO] double elementEffectivePlaybackRate(HTMLMediaElement media);
 
+    [Conditional=VIDEO] undefined enableGStreamerHolePunching(HTMLVideoElement element);
+
     undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
 
     [Conditional=LEGACY_ENCRYPTED_MEDIA] undefined initializeMockCDM();

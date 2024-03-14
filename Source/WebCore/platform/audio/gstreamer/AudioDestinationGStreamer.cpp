@@ -27,6 +27,7 @@
 #include "AudioSourceProvider.h"
 #include "AudioUtilities.h"
 #include "GStreamerCommon.h"
+#include "GStreamerQuirks.h"
 #include "Logging.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include "WebKitWebAudioSourceGStreamer.h"
@@ -126,34 +127,19 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 
     webkitWebAudioSourceSetBus(WEBKIT_WEB_AUDIO_SRC(m_src.get()), m_renderBus);
 
-#if PLATFORM(AMLOGIC)
-    // autoaudiosink changes child element state to READY internally in auto detection phase
-    // that causes resource acquisition in some cases interrupting any playback already running.
-    // On Amlogic we need to set direct-mode=false prop before changing state to READY
-    // but this is not possible with autoaudiosink.
-    GRefPtr<GstElement> audioSink = makeGStreamerElement("amlhalasink", nullptr);
-    ASSERT_WITH_MESSAGE(audioSink, "amlhalasink should be available in the system but it is not");
-    g_object_set(audioSink.get(), "direct-mode", FALSE, nullptr);
-#else
-    GRefPtr<GstElement> audioSink = createPlatformAudioSink("music"_s);
-#endif
+    auto& quirksManager = GStreamerQuirksManager::singleton();
+    GRefPtr<GstElement> audioSink = quirksManager.createWebAudioSink();
     m_audioSinkAvailable = audioSink;
     if (!audioSink) {
         GST_ERROR("Failed to create GStreamer audio sink element");
         return;
     }
 
-    // Probe platform early on for a working audio output device. This is not needed for the WebKit
-    // custom audio sink because it doesn't rely on autoaudiosink.
-    if (!WEBKIT_IS_AUDIO_SINK(audioSink.get())) {
+    // Probe platform early on for a working audio output device in autoaudiosink.
+    if (g_str_has_prefix(GST_OBJECT_NAME(audioSink.get()), "autoaudiosink")) {
         g_signal_connect(audioSink.get(), "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer) {
             if (GST_IS_AUDIO_BASE_SINK(object))
                 g_object_set(GST_AUDIO_BASE_SINK(object), "buffer-time", static_cast<gint64>(100000), nullptr);
-
-#if PLATFORM(REALTEK)
-            if (!g_strcmp0(G_OBJECT_TYPE_NAME(object), "GstRTKAudioSink"))
-                g_object_set(object, "media-tunnel", FALSE, "audio-service", TRUE, nullptr);
-#endif
         }), nullptr);
 
         // Autoaudiosink does the real sink detection in the GST_STATE_NULL->READY transition

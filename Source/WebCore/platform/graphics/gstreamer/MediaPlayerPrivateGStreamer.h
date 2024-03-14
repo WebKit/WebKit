@@ -29,6 +29,7 @@
 #include "AbortableTaskQueue.h"
 #include "GStreamerCommon.h"
 #include "GStreamerEMEUtilities.h"
+#include "GStreamerQuirks.h"
 #include "ImageOrientation.h"
 #include "Logging.h"
 #include "MainThreadNotifier.h"
@@ -279,11 +280,10 @@ protected:
     virtual void sourceSetup(GstElement*);
     virtual void updatePlaybackRate();
 
-#if USE(GSTREAMER_HOLEPUNCH)
+    bool isHolePunchRenderingEnabled() const;
     GstElement* createHolePunchVideoSink();
     void pushNextHolePunchBuffer();
-    bool shouldIgnoreIntrinsicSize() final { return true; }
-#endif
+    bool shouldIgnoreIntrinsicSize() final;
 
 #if USE(TEXTURE_MAPPER_DMABUF)
     GstElement* createVideoSinkDMABuf();
@@ -517,9 +517,8 @@ private:
     void configureAudioDecoder(GstElement*);
     void configureVideoDecoder(GstElement*);
     void configureElement(GstElement*);
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
+
     void configureElementPlatformQuirks(GstElement*);
-#endif
 
     void setPlaybinURL(const URL& urlString);
 
@@ -652,6 +651,8 @@ private:
     bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
 
     RefPtr<PlatformMediaResourceLoader> m_loader;
+
+    RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
 };
 
 }

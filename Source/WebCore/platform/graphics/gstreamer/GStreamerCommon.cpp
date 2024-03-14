@@ -27,6 +27,7 @@
 #include "DMABufVideoSinkGStreamer.h"
 #include "GLVideoSinkGStreamer.h"
 #include "GStreamerAudioMixer.h"
+#include "GStreamerQuirks.h"
 #include "GStreamerRegistryScanner.h"
 #include "GStreamerSinksWorkarounds.h"
 #include "GUniquePtrGStreamer.h"
@@ -315,19 +316,6 @@ bool ensureGStreamerInitialized()
             gst_mpegts_initialize();
 #endif
 
-#if PLATFORM(BCM_NEXUS)
-        {
-            auto registry = gst_registry_get();
-            GRefPtr<GstPluginFeature> brcmaudfilter = adoptGRef(gst_registry_lookup_feature(registry, "brcmaudfilter"));
-            GRefPtr<GstPluginFeature> mpegaudioparse = adoptGRef(gst_registry_lookup_feature(registry, "mpegaudioparse"));
-
-            if (brcmaudfilter && mpegaudioparse) {
-                GST_INFO("overriding mpegaudioparse rank with brcmaudfilter rank + 1");
-                gst_plugin_feature_set_rank(mpegaudioparse.get(), gst_plugin_feature_get_rank(brcmaudfilter.get()) + 1);
-            }
-        }
-#endif
-
         registerAppsinkWithWorkaroundsIfNeeded();
 #endif
     });
@@ -440,6 +428,10 @@ void registerWebKitGStreamerElements()
             if (auto vaapiPlugin = adoptGRef(gst_registry_find_plugin(registry, "vaapi")))
                 gst_registry_remove_plugin(registry, vaapiPlugin.get());
         }
+
+        // Make sure the quirks are created as early as possible.
+        [[maybe_unused]] auto& quirksManager = GStreamerQuirksManager::singleton();
+
         registryWasUpdated = true;
     });
 

@@ -4404,6 +4404,15 @@ ExceptionOr<void> Internals::setOverridePreferredDynamicRangeMode(HTMLMediaEleme
     return { };
 }
 
+void Internals::enableGStreamerHolePunching(HTMLVideoElement& element)
+{
+#if USE(GSTREAMER)
+    element.enableGStreamerHolePunching();
+#else
+    UNUSED_PARAM(element);
+#endif
+}
+
 #endif
 
 bool Internals::isSelectPopupVisible(HTMLSelectElement& element)

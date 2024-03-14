@@ -303,6 +303,8 @@ public:
     virtual FloatSize mediaPlayerVideoLayerSize() const { return { }; }
     virtual void mediaPlayerVideoLayerSizeDidChange(const FloatSize&) { }
 
+    virtual bool isGStreamerHolePunchingEnabled() const { return false; }
+
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;
@@ -633,6 +635,7 @@ public:
 
 #if USE(GSTREAMER)
     void simulateAudioInterruption();
+    bool isGStreamerHolePunchingEnabled();
 #endif
 
     void beginSimulatedHDCPError();
