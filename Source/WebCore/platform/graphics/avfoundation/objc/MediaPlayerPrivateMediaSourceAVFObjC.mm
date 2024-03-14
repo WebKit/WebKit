@@ -1677,7 +1677,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
     if (!m_visible)
         [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = session.spatialTrackingLabel;
     else
-        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = m_spatialTrackingLabel;
+        [m_sampleBufferDisplayLayer sampleBufferRenderer].STSLabel = nsStringNilIfNull(m_spatialTrackingLabel);
 }
 #endif
 

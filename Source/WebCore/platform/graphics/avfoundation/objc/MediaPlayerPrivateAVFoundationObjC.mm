@@ -1154,7 +1154,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    [m_avPlayer _setSTSLabel:m_spatialTrackingLabel];
+    [m_avPlayer _setSTSLabel:nsStringNilIfNull(m_spatialTrackingLabel)];
 #endif
 
     if (m_avPlayerItem)
@@ -4011,9 +4011,9 @@ void MediaPlayerPrivateAVFoundationObjC::setSpatialTrackingLabel(String&& spatia
 {
     if (m_spatialTrackingLabel == spatialTrackingLabel)
         return;
-    m_spatialTrackingLabel = spatialTrackingLabel;
+    m_spatialTrackingLabel = WTFMove(spatialTrackingLabel);
     if (m_avPlayer)
-        [m_avPlayer _setSTSLabel:spatialTrackingLabel];
+        [m_avPlayer _setSTSLabel:nsStringNilIfNull(m_spatialTrackingLabel)];
 }
 #endif
 
