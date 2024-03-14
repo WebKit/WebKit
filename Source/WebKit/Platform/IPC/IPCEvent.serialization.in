@@ -24,7 +24,7 @@ webkit_platform_header: "IPCEvent.h"
 
 [CustomHeader, RValue, WebKitPlatform] class IPC::Signal {
 #if PLATFORM(COCOA)
-    WTF::MachSendRight takeSendRight();
+    MachSendRight takeSendRight();
 #endif
 #if !PLATFORM(COCOA)
     IPC::Semaphore semaphore();

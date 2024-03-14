@@ -24,7 +24,7 @@
 
 webkit_platform_headers: "CoreIPCCVPixelBufferRef.h"
 [CustomHeader, RValue, WebKitPlatform] class WebKit::CoreIPCCVPixelBufferRef {
-    WTF::MachSendRight m_sendRight;
+    MachSendRight m_sendRight;
 }
 
 #endif

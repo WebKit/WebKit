@@ -27,7 +27,7 @@ messages -> GPUProcess LegacyReceiver {
 
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::Connection::Handle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
     UpdateGPUProcessPreferences(struct WebKit::GPUProcessPreferences preferences)
-    UpdateSandboxAccess(Vector<WebKit::SandboxExtension::Handle> extensions);
+    UpdateSandboxAccess(Vector<WebKit::SandboxExtensionHandle> extensions);
 
     PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume()
@@ -72,7 +72,7 @@ messages -> GPUProcess LegacyReceiver {
 #endif
 
 #if PLATFORM(MAC)
-    OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle)
+    OpenDirectoryCacheInvalidated(WebKit::SandboxExtensionHandle handle)
 #endif
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
@@ -80,7 +80,7 @@ messages -> GPUProcess LegacyReceiver {
 #endif
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
-    EnablePowerLogging(WebKit::SandboxExtension::Handle handle)
+    EnablePowerLogging(WebKit::SandboxExtensionHandle handle)
 #endif
 
     UserPreferredLanguagesChanged(Vector<String> languages)

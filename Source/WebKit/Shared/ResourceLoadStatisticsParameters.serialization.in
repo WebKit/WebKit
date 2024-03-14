@@ -24,7 +24,7 @@ enum class WebCore::SameSiteStrictEnforcementEnabled : bool;
 
 [RValue] struct WebKit::ResourceLoadStatisticsParameters {
     String directory;
-    WebKit::SandboxExtension::Handle directoryExtensionHandle;
+    WebKit::SandboxExtensionHandle directoryExtensionHandle;
     bool enabled;
     bool enableLogTestingEvent;
     bool shouldIncludeLocalhost;

@@ -133,6 +133,7 @@ template: struct WebCore::PlaybackTargetClientContextIdentifierType
 template: struct WebCore::SharedWorkerObjectIdentifierType
 template: struct WebCore::SleepDisablerIdentifierType
 template: struct WebCore::UserMediaRequestIdentifierType
+template: struct WebCore::ScrollingNodeIDType
 template: struct WebKit::AuthenticationChallengeIdentifierType
 template: struct WebKit::DataTaskIdentifierType
 template: struct WebKit::DisplayLinkObserverIDType
@@ -146,7 +147,6 @@ template: struct WebKit::PDFPluginIdentifierType
 template: struct WebKit::PageGroupIdentifierType
 template: struct WebKit::RemoteAudioDestinationIdentifierType
 template: struct WebKit::RemoteImageBufferSetIdentifierType
-template: struct WebCore::ScrollingNodeIDType
 template: struct WebKit::TapIdentifierType
 template: struct WebKit::TextCheckerRequestType
 template: struct WebKit::UserContentControllerIdentifierType

@@ -25,7 +25,7 @@
 webkit_platform_headers: "CoreIPCLocale.h"
 
 [WebKitPlatform] class WebKit::CoreIPCLocale {
-    [Validator='WebKit::CoreIPCLocale::isValidIdentifier(*identfier)'] WTF::String identfier()
+    [Validator='WebKit::CoreIPCLocale::isValidIdentifier(*identfier)'] String identfier()
 }
 
 #endif // PLATFORM(COCOA)

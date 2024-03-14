@@ -22,5 +22,5 @@
 
 [RValue] class WebKit::WebIDBResult {
     WebCore::IDBResultData m_resultData;
-    Vector<WebKit::SandboxExtension::Handle> m_handles
+    Vector<WebKit::SandboxExtensionHandle> m_handles
 }

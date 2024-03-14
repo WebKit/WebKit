@@ -41,8 +41,8 @@ header: "WebTextReplacementData.h"
 [CustomHeader] struct WebKit::WebTextReplacementData {
     WTF::UUID uuid;
     WebCore::CharacterRange originalRange;
-    WTF::String replacement;
-    WTF::String description;
+    String replacement;
+    String description;
     WebKit::WebTextReplacementData::State state;
 
     WebCore::AttributedString originalString;

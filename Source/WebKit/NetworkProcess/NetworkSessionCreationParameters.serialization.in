@@ -37,10 +37,10 @@ enum class WebKit::AllowsCellularAccess : bool;
 #endif
 #if HAVE(ALTERNATIVE_SERVICE)
     String alternativeServiceDirectory;
-    WebKit::SandboxExtension::Handle alternativeServiceDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle alternativeServiceDirectoryExtensionHandle;
 #endif
     String hstsStorageDirectory;
-    WebKit::SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle hstsStorageDirectoryExtensionHandle;
 #if USE(SOUP)
     String cookiePersistentStoragePath;
     WebKit::SoupCookiePersistentStorageType cookiePersistentStorageType;
@@ -58,7 +58,7 @@ enum class WebKit::AllowsCellularAccess : bool;
     WebKit::WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration;
 
     String networkCacheDirectory;
-    WebKit::SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle networkCacheDirectoryExtensionHandle;
     String dataConnectionServiceType;
     bool fastServerTrustEvaluationEnabled;
     bool networkCacheSpeculativeValidationEnabled;
@@ -87,15 +87,15 @@ enum class WebKit::AllowsCellularAccess : bool;
     std::optional<uint64_t> standardVolumeCapacity;
     std::optional<uint64_t> volumeCapacityOverride;
     String localStorageDirectory;
-    WebKit::SandboxExtension::Handle localStorageDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle localStorageDirectoryExtensionHandle;
     String indexedDBDirectory;
-    WebKit::SandboxExtension::Handle indexedDBDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle indexedDBDirectoryExtensionHandle;
     String cacheStorageDirectory;
-    WebKit::SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle cacheStorageDirectoryExtensionHandle;
     String generalStorageDirectory;
-    WebKit::SandboxExtension::Handle generalStorageDirectoryHandle;
+    WebKit::SandboxExtensionHandle generalStorageDirectoryHandle;
     String serviceWorkerRegistrationDirectory;
-    WebKit::SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled;
     bool inspectionForServiceWorkersAllowed;
 #if ENABLE(DECLARATIVE_WEB_PUSH)

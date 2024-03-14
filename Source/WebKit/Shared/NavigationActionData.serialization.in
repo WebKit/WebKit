@@ -32,7 +32,7 @@ struct WebKit::NavigationActionData {
     std::optional<WTF::UUID> userGestureAuthorizationToken;
     bool canHandleRequest;
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
-    WTF::String downloadAttribute;
+    String downloadAttribute;
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
     WebCore::ResourceResponse redirectResponse;
     bool isRequestFromClientOrUserInput;
@@ -46,7 +46,7 @@ struct WebKit::NavigationActionData {
     std::optional<WebCore::BackForwardItemIdentifier> sourceBackForwardItemIdentifier;
     WebCore::LockHistory lockHistory;
     WebCore::LockBackForwardList lockBackForwardList;
-    WTF::String clientRedirectSourceForHistory;
+    String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;

@@ -63,7 +63,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetHasStylusDevice(bool hasStylusDevice)
 #endif
 
-    void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);
+    void StartMemorySampler(WebKit::SandboxExtensionHandle sampleLogFileHandle, String sampleLogFilePath, double interval);
     void StopMemorySampler();
 
     SetTextCheckerState(struct WebKit::TextCheckerState textCheckerState)
@@ -173,13 +173,13 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     UpdateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain> domainsWithStorageAccessQuirks);
 
-    GrantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle> assetServicesHandles)
+    GrantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandle> assetServicesHandles)
     RevokeAccessToAssetServices()
-    SwitchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtension::Handle> fontMachExtensionHandles)
+    SwitchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtensionHandle> fontMachExtensionHandles)
 
 #if PLATFORM(COCOA)
     DisableURLSchemeCheckInDataDetectors()
-    UnblockServicesRequiredByAccessibility(Vector<WebKit::SandboxExtension::Handle> handleArray)
+    UnblockServicesRequiredByAccessibility(Vector<WebKit::SandboxExtensionHandle> handleArray)
 #if ENABLE(CFPREFS_DIRECT_MODE)
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
 #endif
@@ -217,7 +217,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(MAC)
-    OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle, WebKit::SandboxExtension::Handle machBootstrapHandle)
+    OpenDirectoryCacheInvalidated(WebKit::SandboxExtensionHandle handle, WebKit::SandboxExtensionHandle machBootstrapHandle)
 #endif
 
     ReleaseMemory() -> ()

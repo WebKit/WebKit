@@ -53,7 +53,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetMaximumBufferSize(size_t size) -> ()
     ComputeSeekTime(struct WebCore::SeekTarget target) -> (WebCore::SourceBufferPrivate::ComputeSeekPromise::Result seekedTime)
     SeekToTime(MediaTime time)
-    UpdateTrackIds(Vector<std::pair<WebCore::TrackID, WebCore::TrackID >> identifierPairs)
+    UpdateTrackIds(Vector<std::pair<WebCore::TrackID, WebCore::TrackID>> identifierPairs)
     BufferedSamplesForTrackId(WebCore::TrackID trackID) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
     EnqueuedSamplesForTrackID(WebCore::TrackID trackID) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
     MemoryPressure(MediaTime currentTime)

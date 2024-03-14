@@ -23,5 +23,5 @@
 headers: "APIURL.h"
 
 [RefCounted, CustomHeader] class API::URL {
-    WTF::String string()
+    String string()
 };

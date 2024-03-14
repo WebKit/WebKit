@@ -672,7 +672,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 
     [typesNeedingDescriptions minusSet:typesHavingDescriptions];
     [typesNeedingDescriptions minusSet:fundamentalTypes];
-    EXPECT_LT(typesNeedingDescriptions.count, 250u); // FIXME: This should eventually be 0.
+    EXPECT_LT(typesNeedingDescriptions.count, 200u); // FIXME: This should eventually be 0.
 }
 
 #endif

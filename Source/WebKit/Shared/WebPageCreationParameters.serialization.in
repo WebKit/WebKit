@@ -137,14 +137,14 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;
     Vector<String> additionalSupportedImageTypes;
-    Vector<WebKit::SandboxExtension::Handle> gpuIOKitExtensionHandles;
-    Vector<WebKit::SandboxExtension::Handle> gpuMachExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> gpuIOKitExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> gpuMachExtensionHandles;
 #endif
 #if PLATFORM(MAC)
-    WebKit::SandboxExtension::Handle renderServerMachExtensionHandle;
+    WebKit::SandboxExtensionHandle renderServerMachExtensionHandle;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
-    Vector<WebKit::SandboxExtension::Handle> fontMachExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> fontMachExtensionHandles;
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
@@ -253,7 +253,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
-    WebKit::SandboxExtension::Handle machBootstrapHandle;
+    WebKit::SandboxExtensionHandle machBootstrapHandle;
 #endif
 
 #if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)

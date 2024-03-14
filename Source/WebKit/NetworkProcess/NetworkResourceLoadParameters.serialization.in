@@ -60,9 +60,9 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     WebCore::ResourceLoaderIdentifier identifier;
     
     RefPtr<WebCore::FormData> request.httpBody();
-    std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensionsIfHttpBody();
+    std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensionsIfHttpBody();
 
-    std::optional<WebKit::SandboxExtension::Handle> sandboxExtensionIflocalFile();
+    std::optional<WebKit::SandboxExtensionHandle> sandboxExtensionIflocalFile();
 
     Seconds maximumBufferingTime;
     

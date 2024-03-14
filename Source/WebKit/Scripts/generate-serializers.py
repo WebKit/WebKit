@@ -152,6 +152,13 @@ class SerializedType(object):
             return self.name
         return self.namespace + '::' + self.cpp_struct_or_class_name()
 
+    def namespace_if_not_wtf_and_name(self):
+        if self.namespace == 'WTF':
+            return self.name
+        if self.namespace is None:
+            return self.name
+        return self.namespace + '::' + self.cpp_struct_or_class_name()
+
     def namespace_and_name_for_construction(self, specialization):
         fulltype = None
         if self.construct_subclass:
@@ -1257,7 +1264,7 @@ def generate_one_serialized_type_info(type):
         return result
 
     if type.cf_type is not None:
-        result.append('            { "WebKit::' + type.cpp_struct_or_class_name() + '"_s, "wrapper"_s }')
+        result.append('            { "' + type.namespace_if_not_wtf_and_name() + '"_s, "wrapper"_s }')
         result.append('        } },')
         if type.condition is not None:
             result.append('#endif // ' + type.condition)
@@ -1272,7 +1279,7 @@ def generate_one_serialized_type_info(type):
                 result.append('#endif // ' + member.condition)
         result.append('        } },')
         result.append('        { "' + type.name + '"_s, {')
-        result.append('            { "WebKit::' + type.cpp_struct_or_class_name() + '"_s, "wrapper"_s }')
+        result.append('            { "' + type.namespace_if_not_wtf_and_name() + '"_s, "wrapper"_s }')
         result.append('        } },')
         if type.condition is not None:
             result.append('#endif // ' + type.condition)

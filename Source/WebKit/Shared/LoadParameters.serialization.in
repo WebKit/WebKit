@@ -32,7 +32,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     uint64_t navigationID;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
     [EncodeRequestBody] WebCore::ResourceRequest request;
-    WebKit::SandboxExtension::Handle sandboxExtensionHandle;
+    WebKit::SandboxExtensionHandle sandboxExtensionHandle;
     std::span<const uint8_t> data;
 
     String MIMEType;

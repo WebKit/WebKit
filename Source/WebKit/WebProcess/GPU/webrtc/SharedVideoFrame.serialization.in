@@ -26,7 +26,7 @@
     MediaTime time;
     bool mirrored;
     WebCore::VideoFrameRotation rotation;
-    std::variant<std::nullptr_t, WebKit::RemoteVideoFrameReadReference, WTF::MachSendRight, WebCore::IntSize> buffer;
+    std::variant<std::nullptr_t, WebKit::RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize> buffer;
 };
 
 #endif

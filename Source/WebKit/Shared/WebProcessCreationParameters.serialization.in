@@ -23,13 +23,13 @@
 [RValue] struct WebKit::WebProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
     String injectedBundlePath;
-    WebKit::SandboxExtension::Handle injectedBundlePathExtensionHandle;
-    Vector<WebKit::SandboxExtension::Handle> additionalSandboxExtensionHandles;
+    WebKit::SandboxExtensionHandle injectedBundlePathExtensionHandle;
+    Vector<WebKit::SandboxExtensionHandle> additionalSandboxExtensionHandles;
 
     WebKit::UserData initializationUserData;
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    Vector<WebKit::SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> enableRemoteWebInspectorExtensionHandles;
 #endif
 
     Vector<String> urlSchemesRegisteredAsEmptyDocument;
@@ -94,10 +94,10 @@
     ProcessID presentingApplicationPID;
 
 #if PLATFORM(COCOA)
-    WTF::MachSendRight acceleratedCompositingPort;
+    MachSendRight acceleratedCompositingPort;
 
     String uiProcessBundleResourcePath;
-    WebKit::SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
+    WebKit::SandboxExtensionHandle uiProcessBundleResourcePathExtensionHandle;
 
     bool shouldEnableJIT;
     bool shouldEnableFTLJIT;
@@ -143,13 +143,13 @@
     std::optional<WebKit::WebProcessDataStoreParameters> websiteDataStoreParameters;
     
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    Vector<WebKit::SandboxExtension::Handle> compilerServiceExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> compilerServiceExtensionHandles;
 #endif
 
-    std::optional<WebKit::SandboxExtension::Handle> mobileGestaltExtensionHandle;
-    std::optional<WebKit::SandboxExtension::Handle> launchServicesExtensionHandle;
+    std::optional<WebKit::SandboxExtensionHandle> mobileGestaltExtensionHandle;
+    std::optional<WebKit::SandboxExtensionHandle> launchServicesExtensionHandle;
 #if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
-    WebKit::SandboxExtension::Handle trustdExtensionHandle;
+    WebKit::SandboxExtensionHandle trustdExtensionHandle;
 #endif
 #if HAVE(VIDEO_RESTRICTED_DECODING)
     bool enableDecodingHEIC;
@@ -157,11 +157,11 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    Vector<WebKit::SandboxExtension::Handle> dynamicIOKitExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> dynamicIOKitExtensionHandles;
 #endif
 
 #if PLATFORM(VISION)
-    Vector<WebKit::SandboxExtension::Handle> metalCacheDirectoryExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> metalCacheDirectoryExtensionHandles;
 #endif
 
 #if PLATFORM(COCOA)

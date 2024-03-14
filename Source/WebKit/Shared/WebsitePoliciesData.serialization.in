@@ -51,12 +51,12 @@ enum class WebKit::WebContentMode : uint8_t {
 };
 
 struct WebKit::WebsitePoliciesData {
-    HashMap<WTF::String, Vector<WTF::String>> activeContentRuleListActionPatterns;
+    HashMap<String, Vector<String>> activeContentRuleListActionPatterns;
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
-    WTF::String customUserAgent;
-    WTF::String customUserAgentAsSiteSpecificQuirks;
-    WTF::String customNavigatorPlatform;
-    WTF::String applicationNameForDesktopUserAgent;
+    String customUserAgent;
+    String customUserAgentAsSiteSpecificQuirks;
+    String customNavigatorPlatform;
+    String applicationNameForDesktopUserAgent;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebCore::ContentExtensionEnablement contentExtensionEnablement;

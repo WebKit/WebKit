@@ -10940,8 +10940,8 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
             filenames.append([fileURL path]);
         capturedDragData.setFileNames(filenames);
 
-        WebKit::SandboxExtension::Handle sandboxExtensionHandle;
-        Vector<WebKit::SandboxExtension::Handle> sandboxExtensionForUpload;
+        WebKit::SandboxExtensionHandle sandboxExtensionHandle;
+        Vector<WebKit::SandboxExtensionHandle> sandboxExtensionForUpload;
         auto dragPasteboardName = WebCore::Pasteboard::nameOfDragPasteboard();
         retainedSelf->_page->createSandboxExtensionsIfNeeded(filenames, sandboxExtensionHandle, sandboxExtensionForUpload);
         retainedSelf->_page->performDragOperation(capturedDragData, dragPasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));

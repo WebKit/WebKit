@@ -29,5 +29,5 @@
     bool lastNavigationWasAppInitiated;
     std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
     std::optional<String> topPrivatelyControlledDomain;
-    WebKit::SandboxExtension::Handle sandboxExtensionHandle;
+    WebKit::SandboxExtensionHandle sandboxExtensionHandle;
 };

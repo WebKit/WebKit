@@ -1398,7 +1398,7 @@ void WebProcess::accessibilitySettingsDidChange()
 }
 #endif
 
-void WebProcess::grantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle>&& assetServicesHandles)
+void WebProcess::grantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandle>&& assetServicesHandles)
 {
     if (m_assetServicesExtensions.size())
         return;
@@ -1426,7 +1426,7 @@ void WebProcess::disableURLSchemeCheckInDataDetectors() const
 #endif
 }
 
-void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtension::Handle>&& fontMachExtensionHandles)
+void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtensionHandle>&& fontMachExtensionHandles)
 {
     SandboxExtension::consumePermanently(fontMachExtensionHandles);
 #if HAVE(STATIC_FONT_REGISTRY)

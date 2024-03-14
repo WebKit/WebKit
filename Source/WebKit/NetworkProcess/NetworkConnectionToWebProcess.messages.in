@@ -56,7 +56,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     UnsubscribeFromCookieChangeNotifications(String host) AllowedWhenWaitingForSyncReply
 #endif
 
-    RegisterInternalFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
+    RegisterInternalFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtensionHandle extensionHandle, String contentType)
     RegisterInternalBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
     RegisterBlobURL(URL url, URL srcURL, struct WebCore::PolicyContainer policyContainer, std::optional<WebCore::SecurityOriginData> topOrigin)
     RegisterInternalBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
