@@ -210,126 +210,12 @@
         </details>
     </section>
     <section class="example">
-        <h1>Daylight switch</h1>
-        <input type="checkbox" switch class="daylight-switch">
+        <h1>Labeled switch</h1>
+        <input type="checkbox" switch class="labeled">
         <details>
             <summary>Show CSS</summary>
             <style>
-.daylight-switch {
-    --star: radial-gradient(circle, transparent 0, #FFF 0, #FFF 75%, transparent 75%);
-    --star-size: 2px 2px;
-    appearance: none;
-    position: relative;
-    height: 25px;
-    width: 45px;
-    border-radius: 20px;
-    display: inline-block;
-    border: 2px solid #1C1C1C;
-    background-color: #3C4145;
-    transition: all 0.3s;
-    background-image: var(--star), var(--star), var(--star), var(--star), var(--star), var(--star), var(--star);
-    background-size: var(--star-size), var(--star-size), var(--star-size), var(--star-size), var(--star-size), var(--star-size), var(--star-size);
-    background-position: 25px 3px,
-                         35px 4px,
-                        29px 10px,
-                        32px 17px,
-                        38px 11px,
-                        26px 20px,
-                        38px 18px;
-    background-repeat: no-repeat;
-    box-sizing: content-box;
-}
-
-.daylight-switch:checked {
-    background: #9EE3FB;
-    border-color: #86C3D7;
-}
-
-.daylight-switch::thumb {
-    border-radius: 100%;
-    width: 19px;
-    height: 19px;
-    margin: 1px;
-    border: 2px solid #E3E3C7;
-    background-color: #FFFFFF;
-    transition: all 0.2s;
-}
-
-.daylight-switch:not(:checked)::thumb {
-    --crater: radial-gradient(circle, #FFF 0, #FFF 30%, #E3E3C7 30%, #E3E3C7 70%, transparent 70%);
-    --deep-crater: radial-gradient(circle, #FFF 0, #FFF 20%, #E3E3C7 20%, #E3E3C7 70%, transparent 70%);
-    background-image: var(--crater), var(--deep-crater), var(--crater);
-    background-size: 5px 5px, 7px 7px, 5px 5px;
-    background-position: 1px 1px, 13px 2px, 7px 14px;
-    background-repeat: no-repeat;
-}
-
-.daylight-switch:checked::thumb {
-    border-color: #E1C348;
-    background-color: #FFDF6D;
-    translate: 20px 0;
-}
-
-.daylight-switch::track {
-    position: absolute;
-    width: 12px;
-    height: 5px;
-    border: 2px solid #D3D3D3;
-    background: #FFF;
-    bottom: 6px;
-    left: 15px;
-    z-index: 99;
-    border-radius: 20px;
-    transition: all 0.2s;
-    transition-delay: 0.15s;
-}
-
-.daylight-switch::before,
-.daylight-switch::after {
-    content: "";
-    border-radius: 40px;
-    border: 2px solid #D3D3D3;
-    border-bottom: 0;
-    z-index: 100;
-    background: white;
-    position: absolute;
-    bottom: 11px;
-    transition: all 0.2s;
-    transition-delay: 0.15s;
-}
-
-.daylight-switch::before {
-    left: 17px;
-    translate: 0 -1px;
-    height: 3.5px;
-    width: 4.5px;
-    rotate: -20deg;
-}
-
-.daylight-switch::after {
-    left: 23px;
-    width: 3px;
-    height: 3px;
-    rotate: 20deg;
-}
-
-.daylight-switch:not(:checked)::track,
-.daylight-switch:not(:checked)::before,
-.daylight-switch:not(:checked)::after {
-    opacity: 0;
-    transform: scale(0.5);
-    transition-delay: 0s;
-}
-            </style>
-        </details>
-    </section>
-    <section class="example">
-        <h1>Toggle button</h1>
-        <input type="checkbox" switch class="toggle-button">
-        <details>
-            <summary>Show CSS</summary>
-            <style>
-.toggle-button {
+.labeled {
     appearance: none;
     display: inline-grid;
     position: relative;
@@ -342,7 +228,7 @@
     position: relative;
 }
 
-.toggle-button::thumb {
+.labeled::thumb {
     background: white;
     height: 100%;
     width: 50%;
@@ -351,17 +237,17 @@
     z-index: 0;
 }
 
-.toggle-button::thumb,
-.toggle-button::track {
+.labeled::thumb,
+.labeled::track {
     grid-area: 1/1;
 }
 
-.toggle-button:checked::thumb {
+.labeled:checked::thumb {
     translate: 100%;
 }
 
-.toggle-button::before,
-.toggle-button::after {
+.labeled::before,
+.labeled::after {
     position: absolute;
     text-align: center;
     width: 35px;
@@ -370,17 +256,17 @@
     z-index: 2;
 }
 
-.toggle-button::before {
+.labeled::before {
     content: "OFF" / "";
     left: 5px;
 }
 
-.toggle-button::after {
+.labeled::after {
     content: "ON" / "";
     right: 5px;
 }
 
-.toggle-button:checked::after {
+.labeled:checked::after {
     color: #007aff;
 }
             </style>
