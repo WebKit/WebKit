@@ -1,0 +1,23 @@
+
+PROMISE: requestMediaKeySystemAccess resolved
+PROMISE: createMediaKeys resolved
+FETCH: resources/cert.der OK
+PROMISE: keys.setServerCertificate resolved
+PROMISE: setMediaKeys() resolved
+Created mediaSource
+EVENT(sourceopen)
+-
+Appending Encrypted Video Payload
+Created sourceBuffer
+FETCH: content/elementary-stream-video-keyid-1.ts OK
+EVENT(encrypted)
+EVENT(message)
+PROMISE: licenseResponse resolved
+PROMISE: session.update() resolved
+EVENT(updateend)
+-
+Playing video
+EVENT(seeked)
+Promise resolved OK
+END OF TEST
+
