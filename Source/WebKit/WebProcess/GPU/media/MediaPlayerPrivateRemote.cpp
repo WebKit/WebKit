@@ -128,6 +128,8 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_documentSecurityOrigin(player->documentSecurityOrigin())
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+    acceleratedRenderingStateChanged();
 }
 
 MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
@@ -343,8 +345,10 @@ void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state)
 {
     ALWAYS_LOG(LOGIDENTIFIER, state.readyState);
     updateCachedState(WTFMove(state));
-    if (auto player = m_player.get())
+    if (auto player = m_player.get()) {
         player->readyStateChanged();
+        checkAcceleratedRenderingState();
+    }
 }
 
 void MediaPlayerPrivateRemote::volumeChanged(double volume)
@@ -487,13 +491,26 @@ bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
 void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
 {
     if (auto player = m_player.get()) {
-        connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(player->renderingCanBeAccelerated()), m_id);
+        m_renderingCanBeAccelerated = player->renderingCanBeAccelerated();
+        connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(m_renderingCanBeAccelerated), m_id);
+    }
+    renderingModeChanged();
+}
+
+void MediaPlayerPrivateRemote::checkAcceleratedRenderingState()
+{
+    if (auto player = m_player.get()) {
+        bool renderingCanBeAccelerated = player->renderingCanBeAccelerated();
+        if (m_renderingCanBeAccelerated != renderingCanBeAccelerated)
+            acceleratedRenderingStateChanged();
     }
 }
 
 void MediaPlayerPrivateRemote::updateConfiguration(RemoteMediaPlayerConfiguration&& configuration)
 {
     m_configuration = WTFMove(configuration);
+    // player->renderingCanBeAccelerated() result is dependent on m_configuration.supportsAcceleratedRendering value.
+    checkAcceleratedRenderingState();
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -873,6 +890,8 @@ void MediaPlayerPrivateRemote::setVideoFullscreenLayer(PlatformLayer* videoFulls
 #if PLATFORM(COCOA)
     m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), nullptr);
 #endif
+    // A Fullscreen layer has been set, this could update the value returned by player->renderingCanBeAccelerated().
+    checkAcceleratedRenderingState();
 }
 
 void MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage()
