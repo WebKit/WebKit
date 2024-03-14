@@ -4,6 +4,8 @@
 #include "avif/avif.h"
 #include "avif/avif_cxx.h"
 
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t * Data, size_t Size);
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* Data, size_t Size) {
   avif::DecoderPtr decoder(avifDecoderCreate());
   if (decoder == nullptr) return 0;
