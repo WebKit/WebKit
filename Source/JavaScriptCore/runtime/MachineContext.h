@@ -44,7 +44,6 @@ template<typename T = void*> T framePointer(const PlatformRegisters&);
 inline CodePtr<PlatformRegistersLRPtrTag> linkRegister(const PlatformRegisters&);
 inline std::optional<CodePtr<PlatformRegistersPCPtrTag>> instructionPointer(const PlatformRegisters&);
 inline void setInstructionPointer(PlatformRegisters&, CodePtr<CFunctionPtrTag>);
-inline void setInstructionPointer(PlatformRegisters&, void *);
 
 template<size_t N> void*& argumentPointer(PlatformRegisters&);
 template<size_t N> void* argumentPointer(const PlatformRegisters&);
@@ -458,25 +457,10 @@ inline void setInstructionPointer(PlatformRegisters& regs, CodePtr<CFunctionPtrT
 {
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, value.taggedPtr());
-#elif USE(DARWIN_REGISTER_MACROS) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
-    __darwin_arm_thread_state64_set_presigned_pc_fptr(regs, value.taggedPtr());
 #elif USE(DARWIN_REGISTER_MACROS)
     __darwin_arm_thread_state64_set_pc_fptr(regs, value.taggedPtr());
 #else
     instructionPointerImpl(regs) = value.taggedPtr();
-#endif
-}
-
-inline void setInstructionPointer(PlatformRegisters& regs, void* value)
-{
-#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
-    WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, value);
-#elif USE(DARWIN_REGISTER_MACROS) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
-    __darwin_arm_thread_state64_set_presigned_pc_fptr(regs, value);
-#elif USE(DARWIN_REGISTER_MACROS)
-    __darwin_arm_thread_state64_set_pc_fptr(regs, value);
-#else
-    instructionPointerImpl(regs) = value;
 #endif
 }
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)

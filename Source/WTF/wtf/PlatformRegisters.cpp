@@ -53,14 +53,6 @@ void* threadStateLRInternal(PlatformRegisters& regs)
 
 void* threadStatePCInternal(PlatformRegisters& regs)
 {
-#if CPU(ARM64E) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
-    // If userspace has modified the PC and set it to the presignedTrampoline,
-    // we want to avoid authing the value as it is using a custom ptrauth signing scheme.
-    _STRUCT_ARM_THREAD_STATE64* ts = &(regs);
-    if (!(ts->__opaque_flags & __DARWIN_ARM_THREAD_STATE64_FLAGS_KERNEL_SIGNED_PC))
-        return nullptr;
-#endif // defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
-
     void* candidatePC = arm_thread_state64_get_pc_fptr(regs);
 
 #if USE(UNTAGGED_THREAD_STATE_PTR)

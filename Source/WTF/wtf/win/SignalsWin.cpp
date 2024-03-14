@@ -149,11 +149,6 @@ void SignalHandlers::initialize()
     // noop
 }
 
-void finalizeSignalHandlers()
-{
-    // noop
-}
-
 } // namespace WTF
 
 #endif // OS(WINDOWS)

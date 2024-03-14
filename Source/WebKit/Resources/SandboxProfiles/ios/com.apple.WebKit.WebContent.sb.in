@@ -1466,22 +1466,13 @@
 #endif
 #endif
 
-#if defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
-#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
-        (with-filter (require-not (webcontent-process-launched))
-            (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler)))
-#endif ;; ENABLE(BLOCK_SET_EXCEPTION_PORTS)
-        (with-filter (require-not (lockdown-mode))
-            (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler)))
-#else
 #if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
         (with-filter (require-not (webcontent-process-launched))
             (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 #else
         (with-filter (require-not (lockdown-mode))
             (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
-#endif ;; ENABLE(BLOCK_SET_EXCEPTION_PORTS)
-#endif ;; defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
+#endif
 
         (with-filter (lockdown-mode)
             (deny mach-message-send (with telemetry) (with message "Lockdown mode")
