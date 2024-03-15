@@ -6654,7 +6654,7 @@ void WebPageProxy::processIsNoLongerAssociatedWithPage(WebProcessProxy& process)
 
 bool WebPageProxy::hasAllowedToRunInTheBackgroundActivity() const
 {
-    return internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges || internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications;
+    return internals().pageAllowedToRunInTheBackgroundToken || internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications;
 }
 
 void WebPageProxy::didReceiveTitleForFrame(FrameIdentifier frameID, const String& title, const UserData& userData)
