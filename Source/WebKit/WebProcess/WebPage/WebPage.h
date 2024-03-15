@@ -522,6 +522,9 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManager* fullScreenManager();
+
+    enum class IsInFullscreenMode : bool { No, Yes };
+    void isInFullscreenChanged(IsInFullscreenMode);
 #endif
 
     void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, std::optional<WebCore::ResourceLoaderIdentifier> = std::nullopt);
@@ -2371,6 +2374,7 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebFullScreenManager> m_fullScreenManager;
+    IsInFullscreenMode m_isInFullscreenMode { IsInFullscreenMode::No };
 #endif
 
     RefPtr<WebPopupMenu> m_activePopupMenu;
@@ -2573,6 +2577,8 @@ private:
     std::optional<std::pair<TransactionID, double>> m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
     bool m_sendAutocorrectionContextAfterFocusingElement { false };
     std::unique_ptr<WebCore::IgnoreSelectionChangeForScope> m_ignoreSelectionChangeScopeForDictation;
+
+    bool m_isMobileDoctype { false };
 #endif // PLATFORM(IOS_FAMILY)
 
     WebCore::Timer m_layerVolatilityTimer;

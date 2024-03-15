@@ -105,6 +105,13 @@
         await waitFor(frame, 'load');
         await run('enterFullscreen()');
         await testExpectedVisibleRect(-100, -50);
+
+        consoleWrite('Test that fullscreen within an iframe without an explicit viewport setting has native viewport behavior:')
+        run('frame.src = "resources/no-viewport.html"');
+        await waitFor(frame, 'load');
+        await run('enterFullscreen()');
+        await testExpectedVisibleRect(-100, -50);
+        testExpected('visibleRect.width', 980, '<');
         await run('exitFullscreen()');
         consoleWrite('')
 

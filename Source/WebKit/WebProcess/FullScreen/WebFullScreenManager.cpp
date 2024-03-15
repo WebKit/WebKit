@@ -329,6 +329,8 @@ void WebFullScreenManager::willEnterFullScreen(WebCore::HTMLMediaElementEnums::V
         return;
     }
 
+    m_page->isInFullscreenChanged(WebPage::IsInFullscreenMode::Yes);
+
 #if !PLATFORM(IOS_FAMILY)
     m_page->hidePageBanners();
 #endif
@@ -430,6 +432,8 @@ static Vector<Ref<Element>> collectFullscreenElementsFromElement(Element* elemen
 
 void WebFullScreenManager::didExitFullScreen()
 {
+    m_page->isInFullscreenChanged(WebPage::IsInFullscreenMode::No);
+
     if (!m_element)
         return;
 

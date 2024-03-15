@@ -40,6 +40,13 @@ EVENT(load)
 RUN(enterFullscreen())
 EXPECTED (visibleRect.left == '-100') OK
 EXPECTED (visibleRect.top == '-50') OK
+Test that fullscreen within an iframe without an explicit viewport setting has native viewport behavior:
+RUN(frame.src = "resources/no-viewport.html")
+EVENT(load)
+RUN(enterFullscreen())
+EXPECTED (visibleRect.left == '-100') OK
+EXPECTED (visibleRect.top == '-50') OK
+EXPECTED (visibleRect.width < '980') OK
 RUN(exitFullscreen())
 
 RUN(setSafeAreaInsets(0, 0))

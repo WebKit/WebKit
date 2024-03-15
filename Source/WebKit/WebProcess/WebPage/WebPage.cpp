@@ -5143,6 +5143,18 @@ WebFullScreenManager* WebPage::fullScreenManager()
         m_fullScreenManager = WebFullScreenManager::create(*this);
     return m_fullScreenManager.get();
 }
+
+void WebPage::isInFullscreenChanged(IsInFullscreenMode isInFullscreenMode)
+{
+    if (m_isInFullscreenMode == isInFullscreenMode)
+        return;
+    m_isInFullscreenMode = isInFullscreenMode;
+
+#if ENABLE(META_VIEWPORT)
+    resetViewportDefaultConfiguration(m_mainFrame.ptr(), m_isMobileDoctype);
+#endif
+}
+
 #endif
 
 void WebPage::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSource, MessageLevel messageLevel, const String& message, std::optional<WebCore::ResourceLoaderIdentifier> requestID)

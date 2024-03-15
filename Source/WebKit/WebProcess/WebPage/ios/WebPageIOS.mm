@@ -454,6 +454,7 @@ FloatSize WebPage::overrideScreenSize() const
 
 void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
 {
+    m_isMobileDoctype = isMobileDoctype;
     resetViewportDefaultConfiguration(m_mainFrame.ptr(), isMobileDoctype);
 }
 
@@ -4101,6 +4102,10 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
     }
 
     auto parametersForStandardFrame = [&] {
+#if ENABLE(FULLSCREEN_API)
+        if (m_isInFullscreenMode == IsInFullscreenMode::Yes)
+            return m_viewportConfiguration.nativeWebpageParameters();
+#endif
         if (shouldIgnoreMetaViewport())
             return m_viewportConfiguration.nativeWebpageParameters();
         return ViewportConfiguration::webpageParameters();
