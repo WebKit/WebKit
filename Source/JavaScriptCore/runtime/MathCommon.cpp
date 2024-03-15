@@ -456,7 +456,7 @@ JSC_DEFINE_JIT_OPERATION(operationToInt32, UCPUStrictInt32, (double value))
 
 JSC_DEFINE_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32, (double number))
 {
-    return toUCPUStrictInt32(toInt32Internal<ToInt32Mode::AfterSensibleConversionAttempt>(number));
+    return toUCPUStrictInt32(toIntImpl<int32_t, ToIntMode::Int32AfterSensibleConversionAttempt>(number));
 }
 
 #if HAVE(ARM_IDIV_INSTRUCTIONS)

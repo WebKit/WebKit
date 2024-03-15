@@ -27,6 +27,7 @@
 
 #include "CPU.h"
 #include "JITOperationValidation.h"
+#include <climits>
 #include <cmath>
 #include <optional>
 
@@ -80,51 +81,60 @@ inline bool isNegativeZero(double value)
 // of the resulting bit-pattern (as such this method is also called to implement
 // ToUInt32).
 //
-// The operation can be described as round towards zero, then select the 32 least
+// The operation can be described as round towards zero, then select the 32 or 64 least
 // bits of the resulting value in 2s-complement representation.
-enum ToInt32Mode {
+enum ToIntMode {
     Generic,
-    AfterSensibleConversionAttempt,
+    Int32AfterSensibleConversionAttempt,
 };
-template<ToInt32Mode Mode>
-ALWAYS_INLINE int32_t toInt32Internal(double number)
+template<class Int, ToIntMode Mode = Generic>
+ALWAYS_INLINE Int toIntImpl(double number)
 {
+    static_assert(std::is_same_v<Int, int32_t> || std::is_same_v<Int, int64_t>);
+    constexpr unsigned intBytes = sizeof(Int);
+    constexpr unsigned intBits = intBytes * CHAR_BIT;
+    constexpr unsigned intBitsMinusOne = intBits - 1;
+    static_assert(intBitsMinusOne == 63 || intBitsMinusOne == 31);
+    using UInt = std::make_unsigned_t<Int>;
+
     uint64_t bits = WTF::bitwise_cast<uint64_t>(number);
     int32_t exp = (static_cast<int32_t>(bits >> 52) & 0x7ff) - 0x3ff;
 
     // If exponent < 0 there will be no bits to the left of the decimal point
-    // after rounding; if the exponent is > 83 then no bits of precision can be
-    // left in the low 32-bit range of the result (IEEE-754 doubles have 52 bits
+    // after rounding; if the exponent is > maxExpForLeftShift then no bits of precision can be
+    // left in the low intBits range of the result (IEEE-754 doubles have 52 bits
     // of fractional precision).
     // Note this case handles 0, -0, and all infinite, NaN, & denormal value.
+    constexpr uint32_t maxExpForLeftShift = intBitsMinusOne + 52;
 
-    // We need to check exp > 83 because:
+    // We need to check exp > maxExpForLeftShift because:
     // 1. exp may be used as a left shift value below in (exp - 52), and
-    // 2. Left shift amounts that exceed 31 results in undefined behavior. See:
+    // 2. Left shift amounts that exceed intBitsMinusOne results in undefined behavior. See:
     //    http://en.cppreference.com/w/cpp/language/operator_arithmetic#Bitwise_shift_operators
     //
     // Using an unsigned comparison here also gives us a exp < 0 check for free.
-    if (static_cast<uint32_t>(exp) > 83u)
+    if (static_cast<uint32_t>(exp) > maxExpForLeftShift)
         return 0;
 
-    // Select the appropriate 32-bits from the floating point mantissa. If the
+    // Select the appropriate intBits from the floating point mantissa. If the
     // exponent is 52 then the bits we need to select are already aligned to the
     // lowest bits of the 64-bit integer representation of the number, no need
     // to shift. If the exponent is greater than 52 we need to shift the value
     // left by (exp - 52), if the value is less than 52 we need to shift right
     // accordingly.
-    uint32_t result = (exp > 52)
-        ? static_cast<uint32_t>(bits << (exp - 52))
-        : static_cast<uint32_t>(bits >> (52 - exp));
+    UInt result = (exp > 52)
+        ? static_cast<UInt>(bits << (exp - 52))
+        : static_cast<UInt>(bits >> (52 - exp));
 
     // IEEE-754 double precision values are stored omitting an implicit 1 before
     // the decimal point; we need to reinsert this now. We may also the shifted
     // invalid bits into the result that are not a part of the mantissa (the sign
     // and exponent bits from the floatingpoint representation); mask these out.
-    // Note that missingOne should be held as uint32_t since ((1 << 31) - 1) causes
-    // int32_t overflow.
-    if (Mode == ToInt32Mode::AfterSensibleConversionAttempt) {
-        if (exp == 31) {
+    // Note that missingOne should be held as UInt since ((1 << intBitsMinusOne) - 1) causes
+    // Int overflow.
+    if constexpr (Mode == ToIntMode::Int32AfterSensibleConversionAttempt) {
+        static_assert(intBitsMinusOne == 31);
+        if (exp == intBitsMinusOne) {
             // This is an optimization for when toInt32() is called in the slow path
             // of a JIT operation. Currently, this optimization is only applicable for
             // x86 ports. This optimization offers 5% performance improvement in
@@ -148,13 +158,13 @@ ALWAYS_INLINE int32_t toInt32Internal(double number)
             // As a result, the exp of the double is always >= 31. We can take advantage
             // of this by specifically checking for (exp == 31) and give the compiler a
             // chance to constant fold the operations below.
-            const constexpr uint32_t missingOne = 1U << 31;
+            const constexpr UInt missingOne = 1U << intBitsMinusOne;
             result &= missingOne - 1;
             result += missingOne;
         }
     } else {
-        if (exp < 32) {
-            const uint32_t missingOne = 1U << exp;
+        if (exp < static_cast<int32_t>(intBits)) {
+            const UInt missingOne = 1U << exp;
             result &= missingOne - 1;
             result += missingOne;
         }
@@ -162,7 +172,7 @@ ALWAYS_INLINE int32_t toInt32Internal(double number)
 
     // If the input value was negative (we could test either 'number' or 'bits',
     // but testing 'bits' is likely faster) invert the result appropriately.
-    return static_cast<int64_t>(bits) < 0 ? -static_cast<int32_t>(result) : static_cast<int32_t>(result);
+    return static_cast<int64_t>(bits) < 0 ? -static_cast<Int>(result) : static_cast<Int>(result);
 }
 
 ALWAYS_INLINE int32_t toInt32(double number)
@@ -172,7 +182,7 @@ ALWAYS_INLINE int32_t toInt32(double number)
     __asm__ ("fjcvtzs %w0, %d1" : "=r" (result) : "w" (number) : "cc");
     return result;
 #else
-    return toInt32Internal<ToInt32Mode::Generic>(number);
+    return toIntImpl<int32_t>(number);
 #endif
 }
 
@@ -188,6 +198,17 @@ ALWAYS_INLINE constexpr UCPUStrictInt32 toUCPUStrictInt32(int32_t value)
 {
     // StrictInt32 format requires that higher bits are all zeros even if value is negative.
     return static_cast<UCPUStrictInt32>(static_cast<uint32_t>(value));
+}
+
+// This implementation follows https://tc39.es/ecma262/#sec-touint32 but use int64 instead.
+ALWAYS_INLINE int64_t toInt64(double number)
+{
+    return toIntImpl<int64_t>(number);
+}
+
+ALWAYS_INLINE uint64_t toUInt64(double number)
+{
+    return static_cast<uint64_t>(toInt64(number));
 }
 
 inline std::optional<double> safeReciprocalForDivByConst(double constant)
