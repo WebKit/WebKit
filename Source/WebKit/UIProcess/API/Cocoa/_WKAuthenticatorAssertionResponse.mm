@@ -37,9 +37,9 @@
     if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensions:WTFMove(extensions) attachment:attachment]))
         return nil;
 
-    _authenticatorData = authenticatorData;
-    _signature = signature;
-    _userHandle = userHandle;
+    _authenticatorData = [authenticatorData retain];
+    _signature = [signature retain];
+    _userHandle = [userHandle retain];
     return self;
 }
 
@@ -48,10 +48,18 @@
     if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensionOutputsCBOR:extensionOutputsCBOR attachment:attachment]))
         return nil;
 
-    _authenticatorData = authenticatorData;
-    _signature = signature;
-    _userHandle = userHandle;
+    _authenticatorData = [authenticatorData retain];
+    _signature = [signature retain];
+    _userHandle = [userHandle retain];
     return self;
+}
+
+- (void)dealloc
+{
+    [_authenticatorData release];
+    [_signature release];
+    [_userHandle release];
+    [super dealloc];
 }
 
 @end
