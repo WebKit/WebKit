@@ -139,7 +139,7 @@ static inline size_t maxCanvasArea()
     // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
     // in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
 #if PLATFORM(IOS_FAMILY)
-    return 4096 * 4096;
+    return 8192 * 8192;
 #else
     return 16384 * 16384;
 #endif
