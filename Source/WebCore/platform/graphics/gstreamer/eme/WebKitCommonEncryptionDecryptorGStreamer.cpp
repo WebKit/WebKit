@@ -432,11 +432,16 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
     // handled in here.
     switch (GST_EVENT_TYPE(event)) {
     case GST_EVENT_CUSTOM_DOWNSTREAM_OOB: {
-        ASSERT(gst_event_has_name(event, "attempt-to-decrypt"));
-        GST_DEBUG_OBJECT(self, "Handling attempt-to-decrypt");
-        gboolean result = installCDMProxyIfNotAvailable(self);
-        gst_event_unref(event);
-        return result;
+        GST_DEBUG_OBJECT(self, "Custom Downstream OOB %" GST_PTR_FORMAT, event);
+
+        if (gst_event_has_name(event, "attempt-to-decrypt")) {
+            GST_DEBUG_OBJECT(self, "Handling attempt-to-decrypt");
+            gboolean result = installCDMProxyIfNotAvailable(self);
+            gst_event_unref(event);
+            return result;
+        }
+        // Let event propagate.
+        break;
     }
     case GST_EVENT_FLUSH_START:
         GST_DEBUG_OBJECT(self, "Flush-start");
