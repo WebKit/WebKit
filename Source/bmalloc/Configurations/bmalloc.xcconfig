@@ -29,3 +29,7 @@ PRODUCT_NAME = bmalloc;
 
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 STRIP_INSTALLED_PRODUCT = NO;
+
+// Used to generate headers filelist for TAPI in JavaScriptCore. CPP_HEADERMAP_PRODUCT_HEADERS_VFS_FILE
+// is not exported to script phases, so it must be bound to a different name.
+WK_HEADERS_VFS_FILE = $(CPP_HEADERMAP_PRODUCT_HEADERS_VFS_FILE);
