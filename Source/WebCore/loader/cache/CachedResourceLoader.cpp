@@ -1681,8 +1681,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::prel
     if (resource && (!m_preloads || !m_preloads->contains(*resource.value().get()))) {
         CachedResourceHandle resourceValue = resource.value();
         // Fonts need special treatment since just creating the resource doesn't trigger a load.
-        if (type == CachedResource::Type::FontResource)
-            downcast<CachedFont>(resourceValue.get())->beginLoadIfNeeded(*this);
+        if (CachedResourceHandle cachedFont = dynamicDowncast<CachedFont>(resourceValue.get()))
+            cachedFont->beginLoadIfNeeded(*this);
         resourceValue->increasePreloadCount();
 
         if (!m_preloads)
