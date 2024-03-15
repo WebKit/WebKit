@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/_WKWebExtensionPermission.h>
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
-#include "APIData.h"
-#include "WebExtensionContext.h"
-#include "WebExtensionContextIdentifier.h"
-#include "WebExtensionTabIdentifier.h"
-#include "WebExtensionWindowIdentifier.h"
-#include <wtf/URL.h>
-
-namespace WebKit {
-
-struct WebExtensionContextParameters {
-    WebExtensionContextIdentifier identifier;
-
-    URL baseURL;
-    String uniqueIdentifier;
-
-    HashMap<String, WallTime> grantedPermissions;
-
-    Ref<API::Data> localizationJSON;
-    Ref<API::Data> manifestJSON;
-
-    double manifestVersion { 0 };
-    bool isSessionStorageAllowedInContentScripts { false };
-
-    std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    Vector<WebExtensionContext::PageIdentifierTuple> inspectorPageIdentifiers;
-    Vector<WebExtensionContext::PageIdentifierTuple> inspectorBackgroundPageIdentifiers;
-#endif
-    Vector<WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;
-    Vector<WebExtensionContext::PageIdentifierTuple> tabPageIdentifiers;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+/*! @abstract The `notifications` permission requests access to the `browser.notifications` APIs. */
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_EXTERN _WKWebExtensionPermission const _WKWebExtensionPermissionNotifications;

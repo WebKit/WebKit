@@ -3111,6 +3111,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionPermissionPrivate {
+    header "_WKWebExtensionPermissionPrivate.h"
+    export *
+  }
+
   explicit module _WKWebExtensionPrivate {
     header "_WKWebExtensionPrivate.h"
     export *

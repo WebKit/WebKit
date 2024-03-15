@@ -153,11 +153,8 @@ bool WebExtensionAPIRuntime::parseConnectOptions(NSDictionary *options, std::opt
 
 bool WebExtensionAPIRuntime::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
-    if (name == "connectNative"_s || name == "sendNativeMessage"_s) {
-        // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.
-        auto *permissions = objectForKey<NSArray>(extensionContext().manifest(), @"permissions", true, NSString.class);
-        return [permissions containsObject:@"nativeMessaging"];
-    }
+    if (name == "connectNative"_s || name == "sendNativeMessage"_s)
+        return extensionContext().hasPermission("nativeMessaging"_s);
 
     ASSERT_NOT_REACHED();
     return false;

@@ -736,6 +736,8 @@ void WebExtensionContext::permissionsDidChange(const PermissionsSet& changedPerm
     if (!isLoaded())
         return;
 
+    extensionController()->sendToAllProcesses(Messages::WebExtensionContextProxy::UpdateGrantedPermissions(m_grantedPermissions), identifier());
+
     if (changedPermissions.contains(_WKWebExtensionPermissionClipboardWrite)) {
         bool granted = hasPermission(_WKWebExtensionPermissionClipboardWrite);
 
@@ -1366,8 +1368,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     ASSERT(!permission.isEmpty());
 
     if (tab && permission == String(_WKWebExtensionPermissionTabs)) {
-        RefPtr temporaryPattern = tab->temporaryPermissionMatchPattern();
-        if (temporaryPattern && temporaryPattern->matchesURL(tab->url()))
+        if (tab->extensionHasTemporaryPermission())
             return PermissionState::GrantedExplicitly;
     }
 

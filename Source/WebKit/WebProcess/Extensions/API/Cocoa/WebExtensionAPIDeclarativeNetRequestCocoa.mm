@@ -206,13 +206,6 @@ void WebExtensionAPIDeclarativeNetRequest::getSessionRules(Ref<WebExtensionCallb
     }, extensionContext().identifier());
 }
 
-static bool extensionHasPermission(WebExtensionContextProxy& extensionContext, NSString *permission)
-{
-    // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.
-    auto *permissions = objectForKey<NSArray>(extensionContext.manifest(), @"permissions", true, NSString.class);
-    return [permissions containsObject:permission];
-}
-
 static NSDictionary *toWebAPI(const Vector<WebExtensionMatchedRuleParameters>& matchedRules)
 {
     NSMutableArray *matchedRuleArray = [NSMutableArray arrayWithCapacity:matchedRules.size()];
@@ -230,11 +223,11 @@ static NSDictionary *toWebAPI(const Vector<WebExtensionMatchedRuleParameters>& m
 
 void WebExtensionAPIDeclarativeNetRequest::getMatchedRules(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    bool hasFeedbackPermission = extensionHasPermission(extensionContext(), _WKWebExtensionPermissionDeclarativeNetRequestFeedback);
-    bool hasActiveTabPermission = extensionHasPermission(extensionContext(), _WKWebExtensionPermissionActiveTab);
+    bool hasFeedbackPermission = extensionContext().hasPermission("declarativeNetRequestFeedback"_s);
+    bool hasActiveTabPermission = extensionContext().hasPermission("activeTab"_s);
 
     if (!hasFeedbackPermission && !hasActiveTabPermission) {
-        *outExceptionString = @"Invalid call to declarativeNetRequest.getMatchedRules(). The 'declarativeNetRequestFeedback' or 'activeTab' permission is required.";
+        *outExceptionString = toErrorString(nil, nil, @"either the 'declarativeNetRequestFeedback' or 'activeTab' permission is required");
         return;
     }
 

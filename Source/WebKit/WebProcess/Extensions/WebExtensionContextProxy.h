@@ -67,6 +67,7 @@ public:
     using WeakPageSet = WeakHashSet<WebPage>;
     using TabWindowIdentifierPair = std::pair<std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
     using WeakPageTabWindowMap = WeakHashMap<WebPage, TabWindowIdentifierPair>;
+    using PermissionsMap = WebExtensionContext::PermissionsMap;
 
     WebExtensionContextIdentifier identifier() const { return m_identifier; }
     WebExtensionControllerProxy* extensionControllerProxy() const;
@@ -102,6 +103,8 @@ public:
 
     RefPtr<WebPage> backgroundPage() const;
     void setBackgroundPage(WebPage&);
+
+    bool hasPermission(const String& permission) const;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     void addInspectorPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
@@ -162,6 +165,7 @@ private:
     void dispatchMenusClickedEvent(const WebExtensionMenuItemParameters&, bool wasChecked, const WebExtensionMenuItemContextParameters&, const std::optional<WebExtensionTabParameters>&);
 
     // Permissions
+    void updateGrantedPermissions(PermissionsMap&&);
     void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
 
     // Port
@@ -215,6 +219,8 @@ private:
     RetainPtr<NSDictionary> m_manifest;
     double m_manifestVersion { 0 };
     bool m_isSessionStorageAllowedInContentScripts { false };
+    mutable PermissionsMap m_grantedPermissions;
+    mutable WallTime m_nextGrantedPermissionsExpirationDate { WallTime::nan() };
     RefPtr<WebCore::DOMWrapperWorld> m_contentScriptWorld;
     WeakFrameSet m_extensionContentFrames;
     WeakPtr<WebPage> m_backgroundPage;

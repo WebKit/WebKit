@@ -113,11 +113,12 @@ public:
 
     bool extensionHasAccess() const;
     bool extensionHasPermission() const;
+    bool extensionHasTemporaryPermission() const;
 
-    bool hasActiveUserGesture() { return m_activeUserGesture; }
+    bool hasActiveUserGesture() const { return m_activeUserGesture; }
     void setActiveUserGesture(bool activeUserGesture) { m_activeUserGesture = activeUserGesture; }
 
-    RefPtr<WebExtensionMatchPattern> temporaryPermissionMatchPattern() { return m_temporaryPermissionMatchPattern; }
+    RefPtr<WebExtensionMatchPattern> temporaryPermissionMatchPattern() const { return m_temporaryPermissionMatchPattern; }
     void setTemporaryPermissionMatchPattern(RefPtr<WebExtensionMatchPattern>&& matchPattern) { m_temporaryPermissionMatchPattern = WTFMove(matchPattern); }
 
     OptionSet<ChangedProperties> changedProperties() const { return m_changedProperties; }

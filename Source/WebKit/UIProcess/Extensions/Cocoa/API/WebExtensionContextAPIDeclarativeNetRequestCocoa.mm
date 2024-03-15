@@ -243,10 +243,8 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
     }
 
     if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback)) {
-        ASSERT(hasPermission(_WKWebExtensionPermissionActiveTab));
-
-        if (!hasPermission(_WKWebExtensionPermissionTabs, tab.get())) {
-            completionHandler(toWebExtensionError(apiName, nil, @"The 'activeTab' permission has not been granted by the user for the specified tab."));
+        if (!tab->extensionHasTemporaryPermission()) {
+            completionHandler(toWebExtensionError(apiName, nil, @"the 'activeTab' permission has not been granted by the user for the tab"));
             return;
         }
     }

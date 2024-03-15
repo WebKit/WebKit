@@ -62,6 +62,7 @@ WebExtensionContextParameters WebExtensionContext::parameters() const
         identifier(),
         baseURL(),
         uniqueIdentifier(),
+        m_grantedPermissions,
         extension().serializeLocalization(),
         extension().serializeManifest(),
         extension().manifestVersion(),
