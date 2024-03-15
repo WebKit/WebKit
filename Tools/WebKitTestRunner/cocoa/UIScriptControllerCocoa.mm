@@ -324,14 +324,19 @@ void UIScriptControllerCocoa::setSpellCheckerResults(JSValueRef results)
     [[LayoutTestSpellChecker checker] setResultsFromJSValue:results inContext:m_context->jsContext()];
 }
 
-void UIScriptControllerCocoa::requestTextExtraction(JSValueRef callback)
+void UIScriptControllerCocoa::requestTextExtraction(JSValueRef callback, TextExtractionOptions* options)
 {
+    auto extractionRect = CGRectNull;
+    if (options && options->clipToBounds)
+        extractionRect = webView().bounds;
+
+    auto includeRects = options && options->includeRects ? IncludeRects::Yes : IncludeRects::No;
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView() _requestTextExtraction:CGRectNull completionHandler:^(WKTextExtractionItem *item) {
+    [webView() _requestTextExtraction:extractionRect completionHandler:^(WKTextExtractionItem *item) {
         if (!m_context)
             return;
 
-        auto description = adopt(JSStringCreateWithCFString((__bridge CFStringRef)recursiveDescription(item)));
+        auto description = adopt(JSStringCreateWithCFString((__bridge CFStringRef)recursiveDescription(item, includeRects)));
         m_context->asyncTaskComplete(callbackID, { JSValueMakeString(m_context->jsContext(), description.get()) });
     }];
 }

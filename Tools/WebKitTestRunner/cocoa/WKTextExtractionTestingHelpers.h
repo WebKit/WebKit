@@ -35,6 +35,7 @@
 
 namespace WTR {
 
-NSString *recursiveDescription(WKTextExtractionItem *);
+enum class IncludeRects : bool { No, Yes };
+NSString *recursiveDescription(WKTextExtractionItem *, IncludeRects);
 
 }

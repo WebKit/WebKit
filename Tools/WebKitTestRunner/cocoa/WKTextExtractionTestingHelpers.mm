@@ -28,6 +28,7 @@
 
 #import "WKTextExtractionItem.h"
 #import <objc/runtime.h>
+#import <wtf/Scope.h>
 #import <wtf/text/TextStream.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
@@ -61,8 +62,21 @@ ASCIILiteral description(WKTextExtractionContainer container)
     }
 }
 
-static void buildDescriptionIgnoringChildren(TextStream& stream, WKTextExtractionItem *item)
+static String descriptionForRect(CGRect rect)
 {
+    auto roundedInt = [](CGFloat value) {
+        return static_cast<int>(std::round(value));
+    };
+    return makeString('[', roundedInt(rect.origin.x), ',', roundedInt(rect.origin.y), ',', roundedInt(rect.size.width), ',', roundedInt(rect.size.height), ']');
+}
+
+static void buildDescriptionIgnoringChildren(TextStream& stream, WKTextExtractionItem *item, IncludeRects includeRects)
+{
+    auto addRectIfNeeded = makeScopeExit([&] {
+        if (includeRects == IncludeRects::Yes)
+            stream << " rect="_s << descriptionForRect(item.rectInWebView);
+    });
+
     if (auto container = downcastItem(item, WKTextExtractionContainerItem)) {
         stream << description(container.container);
         return;
@@ -114,18 +128,18 @@ static void buildDescriptionIgnoringChildren(TextStream& stream, WKTextExtractio
     ASSERT_NOT_REACHED();
 }
 
-static void buildRecursiveDescription(TextStream& stream, WKTextExtractionItem *item)
+static void buildRecursiveDescription(TextStream& stream, WKTextExtractionItem *item, IncludeRects includeRects)
 {
     TextStream::GroupScope scope(stream);
-    buildDescriptionIgnoringChildren(stream, item);
+    buildDescriptionIgnoringChildren(stream, item, includeRects);
     for (WKTextExtractionItem *child in item.children)
-        buildRecursiveDescription(stream, child);
+        buildRecursiveDescription(stream, child, includeRects);
 }
 
-NSString *recursiveDescription(WKTextExtractionItem *item)
+NSString *recursiveDescription(WKTextExtractionItem *item, IncludeRects includeRects)
 {
     TextStream stream { TextStream::LineMode::MultipleLine };
-    buildRecursiveDescription(stream, item);
+    buildRecursiveDescription(stream, item, includeRects);
     return stream.release();
 }
 

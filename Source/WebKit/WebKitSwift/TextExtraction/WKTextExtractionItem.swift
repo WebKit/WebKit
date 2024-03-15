@@ -25,11 +25,11 @@ import Foundation
 
 @available(iOS 17.0, macOS 12.0, *)
 @objc(WKTextExtractionItem) public class WKTextExtractionItem: NSObject {
-    @objc public let rectInRootView: CGRect
+    @objc public let rectInWebView: CGRect
     @objc public let children: [WKTextExtractionItem]
 
-    public init(with rectInRootView: CGRect, children: [WKTextExtractionItem]) {
-        self.rectInRootView = rectInRootView
+    public init(with rectInWebView: CGRect, children: [WKTextExtractionItem]) {
+        self.rectInWebView = rectInWebView
         self.children = children
     }
 }
@@ -51,9 +51,9 @@ import Foundation
 @objc(WKTextExtractionContainerItem) public class WKTextExtractionContainerItem: WKTextExtractionItem {
     @objc public let container: WKTextExtractionContainer
 
-    @objc public init(container: WKTextExtractionContainer, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
+    @objc public init(container: WKTextExtractionContainer, rectInWebView: CGRect, children: [WKTextExtractionItem]) {
         self.container = container
-        super.init(with: rectInRootView, children: children)
+        super.init(with: rectInWebView, children: children)
     }
 }
 
@@ -90,12 +90,12 @@ import Foundation
     @objc public let links: [WKTextExtractionLink]
     @objc public let editable: WKTextExtractionEditable?
 
-    @objc public init(content: String, selectedRange: NSRange, links: [WKTextExtractionLink], editable: WKTextExtractionEditable?, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
+    @objc public init(content: String, selectedRange: NSRange, links: [WKTextExtractionLink], editable: WKTextExtractionEditable?, rectInWebView: CGRect, children: [WKTextExtractionItem]) {
         self.content = content
         self.selectedRange = selectedRange
         self.links = links
         self.editable = editable
-        super.init(with: rectInRootView, children: children)
+        super.init(with: rectInWebView, children: children)
     }
 }
 
@@ -103,9 +103,9 @@ import Foundation
 @objc(WKTextExtractionScrollableItem) public class WKTextExtractionScrollableItem: WKTextExtractionItem {
     @objc public let contentSize: CGSize
 
-    @objc public init(contentSize: CGSize, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
+    @objc public init(contentSize: CGSize, rectInWebView: CGRect, children: [WKTextExtractionItem]) {
         self.contentSize = contentSize
-        super.init(with: rectInRootView, children: children)
+        super.init(with: rectInWebView, children: children)
     }
 }
 
@@ -114,10 +114,10 @@ import Foundation
     @objc public let name: String
     @objc public let altText: String
 
-    @objc public init(name: String, altText: String, rectInRootView: CGRect, children: [WKTextExtractionItem]) {
+    @objc public init(name: String, altText: String, rectInWebView: CGRect, children: [WKTextExtractionItem]) {
         self.name = name
         self.altText = altText
-        super.init(with: rectInRootView, children: children)
+        super.init(with: rectInWebView, children: children)
     }
 }
 

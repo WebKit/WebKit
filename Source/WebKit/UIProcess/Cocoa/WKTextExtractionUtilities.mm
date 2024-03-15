@@ -66,7 +66,7 @@ inline static WKTextExtractionContainer containerType(TextExtraction::ContainerT
     }
 }
 
-inline static RetainPtr<WKTextExtractionTextItem> createWKTextItem(const TextExtraction::TextItemData& data, CGRect rectInRootView, NSArray<WKTextExtractionItem *> *children)
+inline static RetainPtr<WKTextExtractionTextItem> createWKTextItem(const TextExtraction::TextItemData& data, CGRect rectInWebView, NSArray<WKTextExtractionItem *> *children)
 {
     RetainPtr<WKTextExtractionEditable> editable;
     if (data.editable) {
@@ -95,33 +95,34 @@ inline static RetainPtr<WKTextExtractionTextItem> createWKTextItem(const TextExt
         selectedRange:selectedRange
         links:links.get()
         editable:editable.get()
-        rectInRootView:rectInRootView
+        rectInWebView:rectInWebView
         children:children]);
 }
 
-inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextExtraction::Item& item, NSArray<WKTextExtractionItem *> *children)
+inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextExtraction::Item& item, const RootViewToWebViewConverter& converter, NSArray<WKTextExtractionItem *> *children)
 {
+    auto rectInWebView = converter(item.rectInRootView);
     return WTF::switchOn(item.data,
         [&](const TextExtraction::TextItemData& data) -> RetainPtr<WKTextExtractionItem> {
-            return createWKTextItem(data, item.rectInRootView, children);
+            return createWKTextItem(data, rectInWebView, children);
         }, [&](const TextExtraction::ScrollableItemData& data) -> RetainPtr<WKTextExtractionItem> {
-            return adoptNS([allocWKTextExtractionScrollableItemInstance() initWithContentSize:data.contentSize rectInRootView:item.rectInRootView children:children]);
+            return adoptNS([allocWKTextExtractionScrollableItemInstance() initWithContentSize:data.contentSize rectInWebView:rectInWebView children:children]);
         }, [&](const TextExtraction::ImageItemData& data) -> RetainPtr<WKTextExtractionItem> {
-            return adoptNS([allocWKTextExtractionImageItemInstance() initWithName:data.name altText:data.altText rectInRootView:item.rectInRootView children:children]);
+            return adoptNS([allocWKTextExtractionImageItemInstance() initWithName:data.name altText:data.altText rectInWebView:rectInWebView children:children]);
         }, [&](TextExtraction::ContainerType type) -> RetainPtr<WKTextExtractionItem> {
-            return adoptNS([allocWKTextExtractionContainerItemInstance() initWithContainer:containerType(type) rectInRootView:item.rectInRootView children:children]);
+            return adoptNS([allocWKTextExtractionContainerItemInstance() initWithContainer:containerType(type) rectInWebView:rectInWebView children:children]);
         }
     );
 }
 
-static RetainPtr<WKTextExtractionItem> createItemRecursive(const TextExtraction::Item& item)
+static RetainPtr<WKTextExtractionItem> createItemRecursive(const TextExtraction::Item& item, const RootViewToWebViewConverter& converter)
 {
-    return createItemWithChildren(item, createNSArray(item.children, [](auto& child) {
-        return createItemRecursive(child);
+    return createItemWithChildren(item, converter, createNSArray(item.children, [&](auto& child) {
+        return createItemRecursive(child, converter);
     }).get());
 }
 
-RetainPtr<WKTextExtractionItem> createItem(const TextExtraction::Item& item)
+RetainPtr<WKTextExtractionItem> createItem(const TextExtraction::Item& item, RootViewToWebViewConverter&& converter)
 {
     if (!std::holds_alternative<TextExtraction::ContainerType>(item.data)) {
         ASSERT_NOT_REACHED();
@@ -133,7 +134,7 @@ RetainPtr<WKTextExtractionItem> createItem(const TextExtraction::Item& item)
         return nil;
     }
 
-    return createItemRecursive(item);
+    return createItemRecursive(item, WTFMove(converter));
 }
 
 } // namespace WebKit

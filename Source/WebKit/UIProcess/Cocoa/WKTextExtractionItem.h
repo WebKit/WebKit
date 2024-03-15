@@ -42,11 +42,11 @@ typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
 
 @interface WKTextExtractionItem : NSObject
 @property (nonatomic, readonly) NSArray<WKTextExtractionItem *> *children;
-@property (nonatomic, readonly) CGRect rectInRootView;
+@property (nonatomic, readonly) CGRect rectInWebView;
 @end
 
 @interface WKTextExtractionContainerItem : WKTextExtractionItem
-- (instancetype)initWithContainer:(WKTextExtractionContainer)container rectInRootView:(CGRect)rectInRootView children:(NSArray<WKTextExtractionItem *> *)children;
+- (instancetype)initWithContainer:(WKTextExtractionContainer)container rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children;
 @property (nonatomic, readonly) WKTextExtractionContainer container;
 @end
 
@@ -65,7 +65,7 @@ typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
 @end
 
 @interface WKTextExtractionTextItem : WKTextExtractionItem
-- (instancetype)initWithContent:(NSString *)content selectedRange:(NSRange)selectedRange links:(NSArray<WKTextExtractionLink *> *)links editable:(WKTextExtractionEditable *)editable rectInRootView:(CGRect)rectInRootView children:(NSArray<WKTextExtractionItem *> *)children;
+- (instancetype)initWithContent:(NSString *)content selectedRange:(NSRange)selectedRange links:(NSArray<WKTextExtractionLink *> *)links editable:(WKTextExtractionEditable *)editable rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children;
 @property (nonatomic, readonly) NSString *content;
 @property (nonatomic, readonly) NSRange selectedRange;
 @property (nonatomic, readonly) NSArray<WKTextExtractionLink *> *links;
@@ -73,12 +73,12 @@ typedef NS_ENUM(NSInteger, WKTextExtractionContainer) {
 @end
 
 @interface WKTextExtractionScrollableItem : WKTextExtractionItem
-- (instancetype)initWithContentSize:(CGSize)contentSize rectInRootView:(CGRect)rectInRootView children:(NSArray<WKTextExtractionItem *> *)children;
+- (instancetype)initWithContentSize:(CGSize)contentSize rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children;
 @property (nonatomic, readonly) CGSize contentSize;
 @end
 
 @interface WKTextExtractionImageItem : WKTextExtractionItem
-- (instancetype)initWithName:(NSString *)name altText:(NSString *)altText rectInRootView:(CGRect)rectInRootView children:(NSArray<WKTextExtractionItem *> *)children;
+- (instancetype)initWithName:(NSString *)name altText:(NSString *)altText rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children;
 @property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) NSString *altText;
 @end

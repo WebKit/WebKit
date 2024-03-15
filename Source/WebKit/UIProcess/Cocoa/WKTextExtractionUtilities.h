@@ -25,11 +25,14 @@
 
 #pragma once
 
+#import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS WKTextExtractionItem;
 
 namespace WebCore {
+class FloatRect;
+
 namespace TextExtraction {
 struct Item;
 }
@@ -38,6 +41,8 @@ struct Item;
 namespace WebKit {
 
 void prepareTextExtractionSupportIfNeeded();
-RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&);
+
+using RootViewToWebViewConverter = Function<WebCore::FloatRect(const WebCore::FloatRect&)>;
+RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&, RootViewToWebViewConverter&&);
 
 } // namespace WebKit

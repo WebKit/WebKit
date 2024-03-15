@@ -2141,14 +2141,17 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.getSelectedTextInChromeInputField(resolve));
     }
 
-    static requestTextExtraction()
+    static requestTextExtraction(options)
     {
         if (!this.isWebKit2())
             return Promise.resolve();
 
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
-                uiController.requestTextExtraction(result => uiController.uiScriptComplete(result));
+                uiController.requestTextExtraction(
+                    result => uiController.uiScriptComplete(result),
+                    ${JSON.stringify(options)}
+                );
             })()`, resolve);
         });
     }

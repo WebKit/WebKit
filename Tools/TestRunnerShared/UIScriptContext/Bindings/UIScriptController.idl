@@ -42,6 +42,11 @@ dictionary ScrollToOptions {
     boolean unconstrained = false;
 };
 
+dictionary TextExtractionOptions {
+    boolean clipToBounds = false;
+    boolean includeRects = false;
+};
+
 interface UIScriptController {
 
     undefined doAsyncTask(object callback); // Used to test the harness.
@@ -411,6 +416,6 @@ interface UIScriptController {
     undefined setInlinePrediction(DOMString completion);
     undefined acceptInlinePrediction();
 
-    undefined requestTextExtraction(object callback);
+    undefined requestTextExtraction(object callback, TextExtractionOptions options);
     undefined requestRenderedTextForSelector(DOMString selector, object callback);
 };

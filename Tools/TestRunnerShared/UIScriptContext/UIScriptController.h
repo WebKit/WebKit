@@ -56,6 +56,13 @@ struct ScrollToOptions {
 
 ScrollToOptions* toScrollToOptions(JSContextRef, JSValueRef);
 
+struct TextExtractionOptions {
+    bool clipToBounds { false };
+    bool includeRects { false };
+};
+
+TextExtractionOptions* toTextExtractionOptions(JSContextRef, JSValueRef);
+
 class UIScriptController : public JSWrappable {
 public:
     static Ref<UIScriptController> create(UIScriptContext&);
@@ -407,7 +414,7 @@ public:
     virtual void installFakeMachineReadableCodeResultsForImageAnalysis() { }
 
     // Text Extraction
-    virtual void requestTextExtraction(JSValueRef) { notImplemented(); }
+    virtual void requestTextExtraction(JSValueRef, TextExtractionOptions*) { notImplemented(); }
     virtual void requestRenderedTextForSelector(JSStringRef, JSValueRef) { notImplemented(); }
 
 protected:
