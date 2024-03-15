@@ -753,7 +753,7 @@ void HTMLInputElement::collectPresentationalHintsForAttribute(const QualifiedNam
     }
 }
 
-inline void HTMLInputElement::initializeInputType()
+void HTMLInputElement::parserInitializeInputType()
 {
     ASSERT(m_parsingInProgress);
     ASSERT(!m_inputType);
@@ -785,9 +785,13 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:
+        if (attributeModificationReason == AttributeModificationReason::Parser)
+            return; // parserSetAttributes have taken care of this
         updateType(newValue);
         break;
     case AttributeNames::valueAttr:
+        if (attributeModificationReason == AttributeModificationReason::Parser)
+            return; // parserSetAttributes have taken care of this
         // Changes to the value attribute may change whether or not this element has a default value.
         // If this field is autocomplete=off that might affect the return value of needsSuspensionCallback.
         if (m_autocomplete == Off) {
@@ -910,14 +914,6 @@ void HTMLInputElement::readOnlyStateChanged()
 bool HTMLInputElement::supportsReadOnly() const
 {
     return m_inputType->supportsReadOnly();
-}
-
-void HTMLInputElement::parserDidSetAttributes()
-{
-    DelayedUpdateValidityScope delayedUpdateValidityScope(*this);
-
-    ASSERT(m_parsingInProgress);
-    initializeInputType();
 }
 
 void HTMLInputElement::finishParsingChildren()
