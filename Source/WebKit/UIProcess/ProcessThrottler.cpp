@@ -123,6 +123,7 @@ ProcessThrottler::ProcessThrottler(AuxiliaryProcessProxy& process, bool shouldTa
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
     , m_dropNearSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
     , m_prepareToDropLastAssertionTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired)
+    , m_pageAllowedToRunInTheBackgroundCounter([this](RefCounterEvent) { numberOfPagesAllowedToRunInTheBackgroundChanged(); })
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -361,7 +362,10 @@ void ProcessThrottler::dropNearSuspendedAssertionTimerFired()
     PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Removing near-suspended process assertion");
     RELEASE_ASSERT(isHoldingNearSuspendedAssertion());
     ASSERT(m_shouldDropNearSuspendedAssertionAfterDelay);
-    clearAssertion();
+    if (m_pageAllowedToRunInTheBackgroundCounter.value())
+        PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Not releasing near-suspended assertion because a page is allowed to run in the background");
+    else
+        clearAssertion();
 }
 
 void ProcessThrottler::processReadyToSuspend()
@@ -516,6 +520,25 @@ void ProcessThrottler::clearAssertion()
 Ref<AuxiliaryProcessProxy> ProcessThrottler::protectedProcess() const
 {
     return m_process.get();
+}
+
+PageAllowedToRunInTheBackgroundCounter::Token ProcessThrottler::pageAllowedToRunInTheBackgroundToken()
+{
+    return m_pageAllowedToRunInTheBackgroundCounter.count();
+}
+
+void ProcessThrottler::numberOfPagesAllowedToRunInTheBackgroundChanged()
+{
+    if (m_pageAllowedToRunInTheBackgroundCounter.value())
+        return;
+
+    if (m_dropNearSuspendedAssertionTimer.isActive())
+        return;
+
+    if (isHoldingNearSuspendedAssertion()) {
+        PROCESSTHROTTLER_RELEASE_LOG("numberOfPagesAllowedToRunInTheBackgroundChanged: Releasing near-suspended assertion");
+        clearAssertion();
+    }
 }
 
 bool ProcessThrottler::isSuspended() const

@@ -6225,7 +6225,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         if (auto* drawingAreaProxy = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea))
             internals().firstLayerTreeTransactionIdAfterDidCommitLoad = drawingAreaProxy->nextLayerTreeTransactionID();
 #endif
-        internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges = nullptr;
+        internals().pageAllowedToRunInTheBackgroundToken = nullptr;
         internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
     }
 
@@ -6486,7 +6486,7 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
 
     if (isMainFrame) {
         internals().pageLoadState.didFailLoad(transaction);
-        internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges = nullptr;
+        internals().pageAllowedToRunInTheBackgroundToken = nullptr;
         internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
     }
 
@@ -6668,12 +6668,12 @@ void WebPageProxy::didReceiveTitleForFrame(FrameIdentifier frameID, const String
 
     if (frame->isMainFrame()) {
         internals().pageLoadState.setTitle(transaction, title);
-        if (!frame->title().isNull() && frame->title() != title) {
-            WEBPAGEPROXY_RELEASE_LOG(ViewState, "didReceiveTitleForFrame: This page updates its title and is now allowed to run in the background");
+        if (!isViewVisible() && !frame->title().isNull() && frame->title() != title) {
+            WEBPAGEPROXY_RELEASE_LOG(ViewState, "didReceiveTitleForFrame: This page changes its title in the background and is allowed to run in the background");
             // This page updates its title in the background and is thus able to communicate with
             // the user while in the background. Allow it to run in the background.
-            if (!internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges)
-                internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges = process().throttler().backgroundActivity("Page updates its title"_s).moveToUniquePtr();
+            if (!internals().pageAllowedToRunInTheBackgroundToken)
+                internals().pageAllowedToRunInTheBackgroundToken = process().throttler().pageAllowedToRunInTheBackgroundToken();
         }
     }
 
@@ -9794,7 +9794,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     internals().pageIsUserObservableCount = nullptr;
     internals().visiblePageToken = nullptr;
-    internals().pageAllowedToRunInTheBackgroundActivityDueToTitleChanges = nullptr;
+    internals().pageAllowedToRunInTheBackgroundToken = nullptr;
     internals().pageAllowedToRunInTheBackgroundActivityDueToNotifications = nullptr;
 
     m_hasRunningProcess = false;
