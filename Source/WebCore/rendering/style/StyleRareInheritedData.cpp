@@ -137,7 +137,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hasAutoAccentColor(true)
     , effectiveInert(false)
     , isInSubtreeWithBlendMode(false)
-    , effectiveContentVisibility(static_cast<unsigned>(ContentVisibility::Visible))
+    , usedContentVisibility(static_cast<unsigned>(ContentVisibility::Visible))
     , usedTouchActions(RenderStyle::initialTouchActions())
     , strokeWidth(RenderStyle::initialStrokeWidth())
     , strokeColor(RenderStyle::initialStrokeColor())
@@ -228,7 +228,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , hasAutoAccentColor(o.hasAutoAccentColor)
     , effectiveInert(o.effectiveInert)
     , isInSubtreeWithBlendMode(o.isInSubtreeWithBlendMode)
-    , effectiveContentVisibility(o.effectiveContentVisibility)
+    , usedContentVisibility(o.usedContentVisibility)
     , usedTouchActions(o.usedTouchActions)
     , eventListenerRegionTypes(o.eventListenerRegionTypes)
     , strokeWidth(o.strokeWidth)
@@ -352,7 +352,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && usedTouchActions == o.usedTouchActions
         && eventListenerRegionTypes == o.eventListenerRegionTypes
         && effectiveInert == o.effectiveInert
-        && effectiveContentVisibility == o.effectiveContentVisibility
+        && usedContentVisibility == o.usedContentVisibility
         && strokeWidth == o.strokeWidth
         && strokeColor == o.strokeColor
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor

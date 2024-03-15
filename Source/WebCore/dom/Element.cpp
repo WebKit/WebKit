@@ -773,7 +773,7 @@ bool Element::hasFocusableStyle() const
     auto isFocusableStyle = [](const RenderStyle* style) {
         return style && style->display() != DisplayType::None && style->display() != DisplayType::Contents
             && style->visibility() == Visibility::Visible && !style->effectiveInert()
-            && (style->effectiveContentVisibility() != ContentVisibility::Hidden || style->contentVisibility() != ContentVisibility::Visible);
+            && (style->usedContentVisibility() != ContentVisibility::Hidden || style->contentVisibility() != ContentVisibility::Visible);
     };
 
     if (renderStyle())
@@ -5553,11 +5553,11 @@ bool Element::checkVisibility(const CheckVisibilityOptions& options)
     RefPtr parent = parentElementInComposedTree();
     auto isSkippedContentWithReason = [&](ContentVisibility reason) -> bool {
         ASSERT(!parent || parent->computedStyle());
-        if (style->effectiveContentVisibility() != reason)
+        if (style->usedContentVisibility() != reason)
             return false;
 
-        // effectiveContentVisibility() includes the skipped content root, so we query the parent to make sure roots are not considered as skipped.
-        if (!parent || parent->computedStyle()->effectiveContentVisibility() != reason)
+        // usedContentVisibility() includes the skipped content root, so we query the parent to make sure roots are not considered as skipped.
+        if (!parent || parent->computedStyle()->usedContentVisibility() != reason)
             return false;
 
         return true;

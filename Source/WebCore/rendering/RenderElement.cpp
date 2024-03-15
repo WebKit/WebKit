@@ -463,7 +463,7 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
             }
         }
 
-        if (diff > StyleDifference::RepaintLayer && oldStyle.effectiveContentVisibility() != newStyle.effectiveContentVisibility() && isOutOfFlowPositioned()) {
+        if (diff > StyleDifference::RepaintLayer && oldStyle.usedContentVisibility() != newStyle.usedContentVisibility() && isOutOfFlowPositioned()) {
             if (CheckedPtr enclosingLayer = this->enclosingLayer()) {
                 bool rendererWillBeHidden = isSkippedContent();
                 if (rendererWillBeHidden && enclosingLayer->hasVisibleContent() && (this == &enclosingLayer->renderer() || enclosingLayer->renderer().style().visibility() != Visibility::Visible))

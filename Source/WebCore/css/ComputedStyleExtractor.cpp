@@ -2234,7 +2234,7 @@ static Ref<CSSValue> contentToCSSValue(const RenderStyle& style)
         }
     }
     if (list.isEmpty())
-        list.append(CSSPrimitiveValue::create(style.hasEffectiveContentNone() ? CSSValueNone : CSSValueNormal));
+        list.append(CSSPrimitiveValue::create(style.hasUsedContentNone() ? CSSValueNone : CSSValueNormal));
     else if (auto& altText = style.contentAltText(); !altText.isNull())
         return CSSValuePair::createSlashSeparated(CSSValueList::createSpaceSeparated(WTFMove(list)), CSSPrimitiveValue::create(altText));
     return CSSValueList::createSpaceSeparated(WTFMove(list));

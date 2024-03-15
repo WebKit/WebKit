@@ -756,7 +756,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 #endif
     }
     if (isSkippedContentRoot(style, m_element) && m_parentStyle.contentVisibility() != ContentVisibility::Hidden)
-        style.setEffectiveContentVisibility(style.contentVisibility());
+        style.setUsedContentVisibility(style.contentVisibility());
 
     if (style.contentVisibility() == ContentVisibility::Auto) {
         style.containIntrinsicWidthAddAuto();

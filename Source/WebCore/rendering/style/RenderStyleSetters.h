@@ -279,7 +279,7 @@ inline void RenderStyle::setScrollbarColor(const std::optional<ScrollbarColor>& 
 inline void RenderStyle::setScrollbarThumbColor(const StyleColor& color) { m_rareInheritedData.access().scrollbarColor->thumbColor = color; }
 inline void RenderStyle::setScrollbarTrackColor(const StyleColor& color) { m_rareInheritedData.access().scrollbarColor->trackColor = color; }
 inline void RenderStyle::setShapeMargin(Length&& margin) { SET_NESTED(m_nonInheritedData, rareData, shapeMargin, WTFMove(margin)); }
-inline void RenderStyle::setEffectiveContentVisibility(ContentVisibility effectiveContentVisibility) { SET(m_rareInheritedData, effectiveContentVisibility, static_cast<unsigned>(effectiveContentVisibility)); }
+inline void RenderStyle::setUsedContentVisibility(ContentVisibility usedContentVisibility) { SET(m_rareInheritedData, usedContentVisibility, static_cast<unsigned>(usedContentVisibility)); }
 inline void RenderStyle::setSpeakAs(OptionSet<SpeakAs> style) { SET(m_rareInheritedData, speakAs, style.toRaw()); }
 inline void RenderStyle::setSpecifiedZIndex(int value) { SET_NESTED_PAIR(m_nonInheritedData, boxData, m_hasAutoSpecifiedZIndex, false, m_specifiedZIndex, value); }
 inline void RenderStyle::setStrokeColor(const StyleColor& color) { SET(m_rareInheritedData, strokeColor, color); }

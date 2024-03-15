@@ -5531,7 +5531,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     // likely be folded along with the rest.
     if (oldStyle) {
         bool visibilityChanged = oldStyle->visibility() != renderer().style().visibility();
-        if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || oldStyle->effectiveContentVisibility() != renderer().style().effectiveContentVisibility() || visibilityChanged) {
+        if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || oldStyle->usedContentVisibility() != renderer().style().usedContentVisibility() || visibilityChanged) {
             dirtyStackingContextZOrderLists();
             if (isStackingContext())
                 dirtyZOrderLists();

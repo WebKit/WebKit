@@ -722,10 +722,10 @@ public:
 
     inline ContentVisibility contentVisibility() const;
 
-    // effectiveContentVisibility will return ContentVisibility::Hidden in a content-visibility: hidden subtree (overriding
+    // usedContentVisibility will return ContentVisibility::Hidden in a content-visibility: hidden subtree (overriding
     // content-visibility: auto at all times), ContentVisibility::Auto in a content-visibility: auto subtree (when the
     // content is not user relevant and thus skipped), and ContentVisibility::Visible otherwise.
-    inline ContentVisibility effectiveContentVisibility() const;
+    inline ContentVisibility usedContentVisibility() const;
     // Returns true for skipped content roots and skipped content itself.
     inline bool hasSkippedContent() const;
 
@@ -1321,7 +1321,7 @@ public:
 
     inline void setContentVisibility(ContentVisibility);
 
-    inline void setEffectiveContentVisibility(ContentVisibility);
+    inline void setUsedContentVisibility(ContentVisibility);
 
     inline void setListStyleType(ListStyleType);
     void setListStyleImage(RefPtr<StyleImage>&&);
@@ -1705,7 +1705,7 @@ public:
     inline PathOperation* clipPath() const;
     static PathOperation* initialClipPath() { return nullptr; }
 
-    inline bool hasEffectiveContentNone() const;
+    inline bool hasUsedContentNone() const;
     inline bool hasContent() const;
     inline const ContentData* contentData() const;
     void setContent(std::unique_ptr<ContentData>, bool add);

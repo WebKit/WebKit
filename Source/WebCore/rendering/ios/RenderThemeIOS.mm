@@ -216,7 +216,7 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
 
 #if ENABLE(DATALIST_ELEMENT)
     if (style.usedAppearance() == StyleAppearance::ListButton)
-        return style.hasContent() || style.hasEffectiveContentNone();
+        return style.hasContent() || style.hasUsedContentNone();
 #endif
 
     return RenderTheme::isControlStyled(style, userAgentStyle);

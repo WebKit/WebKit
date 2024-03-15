@@ -124,7 +124,7 @@ RenderElement* Styleable::renderer() const
     case PseudoId::Marker:
         if (auto* renderListItem = dynamicDowncast<RenderListItem>(element.renderer())) {
             auto* markerRenderer = renderListItem->markerRenderer();
-            if (markerRenderer && !markerRenderer->style().hasEffectiveContentNone())
+            if (markerRenderer && !markerRenderer->style().hasUsedContentNone())
                 return markerRenderer;
         }
         break;
