@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2023-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import sys
 
 from .command import Command
@@ -33,6 +34,7 @@ class Clone(Command):
     name = 'clone'
     help = 'Clone the radar a bugzilla or commit refers to'
     UMBRELLA = b'\xe2\x98\x82\xef\xb8\x8f'.decode('utf-8')
+    COMMITTED_RE = re.compile(r'Committed \d+\.?\d+@\S+( \([a-f0-9A-F]+\))? to (?P<branch>\S*) referencing this bug')
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -66,10 +68,10 @@ class Clone(Command):
             action='store_true',
         )
         parser.add_argument(
-            '--merge-back',
-            dest='merge_back', default=False,
+            '--merge-back', '--no-merge-back',
+            dest='merge_back', default=None,
             help='Annotate the cloned issue for merge-back',
-            action='store_true',
+            action=arguments.NoAction,
         )
 
     @classmethod
@@ -100,10 +102,10 @@ class Clone(Command):
         ), None)
 
     @classmethod
-    def main(cls, args, repository, merge_back=False, **kwargs):
+    def main(cls, args, repository, merge_back=None, **kwargs):
         rdar = None
-        merge_back = merge_back or args.merge_back
-        prefix = '[merge-back]' if merge_back else ''
+        if args.merge_back is not None:
+            merge_back = args.merge_back
 
         for tracker in Tracker._trackers:
             if isinstance(tracker, radar.Tracker):
@@ -115,12 +117,6 @@ class Clone(Command):
                 sys.stderr.write('This repository does not declare radar as an issue tracker\n')
             else:
                 sys.stderr.write('Radar is not available on this machine\n')
-            return 255
-
-        if not args.reason and args.milestone:
-            args.reason = "Cloning for inclusion in '{}'".format(args.milestone)
-        if not args.reason:
-            sys.stderr.write('No reason for cloning issue has been provided\n')
             return 255
 
         # First, check if we were provided a bug URL
@@ -158,6 +154,40 @@ class Clone(Command):
                     break
         if not isinstance(issue.tracker, radar.Tracker):
             sys.stderr.write("'{}' is not a radar, therefore cannot be cloned\n".format(issue))
+            return 255
+
+        # Attempt to detect if this invocation is likely for merge-back
+        if merge_back is None:
+            on_default_branch = False
+            on_release_branch = False
+
+            branch = None
+            for comment in issue.comments:
+                mtch = cls.COMMITTED_RE.match(comment.content)
+                if mtch:
+                    branch = mtch.group('branch')
+                    if branch == repository.default_branch:
+                        on_default_branch = True
+                        break
+                    else:
+                        on_release_branch = True
+
+            if on_default_branch:
+                merge_back = False
+            elif on_release_branch and (args.prompt or Terminal.choose(
+                prompt='Change is on {} but not {}, would you like to create a merge-back clone?'.format(branch, repository.default_branch),
+                default='Yes',
+            ) == 'Yes'):
+                merge_back = True
+
+        prefix = '[merge-back]' if merge_back else ''
+
+        if not args.reason and merge_back:
+            args.reason = "Cloning for merge-back to {}".format(repository.default_branch)
+        if not args.reason and args.milestone:
+            args.reason = "Cloning for inclusion in '{}'".format(args.milestone)
+        if not args.reason:
+            sys.stderr.write('No reason for cloning issue has been provided\n')
             return 255
 
         milestone = None

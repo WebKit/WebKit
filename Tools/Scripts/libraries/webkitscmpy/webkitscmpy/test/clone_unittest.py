@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2023-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -236,6 +236,54 @@ class TestClone(testing.PathTestCase):
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
             captured.stdout.getvalue(),
+            "Created '[merge-back] rdar://5 Example issue 1'\n"
+            'Moved clone to Internal Tools - October and into Analyze: Prepare\n',
+        )
+
+    def test_infer_merge_back(self):
+        issues = [issue.copy() for issue in bmocks.ISSUES]
+        issues[0]['category'] = 'Important'
+
+        issues.append(dict(
+            title=u'{} merge-back October release'.format(program.Clone.UMBRELLA),
+            timestamp=int(time.time()),
+            opened=True,
+            creator=bmocks.USERS['Tim Contributor'],
+            assignee=bmocks.USERS['Tim Contributor'],
+            description='Umbrella bug tracking October merge-back',
+            project='WebKit',
+            component='Text',
+            version='Other',
+            milestone='October',
+        ))
+
+        with mocks.local.Git(self.path), mocks.local.Svn(), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(
+            issues=issues,
+            projects=bmocks.PROJECTS,
+            milestones=bmocks.MILESTONES,
+        ), MockTerminal.input('y', '1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+            tracker = radar.Tracker()
+            tracker.issue(1).add_comment('Committed 1234.10@some-branch (12345678) to some-branch referencing this bug')
+
+            self.assertEqual(0, program.main(
+                args=('clone', 'rdar://1', '--milestone', 'October'),
+                path=self.path,
+            ))
+            raw_issue = tracker.client.radar_for_id(5)
+
+            self.assertEqual(raw_issue.milestone.name, 'Internal Tools - October')
+            self.assertEqual(raw_issue.category.name, 'Important')
+            self.assertIsNone(raw_issue.event)
+            self.assertIsNone(raw_issue.tentpole)
+
+            parents = tracker.issue(5).related.get('subtask-of')
+            self.assertEqual(1, len(parents))
+            self.assertEqual(parents[0].title, u'{} merge-back October release'.format(program.Clone.UMBRELLA))
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Change is on some-branch but not main, would you like to create a merge-back clone? ([Yes]/No): \n"
             "Created '[merge-back] rdar://5 Example issue 1'\n"
             'Moved clone to Internal Tools - October and into Analyze: Prepare\n',
         )
