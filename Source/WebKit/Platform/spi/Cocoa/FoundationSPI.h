@@ -29,10 +29,26 @@
 
 #include <Foundation/NSPrivateDecls.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include <Foundation/NSDistributedNotificationCenter.h>
+#endif
+
 #else
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSBundle ()
-- (CFBundleRef)_cfBundle;
+- (null_unspecified CFBundleRef)_cfBundle;
 @end
+
+#if PLATFORM(IOS_FAMILY)
+@interface NSDistributedNotificationCenter : NSNotificationCenter
++ (NSDistributedNotificationCenter *)defaultCenter;
+- (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable NSNotificationName)aName object:(nullable NSString *)anObject;
+- (void)postNotificationName:(NSNotificationName)aName object:(nullable NSString *)anObject userInfo:(nullable NSDictionary *)aUserInfo;
+@end
+#endif
+
+NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)

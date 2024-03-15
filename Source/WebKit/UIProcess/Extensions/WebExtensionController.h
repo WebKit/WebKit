@@ -49,6 +49,7 @@
 OBJC_CLASS NSError;
 OBJC_CLASS NSMenu;
 OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
+OBJC_CLASS _WKWebExtensionControllerHelper;
 OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
 
 #ifdef __OBJC__
@@ -174,6 +175,8 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    void initializePlatform();
+
     void addProcessPool(WebProcessPool&);
     void removeProcessPool(WebProcessPool&);
 
@@ -226,6 +229,7 @@ private:
 
     Ref<WebExtensionControllerConfiguration> m_configuration;
 
+    RetainPtr<_WKWebExtensionControllerHelper> m_webExtensionControllerHelper;
     WebExtensionContextSet m_extensionContexts;
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;
     WebPageProxySet m_pages;

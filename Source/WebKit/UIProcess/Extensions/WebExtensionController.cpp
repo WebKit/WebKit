@@ -56,6 +56,8 @@ WebExtensionController::WebExtensionController(Ref<WebExtensionControllerConfigu
     ASSERT(!get(identifier()));
     webExtensionControllers().add(identifier(), *this);
 
+    initializePlatform();
+
     // A freshly created extension controller will be used to determine if the startup event
     // should be fired for any loaded extensions during a brief time window. Start a timer
     // when the first extension is about to be loaded.

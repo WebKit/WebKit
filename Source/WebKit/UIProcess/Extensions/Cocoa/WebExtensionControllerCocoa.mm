@@ -58,9 +58,61 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import "FoundationSPI.h"
+#endif
+
 static constexpr Seconds purgeMatchedRulesInterval = 5_min;
 
+static NSString * const WebExtensionUniqueIdentifierKey = @"uniqueIdentifier";
+static NSString * const WebExtensionLocalStorageWasDeletedNotification = @"WebExtensionLocalStorageWasDeleted";
+
+using namespace WebKit;
+
+@interface _WKWebExtensionControllerHelper : NSObject {
+    WeakPtr<WebKit::WebExtensionController> _webExtensionController;
+}
+
+- (instancetype)initWithWebExtensionController:(WebKit::WebExtensionController&)controller;
+
+@end
+
+@implementation _WKWebExtensionControllerHelper
+
+- (instancetype)initWithWebExtensionController:(WebKit::WebExtensionController&)controller
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _webExtensionController = controller;
+
+    [NSDistributedNotificationCenter.defaultCenter addObserver:self selector:@selector(_didDeleteLocalStorage:) name:WebExtensionLocalStorageWasDeletedNotification object:nil];
+
+    return self;
+}
+
+- (void)_didDeleteLocalStorage:(NSNotification *)notification
+{
+    NSString *uniqueIdentifier = objectForKey<NSString>(notification.userInfo, WebExtensionUniqueIdentifierKey);
+    if (!uniqueIdentifier)
+        return;
+
+    if (!_webExtensionController)
+        return;
+
+    if (RefPtr context = _webExtensionController->extensionContext(uniqueIdentifier))
+        context->invalidateStorage();
+}
+
+@end
+
 namespace WebKit {
+
+void WebExtensionController::initializePlatform()
+{
+    ASSERT(!m_webExtensionControllerHelper);
+    m_webExtensionControllerHelper = [[_WKWebExtensionControllerHelper alloc] initWithWebExtensionController:*this];
+}
 
 String WebExtensionController::storageDirectory(WebExtensionContext& extensionContext) const
 {
@@ -167,9 +219,8 @@ void WebExtensionController::removeData(OptionSet<WebExtensionDataType> types, c
             if (!storage)
                 continue;
 
-            removeStorage(storage, type, makeBlockPtr([aggregator, extensionContext = RefPtr { extensionContext }]() mutable {
-                if (extensionContext)
-                    extensionContext->invalidateStorage();
+            removeStorage(storage, type, makeBlockPtr([aggregator, uniqueIdentifier, extensionContext = RefPtr { extensionContext }]() mutable {
+                [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebExtensionLocalStorageWasDeletedNotification object:nil userInfo:@{ WebExtensionUniqueIdentifierKey: uniqueIdentifier }];
             }));
         }
     }
