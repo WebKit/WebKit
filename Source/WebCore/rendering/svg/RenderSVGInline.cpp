@@ -173,7 +173,7 @@ void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* ol
 #endif
 
     if (diff == StyleDifference::Layout)
-        setNeedsBoundariesUpdate();
+        invalidateCachedBoundaries();
     RenderInline::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }

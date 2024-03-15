@@ -118,7 +118,7 @@ void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* old
 #endif
 
     if (diff == StyleDifference::Layout)
-        setNeedsBoundariesUpdate();
+        invalidateCachedBoundaries();
     RenderBlockFlow::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }

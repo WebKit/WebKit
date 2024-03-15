@@ -156,8 +156,10 @@ void LegacyRenderSVGForeignObject::layout()
     ASSERT(!needsLayout());
 
     // If our bounds changed, notify the parents.
-    if (updateCachedBoundariesInParents)
-        RenderSVGBlock::setNeedsBoundariesUpdate();
+    if (updateCachedBoundariesInParents) {
+        if (CheckedPtr parent = this->parent())
+            parent->invalidateCachedBoundaries();
+    }
 
     // Invalidate all resources of this client if our layout changed.
     if (layoutChanged)

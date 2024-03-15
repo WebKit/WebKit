@@ -51,7 +51,6 @@ public:
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
     bool isInLayout() const { return m_inLayout; }
     void setNeedsBoundariesUpdate() override { m_needsBoundariesOrTransformUpdate = true; }
-    bool needsBoundariesUpdate() override { return m_needsBoundariesOrTransformUpdate; }
     void setNeedsTransformUpdate() override { m_needsBoundariesOrTransformUpdate = true; }
 
     IntSize containerSize() const { return m_containerSize; }

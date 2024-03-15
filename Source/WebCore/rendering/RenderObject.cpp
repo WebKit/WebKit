@@ -1821,7 +1821,7 @@ void RenderObject::willBeRemovedFromTree(IsInternalMove)
     invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::Yes);
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
     // Update cached boundaries in SVG renderers, if a child is removed.
-    checkedParent()->setNeedsBoundariesUpdate();
+    checkedParent()->invalidateCachedBoundaries();
 }
 
 void RenderObject::destroy()
@@ -2103,8 +2103,16 @@ Node* RenderObject::generatingPseudoHostElement() const
 
 void RenderObject::setNeedsBoundariesUpdate()
 {
-    if (CheckedPtr renderer = parent())
-        renderer->setNeedsBoundariesUpdate();
+}
+
+void RenderObject::invalidateCachedBoundaries()
+{
+    for (CheckedPtr renderer = this; renderer && renderer->isSVGRenderer(); renderer = renderer->parent()) {
+        if (renderer->usesBoundaryCaching()) {
+            renderer->setNeedsBoundariesUpdate();
+            break;
+        }
+    }
 }
 
 FloatRect RenderObject::objectBoundingBox() const

@@ -251,6 +251,7 @@ public:
         IsMedia = 1 << 1,
         IsWidget = 1 << 2,
         IsViewTransitionCapture = 1 << 3,
+        UsesBoundaryCaching = 1 << 5,
     };
 
     enum class SVGModelObjectFlag : uint8_t {
@@ -259,6 +260,7 @@ public:
         IsHiddenContainer = 1 << 2,
         IsResourceContainer = 1 << 3,
         IsShape = 1 << 4,
+        UsesBoundaryCaching = 1 << 5,
     };
 
     class TypeSpecificFlags {
@@ -316,7 +318,8 @@ public:
         }
 
         const uint8_t m_kind : 3 { enumToUnderlyingType(Kind::Invalid) }; // Security hardening to store the type.
-        const uint8_t m_flags : 5 { 0 };
+        const uint8_t m_flags : 6 { 0 };
+        // 7 bits free.
     };
 
     // Anonymous objects should pass the document as their node, and they will then automatically be
@@ -586,13 +589,15 @@ public:
     bool isRenderOrLegacyRenderSVGForeignObject() const { return isRenderSVGForeignObject() || isLegacyRenderSVGForeignObject(); }
     bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
     bool isSVGLayerAwareRenderer() const { return isRenderSVGRoot() || isRenderSVGModelObject() || isRenderSVGText() || isRenderSVGInline() || isRenderSVGForeignObject(); }
+    bool isSVGRenderer() const { return isRenderOrLegacyRenderSVGRoot() || isLegacyRenderSVGModelObject() || isRenderSVGModelObject() || isRenderSVGBlock() || isRenderSVGInline(); }
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
     // Unfortunately we don't have such a class yet, because it's not possible for all renderers
     // to inherit from RenderSVGObject -> RenderObject (some need RenderBlock inheritance for instance)
-    virtual void setNeedsTransformUpdate() { }
+    void invalidateCachedBoundaries();
+    bool usesBoundaryCaching() const;
     virtual void setNeedsBoundariesUpdate();
-    virtual bool needsBoundariesUpdate() { return false; }
+    virtual void setNeedsTransformUpdate() { }
 
     // Per SVG 1.1 objectBoundingBox ignores clipping, masking, filter effects, opacity and stroke-width.
     // This is used for all computation of objectBoundingBox relative units and by SVGLocatable::getBBox().
@@ -1266,10 +1271,9 @@ private:
     SingleThreadWeakPtr<RenderElement> m_parent;
     SingleThreadPackedWeakPtr<RenderObject> m_previous;
     const OptionSet<TypeFlag> m_typeFlags;
-    // Free 8 bits
-    SingleThreadPackedWeakPtr<RenderObject> m_next;
     const Type m_type;
-    const TypeSpecificFlags m_typeSpecificFlags; // Depends on values of m_type and/or m_typeFlags
+    SingleThreadPackedWeakPtr<RenderObject> m_next;
+    const TypeSpecificFlags m_typeSpecificFlags;
 
     CheckedPtr<Layout::Box> m_layoutBox;
 
@@ -1563,6 +1567,14 @@ inline bool RenderObject::isRenderTable() const
         break;
     }
     return false;
+}
+
+inline bool RenderObject::usesBoundaryCaching() const
+{
+    // Use the same bit for UsesBoundaryCaching so that clang collapse two comparisons into one.
+    ASSERT(enumToUnderlyingType(ReplacedFlag::UsesBoundaryCaching) == enumToUnderlyingType(SVGModelObjectFlag::UsesBoundaryCaching));
+    return (m_typeSpecificFlags.kind() == TypeSpecificFlags::Kind::Replaced && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::UsesBoundaryCaching))
+        || (m_typeSpecificFlags.kind() == TypeSpecificFlags::Kind::SVGModelObject && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::UsesBoundaryCaching));
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
