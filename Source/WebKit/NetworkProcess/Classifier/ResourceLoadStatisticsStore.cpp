@@ -876,12 +876,12 @@ bool ResourceLoadStatisticsStore::missingUniqueIndices()
     auto statement = m_database.prepareStatement("SELECT COUNT(*) FROM sqlite_master WHERE type = 'index'"_s);
     if (!statement) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsStore::missingUniqueIndices Unable to prepare statement to fetch index count, error message: %s", this, m_database.lastErrorMsg());
-        return { };
+        return false;
     }
 
     if (statement->step() != SQLITE_ROW) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsStore::missingUniqueIndices error executing statement to fetch index count, error message: %s", this, m_database.lastErrorMsg());
-        return { };
+        return false;
     }
 
     if (statement->columnInt(0) < expectedIndexCount)
@@ -976,10 +976,8 @@ void ResourceLoadStatisticsStore::addMissingTablesIfNecessary()
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsStore::addMissingTables failed to execute, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
     }
 
-    if (!createUniqueIndices()) {
+    if (!createUniqueIndices())
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsStore::addMissingTables failed to create unique indices, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 
 template<typename T, typename U, size_t size> bool vectorEqualsArray(const Vector<T>& vector, const std::array<U, size> array)
@@ -1302,10 +1300,8 @@ void ResourceLoadStatisticsStore::insertDomainRelationshipList(const String& sta
         }
     }
 
-    if (insertRelationshipStatement->step() != SQLITE_DONE) {
+    if (insertRelationshipStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::insertDomainRelationshipList failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 
 void ResourceLoadStatisticsStore::insertDomainRelationships(const ResourceLoadStatistics& loadStatistics)
@@ -2055,10 +2051,8 @@ void ResourceLoadStatisticsStore::setUserInteraction(const RegistrableDomain& do
         || scopedStatement->bindInt(1, hadUserInteraction) != SQLITE_OK
         || scopedStatement->bindDouble(2, mostRecentInteraction.secondsSinceEpoch().value()) != SQLITE_OK
         || scopedStatement->bindText(3, domain.string()) != SQLITE_OK
-        || scopedStatement->step() != SQLITE_DONE) {
+        || scopedStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::setUserInteraction, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 
 void ResourceLoadStatisticsStore::logUserInteraction(const TopFrameDomain& domain, CompletionHandler<void()>&& completionHandler)
@@ -2193,10 +2187,8 @@ void ResourceLoadStatisticsStore::setDomainsAsPrevalent(StdSet<unsigned>&& domai
     ASSERT(!RunLoop::isMain());
 
     auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN (", buildList(domains), ")"));
-    if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE) {
+    if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::setDomainsAsPrevalent failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 
 void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<void(String&&)>&& completionHandler)
@@ -2319,10 +2311,8 @@ void ResourceLoadStatisticsStore::clearPrevalentResource(const RegistrableDomain
 
     if (!scopedStatement
         || scopedStatement->bindText(1, domain.string()) != SQLITE_OK
-        || scopedStatement->step() != SQLITE_DONE) {
+        || scopedStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::clearPrevalentResource, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 
 void ResourceLoadStatisticsStore::setGrandfathered(const RegistrableDomain& domain, bool value)
@@ -2551,10 +2541,8 @@ void ResourceLoadStatisticsStore::clearDatabaseContents()
 {
     m_database.clearAllTables();
 
-    if (!createSchema()) {
+    if (!createSchema())
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsStore::clearDatabaseContents failed, error message: %" PRIVATE_LOG_STRING ", database path: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg(), m_storageFilePath.utf8().data());
-        return;
-    }
 }
 
 void ResourceLoadStatisticsStore::removeDataForDomain(const RegistrableDomain& domain)
@@ -2566,9 +2554,8 @@ void ResourceLoadStatisticsStore::removeDataForDomain(const RegistrableDomain& d
     auto scopedStatement = this->scopedStatement(m_removeAllDataStatement, removeAllDataQuery, "removeDataForDomain"_s);
     if (!scopedStatement
         || scopedStatement->bindInt(1, *domainIDToRemove) != SQLITE_OK
-        || scopedStatement->step() != SQLITE_DONE) {
+        || scopedStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::removeDataForDomain failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-    }
 }
 
 Vector<RegistrableDomain> ResourceLoadStatisticsStore::allDomains() const
@@ -2967,10 +2954,8 @@ void ResourceLoadStatisticsStore::pruneStatisticsIfNeeded()
     auto listToPrune = buildList(entriesToPrune);
 
     auto pruneCommand = m_database.prepareStatementSlow(makeString("DELETE from ObservedDomains WHERE domainID IN (", listToPrune, ")"));
-    if (!pruneCommand || pruneCommand->step() != SQLITE_DONE) {
+    if (!pruneCommand || pruneCommand->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::pruneStatisticsIfNeeded failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 
 void ResourceLoadStatisticsStore::updateLastSeen(const RegistrableDomain& domain, WallTime lastSeen)
@@ -2981,10 +2966,8 @@ void ResourceLoadStatisticsStore::updateLastSeen(const RegistrableDomain& domain
     if (!scopedStatement
         || scopedStatement->bindDouble(1, lastSeen.secondsSinceEpoch().value()) != SQLITE_OK
         || scopedStatement->bindText(2, domain.string()) != SQLITE_OK
-        || scopedStatement->step() != SQLITE_DONE) {
+        || scopedStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::updateLastSeen failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 
 void ResourceLoadStatisticsStore::setLastSeen(const RegistrableDomain& domain, Seconds seconds)
@@ -3046,10 +3029,8 @@ void ResourceLoadStatisticsStore::updateDataRecordsRemoved(const RegistrableDoma
     if (!scopedStatement
         || scopedStatement->bindInt(1, value) != SQLITE_OK
         || scopedStatement->bindText(2, domain.string()) != SQLITE_OK
-        || scopedStatement->step() != SQLITE_DONE) {
+        || scopedStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::updateDataRecordsRemoved failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 
 bool ResourceLoadStatisticsStore::isCorrectSubStatisticsCount(const RegistrableDomain& subframeDomain, const TopFrameDomain& topFrameDomain)
@@ -3412,10 +3393,8 @@ void ResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const Registr
         return;
     }
 
-    if (scopedInsertObservedDomainStatement->step() != SQLITE_DONE) {
+    if (scopedInsertObservedDomainStatement->step() != SQLITE_DONE)
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsStore::insertExpiredStatisticForTesting failed to commit, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        return;
-    }
 }
 } // namespace WebKit
 
