@@ -555,12 +555,7 @@ static inline bool isChangingKeyModifiers(BEKeyEntry *event)
     if (!(self = [super init]))
         return nil;
 
-    _type = webEventType([&]() -> BEKeyPressState {
-        static bool supportsStateProperty = [event.class instancesRespondToSelector:@selector(state)];
-        if (supportsStateProperty)
-            return event.state;
-        return event.type;
-    }());
+    _type = webEventType(event.state);
     _timestamp = static_cast<CFTimeInterval>(event.timestamp);
     _keyboardFlags = 0;
     if (isChangingKeyModifiers(event))

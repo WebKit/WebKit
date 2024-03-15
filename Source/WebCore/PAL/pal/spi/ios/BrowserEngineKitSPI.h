@@ -67,8 +67,4 @@
 
 #endif
 
-@interface BEKeyEntry (Staging_121227027)
-@property (nonatomic, readonly) BEKeyPressState state;
-@end
-
 #endif // USE(BROWSERENGINEKIT)
