@@ -615,6 +615,15 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(void* buffer, off_t 
         return 0;
     }
 
+    if (auto dataPtr = plugin->dataPtrForRange(position, count, CheckValidRanges::Yes)) {
+        memcpy(buffer, dataPtr, count);
+#if !LOG_DISABLED
+        decrementThreadsWaitingOnCallback();
+        incrementalLoaderLog(makeString("Satisfied range request for ", count, " bytes at position ", position, " synchronously"));
+#endif
+        return count;
+    }
+
     RefPtr dataSemaphore = createDataSemaphore();
     if (!dataSemaphore)
         return 0;
@@ -677,6 +686,14 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
     stream << ")";
     incrementalLoaderLog(stream.release());
 #endif
+
+    if (plugin->getByteRanges(buffers, ranges, count)) {
+#if !LOG_DISABLED
+        decrementThreadsWaitingOnCallback();
+        incrementalLoaderLog(makeString("Satisfied ", count, " get byte ranges synchronously"));
+#endif
+        return;
+    }
 
     RefPtr dataSemaphore = createDataSemaphore();
     if (!dataSemaphore)

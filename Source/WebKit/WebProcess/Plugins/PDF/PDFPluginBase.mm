@@ -277,6 +277,45 @@ const uint8_t* PDFPluginBase::dataPtrForRange(uint64_t sourcePosition, size_t co
     return CFDataGetBytePtr(m_data.get()) + sourcePosition;
 }
 
+bool PDFPluginBase::getByteRanges(CFMutableArrayRef dataBuffersArray, const CFRange* ranges, size_t count) const
+{
+    Locker locker { m_streamedDataLock };
+
+    auto haveDataForRange = [&](CFRange range) WTF_REQUIRES_LOCK(m_streamedDataLock) {
+        if (!m_data)
+            return false;
+
+        RELEASE_ASSERT(range.location >= 0);
+        RELEASE_ASSERT(range.length >= 0);
+
+        if (haveStreamedDataForRange(range.location, range.length))
+            return true;
+
+        uint64_t rangeLocation = range.location;
+        uint64_t rangeLength = range.length;
+
+        uint64_t dataLength = CFDataGetLength(m_data.get());
+        if (rangeLocation + rangeLength > dataLength)
+            return false;
+
+        return m_validRanges.contains({ rangeLocation, rangeLocation + rangeLength - 1 });
+    };
+
+    for (size_t i = 0; i < count; ++i) {
+        if (!haveDataForRange(ranges[i]))
+            return false;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        auto range = ranges[i];
+        const uint8_t* dataPtr = CFDataGetBytePtr(m_data.get()) + range.location;
+        RetainPtr cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, dataPtr, range.length));
+        CFArrayAppendValue(dataBuffersArray, cfData.get());
+    }
+
+    return true;
+}
+
 void PDFPluginBase::insertRangeRequestData(uint64_t offset, const Vector<uint8_t>& requestData)
 {
     if (!requestData.size())
