@@ -94,13 +94,11 @@ static std::optional<FloatRect> guardRectForRegionBounds(const InteractionRegion
     constexpr int complexSegmentsCount = 20;
 
     bool isSmallRect = false;
-    auto guardRect = region.rectInLayerCoordinates;
-
-    // Use a non-inflated guard rect for complex shapes.
-    if (region.clipPath
+    bool isComplexShape =  region.clipPath
         && region.clipPath->segmentsIfExists()
-        && region.clipPath->segmentsIfExists()->size() > complexSegmentsCount)
-        return guardRect;
+        && region.clipPath->segmentsIfExists()->size() > complexSegmentsCount;
+
+    auto guardRect = region.rectInLayerCoordinates;
 
     if (guardRect.width() < minimumSize) {
         guardRect.inflateX(occlusionMargin);
@@ -112,7 +110,7 @@ static std::optional<FloatRect> guardRectForRegionBounds(const InteractionRegion
         isSmallRect = true;
     }
 
-    if (isSmallRect)
+    if (isSmallRect || isComplexShape)
         return guardRect;
 
     return std::nullopt;
@@ -131,6 +129,15 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
                 return;
             m_occlusionRects.add(rectForTracking);
             
+            m_interactionRegions.append(*interactionRegion);
+            return;
+        }
+
+        if (interactionRegion->type == InteractionRegion::Type::Guard) {
+            if (m_elementGuardRects.contains(rectForTracking))
+                return;
+            m_elementGuardRects.add(rectForTracking);
+
             m_interactionRegions.append(*interactionRegion);
             return;
         }
@@ -155,7 +162,7 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
         Vector<InteractionRegion, 1> discoveredRegions;
         discoveredRegions.append(*interactionRegion);
         m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, discoveredRegions);
-    
+
         auto guardRect = guardRectForRegionBounds(*interactionRegion);
         if (guardRect) {
             m_interactionRegions.append({
@@ -296,7 +303,6 @@ void EventRegionContext::shrinkWrapInteractionRegions()
             region.contentHint = m_interactionRectsAndContentHints.get(rectForTracking);
             m_interactionRegions.insert(++i, WTFMove(region));
         }
-
     }
 }
 
@@ -307,6 +313,8 @@ void EventRegionContext::removeSuperfluousInteractionRegions()
             return m_containersToRemove.contains(region.elementIdentifier);
 
         auto guardRect = enclosingIntRect(region.rectInLayerCoordinates);
+        if (m_elementGuardRects.contains(guardRect))
+            return false;
         for (const auto& interactionRect : m_interactionRectsAndContentHints.keys()) {
             auto intersection = interactionRect;
             intersection.intersect(guardRect);

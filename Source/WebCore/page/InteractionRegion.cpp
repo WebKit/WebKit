@@ -54,6 +54,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderVideo.h"
 #include "SVGSVGElement.h"
+#include "Shape.h"
 #include "SimpleRange.h"
 #include "SliderThumbElement.h"
 #include "StyleResolver.h"
@@ -190,6 +191,35 @@ static bool shouldGetOcclusion(const RenderElement& renderer)
     return false;
 }
 
+static bool hasTransparentContainerStyle(const RenderStyle& style)
+{
+    return !style.hasBackground()
+        && !style.hasOutline()
+        && !style.boxShadow()
+        && !style.hasExplicitlySetBorderRadius()
+        // No visible borders or borders that do not create a complete box.
+        && (!style.hasVisibleBorder()
+            || !(style.borderTopWidth() && style.borderRightWidth() && style.borderBottomWidth() && style.borderLeftWidth()));
+}
+
+static bool isGuardContainer(const Element& element)
+{
+    bool isButton = is<HTMLButtonElement>(element);
+    bool isLink = element.isLink();
+    if (!isButton && !isLink)
+        return false;
+
+    if (!element.firstElementChild()
+        || element.firstElementChild() != element.lastElementChild())
+        return false;
+
+    if (!element.renderer())
+        return false;
+
+    auto& renderer = *element.renderer();
+    return hasTransparentContainerStyle(renderer.style());
+}
+
 static bool cachedImageIsPhoto(const CachedImage& cachedImage)
 {
     if (cachedImage.errorOccurred())
@@ -203,6 +233,37 @@ static bool cachedImageIsPhoto(const CachedImage& cachedImage)
         return false;
 
     return true;
+}
+
+static RefPtr<Image> findIconImage(const RenderObject& renderer)
+{
+    if (const auto& renderImage = dynamicDowncast<RenderImage>(renderer)) {
+        if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
+            return nullptr;
+
+        auto* image = renderImage->cachedImage()->image();
+        if (!image)
+            return nullptr;
+
+        if (image->isSVGImage()
+            || (image->isBitmapImage() && image->nativeImage() && image->nativeImage()->hasAlpha()))
+            return image;
+    }
+
+    return nullptr;
+}
+
+static std::optional<std::pair<Ref<SVGSVGElement>, Ref<SVGGraphicsElement>>> findSVGClipElements(const RenderObject& renderer)
+{
+    if (const auto& renderShape = dynamicDowncast<LegacyRenderSVGShape>(renderer)) {
+        Ref shapeElement = renderShape->protectedGraphicsElement();
+        if (auto* owner = shapeElement->ownerSVGElement()) {
+            Ref svgSVGElement = *owner;
+            return std::make_pair(svgSVGElement, shapeElement);
+        }
+    }
+
+    return std::nullopt;
 }
 
 std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject& regionRenderer, const FloatRect& bounds)
@@ -306,8 +367,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
     bool isPhoto = false;
 
-    float minimumPhotoArea = 200 / scale * 200 / scale;
-    if (bounds.area() > minimumPhotoArea) {
+    float minimumContentHintArea = 200 / scale * 200 / scale;
+    bool needsContentHint = bounds.area() > minimumContentHintArea;
+    if (needsContentHint) {
         if (auto* renderImage = dynamicDowncast<RenderImage>(regionRenderer)) {
             isPhoto = [&]() -> bool {
                 if (is<RenderVideo>(renderImage))
@@ -329,38 +391,61 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         }
     }
 
+    bool matchedElementIsGuardContainer = isGuardContainer(*matchedElement);
+
+    if (isOriginalMatch && matchedElementIsGuardContainer) {
+        return { {
+            InteractionRegion::Type::Guard,
+            elementIdentifier,
+            bounds
+        } };
+    }
+
     // The parent will get its own InteractionRegion.
-    if (!isOriginalMatch && !isPhoto && !isInlineNonBlock && !renderer.style().isDisplayTableOrTablePart())
+    if (!isOriginalMatch && !matchedElementIsGuardContainer && !isPhoto && !isInlineNonBlock && !renderer.style().isDisplayTableOrTablePart())
         return std::nullopt;
+
+    RefPtr<Image> iconImage;
+    std::optional<std::pair<Ref<SVGSVGElement>, Ref<SVGGraphicsElement>>> svgClipElements;
+    if (!needsContentHint)
+        iconImage = findIconImage(regionRenderer);
+    if (!iconImage)
+        svgClipElements = findSVGClipElements(regionRenderer);
 
     auto rect = bounds;
     float cornerRadius = 0;
     OptionSet<InteractionRegion::CornerMask> maskedCorners { };
     std::optional<Path> clipPath = std::nullopt;
 
-    if (const auto& renderShape = dynamicDowncast<LegacyRenderSVGShape>(regionRenderer)) {
-        auto& svgElement = renderShape->graphicsElement();
-        auto path = svgElement.toClipPath();
+    if (iconImage && originalElement) {
+        LayoutRect imageRect(rect);
+        Ref shape = Shape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode::HorizontalTb, 0);
+        Shape::DisplayPaths paths;
+        shape->buildDisplayPaths(paths);
+        auto path = paths.shape;
+        auto boundingRect = originalElement->boundingClientRect();
+        path.translate(FloatSize(-boundingRect.x(), -boundingRect.y()));
+        clipPath = path;
+    } else if (svgClipElements) {
+        auto& [svgSVGElement, shapeElement] = *svgClipElements;
+        auto path = shapeElement->toClipPath();
 
-        auto shapeBoundingBox = svgElement.getBBox(SVGLocatable::DisallowStyleUpdate);
+        auto shapeBoundingBox = shapeElement->getBBox(SVGLocatable::DisallowStyleUpdate);
         path.translate(FloatSize(-shapeBoundingBox.x(), -shapeBoundingBox.y()));
 
-        auto* svgSVGElement = svgElement.ownerSVGElement();
-        if (svgSVGElement) {
-            FloatSize size = svgSVGElement->currentViewportSizeExcludingZoom();
-            auto viewBoxTransform = svgSVGElement->viewBoxToViewTransform(size.width(), size.height());
-            shapeBoundingBox = viewBoxTransform.mapRect(shapeBoundingBox);
-            path.transform(AffineTransform::makeScale(FloatSize(viewBoxTransform.xScale(), viewBoxTransform.yScale())));
+        FloatSize size = svgSVGElement->currentViewportSizeExcludingZoom();
+        auto viewBoxTransform = svgSVGElement->viewBoxToViewTransform(size.width(), size.height());
+        shapeBoundingBox = viewBoxTransform.mapRect(shapeBoundingBox);
+        path.transform(AffineTransform::makeScale(FloatSize(viewBoxTransform.xScale(), viewBoxTransform.yScale())));
 
-            // Position to respect clipping. `rect` is already clipped but the Path is complete.
-            auto clipDeltaX = rect.width() - shapeBoundingBox.width();
-            auto clipDeltaY = rect.height() - shapeBoundingBox.height();
-            if (shapeBoundingBox.x() >= 0)
-                clipDeltaX = 0;
-            if (shapeBoundingBox.y() >= 0)
-                clipDeltaY = 0;
-            path.translate(FloatSize(clipDeltaX, clipDeltaY));
-        }
+        // Position to respect clipping. `rect` is already clipped but the Path is complete.
+        auto clipDeltaX = rect.width() - shapeBoundingBox.width();
+        auto clipDeltaY = rect.height() - shapeBoundingBox.height();
+        if (shapeBoundingBox.x() >= 0)
+            clipDeltaX = 0;
+        if (shapeBoundingBox.y() >= 0)
+            clipDeltaY = 0;
+        path.translate(FloatSize(clipDeltaX, clipDeltaY));
 
         clipPath = path;
     } else if (const auto& renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {
@@ -401,13 +486,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     auto& style = regionRenderer.style();
     bool canTweakShape = !isPhoto
         && !clipPath
-        && !style.hasBackground()
-        && !style.hasOutline()
-        && !style.boxShadow()
-        && !style.hasExplicitlySetBorderRadius()
-        // No visible borders or borders that do not create a complete box.
-        && (!style.hasVisibleBorder()
-            || !(style.borderTopWidth() && style.borderRightWidth() && style.borderBottomWidth() && style.borderLeftWidth()));
+        && hasTransparentContainerStyle(style);
 
     if (canTweakShape) {
         // We can safely tweak the bounds and radius without causing visual mismatch.

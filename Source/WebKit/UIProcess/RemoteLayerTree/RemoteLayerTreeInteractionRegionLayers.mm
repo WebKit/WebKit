@@ -122,7 +122,7 @@ static void configureLayerAsGuard(CALayer *, NSString *) { }
 
 static NSString *interactionRegionGroupNameForRegion(const WebCore::PlatformLayerIdentifier& layerID, const WebCore::InteractionRegion& interactionRegion)
 {
-    return makeString("WKInteractionRegion-"_s, layerID.toString(), interactionRegion.elementIdentifier.toUInt64());
+    return makeString("WKInteractionRegion-"_s, interactionRegion.elementIdentifier.toUInt64());
 }
 
 static void configureRemoteEffect(CALayer *layer, WebCore::InteractionRegion::Type type, NSString *groupName)

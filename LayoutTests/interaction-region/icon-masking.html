@@ -1,0 +1,88 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=1600">
+    <style>
+        body { margin: 0; }
+        #test {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            font-family: -apple-system;
+        }
+        section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            min-height: 100px;
+            text-align: center;
+        }
+        a {
+            width: 100%;
+            min-height: 100px;
+        }
+        a > svg {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="test">
+    <section>
+        <a href="#">
+            <svg viewBox="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="myGradient">
+                        <stop offset="10%" stop-color="gold" />
+                        <stop offset="95%" stop-color="red" />
+                    </radialGradient>
+                </defs>
+                <circle cx="250" cy="250" r="200" fill="url(#myGradient)" />
+            </svg>
+        </a>
+    </section>
+    <section>
+        <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:40%;cursor:pointer;" />
+    </section>
+    <section>
+        <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:10%;cursor:pointer;" />
+    </section>
+    <section>
+        <a href="#">
+            <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:40%;" />
+        </a>
+    </section>
+    <section>
+        <a href="#" style="background: purple;">
+            <img src="../accessibility/resources/apple-logo.svg" alt="apple logo" style="width:40%;" />
+        </a>
+    </section>
+    <section>
+        <a href="#">
+            <img src="../css3/blending/resources/ducky.png" alt="ducky" style="width:80%;" />
+        </a>
+    </section>
+    <section>
+        <img src="../css3/blending/resources/ducky.png" alt="ducky" style="width:80%;cursor:pointer;" />
+    </section>
+</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+       return;
+
+   results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+   document.getElementById('test').remove();
+};
+</script>
+</body>
+</html>

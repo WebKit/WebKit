@@ -11,14 +11,14 @@
         (rect (0,0) width=1600 height=2092)
 
       (interaction regions [
-        (interaction (0,41) width=522.50 height=318)
-        (cornerRadius 8.00),
+        (guard (0,41) width=522.50 height=318),
         (interaction (52.50,41) width=418 height=313.50)
         (content hint photo),
         (interaction (538.50,0) width=523 height=400)
         (content hint photo),
         (interaction (1077.50,0) width=522.50 height=400),
         (interaction (0,416) width=522.50 height=400),
+        (guard (0,416) width=522.50 height=400),
         (interaction (578.50,416) width=443 height=400)
         (cornerRadius 8.00),
         (interaction (623,416) width=354 height=265.50)
@@ -30,9 +30,11 @@
         (cornerRadius 8.00),
         (interaction (1296.84,737) width=83.63 height=28)
         (cornerRadius 8.00),
+        (guard (0,832) width=522.50 height=400),
         (interaction (0,832) width=522.50 height=400)
         (cornerRadius 8.00),
-        (interaction (1288.50,992.50) width=100 height=79)
+        (guard (1288.50,992.50) width=100 height=79),
+        (interaction (1288.50,992.50) width=100 height=75)
         (cornerRadius 8.00)])
       )
       (children 1
