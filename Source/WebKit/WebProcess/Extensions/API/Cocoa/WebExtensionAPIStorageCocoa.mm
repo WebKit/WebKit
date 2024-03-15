@@ -106,6 +106,9 @@ WebExtensionAPIEvent& WebExtensionAPIStorage::onChanged()
 
 void WebExtensionContextProxy::dispatchStorageChangedEvent(const String& onChangedJSON, WebExtensionDataType dataType, WebExtensionContentWorldType contentWorldType)
 {
+    if (!hasDOMWrapperWorld(contentWorldType))
+        return;
+
     NSDictionary *onChangedData = parseJSON(onChangedJSON);
 
     enumerateFramesAndNamespaceObjects([&](WebFrame&, auto& namespaceObject) {

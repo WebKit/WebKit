@@ -558,6 +558,12 @@ NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
 
 void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
 {
+    if (!hasDOMWrapperWorld(contentWorldType)) {
+        // A null reply to the completionHandler means no listeners replied.
+        completionHandler({ });
+        return;
+    }
+
     id message = parseJSON(messageJSON, JSONOptions::FragmentsAllowed);
     auto *senderInfo = toWebAPI(senderParameters);
     auto sourceContentWorldType = senderParameters.contentWorldType;
@@ -663,6 +669,11 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWo
 
 void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
 {
+    if (!hasDOMWrapperWorld(contentWorldType)) {
+        completionHandler({ });
+        return;
+    }
+
     HashCountedSet<WebPageProxyIdentifier> firedEventCounts;
     auto sourceContentWorldType = senderParameters.contentWorldType;
 

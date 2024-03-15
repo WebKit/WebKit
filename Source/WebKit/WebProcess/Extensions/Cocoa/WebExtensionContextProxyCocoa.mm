@@ -132,7 +132,7 @@ _WKWebExtensionLocalization *WebExtensionContextProxy::parseLocalization(API::Da
     return [[_WKWebExtensionLocalization alloc] initWithLocalizedDictionary:parseJSON(json) uniqueIdentifier:baseURL.host().toString()];
 }
 
-WebCore::DOMWrapperWorld& WebExtensionContextProxy::toDOMWrapperWorld(WebExtensionContentWorldType contentWorldType)
+WebCore::DOMWrapperWorld& WebExtensionContextProxy::toDOMWrapperWorld(WebExtensionContentWorldType contentWorldType) const
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:

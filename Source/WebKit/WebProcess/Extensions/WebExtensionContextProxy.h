@@ -68,26 +68,27 @@ public:
     using TabWindowIdentifierPair = std::pair<std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
     using WeakPageTabWindowMap = WeakHashMap<WebPage, TabWindowIdentifierPair>;
 
-    WebExtensionContextIdentifier identifier() { return m_identifier; }
+    WebExtensionContextIdentifier identifier() const { return m_identifier; }
     WebExtensionControllerProxy* extensionControllerProxy() const;
 
     bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }
 
-    const URL& baseURL() { return m_baseURL; }
+    const URL& baseURL() const { return m_baseURL; }
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
 
-    NSDictionary *manifest() { return m_manifest.get(); }
+    NSDictionary *manifest() const { return m_manifest.get(); }
 
-    double manifestVersion() { return m_manifestVersion; }
-    bool supportsManifestVersion(double version) { return manifestVersion() >= version; }
+    double manifestVersion() const { return m_manifestVersion; }
+    bool supportsManifestVersion(double version) const { return manifestVersion() >= version; }
 
-    _WKWebExtensionLocalization *localization() { return m_localization.get(); }
+    _WKWebExtensionLocalization *localization() const { return m_localization.get(); }
 
-    bool isSessionStorageAllowedInContentScripts() { return m_isSessionStorageAllowedInContentScripts; }
+    bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
 
     bool inTestingMode() const;
 
-    WebCore::DOMWrapperWorld& toDOMWrapperWorld(WebExtensionContentWorldType);
+    bool hasDOMWrapperWorld(WebExtensionContentWorldType contentWorldType) const { return contentWorldType != WebExtensionContentWorldType::ContentScript || hasContentScriptWorld(); }
+    WebCore::DOMWrapperWorld& toDOMWrapperWorld(WebExtensionContentWorldType) const;
 
     static WebCore::DOMWrapperWorld& mainWorld() { return WebCore::mainThreadNormalWorld(); }
 
@@ -119,14 +120,9 @@ public:
 
     void enumerateNamespaceObjects(const Function<void(WebExtensionAPINamespace&)>& function, WebCore::DOMWrapperWorld& = mainWorld())
     {
-        enumerateFramesAndNamespaceObjects([&](WebFrame&, WebExtensionAPINamespace& namespaceObject) {
+        enumerateFramesAndNamespaceObjects([&](auto&, auto& namespaceObject) {
             function(namespaceObject);
         });
-    }
-
-    void enumerateContentScriptFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function)
-    {
-        enumerateFramesAndNamespaceObjects(function, contentScriptWorld());
     }
 
 private:
