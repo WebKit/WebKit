@@ -388,6 +388,8 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
 
         if (crossPlatformAllowedCredentials)
             request.get().allowedCredentials = crossPlatformAllowedCredentials.get();
+        if (options.extensions && !options.extensions->appid.isNull())
+            request.get().appID = options.extensions->appid;
         [requests addObject:request.leakRef()];
     }
 
@@ -530,6 +532,11 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.signature = toArrayBuffer(credential.get().signature);
                 response.userHandle = toArrayBufferNilIfEmpty(credential.get().userID);
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
+                if ([credential respondsToSelector:@selector(appID)]) {
+                    AuthenticationExtensionsClientOutputs extensionOutputs;
+                    extensionOutputs.appid = credential.get().appID;
+                    response.extensionOutputs = extensionOutputs;
+                }
             }
 
             if (weakThis) {

@@ -332,11 +332,13 @@ typedef NSString *ASAuthorizationPublicKeyCredentialResidentKeyPreference;
 @end
 
 @interface ASAuthorizationSecurityKeyPublicKeyCredentialAssertion : NSObject <ASAuthorizationPublicKeyCredentialAssertion>
+@property (nonatomic, readonly) BOOL appID;
 @end
 
 @interface ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest : ASAuthorizationRequest <ASAuthorizationPublicKeyCredentialAssertionRequest>
 
 @property (nonatomic, copy) NSArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor *> *allowedCredentials;
+@property (nonatomic, nullable, copy) NSString *appID;
 
 @end
 
