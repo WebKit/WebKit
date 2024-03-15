@@ -141,75 +141,77 @@ try:
 except Exception as e:
     sys.stderr.write('Error while importing six: {}... trying to continue\n'.format(e))
 
-import socket
-import urllib3
+try:
+    import socket
+    import urllib3
 
-HAS_CHECKED_IPV6 = False
-FIRST_IPV6_TIMEOUT = 3
+    HAS_CHECKED_IPV6 = False
+    FIRST_IPV6_TIMEOUT = 3
 
+    # Pulled from urllib3, https://github.com/urllib3/urllib3/blob/main/src/urllib3/util/connection.py
+    # Disable IPV6 if the first attempt to connect to an IPV6 address fails
+    def create_connection(
+        address,
+        timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+        source_address=None,
+        socket_options=None,
+    ):
+        global HAS_CHECKED_IPV6
 
-# Pulled from urllib3, https://github.com/urllib3/urllib3/blob/main/src/urllib3/util/connection.py
-# Disable IPV6 if the first attempt to connect to an IPV6 address fails
-def create_connection(
-    address,
-    timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-    source_address=None,
-    socket_options=None,
-):
-    global HAS_CHECKED_IPV6
+        host, port = address
+        if host.startswith("["):
+            host = host.strip("[]")
+        err = None
 
-    host, port = address
-    if host.startswith("["):
-        host = host.strip("[]")
-    err = None
+        family = urllib3.util.connection.allowed_gai_family()
 
-    family = urllib3.util.connection.allowed_gai_family()
-
-    try:
-        host.encode("idna")
-    except UnicodeError:
-        return six.raise_from(
-            LocationParseError(u"'%s', label empty or too long" % host), None
-        )
-
-    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
-        af, socktype, proto, canonname, sa = res
-
-        is_first_ipv6 = not HAS_CHECKED_IPV6 and af == socket.AF_INET6
-        if af == socket.AF_INET6 and not urllib3.util.connection.HAS_IPV6:
-            continue
-
-        sock = None
         try:
-            sock = socket.socket(af, socktype, proto)
+            host.encode("idna")
+        except UnicodeError:
+            return six.raise_from(
+                LocationParseError(u"'%s', label empty or too long" % host), None
+            )
 
-            urllib3.util.connection._set_socket_options(sock, socket_options)
+        for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+            af, socktype, proto, canonname, sa = res
 
-            if is_first_ipv6 and (not timeout or timeout > FIRST_IPV6_TIMEOUT):
-                sock.settimeout(FIRST_IPV6_TIMEOUT)
-            elif timeout is not socket._GLOBAL_DEFAULT_TIMEOUT:
-                sock.settimeout(timeout)
-            if source_address:
-                sock.bind(source_address)
-            sock.connect(sa)
-            return sock
+            is_first_ipv6 = not HAS_CHECKED_IPV6 and af == socket.AF_INET6
+            if af == socket.AF_INET6 and not urllib3.util.connection.HAS_IPV6:
+                continue
 
-        except socket.error as e:
-            err = e
-            if sock is not None:
-                sock.close()
-                sock = None
-            if is_first_ipv6:
-                sys.stderr.write('IPV6 request to {} has failed, disabling IPV6\n'.format(host))
-                urllib3.util.connection.HAS_IPV6 = False
-        finally:
-            if af == socket.AF_INET6:
-                HAS_CHECKED_IPV6 = True
+            sock = None
+            try:
+                sock = socket.socket(af, socktype, proto)
 
-    if err is not None:
-        raise err
+                urllib3.util.connection._set_socket_options(sock, socket_options)
 
-    raise socket.error("getaddrinfo returns an empty list")
+                if is_first_ipv6 and (not timeout or timeout > FIRST_IPV6_TIMEOUT):
+                    sock.settimeout(FIRST_IPV6_TIMEOUT)
+                elif timeout is not socket._GLOBAL_DEFAULT_TIMEOUT:
+                    sock.settimeout(timeout)
+                if source_address:
+                    sock.bind(source_address)
+                sock.connect(sa)
+                return sock
 
+            except socket.error as e:
+                err = e
+                if sock is not None:
+                    sock.close()
+                    sock = None
+                if is_first_ipv6:
+                    sys.stderr.write('IPV6 request to {} has failed, disabling IPV6\n'.format(host))
+                    urllib3.util.connection.HAS_IPV6 = False
+            finally:
+                if af == socket.AF_INET6:
+                    HAS_CHECKED_IPV6 = True
 
-urllib3.util.connection.create_connection = create_connection
+        if err is not None:
+            raise err
+
+        raise socket.error("getaddrinfo returns an empty list")
+
+    urllib3.util.connection.create_connection = create_connection
+
+except ModuleNotFoundError:
+    pass
