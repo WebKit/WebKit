@@ -1,0 +1,28 @@
+Editable
+Non-editable
+Prefix: Editable: Suffix
+Prefix: Editable: Suffix
+Editable: Suffix
+Prefix: Editable
+Editable
+Prefix: Edit
+able: Suffix
+Prefix: Edit
+able: Suffix
+
+PASS Selection.modify() must not select outside of the host
+PASS Selection.modify('move', 'forward', 'lineboundary') must be within the inline editing host: inline
+PASS Selection.modify('move', 'backward', 'lineboundary') must be within the inline editing host: inline
+PASS Selection.modify('move', 'forward', 'lineboundary') must be within the inline editing host: inline-block
+PASS Selection.modify('move', 'backward', 'lineboundary') must be within the inline editing host: inline-block
+PASS Selection.modify('move', 'forward', 'lineboundary') must be within the inline editing host: suffix only
+PASS Selection.modify('move', 'backward', 'lineboundary') must be within the inline editing host: suffix only
+PASS Selection.modify('move', 'forward', 'lineboundary') must be within the inline editing host: prefix only
+PASS Selection.modify('move', 'backward', 'lineboundary') must be within the inline editing host: prefix only
+PASS Selection.modify('move', 'forward', 'lineboundary') must be within the inline editing host: standalone
+PASS Selection.modify('move', 'backward', 'lineboundary') must be within the inline editing host: standalone
+PASS Selection.modify('move', 'forward', 'lineboundary') must be within the inline editing host: inline linebreak
+PASS Selection.modify('move', 'backward', 'lineboundary') must be within the inline editing host: inline linebreak
+PASS Selection.modify('move', 'forward', 'lineboundary') must be within the inline editing host: inline-block linebreak
+PASS Selection.modify('move', 'backward', 'lineboundary') must be within the inline editing host: inline-block linebreak
+

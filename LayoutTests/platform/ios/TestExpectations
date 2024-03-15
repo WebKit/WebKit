@@ -2837,6 +2837,12 @@ webkit.org/b/179773 imported/w3c/web-platform-tests/fetch/api/abort/serviceworke
 
 webkit.org/b/179784 svg/in-html/by-reference.html [ Failure Timeout ]
 
+imported/w3c/web-platform-tests/selection/contenteditable/modifying-selection-with-non-primary-mouse-button.tentative.html?middle [ Pass Failure ]
+imported/w3c/web-platform-tests/selection/contenteditable/modifying-selection-with-non-primary-mouse-button.tentative.html?secondary [ Pass Failure ]
+imported/w3c/web-platform-tests/selection/contenteditable/modifying-selection-with-primary-mouse-button.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/selection/textcontrols/focus.html [ Pass Failure ]
+imported/w3c/web-platform-tests/selection/user-select-on-input-and-contenteditable.html [ Pass Failure ]
+
 # accessibilityController.role cannot be tested on iOS
 media/modern-media-controls/time-label/time-label.html [ Skip ]
 media/modern-media-controls/tracks-button [ Pass ]
