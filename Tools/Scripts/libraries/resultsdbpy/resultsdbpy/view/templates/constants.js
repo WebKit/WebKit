@@ -25,5 +25,8 @@ const XCODE_CLOUD_SUITES = [{% for suite in XcodeCloud %}
     '{{ suite }}',
 {% endfor %}];
 const DEFAULT_ARCHITECTURE = {{ default_architecture }};
+const TESTS_LIMITS = JSON.parse('{{ tests_limits|safe }}');
+const SUITES_LIMITS = JSON.parse('{{ suites_limits|safe }}');
+const COMMITS_LIMITS = JSON.parse('{{ commits_limits|safe }}');
 
-export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE}
+export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS}
