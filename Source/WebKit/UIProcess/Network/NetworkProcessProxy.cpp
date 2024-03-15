@@ -581,6 +581,10 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     
 #if USE(RUNNINGBOARD)
     m_throttler.didConnectToProcess(*this);
+#if USE(EXTENSIONKIT)
+    if (launcher)
+        launcher->releaseLaunchGrant();
+#endif
 #endif
 }
 

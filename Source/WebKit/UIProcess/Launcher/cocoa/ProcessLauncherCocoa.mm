@@ -225,6 +225,7 @@ void ProcessLauncher::launchProcess()
 
             launcher->m_xpcConnection = WTFMove(xpcConnection);
             launcher->m_process = WTFMove(process);
+            launcher->m_launchGrant = WTFMove(launchGrant);
             launcher->finishLaunchingProcess(name.characters());
         });
     };

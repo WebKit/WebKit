@@ -1273,6 +1273,10 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
 #if USE(RUNNINGBOARD)
     m_throttler.didConnectToProcess(*this);
+#if USE(EXTENSIONKIT)
+    if (launcher)
+        launcher->releaseLaunchGrant();
+#endif
 #if PLATFORM(MAC)
     for (Ref page : pages()) {
         if (page->preferences().backgroundWebContentRunningBoardThrottlingEnabled())
