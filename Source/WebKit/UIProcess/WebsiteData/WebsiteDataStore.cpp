@@ -137,19 +137,22 @@ void WebsiteDataStore::forEachWebsiteDataStore(Function<void(WebsiteDataStore&)>
 
 Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
-    return adoptRef(*new WebsiteDataStore(WebsiteDataStoreConfiguration::create(IsPersistent::No), PAL::SessionID::generateEphemeralSessionID()));
+    Ref result = adoptRef(*new WebsiteDataStore(WebsiteDataStoreConfiguration::create(IsPersistent::No), PAL::SessionID::generateEphemeralSessionID()));
+    result->resolveDirectoriesAsynchronously();
+    return result;
 }
 
 Ref<WebsiteDataStore> WebsiteDataStore::create(Ref<WebsiteDataStoreConfiguration>&& configuration, PAL::SessionID sessionID)
 {
-    return adoptRef(*new WebsiteDataStore(WTFMove(configuration), sessionID));
+    Ref result = adoptRef(*new WebsiteDataStore(WTFMove(configuration), sessionID));
+    result->resolveDirectoriesAsynchronously();
+    return result;
 }
 
 WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configuration, PAL::SessionID sessionID)
     : m_sessionID(sessionID)
-    , m_resolvedConfiguration(WTFMove(configuration))
-    , m_configuration(m_resolvedConfiguration->copy())
-    , m_trackingPreventionDebugMode(m_resolvedConfiguration->resourceLoadStatisticsDebugModeEnabled())
+    , m_configuration(WTFMove(configuration))
+    , m_trackingPreventionDebugMode(m_configuration->resourceLoadStatisticsDebugModeEnabled())
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
@@ -235,12 +238,11 @@ Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
         return Ref { *globalDatasStore };
 
     auto isPersistent = defaultDataStoreIsPersistent();
-    auto newDataStore = adoptRef(new WebsiteDataStore(WebsiteDataStoreConfiguration::create(isPersistent),
-        isPersistent == IsPersistent::Yes ? PAL::SessionID::defaultSessionID() : PAL::SessionID::generateEphemeralSessionID()));
-    globalDatasStore = newDataStore.get();
-    protectedDefaultDataStore() = newDataStore.get();
+    Ref newDataStore = WebsiteDataStore::create(WebsiteDataStoreConfiguration::create(isPersistent), isPersistent == IsPersistent::Yes ? PAL::SessionID::defaultSessionID() : PAL::SessionID::generateEphemeralSessionID());
+    globalDatasStore = newDataStore.ptr();
+    protectedDefaultDataStore() = newDataStore.ptr();
 
-    return *newDataStore;
+    return newDataStore;
 }
 
 void WebsiteDataStore::deleteDefaultDataStoreForTesting()
@@ -358,15 +360,15 @@ void WebsiteDataStore::unregisterProcess(WebProcessProxy& process)
     m_processes.remove(process);
 }
 
-String WebsiteDataStore::migrateMediaKeysStorageIfNecessary(const String& directory)
+static std::pair<String, FileSystem::Salt> migrateMediaKeysStorageIfNecessary(const String& directory)
 {
     if (directory.isEmpty())
-        return emptyString();
+        return { emptyString(), { } };
 
     static constexpr ASCIILiteral versionName = "v1"_s;
     auto versionDirectory = FileSystem::pathByAppendingComponent(directory, versionName);
     auto saltPath = FileSystem::pathByAppendingComponent(versionDirectory, "salt"_s);
-    m_mediaKeysStorageSalt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
+    auto mediaKeysStorageSalt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
 
     auto originDirectoryNames = FileSystem::listDirectory(directory);
     // Migrate existing data to new version directory.
@@ -385,91 +387,146 @@ String WebsiteDataStore::migrateMediaKeysStorageIfNecessary(const String& direct
             continue;
         }
 
-        auto newOriginDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(m_mediaKeysStorageSalt, *originData);
+        auto newOriginDirectoryName = WebCore::StorageUtilities::encodeSecurityOriginForFileName(mediaKeysStorageSalt, *originData);
         auto newOriginDirectory = FileSystem::pathByAppendingComponent(versionDirectory, newOriginDirectoryName);
         if (FileSystem::moveFile(originDirectory, newOriginDirectory))
             WebCore::StorageUtilities::writeOriginToFile(FileSystem::pathByAppendingComponent(newOriginDirectory, "origin"_s), WebCore::ClientOrigin { *originData, *originData });
     }
 
-    return versionDirectory;
+    return { versionDirectory, mediaKeysStorageSalt };
 }
 
-void WebsiteDataStore::resolveDirectoriesIfNecessary()
+static void resolveDirectories(WebsiteDataStoreConfiguration::Directories& directories, FileSystem::Salt& mediaKeysStorageSalt)
 {
-    if (m_hasResolvedDirectories)
-        return;
-    m_hasResolvedDirectories = true;
+    if (!directories.mediaCacheDirectory.isEmpty())
+        directories.mediaCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.mediaCacheDirectory);
 
-    // Resolve directory paths.
-    Ref configuration = m_configuration;
-    Ref resolvedConfiguration = m_resolvedConfiguration;
-    if (!configuration->mediaCacheDirectory().isEmpty())
-        resolvedConfiguration->setMediaCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->mediaCacheDirectory()));
-    if (!configuration->mediaKeysStorageDirectory().isEmpty()) {
-        auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(configuration->mediaKeysStorageDirectory());
-        resolvedConfiguration->setMediaKeysStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(mediaKeysStorageDirectory));
+    if (!directories.mediaKeysStorageDirectory.isEmpty()) {
+        auto [mediaKeysStorageDirectory, salt] = migrateMediaKeysStorageIfNecessary(directories.mediaKeysStorageDirectory);
+        mediaKeysStorageSalt = salt;
+        directories.mediaKeysStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(mediaKeysStorageDirectory);
     }
-    if (!configuration->indexedDBDatabaseDirectory().isEmpty())
-        resolvedConfiguration->setIndexedDBDatabaseDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->indexedDBDatabaseDirectory()));
-    if (!configuration->alternativeServicesDirectory().isEmpty())
-        resolvedConfiguration->setAlternativeServicesDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->alternativeServicesDirectory()));
-    if (!configuration->localStorageDirectory().isEmpty())
-        resolvedConfiguration->setLocalStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->localStorageDirectory()));
-    if (!configuration->deviceIdHashSaltsStorageDirectory().isEmpty())
-        resolvedConfiguration->setDeviceIdHashSaltsStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->deviceIdHashSaltsStorageDirectory()));
-    if (!configuration->networkCacheDirectory().isEmpty())
-        resolvedConfiguration->setNetworkCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->networkCacheDirectory()));
-    if (!configuration->resourceLoadStatisticsDirectory().isEmpty())
-        resolvedConfiguration->setResourceLoadStatisticsDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->resourceLoadStatisticsDirectory()));
-    if (!configuration->serviceWorkerRegistrationDirectory().isEmpty())
-        resolvedConfiguration->setServiceWorkerRegistrationDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->serviceWorkerRegistrationDirectory()));
-    if (!configuration->javaScriptConfigurationDirectory().isEmpty())
-        resolvedConfiguration->setJavaScriptConfigurationDirectory(resolvePathForSandboxExtension(configuration->javaScriptConfigurationDirectory()));
-    if (!configuration->cacheStorageDirectory().isEmpty())
-        resolvedConfiguration->setCacheStorageDirectory(resolvePathForSandboxExtension(configuration->cacheStorageDirectory()));
-    if (!configuration->hstsStorageDirectory().isEmpty())
-        resolvedConfiguration->setHSTSStorageDirectory(resolvePathForSandboxExtension(configuration->hstsStorageDirectory()));
-    if (!configuration->generalStorageDirectory().isEmpty())
-        resolvedConfiguration->setGeneralStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->generalStorageDirectory()));
+
+    if (!directories.indexedDBDatabaseDirectory.isEmpty())
+        directories.indexedDBDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.indexedDBDatabaseDirectory);
+
+    if (!directories.alternativeServicesDirectory.isEmpty())
+        directories.alternativeServicesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.alternativeServicesDirectory);
+
+    if (!directories.localStorageDirectory.isEmpty())
+        directories.localStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.localStorageDirectory);
+
+    if (!directories.deviceIdHashSaltsStorageDirectory.isEmpty())
+        directories.deviceIdHashSaltsStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.deviceIdHashSaltsStorageDirectory);
+
+    if (!directories.networkCacheDirectory.isEmpty())
+        directories.networkCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.networkCacheDirectory);
+
+    if (!directories.resourceLoadStatisticsDirectory.isEmpty())
+        directories.resourceLoadStatisticsDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.resourceLoadStatisticsDirectory);
+
+    if (!directories.serviceWorkerRegistrationDirectory.isEmpty())
+        directories.serviceWorkerRegistrationDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.serviceWorkerRegistrationDirectory);
+
+    if (!directories.javaScriptConfigurationDirectory.isEmpty())
+        directories.javaScriptConfigurationDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.javaScriptConfigurationDirectory);
+
+    if (!directories.cacheStorageDirectory.isEmpty())
+        directories.cacheStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.cacheStorageDirectory);
+
+    if (!directories.hstsStorageDirectory.isEmpty())
+        directories.hstsStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.hstsStorageDirectory);
+
+    if (!directories.generalStorageDirectory.isEmpty())
+        directories.generalStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.generalStorageDirectory);
+
+    if (!directories.searchFieldHistoryDirectory.isEmpty())
+        directories.searchFieldHistoryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.searchFieldHistoryDirectory);
+
+    if (!directories.generalStorageDirectory.isEmpty())
+        directories.generalStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.generalStorageDirectory);
+
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-    if (!configuration->modelElementCacheDirectory().isEmpty())
-        resolvedConfiguration->setModelElementCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->modelElementCacheDirectory()));
+    if (!directories.modelElementCacheDirectory.isEmpty())
+        directories.modelElementCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.modelElementCacheDirectory);
 #endif
-    if (!configuration->searchFieldHistoryDirectory().isEmpty())
-        resolvedConfiguration->setSearchFieldHistoryDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(configuration->searchFieldHistoryDirectory()));
 
-    // Resolve file paths.
-    if (!configuration->cookieStorageFile().isEmpty()) {
-        auto resolvedCookieDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(FileSystem::parentPath(configuration->cookieStorageFile()));
-        resolvedConfiguration->setCookieStorageFile(FileSystem::pathByAppendingComponent(resolvedCookieDirectory, FileSystem::pathFileName(configuration->cookieStorageFile())));
+    if (!directories.cookieStorageFile.isEmpty()) {
+        auto resolvedCookieDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(FileSystem::parentPath(directories.cookieStorageFile));
+        directories.cookieStorageFile = FileSystem::pathByAppendingComponent(resolvedCookieDirectory, FileSystem::pathFileName(directories.cookieStorageFile));
     }
+}
 
-    // Default paths of WebsiteDataStore created with identifier are not under caches or tmp directory,
-    // so we need to explicitly exclude them from backup.
-    if (configuration->identifier()) {
-        Vector<String> allCacheDirectories = {
-            resolvedMediaCacheDirectory()
-            , resolvedNetworkCacheDirectory()
+const WebsiteDataStoreConfiguration::Directories& WebsiteDataStore::resolvedDirectories() const
+{
+    ASSERT(RunLoop::isMain());
+
+    Locker resolveLocker { m_resolveDirectoriesLock };
+    if (m_resolvedDirectories)
+        return *m_resolvedDirectories;
+
+    // Ensure task is dispatched before waiting.
+    RELEASE_ASSERT(m_hasDispatchedResolveDirectories);
+
+    while (!m_resolvedDirectories)
+        m_resolveDirectoriesCondition.wait(m_resolveDirectoriesLock);
+
+    return *m_resolvedDirectories;
+}
+
+FileSystem::Salt WebsiteDataStore::mediaKeysStorageSalt() const
+{
+    Locker resolveLocker { m_resolveDirectoriesLock };
+    RELEASE_ASSERT(m_resolvedDirectories);
+
+    return m_mediaKeysStorageSalt;
+}
+
+void WebsiteDataStore::resolveDirectoriesAsynchronously()
+{
+    ASSERT(RunLoop::isMain());
+
+    RELEASE_ASSERT(!m_hasDispatchedResolveDirectories);
+    m_hasDispatchedResolveDirectories = true;
+
+    Ref resolveDirectoriesQueue = WorkQueue::create("com.apple.WebKit.WebsiteDataStore.resolveDirectories", WorkQueue::QOS::UserInteractive);
+    resolveDirectoriesQueue->dispatch([this, protectedThis = Ref { *this }, directories = crossThreadCopy(m_configuration->directories()), shouldExcludeCacheDirectories = !!m_configuration->identifier()]() mutable {
+        FileSystem::Salt mediaKeysStorageSalt;
+        resolveDirectories(directories, mediaKeysStorageSalt);
+        // Default paths of WebsiteDataStore created with identifier are not under caches or tmp directory,
+        // so we need to explicitly exclude them from backup.
+        handleResolvedDirectoriesAsynchronously(directories, shouldExcludeCacheDirectories);
+        {
+            Locker resolveLocker { m_resolveDirectoriesLock };
+            m_resolvedDirectories = crossThreadCopy(WTFMove(directories));
+            m_mediaKeysStorageSalt = WTFMove(mediaKeysStorageSalt);
+            m_resolveDirectoriesCondition.notifyOne();
+        }
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
+    });
+}
+
+void WebsiteDataStore::handleResolvedDirectoriesAsynchronously(const WebsiteDataStoreConfiguration::Directories& directories, bool shouldExcludeCacheDirectories)
+{
+    Vector<String> allCacheDirectories;
+    if (shouldExcludeCacheDirectories) {
+        allCacheDirectories = {
+            directories.mediaCacheDirectory.isolatedCopy()
+            , directories.networkCacheDirectory.isolatedCopy()
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-            , resolvedModelElementCacheDirectory()
+            , directories.modelElementCacheDirectory.isolatedCopy()
 #endif
         };
-        protectedQueue()->dispatch([directories = crossThreadCopy(WTFMove(allCacheDirectories))]() {
-            for (auto& directory : directories)
-                FileSystem::setExcludedFromBackup(directory, true);
-        });
     }
 
-    // Clear data of deprecated types asynchronously.
-    if (auto webSQLDirectory = configuration->webSQLDatabaseDirectory(); !webSQLDirectory.isEmpty()) {
-        protectedQueue()->dispatch([webSQLDirectory = webSQLDirectory.isolatedCopy()]() {
+    // Clear data of deprecated types.
+    protectedQueue()->dispatch([webSQLDirectory = crossThreadCopy(directories.webSQLDatabaseDirectory), applicationCacheDirectory = crossThreadCopy(directories.applicationCacheDirectory), applicationCacheFlatFileSubdirectoryName = crossThreadCopy(directories.applicationCacheFlatFileSubdirectoryName), directoriesToExclude = WTFMove(allCacheDirectories)]() {
+        if (!webSQLDirectory.isEmpty()) {
             WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDirectory)->deleteAllDatabasesImmediately();
             FileSystem::deleteEmptyDirectory(webSQLDirectory);
-        });
-    }
+        }
 
-    if (auto applicationCacheDirectory = m_configuration->applicationCacheDirectory(); !applicationCacheDirectory.isEmpty()) {
-        protectedQueue()->dispatch([applicationCacheDirectory = applicationCacheDirectory.isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy()]() {
+        if (!applicationCacheDirectory.isEmpty()) {
             {
                 auto storage = WebCore::ApplicationCacheStorage::create(applicationCacheDirectory, applicationCacheFlatFileSubdirectoryName);
                 storage->deleteAllCaches();
@@ -481,8 +538,11 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
             auto applicationCacheDatabasePath = FileSystem::pathByAppendingComponent(applicationCacheDirectory, "ApplicationCache.db"_s);
             WebCore::SQLiteFileSystem::deleteDatabaseFile(applicationCacheDatabasePath);
             FileSystem::deleteEmptyDirectory(applicationCacheDirectory);
-        });
-    }
+        }
+
+        for (auto& directory : directoriesToExclude)
+            FileSystem::setExcludedFromBackup(directory, true);
+    });
 }
 
 Ref<WorkQueue> WebsiteDataStore::protectedQueue() const
@@ -681,8 +741,8 @@ private:
     }
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
-        auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
-        protectedQueue()->dispatch([mediaKeysStorageDirectory = mediaKeysStorageDirectory.isolatedCopy(), callbackAggregator] {
+        auto mediaKeysStorageDirectory = resolvedDirectories().mediaKeysStorageDirectory;
+        protectedQueue()->dispatch([mediaKeysStorageDirectory = crossThreadCopy(WTFMove(mediaKeysStorageDirectory)), callbackAggregator] {
             WebsiteData websiteData;
             websiteData.entries = mediaKeysStorageOrigins(mediaKeysStorageDirectory).map([](auto& origin) {
                 return WebsiteData::Entry { origin, WebsiteDataType::MediaKeys, 0 };
@@ -792,8 +852,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         ensureProtectedDeviceIdHashSaltStorage()->deleteDeviceIdHashSaltOriginsModifiedSince(modifiedSince, [callbackAggregator] { });
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
-        auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
-        protectedQueue()->dispatch([mediaKeysStorageDirectory = mediaKeysStorageDirectory.isolatedCopy(), callbackAggregator, modifiedSince] {
+        auto mediaKeysStorageDirectory = resolvedDirectories().mediaKeysStorageDirectory;
+        protectedQueue()->dispatch([mediaKeysStorageDirectory = crossThreadCopy(WTFMove(mediaKeysStorageDirectory)), callbackAggregator, modifiedSince] {
             removeMediaKeysStorage(mediaKeysStorageDirectory, modifiedSince);
         });
     }
@@ -890,8 +950,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 origins.add(crossThreadCopy(origin));
         }
 
-        auto mediaKeysStorageDirectory = migrateMediaKeysStorageIfNecessary(m_configuration->mediaKeysStorageDirectory());
-        protectedQueue()->dispatch([mediaKeysStorageDirectory = mediaKeysStorageDirectory.isolatedCopy(), salt = m_mediaKeysStorageSalt, callbackAggregator, origins = WTFMove(origins)] {
+        auto mediaKeysStorageDirectory = resolvedDirectories().mediaKeysStorageDirectory;
+        protectedQueue()->dispatch([mediaKeysStorageDirectory = crossThreadCopy(WTFMove(mediaKeysStorageDirectory)), salt = mediaKeysStorageSalt(), callbackAggregator, origins = WTFMove(origins)] {
             removeMediaKeysStorage(mediaKeysStorageDirectory, origins, salt);
         });
     }
@@ -1852,17 +1912,16 @@ void WebsiteDataStore::createHandleFromResolvedPathIfPossible(const String& reso
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {
     WebsiteDataStoreParameters parameters;
-    resolveDirectoriesIfNecessary();
-
-    auto resourceLoadStatisticsDirectory = resolvedResourceLoadStatisticsDirectory();
+    auto& directories = resolvedDirectories();
+    auto resourceLoadStatisticsDirectory = directories.resourceLoadStatisticsDirectory;
     SandboxExtension::Handle resourceLoadStatisticsDirectoryHandle;
     createHandleFromResolvedPathIfPossible(resourceLoadStatisticsDirectory, resourceLoadStatisticsDirectoryHandle);
 
-    auto networkCacheDirectory = resolvedNetworkCacheDirectory();
+    auto networkCacheDirectory = directories.networkCacheDirectory;
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
     createHandleFromResolvedPathIfPossible(networkCacheDirectory, networkCacheDirectoryExtensionHandle);
 
-    auto hstsStorageDirectory = resolvedHSTSStorageDirectory();
+    auto hstsStorageDirectory = directories.hstsStorageDirectory;
     SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
     createHandleFromResolvedPathIfPossible(hstsStorageDirectory, hstsStorageDirectoryExtensionHandle);
 
@@ -1933,16 +1992,16 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.totalQuotaRatio = m_configuration->totalQuotaRatio();
     networkSessionParameters.standardVolumeCapacity = m_configuration->standardVolumeCapacity();
     networkSessionParameters.volumeCapacityOverride = m_configuration->volumeCapacityOverride();
-    networkSessionParameters.localStorageDirectory = resolvedLocalStorageDirectory();
+    networkSessionParameters.localStorageDirectory = directories.localStorageDirectory;
     createHandleFromResolvedPathIfPossible(networkSessionParameters.localStorageDirectory, networkSessionParameters.localStorageDirectoryExtensionHandle);
-    networkSessionParameters.indexedDBDirectory = resolvedIndexedDBDatabaseDirectory();
+    networkSessionParameters.indexedDBDirectory = directories.indexedDBDatabaseDirectory;
     createHandleFromResolvedPathIfPossible(networkSessionParameters.indexedDBDirectory, networkSessionParameters.indexedDBDirectoryExtensionHandle);
-    networkSessionParameters.generalStorageDirectory = resolvedGeneralStorageDirectory();
+    networkSessionParameters.generalStorageDirectory = directories.generalStorageDirectory;
     createHandleFromResolvedPathIfPossible(networkSessionParameters.generalStorageDirectory, networkSessionParameters.generalStorageDirectoryHandle);
-    networkSessionParameters.cacheStorageDirectory = resolvedCacheStorageDirectory();
+    networkSessionParameters.cacheStorageDirectory = directories.cacheStorageDirectory;
     createHandleFromResolvedPathIfPossible(networkSessionParameters.cacheStorageDirectory, networkSessionParameters.cacheStorageDirectoryExtensionHandle);
 
-    networkSessionParameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
+    networkSessionParameters.serviceWorkerRegistrationDirectory = directories.serviceWorkerRegistrationDirectory;
     createHandleFromResolvedPathIfPossible(networkSessionParameters.serviceWorkerRegistrationDirectory, networkSessionParameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     networkSessionParameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
     networkSessionParameters.inspectionForServiceWorkersAllowed = m_inspectionForServiceWorkersAllowed;
@@ -2440,13 +2499,6 @@ void WebsiteDataStore::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF:
     m_proxyConfigData = WTFMove(data);
 }
 #endif // HAVE(NW_PROXY_CONFIG)
-
-FileSystem::Salt WebsiteDataStore::mediaKeysStorageSalt() const
-{
-    RELEASE_ASSERT(m_hasResolvedDirectories);
-
-    return m_mediaKeysStorageSalt;
-}
 
 void WebsiteDataStore::setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&& completionHandler)
 {
