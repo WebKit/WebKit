@@ -1822,6 +1822,18 @@
 #endif
 ))
 
+(define (allow-thread-adopt-exception-handler)
+    (when (defined? 'thread_adopt_exception_handler)
+        (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))))
+
+(define (allow-mach-exceptions)
+#if HAVE(HARDENED_MACH_EXCEPTIONS)
+    (when (defined? 'task_register_hardened_exception_handler)
+        (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))))
+#else
+    (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+#endif
+
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
@@ -1829,17 +1841,21 @@
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
             (with-filter (require-not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
-                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
+                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry))
+                (allow-thread-adopt-exception-handler))
             (with-filter (lockdown-mode)
                 (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
                 (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
 #else
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry))
+            (allow-thread-adopt-exception-handler)
 #endif
 #if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
             (with-filter (require-not (webcontent-process-launched))
-                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+                (allow-mach-exceptions))
+#else
+            (allow-mach-exceptions)
 #endif
 
             (allow mach-message-send (kernel-mig-routines-in-use))
