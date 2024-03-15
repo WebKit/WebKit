@@ -216,6 +216,8 @@ public:
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return CodePath::Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
 
+    bool hasOTSVGGlyph(const GlyphBuffer&) const;
+
     bool primaryFontIsSystemFont() const;
 
     static float syntheticObliqueAngle() { return 14; }
