@@ -78,16 +78,25 @@ static void wpeDisplayDRMDispose(GObject* object)
     G_OBJECT_CLASS(wpe_display_drm_parent_class)->dispose(object);
 }
 
+struct DisplayDevice {
+    CString filename;
+    UnixFileDescriptor fd;
+
+    bool isNull() const
+    {
+        return !fd && filename.isNull();
+    }
+};
+
 // This is based on weston function find_primary_gpu(). It tries to find the boot VGA device that is KMS capable, or the first KMS device.
-static std::optional<std::pair<UnixFileDescriptor, CString>> findDevice(struct udev* udev, const char* seatID)
+static struct DisplayDevice findDevice(struct udev* udev, const char* seatID)
 {
     RefPtr<struct udev_enumerate> udevEnumerate = adoptRef(udev_enumerate_new(udev));
     udev_enumerate_add_match_subsystem(udevEnumerate.get(), "drm");
     udev_enumerate_add_match_sysname(udevEnumerate.get(), "card[0-9]*");
     udev_enumerate_scan_devices(udevEnumerate.get());
 
-    UnixFileDescriptor fd;
-    RefPtr<struct udev_device> drmDevice;
+    struct DisplayDevice displayDevice;
     struct udev_list_entry* entry;
     udev_list_entry_foreach(entry, udev_enumerate_get_list_entry(udevEnumerate.get())) {
         RefPtr<struct udev_device> udevDevice = adoptRef(udev_device_new_from_syspath(udev, udev_list_entry_get_name(entry)));
@@ -100,37 +109,30 @@ static std::optional<std::pair<UnixFileDescriptor, CString>> findDevice(struct u
         if (g_strcmp0(deviceSeatID, seatID))
             continue;
 
-        bool isbootVGA = false;
+        bool isBootVGA = false;
         if (auto* pciDevice = udev_device_get_parent_with_subsystem_devtype(udevDevice.get(), "pci", nullptr)) {
             const char* id = udev_device_get_sysattr_value(pciDevice, "boot_vga");
-            isbootVGA = id && !strcmp(id, "1");
+            isBootVGA = id && !strcmp(id, "1");
         }
 
-        if (!isbootVGA && drmDevice)
+        if (!isBootVGA && !displayDevice.isNull())
             continue;
 
         const char* filename = udev_device_get_devnode(udevDevice.get());
-        fd = UnixFileDescriptor { open(filename, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+        auto fd = UnixFileDescriptor { open(filename, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
         if (!fd)
             continue;
 
         WPE::DRM::UniquePtr<drmModeRes> resources(drmModeGetResources(fd.value()));
-        if (!resources || !resources->count_crtcs || !resources->count_connectors || !resources->count_encoders) {
-            fd = { };
+        if (!resources || !resources->count_crtcs || !resources->count_connectors || !resources->count_encoders)
             continue;
-        }
 
-        drmDevice = WTFMove(udevDevice);
-        if (isbootVGA)
-            return std::pair<UnixFileDescriptor, CString> { WTFMove(fd), CString(filename) };
-
-        fd = { };
+        displayDevice = { CString(filename), WTFMove(fd) };
+        if (isBootVGA)
+            return displayDevice;
     }
 
-    if (!fd || !drmDevice)
-        return std::nullopt;
-
-    return std::pair<UnixFileDescriptor, CString> { WTFMove(fd), CString(udev_device_get_devnode(drmDevice.get())) };
+    return displayDevice;
 }
 
 static bool wpeDisplayDRMInitializeCapabilities(WPEDisplayDRM* display, int fd, GError** error)
@@ -237,13 +239,13 @@ static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
     }
 
     auto session = WPE::DRM::Session::create();
-    auto fdAndFilename = findDevice(udev.get(), session->seatID());
-    if (!fdAndFilename) {
+    auto displayDevice = findDevice(udev.get(), session->seatID());
+    if (displayDevice.isNull()) {
         g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "No suitable DRM device found");
         return FALSE;
     }
 
-    auto fd = WTFMove(fdAndFilename->first);
+    auto fd = WTFMove(displayDevice.fd);
     if (drmSetMaster(fd.value()) == -1) {
         g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to become DRM master");
         return FALSE;
@@ -289,7 +291,7 @@ static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
 
     displayDRM->priv->session = WTFMove(session);
     displayDRM->priv->fd = WTFMove(fd);
-    displayDRM->priv->drmDevice = WTFMove(fdAndFilename->second);
+    displayDRM->priv->drmDevice = WTFMove(displayDevice.filename);
     displayDRM->priv->drmRenderNode = renderNodePath.get();
     displayDRM->priv->device = device;
     displayDRM->priv->connector = WTFMove(connector);
