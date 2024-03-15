@@ -154,8 +154,7 @@ static RetainPtr<NSMutableSet>& pluginViews()
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)plugInsAreRunning
 {
-    NSUInteger pluginViewCount = [_views count];
-    return _started && pluginViewCount;
+    return _started && [_views count];
 }
 
 - (CALayer *)superlayerForPluginView:(NSView *)view
@@ -212,12 +211,10 @@ static RetainPtr<NSMutableSet>& pluginViews()
     if (_started)
         return;
     
-    if ([_views count] > 0)
+    if ([_views count])
         LOG(Plugins, "starting WebKit plugins : %@", [_views description]);
     
-    int count = [_views count];
-    for (int i = 0; i < count; i++) {
-        id aView = [_views objectAtIndex:i];
+    for (id aView in _views) {
         if ([aView respondsToSelector:@selector(webPlugInStart)]) {
             JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
             [aView webPlugInStart];
@@ -234,13 +231,12 @@ static RetainPtr<NSMutableSet>& pluginViews()
     if (!_started)
         return;
 
-    if ([_views count] > 0) {
+    if ([_views count]) {
         LOG(Plugins, "stopping WebKit plugins: %@", [_views description]);
     }
-    
-    int viewsCount = [_views count];
-    for (int i = 0; i < viewsCount; i++)
-        [self stopOnePlugin:[_views objectAtIndex:i]];
+
+    for (id aView in _views)
+        [self stopOnePlugin:aView];
 
     _started = NO;
 }
@@ -251,12 +247,11 @@ static RetainPtr<NSMutableSet>& pluginViews()
     if (!_started)
         return;
 
-    NSUInteger viewsCount = [_views count];
-    if (viewsCount > 0)
+    if ([_views count])
         LOG(Plugins, "stopping WebKit plugins for PageCache: %@", [_views description]);
 
-    for (NSUInteger i = 0; i < viewsCount; ++i)
-        [self stopOnePluginForPageCache:[_views objectAtIndex:i]];
+    for (id aView in _views)
+        [self stopOnePluginForPageCache:aView];
 
     _started = NO;
 }
@@ -265,12 +260,11 @@ static RetainPtr<NSMutableSet>& pluginViews()
 {
     WebView *webView = [_documentView _webView];
 
-    NSUInteger viewsCount = [_views count];
-    if (viewsCount > 0)
+    if ([_views count])
         LOG(Plugins, "restoring WebKit plugins from PageCache: %@", [_views description]);
 
-    for (NSUInteger i = 0; i < viewsCount; ++i)
-        [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:[_views objectAtIndex:i]];
+    for (id aView in _views)
+        [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:aView];
 }
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -367,17 +361,14 @@ static void cancelOutstandingCheck(const void *item, void *context)
 {    
     [self stopAllPlugins];
 
-    if ([_views count] > 0) {
+    if ([_views count]) {
         LOG(Plugins, "destroying WebKit plugins: %@", [_views description]);
     }
 
     [self _cancelOutstandingChecks];
     
-    int viewsCount = [_views count];
-    for (int i = 0; i < viewsCount; i++) {
-        id aView = [_views objectAtIndex:i];
+    for (id aView in _views) {
         [self destroyOnePlugin:aView];
-
         [pluginViews() removeObject:aView];
 #if !PLATFORM(IOS_FAMILY)
         [[_documentView _webView] removePluginInstanceView:aView];

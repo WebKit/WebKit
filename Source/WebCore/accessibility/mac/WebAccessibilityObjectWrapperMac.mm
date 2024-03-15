@@ -1287,9 +1287,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)
 {
-    unsigned length = [array count];
+    NSUInteger length = [array count];
     vector.reserveInitialCapacity(length);
-    for (unsigned i = 0; i < length; ++i) {
+    for (NSUInteger i = 0; i < length; ++i) {
         AXCoreObject* obj = [[array objectAtIndex:i] axBackingObject];
         if (obj)
             vector.append(obj);

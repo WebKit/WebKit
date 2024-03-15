@@ -73,8 +73,7 @@ private:
 
         char* run = nullptr;
         size_t runSize = 0;
-        for (unsigned i = 0; i < decommits.size(); ++i) {
-            auto& pair = decommits[i];
+        for (auto& pair : decommits) {
             if (run + runSize != pair.first) {
                 if (run)
                     vmDeallocatePhysicalPages(run, runSize);

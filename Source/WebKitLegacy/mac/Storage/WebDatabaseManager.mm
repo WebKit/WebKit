@@ -159,9 +159,7 @@ static bool isFileHidden(NSString *file)
     if (!array)
         return;
     
-    NSUInteger count = [array count];
-    for (NSUInteger i = 0; i < count; ++i) {
-        NSString *fileName = [array objectAtIndex:i];
+    for (NSString *fileName in array) {
         // Skip hidden files.
         if (![fileName length] || isFileHidden(fileName))
             continue;
@@ -178,9 +176,8 @@ static bool isFileHidden(NSString *file)
             continue;
         
         NSArray *databaseFilesInOrigin = [fileManager contentsOfDirectoryAtPath:path error:0];
-        NSUInteger databaseFileCount = [databaseFilesInOrigin count];
         NSUInteger deletedDatabaseFileCount = 0;
-        for (NSUInteger j = 0; j < databaseFileCount; ++j) {
+        for (NSString *dbFileName in databaseFilesInOrigin) {
             NSString *dbFileName = [databaseFilesInOrigin objectAtIndex:j];
             // Skip hidden files.
             if (![dbFileName length] || isFileHidden(dbFileName))
@@ -197,7 +194,7 @@ static bool isFileHidden(NSString *file)
         }
         
         // If we have removed every database file for this origin, delete the folder for this origin.
-        if (databaseFileCount == deletedDatabaseFileCount || ![fileManager contentsOfDirectoryAtPath:path error:nullptr].count) {
+        if (deletedDatabaseFileCount == [databaseFilesInOrigin count] || ![fileManager contentsOfDirectoryAtPath:path error:nullptr].count) {
             // Use rmdir - we don't want the deletion to happen if the folder is not empty.
             rmdir([path fileSystemRepresentation]);
         }

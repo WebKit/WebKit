@@ -67,7 +67,7 @@ static bool isWebKitMallocForceEnabled()
 
 static bool isMallocEnvironmentVariableImplyingSystemMallocSet()
 {
-    const char* list[] = {
+    static const char* list[] = {
         "Malloc",
         "MallocLogFile",
         "MallocGuardEdges",
@@ -82,10 +82,9 @@ static bool isMallocEnvironmentVariableImplyingSystemMallocSet()
         "MallocCorruptionAbort",
         "MallocHelp"
     };
-    size_t size = sizeof(list) / sizeof(const char*);
     
-    for (size_t i = 0; i < size; ++i) {
-        if (getenv(list[i]))
+    for (const char* env : list) {
+        if (getenv(env))
             return true;
     }
 

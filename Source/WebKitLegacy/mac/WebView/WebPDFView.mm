@@ -133,8 +133,8 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (![aPages isEqual:bPages])
         return NO;
     
-    int count = [aPages count];
-    int i;
+    NSUInteger count = [aPages count];
+    NSUInteger i;
     for (i = 0; i < count; ++i) {
         NSRect aBounds = [selectionA boundsForPage:[aPages objectAtIndex:i]];
         NSRect bBounds = [selectionB boundsForPage:[bPages objectAtIndex:i]];

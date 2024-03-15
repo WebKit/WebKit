@@ -2724,13 +2724,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return nil;
     }
 
-    unsigned count = [menuItems count];
-    if (!count)
+    if (![menuItems count])
         return nil;
 
     auto menu = adoptNS([[NSMenu alloc] init]);
-    for (unsigned i = 0; i < count; i++)
-        [menu addItem:[menuItems objectAtIndex:i]];
+    for (NSMenuItem *item in menuItems)
+        [menu addItem:item];
 
     return menu.autorelease();
 }
@@ -3672,10 +3671,8 @@ IGNORE_WARNINGS_END
 
     // Ask plug-ins in child frames
     NSArray *childFrames = [frame childFrames];
-    unsigned childCount = [childFrames count];
-    unsigned childIndex;
-    for (childIndex = 0; childIndex < childCount; childIndex++) {
-        if ([self _locked_plugInsAreRunningInFrame:[childFrames objectAtIndex:childIndex]])
+    for (WebFrame *frame in childFrames) {
+        if ([self _locked_plugInsAreRunningInFrame:frame])
             return YES;
     }
 
@@ -3697,10 +3694,8 @@ IGNORE_WARNINGS_END
 
     // Send the message to plug-ins in child frames
     NSArray *childFrames = [frame childFrames];
-    unsigned childCount = [childFrames count];
-    unsigned childIndex;
-    for (childIndex = 0; childIndex < childCount; childIndex++) {
-        [self _locked_recursivelyPerformPlugInSelector:selector inFrame:[childFrames objectAtIndex:childIndex]];
+    for (WebFrame *frame in childFrames) {
+        [self _locked_recursivelyPerformPlugInSelector:selector inFrame:frame];
     }
 }
 
@@ -5223,11 +5218,10 @@ IGNORE_WARNINGS_END
             [WebView _unregisterViewClassAndRepresentationClassForMIMEType:key];
     }
 
-    int i, count = [MIMETypes count];
-    for (i = 0; i < count; i++) {
+    for (NSString *MIMEType in MIMETypes) {
         [WebView registerViewClass:[WebHTMLView class]
                 representationClass:[WebHTMLRepresentation class]
-                forMIMEType:[MIMETypes objectAtIndex:i]];
+                forMIMEType:MIMEType];
     }
 }
 
