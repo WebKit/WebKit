@@ -134,7 +134,7 @@ void ByteRangeRequest::completeUnconditionally(PDFIncrementalLoader& loader)
 
     auto availableRequestBytes = std::min<uint64_t>(m_count, availableBytes - m_position);
 
-    const uint8_t* dataPtr = loader.dataPtrForRange(m_position, availableRequestBytes);
+    const uint8_t* dataPtr = loader.dataPtrForRange(m_position, availableRequestBytes, CheckValidRanges::No);
     if (!dataPtr)
         return;
 
@@ -267,7 +267,6 @@ struct PDFIncrementalLoader::RequestData {
 
     HashMap<ByteRangeRequestIdentifier, ByteRangeRequest> outstandingByteRangeRequests;
     HashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, ByteRangeRequestIdentifier> streamLoaderMap;
-    RangeSet<WTF::Range<uint64_t>> completedRanges;
 };
 
 #pragma mark -
@@ -329,17 +328,6 @@ bool PDFIncrementalLoader::documentFinishedLoading() const
     return plugin->documentFinishedLoading();
 }
 
-void PDFIncrementalLoader::ensureDataBufferLength(uint64_t targetLength)
-{
-    ASSERT(isMainRunLoop());
-
-    RefPtr plugin = m_plugin.get();
-    if (!plugin)
-        return;
-
-    plugin->ensureDataBufferLength(targetLength);
-}
-
 void PDFIncrementalLoader::appendAccumulatedDataToDataBuffer(ByteRangeRequest& request)
 {
     ASSERT(isMainRunLoop());
@@ -360,16 +348,13 @@ uint64_t PDFIncrementalLoader::availableDataSize() const
     return plugin->streamedBytes();
 }
 
-const uint8_t* PDFIncrementalLoader::dataPtrForRange(uint64_t position, size_t count) const
+const uint8_t* PDFIncrementalLoader::dataPtrForRange(uint64_t position, size_t count, CheckValidRanges checkValidRanges) const
 {
     RefPtr plugin = m_plugin.get();
     if (!plugin)
         return nullptr;
 
-    if (!plugin->haveDataForRange(position, count))
-        return nullptr;
-
-    return plugin->dataPtrForRange(position, count);
+    return plugin->dataPtrForRange(position, count, checkValidRanges);
 }
 
 void PDFIncrementalLoader::incrementalPDFStreamDidFinishLoading()
@@ -396,10 +381,6 @@ void PDFIncrementalLoader::incrementalPDFStreamDidReceiveData(const SharedBuffer
     RefPtr plugin = m_plugin.get();
     if (!plugin)
         return;
-
-    // Keep our ranges-lookup-table compact by continuously updating its first range
-    // as the entire document streams in from the network.
-    m_requestData->completedRanges.add({ 0, plugin->streamedBytes() - 1 });
 
     HashSet<ByteRangeRequestIdentifier> handledRequests;
     for (auto& request : m_requestData->outstandingByteRangeRequests.values()) {
@@ -549,27 +530,10 @@ bool PDFIncrementalLoader::requestCompleteIfPossible(ByteRangeRequest& request)
     if (!plugin)
         return false;
 
-    auto haveReceivedDataForRange = [&](const ByteRangeRequest& request) {
-        if (!plugin->haveDataForRange(request.position(), request.count()))
-            return false;
-
-        if (plugin->haveStreamedDataForRange(request.position(), request.count()))
-            return true;
-
-        if (m_requestData->completedRanges.contains({ request.position(), request.position() + request.count() - 1 })) {
-#if !LOG_DISABLED
-            incrementalLoaderLog(makeString("Completing request %llu with a previously completed range", request.identifier()));
-#endif
-            return true;
-        }
-
-        return false;
-    };
-
-    if (!haveReceivedDataForRange(request))
+    const uint8_t* dataPtr = plugin->dataPtrForRange(request.position(), request.count(), CheckValidRanges::Yes);
+    if (!dataPtr)
         return false;
 
-    const uint8_t* dataPtr = plugin->dataPtrForRange(request.position(), request.count());
     request.completeWithBytes(dataPtr, request.count(), *this);
     return true;
 }
@@ -595,13 +559,7 @@ void PDFIncrementalLoader::requestDidCompleteWithAccumulatedData(ByteRangeReques
     incrementalLoaderLog(makeString("Completing range request ", request.identifier(), " (", request.count(), " bytes at ", request.position(), ") with ", request.accumulatedData().size(), " bytes from the network"));
 #endif
 
-    // Fold this data into the main data buffer so that if something in its range is requested again (which happens quite often)
-    // we do not need to hit the network layer again.
-    ensureDataBufferLength(request.position() + request.accumulatedData().size());
-    if (request.accumulatedData().size()) {
-        appendAccumulatedDataToDataBuffer(request);
-        m_requestData->completedRanges.add({ request.position(), request.position() + request.accumulatedData().size() - 1 });
-    }
+    appendAccumulatedDataToDataBuffer(request);
 
     if (auto* streamLoader = request.streamLoader())
         forgetStreamLoader(*streamLoader);

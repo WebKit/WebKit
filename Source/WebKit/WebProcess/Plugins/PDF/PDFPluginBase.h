@@ -40,6 +40,9 @@
 #include <WebCore/ScrollableArea.h>
 #include <WebCore/TextIndicator.h>
 #include <wtf/Identified.h>
+#include <wtf/Lock.h>
+#include <wtf/Range.h>
+#include <wtf/RangeSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeTraits.h>
@@ -80,6 +83,8 @@ struct WebHitTestResultData;
 
 enum class ByteRangeRequestIdentifierType;
 using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
+
+enum class CheckValidRanges : bool { No, Yes };
 
 class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client, public Identified<PDFPluginIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -244,21 +249,21 @@ public:
     void writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types) const;
 #endif
 
+    uint64_t streamedBytes() const;
+
 private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }
-    uint64_t streamedBytes() const { return m_streamedBytes; }
-    void ensureDataBufferLength(uint64_t);
+    void ensureDataBufferLength(uint64_t) WTF_REQUIRES_LOCK(m_streamedDataLock);
 
-    bool haveStreamedDataForRange(uint64_t offset, size_t count) const;
+    bool haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
     // This just checks whether the CFData is large enough; it doesn't know if we filled this range with data.
-    bool haveDataForRange(uint64_t offset, size_t count) const;
 
     void insertRangeRequestData(uint64_t offset, const Vector<uint8_t>&);
 
     // Returns the number of bytes copied.
     size_t copyDataAtPosition(void* buffer, uint64_t sourcePosition, size_t count) const;
     // FIXME: It would be nice to avoid having both the "copy into a buffer" and "return a pointer" ways of getting data.
-    const uint8_t* dataPtrForRange(uint64_t sourcePosition, size_t count) const;
+    const uint8_t* dataPtrForRange(uint64_t sourcePosition, size_t count, CheckValidRanges) const;
 
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
@@ -340,8 +345,10 @@ protected:
     // m_data grows as we receive data in the primary request (PDFPluginBase::streamDidReceiveData())
     // but also as byte range requests are received via m_incrementalLoader, so it may have "holes"
     // before the main resource is fully loaded.
-    RetainPtr<CFMutableDataRef> m_data;
-    uint64_t m_streamedBytes { 0 };
+    mutable Lock m_streamedDataLock;
+    RetainPtr<CFMutableDataRef> m_data WTF_GUARDED_BY_LOCK(m_streamedDataLock);
+    uint64_t m_streamedBytes WTF_GUARDED_BY_LOCK(m_streamedDataLock) { 0 };
+    RangeSet<WTF::Range<uint64_t>> m_validRanges WTF_GUARDED_BY_LOCK(m_streamedDataLock);
 
     RetainPtr<PDFDocument> m_pdfDocument;
 #if PLATFORM(MAC)

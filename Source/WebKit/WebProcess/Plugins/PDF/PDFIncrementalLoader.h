@@ -50,6 +50,8 @@ enum class ByteRangeRequestIdentifierType { };
 using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
 using DataRequestCompletionHandler = Function<void(const uint8_t*, size_t count)>;
 
+enum class CheckValidRanges : bool;
+
 class PDFIncrementalLoader : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDFIncrementalLoader> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFIncrementalLoader);
@@ -86,10 +88,9 @@ private:
 
     bool documentFinishedLoading() const;
 
-    void ensureDataBufferLength(uint64_t);
     void appendAccumulatedDataToDataBuffer(ByteRangeRequest&);
 
-    const uint8_t* dataPtrForRange(uint64_t position, size_t count) const;
+    const uint8_t* dataPtrForRange(uint64_t position, size_t count, CheckValidRanges) const;
     uint64_t availableDataSize() const;
 
     void getResourceBytesAtPosition(size_t count, off_t position, DataRequestCompletionHandler&&);
