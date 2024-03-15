@@ -156,6 +156,13 @@ typedef void (^WPRestrictedOpenerDomainsCompletionHandler)(NSArray<WPRestrictedO
 @end
 #endif
 
+#if !defined(HAS_WEB_PRIVACY_STORAGE_ACCESS_PROMPT_TRIGGER) && HAVE(WEB_PRIVACY_FRAMEWORK)
+@interface WPStorageAccessPromptQuirk (Staging_124689085)
+@property (nonatomic, readonly) NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains;
+@property (nonatomic, readonly) NSArray<NSString *> *triggerPages;
+@end
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 extern NSString *const WPNotificationUserInfoResourceTypeKey;
