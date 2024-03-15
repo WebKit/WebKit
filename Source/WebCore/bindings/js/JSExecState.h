@@ -119,16 +119,16 @@ public:
         task.run(lexicalGlobalObject);
     }
 
-    static JSC::JSInternalPromise& loadModule(JSC::JSGlobalObject& lexicalGlobalObject, const URL& topLevelModuleURL, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
+    static JSC::JSInternalPromise* loadModule(JSC::JSGlobalObject& lexicalGlobalObject, const URL& topLevelModuleURL, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
     {
         JSExecState currentState(&lexicalGlobalObject);
-        return *JSC::loadModule(&lexicalGlobalObject, JSC::Identifier::fromString(lexicalGlobalObject.vm(), topLevelModuleURL.string()), parameters, scriptFetcher);
+        return JSC::loadModule(&lexicalGlobalObject, JSC::Identifier::fromString(lexicalGlobalObject.vm(), topLevelModuleURL.string()), parameters, scriptFetcher);
     }
 
-    static JSC::JSInternalPromise& loadModule(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::SourceCode& sourceCode, JSC::JSValue scriptFetcher)
+    static JSC::JSInternalPromise* loadModule(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::SourceCode& sourceCode, JSC::JSValue scriptFetcher)
     {
         JSExecState currentState(&lexicalGlobalObject);
-        return *JSC::loadModule(&lexicalGlobalObject, sourceCode, scriptFetcher);
+        return JSC::loadModule(&lexicalGlobalObject, sourceCode, scriptFetcher);
     }
 
     static JSC::JSValue linkAndEvaluateModule(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& moduleKey, JSC::JSValue scriptFetcher, NakedPtr<JSC::Exception>& returnedException)

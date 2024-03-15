@@ -184,8 +184,10 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    auto& promise = JSExecState::loadModule(lexicalGlobalObject, topLevelModuleURL, JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
-    setupModuleScriptHandlers(moduleScript, promise, world);
+    auto* promise = JSExecState::loadModule(lexicalGlobalObject, topLevelModuleURL, JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
+    if (UNLIKELY(!promise))
+        return;
+    setupModuleScriptHandlers(moduleScript, *promise, world);
 }
 
 void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const URL& topLevelModuleURL, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters)
@@ -200,8 +202,10 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    auto& promise = JSExecState::loadModule(lexicalGlobalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
-    setupModuleScriptHandlers(moduleScript, promise, world);
+    auto* promise = JSExecState::loadModule(lexicalGlobalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
+    if (UNLIKELY(!promise))
+        return;
+    setupModuleScriptHandlers(moduleScript, *promise, world);
 }
 
 void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const ScriptSourceCode& sourceCode)
