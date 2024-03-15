@@ -43,7 +43,8 @@ import webkitcorepy
 if sys.platform == 'darwin':
     is_root = not os.getuid()
     does_own_libraries = os.stat(libraries).st_uid == os.getuid()
-    if (is_root or not does_own_libraries):
+    directory_writeable = os.access(libraries, os.W_OK)
+    if any([is_root, not does_own_libraries, not directory_writeable]):
         libraries = os.path.expanduser('~/Library/webkitpy')
 
 from webkitcorepy import AutoInstall, Package, Version
