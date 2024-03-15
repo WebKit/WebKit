@@ -130,7 +130,7 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
     case AttributeNames::allowAttr:
     case AttributeNames::allowfullscreenAttr:
     case AttributeNames::webkitallowfullscreenAttr:
-        m_featurePolicy = std::nullopt;
+        m_permissionsPolicy = std::nullopt;
         break;
     case AttributeNames::loadingAttr:
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
@@ -173,11 +173,11 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
     return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
 }
 
-const FeaturePolicy& HTMLIFrameElement::featurePolicy() const
+const PermissionsPolicy& HTMLIFrameElement::permissionsPolicy() const
 {
-    if (!m_featurePolicy)
-        m_featurePolicy = FeaturePolicy::parse(document(), *this, attributeWithoutSynchronization(allowAttr));
-    return *m_featurePolicy;
+    if (!m_permissionsPolicy)
+        m_permissionsPolicy = PermissionsPolicy::parse(document(), *this, attributeWithoutSynchronization(allowAttr));
+    return *m_permissionsPolicy;
 }
 
 const AtomString& HTMLIFrameElement::loadingForBindings() const

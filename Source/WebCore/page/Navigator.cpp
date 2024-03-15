@@ -32,7 +32,6 @@
 #include "DOMPluginArray.h"
 #include "Document.h"
 #include "DocumentInlines.h"
-#include "FeaturePolicy.h"
 #include "FrameLoader.h"
 #include "GPU.h"
 #include "Geolocation.h"
@@ -43,6 +42,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
+#include "PermissionsPolicy.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
 #include "PushStrategy.h"
@@ -141,7 +141,7 @@ static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& conte
 
 static bool validateWebSharePolicy(Document& document)
 {
-    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes);
+    return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::WebShare, document, LogPermissionsPolicyFailure::Yes);
 }
 
 bool Navigator::canShare(Document& document, const ShareData& data)

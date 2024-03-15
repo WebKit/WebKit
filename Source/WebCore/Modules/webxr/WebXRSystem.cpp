@@ -32,7 +32,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
-#include "FeaturePolicy.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebXRSession.h"
@@ -40,6 +39,7 @@
 #include "LocalDOMWindow.h"
 #include "Navigator.h"
 #include "Page.h"
+#include "PermissionsPolicy.h"
 #include "RequestAnimationFrameCallback.h"
 #include "SecurityOrigin.h"
 #include "UserGestureIndicator.h"
@@ -165,7 +165,7 @@ void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromi
     // 3. If the requesting document's origin is not allowed to use the "xr-spatial-tracking" feature policy,
     //    reject promise with a "SecurityError" DOMException and return it.
     auto document = downcast<Document>(scriptExecutionContext());
-    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::XRSpatialTracking, *document, LogFeaturePolicyFailure::Yes)) {
+    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::XRSpatialTracking, *document, LogPermissionsPolicyFailure::Yes)) {
         promise.reject(Exception { ExceptionCode::SecurityError });
         return;
     }

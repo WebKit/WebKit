@@ -29,7 +29,6 @@
 #include "DedicatedWorkerGlobalScope.h"
 #include "Document.h"
 #include "Exception.h"
-#include "FeaturePolicy.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPermissionDescriptor.h"
 #include "JSPermissionStatus.h"
@@ -40,6 +39,7 @@
 #include "PermissionDescriptor.h"
 #include "PermissionName.h"
 #include "PermissionQuerySource.h"
+#include "PermissionsPolicy.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -73,15 +73,15 @@ NavigatorBase* Permissions::navigator()
 
 Permissions::~Permissions() = default;
 
-static bool isAllowedByFeaturePolicy(const Document& document, PermissionName name)
+static bool isAllowedByPermissionsPolicy(const Document& document, PermissionName name)
 {
     switch (name) {
     case PermissionName::Camera:
-        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document, LogFeaturePolicyFailure::No);
+        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document, LogPermissionsPolicyFailure::No);
     case PermissionName::Geolocation:
-        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Geolocation, document, LogFeaturePolicyFailure::No);
+        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Geolocation, document, LogPermissionsPolicyFailure::No);
     case PermissionName::Microphone:
-        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document, LogFeaturePolicyFailure::No);
+        return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document, LogPermissionsPolicyFailure::No);
     default:
         return true;
     }
@@ -154,7 +154,7 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
             return;
         }
 
-        if (!isAllowedByFeaturePolicy(*document, permissionDescriptor.name)) {
+        if (!isAllowedByPermissionsPolicy(*document, permissionDescriptor.name)) {
             promise.resolve(PermissionStatus::create(*context, PermissionState::Denied, permissionDescriptor, PermissionQuerySource::Window, *page));
             return;
         }

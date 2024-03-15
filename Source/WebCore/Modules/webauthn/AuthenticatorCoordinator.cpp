@@ -34,12 +34,12 @@
 #include "AuthenticatorCoordinatorClient.h"
 #include "AuthenticatorResponseData.h"
 #include "Document.h"
-#include "FeaturePolicy.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSBasicCredential.h"
 #include "JSCredentialCreationOptions.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PermissionsPolicy.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialRequestOptions.h"
@@ -235,7 +235,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     // Step 1, 3, 13 are handled by the caller.
     // Step 2.
     // This implements https://www.w3.org/TR/webauthn-2/#sctn-permissions-policy
-    if (scopeAndCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::PublickeyCredentialsGetRule, document, LogFeaturePolicyFailure::No)) {
+    if (scopeAndCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::PublickeyCredentialsGetRule, document, LogPermissionsPolicyFailure::No)) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }

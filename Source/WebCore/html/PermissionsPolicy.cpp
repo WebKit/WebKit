@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "FeaturePolicy.h"
+#include "PermissionsPolicy.h"
 
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -39,61 +39,61 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const char* policyTypeName(FeaturePolicy::Type type)
+static const char* policyTypeName(PermissionsPolicy::Type type)
 {
     switch (type) {
-    case FeaturePolicy::Type::Camera:
+    case PermissionsPolicy::Type::Camera:
         return "Camera";
-    case FeaturePolicy::Type::Microphone:
+    case PermissionsPolicy::Type::Microphone:
         return "Microphone";
-    case FeaturePolicy::Type::SpeakerSelection:
+    case PermissionsPolicy::Type::SpeakerSelection:
         return "SpeakerSelection";
-    case FeaturePolicy::Type::DisplayCapture:
+    case PermissionsPolicy::Type::DisplayCapture:
         return "DisplayCapture";
-    case FeaturePolicy::Type::Gamepad:
+    case PermissionsPolicy::Type::Gamepad:
         return "Gamepad";
-    case FeaturePolicy::Type::Geolocation:
+    case PermissionsPolicy::Type::Geolocation:
         return "Geolocation";
-    case FeaturePolicy::Type::Payment:
+    case PermissionsPolicy::Type::Payment:
         return "Payment";
-    case FeaturePolicy::Type::ScreenWakeLock:
+    case PermissionsPolicy::Type::ScreenWakeLock:
         return "ScreenWakeLock";
-    case FeaturePolicy::Type::SyncXHR:
+    case PermissionsPolicy::Type::SyncXHR:
         return "SyncXHR";
-    case FeaturePolicy::Type::Fullscreen:
+    case PermissionsPolicy::Type::Fullscreen:
         return "Fullscreen";
-    case FeaturePolicy::Type::WebShare:
+    case PermissionsPolicy::Type::WebShare:
         return "WebShare";
 #if ENABLE(DEVICE_ORIENTATION)
-    case FeaturePolicy::Type::Gyroscope:
+    case PermissionsPolicy::Type::Gyroscope:
         return "Gyroscope";
-    case FeaturePolicy::Type::Accelerometer:
+    case PermissionsPolicy::Type::Accelerometer:
         return "Accelerometer";
-    case FeaturePolicy::Type::Magnetometer:
+    case PermissionsPolicy::Type::Magnetometer:
         return "Magnetometer";
 #endif
 #if ENABLE(WEB_AUTHN)
-    case FeaturePolicy::Type::PublickeyCredentialsGetRule:
+    case PermissionsPolicy::Type::PublickeyCredentialsGetRule:
         return "PublickeyCredentialsGet";
 #endif
 #if ENABLE(WEBXR)
-    case FeaturePolicy::Type::XRSpatialTracking:
+    case PermissionsPolicy::Type::XRSpatialTracking:
         return "XRSpatialTracking";
 #endif
-    case FeaturePolicy::Type::PrivateToken:
+    case PermissionsPolicy::Type::PrivateToken:
         return "PrivateToken";
     }
     ASSERT_NOT_REACHED();
     return "";
 }
 
-bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type type, const Document& document, LogFeaturePolicyFailure logFailure)
+bool isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type type, const Document& document, LogPermissionsPolicyFailure logFailure)
 {
     Ref topDocument = document.topDocument();
     RefPtr ancestorDocument = &document;
     while (ancestorDocument.get() != topDocument.ptr()) {
         if (!ancestorDocument) {
-            if (logFailure == LogFeaturePolicyFailure::Yes && document.domWindow())
+            if (logFailure == LogPermissionsPolicyFailure::Yes && document.domWindow())
                 document.domWindow()->printErrorMessage(makeString("Feature policy '", policyTypeName(type), "' check failed."));
             return false;
         }
@@ -101,14 +101,14 @@ bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type type, cons
         RefPtr ownerElement = ancestorDocument->ownerElement();
         RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(ownerElement.get());
 
-        bool isAllowedByFeaturePolicy = false;
+        bool isAllowedByPermissionsPolicy = false;
         if (iframe)
-            isAllowedByFeaturePolicy = iframe->featurePolicy().allows(type, ancestorDocument->securityOrigin().data());
+            isAllowedByPermissionsPolicy = iframe->permissionsPolicy().allows(type, ancestorDocument->securityOrigin().data());
         else if (ownerElement)
-            isAllowedByFeaturePolicy = FeaturePolicy::defaultPolicy(ownerElement->document()).allows(type, ancestorDocument->securityOrigin().data());
+            isAllowedByPermissionsPolicy = PermissionsPolicy::defaultPolicy(ownerElement->document()).allows(type, ancestorDocument->securityOrigin().data());
 
-        if (!isAllowedByFeaturePolicy) {
-            if (logFailure == LogFeaturePolicyFailure::Yes && document.domWindow()) {
+        if (!isAllowedByPermissionsPolicy) {
+            if (logFailure == LogPermissionsPolicyFailure::Yes && document.domWindow()) {
                 String allowValue;
                 if (iframe)
                     allowValue = iframe->attributeWithoutSynchronization(HTMLNames::allowAttr);
@@ -123,23 +123,23 @@ bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type type, cons
     return true;
 }
 
-static bool isAllowedByFeaturePolicy(const FeaturePolicy::AllowRule& rule, const SecurityOriginData& origin)
+static bool isAllowedByPermissionsPolicy(const PermissionsPolicy::AllowRule& rule, const SecurityOriginData& origin)
 {
     switch (rule.type) {
-    case FeaturePolicy::AllowRule::Type::None:
+    case PermissionsPolicy::AllowRule::Type::None:
         return false;
-    case FeaturePolicy::AllowRule::Type::All:
+    case PermissionsPolicy::AllowRule::Type::All:
         return true;
-    case FeaturePolicy::AllowRule::Type::List:
+    case PermissionsPolicy::AllowRule::Type::List:
         return rule.allowedList.contains(origin);
     }
     ASSERT_NOT_REACHED();
     return false;
 }
 
-static inline void processOriginItem(Document& document, const HTMLIFrameElement& iframe, FeaturePolicy::AllowRule& rule, StringView item)
+static inline void processOriginItem(Document& document, const HTMLIFrameElement& iframe, PermissionsPolicy::AllowRule& rule, StringView item)
 {
-    if (rule.type == FeaturePolicy::AllowRule::Type::None)
+    if (rule.type == PermissionsPolicy::AllowRule::Type::None)
         return;
 
     item = item.trim(isASCIIWhitespace<UChar>);
@@ -158,7 +158,7 @@ static inline void processOriginItem(Document& document, const HTMLIFrameElement
     }
 
     if (item == "*"_s) {
-        rule.type = FeaturePolicy::AllowRule::Type::All;
+        rule.type = PermissionsPolicy::AllowRule::Type::All;
         return;
     }
 
@@ -167,7 +167,7 @@ static inline void processOriginItem(Document& document, const HTMLIFrameElement
         return;
     }
     if (item == "'none'"_s) {
-        rule.type = FeaturePolicy::AllowRule::Type::None;
+        rule.type = PermissionsPolicy::AllowRule::Type::None;
         return;
     }
     URL url { { }, item.toString() };
@@ -175,18 +175,18 @@ static inline void processOriginItem(Document& document, const HTMLIFrameElement
         rule.allowedList.add(SecurityOriginData::fromURL(url));
 }
 
-static inline void updateList(Document& document, const HTMLIFrameElement& iframe, FeaturePolicy::AllowRule& rule, StringView value)
+static inline void updateList(Document& document, const HTMLIFrameElement& iframe, PermissionsPolicy::AllowRule& rule, StringView value)
 {
     if (value.isEmpty()) {
-        if (document.quirks().shouldStarBeFeaturePolicyDefaultValue()) {
-            rule.type = FeaturePolicy::AllowRule::Type::All;
+        if (document.quirks().shouldStarBePermissionsPolicyDefaultValue()) {
+            rule.type = PermissionsPolicy::AllowRule::Type::All;
             return;
         }
 
         // The allowlist for the features named in the attribute may be empty; in that case,
         // the default value for the allowlist is 'src', which represents the origin of the
         // URL in the iframe’s src attribute.
-        // https://www.w3.org/TR/permissions-policy/#iframe-allow-attribute
+        // https://w3c.github.io/webappsec-permissions-policy/#iframe-allow-attribute
         processOriginItem(document, iframe, rule, "'src'"_s);
         return;
     }
@@ -203,9 +203,9 @@ static inline void updateList(Document& document, const HTMLIFrameElement& ifram
     }
 }
 
-FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement* iframe, StringView allowAttributeValue)
+PermissionsPolicy PermissionsPolicy::parse(Document& document, const HTMLIFrameElement* iframe, StringView allowAttributeValue)
 {
-    FeaturePolicy policy;
+    PermissionsPolicy policy;
     bool isCameraInitialized = false;
     bool isMicrophoneInitialized = false;
     bool isSpeakerSelectionInitialized = false;
@@ -337,7 +337,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement* 
     if (!isDisplayCaptureInitialized)
         policy.m_displayCaptureRule.allowedList.add(document.securityOrigin().data());
     if (!isGamepadInitialized)
-        policy.m_gamepadRule.type = FeaturePolicy::AllowRule::Type::All;
+        policy.m_gamepadRule.type = PermissionsPolicy::AllowRule::Type::All;
     if (!isScreenWakeLockInitialized)
         policy.m_screenWakeLockRule.allowedList.add(document.securityOrigin().data());
     if (!isGeolocationInitialized)
@@ -365,16 +365,16 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement* 
     if (!isPrivateTokenInitialized)
         policy.m_privateTokenRule.allowedList.add(document.securityOrigin().data());
 
-    // https://w3c.github.io/webappsec-feature-policy/#process-feature-policy-attributes
+    // https://w3c.github.io/webappsec-permissions-policy/#algo-process-policy-attributes
     // 9.5 Process Feature Policy Attributes
     // 3.1 If element’s allowfullscreen attribute is specified, and container policy does
     //     not contain an allowlist for fullscreen,
     if (!isFullscreenInitialized) {
         if (iframe && (iframe->hasAttribute(allowfullscreenAttr) || iframe->hasAttribute(webkitallowfullscreenAttr))) {
             // 3.1.1 Construct a new declaration for fullscreen, whose allowlist is the special value *.
-            policy.m_fullscreenRule.type = FeaturePolicy::AllowRule::Type::All;
+            policy.m_fullscreenRule.type = PermissionsPolicy::AllowRule::Type::All;
         } else {
-            // https://fullscreen.spec.whatwg.org/#feature-policy-integration
+            // https://fullscreen.spec.whatwg.org/#permissions-policy-integration
             // The default allowlist is 'self'.
             policy.m_fullscreenRule.allowedList.add(document.securityOrigin().data());
         }
@@ -386,49 +386,49 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement* 
     return policy;
 }
 
-bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
+bool PermissionsPolicy::allows(Type type, const SecurityOriginData& origin) const
 {
     switch (type) {
     case Type::Camera:
-        return isAllowedByFeaturePolicy(m_cameraRule, origin);
+        return isAllowedByPermissionsPolicy(m_cameraRule, origin);
     case Type::Microphone:
-        return isAllowedByFeaturePolicy(m_microphoneRule, origin);
+        return isAllowedByPermissionsPolicy(m_microphoneRule, origin);
     case Type::SpeakerSelection:
-        return isAllowedByFeaturePolicy(m_speakerSelectionRule, origin);
+        return isAllowedByPermissionsPolicy(m_speakerSelectionRule, origin);
     case Type::DisplayCapture:
-        return isAllowedByFeaturePolicy(m_displayCaptureRule, origin);
+        return isAllowedByPermissionsPolicy(m_displayCaptureRule, origin);
     case Type::Gamepad:
-        return isAllowedByFeaturePolicy(m_gamepadRule, origin);
+        return isAllowedByPermissionsPolicy(m_gamepadRule, origin);
     case Type::Geolocation:
-        return isAllowedByFeaturePolicy(m_geolocationRule, origin);
+        return isAllowedByPermissionsPolicy(m_geolocationRule, origin);
     case Type::Payment:
-        return isAllowedByFeaturePolicy(m_paymentRule, origin);
+        return isAllowedByPermissionsPolicy(m_paymentRule, origin);
     case Type::ScreenWakeLock:
-        return isAllowedByFeaturePolicy(m_screenWakeLockRule, origin);
+        return isAllowedByPermissionsPolicy(m_screenWakeLockRule, origin);
     case Type::SyncXHR:
-        return isAllowedByFeaturePolicy(m_syncXHRRule, origin);
+        return isAllowedByPermissionsPolicy(m_syncXHRRule, origin);
     case Type::Fullscreen:
-        return isAllowedByFeaturePolicy(m_fullscreenRule, origin);
+        return isAllowedByPermissionsPolicy(m_fullscreenRule, origin);
     case Type::WebShare:
-        return isAllowedByFeaturePolicy(m_webShareRule, origin);
+        return isAllowedByPermissionsPolicy(m_webShareRule, origin);
 #if ENABLE(DEVICE_ORIENTATION)
     case Type::Gyroscope:
-        return isAllowedByFeaturePolicy(m_gyroscopeRule, origin);
+        return isAllowedByPermissionsPolicy(m_gyroscopeRule, origin);
     case Type::Accelerometer:
-        return isAllowedByFeaturePolicy(m_accelerometerRule, origin);
+        return isAllowedByPermissionsPolicy(m_accelerometerRule, origin);
     case Type::Magnetometer:
-        return isAllowedByFeaturePolicy(m_magnetometerRule, origin);
+        return isAllowedByPermissionsPolicy(m_magnetometerRule, origin);
 #endif
 #if ENABLE(WEB_AUTHN)
     case Type::PublickeyCredentialsGetRule:
-        return isAllowedByFeaturePolicy(m_publickeyCredentialsGetRule, origin);
+        return isAllowedByPermissionsPolicy(m_publickeyCredentialsGetRule, origin);
 #endif
 #if ENABLE(WEBXR)
     case Type::XRSpatialTracking:
-        return isAllowedByFeaturePolicy(m_xrSpatialTrackingRule, origin);
+        return isAllowedByPermissionsPolicy(m_xrSpatialTrackingRule, origin);
 #endif
     case Type::PrivateToken:
-        return isAllowedByFeaturePolicy(m_privateTokenRule, origin);
+        return isAllowedByPermissionsPolicy(m_privateTokenRule, origin);
     }
     ASSERT_NOT_REACHED();
     return false;

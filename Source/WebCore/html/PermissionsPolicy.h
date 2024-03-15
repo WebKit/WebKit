@@ -34,10 +34,10 @@ namespace WebCore {
 class Document;
 class HTMLIFrameElement;
 
-class FeaturePolicy {
+class PermissionsPolicy {
 public:
-    static FeaturePolicy defaultPolicy(Document& document) { return parse(document, nullptr, { }); }
-    static FeaturePolicy parse(Document& document, const HTMLIFrameElement& frame, StringView allow) { return parse(document, &frame, allow); }
+    static PermissionsPolicy defaultPolicy(Document& document) { return parse(document, nullptr, { }); }
+    static PermissionsPolicy parse(Document& document, const HTMLIFrameElement& frame, StringView allow) { return parse(document, &frame, allow); }
 
     enum class Type {
         Camera,
@@ -73,7 +73,7 @@ public:
     };
 
 private:
-    static FeaturePolicy parse(Document&, const HTMLIFrameElement*, StringView);
+    static PermissionsPolicy parse(Document&, const HTMLIFrameElement*, StringView);
 
     AllowRule m_cameraRule;
     AllowRule m_microphoneRule;
@@ -101,7 +101,7 @@ private:
     AllowRule m_privateTokenRule;
 };
 
-enum class LogFeaturePolicyFailure : bool { No, Yes };
-extern bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type, const Document&, LogFeaturePolicyFailure = LogFeaturePolicyFailure::Yes);
+enum class LogPermissionsPolicyFailure : bool { No, Yes };
+extern bool isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type, const Document&, LogPermissionsPolicyFailure = LogPermissionsPolicyFailure::Yes);
 
 } // namespace WebCore

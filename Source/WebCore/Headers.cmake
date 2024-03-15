@@ -1166,7 +1166,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/DOMTokenList.h
     html/DataListSuggestionInformation.h
     html/EnterKeyHint.h
-    html/FeaturePolicy.h
     html/FormAssociatedCustomElement.h
     html/FormAssociatedElement.h
     html/FormController.h
@@ -1263,6 +1262,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/MediaError.h
     html/OffscreenCanvas.h
     html/PDFDocument.h
+    html/PermissionsPolicy.h
     html/PluginDocument.h
     html/StepRange.h
     html/TimeRanges.h

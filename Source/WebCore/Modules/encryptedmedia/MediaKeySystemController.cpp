@@ -28,7 +28,6 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "Document.h"
-#include "FeaturePolicy.h"
 #include "HTMLIFrameElement.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"

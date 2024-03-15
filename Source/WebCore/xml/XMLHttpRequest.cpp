@@ -661,7 +661,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         // Either loader is null or some error was synchronously sent to us.
         ASSERT(m_loadingActivity || !m_sendFlag);
     } else {
-        if (scriptExecutionContext()->isDocument() && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::SyncXHR, *document()))
+        if (scriptExecutionContext()->isDocument() && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::SyncXHR, *document()))
             return Exception { ExceptionCode::NetworkError };
 
         request.setDomainForCachePartition(scriptExecutionContext()->domainForCachePartition());

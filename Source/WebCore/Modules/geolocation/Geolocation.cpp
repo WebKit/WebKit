@@ -32,7 +32,6 @@
 
 #include "Document.h"
 #include "EventLoop.h"
-#include "FeaturePolicy.h"
 #include "GeoNotifier.h"
 #include "GeolocationController.h"
 #include "GeolocationCoordinates.h"
@@ -42,6 +41,7 @@
 #include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
+#include "PermissionsPolicy.h"
 #include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include <wtf/IsoMallocInlines.h>
@@ -356,7 +356,7 @@ static void logError(const String& target, const bool isSecure, const bool isMix
     
 bool Geolocation::shouldBlockGeolocationRequests()
 {
-    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Geolocation, *document(), LogFeaturePolicyFailure::Yes))
+    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Geolocation, *document(), LogPermissionsPolicyFailure::Yes))
         return true;
 
     bool isSecure = SecurityOrigin::isSecure(document()->url()) || document()->isSecureContext();

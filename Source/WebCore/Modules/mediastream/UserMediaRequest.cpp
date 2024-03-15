@@ -115,19 +115,19 @@ void UserMediaRequest::start()
     switch (m_request.type) {
     case MediaStreamRequest::Type::DisplayMedia:
     case MediaStreamRequest::Type::DisplayMediaWithAudio:
-        if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::DisplayCapture, document)) {
+        if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::DisplayCapture, document)) {
             deny(MediaAccessDenialReason::PermissionDenied);
             controller->logGetDisplayMediaDenial(document);
             return;
         }
         break;
     case MediaStreamRequest::Type::UserMedia:
-        if (m_request.audioConstraints.isValid && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document)) {
+        if (m_request.audioConstraints.isValid && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document)) {
             deny(MediaAccessDenialReason::PermissionDenied);
             controller->logGetUserMediaDenial(document);
             return;
         }
-        if (m_request.videoConstraints.isValid && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document)) {
+        if (m_request.videoConstraints.isValid && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document)) {
             deny(MediaAccessDenialReason::PermissionDenied);
             controller->logGetUserMediaDenial(document);
             return;
