@@ -3352,20 +3352,6 @@ IndexedDBAPIEnabled:
     WebCore:
       default: true
 
-InlineFormattingContextIntegrationEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "Next-generation inline layout (IFC)"
-  humanReadableDescription: "Enable next-generation inline layout (IFC)"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 InlineMediaPlaybackRequiresPlaysInlineAttribute:
   type: bool
   status: embedder

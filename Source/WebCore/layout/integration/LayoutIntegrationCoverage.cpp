@@ -53,62 +53,19 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
+bool canUseForLineLayout(const RenderBlockFlow& flow)
 {
-    if (is<RenderText>(child)) {
-        if (child.isRenderSVGInlineText())
-            return AvoidanceReason::ContentIsSVG;
-        return { };
-    }
-
-    if (is<RenderLineBreak>(child))
-        return { };
-
-    auto& renderer = downcast<RenderElement>(child);
-    if (is<RenderBlockFlow>(renderer)
-        || is<RenderGrid>(renderer)
-        || is<RenderFrameSet>(renderer)
-        || is<RenderFlexibleBox>(renderer)
-        || is<RenderDeprecatedFlexibleBox>(renderer)
-        || is<RenderReplaced>(renderer)
-        || is<RenderListItem>(renderer)
-        || is<RenderTable>(renderer)
-#if ENABLE(MATHML)
-        || is<RenderMathMLBlock>(renderer)
-#endif
-        || is<RenderListMarker>(renderer))
-        return { };
-
-    if (is<RenderInline>(renderer)) {
-        if (renderer.isRenderSVGInline())
-            return AvoidanceReason::ContentIsSVG;
-        return { };
-    }
-
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& flow)
-{
-    if (!flow.document().settings().inlineFormattingContextIntegrationEnabled())
-        return AvoidanceReason::FeatureIsDisabled;
     if (!flow.firstChild()) {
         // Non-SVG code does not call into layoutInlineChildren with no children anymore.
         ASSERT(is<RenderSVGBlock>(flow));
-        return AvoidanceReason::ContentIsSVG;
+        return false;
     }
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
-        if (auto childReason = canUseForChild(child))
-            return *childReason;
+        if (child.isRenderSVGInlineText() || child.isRenderSVGInline())
+            return false;
     }
-    return { };
-}
-
-bool canUseForLineLayout(const RenderBlockFlow& flow)
-{
-    return !canUseForLineLayoutWithReason(flow);
+    return true;
 }
 
 bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)

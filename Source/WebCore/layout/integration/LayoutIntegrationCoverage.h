@@ -37,11 +37,6 @@ class RenderObject;
 namespace LayoutIntegration {
 class LineLayout;
 
-enum class AvoidanceReason : uint8_t {
-    ContentIsSVG,
-    FeatureIsDisabled
-};
-
 bool canUseForLineLayout(const RenderBlockFlow&);
 bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
 enum class TypeOfChangeForInvalidation : uint8_t {
