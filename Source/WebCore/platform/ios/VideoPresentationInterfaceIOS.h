@@ -143,10 +143,8 @@ public:
     WEBCORE_EXPORT void setMode(HTMLMediaElementEnums::VideoFullscreenMode, bool shouldNotifyModel);
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode, bool shouldNotifyModel);
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_currentMode.hasMode(mode); }
-#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
     WEBCORE_EXPORT UIViewController *presentingViewController();
     UIViewController *fullscreenViewController() const { return m_viewController.get(); }
-#endif
     WEBCORE_EXPORT virtual bool pictureInPictureWasStartedWhenEnteringBackground() const = 0;
 
     WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
