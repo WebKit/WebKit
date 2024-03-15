@@ -145,6 +145,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 #endif
 
     bool shouldShowOverlay = false;
+    bool shouldSetSelection = !options.contains(FindOptions::DoNotSetSelection);
     unsigned matchCount = 0;
     Vector<IntRect> matchRects;
     if (!found) {
@@ -153,7 +154,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 #endif
             m_webPage->corePage()->unmarkAllTextMatches();
 
-        if (selectedFrame && !options.contains(FindOptions::DoNotSetSelection))
+        if (selectedFrame && shouldSetSelection)
             selectedFrame->selection().clear();
 
         hideFindIndicator();
@@ -235,7 +236,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 #if ENABLE(PDF_PLUGIN)
     canShowFindIndicator |= pluginView && !pluginView->drawsFindOverlay();
 #endif
-    if (!wantsFindIndicator || !canShowFindIndicator || !updateFindIndicator(shouldShowOverlay))
+    if (shouldSetSelection && (!wantsFindIndicator || !canShowFindIndicator || !updateFindIndicator(shouldShowOverlay)))
         hideFindIndicator();
 
     completionHandler(idOfFrameContainingString, WTFMove(matchRects), matchCount, m_foundStringMatchIndex, didWrap == DidWrap::Yes);
