@@ -51,9 +51,12 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
     }
     auto blob = builder.make();
     auto* canvas = graphicsContext.platformContext();
-    SkPaint paint = static_cast<GraphicsContextSkia*>(&graphicsContext)->createFillPaint();
+    auto* skiaGraphicsContext = static_cast<GraphicsContextSkia*>(&graphicsContext);
+    SkPaint paint = skiaGraphicsContext->createFillPaint();
     paint.setAntiAlias(font.allowsAntialiasing());
-    paint.setImageFilter(static_cast<GraphicsContextSkia*>(&graphicsContext)->createDropShadowFilterIfNeeded(GraphicsContextSkia::ShadowStyle::Outset));
+    paint.setImageFilter(skiaGraphicsContext->createDropShadowFilterIfNeeded(GraphicsContextSkia::ShadowStyle::Outset));
+    paint.setColor(SkColor(skiaGraphicsContext->fillColor().colorWithAlphaMultipliedBy(skiaGraphicsContext->alpha())));
+
     canvas->drawTextBlob(blob, SkFloatToScalar(position.x()), SkFloatToScalar(position.y()), paint);
 }
 

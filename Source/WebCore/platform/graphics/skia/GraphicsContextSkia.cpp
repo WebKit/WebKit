@@ -124,7 +124,9 @@ void GraphicsContextSkia::drawRect(const FloatRect& rect, float borderThickness)
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    canvas().drawRect(rect, createFillPaint());
+    SkPaint paint = createFillPaint();
+    setupFillSource(paint);
+    canvas().drawRect(rect, paint);
     if (strokeStyle() == StrokeStyle::NoStroke)
         return;
 
@@ -139,6 +141,7 @@ void GraphicsContextSkia::drawRect(const FloatRect& rect, float borderThickness)
     region.setRects(rects, 4);
     SkPaint strokePaint = createStrokePaint();
     strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    setupStrokeSource(strokePaint);
     canvas().drawRegion(region, strokePaint);
 }
 
@@ -289,7 +292,10 @@ void GraphicsContextSkia::drawLine(const FloatPoint& point1, const FloatPoint& p
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    canvas().drawLine(SkFloatToScalar(point1.x()), SkFloatToScalar(point1.y()), SkFloatToScalar(point2.x()), SkFloatToScalar(point2.y()), createFillPaint());
+    // FIXME: Use stroke style to handle dashed/dotted lines, see https://bugs.webkit.org/show_bug.cgi?id=271044
+    SkPaint paint = createFillPaint();
+    paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
+    canvas().drawLine(SkFloatToScalar(point1.x()), SkFloatToScalar(point1.y()), SkFloatToScalar(point2.x()), SkFloatToScalar(point2.y()), paint);
 }
 
 // This method is only used to draw the little circles used in lists.
@@ -298,7 +304,9 @@ void GraphicsContextSkia::drawEllipse(const FloatRect& boundaries)
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    canvas().drawOval(boundaries, createFillPaint());
+    SkPaint paint = createFillPaint();
+    setupFillSource(paint);
+    canvas().drawOval(boundaries, paint);
 }
 
 static inline SkPathFillType toSkiaFillType(const WindRule& windRule)
@@ -323,6 +331,7 @@ void GraphicsContextSkia::fillPath(const Path& path)
 
     SkPaint paint = createFillPaint();
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    setupFillSource(paint);
 
     auto fillRule = toSkiaFillType(state().fillRule());
     auto& skiaPath= *path.platformPath();
@@ -346,6 +355,7 @@ void GraphicsContextSkia::strokePath(const Path& path)
 
     SkPaint strokePaint = createStrokePaint();
     strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    setupStrokeSource(strokePaint);
     canvas().drawPath(*path.platformPath(), strokePaint);
 }
 
@@ -401,52 +411,47 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
     return nullptr;
 }
 
-SkPaint GraphicsContextSkia::createFillPaint(std::optional<Color> fillColor) const
+SkPaint GraphicsContextSkia::createFillPaint() const
 {
-    const auto& state = this->state();
-
     SkPaint paint;
     paint.setAntiAlias(true);
     paint.setStyle(SkPaint::kFill_Style);
-    paint.setBlendMode(toSkiaBlendMode(state.compositeMode().operation, state.compositeMode().blendMode));
-
-    if (auto fillPattern = state.fillBrush().pattern())
-        paint.setShader(fillPattern->createPlatformPattern({ }, toSkSamplingOptions(m_state.imageInterpolationQuality())));
-    else if (auto fillGradient = state.fillBrush().gradient())
-        paint.setShader(fillGradient->shader(state.alpha(), state.fillBrush().gradientSpaceTransform()));
-    else
-        paint.setColor(SkColor(fillColor.value_or(state.fillBrush().color()).colorWithAlphaMultipliedBy(state.alpha())));
+    paint.setBlendMode(toSkiaBlendMode(compositeMode().operation, blendMode()));
 
     return paint;
 }
 
-SkPaint GraphicsContextSkia::createStrokeStylePaint() const
+void GraphicsContextSkia::setupFillSource(SkPaint& paint) const
+{
+    if (auto fillPattern = fillBrush().pattern())
+        paint.setShader(fillPattern->createPlatformPattern({ }, toSkSamplingOptions(imageInterpolationQuality())));
+    else if (auto fillGradient = fillBrush().gradient())
+        paint.setShader(fillGradient->shader(alpha(), fillBrush().gradientSpaceTransform()));
+    else
+        paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
+}
+
+SkPaint GraphicsContextSkia::createStrokePaint() const
 {
     SkPaint paint;
+    paint.setAntiAlias(true);
     paint.setStyle(SkPaint::kStroke_Style);
     paint.setStrokeCap(m_skiaState.m_stroke.cap);
     paint.setStrokeJoin(m_skiaState.m_stroke.join);
     paint.setStrokeMiter(m_skiaState.m_stroke.miter);
-    paint.setStrokeWidth(SkFloatToScalar(state().strokeThickness()));
+    paint.setStrokeWidth(SkFloatToScalar(strokeThickness()));
     paint.setPathEffect(m_skiaState.m_stroke.dash);
     return paint;
 }
 
-SkPaint GraphicsContextSkia::createStrokePaint(std::optional<Color> strokeColor) const
+void GraphicsContextSkia::setupStrokeSource(SkPaint& paint) const
 {
-    const auto& state = this->state();
-
-    SkPaint paint = createStrokeStylePaint();
-    paint.setAntiAlias(true);
-
-    if (auto strokePattern = state.strokeBrush().pattern())
-        paint.setShader(strokePattern->createPlatformPattern({ }, toSkSamplingOptions(m_state.imageInterpolationQuality())));
-    else if (auto strokeGradient = state.strokeBrush().gradient())
-        paint.setShader(strokeGradient->shader(state.alpha(), state.strokeBrush().gradientSpaceTransform()));
+    if (auto strokePattern = strokeBrush().pattern())
+        paint.setShader(strokePattern->createPlatformPattern({ }, toSkSamplingOptions(imageInterpolationQuality())));
+    else if (auto strokeGradient = strokeBrush().gradient())
+        paint.setShader(strokeGradient->shader(alpha(), strokeBrush().gradientSpaceTransform()));
     else
-        paint.setColor(SkColor(strokeColor.value_or(state.strokeBrush().color()).colorWithAlphaMultipliedBy(state.alpha())));
-
-    return paint;
+        paint.setColor(SkColor(strokeBrush().color().colorWithAlphaMultipliedBy(alpha())));
 }
 
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries)
@@ -456,6 +461,7 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries)
 
     SkPaint paint = createFillPaint();
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    setupFillSource(paint);
     canvas().drawRect(boundaries, paint);
 }
 
@@ -464,7 +470,8 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fil
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    SkPaint paint = createFillPaint(fillColor);
+    SkPaint paint = createFillPaint();
+    paint.setColor(SkColor(fillColor));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     canvas().drawRect(boundaries, paint);
 }
@@ -651,7 +658,9 @@ void GraphicsContextSkia::drawDotsForDocumentMarker(const FloatRect& boundaries,
         && style.mode != DocumentMarkerLineStyleMode::Grammar)
         return;
 
-    canvas().drawPath(createErrorUnderlinePath(boundaries), createFillPaint(style.color));
+    SkPaint paint = createFillPaint();
+    paint.setColor(SkColor(style.color));
+    canvas().drawPath(createErrorUnderlinePath(boundaries), paint);
 }
 
 void GraphicsContextSkia::translate(float x, float y)
@@ -714,6 +723,7 @@ void GraphicsContextSkia::strokeRect(const FloatRect& boundaries, float lineWidt
     auto strokePaint = createStrokePaint();
     strokePaint.setStrokeWidth(SkFloatToScalar(lineWidth));
     strokePaint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    setupStrokeSource(strokePaint);
     canvas().drawRect(boundaries, strokePaint);
 }
 
@@ -796,7 +806,8 @@ void GraphicsContextSkia::fillRoundedRectImpl(const FloatRoundedRect& rect, cons
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    SkPaint paint = createFillPaint(color);
+    SkPaint paint = createFillPaint();
+    paint.setColor(SkColor(color));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     canvas().drawRRect(rect, paint);
 }
@@ -809,7 +820,8 @@ void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect& outerRect, co
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    SkPaint paint = createFillPaint(color);
+    SkPaint paint = createFillPaint();
+    paint.setColor(SkColor(color));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Inset));
     canvas().drawDRRect(SkRRect::MakeRect(outerRect), innerRRect, paint);
 }
