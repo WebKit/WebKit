@@ -294,25 +294,33 @@ enum class WebCore::PlatformCALayerFilterType : uint8_t {
 };
 
 enum class WebCore::PlatformCALayerLayerType : uint8_t {
-        LayerTypeLayer,
-        LayerTypeWebLayer,
-        LayerTypeSimpleLayer,
-        LayerTypeTransformLayer,
-        LayerTypeTiledBackingLayer,
-        LayerTypePageTiledBackingLayer,
-        LayerTypeTiledBackingTileLayer,
-        LayerTypeRootLayer,
-        LayerTypeAVPlayerLayer,
-        LayerTypeContentsProvidedLayer,
-        LayerTypeBackdropLayer,
-        LayerTypeShapeLayer,
-        LayerTypeScrollContainerLayer,
+    LayerTypeLayer,
+    LayerTypeWebLayer,
+    LayerTypeSimpleLayer,
+    LayerTypeTransformLayer,
+    LayerTypeTiledBackingLayer,
+    LayerTypePageTiledBackingLayer,
+    LayerTypeTiledBackingTileLayer,
+    LayerTypeRootLayer,
+    LayerTypeAVPlayerLayer,
+    LayerTypeContentsProvidedLayer,
+    LayerTypeBackdropLayer,
+    LayerTypeShapeLayer,
+    LayerTypeScrollContainerLayer,
 #if ENABLE(MODEL_ELEMENT)
-        LayerTypeModelLayer,
+    LayerTypeModelLayer,
 #endif
-        LayerTypeCustom,
-        LayerTypeHost,
+    LayerTypeCustom,
+    LayerTypeHost,
 };
+
+#if USE(APPKIT)
+using WebCore::CocoaColor = NSColor;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+using WebCore::CocoaColor = UIColor;
+#endif
 
 #if USE(AVFOUNDATION)
 AVOutputContext wrapped by CoreIPCAVOutputContext

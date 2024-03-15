@@ -49,15 +49,15 @@ public:
 
     static bool shouldWrapValue(NSValue *);
 
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCNSValue, void>;
-
 #if PLATFORM(MAC)
     using WrappedNSValue = std::variant<NSRange, NSRect>;
 #else
     using WrappedNSValue = std::variant<NSRange>;
 #endif
     using Value = std::variant<WrappedNSValue, CoreIPCSecureCoding>;
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCNSValue, void>;
 
     static Value valueFromNSValue(NSValue *);
 

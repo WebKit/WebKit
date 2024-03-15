@@ -43,7 +43,7 @@ header: "WebTextReplacementData.h"
     WebCore::CharacterRange originalRange;
     String replacement;
     String description;
-    WebKit::WebTextReplacementData::State state;
+    WebKit::WebTextReplacementDataState state;
 
     WebCore::AttributedString originalString;
 };

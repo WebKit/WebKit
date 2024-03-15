@@ -30,9 +30,9 @@ struct WebKit::RemoteMediaPlayerState {
     String languageOfPrimaryAudioTrack;
     String wirelessPlaybackTargetName;
     std::optional<WebCore::PlatformTimeRanges> bufferedRanges;
-    WebCore::MediaPlayerEnums::NetworkState networkState;
-    WebCore::MediaPlayerEnums::MovieLoadType movieLoadType;
-    WebCore::MediaPlayerEnums::WirelessPlaybackTargetType wirelessPlaybackTargetType;
+    WebCore::MediaPlayerNetworkState networkState;
+    WebCore::MediaPlayerMovieLoadType movieLoadType;
+    WebCore::MediaPlayerWirelessPlaybackTargetType wirelessPlaybackTargetType;
     WebCore::FloatSize naturalSize;
     double maxFastForwardRate;
     double minFastReverseRate;

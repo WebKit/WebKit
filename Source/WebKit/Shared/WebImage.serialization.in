@@ -21,5 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [RefCounted] class WebKit::WebImage {
-    std::optional<std::pair<WebCore::ImageBufferParameters, WebCore::ShareableBitmap::Handle>> parametersAndHandle()
+    std::optional<std::pair<WebCore::ImageBufferParameters, WebCore::ShareableBitmapHandle>> parametersAndHandle()
 };

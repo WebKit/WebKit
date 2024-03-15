@@ -311,7 +311,7 @@ enum class ScrollClamping : bool {
     Clamped
 };
 
-enum ScrollBehaviorForFixedElements : bool {
+enum class ScrollBehaviorForFixedElements : bool {
     StickToDocumentBounds,
     StickToViewportBounds
 };

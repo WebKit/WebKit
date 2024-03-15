@@ -45,4 +45,6 @@ struct WebKit::WebExtensionContextParameters {
     Vector<WebKit::WebExtensionContext::PageIdentifierTuple> tabPageIdentifiers;
 }
 
+using WebKit::WebExtensionError = String;
+
 #endif

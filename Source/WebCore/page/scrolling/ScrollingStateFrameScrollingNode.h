@@ -200,7 +200,7 @@ private:
     float m_topContentInset { 0 };
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
-    ScrollBehaviorForFixedElements m_behaviorForFixed { StickToDocumentBounds };
+    ScrollBehaviorForFixedElements m_behaviorForFixed { ScrollBehaviorForFixedElements::StickToDocumentBounds };
     bool m_fixedElementsLayoutRelativeToFrame { false };
     bool m_visualViewportIsSmallerThanLayoutViewport { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
