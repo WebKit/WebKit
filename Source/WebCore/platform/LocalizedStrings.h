@@ -234,7 +234,6 @@ namespace WebCore {
     String AXTimeFieldMinuteText();
     String AXTimeFieldSecondText();
     String AXTimeFieldMillisecondText();
-    String AXTimeFieldMeridiemText();
     String AXDateTimeFieldText();
     String AXMonthFieldText();
     String AXNumberFieldText();

@@ -70,8 +70,12 @@ public:
 private:
     DateTimeMeridiemFieldElement(Document&, FieldOwner&, const Vector<String>&);
 
+    void updateAriaValueAttributes();
     // DateTimeFieldElement functions:
+    void setEmptyValue(EventBehavior = DispatchNoEvent) final;
     void setValueAsDate(const DateComponents&) final;
+    void setValueAsInteger(int, EventBehavior = DispatchNoEvent) final;
+
     void populateDateTimeFieldsState(DateTimeFieldsState&) final;
 };
 

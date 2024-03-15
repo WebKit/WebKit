@@ -758,11 +758,6 @@ String AXTimeFieldMillisecondText()
     return WEB_UI_STRING("milliseconds", "accessibility label for milliseconds fields.");
 }
 
-String AXTimeFieldMeridiemText()
-{
-    return WEB_UI_STRING("meridiem", "accessibility label for meridiem fields.");
-}
-
 String AXDateTimeFieldText()
 {
     return WEB_UI_STRING("date and time field", "accessibility role description for a date and time field.");

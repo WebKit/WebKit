@@ -146,8 +146,15 @@ Ref<DateTimeMeridiemFieldElement> DateTimeMeridiemFieldElement::create(Document&
     auto element = adoptRef(*new DateTimeMeridiemFieldElement(document, fieldOwner, labels));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMeridiemField());
-    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldMeridiemText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->updateAriaValueAttributes();
     return element;
+}
+
+void DateTimeMeridiemFieldElement::updateAriaValueAttributes()
+{
+    setAttributeWithoutSynchronization(HTMLNames::aria_valuenowAttr, AtomString::number(valueAsInteger()));
+    setAttributeWithoutSynchronization(HTMLNames::aria_valuetextAttr, AtomString { visibleValue() });
 }
 
 void DateTimeMeridiemFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
@@ -159,6 +166,19 @@ void DateTimeMeridiemFieldElement::populateDateTimeFieldsState(DateTimeFieldsSta
 void DateTimeMeridiemFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.hour() >= 12 ? 1 : 0);
+    updateAriaValueAttributes();
+}
+
+void DateTimeMeridiemFieldElement::setValueAsInteger(int newSelectedIndex, EventBehavior eventBehavior)
+{
+    DateTimeSymbolicFieldElement::setValueAsInteger(newSelectedIndex, eventBehavior);
+    updateAriaValueAttributes();
+}
+
+void DateTimeMeridiemFieldElement::setEmptyValue(EventBehavior eventBehavior)
+{
+    DateTimeSymbolicFieldElement::setEmptyValue(eventBehavior);
+    updateAriaValueAttributes();
 }
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMillisecondFieldElement);
