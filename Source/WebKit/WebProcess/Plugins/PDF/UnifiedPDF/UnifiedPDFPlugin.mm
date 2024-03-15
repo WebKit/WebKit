@@ -29,9 +29,12 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "AsyncPDFRenderer.h"
+#include "DataDetectionResult.h"
 #include "FindController.h"
 #include "MessageSenderInlines.h"
 #include "PDFContextMenu.h"
+#include "PDFDataDetectorItem.h"
+#include "PDFDataDetectorOverlayController.h"
 #include "PDFKitSPI.h"
 #include "PDFPageCoverage.h"
 #include "PDFPluginAnnotation.h"
@@ -53,6 +56,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ColorCocoa.h>
+#include <WebCore/DataDetectorElementInfo.h>
 #include <WebCore/DictionaryLookup.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Editor.h>
@@ -61,12 +65,16 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageOverlay.h>
+#include <WebCore/PageOverlayController.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
@@ -126,6 +134,9 @@ Ref<UnifiedPDFPlugin> UnifiedPDFPlugin::create(HTMLPlugInElement& pluginElement)
 UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
     : PDFPluginBase(element)
     , m_pdfMutationObserver(adoptNS([[WKPDFFormMutationObserver alloc] initWithPlugin:this]))
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    , m_dataDetectorOverlayController { WTF::makeUnique<PDFDataDetectorOverlayController>(*this) }
+#endif
 {
     this->setVerticalScrollElasticity(ScrollElasticity::Automatic);
     this->setHorizontalScrollElasticity(ScrollElasticity::Automatic);
@@ -175,6 +186,10 @@ void UnifiedPDFPlugin::teardown()
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_pdfMutationObserver.get() name:mutationObserverNotificationString() object:m_pdfDocument.get()];
     m_pdfMutationObserver = nullptr;
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    std::exchange(m_dataDetectorOverlayController, nullptr)->teardown();
+#endif
 }
 
 GraphicsLayer* UnifiedPDFPlugin::graphicsLayer() const
@@ -231,8 +246,33 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     [[NSNotificationCenter defaultCenter] addObserver:m_pdfMutationObserver.get() selector:@selector(formChanged:) name:mutationObserverNotificationString() object:m_pdfDocument.get()];
 
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    enableDataDetection();
+#endif
+
     scrollToFragmentIfNeeded();
 }
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+
+void UnifiedPDFPlugin::enableDataDetection()
+{
+#if HAVE(PDFDOCUMENT_ENABLE_DATA_DETECTORS)
+    if ([m_pdfDocument respondsToSelector:@selector(setEnableDataDetectors:)])
+        [m_pdfDocument setEnableDataDetectors:YES];
+#endif
+}
+
+void UnifiedPDFPlugin::handleClickForDataDetectionResult(const DataDetectorElementInfo& dataDetectorElementInfo, const IntPoint& clickPointInPluginSpace)
+{
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    page->chrome().client().handleClickForDataDetectionResult(dataDetectorElementInfo, clickPointInPluginSpace);
+}
+
+#endif
 
 #if PLATFORM(MAC)
 
@@ -279,13 +319,27 @@ void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
 
 RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
+    if (RefPtr graphicsLayer = createGraphicsLayer(*this, layerType)) {
+        graphicsLayer->setName(name);
+        return graphicsLayer;
+    }
+
+    return nullptr;
+}
+
+RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(GraphicsLayerClient& client)
+{
+    return createGraphicsLayer(client, GraphicsLayer::Type::Normal);
+}
+
+RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(GraphicsLayerClient& client, GraphicsLayer::Type layerType)
+{
     RefPtr page = this->page();
     if (!page)
         return nullptr;
 
     auto* graphicsLayerFactory = page->chrome().client().graphicsLayerFactory();
-    Ref graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
-    graphicsLayer->setName(name);
+    Ref graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, client, layerType);
     return graphicsLayer;
 }
 
@@ -309,13 +363,13 @@ void UnifiedPDFPlugin::setNeedsRepaintInDocumentRects(OptionSet<RepaintRequireme
         setNeedsRepaintInDocumentRect(repaintRequirements, rectInDocumentCoordinates);
 }
 
-void UnifiedPDFPlugin::scheduleRenderingUpdate()
+void UnifiedPDFPlugin::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
 {
     RefPtr page = this->page();
     if (!page)
         return;
 
-    page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
+    page->scheduleRenderingUpdate(requestedSteps);
 }
 
 void UnifiedPDFPlugin::ensureLayers()
@@ -1082,6 +1136,11 @@ FloatRect UnifiedPDFPlugin::layoutBoundsForPageAtIndex(PDFDocumentLayout::PageIn
     return m_documentLayout.layoutBoundsForPageAtIndex(pageIndex);
 }
 
+RetainPtr<PDFPage> UnifiedPDFPlugin::pageAtIndex(PDFDocumentLayout::PageIndex pageIndex) const
+{
+    return m_documentLayout.pageAtIndex(pageIndex);
+}
+
 RefPtr<FragmentedSharedBuffer> UnifiedPDFPlugin::liveResourceData() const
 {
     NSData *pdfData = liveData();
@@ -1122,6 +1181,11 @@ void UnifiedPDFPlugin::didChangeScrollOffset()
 
     // FIXME: Make the overlay scroll with the tiles instead of repainting constantly.
     m_frame->protectedPage()->findController().didInvalidateFindRects();
+
+    // FIXME: Make the overlay scroll with the tiles instead of repainting constantly.
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    dataDetectorOverlayController().didInvalidateHighlightOverlayRects();
+#endif
 
     scheduleRenderingUpdate();
 }
@@ -1780,6 +1844,11 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
         beginTrackingSelection(*pageIndex, pointInPageSpace, event);
         return true;
     }
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    if (dataDetectorOverlayController().handleMouseEvent(event, *pageIndex))
+        return true;
+#endif
 
     switch (mouseEventType) {
     case WebEventType::MouseMove:
@@ -2710,6 +2779,19 @@ bool UnifiedPDFPlugin::existingSelectionContainsPoint(const FloatPoint& rootView
     return FloatRect { [m_currentSelection boundsForPage:page.get()] }.contains(pagePoint);
 }
 
+FloatRect UnifiedPDFPlugin::rectForSelectionInPluginSpace(PDFSelection *selection) const
+{
+    if (!selection || !selection.pages)
+        return { };
+
+    RetainPtr page = [selection.pages firstObject];
+    auto pageIndex = m_documentLayout.indexForPage(page);
+    if (!pageIndex)
+        return { };
+
+    return convertUp(CoordinateSpace::PDFPage, CoordinateSpace::Plugin, FloatRect { [selection boundsForPage:page.get()] }, *pageIndex);
+}
+
 FloatRect UnifiedPDFPlugin::rectForSelectionInRootView(PDFSelection *selection) const
 {
     if (!selection || !selection.pages)
@@ -3327,6 +3409,34 @@ bool UnifiedPDFPlugin::isTaggedPDF() const
 {
     return CGPDFDocumentIsTaggedPDF([m_pdfDocument documentRef]);
 }
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+
+void UnifiedPDFPlugin::installDataDetectorOverlay(PageOverlay& overlay)
+{
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return;
+
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->corePage()->pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
+}
+
+void UnifiedPDFPlugin::uninstallDataDetectorOverlay(PageOverlay& overlay)
+{
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return;
+
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->corePage()->pageOverlayController().uninstallPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
+}
+
+#endif
 
 } // namespace WebKit
 

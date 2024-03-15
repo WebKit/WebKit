@@ -107,6 +107,7 @@ extern CFStringRef const DDBinderParsecSourceKey;
 extern CFStringRef const DDBinderSignatureBlockKey;
 
 @interface DDScannerResult : NSObject <NSCoding, NSSecureCoding>
+@property (readonly, nonatomic) NSRange urlificationRange;
 + (NSArray *)resultsFromCoreResults:(CFArrayRef)coreResults;
 - (DDResultRef)coreResult;
 @end

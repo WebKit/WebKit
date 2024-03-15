@@ -31,20 +31,30 @@
 #include "PDFPluginBase.h"
 #include <WebCore/ElementIdentifier.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/Page.h>
 #include <wtf/OptionSet.h>
 
 OBJC_CLASS PDFAction;
 OBJC_CLASS PDFDestination;
+OBJC_CLASS PDFPage;
 OBJC_CLASS WKPDFFormMutationObserver;
 
 namespace WebCore {
+class PageOverlay;
+
 enum class DelegatedScrollingMode : uint8_t;
+
+struct DataDetectorElementInfo;
 }
 
 namespace WebKit {
 
 class AsyncPDFRenderer;
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+class PDFDataDetectorItem;
+class PDFDataDetectorOverlayController;
+#endif
 class PDFPluginPasswordField;
 class PDFPluginPasswordForm;
 class WebFrame;
@@ -125,6 +135,21 @@ public:
     void accessibilityScrollToPage(PDFDocumentLayout::PageIndex);
 #endif
 
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    void installDataDetectorOverlay(WebCore::PageOverlay&);
+    void uninstallDataDetectorOverlay(WebCore::PageOverlay&);
+
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
+#endif
+
+    void scheduleRenderingUpdate(OptionSet<WebCore::RenderingUpdateStep> = WebCore::RenderingUpdateStep::LayerFlush);
+    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&);
+    float deviceScaleFactor() const override;
+
+    WebCore::FloatRect rectForSelectionInPluginSpace(PDFSelection *) const;
+
+    RetainPtr<PDFPage> pageAtIndex(PDFDocumentLayout::PageIndex) const;
+
 private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }
@@ -135,6 +160,12 @@ private:
     void teardown() override;
 
     void installPDFDocument() override;
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    void enableDataDetection();
+
+    PDFDataDetectorOverlayController& dataDetectorOverlayController() { return *m_dataDetectorOverlayController; }
+#endif
 
     float scaleForActualSize() const;
     float initialScale() const;
@@ -170,8 +201,6 @@ private:
     unsigned firstPageHeight() const override;
     unsigned heightForPageAtIndex(PDFDocumentLayout::PageIndex) const;
     WebCore::FloatRect layoutBoundsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
-
-    void scheduleRenderingUpdate();
 
     enum class AdjustScaleAfterLayout : bool {
         No,
@@ -309,7 +338,6 @@ private:
     // GraphicsLayerClient
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
-    float deviceScaleFactor() const override;
     float pageScaleFactor() const override { return scaleFactor(); }
     bool layerNeedsPlatformContext(const WebCore::GraphicsLayer*) const override { return true; }
 
@@ -386,6 +414,7 @@ private:
     void updateTrackedAnnotation(PDFAnnotation *annotationUnderMouse);
     void finishTrackingAnnotation(PDFAnnotation *annotationUnderMouse, WebEventType, WebMouseEventButton, OptionSet<RepaintRequirement> = { });
 
+    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&, WebCore::GraphicsLayer::Type);
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
     void setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement>, const WebCore::FloatRect&);
@@ -495,6 +524,10 @@ private:
     Vector<WebCore::FloatRect> m_findMatchRectsInDocumentCoordinates;
 
     RefPtr<AsyncPDFRenderer> m_asyncRenderer;
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    std::unique_ptr<PDFDataDetectorOverlayController> m_dataDetectorOverlayController;
+#endif
 };
 
 } // namespace WebKit

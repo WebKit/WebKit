@@ -58,6 +58,13 @@ Ref<DataDetectorHighlight> DataDetectorHighlight::createForImageOverlay(DataDete
     return adoptRef(*new DataDetectorHighlight(client, DataDetectorHighlight::Type::ImageOverlay, WTFMove(ddHighlight), { WTFMove(range) }));
 }
 
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+Ref<DataDetectorHighlight> DataDetectorHighlight::createForPDFSelection(DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight)
+{
+    return adoptRef(*new DataDetectorHighlight(client, DataDetectorHighlight::Type::PDFSelection, WTFMove(ddHighlight), { }));
+}
+#endif
+
 DataDetectorHighlight::DataDetectorHighlight(DataDetectorHighlightClient& client, Type type, RetainPtr<DDHighlightRef>&& ddHighlight, std::optional<SimpleRange>&& range)
     : m_client(client)
     , m_range(WTFMove(range))
@@ -151,6 +158,7 @@ float DataDetectorHighlight::deviceScaleFactor() const
 
 bool DataDetectorHighlight::isRangeSupportingType() const
 {
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
     static constexpr OptionSet rangeSupportingHighlightTypes {
         DataDetectorHighlight::Type::TelephoneNumber,
         DataDetectorHighlight::Type::Selection,
@@ -158,6 +166,8 @@ bool DataDetectorHighlight::isRangeSupportingType() const
     };
 
     return rangeSupportingHighlightTypes.contains(m_type);
+#endif
+    return true;
 }
 
 const SimpleRange& DataDetectorHighlight::range() const

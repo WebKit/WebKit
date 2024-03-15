@@ -62,6 +62,9 @@ public:
     static Ref<DataDetectorHighlight> createForSelection(DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
     static Ref<DataDetectorHighlight> createForTelephoneNumber(DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
     static Ref<DataDetectorHighlight> createForImageOverlay(DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&, SimpleRange&&);
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    WEBCORE_EXPORT static Ref<DataDetectorHighlight> createForPDFSelection(DataDetectorHighlightClient&, RetainPtr<DDHighlightRef>&&);
+#endif
 
     ~DataDetectorHighlight();
 
@@ -76,15 +79,18 @@ public:
         TelephoneNumber = 1 << 0,
         Selection = 1 << 1,
         ImageOverlay = 1 << 2,
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+        PDFSelection = 1 << 3,
+#endif
     };
 
     Type type() const { return m_type; }
     bool isRangeSupportingType() const;
 
-    void fadeIn();
-    void fadeOut();
+    WEBCORE_EXPORT void fadeIn();
+    WEBCORE_EXPORT void fadeOut();
 
-    void setHighlight(DDHighlightRef);
+    WEBCORE_EXPORT void setHighlight(DDHighlightRef);
 
 private:
     DataDetectorHighlight(DataDetectorHighlightClient&, Type, RetainPtr<DDHighlightRef>&&, std::optional<SimpleRange>&&);

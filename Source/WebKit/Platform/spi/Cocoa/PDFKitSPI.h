@@ -155,6 +155,22 @@ typedef NS_ENUM(NSUInteger, PDFSelectionGranularity);
 @end
 #endif
 
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+
+#if HAVE(PDFDOCUMENT_ENABLE_DATA_DETECTORS)
+@interface PDFDocument (Staging_123761050)
+@property (nonatomic) BOOL enableDataDetectors;
+@end
+#endif
+
+#if HAVE(PDFPAGE_DATA_DETECTOR_RESULTS)
+@interface PDFPage (Staging_123761050)
+- (NSArray *)dataDetectorResults;
+@end
+#endif
+
+#endif
+
 #endif // ENABLE(UNIFIED_PDF)
 
 // FIXME: Move this declaration inside the !USE(APPLE_INTERNAL_SDK) block once rdar://problem/118903435 is in builds.

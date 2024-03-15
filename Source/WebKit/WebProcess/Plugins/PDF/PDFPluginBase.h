@@ -185,6 +185,8 @@ public:
     WebCore::IntRect convertFromPluginToRootView(const WebCore::IntRect&) const;
     WebCore::IntRect boundsOnScreen() const;
 
+    WebCore::IntPoint mousePositionInView(const WebMouseEvent&) const;
+
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
     WebCore::AXObjectCache* axObjectCache() const;
 
