@@ -279,20 +279,47 @@ Vector<hb_feature_t> FontCache::computeFeatures(const FontDescription& fontDescr
     return features;
 }
 
+static SkFontStyle skiaFontStyle(const FontDescription& fontDescription)
+{
+    int skWeight = SkFontStyle::kNormal_Weight;
+    auto weight = fontDescription.weight();
+    if (weight > FontSelectionValue(SkFontStyle::kInvisible_Weight) && weight <= FontSelectionValue(SkFontStyle::kExtraBlack_Weight))
+        skWeight = static_cast<int>(weight);
+
+    int skWidth = SkFontStyle::kNormal_Width;
+    auto stretch = fontDescription.stretch();
+    if (stretch <= ultraCondensedStretchValue())
+        skWidth = SkFontStyle::kUltraCondensed_Width;
+    else if (stretch <= extraCondensedStretchValue())
+        skWidth = SkFontStyle::kExtraCondensed_Width;
+    else if (stretch <= condensedStretchValue())
+        skWidth = SkFontStyle::kCondensed_Width;
+    else if (stretch <= semiCondensedStretchValue())
+        skWidth = SkFontStyle::kSemiCondensed_Width;
+    else if (stretch >= semiExpandedStretchValue())
+        skWidth = SkFontStyle::kSemiExpanded_Width;
+    else if (stretch >= expandedStretchValue())
+        skWidth = SkFontStyle::kExpanded_Width;
+    if (stretch >= extraExpandedStretchValue())
+        skWidth = SkFontStyle::kExtraExpanded_Width;
+    if (stretch >= ultraExpandedStretchValue())
+        skWidth = SkFontStyle::kUltraExpanded_Width;
+
+    SkFontStyle::Slant skSlant = SkFontStyle::kUpright_Slant;
+    if (auto italic = fontDescription.italic()) {
+        if (italic.value() > normalItalicValue() && italic.value() <= italicThreshold())
+            skSlant = SkFontStyle::kItalic_Slant;
+        else if (italic.value() > italicThreshold())
+            skSlant = SkFontStyle::kOblique_Slant;
+    }
+
+    return SkFontStyle(skWeight, skWidth, skSlant);
+}
+
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)
 {
-    auto width = SkFontStyle::kNormal_Width;
-
-    auto weight = SkFontStyle::kNormal_Weight;
-    if (isFontWeightBold(fontDescription.weight()))
-        weight = SkFontStyle::kBold_Weight;
-
-    auto slant = SkFontStyle::kUpright_Slant;
-    if (fontDescription.italic())
-        slant = SkFontStyle::kItalic_Slant;
-
     auto familyName = getFamilyNameStringFromFamily(family);
-    auto typeface = m_fontManager->matchFamilyStyle(familyName.utf8().data(), SkFontStyle { weight, width, slant });
+    auto typeface = m_fontManager->matchFamilyStyle(familyName.utf8().data(), skiaFontStyle(fontDescription));
     if (!typeface)
         return nullptr;
 
