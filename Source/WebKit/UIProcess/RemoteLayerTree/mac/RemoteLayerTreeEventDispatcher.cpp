@@ -39,6 +39,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/ScrollingCoordinatorTypes.h>
+#include <WebCore/ScrollingNodeID.h>
 #include <WebCore/ScrollingThread.h>
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <wtf/SystemTracing.h>

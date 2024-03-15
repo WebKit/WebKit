@@ -28,6 +28,7 @@
 
 #if HAVE(APP_SSO)
 
+#import "Logging.h"
 #import "SOAuthorizationSession.h"
 #import "WebPageProxy.h"
 #import <wtf/RunLoop.h>

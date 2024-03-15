@@ -35,6 +35,7 @@
 #include <WebCore/ExceptionData.h>
 #include <WebCore/U2fCommandConstructor.h>
 #include <WebCore/U2fResponseConverter.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 #define U2F_RELEASE_LOG(fmt, ...) RELEASE_LOG(WebAuthn, "%p [transport=%s] - U2fAuthenticator::" fmt, this, transportForDebugging().utf8().data(), ##__VA_ARGS__)

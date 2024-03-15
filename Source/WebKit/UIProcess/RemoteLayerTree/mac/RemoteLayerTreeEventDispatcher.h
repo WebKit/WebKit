@@ -30,6 +30,8 @@
 #include "DisplayLinkObserverID.h"
 #include "MomentumEventDispatcher.h"
 #include "NativeWebWheelEvent.h"
+#include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/ProcessQualified.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
@@ -54,8 +56,10 @@ namespace WebKit {
 
 class DisplayLink;
 class NativeWebWheelEvent;
+class RemoteAcceleratedEffectStack;
 class RemoteScrollingCoordinatorProxyMac;
 class RemoteLayerTreeDrawingAreaProxyMac;
+class RemoteLayerTreeNode;
 class RemoteScrollingTree;
 class RemoteLayerTreeEventDispatcherDisplayLinkClient;
 

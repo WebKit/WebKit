@@ -34,6 +34,7 @@
 #import "VideoPresentationManagerProxy.h"
 #import "WKVideoView.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 

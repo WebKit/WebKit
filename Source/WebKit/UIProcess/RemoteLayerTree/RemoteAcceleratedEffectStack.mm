@@ -28,8 +28,9 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
+#import <WebCore/AcceleratedEffectStack.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#include <wtf/IsoMallocInlines.h>
+#import <wtf/IsoMallocInlines.h>
 
 namespace WebKit {
 
@@ -46,9 +47,9 @@ RemoteAcceleratedEffectStack::RemoteAcceleratedEffectStack(WebCore::FloatRect bo
 {
 }
 
-void RemoteAcceleratedEffectStack::setEffects(AcceleratedEffects&& effects)
+void RemoteAcceleratedEffectStack::setEffects(WebCore::AcceleratedEffects&& effects)
 {
-    AcceleratedEffectStack::setEffects(WTFMove(effects));
+    WebCore::AcceleratedEffectStack::setEffects(WTFMove(effects));
 
     bool affectsFilter = false;
     bool affectsOpacity = false;
@@ -56,9 +57,9 @@ void RemoteAcceleratedEffectStack::setEffects(AcceleratedEffects&& effects)
 
     for (auto& effect : m_backdropLayerEffects.isEmpty() ? m_primaryLayerEffects : m_backdropLayerEffects) {
         auto& properties = effect->animatedProperties();
-        affectsFilter = affectsFilter || properties.containsAny({ AcceleratedEffectProperty::Filter, AcceleratedEffectProperty::BackdropFilter });
-        affectsOpacity = affectsOpacity || properties.contains(AcceleratedEffectProperty::Opacity);
-        affectsTransform = affectsTransform || properties.containsAny(transformRelatedAcceleratedProperties);
+        affectsFilter = affectsFilter || properties.containsAny({ WebCore::AcceleratedEffectProperty::Filter, WebCore::AcceleratedEffectProperty::BackdropFilter });
+        affectsOpacity = affectsOpacity || properties.contains(WebCore::AcceleratedEffectProperty::Opacity);
+        affectsTransform = affectsTransform || properties.containsAny(WebCore::transformRelatedAcceleratedProperties);
         if (affectsFilter && affectsOpacity && affectsTransform)
             break;
     }
@@ -80,7 +81,7 @@ const WebCore::FilterOperations* RemoteAcceleratedEffectStack::longestFilterList
         return nullptr;
 
     auto isBackdrop = !m_backdropLayerEffects.isEmpty();
-    auto filterProperty = isBackdrop ? AcceleratedEffectProperty::BackdropFilter : AcceleratedEffectProperty::Filter;
+    auto filterProperty = isBackdrop ? WebCore::AcceleratedEffectProperty::BackdropFilter : WebCore::AcceleratedEffectProperty::Filter;
     auto& effects = isBackdrop ? m_backdropLayerEffects : m_primaryLayerEffects;
 
     const WebCore::FilterOperations* longestFilterList = nullptr;
@@ -120,7 +121,7 @@ void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *laye
         size_t count = 0;
         if (m_affectedLayerProperties.contains(LayerProperty::Filter)) {
             ASSERT(canonicalFilters);
-            count += PlatformCAFilters::presentationModifierCount(*canonicalFilters);
+            count += WebCore::PlatformCAFilters::presentationModifierCount(*canonicalFilters);
         }
         if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
             count++;
@@ -132,7 +133,7 @@ void RemoteAcceleratedEffectStack::initEffectsFromMainThread(PlatformLayer *laye
     m_presentationModifierGroup = [CAPresentationModifierGroup groupWithCapacity:numberOfPresentationModifiers];
 
     if (m_affectedLayerProperties.contains(LayerProperty::Filter)) {
-        PlatformCAFilters::presentationModifiers(computedValues.filter, longestFilterList(), m_filterPresentationModifiers, m_presentationModifierGroup);
+        WebCore::PlatformCAFilters::presentationModifiers(computedValues.filter, longestFilterList(), m_filterPresentationModifiers, m_presentationModifierGroup);
         for (auto& filterPresentationModifier : m_filterPresentationModifiers)
             [layer addPresentationModifier:filterPresentationModifier.second.get()];
     }
@@ -160,7 +161,7 @@ void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime
     auto computedValues = computeValues(now);
 
     if (!m_filterPresentationModifiers.isEmpty())
-        PlatformCAFilters::updatePresentationModifiers(computedValues.filter, m_filterPresentationModifiers);
+        WebCore::PlatformCAFilters::updatePresentationModifiers(computedValues.filter, m_filterPresentationModifiers);
 
     if (m_opacityPresentationModifier) {
         auto *opacity = @(computedValues.opacity);
@@ -182,7 +183,7 @@ void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *lay
     auto computedValues = computeValues(now);
 
     if (m_affectedLayerProperties.contains(LayerProperty::Filter))
-        PlatformCAFilters::setFiltersOnLayer(layer, computedValues.filter);
+        WebCore::PlatformCAFilters::setFiltersOnLayer(layer, computedValues.filter);
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
         [layer setOpacity:computedValues.opacity];
@@ -193,7 +194,7 @@ void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *lay
     }
 }
 
-AcceleratedEffectValues RemoteAcceleratedEffectStack::computeValues(MonotonicTime now) const
+WebCore::AcceleratedEffectValues RemoteAcceleratedEffectStack::computeValues(MonotonicTime now) const
 {
     auto values = m_baseValues;
     auto currentTime = now.secondsSinceEpoch() - m_acceleratedTimelineTimeOrigin;
