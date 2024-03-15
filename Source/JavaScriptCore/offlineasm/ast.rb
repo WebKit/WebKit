@@ -212,10 +212,6 @@ class Immediate < NoChildren
     def dump
         "#{value}"
     end
-
-    def name
-        "0x%x" % value
-    end
     
     def ==(other)
         other.is_a? Immediate and other.value == @value
@@ -1093,7 +1089,6 @@ class Label < NoChildren
         @extern = true
         @global = false
         @aligned = true
-        @alignTo = false
         @export = false
     end
     
@@ -1145,18 +1140,6 @@ class Label < NoChildren
         end
     end
 
-    def self.setAsAligned(codeOrigin, name, alignTo)
-        if $labelMapping[name]
-            label = $labelMapping[name]
-            raise "Label: #{name} declared aligned multiple times" unless not label.aligned?
-            label.setAligned(alignTo)
-        else
-            newLabel = Label.new(codeOrigin, name)
-            newLabel.setAligned(alignTo)
-            $labelMapping[name] = newLabel
-        end
-    end
-
     def self.setAsUnalignedGlobalExport(codeOrigin, name)
         if $labelMapping[name]
             label = $labelMapping[name]
@@ -1200,11 +1183,6 @@ class Label < NoChildren
     def setUnalignedGlobal
         @global = true
         @aligned = false
-    end
-
-    def setAligned(alignTo)
-        @aligned = true
-        @alignTo = alignTo
     end
 
     def setUnalignedGlobalExport
