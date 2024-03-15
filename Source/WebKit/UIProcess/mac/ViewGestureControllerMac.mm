@@ -145,7 +145,7 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
     m_magnification += m_magnification * scaleWithResistance;
     m_magnification = std::min(std::max(m_magnification, minElasticMagnification), maxElasticMagnification);
 
-    LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::handleMagnificationGestureEvent - gesture scale " << scale << " with resistance " << scaleWithResistance << " clamped to " << m_magnification);
+    LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::handleMagnificationGestureEvent - gesture scale " << scale << " with resistance " << scaleWithResistance << " clamped to " << m_magnification << " origin in view coords " << origin);
 
     m_magnificationOrigin = origin;
 

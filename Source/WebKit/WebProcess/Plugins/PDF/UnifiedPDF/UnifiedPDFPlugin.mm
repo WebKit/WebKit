@@ -954,17 +954,43 @@ void UnifiedPDFPlugin::didBeginMagnificationGesture()
 void UnifiedPDFPlugin::didEndMagnificationGesture()
 {
     m_inMagnificationGesture = false;
+    m_magnificationOriginInContentCoordinates = { };
+    m_magnificationOriginInPluginCoordinates = { };
     m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
-void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPoint> origin)
+void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPoint> originInRootViewCoordinates)
 {
     RefPtr page = this->page();
     if (!page)
         return;
 
-    auto oldScrollPosition = this->scrollPosition();
-    auto oldScale = std::exchange(m_scaleFactor, scale);
+    IntPoint originInPluginCoordinates;
+    if (originInRootViewCoordinates)
+        originInPluginCoordinates = convertFromRootViewToPlugin(*originInRootViewCoordinates);
+    else
+        originInPluginCoordinates = IntRect({ }, size()).center();
+
+    auto computeOriginInContentsCoordinates = [&]() {
+        if (m_magnificationOriginInContentCoordinates) {
+            ASSERT(m_magnificationOriginInPluginCoordinates);
+            originInPluginCoordinates = *m_magnificationOriginInPluginCoordinates;
+            return *m_magnificationOriginInContentCoordinates;
+        }
+
+        auto originInContentsCoordinates = roundedIntPoint(convertDown(CoordinateSpace::Plugin, CoordinateSpace::Contents, FloatPoint { originInPluginCoordinates }));
+
+        if (m_inMagnificationGesture && !m_magnificationOriginInContentCoordinates) {
+            m_magnificationOriginInPluginCoordinates = originInPluginCoordinates;
+            m_magnificationOriginInContentCoordinates = originInContentsCoordinates;
+        }
+
+        return originInContentsCoordinates;
+    };
+
+    auto zoomContentsOrigin = computeOriginInContentsCoordinates();
+
+    std::exchange(m_scaleFactor, scale);
 
     updateScrollbars();
     updateScrollingExtents();
@@ -979,22 +1005,12 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
     if (RefPtr asyncRenderer = asyncRendererIfExists())
         asyncRenderer->layoutConfigurationChanged();
 
-    if (!origin)
-        origin = IntRect({ }, size()).center();
-
-    auto gestureOriginInContentsCoordinates = convertFromRootViewToPlugin(*origin);
-    gestureOriginInContentsCoordinates.moveBy(oldScrollPosition);
-
-    auto gestureOriginInNewContentsCoordinates = gestureOriginInContentsCoordinates;
-    gestureOriginInNewContentsCoordinates.scale(m_scaleFactor / oldScale);
-
-    auto delta = gestureOriginInNewContentsCoordinates - gestureOriginInContentsCoordinates;
-    auto newPosition = oldScrollPosition + delta;
-    newPosition = newPosition.expandedTo({ 0, 0 });
+    auto scrolledContentsPoint = roundedIntPoint(convertUp(CoordinateSpace::Contents, CoordinateSpace::ScrolledContents, FloatPoint { zoomContentsOrigin }));
+    auto newScrollPosition = IntPoint { scrolledContentsPoint - originInPluginCoordinates };
+    newScrollPosition = newScrollPosition.expandedTo({ 0, 0 });
 
     auto options = ScrollPositionChangeOptions::createUser();
-    options.originalScrollDelta = delta;
-    page->protectedScrollingCoordinator()->requestScrollToPosition(*this, newPosition, options);
+    page->protectedScrollingCoordinator()->requestScrollToPosition(*this, newScrollPosition, options);
 
     scheduleRenderingUpdate();
 
@@ -1011,6 +1027,14 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     RefPtr page = this->page();
     if (!page)
         return;
+
+    if (origin) {
+        // Compensate for the subtraction of topContentInset that happens in ViewGestureController::handleMagnificationGestureEvent();
+        // origin is not in root view coordinates.
+        RefPtr frameView = m_frame->coreLocalFrame()->view();
+        if (frameView)
+            origin->move(0, std::round(frameView->topContentInset()));
+    }
 
     setScaleFactor(scale, origin);
 }

@@ -490,6 +490,8 @@ private:
 
     float m_scaleFactor { 1 };
     bool m_inMagnificationGesture { false };
+    std::optional<WebCore::IntPoint> m_magnificationOriginInContentCoordinates;
+    std::optional<WebCore::IntPoint> m_magnificationOriginInPluginCoordinates;
 
     bool m_didAttachScrollingTreeNode { false };
     bool m_didScrollToFragment { false };
