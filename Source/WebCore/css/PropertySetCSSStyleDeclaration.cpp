@@ -187,8 +187,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setCssText(const String& text)
         return { };
 
     bool changed = m_propertySet->parseDeclaration(text, cssParserContext());
-
-    didMutate(changed ? PropertyChanged : NoChanges);
+    didMutate(changed ? MutationType::PropertyChanged : MutationType::StyleAttributeChanged);
 
     mutationScope.enqueueMutationRecord();
     return { };
@@ -268,7 +267,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
     else
         changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
 
-    didMutate(changed ? PropertyChanged : NoChanges);
+    didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
 
     if (changed) {
         // CSS DOM requires raising SyntaxError of parsing failed, but this is too dangerous for compatibility,
@@ -294,7 +293,7 @@ ExceptionOr<String> PropertySetCSSStyleDeclaration::removeProperty(const String&
     String result;
     bool changed = propertyID != CSSPropertyCustom ? m_propertySet->removeProperty(propertyID, &result) : m_propertySet->removeCustomProperty(propertyName, &result);
 
-    didMutate(changed ? PropertyChanged : NoChanges);
+    didMutate(changed ? MutationType::PropertyChanged : MutationType::NoChanges);
 
     if (changed)
         mutationScope.enqueueMutationRecord();
@@ -324,10 +323,10 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropert
         return { };
 
     if (m_propertySet->setProperty(propertyID, value, important, cssParserContext())) {
-        didMutate(PropertyChanged);
+        didMutate(MutationType::PropertyChanged);
         mutationScope.enqueueMutationRecord();
     } else
-        didMutate(NoChanges);
+        didMutate(MutationType::NoChanges);
         
     return { };
 }
@@ -402,7 +401,7 @@ void StyleRuleCSSStyleDeclaration::didMutate(MutationType type)
     ASSERT(m_parentRule);
     ASSERT(m_parentRule->parentStyleSheet());
 
-    if (type == PropertyChanged)
+    if (type == MutationType::PropertyChanged)
         m_cssomValueWrappers.clear();
 
     // Style sheet mutation needs to be signaled even if the change failed. willMutate*/didMutate* must pair.
@@ -442,8 +441,13 @@ bool InlineCSSStyleDeclaration::willMutate()
 
 void InlineCSSStyleDeclaration::didMutate(MutationType type)
 {
-    if (type == NoChanges)
+    if (type == MutationType::NoChanges)
         return;
+
+    if (type == MutationType::StyleAttributeChanged && m_parentElement) {
+        m_parentElement->dirtyStyleAttribute();
+        return;
+    }
 
     m_cssomValueWrappers.clear();
 

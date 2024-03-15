@@ -162,6 +162,20 @@ void StyledElement::styleAttributeChanged(const AtomString& newStyleString, Attr
     InspectorInstrumentation::didInvalidateStyleAttr(*this);
 }
 
+void StyledElement::dirtyStyleAttribute()
+{
+    elementData()->setStyleAttributeIsDirty(true);
+
+    if (styleResolver().ruleSets().hasSelectorsForStyleAttribute()) {
+        if (auto* inlineStyle = this->inlineStyle()) {
+            elementData()->setStyleAttributeIsDirty(false);
+            auto newValue = inlineStyle->asTextAtom();
+            Style::AttributeChangeInvalidation styleInvalidation(*this, styleAttr, attributeWithoutSynchronization(styleAttr), newValue);
+            setSynchronizedLazyAttribute(styleAttr, newValue);
+        }
+    }
+}
+
 void StyledElement::invalidateStyleAttribute()
 {
     if (auto* inlineStyle = this->inlineStyle()) {

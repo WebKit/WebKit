@@ -44,6 +44,7 @@ class StyledElement : public Element {
 public:
     virtual ~StyledElement();
 
+    void dirtyStyleAttribute();
     void invalidateStyleAttribute();
 
     const StyleProperties* inlineStyle() const { return elementData() ? elementData()->m_inlineStyle.get() : nullptr; }

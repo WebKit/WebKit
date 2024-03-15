@@ -370,6 +370,11 @@ const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQue
     return *m_customPropertyNamesInStyleContainerQueries;
 }
 
+bool ScopeRuleSets::hasSelectorsForStyleAttribute() const
+{
+    return !!attributeInvalidationRuleSets(HTMLNames::styleAttr->localName());
+}
+
 bool ScopeRuleSets::hasComplexSelectorsForStyleAttribute() const
 {
     auto compute = [&] {

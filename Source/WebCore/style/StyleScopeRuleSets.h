@@ -78,6 +78,7 @@ public:
 
     const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
 
+    bool hasSelectorsForStyleAttribute() const;
     bool hasComplexSelectorsForStyleAttribute() const;
 
     void setUsesSharedUserStyle(bool b) { m_usesSharedUserStyle = b; }

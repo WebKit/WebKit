@@ -37,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-disabled-regular-sheet-insertion.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-disallow-import.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-duplicate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-replace-cssRules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-replace-on-regular-sheet.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable.html
@@ -93,6 +94,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-all-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-final-delimiter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-setter.window.js
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-custom-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutability.html
