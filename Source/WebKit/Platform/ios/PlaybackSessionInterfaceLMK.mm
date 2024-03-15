@@ -182,14 +182,12 @@
 
 - (void)linearMediaPlayerToggleInlineMode:(WKSLinearMediaPlayer *)player
 {
-    if (auto model = _model.get())
-        model->toggleFullscreen();
-}
+    auto model = _model.get();
+    if (!model)
+        return;
 
-- (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player didExitFullscreenWithError:(NSError * _Nullable)error
-{
-    if (auto model = _model.get())
-        model->setVideoReceiverEndpoint(nullptr);
+    model->toggleFullscreen();
+    model->setVideoReceiverEndpoint(nullptr);
 }
 
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setVideoReceiverEndpoint:(xpc_object_t)videoReceiverEndpoint

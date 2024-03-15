@@ -70,8 +70,8 @@ void VideoPresentationInterfaceLMK::setupPlayerViewController()
     linearMediaPlayer().allowFullScreenFromInline = YES;
     linearMediaPlayer().contentType = WKSLinearMediaContentTypePlanar;
     linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
-    linearMediaPlayer().captionLayer = captionsLayer();
-    linearMediaPlayer().videoLayer = [m_playerLayerView playerLayer];
+    // FIXME: pass a valid caption layer (rdar://124223292)
+    linearMediaPlayer().captionLayer = CALayer.layer;
 
     m_playerViewController = [linearMediaPlayer() makeViewController];
 }
