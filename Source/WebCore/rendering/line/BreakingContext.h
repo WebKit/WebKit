@@ -72,7 +72,7 @@ struct WordMeasurement {
 
 class BreakingContext {
 public:
-    BreakingContext(LineBreaker& lineBreaker, InlineBidiResolver& resolver, LineInfo& inLineInfo, LineWidth& lineWidth, RenderTextInfo& inRenderTextInfo, FloatingObject* inLastFloatFromPreviousLine, bool appliedStartWidth, RenderBlockFlow& block)
+    BreakingContext(LineBreaker& lineBreaker, InlineBidiResolver& resolver, LineInfo& inLineInfo, LineWidth& lineWidth, RenderTextInfo& inRenderTextInfo, bool appliedStartWidth, RenderBlockFlow& block)
         : m_lineBreaker(lineBreaker)
         , m_resolver(resolver)
         , m_current(resolver.position())
@@ -83,7 +83,6 @@ public:
         , m_blockStyle(block.style())
         , m_lineInfo(inLineInfo)
         , m_renderTextInfo(inRenderTextInfo)
-        , m_lastFloatFromPreviousLine(inLastFloatFromPreviousLine)
         , m_width(lineWidth)
         , m_preservesNewline(false)
         , m_atStart(true)
@@ -172,8 +171,6 @@ private:
     LineInfo& m_lineInfo;
 
     RenderTextInfo& m_renderTextInfo;
-
-    FloatingObject* m_lastFloatFromPreviousLine;
 
     LineWidth m_width;
 
@@ -367,33 +364,11 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
     m_renderTextInfo.lineBreakIteratorFactory.priorContext().reset();
 }
 
-inline void BreakingContext::handleFloat()
-{
-    auto& floatBox = downcast<RenderBox>(*m_current.renderer());
-    const auto& floatingObject = *m_lineBreaker.insertFloatingObject(floatBox);
-    // check if it fits in the current line.
-    // If it does, position it now, otherwise, position
-    // it after moving to next line (in clearFloats() func)
-    if (m_floatsFitOnLine && m_width.fitsOnLineExcludingTrailingWhitespace(m_block.logicalWidthForFloat(floatingObject))) {
-        m_lineBreaker.positionNewFloatOnLine(floatingObject, m_lastFloatFromPreviousLine, m_lineInfo, m_width);
-        if (m_lineBreak.renderer() == m_current.renderer()) {
-            ASSERT(!m_lineBreak.offset());
-            m_lineBreak.increment();
-        }
-    } else
-        m_floatsFitOnLine = false;
-    // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for floating element.
-    m_renderTextInfo.lineBreakIteratorFactory.priorContext().update(replacementCharacter);
-}
-
 // This is currently just used for list markers and inline flows that have line boxes. Neither should
 // have an effect on whitespace at the start of the line.
 inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderObject* o, LineWhitespaceCollapsingState& lineWhitespaceCollapsingState)
 {
     RenderObject* next = nextInlineRendererSkippingEmpty(block, o);
-    while (next && next->isFloatingOrOutOfFlowPositioned())
-        next = nextInlineRendererSkippingEmpty(block, next);
-
     auto* nextText = dynamicDowncast<RenderText>(next);
     if (nextText && nextText->text().length() > 0) {
         UChar nextChar = nextText->characterAt(0);

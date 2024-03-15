@@ -282,11 +282,6 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
                             changeLogicalBottom = std::max(changeLogicalBottom, std::max(logicalTop, oldLogicalTop));
                         }
                     }
-
-                    if (oldFloatingObject->originatingLine() && !selfNeedsLayout()) {
-                        ASSERT(&oldFloatingObject->originatingLine()->renderer() == this);
-                        oldFloatingObject->originatingLine()->markDirty();
-                    }
                 } else {
                     changeLogicalTop = 0;
                     changeLogicalBottom = std::max(changeLogicalBottom, logicalBottom);
@@ -1985,16 +1980,6 @@ static void clearShouldBreakAtLineToAvoidWidowIfNeeded(RenderBlockFlow& blockFlo
     blockFlow.setDidBreakAtLineToAvoidWidow();
 }
 
-void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* rootInlineBox, LayoutUnit& delta)
-{
-    auto adjustment = computeLineAdjustmentForPagination(rootInlineBox, delta);
-
-    rootInlineBox->setPaginationStrut(adjustment.strut);
-    rootInlineBox->setIsFirstAfterPageBreak(adjustment.isFirstAfterPageBreak);
-
-    delta += adjustment.strut;
-}
-
 RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustmentForPagination(const InlineIterator::LineBoxIterator& lineBox, LayoutUnit delta, LayoutUnit floatMinimumBottom)
 {
     // FIXME: For now we paginate using line overflow. This ensures that lines don't overlap at all when we
@@ -2688,16 +2673,6 @@ void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
                     // the line that they're on, but it still needs to be dirtied. This is
                     // accomplished by pretending they have a height of 1.
                     logicalBottom = std::max(logicalBottom, logicalTop + 1);
-                }
-                if (floatingObject.originatingLine()) {
-                    floatingObject.originatingLine()->removeFloat(floatBox);
-                    if (!selfNeedsLayout()) {
-                        ASSERT(&floatingObject.originatingLine()->renderer() == this);
-                        floatingObject.originatingLine()->markDirty();
-                    }
-#if ASSERT_ENABLED
-                    floatingObject.clearOriginatingLine();
-#endif
                 }
                 markLinesDirtyInBlockRange(0, logicalBottom);
             }

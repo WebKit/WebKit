@@ -494,21 +494,13 @@ void RenderFragmentContainer::addVisualOverflowForBox(const RenderBox& box, cons
     fragmentOverflow->addVisualOverflow(flippedRect);
 }
 
-LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBoxModelObject& box) const
+LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBox& box) const
 {
-    if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(box))
-        return inlineBox->linesVisualOverflowBoundingBoxInFragment(this);
+    RefPtr<RenderOverflow> overflow;
+    ensureOverflowForBox(box, overflow, true);
 
-    if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(box)) {
-        RefPtr<RenderOverflow> overflow;
-        ensureOverflowForBox(*renderBox, overflow, true);
-
-        ASSERT(overflow);
-        return overflow->visualOverflowRect();
-    }
-
-    ASSERT_NOT_REACHED();
-    return LayoutRect();
+    ASSERT(overflow);
+    return overflow->visualOverflowRect();
 }
 
 // FIXME: This doesn't work for writing modes.
@@ -536,7 +528,7 @@ LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const
     return rect;
 }
 
-LayoutRect RenderFragmentContainer::visualOverflowRectForBoxForPropagation(const RenderBoxModelObject& box)
+LayoutRect RenderFragmentContainer::visualOverflowRectForBoxForPropagation(const RenderBox& box)
 {
     LayoutRect rect = visualOverflowRectForBox(box);
     fragmentedFlow()->flipForWritingModeLocalCoordinates(rect);

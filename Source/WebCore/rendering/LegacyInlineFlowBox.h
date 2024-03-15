@@ -46,8 +46,6 @@ public:
         , m_baselineType(AlphabeticBaseline)
         , m_hasAnnotationsBefore(false)
         , m_hasAnnotationsAfter(false)
-        , m_isFirstAfterPageBreak(false)
-        , m_isForTrailingFloats(false)
         , m_hasSelfPaintInlineBox(false)
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         , m_hasBadChildList(false)
@@ -254,8 +252,6 @@ protected:
     unsigned m_lineBreakBidiStatusLastStrong : 5; // UCharDirection
     unsigned m_lineBreakBidiStatusLast : 5; // UCharDirection
 
-    unsigned m_isFirstAfterPageBreak : 1;
-    unsigned m_isForTrailingFloats : 1;
     unsigned m_hasSelfPaintInlineBox : 1;
 
     // End of RootInlineBox-specific members.

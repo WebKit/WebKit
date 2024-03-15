@@ -133,9 +133,6 @@ float LegacyInlineBox::logicalHeight() const
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
 
-    if (auto* inlineBox = dynamicDowncast<LegacyRootInlineBox>(*this); inlineBox && inlineBox->isForTrailingFloats())
-        return 0;
-
     const RenderStyle& lineStyle = this->lineStyle();
     if (renderer().isRenderTextOrLineBreak())
         return lineStyle.metricsOfPrimaryFont().intHeight();

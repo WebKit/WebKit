@@ -369,17 +369,8 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
 
         // FIXME: We shouldn't need to always dirty the next line. This is only strictly 
         // necessary some of the time, in situations involving BRs.
-        if (LegacyRootInlineBox* nextBox = box->nextRootBox()) {
+        if (LegacyRootInlineBox* nextBox = box->nextRootBox())
             nextBox->markDirty();
-            // Dedicated linebox for floats may be added as the last rootbox. If this occurs with BRs inside inlines that propagte their lineboxes to
-            // the parent flow, we need to invalidate it explicitly.
-            // FIXME: We should be able to figure out the actual "changed child" even when we are calling through empty inlines recursively.
-            if (auto* renderInline = dynamicDowncast<RenderInline>(child); renderInline && !renderInline->firstLineBox()) {
-                auto* lastRootBox = nextBox->blockFlow().lastRootBox();
-                if (lastRootBox->isForTrailingFloats() && !lastRootBox->isDirty())
-                    lastRootBox->markDirty();
-            }
-        }
     }
 }
 

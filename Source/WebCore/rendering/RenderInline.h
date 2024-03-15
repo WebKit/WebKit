@@ -60,7 +60,6 @@ public:
 
     WEBCORE_EXPORT IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
-    LayoutRect linesVisualOverflowBoundingBoxInFragment(const RenderFragmentContainer*) const;
 
     LegacyInlineFlowBox* createAndAppendInlineFlowBox();
 

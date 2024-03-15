@@ -575,49 +575,6 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
     return rect;
 }
 
-LayoutRect RenderInline::linesVisualOverflowBoundingBoxInFragment(const RenderFragmentContainer* fragment) const
-{
-    ASSERT(fragment);
-
-    if (!firstLineBox() || !lastLineBox())
-        return LayoutRect();
-
-    // Return the width of the minimal left side and the maximal right side.
-    LayoutUnit logicalLeftSide = LayoutUnit::max();
-    LayoutUnit logicalRightSide = LayoutUnit::min();
-    LayoutUnit logicalTop;
-    LayoutUnit logicalHeight;
-    LegacyInlineFlowBox* lastInlineInFragment = 0;
-    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        const LegacyRootInlineBox& root = curr->root();
-        if (root.containingFragment() != fragment) {
-            if (lastInlineInFragment)
-                break;
-            continue;
-        }
-
-        if (!lastInlineInFragment)
-            logicalTop = curr->logicalTopVisualOverflow(root.lineTop());
-
-        lastInlineInFragment = curr;
-
-        logicalLeftSide = std::min(logicalLeftSide, curr->logicalLeftVisualOverflow());
-        logicalRightSide = std::max(logicalRightSide, curr->logicalRightVisualOverflow());
-    }
-
-    if (!lastInlineInFragment)
-        return LayoutRect();
-
-    logicalHeight = lastInlineInFragment->logicalBottomVisualOverflow(lastInlineInFragment->root().lineBottom()) - logicalTop;
-    
-    LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
-    
-    LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
-    if (!style().isHorizontalWritingMode())
-        rect = rect.transposedRect();
-    return rect;
-}
-
 LayoutRect RenderInline::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     // Only first-letter renderers are allowed in here during layout. They mutate the tree triggering repaints.

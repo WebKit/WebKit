@@ -65,7 +65,6 @@ public:
     void layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     LegacyRootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
-    bool positionNewFloatOnLine(const FloatingObject& newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo&, LineWidth&);
     void addOverflowFromInlineChildren();
 
     size_t lineCount() const;
@@ -82,20 +81,13 @@ private:
     void removeInlineBox(BidiRun&, const LegacyRootInlineBox&) const;
     void removeEmptyTextBoxesAndUpdateVisualReordering(LegacyRootInlineBox*, BidiRun* firstRun);
     inline BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns, BidiContext* currentContext);
-    void appendFloatingObjectToLastLine(FloatingObject&);
     LegacyRootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo&);
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
-    inline const LegacyInlineIterator& restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight, FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver&,  const LegacyInlineIterator& oldEnd);
-    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const LegacyInlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
-    void reattachCleanLineFloats(LegacyRootInlineBox& cleanLine, LayoutUnit delta, bool isFirstCleanLine);
+    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const LegacyInlineIterator& cleanLineStart, unsigned consecutiveHyphenatedLines);
     void linkToEndLineIfNeeded(LineLayoutState&);
-    void checkFloatInCleanLine(LegacyRootInlineBox& cleanLine, RenderBox& floatBoxOnCleanLine, FloatWithRect& matchingFloatWithRect, bool& encounteredNewFloat, bool& dirtiedByFloat);
     LegacyRootInlineBox* determineStartPosition(LineLayoutState&, InlineBidiResolver&);
-    void determineEndPosition(LineLayoutState&, LegacyRootInlineBox* startLine, LegacyInlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus);
-    bool checkPaginationAndFloatsAtEndLine(LineLayoutState&);
-    bool lineWidthForPaginatedLineChanged(LegacyRootInlineBox* rootBox, LayoutUnit lineDelta, RenderFragmentedFlow*) const;
-    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const LegacyInlineIterator& endLineStart, const BidiStatus& endLineStatus);
-    void updateFragmentForLine(LegacyRootInlineBox*) const;
+    void determineEndPosition(LineLayoutState&, LegacyRootInlineBox* startLine, LegacyInlineIterator& cleanLineStart);
+    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const LegacyInlineIterator& endLineStart);
 
     const RenderStyle& style() const;
     const LocalFrameViewLayoutContext& layoutContext() const;

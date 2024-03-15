@@ -534,9 +534,6 @@ private:
     std::optional<LayoutUnit> selfCollapsingMarginBeforeWithClear(RenderObject* candidate);
 
 public:
-    // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
-    void adjustLinePositionForPagination(LegacyRootInlineBox*, LayoutUnit& deltaOffset);
-
     struct LinePaginationAdjustment {
         LayoutUnit strut { 0_lu };
         bool isFirstAfterPageBreak { false };

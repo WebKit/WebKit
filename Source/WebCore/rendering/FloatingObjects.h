@@ -90,11 +90,6 @@ public:
     bool isDescendant() const { return m_isDescendant; }
     void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
 
-    // FIXME: Callers of these methods are dangerous and should be allowed explicitly or removed.
-    LegacyRootInlineBox* originatingLine() const { return m_originatingLine.get(); }
-    void clearOriginatingLine() { m_originatingLine = nullptr; }
-    void setOriginatingLine(LegacyRootInlineBox& line) { m_originatingLine = line; }
-
     LayoutSize locationOffsetOfBorderBox() const
     {
         ASSERT(isPlaced());
@@ -107,7 +102,6 @@ private:
     friend FloatingObjects;
 
     SingleThreadWeakPtr<RenderBox> m_renderer;
-    WeakPtr<LegacyRootInlineBox> m_originatingLine;
     LayoutRect m_frameRect;
     LayoutUnit m_paginationStrut;
     LayoutSize m_marginOffset;
@@ -168,7 +162,6 @@ public:
     bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
     bool hasRightObjects() const { return m_rightObjectsCount > 0; }
     const FloatingObjectSet& set() const { return m_set; }
-    void clearLineBoxTreePointers();
 
     LayoutUnit logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight);
     LayoutUnit logicalRightOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight);

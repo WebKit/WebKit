@@ -30,7 +30,6 @@ namespace WebCore {
 class HitTestResult;
 class LogicalSelectionOffsetCaches;
 class RenderBlockFlow;
-class RenderFragmentContainer;
 
 struct BidiStatus;
 struct GapRects;
@@ -55,21 +54,6 @@ public:
     LayoutUnit lineBoxTop() const { return m_lineBoxTop; }
     LayoutUnit lineBoxBottom() const { return m_lineBoxBottom; }
     LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
-    
-    LayoutUnit paginationStrut() const { return m_paginationStrut; }
-    void setPaginationStrut(LayoutUnit strut) { m_paginationStrut = strut; }
-
-    bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
-    void setIsFirstAfterPageBreak(bool isFirstAfterPageBreak) { m_isFirstAfterPageBreak = isFirstAfterPageBreak; }
-
-    LayoutUnit paginatedLineWidth() const { return m_paginatedLineWidth; }
-    void setPaginatedLineWidth(LayoutUnit width) { m_paginatedLineWidth = width; }
-
-    // It should not be assumed the containingFragment() is always valid.
-    // It can also be nullptr if the flow has no fragment chain.
-    RenderFragmentContainer* containingFragment() const;
-    void setContainingFragment(RenderFragmentContainer&);
-    void clearContainingFragment();
 
     LayoutUnit selectionTop() const;
     LayoutUnit selectionBottom() const;
@@ -93,9 +77,6 @@ public:
     unsigned lineBreakPos() const { return m_lineBreakPos; }
     void setLineBreakPos(unsigned p) { m_lineBreakPos = p; }
 
-    bool isForTrailingFloats() const { return m_isForTrailingFloats; }
-    void setIsForTrailingFloats() { m_isForTrailingFloats = true; }
-
     using LegacyInlineBox::endsWithBreak;
     using LegacyInlineBox::setEndsWithBreak;
 
@@ -109,25 +90,6 @@ public:
     RenderObject::HighlightState selectionState() const final;
     const LegacyInlineBox* firstSelectedBox() const;
     const LegacyInlineBox* lastSelectedBox() const;
-
-    using CleanLineFloatList = Vector<SingleThreadWeakPtr<RenderBox>>;
-    void appendFloat(RenderBox& floatingBox)
-    {
-        ASSERT(!isDirty());
-        if (m_floats)
-            m_floats->append(floatingBox);
-        else
-            m_floats = makeUnique<CleanLineFloatList>(1, floatingBox);
-    }
-
-    void removeFloat(RenderBox& floatingBox)
-    {
-        ASSERT(m_floats);
-        ASSERT(m_floats->contains(&floatingBox));
-        m_floats->remove(m_floats->find(&floatingBox));
-    }
-
-    CleanLineFloatList* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
 
     void extractLineBoxFromRenderObject() final;
     void attachLineBoxToRenderObject() final;
@@ -175,13 +137,6 @@ private:
 
     LayoutUnit m_lineBoxTop;
     LayoutUnit m_lineBoxBottom;
-
-    LayoutUnit m_paginationStrut;
-    LayoutUnit m_paginatedLineWidth;
-
-    // Floats hanging off the line are pushed into this vector during layout. It is only
-    // good for as long as the line has not been marked dirty.
-    std::unique_ptr<CleanLineFloatList> m_floats;
 };
 
 inline LegacyRootInlineBox* LegacyRootInlineBox::nextRootBox() const

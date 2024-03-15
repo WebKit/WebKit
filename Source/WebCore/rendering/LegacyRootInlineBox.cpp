@@ -46,20 +46,13 @@ struct SameSizeAsLegacyRootInlineBox : LegacyInlineFlowBox, CanMakeWeakPtr<Legac
     unsigned lineBreakPos;
     SingleThreadWeakPtr<RenderObject> lineBreakObj;
     void* lineBreakContext;
-    int layoutUnits[6];
-    void* floats;
+    int layoutUnits[4];
 };
 
 static_assert(sizeof(LegacyRootInlineBox) == sizeof(SameSizeAsLegacyRootInlineBox), "LegacyRootInlineBox should stay small");
 #if !ASSERT_ENABLED
 static_assert(sizeof(SingleThreadWeakPtr<RenderObject>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
-
-static ContainingFragmentMap& containingFragmentMap(RenderBlockFlow& block)
-{
-    ASSERT(block.enclosingFragmentedFlow());
-    return block.enclosingFragmentedFlow()->containingFragmentMap();
-}
 
 LegacyRootInlineBox::LegacyRootInlineBox(RenderBlockFlow& block)
     : LegacyInlineFlowBox(block)
@@ -69,8 +62,6 @@ LegacyRootInlineBox::LegacyRootInlineBox(RenderBlockFlow& block)
 
 LegacyRootInlineBox::~LegacyRootInlineBox()
 {
-    if (!renderer().document().renderTreeBeingDestroyed() && blockFlow().enclosingFragmentedFlow())
-        containingFragmentMap(blockFlow()).remove(this);
 }
 
 bool LegacyRootInlineBox::isHyphenated() const
@@ -112,40 +103,6 @@ void LegacyRootInlineBox::childRemoved(LegacyInlineBox* box)
         prev->setLineBreakInfo(nullptr, 0, BidiStatus());
         prev->markDirty();
     }
-}
-
-RenderFragmentContainer* LegacyRootInlineBox::containingFragment() const
-{
-    ContainingFragmentMap& fragmentMap = containingFragmentMap(blockFlow());
-    bool hasContainingFragment = fragmentMap.contains(this);
-    RenderFragmentContainer* fragment = hasContainingFragment ? fragmentMap.get(this).get() : nullptr;
-
-#ifndef NDEBUG
-    if (hasContainingFragment) {
-        RenderFragmentedFlow* fragmentedFlow = blockFlow().enclosingFragmentedFlow();
-        const RenderFragmentContainerList& fragmentList = fragmentedFlow->renderFragmentContainerList();
-        ASSERT_WITH_SECURITY_IMPLICATION(fragmentList.contains(*fragment));
-    }
-#endif
-
-    return fragment;
-}
-
-void LegacyRootInlineBox::clearContainingFragment()
-{
-    ASSERT(!isDirty());
-
-    if (!containingFragmentMap(blockFlow()).contains(this))
-        return;
-
-    containingFragmentMap(blockFlow()).remove(this);
-}
-
-void LegacyRootInlineBox::setContainingFragment(RenderFragmentContainer& fragment)
-{
-    ASSERT(!isDirty());
-
-    containingFragmentMap(blockFlow()).set(this, &fragment);
 }
 
 RenderObject::HighlightState LegacyRootInlineBox::selectionState() const
