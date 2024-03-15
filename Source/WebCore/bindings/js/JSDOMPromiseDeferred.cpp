@@ -146,6 +146,12 @@ void DeferredPromise::reject(std::nullptr_t, RejectAsHandled rejectAsHandled)
 
 void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandled)
 {
+    JSC::JSValue exceptionObject;
+    reject(exception, rejectAsHandled, exceptionObject);
+}
+
+void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandled, JSC::JSValue& exceptionObject)
+{
     if (shouldIgnoreRequestToFulfill())
         return;
 
@@ -168,13 +174,15 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
         return;
     }
 
-    auto error = createDOMException(lexicalGlobalObject, WTFMove(exception));
-    if (UNLIKELY(scope.exception())) {
-        handleUncaughtException(scope, lexicalGlobalObject);
-        return;
+    if (exceptionObject.isEmpty()) {
+        exceptionObject = createDOMException(lexicalGlobalObject, WTFMove(exception));
+        if (UNLIKELY(scope.exception())) {
+            handleUncaughtException(scope, lexicalGlobalObject);
+            return;
+        }
     }
 
-    reject(lexicalGlobalObject, error, rejectAsHandled);
+    reject(lexicalGlobalObject, exceptionObject, rejectAsHandled);
     if (UNLIKELY(scope.exception()))
         handleUncaughtException(scope, lexicalGlobalObject);
 }
@@ -212,18 +220,6 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
     reject(lexicalGlobalObject, error, rejectAsHandled);
     if (UNLIKELY(scope.exception()))
         handleUncaughtException(scope, lexicalGlobalObject);
-}
-
-void DeferredPromise::reject(const JSC::PrivateName& privateName, RejectAsHandled rejectAsHandled)
-{
-    if (shouldIgnoreRequestToFulfill())
-        return;
-
-    ASSERT(deferred());
-    ASSERT(m_globalObject);
-    JSC::JSGlobalObject* lexicalGlobalObject = m_globalObject.get();
-    JSC::JSLockHolder locker(lexicalGlobalObject);
-    reject(*lexicalGlobalObject, JSC::Symbol::create(lexicalGlobalObject->vm(), privateName.uid()), rejectAsHandled);
 }
 
 void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSPromise& promise, JSC::CatchScope& catchScope)

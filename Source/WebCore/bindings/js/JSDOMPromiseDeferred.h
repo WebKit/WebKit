@@ -160,9 +160,9 @@ public:
 
     void reject(RejectAsHandled = RejectAsHandled::No);
     void reject(std::nullptr_t, RejectAsHandled = RejectAsHandled::No);
+    void reject(Exception, RejectAsHandled, JSC::JSValue&);
     WEBCORE_EXPORT void reject(Exception, RejectAsHandled = RejectAsHandled::No);
     WEBCORE_EXPORT void reject(ExceptionCode, const String& = { }, RejectAsHandled = RejectAsHandled::No);
-    void reject(const JSC::PrivateName&, RejectAsHandled = RejectAsHandled::No);
 
     template<typename Callback>
     void resolveWithCallback(Callback callback)

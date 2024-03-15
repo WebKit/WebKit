@@ -117,8 +117,9 @@ static Navigation::Result createErrorResult(Ref<DeferredPromise> committed, Ref<
         DOMPromise::create(*globalObject, *JSC::jsCast<JSC::JSPromise*>(finished->promise()))
     };
 
-    committed->reject(exception);
-    finished->reject(exception);
+    JSC::JSValue exceptionObject;
+    committed->reject(exception, RejectAsHandled::No, exceptionObject);
+    finished->reject(exception, RejectAsHandled::No, exceptionObject);
 
     return result;
 }
@@ -194,6 +195,9 @@ Navigation::Result Navigation::navigate(ScriptExecutionContext& scriptExecutionC
 
     if (options.history == HistoryBehavior::Push && newURL.protocolIsJavaScript())
         return createErrorResult(committed, finished, ExceptionCode::NotSupportedError, "A \"push\" navigation was explicitly requested, but only a \"replace\" navigation is possible when navigating to a javascript: URL."_s);
+
+    if (options.history == HistoryBehavior::Push && currentURL.isAboutBlank())
+        return createErrorResult(committed, finished, ExceptionCode::NotSupportedError, "A \"push\" navigation was explicitly requested, but only a \"replace\" navigation is possible while on an about:blank document."_s);
 
     auto serializedState = serializeState(options.state);
     if (serializedState.hasException())

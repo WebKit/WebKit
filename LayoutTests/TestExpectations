@@ -6871,6 +6871,7 @@ imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-from-
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-intercept-history-state.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-relative-url.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-out-of-bounds.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-push-initial-about-blank.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-base-url.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-parent.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-sibling.html [ Pass ]
