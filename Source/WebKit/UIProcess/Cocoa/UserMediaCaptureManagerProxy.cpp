@@ -572,8 +572,8 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
     m_connectionProxy->setTCCIdentity();
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
-    bool hasValidMediaEnvironment = m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier);
-    if (!hasValidMediaEnvironment && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
+    bool hasValidMediaEnvironmentOrIdentity = m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier) || RealtimeMediaSourceCenter::singleton().hasIdentity();
+    if (!hasValidMediaEnvironmentOrIdentity && proxy->source().deviceType() == CaptureDevice::DeviceType::Camera && WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to set media environment, failing capture.");
         proxy->source().captureFailed();
         return;

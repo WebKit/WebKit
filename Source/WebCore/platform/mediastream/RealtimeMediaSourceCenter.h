@@ -105,6 +105,7 @@ public:
 #if ENABLE(APP_PRIVACY_REPORT)
     void setIdentity(OSObjectPtr<tcc_identity_t>&& identity) { m_identity = WTFMove(identity); }
     OSObjectPtr<tcc_identity_t> identity() const { return m_identity; }
+    bool hasIdentity() const { return !!m_identity; }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
