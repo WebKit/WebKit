@@ -29,30 +29,22 @@ inline LayoutUnit LegacyInlineFlowBox::marginBorderPaddingLogicalRight() const {
 
 inline float LegacyInlineFlowBox::borderLogicalLeft() const
 {
-    if (!includeLogicalLeftEdge())
-        return 0;
-    return isHorizontal() ? lineStyle().borderLeftWidth() : lineStyle().borderTopWidth();
+    return 0;
 }
 
 inline float LegacyInlineFlowBox::borderLogicalRight() const
 {
-    if (!includeLogicalRightEdge())
-        return 0;
-    return isHorizontal() ? lineStyle().borderRightWidth() : lineStyle().borderBottomWidth();
+    return 0;
 }
 
 inline float LegacyInlineFlowBox::paddingLogicalLeft() const
 {
-    if (!includeLogicalLeftEdge())
-        return 0;
-    return isHorizontal() ? renderer().paddingLeft() : renderer().paddingTop();
+    return 0;
 }
 
 inline float LegacyInlineFlowBox::paddingLogicalRight() const
 {
-    if (!includeLogicalRightEdge())
-        return 0;
-    return isHorizontal() ? renderer().paddingRight() : renderer().paddingBottom();
+    return 0;
 }
 
 } // namespace WebCore

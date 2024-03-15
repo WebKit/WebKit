@@ -41,8 +41,6 @@ class LegacyInlineFlowBox : public LegacyInlineBox {
 public:
     explicit LegacyInlineFlowBox(RenderBoxModelObject& renderer)
         : LegacyInlineBox(renderer)
-        , m_includeLogicalLeftEdge(false)
-        , m_includeLogicalRightEdge(false)
         , m_hasHardLinebreak(false)
         , m_descendantsHaveSameLineHeightAndBaseline(true)
         , m_baselineType(AlphabeticBaseline)
@@ -118,41 +116,16 @@ public:
     inline LayoutUnit marginBorderPaddingLogicalRight() const;
     LayoutUnit marginLogicalLeft() const
     {
-        if (!includeLogicalLeftEdge())
-            return 0;
-        return isHorizontal() ? renderer().marginLeft() : renderer().marginTop();
+        return 0;
     }
     LayoutUnit marginLogicalRight() const
     {
-        if (!includeLogicalRightEdge())
-            return 0;
-        return isHorizontal() ? renderer().marginRight() : renderer().marginBottom();
+        return 0;
     }
     inline float borderLogicalLeft() const;
     inline float borderLogicalRight() const;
     inline float paddingLogicalLeft() const;
     inline float paddingLogicalRight() const;
-
-    bool includeLogicalLeftEdge() const { return m_includeLogicalLeftEdge; }
-    bool includeLogicalRightEdge() const { return m_includeLogicalRightEdge; }
-    void setEdges(bool includeLeft, bool includeRight)
-    {
-        m_includeLogicalLeftEdge = includeLeft;
-        m_includeLogicalRightEdge = includeRight;
-    }
-
-    // Helper functions used during line construction and placement.
-    void determineSpacingForFlowBoxes(bool lastLine, bool isLogicallyLastRunWrapped, RenderObject* logicallyLastRunRenderer);
-    LayoutUnit getFlowSpacingLogicalWidth();
-    float placeBoxesInInlineDirection(float logicalLeft, bool& needsWordSpacing);
-    float placeBoxRangeInInlineDirection(LegacyInlineBox* firstChild, LegacyInlineBox* lastChild, float& logicalLeft, float& minLogicalLeft, float& maxLogicalRight, bool& needsWordSpacing);
-    void beginPlacingBoxRangesInInlineDirection(float logicalLeft) { setLogicalLeft(logicalLeft); }
-    void endPlacingBoxRangesInInlineDirection(float logicalLeft, float logicalRight, float minLogicalLeft, float maxLogicalRight)
-    {
-        setLogicalWidth(logicalRight - logicalLeft);
-        if (knownToHaveNoOverflow() && (minLogicalLeft < logicalLeft || maxLogicalRight > logicalRight))
-            clearKnownToHaveNoOverflow();
-    }
 
     LayoutUnit computeOverAnnotationAdjustment(LayoutUnit allowedPosition) const;
     LayoutUnit computeUnderAnnotationAdjustment(LayoutUnit allowedPosition) const;
@@ -262,8 +235,6 @@ private:
     void addReplacedChildOverflow(const LegacyInlineBox*, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow);
 
 private:
-    unsigned m_includeLogicalLeftEdge : 1;
-    unsigned m_includeLogicalRightEdge : 1;
     unsigned m_hasTextChildren : 1;
     unsigned m_hasTextDescendants : 1;
     unsigned m_hasHardLinebreak : 1;

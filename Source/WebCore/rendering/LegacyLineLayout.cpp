@@ -250,31 +250,6 @@ LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const 
     return result;
 }
 
-template<typename CharacterType> static inline bool endsWithHTMLSpaces(const CharacterType* characters, unsigned position, unsigned end)
-{
-    for (unsigned i = position; i < end; ++i) {
-        if (!isASCIIWhitespace(characters[i]))
-            return false;
-    }
-    return true;
-}
-
-static bool reachedEndOfTextRenderer(const BidiRunList<BidiRun>& bidiRuns)
-{
-    BidiRun* run = bidiRuns.logicallyLastRun();
-    if (!run)
-        return true;
-    CheckedPtr renderText = dynamicDowncast<RenderText>(run->renderer());
-    if (!renderText)
-        return false;
-    auto& text = renderText->text();
-    unsigned position = run->stop();
-    unsigned length = text.length();
-    if (text.is8Bit())
-        return endsWithHTMLSpaces(text.characters8(), position, length);
-    return endsWithHTMLSpaces(text.characters16(), position, length);
-}
-
 LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiRuns, const LineInfo& lineInfo)
 {
     ASSERT(bidiRuns.firstRun());
@@ -314,52 +289,11 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
     // be the last continuation of our line list.
     ASSERT(lastRootBox() && !lastRootBox()->isConstructed());
 
-    // Set bits on our inline flow boxes that indicate which sides should
-    // paint borders/margins/padding. This knowledge will ultimately be used when
-    // we determine the horizontal positions and widths of all the inline boxes on
-    // the line.
-    bool isLogicallyLastRunWrapped = bidiRuns.logicallyLastRun()->renderer().isRenderText() ? !reachedEndOfTextRenderer(bidiRuns) : !is<RenderInline>(bidiRuns.logicallyLastRun()->renderer());
-    lastRootBox()->determineSpacingForFlowBoxes(lineInfo.isLastLine(), isLogicallyLastRunWrapped, &bidiRuns.logicallyLastRun()->renderer());
-
     // Now mark the line boxes as being constructed.
     lastRootBox()->setConstructed();
 
     // Return the last line.
     return lastRootBox();
-}
-
-TextAlignMode LegacyLineLayout::textAlignmentForLine(bool endsWithSoftBreak) const
-{
-    if (auto overrideAlignment = m_flow.overrideTextAlignmentForLine(endsWithSoftBreak))
-        return *overrideAlignment;
-
-    TextAlignMode alignment = style().textAlign();
-
-    if (endsWithSoftBreak)
-        return alignment;
-
-    TextAlignLast alignmentLast = style().textAlignLast();
-    switch (alignmentLast) {
-    case TextAlignLast::Start:
-        return TextAlignMode::Start;
-    case TextAlignLast::End:
-        return TextAlignMode::End;
-    case TextAlignLast::Left:
-        return TextAlignMode::Left;
-    case TextAlignLast::Right:
-        return TextAlignMode::Right;
-    case TextAlignLast::Center:
-        return TextAlignMode::Center;
-    case TextAlignLast::Justify:
-        return TextAlignMode::Justify;
-    case TextAlignLast::Auto:
-        if (alignment == TextAlignMode::Justify)
-            return TextAlignMode::Start;
-        return alignment;
-    }
-
-    ASSERT_NOT_REACHED();
-    return TextAlignMode::Start;
 }
 
 static void updateLogicalWidthForLeftAlignedBlock(bool isLeftToRightDirection, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float availableLogicalWidth)
@@ -413,123 +347,6 @@ static void updateLogicalWidthForCenterAlignedBlock(bool isLeftToRightDirection,
         logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
 }
 
-static inline void setLogicalWidthForTextRun(BidiRun* run, RenderText& renderer, float xPos, const LineInfo& lineInfo,
-    GlyphOverflowAndFallbackFontsMap& textBoxDataMap, WordMeasurements& wordMeasurements)
-{
-    SingleThreadWeakHashSet<const Font> fallbackFonts;
-    GlyphOverflow glyphOverflow;
-
-    const FontCascade& font = lineStyle(*renderer.parent(), lineInfo).fontCascade();
-    
-    LayoutUnit hyphenWidth;
-    if (downcast<LegacyInlineTextBox>(*run->box()).hasHyphen())
-        hyphenWidth = measureHyphenWidth(renderer, font, &fallbackFonts);
-
-    float measuredWidth = 0;
-
-    bool kerningIsEnabled = font.enableKerning();
-    bool canUseSimpleFontCodePath = renderer.canUseSimpleFontCodePath();
-    
-    // Since we don't cache glyph overflows, we need to re-measure the run if
-    // the style is linebox-contain: glyph.
-    if (canUseSimpleFontCodePath) {
-        unsigned lastEndOffset = run->m_start;
-        bool atFirstWordMeasurement = true;
-        for (size_t i = 0, size = wordMeasurements.size(); i < size && lastEndOffset < run->m_stop; ++i) {
-            WordMeasurement& wordMeasurement = wordMeasurements[i];
-            if (wordMeasurement.width <= 0 || wordMeasurement.startOffset == wordMeasurement.endOffset)
-                continue;
-            if (wordMeasurement.renderer != &renderer || wordMeasurement.startOffset != lastEndOffset || wordMeasurement.endOffset > run->m_stop)
-                continue;
-
-            lastEndOffset = wordMeasurement.endOffset;
-            if (kerningIsEnabled && lastEndOffset == run->m_stop) {
-                int wordLength = lastEndOffset - wordMeasurement.startOffset;
-                GlyphOverflow overflow;
-                measuredWidth += renderer.width(wordMeasurement.startOffset, wordLength, xPos + measuredWidth, lineInfo.isFirstLine(),
-                    &wordMeasurement.fallbackFonts, &overflow);
-                UChar c = renderer.characterAt(wordMeasurement.startOffset);
-                // renderer.width() omits word-spacing value for leading whitespace, so let's just add it back here.
-                if (!atFirstWordMeasurement && FontCascade::treatAsSpace(c))
-                    measuredWidth += renderer.style().fontCascade().wordSpacing();
-            } else
-                measuredWidth += wordMeasurement.width;
-            atFirstWordMeasurement = false;
-
-            for (auto& font : wordMeasurement.fallbackFonts)
-                fallbackFonts.add(font);
-        }
-        if (measuredWidth && lastEndOffset != run->m_stop) {
-            // If we don't have enough cached data, we'll measure the run again.
-            measuredWidth = 0;
-            fallbackFonts.clear();
-        }
-    }
-
-    if (!measuredWidth)
-        measuredWidth = renderer.width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow);
-
-    ASSERT(measuredWidth >= 0);
-    ASSERT(hyphenWidth >= 0);
-
-    run->box()->setLogicalWidth(measuredWidth + hyphenWidth);
-    if (!fallbackFonts.isEmptyIgnoringNullReferences()) {
-        ASSERT(run->box()->isInlineTextBox());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<SingleThreadWeakPtr<const Font>>(), GlyphOverflow())).iterator;
-        ASSERT(it->value.first.isEmpty());
-        it->value.first = copyToVector(fallbackFonts);
-        run->box()->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
-    }
-
-    // Include text decoration visual overflow as part of the glyph overflow.
-    if (!renderer.style().textDecorationsInEffect().isEmpty()) {
-        auto textBox = InlineIterator::textBoxFor(downcast<LegacyInlineTextBox>(run->box()));
-        glyphOverflow.extendTo(visualOverflowForDecorations(textBox->lineBox(), renderer, textBox->logicalTop(), textBox->logicalBottom()));
-    }
-
-    if (!glyphOverflow.isEmpty()) {
-        ASSERT(run->box()->isInlineTextBox());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<SingleThreadWeakPtr<const Font>>(), GlyphOverflow())).iterator;
-        it->value.second = glyphOverflow;
-        run->box()->clearKnownToHaveNoOverflow();
-    }
-}
-
-void LegacyLineLayout::computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth)
-{
-    if (!expansionOpportunityCount || availableLogicalWidth <= totalLogicalWidth)
-        return;
-
-    size_t i = 0;
-    for (BidiRun* run = firstRun; run; run = run->next()) {
-        if (!run->box() || run == trailingSpaceRun)
-            continue;
-
-        // Positioned objects are only participating to figure out their correct static x position.
-        // They have no affect on the width. Similarly, line break boxes have no affect on the width.
-        if (run->renderer().isOutOfFlowPositioned() || run->box()->isLineBreak())
-            continue;
-
-        if (is<RenderText>(run->renderer())) {
-            unsigned opportunitiesInRun = expansionOpportunities[i++];
-            
-            ASSERT(opportunitiesInRun <= expansionOpportunityCount);
-            
-            // Only justify text if whitespace is collapsed.
-            if (run->renderer().style().collapseWhiteSpace()) {
-                LegacyInlineTextBox& textBox = downcast<LegacyInlineTextBox>(*run->box());
-                float expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
-                textBox.setExpansion(expansion);
-                totalLogicalWidth += expansion;
-            }
-            expansionOpportunityCount -= opportunitiesInRun;
-        }
-
-        if (!expansionOpportunityCount)
-            break;
-    }
-}
-
 void LegacyLineLayout::updateLogicalWidthForAlignment(RenderBlockFlow& flow, const TextAlignMode& textAlign, const LegacyRootInlineBox* rootInlineBox, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount)
 {
     TextDirection direction;
@@ -558,7 +375,6 @@ void LegacyLineLayout::updateLogicalWidthForAlignment(RenderBlockFlow& flow, con
         updateLogicalWidthForCenterAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         break;
     case TextAlignMode::Justify:
-        flow.adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
         if (expansionOpportunityCount) {
             if (trailingSpaceRun) {
                 totalLogicalWidth -= trailingSpaceRun->box()->logicalWidth();
@@ -580,256 +396,6 @@ void LegacyLineLayout::updateLogicalWidthForAlignment(RenderBlockFlow& flow, con
             updateLogicalWidthForLeftAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
         break;
     }
-}
-
-static void updateLogicalInlinePositions(RenderBlockFlow& block, float& lineLogicalLeft, float& lineLogicalRight, float& availableLogicalWidth, bool firstLine,
-    IndentTextOrNot shouldIndentText, LayoutUnit boxLogicalHeight)
-{
-    LayoutUnit lineLogicalHeight = block.minLineHeightForReplacedRenderer(firstLine, boxLogicalHeight);
-    lineLogicalLeft = block.logicalLeftOffsetForLine(block.logicalHeight(), shouldIndentText, lineLogicalHeight);
-    lineLogicalRight = block.logicalRightOffsetForLine(block.logicalHeight(), shouldIndentText, lineLogicalHeight);
-    availableLogicalWidth = lineLogicalRight - lineLogicalLeft;
-}
-
-void LegacyLineLayout::computeInlineDirectionPositionsForLine(LegacyRootInlineBox* lineBox, const LineInfo& lineInfo, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, WordMeasurements& wordMeasurements)
-{
-    TextAlignMode textAlign = textAlignmentForLine(!reachedEnd && !lineBox->endsWithBreak());
-
-    // CSS 2.1: "'Text-indent' only affects a line if it is the first formatted line of an element. For example, the first line of an anonymous block
-    // box is only affected if it is the first child of its parent element."
-    // CSS3 "text-indent", "each-line" affects the first line of the block container as well as each line after a forced line break,
-    // but does not affect lines after a soft wrap break.
-    bool isFirstLine = lineInfo.isFirstLine() && !(m_flow.isAnonymousBlock() && m_flow.parent()->firstChild() != &m_flow);
-    bool isAfterHardLineBreak = lineBox->prevRootBox() && lineBox->prevRootBox()->endsWithBreak();
-    IndentTextOrNot shouldIndentText = requiresIndent(isFirstLine, isAfterHardLineBreak, style());
-    float lineLogicalLeft;
-    float lineLogicalRight;
-    float availableLogicalWidth;
-    updateLogicalInlinePositions(m_flow, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, 0);
-    bool needsWordSpacing;
-
-    if (firstRun && firstRun->renderer().isReplacedOrInlineBlock()) {
-        RenderBox& renderBox = downcast<RenderBox>(firstRun->renderer());
-        updateLogicalInlinePositions(m_flow, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, isFirstLine, shouldIndentText, renderBox.logicalHeight());
-    }
-
-    computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, lineLogicalLeft, availableLogicalWidth, firstRun, trailingSpaceRun, textBoxDataMap, wordMeasurements);
-    // The widths of all runs are now known. We can now place every inline box (and
-    // compute accurate widths for the inline flow boxes).
-    needsWordSpacing = false;
-    lineBox->placeBoxesInInlineDirection(lineLogicalLeft, needsWordSpacing);
-}
-
-static inline ExpansionBehavior expansionBehaviorForInlineTextBox(LegacyInlineTextBox& textBox, bool isAfterExpansion)
-{
-    // Tatechuyoko is modeled as the Object Replacement Character (U+FFFC), which can never have expansion opportunities inside nor intrinsically adjacent to it.
-    if (textBox.renderer().style().textCombine() == TextCombine::All)
-        return ExpansionBehavior::forbidAll();
-
-    auto result = ExpansionBehavior::forbidAll();
-    result.left = isAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow;
-    result.right = ExpansionBehavior::Behavior::Allow;
-    return result;
-}
-
-static inline void applyExpansionBehavior(LegacyInlineTextBox& textBox, ExpansionBehavior expansionBehavior)
-{
-    switch (expansionBehavior.left) {
-    case ExpansionBehavior::Behavior::Force:
-        textBox.setForceLeftExpansion();
-        break;
-    case ExpansionBehavior::Behavior::Forbid:
-        textBox.setCanHaveLeftExpansion(false);
-        break;
-    case ExpansionBehavior::Behavior::Allow:
-        textBox.setCanHaveLeftExpansion(true);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    };
-
-    switch (expansionBehavior.right) {
-    case ExpansionBehavior::Behavior::Force:
-        textBox.setForceRightExpansion();
-        break;
-    case ExpansionBehavior::Behavior::Forbid:
-        textBox.setCanHaveRightExpansion(false);
-        break;
-    case ExpansionBehavior::Behavior::Allow:
-        textBox.setCanHaveRightExpansion(true);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-}
-
-static bool inlineAncestorHasStartBorderPaddingOrMargin(const RenderBlockFlow& block, const LegacyInlineBox& box)
-{
-    bool isLTR = block.style().isLeftToRightDirection();
-    for (auto* currentBox = box.parent(); currentBox; currentBox = currentBox->parent()) {
-        if ((isLTR && currentBox->marginBorderPaddingLogicalLeft() > 0)
-            || (!isLTR && currentBox->marginBorderPaddingLogicalRight() > 0))
-            return true;
-    }
-    return false;
-}
-
-static bool inlineAncestorHasEndBorderPaddingOrMargin(const RenderBlockFlow& block, const LegacyInlineBox& box)
-{
-    bool isLTR = block.style().isLeftToRightDirection();
-    for (auto* currentBox = box.parent(); currentBox; currentBox = currentBox->parent()) {
-        if ((isLTR && currentBox->marginBorderPaddingLogicalRight() > 0)
-            || (!isLTR && currentBox->marginBorderPaddingLogicalLeft() > 0))
-            return true;
-    }
-    return false;
-}
-    
-static bool isLastInFlowRun(BidiRun& runToCheck)
-{
-    for (auto* run = runToCheck.next(); run; run = run->next()) {
-        if (!run->box() || run->renderer().isOutOfFlowPositioned() || run->box()->isLineBreak())
-            continue;
-        return false;
-    }
-    return true;
-}
-
-BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootInlineBox* lineBox, const LineInfo& lineInfo, TextAlignMode textAlign, float& lineLogicalLeft,
-    float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap,
-    WordMeasurements& wordMeasurements)
-{
-    bool needsWordSpacing = false;
-    bool canHangPunctuationAtStart = style().hangingPunctuation().contains(HangingPunctuation::First);
-    bool canHangPunctuationAtEnd = style().hangingPunctuation().contains(HangingPunctuation::Last);
-    bool isLTR = style().isLeftToRightDirection();
-    float contentWidth = 0;
-    unsigned expansionOpportunityCount = 0;
-    bool isAfterExpansion = true;
-    Vector<unsigned, 16> expansionOpportunities;
-
-    HashMap<LegacyInlineTextBox*, LayoutUnit> logicalSpacingForInlineTextBoxes;
-    auto collectSpacingLogicalWidths = [&] () {
-        auto totalSpacingWidth = LayoutUnit { };
-        // Collect the spacing positions (margin, border padding) for the textboxes by traversing the inline tree of the current line.
-        Vector<LegacyInlineBox*> queue;
-        queue.append(lineBox);
-        // 1. Visit each inline box in a preorder fashion
-        // 2. Accumulate the spacing when we find an LegacyInlineFlowBox (inline container e.g. span)
-        // 3. Add the LegacyInlineTextBoxes to the hashmap
-        while (!queue.isEmpty()) {
-            while (true) {
-                auto* inlineBox = queue.last();
-                if (auto* inlineFlowBox = dynamicDowncast<LegacyInlineFlowBox>(inlineBox)) {
-                    totalSpacingWidth += inlineFlowBox->marginBorderPaddingLogicalLeft();
-                    if (auto* child = inlineFlowBox->firstChild()) {
-                        queue.append(child);
-                        continue;
-                    }
-                    break;
-                }
-                if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(inlineBox))
-                    logicalSpacingForInlineTextBoxes.add(textBox, totalSpacingWidth);
-                break;
-            }
-            while (!queue.isEmpty()) {
-                auto& inlineBox = *queue.takeLast();
-                if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(inlineBox))
-                    totalSpacingWidth += flowBox->marginBorderPaddingLogicalRight();
-                if (auto* nextSibling = inlineBox.nextOnLine()) {
-                    queue.append(nextSibling);
-                    break;
-                }
-            }
-        }
-    };
-    collectSpacingLogicalWidths();
-
-    BidiRun* run = firstRun;
-    for (; run; run = run->next()) {
-        auto computeExpansionOpportunities = [&] (LegacyInlineTextBox& textBox, StringView stringView, TextDirection direction)
-        {
-            if (stringView.isEmpty()) {
-                // Empty runs should still produce an entry in expansionOpportunities list so that the number of items matches the number of runs.
-                expansionOpportunities.append(0);
-                return;
-            }
-            ExpansionBehavior expansionBehavior = expansionBehaviorForInlineTextBox(textBox, isAfterExpansion);
-            applyExpansionBehavior(textBox, expansionBehavior);
-            unsigned opportunitiesInRun;
-            std::tie(opportunitiesInRun, isAfterExpansion) = FontCascade::expansionOpportunityCount(stringView, direction, expansionBehavior);
-            expansionOpportunities.append(opportunitiesInRun);
-            expansionOpportunityCount += opportunitiesInRun;
-        };
-        if (!run->box() || run->renderer().isOutOfFlowPositioned() || run->box()->isLineBreak()) {
-            // Positioned objects are only participating to figure out their correct static x position.
-            // They have no effect on the width. Similarly, line break boxes have no effect on the width.
-            continue;
-        }
-        if (CheckedPtr renderText = dynamicDowncast<RenderText>(run->renderer())) {
-            auto& textBox = downcast<LegacyInlineTextBox>(*run->box());
-            if (canHangPunctuationAtStart && lineInfo.isFirstLine() && (isLTR || isLastInFlowRun(*run))
-                && !inlineAncestorHasStartBorderPaddingOrMargin(m_flow, *run->box())) {
-                float hangStartWidth = renderText->hangablePunctuationStartWidth(run->m_start);
-                availableLogicalWidth += hangStartWidth;
-                if (style().isLeftToRightDirection())
-                    lineLogicalLeft -= hangStartWidth;
-                canHangPunctuationAtStart = false;
-            }
-            
-            if (canHangPunctuationAtEnd && lineInfo.isLastLine() && run->m_stop > 0 && (!isLTR || isLastInFlowRun(*run))
-                && !inlineAncestorHasEndBorderPaddingOrMargin(m_flow, *run->box())) {
-                float hangEndWidth = renderText->hangablePunctuationEndWidth(run->m_stop - 1);
-                availableLogicalWidth += hangEndWidth;
-                if (!style().isLeftToRightDirection())
-                    lineLogicalLeft -= hangEndWidth;
-                canHangPunctuationAtEnd = false;
-            }
-            
-            if (textAlign == TextAlignMode::Justify && run != trailingSpaceRun)
-                computeExpansionOpportunities(textBox, renderText->stringView(run->m_start, run->m_stop), run->box()->direction());
-
-            if (unsigned length = renderText->text().length()) {
-                if (!run->m_start && needsWordSpacing && deprecatedIsSpaceOrNewline(renderText->characterAt(run->m_start)))
-                    contentWidth += lineStyle(*renderText->parent(), lineInfo).fontCascade().wordSpacing();
-                // run->m_start == run->m_stop should only be true iff the run is a replaced run for bidi: isolate.
-                ASSERT(run->m_stop > 0 || run->m_start == run->m_stop);
-                needsWordSpacing = run->m_stop == length && !deprecatedIsSpaceOrNewline(renderText->characterAt(run->m_stop - 1));
-            }
-            auto currentLogicalLeftPosition = logicalSpacingForInlineTextBoxes.get(&textBox) + contentWidth;
-            setLogicalWidthForTextRun(run, *renderText, currentLogicalLeftPosition, lineInfo, textBoxDataMap, wordMeasurements);
-        } else {
-            canHangPunctuationAtStart = false;
-            isAfterExpansion = false;
-
-            if (!is<RenderInline>(run->renderer())) {
-                auto& renderBox = downcast<RenderBox>(run->renderer());
-                run->box()->setLogicalWidth(m_flow.logicalWidthForChild(renderBox));
-                contentWidth += m_flow.marginStartForChild(renderBox) + m_flow.marginEndForChild(renderBox);
-            }
-        }
-
-        contentWidth += run->box()->logicalWidth();
-    }
-
-    if (isAfterExpansion && !expansionOpportunities.isEmpty()) {
-        // FIXME: see <webkit.org/b/139393#c11>
-        int lastValidExpansionOpportunitiesIndex = expansionOpportunities.size() - 1;
-        while (lastValidExpansionOpportunitiesIndex >= 0 && !expansionOpportunities.at(lastValidExpansionOpportunitiesIndex))
-            --lastValidExpansionOpportunitiesIndex;
-        if (lastValidExpansionOpportunitiesIndex >= 0) {
-            ASSERT(expansionOpportunities.at(lastValidExpansionOpportunitiesIndex));
-            expansionOpportunities.at(lastValidExpansionOpportunitiesIndex)--;
-            expansionOpportunityCount--;
-        }
-    }
-
-    auto totalLogicalWidth = contentWidth + lineBox->getFlowSpacingLogicalWidth();
-    updateLogicalWidthForAlignment(m_flow, textAlign, lineBox, trailingSpaceRun, lineLogicalLeft, totalLogicalWidth, availableLogicalWidth, expansionOpportunityCount);
-    computeExpansionForJustifiedText(firstRun, trailingSpaceRun, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth);
-    return run;
 }
 
 void LegacyLineLayout::removeInlineBox(BidiRun& run, const LegacyRootInlineBox& rootLineBox) const
@@ -1044,7 +610,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
 }
 
 // This function constructs line boxes for all of the text runs in the resolver and computes their position.
-LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo& lineInfo, BidiRun* trailingSpaceRun, WordMeasurements& wordMeasurements)
+LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo& lineInfo)
 {
     if (!bidiRuns.runCount())
         return nullptr;
@@ -1060,13 +626,12 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
     lineBox->setEndsWithBreak(lineInfo.previousLineBrokeCleanly());
     
     bool isSVGRootInlineBox = is<SVGRootInlineBox>(*lineBox);
-    
+    ASSERT(isSVGRootInlineBox);
+
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;
     
     // Now we position all of our text runs horizontally.
-    if (!isSVGRootInlineBox)
-        computeInlineDirectionPositionsForLine(lineBox, lineInfo, bidiRuns.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, wordMeasurements);
-    
+
     removeEmptyTextBoxesAndUpdateVisualReordering(lineBox, bidiRuns.firstRun());
 
     // SVG text layout code computes vertical & horizontal positions on its own.
@@ -1264,7 +829,8 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
             constructBidiRunsForSegment(resolver, bidiRuns, end, override, layoutState.lineInfo().previousLineBrokeCleanly());
             ASSERT(resolver.position() == end);
 
-            BidiRun* trailingSpaceRun = !layoutState.lineInfo().previousLineBrokeCleanly() ? handleTrailingSpaces(bidiRuns, resolver.context()) : nullptr;
+            if (!layoutState.lineInfo().previousLineBrokeCleanly())
+                handleTrailingSpaces(bidiRuns, resolver.context());
 
             if (bidiRuns.runCount() && lineBreaker.lineWasHyphenated()) {
                 bidiRuns.logicallyLastRun()->m_hasHyphen = true;
@@ -1277,7 +843,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
             // inline flow boxes.
 
             LayoutUnit oldLogicalHeight = m_flow.logicalHeight();
-            LegacyRootInlineBox* lineBox = createLineBoxesFromBidiRuns(resolver.status().context->level(), bidiRuns, end, layoutState.lineInfo(), trailingSpaceRun, wordMeasurements);
+            LegacyRootInlineBox* lineBox = createLineBoxesFromBidiRuns(resolver.status().context->level(), bidiRuns, end, layoutState.lineInfo());
 
             bidiRuns.clear();
             resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).

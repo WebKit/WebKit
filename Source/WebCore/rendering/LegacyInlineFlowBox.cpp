@@ -75,16 +75,6 @@ void LegacyInlineFlowBox::setHasBadChildList()
 
 #endif
 
-LayoutUnit LegacyInlineFlowBox::getFlowSpacingLogicalWidth()
-{
-    LayoutUnit totalWidth = marginBorderPaddingLogicalLeft() + marginBorderPaddingLogicalRight();
-    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-        if (auto* blockFlow = dynamicDowncast<LegacyInlineFlowBox>(*child))
-            totalWidth += blockFlow->getFlowSpacingLogicalWidth();
-    }
-    return totalWidth;
-}
-
 static void setHasTextDescendantsOnAncestors(LegacyInlineFlowBox* box)
 {
     while (box && !box->hasTextDescendants()) {
@@ -260,151 +250,6 @@ void LegacyInlineFlowBox::adjustPosition(float dx, float dy)
         m_overflow->move(LayoutUnit(dx), LayoutUnit(dy)); // FIXME: Rounding error here since overflow was pixel snapped, but nobody other than list markers passes non-integral values here.
 }
 
-static inline bool isLastChildForRenderer(const RenderElement& ancestor, const RenderObject* child)
-{
-    if (!child)
-        return false;
-    
-    if (child == &ancestor)
-        return true;
-
-    const RenderObject* curr = child;
-    const RenderElement* parent = curr->parent();
-    while (parent && (!parent->isRenderBlock() || parent->isInline())) {
-        if (parent->lastChild() != curr)
-            return false;
-        if (parent == &ancestor)
-            return true;
-
-        curr = parent;
-        parent = curr->parent();
-    }
-
-    return true;
-}
-
-static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderObject* child)
-{
-    const RenderObject* object = child;
-    while (object && (!object->isRenderBlock() || object->isInline())) {
-        if (object == &ancestor)
-            return true;
-        object = object->parent();
-    }
-    return false;
-}
-
-void LegacyInlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogicallyLastRunWrapped, RenderObject* logicallyLastRunRenderer)
-{
-    // All boxes start off open. They will not apply any margins/border/padding on
-    // any side.
-    bool includeLeftEdge = false;
-    bool includeRightEdge = false;
-
-    // The root inline box never has borders/margins/padding.
-    if (parent()) {
-        const auto& inlineFlow = downcast<RenderInline>(renderer());
-
-        bool ltr = renderer().style().isLeftToRightDirection();
-
-        // Check to see if all initial lines are unconstructed. If so, then
-        // we know the inline began on this line (unless we are a continuation).
-        const auto& lineBoxList = inlineFlow.lineBoxes();
-        if (!lineBoxList.firstLineBox()->isConstructed() && !inlineFlow.isContinuation()) {
-            if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone)
-                includeLeftEdge = includeRightEdge = true;
-            else if (ltr && lineBoxList.firstLineBox() == this)
-                includeLeftEdge = true;
-            else if (!ltr && lineBoxList.lastLineBox() == this)
-                includeRightEdge = true;
-        }
-
-        if (!lineBoxList.lastLineBox()->isConstructed()) {
-            bool isLastObjectOnLine = !isAncestorAndWithinBlock(inlineFlow, logicallyLastRunRenderer) || (isLastChildForRenderer(renderer(), logicallyLastRunRenderer) && !isLogicallyLastRunWrapped);
-
-            // We include the border under these conditions:
-            // (1) The next line was not created, or it is constructed. We check the previous line for rtl.
-            // (2) The logicallyLastRun is not a descendant of this renderer.
-            // (3) The logicallyLastRun is a descendant of this renderer, but it is the last child of this renderer and it does not wrap to the next line.
-            // (4) The decoration break is set to clone therefore there will be borders on every sides.
-            if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone)
-                includeLeftEdge = includeRightEdge = true;
-            else if (ltr) {
-                if (!nextLineBox()
-                    && ((lastLine || isLastObjectOnLine) && !inlineFlow.continuation()))
-                    includeRightEdge = true;
-            } else {
-                if ((!prevLineBox() || prevLineBox()->isConstructed())
-                    && ((lastLine || isLastObjectOnLine) && !inlineFlow.continuation()))
-                    includeLeftEdge = true;
-            }
-        }
-    }
-
-    setEdges(includeLeftEdge, includeRightEdge);
-
-    // Recur into our children.
-    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
-            flowBox->determineSpacingForFlowBoxes(lastLine, isLogicallyLastRunWrapped, logicallyLastRunRenderer);
-    }
-}
-
-float LegacyInlineFlowBox::placeBoxesInInlineDirection(float logicalLeft, bool& needsWordSpacing)
-{
-    // Set our x position.
-    beginPlacingBoxRangesInInlineDirection(logicalLeft);
-
-    float startLogicalLeft = logicalLeft;
-    logicalLeft += borderLogicalLeft() + paddingLogicalLeft();
-
-    float minLogicalLeft = startLogicalLeft;
-    float maxLogicalRight = logicalLeft;
-
-    placeBoxRangeInInlineDirection(firstChild(), nullptr, logicalLeft, minLogicalLeft, maxLogicalRight, needsWordSpacing);
-
-    logicalLeft += borderLogicalRight() + paddingLogicalRight();
-    endPlacingBoxRangesInInlineDirection(startLogicalLeft, logicalLeft, minLogicalLeft, maxLogicalRight);
-    return logicalLeft;
-}
-
-float LegacyInlineFlowBox::placeBoxRangeInInlineDirection(LegacyInlineBox* firstChild, LegacyInlineBox* lastChild, float& logicalLeft, float& minLogicalLeft, float& maxLogicalRight, bool& needsWordSpacing)
-{
-    float totalExpansion = 0;
-    for (auto* child = firstChild; child && child != lastChild; child = child->nextOnLine()) {
-        if (is<RenderText>(child->renderer())) {
-            auto& textBox = downcast<LegacyInlineTextBox>(*child);
-            RenderText& renderText = textBox.renderer();
-            if (renderText.text().length()) {
-                if (needsWordSpacing && deprecatedIsSpaceOrNewline(renderText.characterAt(textBox.start())))
-                    logicalLeft += textBox.lineStyle().fontCascade().wordSpacing();
-                needsWordSpacing = !deprecatedIsSpaceOrNewline(renderText.characterAt(textBox.end() - 1));
-            }
-            textBox.setLogicalLeft(logicalLeft);
-            if (knownToHaveNoOverflow())
-                minLogicalLeft = std::min(logicalLeft, minLogicalLeft);
-            logicalLeft += textBox.logicalWidth();
-            totalExpansion += textBox.expansion();
-            if (knownToHaveNoOverflow())
-                maxLogicalRight = std::max(logicalLeft, maxLogicalRight);
-        } else {
-            if (is<RenderInline>(child->renderer())) {
-                auto& flow = downcast<LegacyInlineFlowBox>(*child);
-                logicalLeft += flow.marginLogicalLeft();
-                if (knownToHaveNoOverflow())
-                    minLogicalLeft = std::min(logicalLeft, minLogicalLeft);
-                logicalLeft = flow.placeBoxesInInlineDirection(logicalLeft, needsWordSpacing);
-                totalExpansion += flow.expansion();
-                if (knownToHaveNoOverflow())
-                    maxLogicalRight = std::max(logicalLeft, maxLogicalRight);
-                logicalLeft += flow.marginLogicalRight();
-            }
-        }
-    }
-    setExpansionWithoutGrowing(totalExpansion);
-    return logicalLeft;
-}
-
 inline void LegacyInlineFlowBox::addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow)
 {
     // box-shadow on root line boxes is applying to the block and not to the lines.
@@ -451,8 +296,6 @@ inline void LegacyInlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logic
 
     LayoutUnit borderOutsetLogicalTop = borderOutsets.before(lineStyle.writingMode());
     LayoutUnit borderOutsetLogicalBottom = borderOutsets.after(lineStyle.writingMode());
-    LayoutUnit borderOutsetLogicalLeft = borderOutsets.start(lineStyle.writingMode());
-    LayoutUnit borderOutsetLogicalRight = borderOutsets.end(lineStyle.writingMode());
 
     // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite border that applies, since
     // the line is "upside down" in terms of block coordinates. vertical-rl and horizontal-bt are the flipped line modes.
@@ -462,11 +305,8 @@ inline void LegacyInlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logic
     LayoutUnit logicalTopVisualOverflow = std::min(LayoutUnit(logicalTop() - outsetLogicalTop), logicalVisualOverflow.y());
     LayoutUnit logicalBottomVisualOverflow = std::max(LayoutUnit(logicalBottom() + outsetLogicalBottom), logicalVisualOverflow.maxY());
 
-    LayoutUnit outsetLogicalLeft = includeLogicalLeftEdge() ? borderOutsetLogicalLeft : 0_lu;
-    LayoutUnit outsetLogicalRight = includeLogicalRightEdge() ? borderOutsetLogicalRight : 0_lu;
-
-    LayoutUnit logicalLeftVisualOverflow = std::min(LayoutUnit(logicalLeft() - outsetLogicalLeft), logicalVisualOverflow.x());
-    LayoutUnit logicalRightVisualOverflow = std::max(LayoutUnit(logicalRight() + outsetLogicalRight), logicalVisualOverflow.maxX());
+    LayoutUnit logicalLeftVisualOverflow = std::min(LayoutUnit(logicalLeft()), logicalVisualOverflow.x());
+    LayoutUnit logicalRightVisualOverflow = std::max(LayoutUnit(logicalRight()), logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow, logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
 }
