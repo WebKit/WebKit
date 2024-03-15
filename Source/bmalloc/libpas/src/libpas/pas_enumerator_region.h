@@ -37,7 +37,7 @@ struct pas_enumerator_region {
     pas_enumerator_region* previous;
     size_t size;
     size_t offset;
-    uint64_t payload[1];
+    PAS_ALIGNED(PAS_INTERNAL_MIN_ALIGN) uint64_t payload[1];
 };
 
 PAS_API void* pas_enumerator_region_allocate(pas_enumerator_region** region_ptr,
