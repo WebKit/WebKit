@@ -162,8 +162,7 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
             m_activeDataDetectorHighlight->fadeIn();
         }
 
-        overlay->setNeedsDisplay();
-        didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData::No);
+        didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData::No, ActiveHighlightChanged::Yes);
     }
 
     if (event.type() == WebEventType::MouseDown && mouseIsOverActiveHighlightButton)
@@ -234,13 +233,16 @@ void PDFDataDetectorOverlayController::updatePlatformHighlightData(PDFDocumentLa
     });
 }
 
-void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData)
+void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
 {
     if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::Yes) {
         WTF::forEach(m_pdfDataDetectorItemsWithHighlightsMap.keys(), [&](auto pageIndex) {
             updatePlatformHighlightData(pageIndex);
         });
     }
+
+    if (activeHighlightChanged == ActiveHighlightChanged::No && !m_activeDataDetectorHighlight)
+        return;
 
     RefPtr overlay = protectedOverlay();
 

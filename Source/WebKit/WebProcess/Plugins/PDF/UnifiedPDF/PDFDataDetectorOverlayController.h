@@ -66,7 +66,8 @@ public:
     RefPtr<PageOverlay> protectedOverlay() const { return m_overlay; }
 
     enum class ShouldUpdatePlatformHighlightData : bool { No, Yes };
-    void didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData = ShouldUpdatePlatformHighlightData::Yes);
+    enum class ActiveHighlightChanged : bool { No, Yes };
+    void didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData = ShouldUpdatePlatformHighlightData::Yes, ActiveHighlightChanged = ActiveHighlightChanged::No);
 
 private:
     // PageOverlay::Client
