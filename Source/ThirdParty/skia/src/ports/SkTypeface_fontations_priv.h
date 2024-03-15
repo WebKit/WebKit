@@ -10,6 +10,7 @@
 
 #include "include/core/SkFontParameters.h"
 #include "include/core/SkPath.h"
+#include "include/core/SkSpan.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkTypeface.h"
 #include "include/private/base/SkOnce.h"
@@ -42,8 +43,8 @@ private:
     bool current_is_not(SkPoint);
 
     SkPath fPath;
-    bool fStarted;
-    SkPoint fCurrent;
+    bool fStarted{false};
+    SkPoint fCurrent{0, 0};
 };
 
 /** Implementation of AxisWrapper FFI C++ interface, allowing Rust to call back into
@@ -226,9 +227,7 @@ protected:
     std::unique_ptr<SkScalerContext> onCreateScalerContext(const SkScalerContextEffects& effects,
                                                            const SkDescriptor* desc) const override;
     void onFilterRec(SkScalerContextRec*) const override;
-    std::unique_ptr<SkAdvancedTypefaceMetrics> onGetAdvancedMetrics() const override {
-        return nullptr;
-    }
+    std::unique_ptr<SkAdvancedTypefaceMetrics> onGetAdvancedMetrics() const override;
     void onGetFontDescriptor(SkFontDescriptor*, bool*) const override;
     void onCharsToGlyphs(const SkUnichar* chars, int count, SkGlyphID glyphs[]) const override;
     int onCountGlyphs() const override;

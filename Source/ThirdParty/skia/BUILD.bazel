@@ -108,6 +108,18 @@ alias(
 )
 
 alias(
+    name = "ganesh_webgl_factory",
+    actual = "//src/gpu/ganesh/gl/webgl:webgl_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_epoxy_factory",
+    actual = "//src/gpu/ganesh/gl/epoxy:epoxy_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
     name = "ganesh_vulkan",
     actual = "//src/gpu/ganesh/vk:ganesh_vulkan",
     visibility = ["//visibility:public"],
@@ -184,14 +196,20 @@ alias(
 ###
 
 alias(
-    name = "fontmgr_fontconfig_freetype",
-    actual = "//src/ports:fontmgr_fontconfig_freetype",
+    name = "fontmgr_empty_freetype",
+    actual = "//src/ports:fontmgr_empty_freetype",
     visibility = ["//visibility:public"],
 )
 
 alias(
-    name = "fontmgr_empty_freetype",
-    actual = "//src/ports:fontmgr_empty_freetype",
+    name = "fontmgr_data_freetype",
+    actual = "//src/ports:fontmgr_data_freetype",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_fontconfig_freetype",
+    actual = "//src/ports:fontmgr_fontconfig_freetype",
     visibility = ["//visibility:public"],
 )
 
@@ -200,6 +218,33 @@ alias(
 alias(
     name = "skparagraph_harfbuzz_icu",
     actual = "//modules/skparagraph:skparagraph_harfbuzz_icu",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skshaper_core",
+    actual = "//modules/skshaper:skshaper_core",
+    visibility = ["//visibility:public"],
+)
+
+# TODO(kjlubick)
+# alias(
+#     name = "skshaper_coretext",
+#     actual = "//modules/skshaper:skshaper_coretext",
+#     visibility = ["//visibility:public"],
+# )
+
+alias(
+    name = "skshaper_harfbuzz",
+    actual = "//modules/skshaper:skshaper_harfbuzz",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "skshaper_unicode",
+    actual = "//modules/skshaper:skshaper_unicode",
     visibility = ["//visibility:public"],
 )
 

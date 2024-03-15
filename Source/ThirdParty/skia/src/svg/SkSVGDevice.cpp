@@ -903,6 +903,11 @@ void SkSVGDevice::drawPoints(SkCanvas::PointMode mode, size_t count,
 }
 
 void SkSVGDevice::drawRect(const SkRect& r, const SkPaint& paint) {
+    if (paint.getPathEffect()) {
+        this->drawPath(SkPath::Rect(r), paint, true);
+        return;
+    }
+
     std::unique_ptr<AutoElement> svg;
     if (RequiresViewportReset(paint)) {
       svg = std::make_unique<AutoElement>("svg", this, fResourceBucket.get(), MxCp(this), paint);
@@ -922,6 +927,11 @@ void SkSVGDevice::drawRect(const SkRect& r, const SkPaint& paint) {
 }
 
 void SkSVGDevice::drawOval(const SkRect& oval, const SkPaint& paint) {
+    if (paint.getPathEffect()) {
+        this->drawPath(SkPath::Oval(oval), paint, true);
+        return;
+    }
+
     AutoElement ellipse("ellipse", this, fResourceBucket.get(), MxCp(this), paint);
     ellipse.addAttribute("cx", oval.centerX());
     ellipse.addAttribute("cy", oval.centerY());
@@ -930,6 +940,11 @@ void SkSVGDevice::drawOval(const SkRect& oval, const SkPaint& paint) {
 }
 
 void SkSVGDevice::drawRRect(const SkRRect& rr, const SkPaint& paint) {
+    if (paint.getPathEffect()) {
+        this->drawPath(SkPath::RRect(rr), paint, true);
+        return;
+    }
+
     AutoElement elem("path", this, fResourceBucket.get(), MxCp(this), paint);
     elem.addPathAttributes(SkPath::RRect(rr), this->pathEncoding());
 }
@@ -1121,11 +1136,10 @@ private:
 
 void SkSVGDevice::onDrawGlyphRunList(SkCanvas* canvas,
                                      const sktext::GlyphRunList& glyphRunList,
-                                     const SkPaint& initialPaint,
-                                     const SkPaint& drawingPaint)  {
+                                     const SkPaint& paint) {
     SkASSERT(!glyphRunList.hasRSXForm());
-    const auto draw_as_path = (fFlags & SkSVGCanvas::kConvertTextToPaths_Flag) ||
-                              drawingPaint.getPathEffect();
+    const auto draw_as_path =
+            (fFlags & SkSVGCanvas::kConvertTextToPaths_Flag) || paint.getPathEffect();
 
     if (draw_as_path) {
         // Emit a single <path> element.
@@ -1134,14 +1148,14 @@ void SkSVGDevice::onDrawGlyphRunList(SkCanvas* canvas,
             AddPath(glyphRun, glyphRunList.origin(), &path);
         }
 
-        this->drawPath(path, drawingPaint);
+        this->drawPath(path, paint);
 
         return;
     }
 
     // Emit one <text> element for each run.
     for (auto& glyphRun : glyphRunList) {
-        AutoElement elem("text", this, fResourceBucket.get(), MxCp(this), drawingPaint);
+        AutoElement elem("text", this, fResourceBucket.get(), MxCp(this), paint);
         elem.addTextAttributes(glyphRun.font());
 
         SVGTextBuilder builder(glyphRunList.origin(), glyphRun);

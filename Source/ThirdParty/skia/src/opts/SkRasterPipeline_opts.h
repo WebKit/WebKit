@@ -16,6 +16,7 @@
 #include "src/base/SkUtils.h"  // unaligned_{load,store}
 #include "src/core/SkRasterPipeline.h"
 #include "src/core/SkRasterPipelineContextUtils.h"
+#include "src/shaders/SkPerlinNoiseShaderType.h"
 #include "src/sksl/tracing/SkSLTraceHook.h"
 
 #include <cstdint>
@@ -135,7 +136,8 @@ namespace SK_OPTS_NS {
     SI I32 max(I32 a, I32 b) { return a > b ? a : b; }
     SI U32 max(U32 a, U32 b) { return a > b ? a : b; }
 
-    SI F   mad(F f, F m, F a)   { return f*m+a; }
+    SI F   mad(F f, F m, F a)   { return a+f*m; }
+    SI F   nmad(F f, F m, F a)  { return a-f*m; }
     SI F   abs_  (F v)          { return fabsf(v); }
     SI I32 abs_  (I32 v)        { return v < 0 ? -v : v; }
     SI F   floor_(F v)          { return floorf(v); }
@@ -145,8 +147,9 @@ namespace SK_OPTS_NS {
     SI F   sqrt_ (F v)          { return sqrtf(v); }
     SI F   rcp_precise (F v)    { return 1.0f / v; }
 
-    SI U32 round(F v)           { return (uint32_t)(v + 0.5f); }
-    SI U32 round(F v, F scale)  { return (uint32_t)(v*scale + 0.5f); }
+    SI I32 iround(F v)          { return (I32)(v + 0.5f); }
+    SI U32 round(F v)           { return (U32)(v + 0.5f); }
+    SI U32 round(F v, F scale)  { return (U32)(v*scale + 0.5f); }
     SI U16 pack(U32 v)          { return (U16)v; }
     SI U8  pack(U16 v)          { return  (U8)v; }
 
@@ -231,16 +234,20 @@ namespace SK_OPTS_NS {
         SI bool all(I32 c) { return vminvq_u32((U32)c) != 0; }
 
         SI F     mad(F f, F m, F a) { return vfmaq_f32(a,f,m); }
-        SI F  floor_(F v) { return vrndmq_f32(v); }
-        SI F   ceil_(F v) { return vrndpq_f32(v); }
-        SI F   sqrt_(F v) { return vsqrtq_f32(v); }
-        SI U32 round(F v) { return vcvtnq_u32_f32(v); }
-        SI U32 round(F v, F scale) { return vcvtnq_u32_f32(v*scale); }
+        SI F    nmad(F f, F m, F a) { return vfmsq_f32(a,f,m); }
+        SI F  floor_(F v)           { return vrndmq_f32(v); }
+        SI F   ceil_(F v)           { return vrndpq_f32(v); }
+        SI F   sqrt_(F v)           { return vsqrtq_f32(v); }
+        SI I32 iround(F v)          { return vcvtnq_s32_f32(v); }
+        SI U32 round(F v)           { return vcvtnq_u32_f32(v); }
+        SI U32 round(F v, F scale)  { return vcvtnq_u32_f32(v*scale); }
     #else
         SI bool any(I32 c) { return c[0] | c[1] | c[2] | c[3]; }
         SI bool all(I32 c) { return c[0] & c[1] & c[2] & c[3]; }
 
-        SI F mad(F f, F m, F a) { return vmlaq_f32(a,f,m); }
+        SI F mad(F f, F m, F a)  { return vmlaq_f32(a,f,m); }
+        SI F nmad(F f, F m, F a) { return vmlsq_f32(a,f,m); }
+
         SI F floor_(F v) {
             F roundtrip = vcvtq_f32_s32(vcvtq_s32_f32(v));
             return roundtrip - if_then_else(roundtrip > v, F(1), F(0));
@@ -256,6 +263,10 @@ namespace SK_OPTS_NS {
             e *= vrsqrtsq_f32(v,e*e);
             e *= vrsqrtsq_f32(v,e*e);
             return v*e;                // sqrt(v) == v*rsqrt(v).
+        }
+
+        SI I32 iround(F v) {
+            return vcvtq_s32_f32(v + 0.5f);
         }
 
         SI U32 round(F v) {
@@ -319,6 +330,7 @@ namespace SK_OPTS_NS {
     using U8  = V<uint8_t >;
 
     SI F   mad(F f, F m, F a) { return _mm512_fmadd_ps(f, m, a); }
+    SI F  nmad(F f, F m, F a) { return _mm512_fnmadd_ps(f, m, a); }
     SI F   min(F a, F b)     { return _mm512_min_ps(a,b);    }
     SI I32 min(I32 a, I32 b) { return (I32)_mm512_min_epi32((__m512i)a,(__m512i)b); }
     SI U32 min(U32 a, U32 b) { return (U32)_mm512_min_epu32((__m512i)a,(__m512i)b); }
@@ -336,11 +348,12 @@ namespace SK_OPTS_NS {
         F e = rcp_approx(v);
         return _mm512_fnmadd_ps(v, e, _mm512_set1_ps(2.0f)) * e;
     }
+    SI I32 iround(F v)         { return (I32)_mm512_cvtps_epi32(v); }
     SI U32 round(F v)          { return (U32)_mm512_cvtps_epi32(v); }
     SI U32 round(F v, F scale) { return (U32)_mm512_cvtps_epi32(v*scale); }
     SI U16 pack(U32 v) {
         __m256i rst = _mm256_packus_epi32(_mm512_castsi512_si256((__m512i)v),
-                                _mm512_extracti64x4_epi64((__m512i)v, 1));
+                                          _mm512_extracti64x4_epi64((__m512i)v, 1));
         return (U16)_mm256_permutex_epi64(rst, 216);
     }
     SI U8 pack(U16 v) {
@@ -561,6 +574,7 @@ namespace SK_OPTS_NS {
     using U8  = V<uint8_t >;
 
     SI F   mad(F f, F m, F a) { return _mm256_fmadd_ps(f, m, a); }
+    SI F  nmad(F f, F m, F a) { return _mm256_fnmadd_ps(f, m, a); }
 
     SI F   min(F a, F b)     { return _mm256_min_ps(a,b);    }
     SI I32 min(I32 a, I32 b) { return (I32)_mm256_min_epi32((__m256i)a,(__m256i)b); }
@@ -581,6 +595,7 @@ namespace SK_OPTS_NS {
         return _mm256_fnmadd_ps(v, e, _mm256_set1_ps(2.0f)) * e;
     }
 
+    SI I32 iround(F v)         { return (I32)_mm256_cvtps_epi32(v); }
     SI U32 round(F v)          { return (U32)_mm256_cvtps_epi32(v); }
     SI U32 round(F v, F scale) { return (U32)_mm256_cvtps_epi32(v*scale); }
     SI U16 pack(U32 v) {
@@ -761,7 +776,8 @@ namespace SK_OPTS_NS {
     }
 #endif
 
-    SI F   mad(F f, F m, F a)  { return f*m+a;              }
+    SI F   mad(F f, F m, F a)  { return a+f*m;              }
+    SI F  nmad(F f, F m, F a)  { return a-f*m;              }
     SI F   abs_(F v)           { return _mm_and_ps(v, 0-v); }
 #if defined(JUMPER_IS_SSE41) || defined(JUMPER_IS_AVX)
     SI I32 abs_(I32 v)         { return (I32)_mm_abs_epi32((__m128i)v); }
@@ -773,6 +789,7 @@ namespace SK_OPTS_NS {
     SI F   rsqrt_approx(F v)   { return _mm_rsqrt_ps(v);    }
     SI F    sqrt_(F v)         { return _mm_sqrt_ps (v);    }
 
+    SI I32 iround(F v)         { return (I32)_mm_cvtps_epi32(v); }
     SI U32 round(F v)          { return (U32)_mm_cvtps_epi32(v); }
     SI U32 round(F v, F scale) { return (U32)_mm_cvtps_epi32(v*scale); }
 
@@ -923,6 +940,13 @@ static constexpr F F0 = F_(0.0f),
     SI F mad(float f, F m, F a) { return mad(F_(f), m, a); }
     SI F mad(float f, F m, float a) { return mad(F_(f), m, F_(a)); }
     SI F mad(float f, float m, F a) { return mad(F_(f), F_(m), a); }
+
+    SI F nmad(F f, F m, float a) { return nmad(f, m, F_(a)); }
+    SI F nmad(F f, float m, F a) { return nmad(f, F_(m), a); }
+    SI F nmad(F f, float m, float a) { return nmad(f, F_(m), F_(a)); }
+    SI F nmad(float f, F m, F a) { return nmad(F_(f), m, a); }
+    SI F nmad(float f, F m, float a) { return nmad(F_(f), m, F_(a)); }
+    SI F nmad(float f, float m, F a) { return nmad(F_(f), F_(m), a); }
 #endif
 
 // We need to be a careful with casts.
@@ -957,10 +981,8 @@ SI F approx_log2(F x) {
 
     // ... but using the mantissa to refine its error is _much_ better.
     F m = sk_bit_cast<F>((sk_bit_cast<U32>(x) & 0x007fffff) | 0x3f000000);
-    return e
-         - 124.225514990f
-         -   1.498030302f * m
-         -   1.725879990f / (0.3520887068f + m);
+
+    return nmad(m, 1.498030302f, e - 124.225514990f) - 1.725879990f / (0.3520887068f + m);
 }
 
 SI F approx_log(F x) {
@@ -972,8 +994,7 @@ SI F approx_pow2(F x) {
     constexpr float kInfinityBits = 0x7f800000;
 
     F f = fract(x);
-    F approx = x + 121.274057500f;
-      approx -= f * 1.490129070f;
+    F approx = nmad(f, 1.490129070f, x + 121.274057500f);
       approx += 27.728023300f / (4.84252568f - f);
       approx *= 1.0f * (1<<23);
       approx  = min(max(approx, F0), F_(kInfinityBits));  // guard against underflow/overflow
@@ -1415,7 +1436,7 @@ SI T* ptr_at_xy(const SkRasterPipeline_MemoryCtx* ctx, size_t dx, size_t dy) {
 
 // clamp v to [0,limit).
 SI F clamp(F v, F limit) {
-    F inclusive = sk_bit_cast<F>( sk_bit_cast<U32>(limit) - 1 );  // Exclusive -> inclusive.
+    F inclusive = sk_bit_cast<F>(sk_bit_cast<U32>(limit) - 1);  // Exclusive -> inclusive.
     return min(max(0.0f, v), inclusive);
 }
 
@@ -1478,7 +1499,7 @@ SI F tan_(F x) {
     constexpr float Pi = SK_FloatPI;
     // periodic between -pi/2 ... pi/2
     // shift to 0...Pi, scale 1/Pi to get into 0...1, then fract, scale-up, shift-back
-    x = fract((1/Pi)*x + 0.5f) * Pi - (Pi/2);
+    x = mad(fract(mad(x, 1/Pi, 0.5f)), Pi, -Pi/2);
 
     I32 neg = (x < 0.0f);
     x = if_then_else(neg, -x, x);
@@ -1541,7 +1562,7 @@ SI F asin_(F x) {
     const float c1 = -0.2121144f;
     const float c0 = 1.5707288f;
     F poly = mad(x, mad(x, mad(x, c3, c2), c1), c0);
-    x = SK_FloatPI/2 - sqrt_(1 - x) * poly;
+    x = nmad(sqrt_(1 - x), poly, SK_FloatPI/2);
     x = if_then_else(neg, -x, x);
     return x;
 }
@@ -1850,12 +1871,10 @@ SI void set_sat(F* r, F* g, F* b, F s) {
       sat = mx - mn;
 
     // Map min channel to 0, max channel to s, and scale the middle proportionally.
-    auto scale = [=](F c) {
-        return if_then_else(sat == 0, 0.0f, (c - mn) * s / sat);
-    };
-    *r = scale(*r);
-    *g = scale(*g);
-    *b = scale(*b);
+    s = if_then_else(sat == 0.0f, 0.0f, s * rcp_fast(sat));
+    *r = (*r - mn) * s;
+    *g = (*g - mn) * s;
+    *b = (*b - mn) * s;
 }
 SI void set_lum(F* r, F* g, F* b, F l) {
     F diff = l - lum(*r, *g, *b);
@@ -1863,20 +1882,24 @@ SI void set_lum(F* r, F* g, F* b, F l) {
     *g += diff;
     *b += diff;
 }
+SI F clip_channel(F c, F l, I32 clip_low, I32 clip_high, F mn_scale, F mx_scale) {
+    c = if_then_else(clip_low,  mad(mn_scale, c - l, l), c);
+    c = if_then_else(clip_high, mad(mx_scale, c - l, l), c);
+    c = max(c, 0.0f);  // Sometimes without this we may dip just a little negative.
+    return c;
+}
 SI void clip_color(F* r, F* g, F* b, F a) {
-    F mn = min(*r, min(*g, *b)),
-      mx = max(*r, max(*g, *b)),
-      l  = lum(*r, *g, *b);
+    F   mn        = min(*r, min(*g, *b)),
+        mx        = max(*r, max(*g, *b)),
+        l         = lum(*r, *g, *b),
+        mn_scale  = (    l) * rcp_fast(l - mn),
+        mx_scale  = (a - l) * rcp_fast(mx - l);
+    I32 clip_low  = cond_to_mask(mn < 0 && l != mn),
+        clip_high = cond_to_mask(mx > a && l != mx);
 
-    auto clip = [=](F c) {
-        c = if_then_else(mn < 0 && l != mn, l + (c - l) * (    l) / (l - mn), c);
-        c = if_then_else(mx > a && l != mx, l + (c - l) * (a - l) / (mx - l), c);
-        c = max(c, 0.0f);  // Sometimes without this we may dip just a little negative.
-        return c;
-    };
-    *r = clip(*r);
-    *g = clip(*g);
-    *b = clip(*b);
+    *r = clip_channel(*r, l, clip_low, clip_high, mn_scale, mx_scale);
+    *g = clip_channel(*g, l, clip_low, clip_high, mn_scale, mx_scale);
+    *b = clip_channel(*b, l, clip_low, clip_high, mn_scale, mx_scale);
 }
 
 STAGE(hue, NoCtx) {
@@ -1888,10 +1911,10 @@ STAGE(hue, NoCtx) {
     set_lum(&R, &G, &B, lum(dr,dg,db)*a);
     clip_color(&R,&G,&B, a*da);
 
-    r = r*inv(da) + dr*inv(a) + R;
-    g = g*inv(da) + dg*inv(a) + G;
-    b = b*inv(da) + db*inv(a) + B;
-    a = a + da - a*da;
+    r = mad(r, inv(da), mad(dr, inv(a), R));
+    g = mad(g, inv(da), mad(dg, inv(a), G));
+    b = mad(b, inv(da), mad(db, inv(a), B));
+    a = a + nmad(a, da, da);
 }
 STAGE(saturation, NoCtx) {
     F R = dr*a,
@@ -1902,10 +1925,10 @@ STAGE(saturation, NoCtx) {
     set_lum(&R, &G, &B, lum(dr,dg,db)* a);  // (This is not redundant.)
     clip_color(&R,&G,&B, a*da);
 
-    r = r*inv(da) + dr*inv(a) + R;
-    g = g*inv(da) + dg*inv(a) + G;
-    b = b*inv(da) + db*inv(a) + B;
-    a = a + da - a*da;
+    r = mad(r, inv(da), mad(dr, inv(a), R));
+    g = mad(g, inv(da), mad(dg, inv(a), G));
+    b = mad(b, inv(da), mad(db, inv(a), B));
+    a = a + nmad(a, da, da);
 }
 STAGE(color, NoCtx) {
     F R = r*da,
@@ -1915,10 +1938,10 @@ STAGE(color, NoCtx) {
     set_lum(&R, &G, &B, lum(dr,dg,db)*a);
     clip_color(&R,&G,&B, a*da);
 
-    r = r*inv(da) + dr*inv(a) + R;
-    g = g*inv(da) + dg*inv(a) + G;
-    b = b*inv(da) + db*inv(a) + B;
-    a = a + da - a*da;
+    r = mad(r, inv(da), mad(dr, inv(a), R));
+    g = mad(g, inv(da), mad(dg, inv(a), G));
+    b = mad(b, inv(da), mad(db, inv(a), B));
+    a = a + nmad(a, da, da);
 }
 STAGE(luminosity, NoCtx) {
     F R = dr*a,
@@ -1928,10 +1951,10 @@ STAGE(luminosity, NoCtx) {
     set_lum(&R, &G, &B, lum(r,g,b)*da);
     clip_color(&R,&G,&B, a*da);
 
-    r = r*inv(da) + dr*inv(a) + R;
-    g = g*inv(da) + dg*inv(a) + G;
-    b = b*inv(da) + db*inv(a) + B;
-    a = a + da - a*da;
+    r = mad(r, inv(da), mad(dr, inv(a), R));
+    g = mad(g, inv(da), mad(dg, inv(a), G));
+    b = mad(b, inv(da), mad(db, inv(a), B));
+    a = a + nmad(a, da, da);
 }
 
 STAGE(srcover_rgba_8888, const SkRasterPipeline_MemoryCtx* ctx) {
@@ -3230,6 +3253,124 @@ STAGE(bicubic_n1y, SkRasterPipeline_SamplerCtx* ctx) { bicubic_y<-1>(ctx, &g); }
 STAGE(bicubic_p1y, SkRasterPipeline_SamplerCtx* ctx) { bicubic_y<+1>(ctx, &g); }
 STAGE(bicubic_p3y, SkRasterPipeline_SamplerCtx* ctx) { bicubic_y<+3>(ctx, &g); }
 
+SI F compute_perlin_vector(U32 sample, F x, F y) {
+    // We're relying on the packing of uint16s within a uint32, which will vary based on endianness.
+#ifdef SK_CPU_BENDIAN
+    U32 sampleLo = sample >> 16;
+    U32 sampleHi = sample & 0xFFFF;
+#else
+    U32 sampleLo = sample & 0xFFFF;
+    U32 sampleHi = sample >> 16;
+#endif
+
+    // Convert 32-bit sample value into two floats in the [-1..1] range.
+    F vecX = mad(cast(sampleLo), 2.0f / 65535.0f, -1.0f);
+    F vecY = mad(cast(sampleHi), 2.0f / 65535.0f, -1.0f);
+
+    // Return the dot of the sample and the passed-in vector.
+    return mad(vecX,  x,
+               vecY * y);
+}
+
+STAGE(perlin_noise, SkRasterPipeline_PerlinNoiseCtx* ctx) {
+    F noiseVecX = (r + 0.5) * ctx->baseFrequencyX;
+    F noiseVecY = (g + 0.5) * ctx->baseFrequencyY;
+    r = g = b = a = F0;
+    F stitchDataX = F_(ctx->stitchDataInX);
+    F stitchDataY = F_(ctx->stitchDataInY);
+    F ratio = F1;
+
+    for (int octave = 0; octave < ctx->numOctaves; ++octave) {
+        // Calculate noise coordinates. (Roughly $noise_helper in Graphite)
+        F floorValX = floor_(noiseVecX);
+        F floorValY = floor_(noiseVecY);
+        F  ceilValX = floorValX + 1.0f;
+        F  ceilValY = floorValY + 1.0f;
+        F fractValX = noiseVecX - floorValX;
+        F fractValY = noiseVecY - floorValY;
+
+        if (ctx->stitching) {
+            // If we are stitching, wrap the coordinates to the stitch position.
+            floorValX -= sk_bit_cast<F>(cond_to_mask(floorValX >= stitchDataX) &
+                                        sk_bit_cast<I32>(stitchDataX));
+            floorValY -= sk_bit_cast<F>(cond_to_mask(floorValY >= stitchDataY) &
+                                        sk_bit_cast<I32>(stitchDataY));
+            ceilValX -= sk_bit_cast<F>(cond_to_mask(ceilValX >= stitchDataX) &
+                                       sk_bit_cast<I32>(stitchDataX));
+            ceilValY -= sk_bit_cast<F>(cond_to_mask(ceilValY >= stitchDataY) &
+                                       sk_bit_cast<I32>(stitchDataY));
+        }
+
+        U32 latticeLookup = (U32)(iround(floorValX)) & 0xFF;
+        F latticeIdxX = cast(expand(gather(ctx->latticeSelector, latticeLookup)));
+        latticeLookup = (U32)(iround(ceilValX)) & 0xFF;
+        F latticeIdxY = cast(expand(gather(ctx->latticeSelector, latticeLookup)));
+
+        U32 b00 = (U32)(iround(latticeIdxX + floorValY)) & 0xFF;
+        U32 b10 = (U32)(iround(latticeIdxY + floorValY)) & 0xFF;
+        U32 b01 = (U32)(iround(latticeIdxX + ceilValY)) & 0xFF;
+        U32 b11 = (U32)(iround(latticeIdxY + ceilValY)) & 0xFF;
+
+        // Calculate noise colors. (Roughly $noise_function in Graphite)
+        // Apply Hermite interpolation to the fractional value.
+        F smoothX = fractValX * fractValX * (3.0f - 2.0f * fractValX);
+        F smoothY = fractValY * fractValY * (3.0f - 2.0f * fractValY);
+
+        F color[4];
+        const uint32_t* channelNoiseData = reinterpret_cast<const uint32_t*>(ctx->noiseData);
+        for (int channel = 0; channel < 4; ++channel) {
+            U32 sample00 = gather(channelNoiseData, b00);
+            U32 sample10 = gather(channelNoiseData, b10);
+            U32 sample01 = gather(channelNoiseData, b01);
+            U32 sample11 = gather(channelNoiseData, b11);
+            channelNoiseData += 256;
+
+            F u = compute_perlin_vector(sample00, fractValX,        fractValY);
+            F v = compute_perlin_vector(sample10, fractValX - 1.0f, fractValY);
+            F A = lerp(u, v, smoothX);
+
+              u = compute_perlin_vector(sample01, fractValX,        fractValY - 1.0f);
+              v = compute_perlin_vector(sample11, fractValX - 1.0f, fractValY - 1.0f);
+            F B = lerp(u, v, smoothX);
+
+            color[channel] = lerp(A, B, smoothY);
+        }
+
+        if (ctx->noiseType != SkPerlinNoiseShaderType::kFractalNoise) {
+            // For kTurbulence the result is: abs(noise[-1,1])
+            color[0] = abs_(color[0]);
+            color[1] = abs_(color[1]);
+            color[2] = abs_(color[2]);
+            color[3] = abs_(color[3]);
+        }
+
+        r = mad(color[0], ratio, r);
+        g = mad(color[1], ratio, g);
+        b = mad(color[2], ratio, b);
+        a = mad(color[3], ratio, a);
+
+        // Scale inputs for the next round.
+        noiseVecX *= 2.0f;
+        noiseVecY *= 2.0f;
+        stitchDataX *= 2.0f;
+        stitchDataY *= 2.0f;
+        ratio *= 0.5f;
+    }
+
+    if (ctx->noiseType == SkPerlinNoiseShaderType::kFractalNoise) {
+        // For kFractalNoise the result is: noise[-1,1] * 0.5 + 0.5
+        r = mad(r, 0.5f, 0.5f);
+        g = mad(g, 0.5f, 0.5f);
+        b = mad(b, 0.5f, 0.5f);
+        a = mad(a, 0.5f, 0.5f);
+    }
+
+    r = clamp_01_(r) * a;
+    g = clamp_01_(g) * a;
+    b = clamp_01_(b) * a;
+    a = clamp_01_(a);
+}
+
 STAGE(mipmap_linear_init, SkRasterPipeline_MipmapCtx* ctx) {
     sk_unaligned_store(ctx->x, r);
     sk_unaligned_store(ctx->y, g);
@@ -3881,7 +4022,7 @@ STAGE_TAIL(log2_float, F* dst) { *dst = approx_log2(*dst); }
 STAGE_TAIL(inverse_mat2, F* dst) {
     F a00 = dst[0], a01 = dst[1],
       a10 = dst[2], a11 = dst[3];
-    F det = mad(a00, a11, -a01 * a10),
+    F det = nmad(a01, a10, a00 * a11),
       invdet = rcp_precise(det);
     dst[0] =  invdet * a11;
     dst[1] = -invdet * a01;
@@ -3893,20 +4034,20 @@ STAGE_TAIL(inverse_mat3, F* dst) {
     F a00 = dst[0], a01 = dst[1], a02 = dst[2],
       a10 = dst[3], a11 = dst[4], a12 = dst[5],
       a20 = dst[6], a21 = dst[7], a22 = dst[8];
-    F b01 = mad(a22, a11, -a12 * a21),
-      b11 = mad(a12, a20, -a22 * a10),
-      b21 = mad(a21, a10, -a11 * a20);
+    F b01 = nmad(a12, a21, a22 * a11),
+      b11 = nmad(a22, a10, a12 * a20),
+      b21 = nmad(a11, a20, a21 * a10);
     F det = mad(a00, b01, mad(a01, b11, a02 * b21)),
       invdet = rcp_precise(det);
     dst[0] = invdet * b01;
-    dst[1] = invdet * mad(a02, a21, -a22 * a01);
-    dst[2] = invdet * mad(a12, a01, -a02 * a11);
+    dst[1] = invdet * nmad(a22, a01, a02 * a21);
+    dst[2] = invdet * nmad(a02, a11, a12 * a01);
     dst[3] = invdet * b11;
-    dst[4] = invdet * mad(a22, a00, -a02 * a20);
-    dst[5] = invdet * mad(a02, a10, -a12 * a00);
+    dst[4] = invdet * nmad(a02, a20, a22 * a00);
+    dst[5] = invdet * nmad(a12, a00, a02 * a10);
     dst[6] = invdet * b21;
-    dst[7] = invdet * mad(a01, a20, -a21 * a00);
-    dst[8] = invdet * mad(a11, a00, -a01 * a10);
+    dst[7] = invdet * nmad(a21, a00, a01 * a20);
+    dst[8] = invdet * nmad(a01, a10, a11 * a00);
 }
 
 STAGE_TAIL(inverse_mat4, F* dst) {
@@ -3914,18 +4055,18 @@ STAGE_TAIL(inverse_mat4, F* dst) {
       a10 = dst[4],  a11 = dst[5],  a12 = dst[6],  a13 = dst[7],
       a20 = dst[8],  a21 = dst[9],  a22 = dst[10], a23 = dst[11],
       a30 = dst[12], a31 = dst[13], a32 = dst[14], a33 = dst[15];
-    F b00 = mad(a00, a11, -a01 * a10),
-      b01 = mad(a00, a12, -a02 * a10),
-      b02 = mad(a00, a13, -a03 * a10),
-      b03 = mad(a01, a12, -a02 * a11),
-      b04 = mad(a01, a13, -a03 * a11),
-      b05 = mad(a02, a13, -a03 * a12),
-      b06 = mad(a20, a31, -a21 * a30),
-      b07 = mad(a20, a32, -a22 * a30),
-      b08 = mad(a20, a33, -a23 * a30),
-      b09 = mad(a21, a32, -a22 * a31),
-      b10 = mad(a21, a33, -a23 * a31),
-      b11 = mad(a22, a33, -a23 * a32),
+    F b00 = nmad(a01, a10, a00 * a11),
+      b01 = nmad(a02, a10, a00 * a12),
+      b02 = nmad(a03, a10, a00 * a13),
+      b03 = nmad(a02, a11, a01 * a12),
+      b04 = nmad(a03, a11, a01 * a13),
+      b05 = nmad(a03, a12, a02 * a13),
+      b06 = nmad(a21, a30, a20 * a31),
+      b07 = nmad(a22, a30, a20 * a32),
+      b08 = nmad(a23, a30, a20 * a33),
+      b09 = nmad(a22, a31, a21 * a32),
+      b10 = nmad(a23, a31, a21 * a33),
+      b11 = nmad(a23, a32, a22 * a33),
       det = mad(b00, b11, b05 * b06) + mad(b02, b09, b03 * b08) - mad(b01, b10, b04 * b07),
       invdet = rcp_precise(det);
     b00 *= invdet;
@@ -3940,22 +4081,22 @@ STAGE_TAIL(inverse_mat4, F* dst) {
     b09 *= invdet;
     b10 *= invdet;
     b11 *= invdet;
-    dst[0]  = mad(a11, b11, a13*b09) - a12*b10;
-    dst[1]  = a02*b10 - mad(a01, b11, a03*b09);
-    dst[2]  = mad(a31, b05, a33*b03) - a32*b04;
-    dst[3]  = a22*b04 - mad(a21, b05, a23*b03);
-    dst[4]  = a12*b08 - mad(a10, b11, a13*b07);
-    dst[5]  = mad(a00, b11, a03*b07) - a02*b08;
-    dst[6]  = a32*b02 - mad(a30, b05, a33*b01);
-    dst[7]  = mad(a20, b05, a23*b01) - a22*b02;
-    dst[8]  = mad(a10, b10, a13*b06) - a11*b08;
-    dst[9]  = a01*b08 - mad(a00, b10, a03*b06);
-    dst[10] = mad(a30, b04, a33*b00) - a31*b02;
-    dst[11] = a21*b02 - mad(a20, b04, a23*b00);
-    dst[12] = a11*b07 - mad(a10, b09, a12*b06);
-    dst[13] = mad(a00, b09, a02*b06) - a01*b07;
-    dst[14] = a31*b01 - mad(a30, b03, a32*b00);
-    dst[15] = mad(a20, b03, a22*b00) - a21*b01;
+    dst[0]  =  mad(a13, b09, nmad(a12, b10, a11*b11));
+    dst[1]  = nmad(a03, b09, nmad(a01, b11, a02*b10));
+    dst[2]  =  mad(a33, b03, nmad(a32, b04, a31*b05));
+    dst[3]  = nmad(a23, b03, nmad(a21, b05, a22*b04));
+    dst[4]  = nmad(a13, b07, nmad(a10, b11, a12*b08));
+    dst[5]  =  mad(a03, b07, nmad(a02, b08, a00*b11));
+    dst[6]  = nmad(a33, b01, nmad(a30, b05, a32*b02));
+    dst[7]  =  mad(a23, b01, nmad(a22, b02, a20*b05));
+    dst[8]  =  mad(a13, b06, nmad(a11, b08, a10*b10));
+    dst[9]  = nmad(a03, b06, nmad(a00, b10, a01*b08));
+    dst[10] =  mad(a33, b00, nmad(a31, b02, a30*b04));
+    dst[11] = nmad(a23, b00, nmad(a20, b04, a21*b02));
+    dst[12] = nmad(a12, b06, nmad(a10, b09, a11*b07));
+    dst[13] =  mad(a02, b06, nmad(a01, b07, a00*b09));
+    dst[14] = nmad(a32, b00, nmad(a30, b03, a31*b01));
+    dst[15] =  mad(a22, b00, nmad(a21, b01, a20*b03));
 }
 
 // Binary operations take two adjacent inputs, and write their output in the first position.
@@ -4818,13 +4959,21 @@ SI I32 max(int32_t a, I32     b) { return max(I32_(a),      b ); }
 SI I32 min(I32     a, int32_t b) { return min(     a , I32_(b)); }
 SI I32 min(int32_t a, I32     b) { return min(I32_(a),      b ); }
 
-SI F mad(F     f, F     m, F     a) { return f*m+a; }
+SI F mad(F     f, F     m, F     a) { return a+f*m; }
 SI F mad(F     f, F     m, float a) { return mad(   f ,    m , F_(a)); }
 SI F mad(F     f, float m, F     a) { return mad(   f , F_(m),    a ); }
 SI F mad(F     f, float m, float a) { return mad(   f , F_(m), F_(a)); }
 SI F mad(float f, F     m, F     a) { return mad(F_(f),    m ,    a ); }
 SI F mad(float f, F     m, float a) { return mad(F_(f),    m , F_(a)); }
 SI F mad(float f, float m, F     a) { return mad(F_(f), F_(m),    a ); }
+
+SI F nmad(F     f, F     m, F     a) { return a-f*m; }
+SI F nmad(F     f, F     m, float a) { return nmad(   f ,    m , F_(a)); }
+SI F nmad(F     f, float m, F     a) { return nmad(   f , F_(m),    a ); }
+SI F nmad(F     f, float m, float a) { return nmad(   f , F_(m), F_(a)); }
+SI F nmad(float f, F     m, F     a) { return nmad(F_(f),    m ,    a ); }
+SI F nmad(float f, F     m, float a) { return nmad(F_(f),    m , F_(a)); }
+SI F nmad(float f, float m, F     a) { return nmad(F_(f), F_(m),    a ); }
 
 SI U32 trunc_(F x) { return (U32)cast<I32>(x); }
 

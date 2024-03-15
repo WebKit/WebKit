@@ -247,6 +247,8 @@ public:
 
     const SkWuffsFrame* frame(int i) const;
 
+    std::unique_ptr<SkStream> getEncodedData() const override;
+
 private:
     // SkCodec overrides.
     SkEncodedImageFormat onGetEncodedFormat() const override;
@@ -291,7 +293,7 @@ private:
     void        updateNumFullyReceivedFrames();
 
     SkWuffsFrameHolder                           fFrameHolder;
-    std::unique_ptr<SkStream>                    fStream;
+    std::unique_ptr<SkStream>                    fPrivStream;
     std::unique_ptr<uint8_t, decltype(&sk_free)> fWorkbufPtr;
     size_t                                       fWorkbufLen;
 
@@ -390,7 +392,7 @@ SkWuffsCodec::SkWuffsCodec(SkEncodedInfo&&                                      
                 // is too trigger-happy on rewinding the stream.
                 nullptr),
       fFrameHolder(),
-      fStream(std::move(stream)),
+      fPrivStream(std::move(stream)),
       fWorkbufPtr(std::move(workbuf_ptr)),
       fWorkbufLen(workbuf_len),
       fDecoder(std::move(dec)),
@@ -895,7 +897,7 @@ SkCodec::Result SkWuffsCodec::seekFrame(int frameIndex) {
         return SkCodec::kInternalError;
     }
 
-    if (!seek_buffer(&fIOBuffer, fStream.get(), pos)) {
+    if (!seek_buffer(&fIOBuffer, fPrivStream.get(), pos)) {
         return SkCodec::kInternalError;
     }
     wuffs_base__status status =
@@ -907,13 +909,13 @@ SkCodec::Result SkWuffsCodec::seekFrame(int frameIndex) {
 }
 
 SkCodec::Result SkWuffsCodec::resetDecoder() {
-    if (!fStream->rewind()) {
+    if (!fPrivStream->rewind()) {
         return SkCodec::kInternalError;
     }
     fIOBuffer.meta = wuffs_base__empty_io_buffer_meta();
 
     SkCodec::Result result =
-        reset_and_decode_image_config(fDecoder.get(), nullptr, &fIOBuffer, fStream.get());
+        reset_and_decode_image_config(fDecoder.get(), nullptr, &fIOBuffer, fPrivStream.get());
     if (result == SkCodec::kIncompleteInput) {
         return SkCodec::kInternalError;
     } else if (result != SkCodec::kSuccess) {
@@ -929,7 +931,7 @@ const char* SkWuffsCodec::decodeFrameConfig() {
         wuffs_base__status status =
             fDecoder->decode_frame_config(&fFrameConfig, &fIOBuffer);
         if ((status.repr == wuffs_base__suspension__short_read) &&
-            fill_buffer(&fIOBuffer, fStream.get())) {
+            fill_buffer(&fIOBuffer, fPrivStream.get())) {
             continue;
         }
         fDecoderIsSuspended = !status.is_complete();
@@ -944,7 +946,7 @@ const char* SkWuffsCodec::decodeFrame() {
             &fPixelBuffer, &fIOBuffer, fIncrDecPixelBlend,
             wuffs_base__make_slice_u8(fWorkbufPtr.get(), fWorkbufLen), nullptr);
         if ((status.repr == wuffs_base__suspension__short_read) &&
-            fill_buffer(&fIOBuffer, fStream.get())) {
+            fill_buffer(&fIOBuffer, fPrivStream.get())) {
             continue;
         }
         fDecoderIsSuspended = !status.is_complete();
@@ -961,6 +963,13 @@ void SkWuffsCodec::updateNumFullyReceivedFrames() {
     if (fNumFullyReceivedFrames < n) {
         fNumFullyReceivedFrames = n;
     }
+}
+
+// We cannot use the SkCodec implementation since we pass nullptr to the superclass out of
+// an abundance of caution w/r to rewinding the stream.
+std::unique_ptr<SkStream> SkWuffsCodec::getEncodedData() const {
+    SkASSERT(fPrivStream);
+    return fPrivStream->duplicate();
 }
 
 namespace SkGifDecoder {

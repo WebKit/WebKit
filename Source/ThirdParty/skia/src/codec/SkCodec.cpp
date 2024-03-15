@@ -1042,3 +1042,10 @@ void SkFrameHolder::setAlphaAndRequiredFrame(SkFrame* frame) {
     frame->setHasAlpha(prevFrame->hasAlpha() || (reportsAlpha && !blendWithPrevFrame));
 }
 
+std::unique_ptr<SkStream> SkCodec::getEncodedData() const {
+    SkASSERT(fStream);
+    if (!fStream) {
+        return nullptr;
+    }
+    return fStream->duplicate();
+}

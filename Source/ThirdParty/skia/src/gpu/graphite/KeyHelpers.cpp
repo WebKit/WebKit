@@ -1318,7 +1318,10 @@ static void add_to_key(const KeyContext& keyContext,
                        const SkColor4Shader* shader) {
     SkASSERT(shader);
 
-    SolidColorShaderBlock::AddBlock(keyContext, builder, gatherer, shader->color().premul());
+    SkPMColor4f color = map_color(shader->color(), shader->colorSpace().get(),
+                                  keyContext.dstColorInfo().colorSpace());
+
+    SolidColorShaderBlock::AddBlock(keyContext, builder, gatherer, color);
 }
 
 static void add_to_key(const KeyContext& keyContext,
@@ -1571,8 +1574,7 @@ static void add_to_key(const KeyContext& keyContext,
     SkASSERT(shader);
     SkASSERT(shader->numOctaves());
 
-    std::unique_ptr<SkPerlinNoiseShader::PaintingData> paintingData =
-            shader->getPaintingData(SkMatrix::I());
+    std::unique_ptr<SkPerlinNoiseShader::PaintingData> paintingData = shader->getPaintingData();
     paintingData->generateBitmaps();
 
     sk_sp<TextureProxy> perm = RecorderPriv::CreateCachedProxy(

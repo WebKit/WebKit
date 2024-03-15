@@ -21,6 +21,44 @@
 
 namespace skgpu::graphite {
 
+namespace {
+
+#ifdef SK_DEBUG
+
+bool precompilebase_is_valid_as_child(const PrecompileBase *child) {
+    if (!child) {
+        return true;
+    }
+
+    switch (child->type()) {
+        case PrecompileBase::Type::kShader:
+        case PrecompileBase::Type::kColorFilter:
+        case PrecompileBase::Type::kBlender:
+            return true;
+        default:
+            return false;
+    }
+}
+
+#endif // SK_DEBUG
+
+// If all the options are null the span is considered empty
+bool is_empty(SkSpan<const sk_sp<PrecompileColorFilter>> options) {
+    if (options.empty()) {
+        return true;
+    }
+
+    for (const auto& o : options) {
+        if (o) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+} // anonymous namespace
+
 //--------------------------------------------------------------------------------------------------
 class PrecompileBlendModeBlender : public PrecompileBlender {
 public:
@@ -47,6 +85,58 @@ sk_sp<PrecompileBlender> PrecompileBlender::Mode(SkBlendMode blendMode) {
 }
 
 //--------------------------------------------------------------------------------------------------
+class PrecompileEmptyShader : public PrecompileShader {
+public:
+    PrecompileEmptyShader() {}
+
+private:
+    void addToKey(const KeyContext& keyContext,
+                  PaintParamsKeyBuilder* builder,
+                  PipelineDataGatherer* gatherer,
+                  int desiredCombination) const override {
+
+        SkASSERT(desiredCombination == 0); // The empty shader only ever has one combination
+
+        builder->addBlock(BuiltInCodeSnippetID::kPriorOutput);
+    }
+
+};
+
+sk_sp<PrecompileShader> PrecompileShaders::Empty() {
+    return sk_make_sp<PrecompileEmptyShader>();
+}
+
+//--------------------------------------------------------------------------------------------------
+class PrecompilePerlinNoiseShader : public PrecompileShader {
+public:
+    PrecompilePerlinNoiseShader() {}
+
+private:
+    void addToKey(const KeyContext& keyContext,
+                  PaintParamsKeyBuilder* builder,
+                  PipelineDataGatherer* gatherer,
+                  int desiredCombination) const override {
+
+        SkASSERT(desiredCombination == 0); // The Perlin noise shader only ever has one combination
+
+        // TODO: update PerlinNoiseShaderBlock so the NoiseData is optional
+        static const PerlinNoiseShaderBlock::PerlinNoiseData kIgnoredNoiseData(
+                PerlinNoiseShaderBlock::Type::kFractalNoise, { 0.0f, 0.0f }, 2, {1, 1});
+
+        PerlinNoiseShaderBlock::AddBlock(keyContext, builder, gatherer, kIgnoredNoiseData);
+    }
+
+};
+
+sk_sp<PrecompileShader> PrecompileShaders::MakeFractalNoise() {
+    return sk_make_sp<PrecompilePerlinNoiseShader>();
+}
+
+sk_sp<PrecompileShader> PrecompileShaders::MakeTurbulence() {
+    return sk_make_sp<PrecompilePerlinNoiseShader>();
+}
+
+//--------------------------------------------------------------------------------------------------
 class PrecompileColorShader : public PrecompileShader {
 public:
     PrecompileColorShader() {}
@@ -64,10 +154,15 @@ private:
         // The white PMColor is just a placeholder for the actual paint params color
         SolidColorShaderBlock::AddBlock(keyContext, builder, gatherer, SK_PMColor4fWHITE);
     }
-
 };
 
 sk_sp<PrecompileShader> PrecompileShaders::Color() {
+    return sk_make_sp<PrecompileColorShader>();
+}
+
+// The colorSpace is safe to ignore - it is just applied to the color and doesn't modify the
+// generated program.
+sk_sp<PrecompileShader> PrecompileShaders::Color(sk_sp<SkColorSpace>) {
     return sk_make_sp<PrecompileColorShader>();
 }
 
@@ -253,6 +348,46 @@ sk_sp<PrecompileShader> PrecompileShaders::Blend(
     return sk_make_sp<PrecompileBlendShader>(SkSpan<const sk_sp<PrecompileBlender>>(),
                                              dsts, srcs,
                                              needsPorterDuffBased, needsBlendModeBased);
+}
+
+//--------------------------------------------------------------------------------------------------
+class PrecompileCoordClampShader : public PrecompileShader {
+public:
+    PrecompileCoordClampShader(SkSpan<const sk_sp<PrecompileShader>> shaders)
+            : fShaders(shaders.begin(), shaders.end()) {
+        fNumShaderCombos = 0;
+        for (const auto& s : fShaders) {
+            fNumShaderCombos += s->numCombinations();
+        }
+    }
+
+private:
+    int numChildCombinations() const override {
+        return fNumShaderCombos;
+    }
+
+    void addToKey(const KeyContext& keyContext,
+                  PaintParamsKeyBuilder* builder,
+                  PipelineDataGatherer* gatherer,
+                  int desiredCombination) const override {
+        SkASSERT(desiredCombination < fNumShaderCombos);
+
+        constexpr SkRect kIgnored { 0, 0, 256, 256 }; // ignored bc we're precompiling
+
+        // TODO: update CoordClampShaderBlock so this is optional
+        CoordClampShaderBlock::CoordClampData data(kIgnored);
+
+        CoordClampShaderBlock::BeginBlock(keyContext, builder, gatherer, data);
+            AddToKey<PrecompileShader>(keyContext, builder, gatherer, fShaders, desiredCombination);
+        builder->endBlock();
+    }
+
+    std::vector<sk_sp<PrecompileShader>> fShaders;
+    int fNumShaderCombos;
+};
+
+sk_sp<PrecompileShader> PrecompileShaders::CoordClamp(SkSpan<const sk_sp<PrecompileShader>> input) {
+    return sk_make_sp<PrecompileCoordClampShader>(input);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -618,7 +753,7 @@ private:
 sk_sp<PrecompileColorFilter> PrecompileColorFilters::Compose(
         SkSpan<const sk_sp<PrecompileColorFilter>> outerOptions,
         SkSpan<const sk_sp<PrecompileColorFilter>> innerOptions) {
-    if (outerOptions.empty() && innerOptions.empty()) {
+    if (is_empty(outerOptions) && is_empty(innerOptions)) {
         return nullptr;
     }
 
@@ -766,29 +901,6 @@ PrecompileChildPtr::PrecompileChildPtr(sk_sp<PrecompileColorFilter> cf)
         : fChild(std::move(cf)) {
 }
 PrecompileChildPtr::PrecompileChildPtr(sk_sp<PrecompileBlender> b) : fChild(std::move(b)) {}
-
-namespace {
-
-#ifdef SK_DEBUG
-
-bool precompilebase_is_valid_as_child(const PrecompileBase *child) {
-    if (!child) {
-        return true;
-    }
-
-    switch (child->type()) {
-        case PrecompileBase::Type::kShader:
-        case PrecompileBase::Type::kColorFilter:
-        case PrecompileBase::Type::kBlender:
-            return true;
-        default:
-            return false;
-    }
-}
-
-#endif // SK_DEBUG
-
-} // anonymous namespace
 
 PrecompileChildPtr::PrecompileChildPtr(sk_sp<PrecompileBase> child)
         : fChild(std::move(child)) {

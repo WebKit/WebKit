@@ -7,7 +7,10 @@
 
 #include "src/gpu/AtlasTypes.h"
 
+#include "include/core/SkAlphaType.h"
+#include "include/core/SkImageInfo.h"
 #include "include/private/base/SkMalloc.h"
+#include "src/core/SkAutoPixmapStorage.h"
 #include "src/core/SkSwizzlePriv.h"
 
 namespace skgpu {
@@ -46,7 +49,7 @@ Plot::~Plot() {
     sk_free(fData);
 }
 
-bool Plot::addSubImage(int width, int height, const void* image, AtlasLocator* atlasLocator) {
+bool Plot::addRect(int width, int height, AtlasLocator* atlasLocator) {
     SkASSERT(width <= fWidth && height <= fHeight);
 
     SkIPoint16 loc;
@@ -55,17 +58,50 @@ bool Plot::addSubImage(int width, int height, const void* image, AtlasLocator* a
     }
 
     auto rect = skgpu::IRect16::MakeXYWH(loc.fX, loc.fY, width, height);
+    fDirtyRect.join({rect.fLeft, rect.fTop, rect.fRight, rect.fBottom});
 
+    rect.offset(fOffset.fX, fOffset.fY);
+    atlasLocator->updateRect(rect);
+    SkDEBUGCODE(fDirty = true;)
+
+    return true;
+}
+
+void* Plot::dataAt(const AtlasLocator& atlasLocator) {
     if (!fData) {
         fData = reinterpret_cast<unsigned char*>(
-                sk_calloc_throw(fBytesPerPixel * fWidth * fHeight));
+                        sk_calloc_throw(fBytesPerPixel * fWidth * fHeight));
     }
-    size_t rowBytes = width * fBytesPerPixel;
-    const unsigned char* imagePtr = (const unsigned char*)image;
     // point ourselves at the right starting spot
     unsigned char* dataPtr = fData;
-    dataPtr += fBytesPerPixel * fWidth * rect.fTop;
-    dataPtr += fBytesPerPixel * rect.fLeft;
+    SkIPoint topLeft = atlasLocator.topLeft();
+    // Assert if we're not accessing the correct Plot
+    SkASSERT(topLeft.fX >= fOffset.fX && topLeft.fX < fOffset.fX + fWidth &&
+             topLeft.fY >= fOffset.fY && topLeft.fY < fOffset.fY + fHeight);
+    topLeft -= SkIPoint::Make(fOffset.fX, fOffset.fY);
+    dataPtr += fBytesPerPixel * fWidth * topLeft.fY;
+    dataPtr += fBytesPerPixel * topLeft.fX;
+
+    return dataPtr;
+}
+
+SkIPoint Plot::prepForRender(const AtlasLocator& al, SkAutoPixmapStorage* pixmap) {
+    if (!fData) {
+        fData = reinterpret_cast<unsigned char*>(
+                        sk_calloc_throw(fBytesPerPixel * fWidth * fHeight));
+    }
+    pixmap->reset(SkImageInfo::Make(fWidth, fHeight, fColorType, kOpaque_SkAlphaType),
+                  fData, fBytesPerPixel * fWidth);
+    return al.topLeft() - SkIPoint::Make(fOffset.fX, fOffset.fY);
+}
+
+void Plot::copySubImage(const AtlasLocator& al, const void* image) {
+    const unsigned char* imagePtr = (const unsigned char*)image;
+    unsigned char* dataPtr = (unsigned char*)this->dataAt(al);
+    int width = al.width();
+    int height = al.height();
+    size_t rowBytes = width * fBytesPerPixel;
+
     // copy into the data buffer, swizzling as we go if this is ARGB data
     constexpr bool kBGRAIsNative = kN32_SkColorType == kBGRA_8888_SkColorType;
     if (4 == fBytesPerPixel && kBGRAIsNative) {
@@ -81,12 +117,13 @@ bool Plot::addSubImage(int width, int height, const void* image, AtlasLocator* a
             imagePtr += rowBytes;
         }
     }
+}
 
-    fDirtyRect.join({rect.fLeft, rect.fTop, rect.fRight, rect.fBottom});
-
-    rect.offset(fOffset.fX, fOffset.fY);
-    atlasLocator->updateRect(rect);
-    SkDEBUGCODE(fDirty = true;)
+bool Plot::addSubImage(int width, int height, const void* image, AtlasLocator* atlasLocator) {
+    if (!this->addRect(width, height, atlasLocator)) {
+        return false;
+    }
+    this->copySubImage(*atlasLocator, image);
 
     return true;
 }

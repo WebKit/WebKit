@@ -25,7 +25,7 @@ namespace {
 
 constexpr int kBufferBindingSizeAlignment = 16;
 constexpr int kMaxNumberOfCachedBufferBindGroups = 32;
-constexpr int kMaxNumberOfCachedTextureBindGroups = 256;
+constexpr int kMaxNumberOfCachedTextureBindGroups = 4096;
 
 wgpu::ShaderModule create_shader_module(const wgpu::Device& device, const char* source) {
     wgpu::ShaderModuleWGSLDescriptor wgslDesc;
@@ -194,11 +194,11 @@ wgpu::RenderPipeline DawnResourceProvider::findOrCreateBlitWithDrawPipeline(
                 std::move(vsModule),
                 std::move(fsModule),
                 /*renderPassColorFormat=*/
-                renderPassDesc.fColorAttachment.fTextureInfo.dawnTextureSpec().fFormat,
+                renderPassDesc.fColorAttachment.fTextureInfo.dawnTextureSpec().getViewFormat(),
                 /*renderPassDepthStencilFormat=*/
                 renderPassDesc.fDepthStencilAttachment.fTextureInfo.isValid()
                         ? renderPassDesc.fDepthStencilAttachment.fTextureInfo.dawnTextureSpec()
-                                  .fFormat
+                                  .getViewFormat()
                         : wgpu::TextureFormat::Undefined,
                 /*numSamples=*/renderPassDesc.fColorAttachment.fTextureInfo.numSamples());
 

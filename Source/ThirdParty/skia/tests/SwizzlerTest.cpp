@@ -180,19 +180,20 @@ static void test_reciprocal_alpha(
     }
 }
 
+#define SK_OPTS_NS test
 #define SK_OPTS_TARGET SK_OPTS_TARGET_DEFAULT
 #include "src/opts/SkOpts_SetTarget.h"
-#include "src/opts/SkSwizzler_opts.h"
+#include "src/opts/SkSwizzler_opts.inc"
 DEF_TEST(ReciprocalAlphaOptimized, reporter) {
     test_reciprocal_alpha(reporter,
-                          SK_OPTS_NS::SkReciprocalAlphaTimes255,
-                          SK_OPTS_NS::SkReciprocalAlpha);
+                          SK_OPTS_NS::reciprocal_alpha_times_255,
+                          SK_OPTS_NS::reciprocal_alpha);
 }
 
 DEF_TEST(ReciprocalAlphaPortable, reporter) {
     test_reciprocal_alpha(reporter,
-                          SK_OPTS_NS::SkReciprocalAlphaTimes255_portable,
-                          SK_OPTS_NS::SkReciprocalAlpha_portable);
+                          SK_OPTS_NS::reciprocal_alpha_times_255_portable,
+                          SK_OPTS_NS::reciprocal_alpha_portable);
 }
 
 // The stages of RasterPipeline unpremul calcExpected needs to simulate.
@@ -235,7 +236,7 @@ DEF_TEST(UnpremulSimulatingRP, reporter) {
         for (uint32_t c = 0; c < 256; ++c) {
             const uint32_t expected = calcExpected(a, c);
             const float normalizedA = a * (1.0f / 255.0f);
-            const float invA = SK_OPTS_NS::SkReciprocalAlpha(normalizedA);
+            const float invA = SK_OPTS_NS::reciprocal_alpha(normalizedA);
             const uint32_t actual = SK_OPTS_NS::unpremul_simulating_RP(invA, c);
             if (actual != expected) {
                 SkDebugf("a: %d c: %d expected: %d actual: %d\n", a, c, expected, actual);

@@ -33,11 +33,16 @@
 
 #if defined(SK_BUILD_FOR_ANDROID) && defined(SK_FONTMGR_ANDROID_AVAILABLE)
 #include "include/ports/SkFontMgr_android.h"
+#include "src/ports/SkTypeface_FreeType.h"
 #endif
 
 #if defined(SK_FONTMGR_CORETEXT_AVAILABLE) && (defined(SK_BUILD_FOR_IOS) || \
                                                defined(SK_BUILD_FOR_MAC))
 #include "include/ports/SkFontMgr_mac_ct.h"
+#endif
+
+#if defined(SK_FONTMGR_FONTATIONS_AVAILABLE)
+#include "include/ports/SkFontMgr_Fontations.h"
 #endif
 
 #if defined(SK_FONTMGR_FONTCONFIG_AVAILABLE)
@@ -61,6 +66,9 @@ static DEFINE_bool(nativeFonts,
 #if defined(SK_BUILD_FOR_WIN)
 static DEFINE_bool(gdi, false, "Use GDI instead of DirectWrite for font rendering.");
 #endif
+#if defined(SK_FONTMGR_FONTATIONS_AVAILABLE)
+static DEFINE_bool(fontations, false, "Use Fontations for native font rendering.");
+#endif
 
 sk_sp<SkTypeface> PlanetTypeface() {
     static const sk_sp<SkTypeface> planetTypeface = []() {
@@ -81,23 +89,61 @@ sk_sp<SkTypeface> PlanetTypeface() {
     return planetTypeface;
 }
 
-sk_sp<SkTypeface> EmojiTypeface() {
-    static const sk_sp<SkTypeface> emojiTypeface = []() {
-        const char* filename;
+EmojiTestSample EmojiSample() {
+    static const EmojiTestSample emojiSample = []() {
+        EmojiTestSample sample = {nullptr, ""};
 #if defined(SK_BUILD_FOR_WIN)
-        filename = "fonts/colr.ttf";
+        sample = EmojiSample(EmojiFontFormat::ColrV0);
 #elif defined(SK_BUILD_FOR_MAC) || defined(SK_BUILD_FOR_IOS)
-        filename = "fonts/sbix.ttf";
+        sample = EmojiSample(EmojiFontFormat::Sbix);
 #else
-        filename = "fonts/cbdt.ttf";
+        sample = EmojiSample(EmojiFontFormat::Cbdt);
 #endif
-        sk_sp<SkTypeface> typeface = CreateTypefaceFromResource(filename);
-        if (typeface) {
-            return typeface;
+        if (sample.typeface) {
+            return sample;
         }
-        return CreateTestTypeface("Emoji", SkFontStyle());
+        return EmojiSample(EmojiFontFormat::Test);
     }();
-    return emojiTypeface;
+    return emojiSample;
+}
+
+EmojiTestSample EmojiSample(EmojiFontFormat format) {
+    EmojiTestSample sample;
+    sample.sampleText = "\U0001F600 \u2662";  // 😀 ♢
+    switch (format) {
+        case EmojiFontFormat::Cbdt:
+            sample.typeface = CreateTypefaceFromResource("fonts/cbdt.ttf");
+            break;
+        case EmojiFontFormat::Sbix:
+            sample.typeface = CreateTypefaceFromResource("fonts/sbix.ttf");
+            break;
+        case EmojiFontFormat::ColrV0:
+            sample.typeface = CreateTypefaceFromResource("fonts/colr.ttf");
+            break;
+        case EmojiFontFormat::Svg:
+            sample.typeface = CreateTypefaceFromResource("fonts/SampleSVG.ttf");
+            sample.sampleText = "abcdefghij";
+            break;
+        case EmojiFontFormat::Test:
+            sample.typeface = CreatePortableTypeface("Emoji", SkFontStyle());
+    }
+    return sample;
+}
+
+SkString NameForFontFormat(EmojiFontFormat format) {
+    switch (format) {
+        case EmojiFontFormat::Cbdt:
+            return SkString("cbdt");
+        case EmojiFontFormat::Sbix:
+            return SkString("sbix");
+        case EmojiFontFormat::ColrV0:
+            return SkString("colrv0");
+        case EmojiFontFormat::Test:
+            return SkString("test");
+        case EmojiFontFormat::Svg:
+            return SkString("svg");
+    }
+    return SkString();
 }
 
 sk_sp<SkTypeface> SampleUserTypeface() {
@@ -210,9 +256,14 @@ sk_sp<SkFontMgr> TestFontMgr() {
             mgr = SkFontMgr_New_GDI();
         }
 #endif
+#if defined(SK_FONTMGR_FONTATIONS_AVAILABLE)
+        else if (FLAGS_fontations) {
+            mgr = SkFontMgr_New_Fontations_Empty();
+        }
+#endif
         else {
 #if defined(SK_BUILD_FOR_ANDROID) && defined(SK_FONTMGR_ANDROID_AVAILABLE)
-            mgr = SkFontMgr_New_Android(nullptr);
+            mgr = SkFontMgr_New_Android(nullptr, std::make_unique<SkFontScanner_FreeType>());
 #elif defined(SK_BUILD_FOR_WIN) && defined(SK_FONTMGR_DIRECTWRITE_AVAILABLE)
             mgr = SkFontMgr_New_DirectWrite();
 #elif defined(SK_FONTMGR_CORETEXT_AVAILABLE) && (defined(SK_BUILD_FOR_IOS) || \

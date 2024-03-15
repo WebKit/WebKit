@@ -31,7 +31,6 @@ config("skia_public") {
   defines = [
     "SK_CODEC_DECODES_BMP",
     "SK_CODEC_DECODES_WBMP",
-    "SK_DISABLE_LEGACY_VULKAN_MUTABLE_TEXTURE_STATE",
   ]
   cflags_objcc = []
   if (is_component_build) {
@@ -63,10 +62,7 @@ config("skia_public") {
   } else if (skia_gl_standard == "gl") {
     defines += [ "SK_ASSUME_GL=1" ]
   } else if (skia_gl_standard == "webgl") {
-    defines += [
-      "SK_ASSUME_WEBGL=1",
-      "SK_USE_WEBGL",
-    ]
+    defines += [ "SK_ASSUME_WEBGL=1" ]
   }
   if (skia_enable_ganesh) {
     defines += [ "SK_GANESH" ]
@@ -400,6 +396,18 @@ optional("fontmgr_FontConfigInterface") {
     "src/ports/SkFontMgr_FontConfigInterface.cpp",
   ]
   sources_for_tests = [ "tests/FCITest.cpp" ]
+}
+
+optional("fontmgr_fontations_empty") {
+  enabled = skia_use_fontations
+  public_defines = [ "SK_FONTMGR_FONTATIONS_AVAILABLE" ]
+
+  deps = [ ":typeface_fontations" ]
+  public = [ "include/ports/SkFontMgr_Fontations.h" ]
+  sources = [
+    "src/ports/SkFontMgr_fontations_empty.cpp",
+    "src/ports/SkFontMgr_fontations_empty.h",
+  ]
 }
 
 optional("fontmgr_fuchsia") {
@@ -982,11 +990,16 @@ optional("gpu") {
         libs += [ "android" ]
       }
     } else if (skia_use_egl) {
-      sources += [
-        "src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp",
-        "src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp",
-      ]
-      libs += [ "EGL" ]
+      if (skia_use_epoxy_egl) {
+        sources += [ "src/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.cpp" ]
+        libs += [ "epoxy" ]
+      } else {
+        sources += [
+          "src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp",
+          "src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp",
+        ]
+        libs += [ "EGL" ]
+      }
     } else if (skia_use_webgl) {
       sources += [ "src/gpu/ganesh/gl/webgl/GrGLMakeNativeInterface_webgl.cpp" ]
     } else if (is_linux && skia_use_x11) {
@@ -1213,14 +1226,10 @@ optional("pdf") {
   public = skia_pdf_public
   sources = skia_pdf_sources
   sources_when_disabled = [ "src/pdf/SkDocument_PDF_None.cpp" ]
-  if (skia_use_harfbuzz && skia_pdf_subset_harfbuzz) {
+  if (skia_pdf_subset_harfbuzz) {
     deps += [ "//third_party/harfbuzz" ]
     defines = [ "SK_PDF_USE_HARFBUZZ_SUBSET" ]
-  } else if (skia_use_icu && skia_use_sfntly) {
-    deps += [ "//third_party/sfntly" ]
-    defines = [ "SK_PDF_USE_SFNTLY" ]
   }
-
   deps += [
     ":jpeg_decode",
     ":jpeg_encode",
@@ -1363,6 +1372,8 @@ optional("typeface_fontations") {
     "$root_out_dir/libbridge_rust_side.a",
   ]
   sources = [
+    "src/ports/SkFontScanner_fontations.cpp",
+    "src/ports/SkFontScanner_fontations.h",
     "src/ports/SkTypeface_fontations.cpp",
     "src/ports/SkTypeface_fontations_priv.h",
   ]
@@ -1446,6 +1457,7 @@ skia_component("skia") {
     ":fontmgr_custom_directory",
     ":fontmgr_custom_embedded",
     ":fontmgr_custom_empty",
+    ":fontmgr_fontations_empty",
     ":fontmgr_fontconfig",
     ":fontmgr_fuchsia",
     ":fontmgr_mac_ct",
@@ -2054,6 +2066,8 @@ if (skia_enable_tools) {
       sources += [ "tools/graphite/GraphiteTestContext.h" ]
       sources += [ "tools/graphite/GraphiteTestContext.cpp" ]
       sources += [ "tools/graphite/ProtectedUtils_Graphite.cpp" ]
+      sources += [ "tools/graphite/UniqueKeyUtils.cpp" ]
+      sources += [ "tools/graphite/UniqueKeyUtils.h" ]
       if (skia_use_dawn) {
         sources += [ "tools/graphite/dawn/GraphiteDawnTestContext.cpp" ]
         sources += [ "tools/graphite/dawn/GraphiteDawnTestContext.h" ]

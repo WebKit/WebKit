@@ -45,7 +45,8 @@ void Caps::finishInitialization(const ContextOptions& options) {
     fGlyphCacheTextureMaximumBytes = options.fGlyphCacheTextureMaximumBytes;
     fMinDistanceFieldFontSize = options.fMinDistanceFieldFontSize;
     fGlyphsAsPathsFontSize = options.fGlyphsAsPathsFontSize;
-    fAllowMultipleGlyphCacheTextures = options.fAllowMultipleGlyphCacheTextures;
+    fMaxPathAtlasTextureSize = options.fMaxPathAtlasTextureSize;
+    fAllowMultipleAtlasTextures = options.fAllowMultipleAtlasTextures;
     fSupportBilerpFromGlyphAtlas = options.fSupportBilerpFromGlyphAtlas;
     if (options.fDisableCachedGlyphUploads) {
         fRequireOrderedRecordings = true;
@@ -53,6 +54,11 @@ void Caps::finishInitialization(const ContextOptions& options) {
 }
 
 sk_sp<SkCapabilities> Caps::capabilities() const { return fCapabilities; }
+
+SkISize Caps::getDepthAttachmentDimensions(const TextureInfo& textureInfo,
+                                           const SkISize colorAttachmentDimensions) const {
+    return colorAttachmentDimensions;
+}
 
 bool Caps::isTexturable(const TextureInfo& info) const {
     if (info.numSamples() > 1) {

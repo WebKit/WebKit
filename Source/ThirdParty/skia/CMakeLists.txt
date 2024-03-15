@@ -81,17 +81,13 @@ if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
         INTERFACE_COMPILE_DEFINITIONS "${SKIA_COMPILE_DEFINITIONS}"
     )
 
-    find_package(EGL REQUIRED)
-    find_package(OpenGLES2 REQUIRED)
-
     target_link_libraries(Skia INTERFACE
+        Epoxy::Epoxy
         Fontconfig::Fontconfig
         Freetype::Freetype
         JPEG::JPEG
-        OpenGL::GLES
         PNG::PNG
         WebP::mux
-        ${EGL_LIBRARIES}
     )
 
     add_custom_target(Skia_headers_symlink
@@ -107,9 +103,9 @@ if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
 
     message(STATUS "Using external Skia: ${SKIA_LIBRARY}")
     message(WARNING
-        "External Skia builds normally link against libEGL + libGLESv2"
-        "but WebKit uses libepoxy. Expect malfunctions if libepoxy"
-        "chooses different versions of the libraries at runtime!"
+        "Make sure the external Skia build has been built with "
+        "skia_use_egl=true + skia_use_epoxy_egl=true. Expect malfunctions "
+        "otherwise at runtime!"
     )
     return ()
 endif ()

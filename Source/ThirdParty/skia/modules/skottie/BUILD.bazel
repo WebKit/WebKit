@@ -14,6 +14,10 @@ skia_cc_library(
         "//src/utils:json_srcs",
     ],
     hdrs = ["//modules/skottie/include:hdrs"],
+    defines = [
+        "SK_ENABLE_SKOTTIE_SKSLEFFECT",
+        "SK_ENABLE_SKOTTIE",
+    ],
     visibility = ["//:__subpackages__"],
     deps = [
         "//:skia_internal",
@@ -95,6 +99,10 @@ skia_cc_library(
         "//src/utils:json_srcs",
     ],
     hdrs = ["//modules/skottie/include:hdrs"],
+    defines = [
+        "SK_ENABLE_SKOTTIE_SKSLEFFECT",
+        "SK_ENABLE_SKOTTIE",
+    ],
     features = ["layering_check"],
     visibility = ["//:__subpackages__"],
     deps = [
@@ -110,9 +118,32 @@ skia_cc_library(
 )
 
 skia_cc_library(
+    name = "skottie",
+    srcs = [
+        "//modules/skottie/src:srcs",
+        "//src/utils:json_hdrs",
+        "//src/utils:json_srcs",
+    ],
+    hdrs = ["//modules/skottie/include:hdrs"],
+    features = ["layering_check"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        ":textshaper",
+        "//:core",
+        "//modules/skresources",
+        "//modules/sksg",
+        "//modules/sksg:sksg_priv",
+        "//src/base",
+        "//src/codec:codec_support_priv",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
     name = "utils",
     srcs = ["//modules/skottie/utils:srcs"],
     hdrs = ["//modules/skottie/utils:hdrs"],
+    visibility = ["//modules/canvaskit:__pkg__"],
     deps = [
         ":skottie_harfbuzz_icu",
         "//:core",
@@ -132,8 +163,24 @@ skia_cc_library(
     deps = [
         "//:core",
         "//modules/skshaper:skshaper_harfbuzz",
+        "//modules/skshaper:skshaper_unicode",
         "//modules/skunicode:skunicode_icu",
         "//src/base",
         "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "textshaper",
+    srcs = ["//modules/skottie/src/text:text_shaper_srcs"],
+    hdrs = ["//modules/skottie/include:text_shaper_hdrs"],
+    features = ["layering_check"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//:skshaper_core",
+        # TODO(kjlubick) make this depend on skunicode_core
     ],
 )

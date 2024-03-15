@@ -231,7 +231,7 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//include/utils/mac:public_hdrs"}},
 		{Var: "skia_utils_chromium",
 			Rules: []string{
-				"//include/docs:chromium_hdrs",
+				"//include/docs:multi_picture_document_hdrs",
 				"//src/utils:chromium_hdrs"}},
 		{Var: "skia_utils_private",
 			Rules: []string{
@@ -387,9 +387,11 @@ var gniExportDescs = []exporter.GNIExportDesc{
 		{Var: "skia_native_gpu_sources",
 			Rules: []string{
 				"//include/gpu/gl/egl:public_hdrs",
+				"//include/gpu/gl/epoxy:public_hdrs",
 				"//include/gpu/gl/glx:public_hdrs",
 				"//src/gpu/ganesh/gl/android:srcs",
 				"//src/gpu/ganesh/gl/egl:srcs",
+				"//src/gpu/ganesh/gl/epoxy:srcs",
 				"//src/gpu/ganesh/gl/glx:srcs",
 				"//src/gpu/ganesh/gl/iOS:srcs",
 				"//src/gpu/ganesh/gl/mac:srcs",

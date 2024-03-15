@@ -1,7 +1,7 @@
 This directory contains a copy of Skia from the official repository.
 
   - URL: https://skia.googlesource.com/skia
-  - Commit: 5325053967daf408d21ec70f93db4a5d9bd09efd
+  - Commit: f4f7364eb73a016f363d3d66ff3007e3a94e3f5e
 
 Changes on top of upstream Skia:
 
@@ -16,8 +16,6 @@ from scratch, and restoring the needed files with Git. Example commands:
       Source/ThirdParty/skia/README.WebKit \
       Source/ThirdParty/skia/CMakeLists.txt \
       Source/ThirdParty/skia/ext-skia-configure \
-      Source/ThirdParty/skia/src/gpu/ganesh/gl/epoxy/ \
-      Source/ThirdParty/skia/include/gpu/gl/epoxy/
   rm -rf Source/ThirdParty/skia/.git/
   git add -A Source/ThirdParty/skia/
 

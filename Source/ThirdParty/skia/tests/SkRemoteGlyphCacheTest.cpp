@@ -235,7 +235,7 @@ SkBitmap RasterBlobThroughSlug(sk_sp<SkTextBlob> blob, int width, int height, co
     }
     auto canvas = surface->getCanvas();
     auto slug = Slug::ConvertBlob(canvas, *blob, {x, height/2.0f}, paint);
-    slug->draw(canvas);
+    slug->draw(canvas, paint);
     SkBitmap bitmap;
     bitmap.allocN32Pixels(width, height);
     surface->readPixels(bitmap, 0, 0);
@@ -250,7 +250,7 @@ SkBitmap RasterSlug(sk_sp<Slug> slug, int width, int height, const SkPaint& pain
     if (matrix) {
         canvas->concat(*matrix);
     }
-    slug->draw(canvas);
+    slug->draw(canvas, paint);
     SkBitmap bitmap;
     bitmap.allocN32Pixels(width, height);
     surface->readPixels(bitmap, 0, 0);
@@ -419,7 +419,7 @@ DEF_GANESH_TEST_FOR_CONTEXTS(SkRemoteGlyphCache_SlugSerialization,
 
     // Generate strike updates.
     auto srcSlug = Slug::ConvertBlob(analysisCanvas.get(), *serverBlob, {0.3f, 0}, paint);
-    auto dstSlugData = srcSlug->serialize({});
+    auto dstSlugData = srcSlug->serialize();
 
     std::vector<uint8_t> serverStrikeData;
     server.writeStrikeData(&serverStrikeData);
@@ -429,7 +429,7 @@ DEF_GANESH_TEST_FOR_CONTEXTS(SkRemoteGlyphCache_SlugSerialization,
                     client.readStrikeData(serverStrikeData.data(), serverStrikeData.size()));
 
     SkBitmap expected = RasterSlug(srcSlug, 10, 10, paint, dContext);
-    auto dstSlug = client.deserializeSlugForTest(dstSlugData->data(), dstSlugData->size(), {});
+    auto dstSlug = client.deserializeSlugForTest(dstSlugData->data(), dstSlugData->size());
     REPORTER_ASSERT(reporter, dstSlug != nullptr);
     SkBitmap actual = RasterSlug(dstSlug, 10, 10, paint, dContext);
     compare_blobs(expected, actual, reporter);
@@ -923,7 +923,7 @@ sk_sp<SkTextBlob> MakeEmojiBlob(sk_sp<SkTypeface> serverTf, SkScalar textSize,
     font.setTypeface(serverTf);
     font.setSize(textSize);
 
-    const char* text = ToolUtils::EmojiSampleText();
+    const char* text = ToolUtils::EmojiSample().sampleText;
     auto blob = SkTextBlob::MakeFromText(text, strlen(text), font);
     if (clientTf == nullptr) return blob;
 
@@ -950,7 +950,7 @@ DEF_GANESH_TEST_FOR_RENDERING_CONTEXTS(SkRemoteGlyphCache_TypefaceWithNoPaths,
     SkStrikeServer server(discardableManager.get());
     SkStrikeClient client(discardableManager, false);
 
-    auto serverTypeface = ToolUtils::EmojiTypeface();
+    auto serverTypeface = ToolUtils::EmojiSample().typeface;
     const SkTypefaceID serverTypefaceID = serverTypeface->uniqueID();
 
     auto props = FindSurfaceProps(direct);

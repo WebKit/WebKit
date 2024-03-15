@@ -149,6 +149,7 @@ SKIA_PUBLIC_HDRS = [
     "include/gpu/ganesh/SkSurfaceGanesh.h",
     "include/gpu/ganesh/gl/GrGLBackendSurface.h",
     "include/gpu/ganesh/gl/GrGLDirectContext.h",
+    "include/gpu/ganesh/mtl/GrMtlBackendSemaphore.h",
     "include/gpu/ganesh/mtl/SkSurfaceMetal.h",
     "include/gpu/ganesh/vk/GrBackendDrawableInfo.h",
     "include/gpu/ganesh/vk/GrVkBackendSemaphore.h",
@@ -1298,7 +1299,7 @@ BASE_SRCS_ALL = [
     "src/opts/SkOpts_RestoreTarget.h",
     "src/opts/SkOpts_SetTarget.h",
     "src/opts/SkRasterPipeline_opts.h",
-    "src/opts/SkSwizzler_opts.h",
+    "src/opts/SkSwizzler_opts.inc",
     "src/pathops/SkAddIntersections.cpp",
     "src/pathops/SkAddIntersections.h",
     "src/pathops/SkDConicLineIntersection.cpp",
@@ -1907,6 +1908,7 @@ base_gl_srcs = [
     "src/gpu/ganesh/gl/GrGLCaps.h",
     "src/gpu/ganesh/gl/GrGLContext.cpp",
     "src/gpu/ganesh/gl/GrGLContext.h",
+    "src/gpu/ganesh/gl/GrGLCoreFunctions.h",
     "src/gpu/ganesh/gl/GrGLDefines.h",
     "src/gpu/ganesh/gl/GrGLDirectContext.cpp",
     "src/gpu/ganesh/gl/GrGLExtensions.cpp",
@@ -2037,6 +2039,8 @@ PORTS_SRCS_IOS = [
     "src/utils/mac/SkCreateCGImageRef.cpp",
     "src/utils/mac/SkCTFont.cpp",
     "src/utils/mac/SkCTFont.h",
+    "src/utils/mac/SkCTFontCreateExactCopy.cpp",
+    "src/utils/mac/SkCTFontCreateExactCopy.h",
     "src/utils/mac/SkUniqueCFRef.h",
 ]
 
@@ -2112,6 +2116,7 @@ MTL_HDRS = [
 
 MTL_SRCS = [
     "src/gpu/ganesh/mtl/GrMtlAttachment.mm",
+    "src/gpu/ganesh/mtl/GrMtlBackendSemaphore.mm",
     "src/gpu/ganesh/mtl/GrMtlBuffer.mm",
     "src/gpu/ganesh/mtl/GrMtlCaps.mm",
     "src/gpu/ganesh/mtl/GrMtlCommandBuffer.mm",
@@ -2583,6 +2588,9 @@ SKUNICODE_HDRS = [
 
 SKSHAPER_HDRS = [
     "modules/skshaper/include/SkShaper.h",
+    "modules/skshaper/include/SkShaper_harfbuzz.h",
+    "modules/skshaper/include/SkShaper_coretext.h",
+    "modules/skshaper/include/SkShaper_skunicode.h",
 ]
 
 SKSHAPER_HARFBUZZ_SRCS = [

@@ -113,7 +113,7 @@ inline void DrawAtlas::processEviction(PlotLocator plotLocator) {
     fAtlasGeneration = fGenerationCounter->next();
 }
 
-inline bool DrawAtlas::updatePlot(AtlasLocator* atlasLocator, Plot* plot) {
+inline void DrawAtlas::updatePlot(Plot* plot, AtlasLocator* atlasLocator) {
     int pageIdx = plot->pageIndex();
     this->makeMRU(plot, pageIdx);
 
@@ -121,11 +121,10 @@ inline bool DrawAtlas::updatePlot(AtlasLocator* atlasLocator, Plot* plot) {
 
     atlasLocator->updatePlotLocator(plot->plotLocator());
     SkDEBUGCODE(this->validate(*atlasLocator);)
-    return true;
 }
 
-bool DrawAtlas::addToPage(unsigned int pageIdx, int width, int height, const void* image,
-                          AtlasLocator* atlasLocator) {
+bool DrawAtlas::addRectToPage(unsigned int pageIdx, int width, int height,
+                              AtlasLocator* atlasLocator) {
     SkASSERT(fProxies[pageIdx]);
 
     // look through all allocated plots for one we can share, in Most Recently Refed order
@@ -133,8 +132,9 @@ bool DrawAtlas::addToPage(unsigned int pageIdx, int width, int height, const voi
     plotIter.init(fPages[pageIdx].fPlotList, PlotList::Iter::kHead_IterStart);
 
     for (Plot* plot = plotIter.get(); plot; plot = plotIter.next()) {
-        if (plot->addSubImage(width, height, image, atlasLocator)) {
-            return this->updatePlot(atlasLocator, plot);
+        if (plot->addRect(width, height, atlasLocator)) {
+            this->updatePlot(plot, atlasLocator);
+            return true;
         }
     }
 
@@ -182,18 +182,33 @@ bool DrawAtlas::recordUploads(DrawContext* dc, Recorder* recorder) {
 static constexpr auto kPlotRecentlyUsedCount = 32;
 static constexpr auto kAtlasRecentlyUsedCount = 128;
 
-DrawAtlas::ErrorCode DrawAtlas::addToAtlas(Recorder* recorder,
-                                           int width, int height, const void* image,
-                                           AtlasLocator* atlasLocator) {
-    if (width > fPlotWidth || height > fPlotHeight) {
+DrawAtlas::ErrorCode DrawAtlas::addRect(Recorder* recorder,
+                                        int width, int height,
+                                        AtlasLocator* atlasLocator) {
+    if (width > fPlotWidth || height > fPlotHeight || width < 0 || height < 0) {
         return ErrorCode::kError;
+    }
+
+    // We permit zero-sized rects to allow inverse fills in the PathAtlases to work,
+    // but we don't want to enter them in the Rectanizer. So we handle this special case here.
+    // For text this should be caught at a higher level, but if not the only end result
+    // will be rendering a degenerate quad.
+    if (width == 0 || height == 0) {
+        if (fNumActivePages == 0) {
+            // Make sure we have a Page for the AtlasLocator to refer to
+            this->activateNewPage(recorder);
+        }
+        atlasLocator->updateRect(skgpu::IRect16::MakeXYWH(0, 0, 0, 0));
+        // Use the MRU Plot from the first Page
+        atlasLocator->updatePlotLocator(fPages[0].fPlotList.head()->plotLocator());
+        return ErrorCode::kSucceeded;
     }
 
     // Look through each page to see if we can upload without having to flush
     // We prioritize this upload to the first pages, not the most recently used, to make it easier
     // to remove unused pages in reverse page order.
     for (unsigned int pageIdx = 0; pageIdx < fNumActivePages; ++pageIdx) {
-        if (this->addToPage(pageIdx, width, height, image, atlasLocator)) {
+        if (this->addRectToPage(pageIdx, width, height, atlasLocator)) {
             return ErrorCode::kSucceeded;
         }
     }
@@ -209,11 +224,9 @@ DrawAtlas::ErrorCode DrawAtlas::addToAtlas(Recorder* recorder,
             SkASSERT(plot);
             if (plot->lastUseToken() < recorder->priv().tokenTracker()->nextFlushToken()) {
                 this->processEvictionAndResetRects(plot);
-                SkDEBUGCODE(bool verify = )plot->addSubImage(width, height, image, atlasLocator);
+                SkDEBUGCODE(bool verify = )plot->addRect(width, height, atlasLocator);
                 SkASSERT(verify);
-                if (!this->updatePlot(atlasLocator, plot)) {
-                    return ErrorCode::kError;
-                }
+                this->updatePlot(plot, atlasLocator);
                 return ErrorCode::kSucceeded;
             }
         }
@@ -223,7 +236,7 @@ DrawAtlas::ErrorCode DrawAtlas::addToAtlas(Recorder* recorder,
             return ErrorCode::kError;
         }
 
-        if (this->addToPage(fNumActivePages-1, width, height, image, atlasLocator)) {
+        if (this->addRectToPage(fNumActivePages-1, width, height, atlasLocator)) {
             return ErrorCode::kSucceeded;
         } else {
             // If we fail to upload to a newly activated page then something has gone terribly
@@ -241,6 +254,23 @@ DrawAtlas::ErrorCode DrawAtlas::addToAtlas(Recorder* recorder,
     // token, and call back into this function. The subsequent call will have plots available
     // for fresh uploads.
     return ErrorCode::kTryAgain;
+}
+
+DrawAtlas::ErrorCode DrawAtlas::addToAtlas(Recorder* recorder,
+                                           int width, int height, const void* image,
+                                           AtlasLocator* atlasLocator) {
+    ErrorCode ec = this->addRect(recorder, width, height, atlasLocator);
+    if (ec == ErrorCode::kSucceeded) {
+        Plot* plot = this->findPlot(*atlasLocator);
+        plot->copySubImage(*atlasLocator, image);
+    }
+
+    return ec;
+}
+
+SkIPoint DrawAtlas::prepForRender(const AtlasLocator& locator, SkAutoPixmapStorage* pixmap) {
+    Plot* plot = this->findPlot(locator);
+    return plot->prepForRender(locator, pixmap);
 }
 
 void DrawAtlas::compact(AtlasToken startTokenForNextFlush) {

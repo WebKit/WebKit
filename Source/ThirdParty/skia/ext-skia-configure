@@ -37,6 +37,7 @@ declare -a gn_args=(
 	skia_enable_tools=false
 
 	skia_use_egl=true
+	skia_use_epoxy_egl=true
 	skia_use_expat=false
 	skia_use_icu=false
 	skia_use_jpeg_gainmaps=false

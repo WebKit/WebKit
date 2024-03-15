@@ -787,6 +787,12 @@ public:
      // If 'blender' is null, it's equivalent to kSrcOver blending.
     void draw(const Context& ctx, SkDevice* target, const SkBlender* blender) const;
 
+    // SkCanvas can prepare layer source images with transparent padding, similarly to AutoSurface.
+    // This adjusts the FilterResult metadata to be aware of that padding. This should only be
+    // called when it's externally known that the FilterResult has a 1px buffer of transparent
+    // black pixels and has had no further modifications.
+    FilterResult insetForSaveLayer() const;
+
     class Builder;
 
     enum class ShaderFlags : int {
@@ -924,6 +930,14 @@ private:
               SkDevice* device,
               bool preserveDeviceState,
               const SkBlender* blender=nullptr) const;
+
+    // This variant should only be called after analysis and final sampling has been determined,
+    // and there's no need to fall back to filling the device with shader.
+    void drawAnalyzedImage(const Context& ctx,
+                           SkDevice* device,
+                           const SkSamplingOptions& finalSampling,
+                           SkEnumBitMask<BoundsAnalysis> analysis,
+                           const SkBlender* blender=nullptr) const;
 
     // Returns the FilterResult as a shader, ideally without resolving to an axis-aligned image.
     // 'xtraSampling' is the sampling that any parent shader applies to the FilterResult.

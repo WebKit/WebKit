@@ -375,6 +375,16 @@ Device::Device(Recorder* recorder,
     if (addInitialClear) {
         fDC->clear(SkColors::kTransparent);
     }
+    if (fRecorder->priv().caps()->defaultMSAASamplesCount() > 1) {
+        if (fRecorder->priv().caps()->msaaRenderToSingleSampledSupport()) {
+            fMSAASupported = true;
+        } else {
+            TextureInfo msaaTexInfo =
+                   fRecorder->priv().caps()->getDefaultMSAATextureInfo(fDC->target()->textureInfo(),
+                                                                       Discardable::kYes);
+            fMSAASupported = msaaTexInfo.isValid();
+        }
+    }
 }
 
 Device::~Device() {
@@ -964,12 +974,11 @@ sktext::gpu::AtlasDrawDelegate Device::atlasDelegate() {
 
 void Device::onDrawGlyphRunList(SkCanvas* canvas,
                                 const sktext::GlyphRunList& glyphRunList,
-                                const SkPaint& initialPaint,
-                                const SkPaint& drawingPaint) {
+                                const SkPaint& paint) {
     fRecorder->priv().textBlobCache()->drawGlyphRunList(canvas,
                                                         this->localToDevice(),
                                                         glyphRunList,
-                                                        drawingPaint,
+                                                        paint,
                                                         this->strikeDeviceInfo(),
                                                         this->atlasDelegate());
 }
@@ -1413,7 +1422,6 @@ std::pair<const Renderer*, PathAtlas*> Device::chooseRenderer(const Transform& l
     }
 
     PathAtlas* pathAtlas = nullptr;
-    bool msaaSupported = fRecorder->priv().caps()->defaultMSAASamplesCount() > 1;
 
     // Prefer compute atlas draws if supported. This currently implicitly filters out clip draws as
     // they require MSAA. Eventually we may want to route clip shapes to the atlas as well but not
@@ -1428,7 +1436,7 @@ std::pair<const Renderer*, PathAtlas*> Device::chooseRenderer(const Transform& l
     // TODO: enable other uses of the software path renderer
     } else if (atlasProvider->isAvailable(AtlasProvider::PathAtlasFlags::kRaster) &&
                (strategy == PathRendererStrategy::kRasterAA ||
-                (strategy == PathRendererStrategy::kDefault && !msaaSupported))) {
+                (strategy == PathRendererStrategy::kDefault && !fMSAASupported))) {
         pathAtlas = atlasProvider->getRasterPathAtlas();
     }
 
@@ -1440,8 +1448,7 @@ std::pair<const Renderer*, PathAtlas*> Device::chooseRenderer(const Transform& l
         //
         // If the hardware doesn't support MSAA and anti-aliasing is required, then we always render
         // paths with atlasing.
-        if (!msaaSupported || strategy == PathRendererStrategy::kComputeAnalyticAA ||
-            strategy == PathRendererStrategy::kRasterAA) {
+        if (!fMSAASupported || strategy != PathRendererStrategy::kDefault) {
             return {nullptr, pathAtlas};
         }
 
@@ -1687,21 +1694,17 @@ TextureProxyView Device::readSurfaceView() const {
 }
 
 sk_sp<sktext::gpu::Slug> Device::convertGlyphRunListToSlug(const sktext::GlyphRunList& glyphRunList,
-                                                           const SkPaint& initialPaint,
-                                                           const SkPaint& drawingPaint) {
+                                                           const SkPaint& paint) {
     return sktext::gpu::SlugImpl::Make(this->localToDevice(),
                                        glyphRunList,
-                                       initialPaint,
-                                       drawingPaint,
+                                       paint,
                                        this->strikeDeviceInfo(),
                                        SkStrikeCache::GlobalStrikeCache());
 }
 
-void Device::drawSlug(SkCanvas* canvas, const sktext::gpu::Slug* slug,
-                      const SkPaint& drawingPaint) {
+void Device::drawSlug(SkCanvas* canvas, const sktext::gpu::Slug* slug, const SkPaint& paint) {
     auto slugImpl = static_cast<const sktext::gpu::SlugImpl*>(slug);
-    slugImpl->subRuns()->draw(canvas, slugImpl->origin(), drawingPaint, slugImpl,
-                              this->atlasDelegate());
+    slugImpl->subRuns()->draw(canvas, slugImpl->origin(), paint, slugImpl, this->atlasDelegate());
 }
 
 } // namespace skgpu::graphite

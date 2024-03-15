@@ -55,7 +55,7 @@ static sk_sp<const GrGLInterface> skiaGLInterface()
     static NeverDestroyed<sk_sp<const GrGLInterface>> interface {
 #if USE(EGL)
 #if USE(LIBEPOXY)
-        GrGLMakeEpoxyEGLInterface()
+        GrGLInterfaces::MakeEpoxyEGL()
 #else
         GrGLInterfaces::MakeEGL()
 #endif
