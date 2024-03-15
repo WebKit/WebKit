@@ -39,13 +39,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationEffect);
 
-AnimationEffect::AnimationEffect()
-{
-}
+AnimationEffect::AnimationEffect() = default;
 
-AnimationEffect::~AnimationEffect()
-{
-}
+AnimationEffect::~AnimationEffect() = default;
 
 void AnimationEffect::setAnimation(WebAnimation* animation)
 {

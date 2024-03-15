@@ -33,13 +33,9 @@
 
 namespace WebCore {
 
-NavigatorAudioSession::NavigatorAudioSession()
-{
-}
+NavigatorAudioSession::NavigatorAudioSession() = default;
 
-NavigatorAudioSession::~NavigatorAudioSession()
-{
-}
+NavigatorAudioSession::~NavigatorAudioSession() = default;
 
 RefPtr<DOMAudioSession> NavigatorAudioSession::audioSession(Navigator& navigator)
 {

@@ -64,9 +64,7 @@ WebCodecsVideoEncoder::WebCodecsVideoEncoder(ScriptExecutionContext& context, In
 {
 }
 
-WebCodecsVideoEncoder::~WebCodecsVideoEncoder()
-{
-}
+WebCodecsVideoEncoder::~WebCodecsVideoEncoder() = default;
 
 static bool isSupportedEncoderCodec(const String& codec, const Settings::Values& settings)
 {

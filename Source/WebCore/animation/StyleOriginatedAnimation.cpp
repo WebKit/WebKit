@@ -51,9 +51,7 @@ StyleOriginatedAnimation::StyleOriginatedAnimation(const Styleable& styleable, c
 {
 }
 
-StyleOriginatedAnimation::~StyleOriginatedAnimation()
-{
-}
+StyleOriginatedAnimation::~StyleOriginatedAnimation() = default;
 
 const std::optional<const Styleable> StyleOriginatedAnimation::owningElement() const
 {

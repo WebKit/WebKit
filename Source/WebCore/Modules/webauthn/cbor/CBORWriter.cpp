@@ -36,9 +36,7 @@
 
 namespace cbor {
 
-CBORWriter::~CBORWriter()
-{
-}
+CBORWriter::~CBORWriter() = default;
 
 // static
 std::optional<Vector<uint8_t>> CBORWriter::write(const CBORValue& node, size_t maxNestingLevel)

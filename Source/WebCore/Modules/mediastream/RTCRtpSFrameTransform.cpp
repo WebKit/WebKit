@@ -68,9 +68,7 @@ RTCRtpSFrameTransform::RTCRtpSFrameTransform(ScriptExecutionContext& context, Op
     m_transformer->setAuthenticationSize(options.authenticationSize);
 }
 
-RTCRtpSFrameTransform::~RTCRtpSFrameTransform()
-{
-}
+RTCRtpSFrameTransform::~RTCRtpSFrameTransform() = default;
 
 void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, std::optional<uint64_t> keyId, DOMPromiseDeferred<void>&& promise)
 {

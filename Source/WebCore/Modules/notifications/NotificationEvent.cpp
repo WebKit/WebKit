@@ -54,9 +54,7 @@ NotificationEvent::NotificationEvent(const AtomString& type, NotificationEventIn
 {
 }
 
-NotificationEvent::~NotificationEvent()
-{
-}
+NotificationEvent::~NotificationEvent() = default;
 
 } // namespace WebCore
 

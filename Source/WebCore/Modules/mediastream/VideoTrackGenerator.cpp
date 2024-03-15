@@ -93,9 +93,7 @@ VideoTrackGenerator::VideoTrackGenerator(Ref<Sink>&& sink, Ref<WritableStream>&&
 {
 }
 
-VideoTrackGenerator::~VideoTrackGenerator()
-{
-}
+VideoTrackGenerator::~VideoTrackGenerator() = default;
 
 void VideoTrackGenerator::setMuted(ScriptExecutionContext& context, bool muted)
 {

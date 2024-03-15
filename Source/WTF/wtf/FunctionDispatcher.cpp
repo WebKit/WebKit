@@ -28,12 +28,8 @@
 
 namespace WTF {
 
-FunctionDispatcher::FunctionDispatcher()
-{
-}
+FunctionDispatcher::FunctionDispatcher() = default;
 
-FunctionDispatcher::~FunctionDispatcher()
-{
-}
+FunctionDispatcher::~FunctionDispatcher() = default;
 
 } // namespace WTF

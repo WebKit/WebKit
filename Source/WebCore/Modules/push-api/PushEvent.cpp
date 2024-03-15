@@ -78,8 +78,6 @@ PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, st
 {
 }
 
-PushEvent::~PushEvent()
-{
-}
+PushEvent::~PushEvent() = default;
 
 } // namespace WebCore

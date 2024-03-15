@@ -36,9 +36,7 @@ Decoder::Decoder(std::span<const uint8_t> span)
 {
 }
 
-Decoder::~Decoder()
-{
-}
+Decoder::~Decoder() = default;
 
 bool Decoder::bufferIsLargeEnoughToContain(size_t size) const
 {

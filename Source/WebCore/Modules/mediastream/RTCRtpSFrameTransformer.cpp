@@ -153,9 +153,7 @@ RTCRtpSFrameTransformer::RTCRtpSFrameTransformer(CompatibilityMode mode)
 {
 }
 
-RTCRtpSFrameTransformer::~RTCRtpSFrameTransformer()
-{
-}
+RTCRtpSFrameTransformer::~RTCRtpSFrameTransformer() = default;
 
 ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t> keyId)
 {

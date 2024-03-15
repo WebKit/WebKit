@@ -45,13 +45,9 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(KeyframeEffectStack);
 
-KeyframeEffectStack::KeyframeEffectStack()
-{
-}
+KeyframeEffectStack::KeyframeEffectStack() = default;
 
-KeyframeEffectStack::~KeyframeEffectStack()
-{
-}
+KeyframeEffectStack::~KeyframeEffectStack() = default;
 
 bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 {

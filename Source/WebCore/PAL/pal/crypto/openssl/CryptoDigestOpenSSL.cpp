@@ -103,13 +103,9 @@ private:
     SHAContext m_context;
 };
 
-CryptoDigest::CryptoDigest()
-{
-}
+CryptoDigest::CryptoDigest() = default;
 
-CryptoDigest::~CryptoDigest()
-{
-}
+CryptoDigest::~CryptoDigest() = default;
 
 static std::unique_ptr<CryptoDigestContext> createCryptoDigest(CryptoDigest::Algorithm algorithm)
 {

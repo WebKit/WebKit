@@ -60,9 +60,7 @@ WebCodecsAudioDecoder::WebCodecsAudioDecoder(ScriptExecutionContext& context, In
 {
 }
 
-WebCodecsAudioDecoder::~WebCodecsAudioDecoder()
-{
-}
+WebCodecsAudioDecoder::~WebCodecsAudioDecoder() = default;
 
 static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
 {

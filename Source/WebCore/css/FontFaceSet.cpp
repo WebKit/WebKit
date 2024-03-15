@@ -85,9 +85,7 @@ FontFaceSet::FontFaceSet(ScriptExecutionContext& context, CSSFontFaceSet& backin
     m_backing->addFontEventClient(*this);
 }
 
-FontFaceSet::~FontFaceSet()
-{
-}
+FontFaceSet::~FontFaceSet() = default;
 
 FontFaceSet::Iterator::Iterator(FontFaceSet& set)
     : m_target(set)

@@ -73,9 +73,7 @@ TransformStream::TransformStream(JSC::JSValue internalTransformStream, Ref<Reada
 {
 }
 
-TransformStream::~TransformStream()
-{
-}
+TransformStream::~TransformStream() = default;
 
 static ExceptionOr<JSC::JSValue> invokeTransformStreamFunction(JSC::JSGlobalObject& globalObject, const JSC::Identifier& identifier, const JSC::MarkedArgumentBuffer& arguments)
 {

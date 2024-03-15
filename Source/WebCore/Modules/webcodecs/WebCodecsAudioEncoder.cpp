@@ -68,9 +68,7 @@ WebCodecsAudioEncoder::WebCodecsAudioEncoder(ScriptExecutionContext& context, In
 {
 }
 
-WebCodecsAudioEncoder::~WebCodecsAudioEncoder()
-{
-}
+WebCodecsAudioEncoder::~WebCodecsAudioEncoder() = default;
 
 static bool isSupportedEncoderCodec(const StringView& codec)
 {

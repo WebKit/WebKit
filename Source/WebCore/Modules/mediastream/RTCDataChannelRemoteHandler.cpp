@@ -48,9 +48,7 @@ RTCDataChannelRemoteHandler::RTCDataChannelRemoteHandler(RTCDataChannelIdentifie
 {
 }
 
-RTCDataChannelRemoteHandler::~RTCDataChannelRemoteHandler()
-{
-}
+RTCDataChannelRemoteHandler::~RTCDataChannelRemoteHandler() = default;
 
 void RTCDataChannelRemoteHandler::didChangeReadyState(RTCDataChannelState state)
 {
