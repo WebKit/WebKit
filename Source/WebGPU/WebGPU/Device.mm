@@ -323,8 +323,10 @@ void Device::generateAnOutOfMemoryError(String&& message)
         return;
     }
 
-    if (m_uncapturedErrorCallback)
+    if (m_uncapturedErrorCallback) {
         m_uncapturedErrorCallback(WGPUErrorType_OutOfMemory, WTFMove(message));
+        m_uncapturedErrorCallback = nullptr;
+    }
 }
 
 void Device::generateAnInternalError(String&& message)
@@ -339,8 +341,10 @@ void Device::generateAnInternalError(String&& message)
         return;
     }
 
-    if (m_uncapturedErrorCallback)
+    if (m_uncapturedErrorCallback) {
         m_uncapturedErrorCallback(WGPUErrorType_Internal, WTFMove(message));
+        m_uncapturedErrorCallback = nullptr;
+    }
 }
 
 uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
