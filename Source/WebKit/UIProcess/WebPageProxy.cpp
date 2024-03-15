@@ -7111,10 +7111,22 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
 
+        bool shouldForceDownload = [&] {
+            if (policyAction != PolicyAction::Use || process->lockdownMode() != WebProcessProxy::LockdownMode::Enabled)
+                return false;
+            if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(navigationResponse->response().mimeType()))
+                return true;
+            if (MIMETypeRegistry::isSupportedModelMIMEType(navigationResponse->response().mimeType()))
+                return true;
 #if USE(QUICK_LOOK)
-        if (policyAction == PolicyAction::Use && process->lockdownMode() == WebProcessProxy::LockdownMode::Enabled && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(navigationResponse->response().mimeType()) || MIMETypeRegistry::isSupportedModelMIMEType(navigationResponse->response().mimeType()) || PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType())))
-            policyAction = PolicyAction::Download;
+            if (PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType()))
+                return true;
 #endif
+            return false;
+        }();
+        if (shouldForceDownload)
+            policyAction = PolicyAction::Download;
+
         receivedNavigationResponsePolicyDecision(policyAction, navigation.get(), request, WTFMove(navigationResponse), WTFMove(completionHandler));
     }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No);
 
