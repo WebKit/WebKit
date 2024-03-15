@@ -261,6 +261,12 @@ bool DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingModeIfNeeded()
     enterAcceleratedCompositingMode(nullptr);
     return true;
 }
+
+void DrawingAreaCoordinatedGraphics::backgroundColorDidChange()
+{
+    if (m_layerTreeHost)
+        m_layerTreeHost->backgroundColorDidChange();
+}
 #endif
 
 void DrawingAreaCoordinatedGraphics::setDeviceScaleFactor(float deviceScaleFactor)

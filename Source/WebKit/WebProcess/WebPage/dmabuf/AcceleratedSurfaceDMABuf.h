@@ -81,6 +81,7 @@ private:
 #endif
 
     void visibilityDidChange(bool) override;
+    bool backgroundColorDidChange() override;
 
     AcceleratedSurfaceDMABuf(WebPage&, Client&);
 
@@ -173,7 +174,7 @@ private:
         unsigned size() const { return m_freeTargets.size() + m_lockedTargets.size(); }
 
 #if USE(GBM)
-        void setupBufferFormat(const Vector<DMABufRendererBufferFormat>&);
+        void setupBufferFormat(const Vector<DMABufRendererBufferFormat>&, bool);
 #endif
 
     private:

@@ -38,6 +38,11 @@ enum class DMABufRendererBufferFormatUsage : uint8_t {
 };
 
 struct DMABufRendererBufferFormat {
+    bool operator==(const DMABufRendererBufferFormat& other) const
+    {
+        return usage == other.usage && fourcc == other.fourcc && modifiers == other.modifiers;
+    }
+
     using Usage = DMABufRendererBufferFormatUsage;
     Usage usage { Usage::Rendering };
     uint32_t fourcc { 0 };

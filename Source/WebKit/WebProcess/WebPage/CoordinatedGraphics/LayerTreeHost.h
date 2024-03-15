@@ -100,6 +100,7 @@ public:
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&);
 
     void deviceOrPageScaleFactorChanged();
+    void backgroundColorDidChange();
 
 #if !HAVE(DISPLAY_LINK)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
@@ -138,6 +139,7 @@ private:
     void didDestroyGLContext() override;
     void resize(const WebCore::IntSize&) override;
     void willRenderFrame() override;
+    void clearIfNeeded() override;
     void didRenderFrame() override;
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
 

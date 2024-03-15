@@ -270,8 +270,7 @@ void ThreadedCompositor::renderLayerTree()
     if (needsResize)
         glViewport(0, 0, viewportSize.width(), viewportSize.height());
 
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    m_client.clearIfNeeded();
 
     m_scene->applyStateChanges(states);
     m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);

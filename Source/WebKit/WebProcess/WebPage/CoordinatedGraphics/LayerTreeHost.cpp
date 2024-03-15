@@ -333,6 +333,11 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
     didChangeViewport();
 }
 
+void LayerTreeHost::backgroundColorDidChange()
+{
+    m_surface->backgroundColorDidChange();
+}
+
 #if !HAVE(DISPLAY_LINK)
 RefPtr<DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
@@ -397,6 +402,11 @@ void LayerTreeHost::willRenderFrame()
             drawingArea->willStartRenderingUpdateDisplay();
     });
     m_surface->willRenderFrame();
+}
+
+void LayerTreeHost::clearIfNeeded()
+{
+    m_surface->clearIfNeeded();
 }
 
 void LayerTreeHost::didRenderFrame()

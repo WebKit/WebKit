@@ -3921,6 +3921,9 @@ void WebPage::setBackgroundColor(const std::optional<WebCore::Color>& background
     if (RefPtr frameView = localMainFrameView())
         frameView->updateBackgroundRecursively(backgroundColor);
 
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    m_drawingArea->backgroundColorDidChange();
+#endif
     m_drawingArea->setNeedsDisplay();
 }
 

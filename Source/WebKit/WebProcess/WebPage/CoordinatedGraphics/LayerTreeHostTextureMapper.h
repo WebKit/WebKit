@@ -76,6 +76,7 @@ public:
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&);
     void setIsDiscardable(bool);
     void deviceOrPageScaleFactorChanged();
+    void backgroundColorDidChange();
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
 
