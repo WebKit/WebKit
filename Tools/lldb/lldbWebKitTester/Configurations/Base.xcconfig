@@ -85,7 +85,7 @@ WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter -Wno-unused-private-field -Wno-u
 
 HEADER_SEARCH_PATHS = ${BUILT_PRODUCTS_DIR}/usr/local/include;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 
 DEAD_CODE_STRIPPING = YES;
 DEAD_CODE_STRIPPING[config=Debug] = NO;
