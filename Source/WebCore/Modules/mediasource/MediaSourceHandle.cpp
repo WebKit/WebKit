@@ -120,9 +120,9 @@ bool MediaSourceHandle::isManaged() const
     return m_private->m_isManaged;
 }
 
-void MediaSourceHandle::ensureOnDispatcher(MediaSourceHandle::TaskType&& task) const
+void MediaSourceHandle::ensureOnDispatcher(MediaSourceHandle::TaskType&& task, bool forceRun) const
 {
-    m_private->dispatch(WTFMove(task));
+    m_private->dispatch(WTFMove(task), forceRun);
 }
 
 Ref<DetachedMediaSourceHandle> MediaSourceHandle::detach()

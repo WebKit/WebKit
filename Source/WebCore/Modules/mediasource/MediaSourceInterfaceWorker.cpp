@@ -96,9 +96,10 @@ bool MediaSourceInterfaceWorker::attachToElement(WeakPtr<HTMLMediaElement>&& ele
     if (m_handle->hasEverBeenAssignedAsSrcObject())
         return false;
     m_handle->setHasEverBeenAssignedAsSrcObject();
+    bool forceRun = true;
     m_handle->ensureOnDispatcher([element = WTFMove(element)](MediaSource& mediaSource) mutable {
         mediaSource.attachToElement(WTFMove(element));
-    });
+    }, forceRun);
     return true;
 }
 

@@ -1084,6 +1084,9 @@ media/media-source/media-managedmse-memorypressure.html [ Timeout ]
 media/media-source/media-managedmse-memorypressure-inactive.html [ Timeout ]
 media/media-source/media-managedmse-eviction.html [ Timeout ]
 
+# No MSE in a worker on glib platforms for now (requires GPU process).
+media/media-source/worker/media-managedmse-worker.html [ Timeout ]
+
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
 webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Missing Failure ]

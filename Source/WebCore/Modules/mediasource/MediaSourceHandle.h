@@ -55,7 +55,7 @@ public:
     bool isManaged() const;
 
     using TaskType = Function<void(MediaSource&)>;
-    void ensureOnDispatcher(TaskType&&) const;
+    void ensureOnDispatcher(TaskType&&, bool forceRun = false) const;
 
     RefPtr<MediaSourcePrivateClient> mediaSourcePrivateClient() const;
     RefPtr<MediaSourcePrivate> mediaSourcePrivate() const;
