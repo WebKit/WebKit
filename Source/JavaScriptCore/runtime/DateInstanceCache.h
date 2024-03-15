@@ -29,11 +29,11 @@
 #include <array>
 #include <wtf/GregorianDateTime.h>
 #include <wtf/HashFunctions.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
 
-class DateInstanceData : public RefCounted<DateInstanceData> {
+class DateInstanceData : public ThreadSafeRefCounted<DateInstanceData> {
 public:
     static Ref<DateInstanceData> create() { return adoptRef(*new DateInstanceData); }
 

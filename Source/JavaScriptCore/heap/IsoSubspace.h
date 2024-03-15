@@ -65,6 +65,7 @@ private:
     void didResizeBits(unsigned newSize) override;
     void didRemoveBlock(unsigned blockIndex) override;
     void didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
+    void didBeginSweepingToFreeListConcurrently(MarkedBlock::Handle*) override;
 
     BlockDirectory m_directory;
     std::unique_ptr<IsoMemoryAllocatorBase> m_isoAlignedMemoryAllocator;

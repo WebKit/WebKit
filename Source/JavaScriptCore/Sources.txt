@@ -532,6 +532,7 @@ heap/CodeBlockSet.cpp
 heap/CollectionScope.cpp
 heap/CollectorPhase.cpp
 heap/CompleteSubspace.cpp
+heap/ConcurrentSweeper.cpp
 heap/ConservativeRoots.cpp
 heap/DeferGC.cpp
 heap/DestructionMode.cpp

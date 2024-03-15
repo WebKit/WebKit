@@ -850,6 +850,9 @@ void Options::notifyOptionsChanged()
         Options::scribbleFreeCells() = true;
     }
 
+    if (Options::sweepSynchronously())
+        Options::useConcurrentSweeper() = false;
+
     if (Options::reservedZoneSize() < minimumReservedZoneSize)
         Options::reservedZoneSize() = minimumReservedZoneSize;
     if (Options::softReservedZoneSize() < Options::reservedZoneSize() + minimumReservedZoneSize)

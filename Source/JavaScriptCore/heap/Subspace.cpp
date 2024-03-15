@@ -144,5 +144,10 @@ void Subspace::didBeginSweepingToFreeList(MarkedBlock::Handle*)
 {
 }
 
+void Subspace::didBeginSweepingToFreeListConcurrently(MarkedBlock::Handle*)
+{
+}
+
+
 } // namespace JSC
 
