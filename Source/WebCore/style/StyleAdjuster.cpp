@@ -985,9 +985,9 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
     // "Additionally, when any containments are active on either the HTML html or body elements, propagation of
     // properties from the body element to the initial containing block, the viewport, or the canvas background, is disabled."
     auto shouldPropagateFromBody = [&] {
-        if (bodyStyle && !bodyStyle->effectiveContainment().isEmpty())
+        if (bodyStyle && !bodyStyle->usedContain().isEmpty())
             return false;
-        return documentElementStyle->effectiveContainment().isEmpty();
+        return documentElementStyle->usedContain().isEmpty();
     }();
 
     auto writingMode = [&] {

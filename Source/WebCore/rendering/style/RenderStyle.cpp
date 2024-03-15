@@ -845,8 +845,8 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.inputSecurity != second.inputSecurity)
         return true;
 
-    if (first.effectiveContainment().contains(Containment::Size) != second.effectiveContainment().contains(Containment::Size)
-        || first.effectiveContainment().contains(Containment::InlineSize) != second.effectiveContainment().contains(Containment::InlineSize))
+    if (first.usedContain().contains(Containment::Size) != second.usedContain().contains(Containment::Size)
+        || first.usedContain().contains(Containment::InlineSize) != second.usedContain().contains(Containment::InlineSize))
         return true;
 
     // content-visibiliy:hidden turns on contain:size which requires relayout.
@@ -3030,7 +3030,7 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
         if (colorProperty == CSSPropertyTextDecorationColor) {
             if (hasPositiveStrokeWidth()) {
                 // Prefer stroke color if possible but not if it's fully transparent.
-                auto strokeColor = colorResolvingCurrentColor(effectiveStrokeColorProperty(), visitedLink);
+                auto strokeColor = colorResolvingCurrentColor(usedStrokeColorProperty(), visitedLink);
                 if (strokeColor.isVisible())
                     return strokeColor;
             }
@@ -3776,7 +3776,7 @@ bool RenderStyle::hasPositiveStrokeWidth() const
 
 Color RenderStyle::computedStrokeColor() const
 {
-    return visitedDependentColor(effectiveStrokeColorProperty());
+    return visitedDependentColor(usedStrokeColorProperty());
 }
 
 UsedClear RenderStyle::usedClear(const RenderObject& renderer)

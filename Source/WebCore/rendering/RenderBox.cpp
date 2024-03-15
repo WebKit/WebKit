@@ -474,8 +474,8 @@ void RenderBox::updateFromStyle()
             if (is<HTMLHtmlElement>(documentElement)
                 && document().body() == element()
                 && documentElementRenderer.effectiveOverflowX() == Overflow::Visible
-                && !styleToUse.effectiveContainment()
-                && !documentElementRenderer.style().effectiveContainment()) {
+                && !styleToUse.usedContain()
+                && !documentElementRenderer.style().usedContain()) {
                 boxHasNonVisibleOverflow = false;
             }
         }

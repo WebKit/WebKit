@@ -310,7 +310,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && fieldSizing == o.fieldSizing;
 }
 
-OptionSet<Containment> StyleRareNonInheritedData::effectiveContainment() const
+OptionSet<Containment> StyleRareNonInheritedData::usedContain() const
 {
     auto containment = contain;
 

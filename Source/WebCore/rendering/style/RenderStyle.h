@@ -709,7 +709,7 @@ public:
     inline BoxSizing boxSizingForAspectRatio() const;
     inline bool hasAspectRatio() const;
     inline OptionSet<Containment> contain() const;
-    inline OptionSet<Containment> effectiveContainment() const;
+    inline OptionSet<Containment> usedContain() const;
     inline bool containsLayout() const;
     inline bool containsSize() const;
     inline bool containsInlineSize() const;
@@ -1631,7 +1631,7 @@ public:
     inline bool hasExplicitlySetStrokeColor() const;
     static inline StyleColor initialStrokeColor();
     Color computedStrokeColor() const;
-    inline CSSPropertyID effectiveStrokeColorProperty() const;
+    inline CSSPropertyID usedStrokeColorProperty() const;
 
     inline float strokeMiterLimit() const;
     inline void setStrokeMiterLimit(float);
