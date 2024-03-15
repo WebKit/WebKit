@@ -600,9 +600,6 @@ end
 
 macro loadCagedJSValue(source, dest, scratchOrLength)
     loadp source, dest
-    if GIGACAGE_ENABLED
-        cage(GigacageConfig + Gigacage::Config::basePtrs + GigacageJSValueBasePtrOffset, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
-    end
 end
 
 macro loadVariable(get, fieldName, valueReg)

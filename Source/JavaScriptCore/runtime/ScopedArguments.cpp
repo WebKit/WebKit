@@ -49,7 +49,7 @@ ScopedArguments* ScopedArguments::createUninitialized(VM& vm, Structure* structu
     WriteBarrier<Unknown>* storage = nullptr;
     if (totalLength > table->length()) {
         Checked<unsigned> overflowLength = totalLength - table->length();
-        storage = static_cast<WriteBarrier<Unknown>*>(vm.jsValueGigacageAuxiliarySpace().allocate(vm, overflowLength * sizeof(WriteBarrier<Unknown>), nullptr, AllocationFailureMode::Assert));
+        storage = static_cast<WriteBarrier<Unknown>*>(vm.auxiliarySpace().allocate(vm, overflowLength * sizeof(WriteBarrier<Unknown>), nullptr, AllocationFailureMode::Assert));
     }
 
     ScopedArguments* result = new (

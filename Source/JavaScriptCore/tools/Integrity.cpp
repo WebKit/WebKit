@@ -289,13 +289,6 @@ bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
     if (cell->isObject()) {
         AUDIT_VERIFY(jsDynamicCast<JSObject*>(cell),
             "cell %p cell.type %d", cell, cell->type());
-
-        if (Gigacage::isEnabled(Gigacage::JSValue)) {
-            JSObject* object = bitwise_cast<JSObject*>(cell);
-            const Butterfly* butterfly = object->butterfly();
-            AUDIT_VERIFY(!butterfly || Gigacage::isCaged(Gigacage::JSValue, butterfly),
-                "cell %p cell.type %d butterfly %p", cell, cell->type(), butterfly);
-        }
     }
 
     return true;

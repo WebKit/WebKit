@@ -93,7 +93,7 @@ auto MarkedVectorBase::expandCapacity(int newCapacity) -> Status
     auto checkedSize = CheckedSize(newCapacity) * sizeof(EncodedJSValue);
     if (UNLIKELY(checkedSize.hasOverflowed()))
         return Status::Overflowed;
-    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(Gigacage::tryMalloc(Gigacage::JSValue, checkedSize));
+    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(FastMalloc::tryMalloc(checkedSize));
     if (!newBuffer)
         return Status::Overflowed;
     for (int i = 0; i < m_size; ++i) {
@@ -102,7 +102,7 @@ auto MarkedVectorBase::expandCapacity(int newCapacity) -> Status
     }
 
     if (EncodedJSValue* base = mallocBase())
-        Gigacage::free(Gigacage::JSValue, base);
+        FastMalloc::free(base);
 
     m_buffer = newBuffer;
     m_capacity = newCapacity;

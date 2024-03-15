@@ -42,12 +42,10 @@ namespace bmalloc { namespace api {
 #if BUSE(LIBPAS)
 namespace {
 static const bmalloc_type primitiveGigacageType = BMALLOC_TYPE_INITIALIZER(1, 1, "Primitive Gigacage");
-static const bmalloc_type jsValueGigacageType = BMALLOC_TYPE_INITIALIZER(1, 1, "JSValue Gigacage");
 } // anonymous namespace
 
 pas_primitive_heap_ref gigacageHeaps[Gigacage::NumberOfKinds] = {
     BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&primitiveGigacageType),
-    BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&jsValueGigacageType)
 };
 #endif
 

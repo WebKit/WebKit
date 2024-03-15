@@ -27,10 +27,10 @@
 
 #include "APICast.h"
 #include "ArgList.h"
-#include <wtf/CagedUniquePtr.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
+#include <wtf/UniqueArray.h>
 
 namespace JSC {
 
@@ -39,7 +39,6 @@ class MarkedJSValueRefArray final : public BasicRawSentinelNode<MarkedJSValueRef
     WTF_MAKE_NONMOVABLE(MarkedJSValueRefArray);
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    using BufferUniquePtr = CagedUniquePtr<Gigacage::JSValue, JSValueRef>;
     static constexpr size_t inlineCapacity = MarkedArgumentBuffer::inlineCapacity;
 
     JS_EXPORT_PRIVATE MarkedJSValueRefArray(JSGlobalContextRef, unsigned);
@@ -67,7 +66,7 @@ public:
 private:
     unsigned m_size;
     JSValueRef m_inlineBuffer[inlineCapacity] { };
-    BufferUniquePtr m_buffer;
+    UniqueArray<JSValueRef> m_buffer;
 };
 
 } // namespace JSC

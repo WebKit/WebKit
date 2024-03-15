@@ -488,7 +488,6 @@ set(WTF_SOURCES
     HexNumber.cpp
     Int128.cpp
     JSONValues.cpp
-    JSValueMalloc.cpp
     Language.cpp
     LikelyDenseUnsignedIntegerSet.cpp
     Lock.cpp

@@ -48,7 +48,7 @@ public:
             m_markSet->remove(this);
 
         if (EncodedJSValue* base = mallocBase())
-            Gigacage::free(Gigacage::JSValue, base);
+            FastMalloc::free(base);
     }
 
     size_t size() const { return m_size; }

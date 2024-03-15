@@ -2489,7 +2489,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
         return true;
     };
 
-    if (isGigacageMemoryExhausted(Gigacage::JSValue) || isGigacageMemoryExhausted(Gigacage::Primitive))
+    if (isGigacageMemoryExhausted(Gigacage::Primitive))
         return JSValue::encode(throwOutOfMemoryError(globalObject, scope, "Gigacage is exhausted"_s));
 
     String workerPath = "worker"_s;

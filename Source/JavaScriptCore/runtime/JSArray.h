@@ -221,7 +221,7 @@ inline JSArray* JSArray::tryCreate(VM& vm, Structure* structure, unsigned initia
             return nullptr;
 
         unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, vectorLengthHint);
-        void* temp = vm.jsValueGigacageAuxiliarySpace().allocate(
+        void* temp = vm.auxiliarySpace().allocate(
             vm,
             Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)),
             nullptr, AllocationFailureMode::ReturnNull);

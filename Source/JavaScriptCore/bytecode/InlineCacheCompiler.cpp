@@ -3005,7 +3005,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             size_t newSize = accessCase.newStructure()->outOfLineCapacity() * sizeof(JSValue);
 
             if (allocatingInline) {
-                Allocator allocator = vm.jsValueGigacageAuxiliarySpace().allocatorForNonInline(newSize, AllocatorForMode::AllocatorIfExists);
+                Allocator allocator = vm.auxiliarySpace().allocatorForNonInline(newSize, AllocatorForMode::AllocatorIfExists);
 
                 jit.emitAllocate(scratchGPR, JITAllocator::constant(allocator), scratchGPR2, scratchGPR3, slowPath);
                 jit.addPtr(CCallHelpers::TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR);
