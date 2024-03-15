@@ -44,7 +44,9 @@
 #include "Performance.h"
 #include "PictureInPictureSupport.h"
 #include "RenderImage.h"
+#include "RenderLayerCompositor.h"
 #include "RenderVideo.h"
+#include "RenderView.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "VideoFrameMetadata.h"
@@ -111,6 +113,47 @@ void HTMLVideoElement::didAttachRenderers()
         if (auto* renderer = this->renderer())
             renderer->imageResource().setCachedImage(m_imageLoader->image());
     }
+}
+
+void HTMLVideoElement::acceleratedRenderingStateChanged()
+{
+    computeAcceleratedRenderingStateAndUpdateMediaPlayer();
+}
+
+bool HTMLVideoElement::supportsAcceleratedRendering() const
+{
+    return RefPtr { player() } && player()->supportsAcceleratedRendering();
+}
+
+void HTMLVideoElement::mediaPlayerRenderingModeChanged()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    // Kick off a fake recalcStyle that will update the compositing tree.
+    computeAcceleratedRenderingStateAndUpdateMediaPlayer();
+    invalidateStyleAndLayerComposition();
+}
+
+void HTMLVideoElement::computeAcceleratedRenderingStateAndUpdateMediaPlayer()
+{
+    RefPtr player = this->player();
+    if (!player)
+        return;
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    // This function must return "true" when the video is playing in the
+    // picture-in-picture window or if it is in fullscreen.
+    // Otherwise, the MediaPlayerPrivate* may destroy the video layer if
+    // it is no longer in the DOM.
+    bool isInFullScreen = fullscreenMode() != VideoFullscreenModeNone;
+#else
+    bool isInFullScreen = false;
+#endif
+    auto* renderer = this->renderer();
+    bool canBeAccelerated = player->supportsAcceleratedRendering() && (isInFullScreen || (renderer && renderer->view().compositor().hasAcceleratedCompositing()));
+    if (canBeAccelerated == m_renderingCanBeAccelerated)
+        return;
+    m_renderingCanBeAccelerated = canBeAccelerated;
+    player->acceleratedRenderingStateChanged(); // This call will trigger a call back to `mediaPlayerRenderingCanBeAccelerated()` from the MediaPlayer.
 }
 
 void HTMLVideoElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
@@ -666,6 +709,9 @@ void HTMLVideoElement::mediaPlayerEngineUpdated()
     HTMLMediaElement::mediaPlayerEngineUpdated();
     if (!m_videoFrameRequests.isEmpty() && player())
         player()->startVideoFrameMetadataGathering();
+
+    // If the RenderLayerCompositor had queried the element's MediaPlayer::supportsAcceleratedRendering prior the player having been created it would have been set to false.
+    mediaPlayerRenderingModeChanged();
 }
 
 } // namespace WebCore
