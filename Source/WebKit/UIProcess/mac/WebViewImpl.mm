@@ -327,6 +327,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidDeminiaturize:) name:NSWindowDidDeminiaturizeNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidMove:) name:NSWindowDidMoveNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidResize:) name:NSWindowDidResizeNotification object:window];
+    [defaultNotificationCenter addObserver:self selector:@selector(_windowWillBeginSheet:) name:NSWindowWillBeginSheetNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeBackingProperties:) name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeScreen:) name:NSWindowDidChangeScreenNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeLayerHosting:) name:_NSWindowDidChangeContentsHostedInLayerSurfaceNotification object:window];
@@ -361,6 +362,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter removeObserver:self name:NSWindowDidDeminiaturizeNotification object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidMoveNotification object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidResizeNotification object:window];
+    [defaultNotificationCenter removeObserver:self name:NSWindowWillBeginSheetNotification object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
     [defaultNotificationCenter removeObserver:self name:_NSWindowDidChangeContentsHostedInLayerSurfaceNotification object:window];
@@ -435,6 +437,11 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 - (void)_windowDidResize:(NSNotification *)notification
 {
     _impl->windowDidResize();
+}
+
+- (void)_windowWillBeginSheet:(NSNotification *)notification
+{
+    _impl->windowWillBeginSheet();
 }
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification
@@ -2036,6 +2043,13 @@ void WebViewImpl::windowDidMove()
 void WebViewImpl::windowDidResize()
 {
     updateWindowAndViewFrames();
+}
+
+void WebViewImpl::windowWillBeginSheet()
+{
+#if ENABLE(POINTER_LOCK)
+    m_page->requestPointerUnlock();
+#endif
 }
 
 void WebViewImpl::windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor)
