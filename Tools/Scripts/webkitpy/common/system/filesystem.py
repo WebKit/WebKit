@@ -41,12 +41,17 @@ import time
 
 from webkitcorepy import string_utils
 
+if sys.version_info < (3,):
+    # Avoid having to compile scandir where it is unneeded.
+    import scandir
+
 
 class FileSystem(object):
     """FileSystem interface for webkitpy.
 
     Unless otherwise noted, all paths are allowed to be either absolute
     or relative."""
+
     def __init__(self):
         self.sep = os.sep
         self.pardir = os.pardir
@@ -100,12 +105,20 @@ class FileSystem(object):
                 with the filesystem object and the path of each dirfound.
                 The dir is included in the result if the callback returns True.
         """
+
         def filter_all(fs, dirpath):
             return True
+
         dir_filter = dir_filter or filter_all
 
         dirs = []
-        for (dirpath, dirnames, filenames) in os.walk(path):
+
+        if sys.version_info >= (3,):
+            it = os.walk(path)
+        else:
+            it = scandir.walk(path)
+
+        for dirpath, dirnames, filenames in it:
             if dir_filter(self, dirpath):
                 dirs.append(dirpath)
         return dirs
@@ -121,6 +134,7 @@ class FileSystem(object):
                 each file found. The file is included in the result if the
                 callback returns True.
         """
+
         def filter_all(fs, dirpath, basename):
             return True
 
@@ -134,7 +148,12 @@ class FileSystem(object):
         if self.basename(path) in dirs_to_skip:
             return []
 
-        for (dirpath, dirnames, filenames) in os.walk(path):
+        if sys.version_info >= (3,):
+            it = os.walk(path)
+        else:
+            it = scandir.walk(path)
+
+        for dirpath, dirnames, filenames in it:
             for d in dirs_to_skip:
                 if d in dirnames:
                     dirnames.remove(d)
@@ -162,11 +181,20 @@ class FileSystem(object):
     def isdir(self, path):
         return os.path.isdir(path)
 
+    def islink(self, path):
+        return os.path.islink(path)
+
     def join(self, *comps):
         return os.path.join(*comps)
 
     def listdir(self, path):
         return os.listdir(path)
+
+    def scandir(self, path):
+        if sys.version_info >= (3,):
+            return os.scandir(path)
+        else:
+            return scandir.scandir(path)
 
     def mkdtemp(self, **kwargs):
         """Create and return a uniquely named directory.
@@ -180,6 +208,7 @@ class FileSystem(object):
         Note that the object returned is not a string and does not support all of the string
         methods. If you need a string, coerce the object to a string and go from there.
         """
+
         class TemporaryDirectory(object):
             def __init__(self, filesystem, **kwargs):
                 self._filesystem = filesystem

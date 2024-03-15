@@ -200,6 +200,7 @@ def main():
         "webkitpy.common.watchlist.watchlistrule_unittest",
         "webkitpy.featuredefines.matcher_unittest",
         "webkitpy.layout_tests.controllers.layout_test_finder_legacy_unittest",
+        "webkitpy.layout_tests.controllers.layout_test_finder_unittest",
         "webkitpy.layout_tests.controllers.layout_test_runner_unittest",
         "webkitpy.layout_tests.controllers.manager_unittest",
         "webkitpy.layout_tests.controllers.single_test_runner_unittest",

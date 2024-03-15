@@ -448,9 +448,9 @@ def _print_expectations(port, options, args, logging_stream):
         return exit_code
     except Exception as error:
         _log.error('Error printing expectations: {}'.format(error))
+        return -1
     finally:
         printer.cleanup()
-        return -1
 
 
 def _set_up_derived_options(port, options):

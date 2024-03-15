@@ -35,9 +35,7 @@ from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import (
     LayoutTestFinder,
-    Port,
     _is_reference_html_file,
-    _supported_test_extensions,
 )
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.port.test import (
@@ -62,9 +60,6 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
     def tearDown(self):
         self.port = None
         self.finder = None
-
-    def test_supported_test_extensions(self):
-        self.assertEqual(set(_supported_test_extensions) & set(Port._supported_reference_extensions), set(Port._supported_reference_extensions))
 
     def test_is_reference_html_file(self):
         filesystem = MockFileSystem()
@@ -316,34 +311,7 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             t.test_path
             for t in finder.find_tests_by_path(["failures/expected/?mage.html"])
         ]
-        self.assertEqual(
-            tests,
-            [
-                "failures/expected/audio.html?mage.html",
-                "failures/expected/crash.html?mage.html",
-                "failures/expected/exception.html?mage.html",
-                "failures/expected/flaky-leak.html?mage.html",
-                "failures/expected/hang.html?mage.html",
-                "failures/expected/image.html?mage.html",
-                "failures/expected/image_checksum.html?mage.html",
-                "failures/expected/keyboard.html?mage.html",
-                "failures/expected/leak.html?mage.html",
-                "failures/expected/leaky-reftest.html?mage.html",
-                "failures/expected/mismatch.html?mage.html",
-                "failures/expected/missing_audio.html?mage.html",
-                "failures/expected/missing_check.html?mage.html",
-                "failures/expected/missing_image.html?mage.html",
-                "failures/expected/missing_text.html?mage.html",
-                "failures/expected/newlines_leading.html?mage.html",
-                "failures/expected/newlines_trailing.html?mage.html",
-                "failures/expected/newlines_with_excess_CR.html?mage.html",
-                "failures/expected/pixel-fail.html?mage.html",
-                "failures/expected/reftest.html?mage.html",
-                "failures/expected/skip_text.html?mage.html",
-                "failures/expected/text.html?mage.html",
-                "failures/expected/timeout.html?mage.html",
-            ],
-        )
+        self.assertEqual(tests, ["failures/expected/image.html"])
 
     def test_find_glob_c(self):
         finder = self.finder
@@ -783,6 +751,14 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         finder._filesystem.maybe_make_directory(finder._filesystem.dirname(path))
         finder._filesystem.write_text_file(path, json.dumps(resource_files_obj))
 
+        self.assertTrue(
+            finder._is_w3c_resource_file(
+                finder._filesystem,
+                finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests",
+                "wpt.py",
+            )
+        )
+
         self.assertFalse(
             finder._is_w3c_resource_file(
                 finder._filesystem,
@@ -805,6 +781,14 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 finder._port.layout_tests_dir()
                 + "/imported/w3c/web-platform-tests/XMLHttpRequest",
                 "xmlhttprequest-sync-block-defer-scripts-subframe.html.html",
+            )
+        )
+
+        self.assertTrue(
+            finder._is_w3c_resource_file(
+                finder._filesystem,
+                finder._port.layout_tests_dir() + "/imported/w3c/web-platform-tests/common/subdir",
+                "test.html",
             )
         )
 
@@ -890,6 +874,9 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
 
         w3c_path = fs.join(self.port.layout_tests_dir(), "imported", "w3c")
         fs.rmtree(w3c_path)
+
+        # fs.rmtree passes ignore_errors=True, so make sure it's deleted.
+        self.assertFalse(fs.isdir(w3c_path))
 
         finder = LayoutTestFinder(self.port, None)
         tests = [t.test_path for t in finder.find_tests_by_path(["imported/w3c"])]
@@ -1318,13 +1305,13 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
-                ("==", "test-expected.xhtml"),
                 ("==", "test-expected.svg"),
                 ("==", "test-expected.xht"),
+                ("==", "test-expected.xhtml"),
                 ("!=", "test-expected-mismatch.html"),
-                ("!=", "test-expected-mismatch.xhtml"),
                 ("!=", "test-expected-mismatch.svg"),
                 ("!=", "test-expected-mismatch.xht"),
+                ("!=", "test-expected-mismatch.xhtml"),
             )
         )
 

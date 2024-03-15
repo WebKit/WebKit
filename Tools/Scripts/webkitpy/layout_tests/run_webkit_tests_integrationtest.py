@@ -29,7 +29,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import sys
 import unittest
 
 from webkitcorepy import StringIO, OutputCapture
@@ -1050,7 +1049,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         with OutputCapture() as captured:
             logging = StringIO()
-            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
+            exit_code = run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
+
+        self.assertEqual(0, exit_code)
 
         current_type = None
         by_type = {}
@@ -1096,7 +1097,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         with OutputCapture() as captured:
             logging = StringIO()
-            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
+            exit_code = run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
+
+        self.assertEqual(0, exit_code)
 
         current_type = None
         by_type = {}
