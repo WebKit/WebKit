@@ -94,42 +94,6 @@ bool isWOFF(SharedBuffer& buffer)
 #endif
 }
 
-#if USE(WOFF2)
-class WOFF2VectorOut : public woff2::WOFF2Out {
-public:
-    WOFF2VectorOut(Vector<uint8_t>& vector)
-        : m_vector(vector)
-    { }
-
-    bool Write(const void* data, size_t n) override
-    {
-        if (!m_vector.tryReserveCapacity(m_vector.size() + n))
-            return false;
-        m_vector.append(static_cast<const uint8_t*>(data), n);
-        return true;
-    }
-
-    bool Write(const void* data, size_t offset, size_t n) override
-    {
-        if (!m_vector.tryReserveCapacity(offset + n))
-            return false;
-        if (offset + n > m_vector.size())
-            m_vector.grow(offset + n);
-        m_vector.remove(offset, n);
-        m_vector.insert(offset, static_cast<const uint8_t*>(data), n);
-        return true;
-    }
-
-    size_t Size() override
-    {
-        return m_vector.size();
-    }
-
-private:
-    Vector<uint8_t>& m_vector;
-};
-#endif
-
 bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
 {
     ASSERT_ARG(sfnt, sfnt.isEmpty());
@@ -151,8 +115,9 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
 
         if (!sfnt.tryReserveCapacity(sfntSize))
             return false;
+        sfnt.grow(sfntSize);
 
-        WOFF2VectorOut out(sfnt);
+        woff2::WOFF2MemoryOut out(sfnt.data(), sfnt.size());
         return woff2::ConvertWOFF2ToTTF(woffData, woffSize, &out);
     }
 #endif
