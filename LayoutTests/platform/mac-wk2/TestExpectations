@@ -1958,17 +1958,16 @@ webkit.org/b/267796 [ Monterey+ Release ] imported/w3c/web-platform-tests/reques
 
 webkit.org/b/268018 [ Sonoma+ Release ] fast/images/text-recognition/mac/select-word-in-transparent-image-overlay.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/270790 [ Monterey+ x86_64 ] http/wpt/webrtc/video-script-transform.html [ Pass Failure ]
-webkit.org/b/270790 [ Monterey+ x86_64 ] http/wpt/webrtc/video-script-transform-simulcast.html [ Pass Failure ]
-webkit.org/b/270790 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] http/wpt/webrtc/video-script-transform.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] http/wpt/webrtc/video-script-transform-simulcast.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
 
 webkit.org/b/268200 [ Sonoma+ Release ] inspector/console/console-screenshot.html [ Pass Failure ]
 
 webkit.org/b/268406 transitions/flex-transitions.html [ Pass Failure ]
-
-# webkit.org/b/268414 [ macOS ] 2 tests in imported/w3c/web-platform-tests/webrtc are flaky failure
-imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Failure ]
 
 webkit.org/b/268494 [ Monterey+ Release ] media/track/media-element-enqueue-event-crash.html [ Pass Crash ]
 
