@@ -91,6 +91,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/SuddenTermination.h>
+#include <optional>
 #include <pal/system/Sound.h>
 #include <stdio.h>
 #include <wtf/Algorithms.h>
@@ -2553,22 +2554,37 @@ void WebProcessProxy::getNotifications(const URL& registrationURL, const String&
     WebNotificationManagerProxy::sharedServiceWorkerManager().getNotifications(registrationURL, tag, sessionID(), WTFMove(callback));
 }
 
+std::optional<Vector<uint8_t>> WebProcessProxy::getWebCryptoMasterKey()
+{
+    if (auto isKey = m_websiteDataStore->client().webCryptoMasterKey())
+        return isKey;
+    if (auto isKey = defaultWebCryptoMasterKey())
+        return isKey;
+    return std::nullopt;
+}
+
 void WebProcessProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    Vector<uint8_t> wrappedKey;
-    if (wrapSerializedCryptoKey(m_websiteDataStore->client().webCryptoMasterKey(), key, wrappedKey)) {
-        completionHandler(WTFMove(wrappedKey));
-        return;
+    std::optional<Vector<uint8_t>> masterKey(getWebCryptoMasterKey());
+    if (masterKey) {
+        Vector<uint8_t> wrappedKey;
+        if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey)) {
+            completionHandler(WTFMove(wrappedKey));
+            return;
+        }
     }
     completionHandler(std::nullopt);
 }
 
 void WebProcessProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
-    Vector<uint8_t> key;
-    if (unwrapSerializedCryptoKey(m_websiteDataStore->client().webCryptoMasterKey(), wrappedKey, key)) {
-        completionHandler(WTFMove(key));
-        return;
+    std::optional<Vector<uint8_t>> masterKey(getWebCryptoMasterKey());
+    if (masterKey) {
+        Vector<uint8_t> key;
+        if (unwrapSerializedCryptoKey(*masterKey, wrappedKey, key)) {
+            completionHandler(WTFMove(key));
+            return;
+        }
     }
     completionHandler(std::nullopt);
 }

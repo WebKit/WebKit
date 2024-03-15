@@ -233,6 +233,7 @@
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
 #include <WebCore/WritingDirection.h>
+#include <optional>
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/EnumTraits.h>
@@ -11244,19 +11245,26 @@ void WebPageProxy::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOver
         send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyleForMessage), internals().webPageID);
 }
 
+std::optional<Vector<uint8_t>> WebPageProxy::getWebCryptoMasterKey()
+{
+    if (auto keyData = m_websiteDataStore->client().webCryptoMasterKey())
+        return keyData;
+    if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
+        return Vector(keyData->dataReference());
+    return std::nullopt;
+}
+
 void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
     Ref protectedPageClient { pageClient() };
 
-    Vector<uint8_t> masterKey;
-
-    if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
-        masterKey = Vector(keyData->dataReference());
-
-    Vector<uint8_t> wrappedKey;
-    if (wrapSerializedCryptoKey(masterKey, key, wrappedKey)) {
-        completionHandler(WTFMove(wrappedKey));
-        return;
+    std::optional<Vector<uint8_t>> masterKey = getWebCryptoMasterKey();
+    if (masterKey) {
+        Vector<uint8_t> wrappedKey;
+        if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey)) {
+            completionHandler(WTFMove(wrappedKey));
+            return;
+        }
     }
     completionHandler(std::optional<Vector<uint8_t>>());
 }
@@ -11265,15 +11273,13 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Completion
 {
     Ref protectedPageClient { pageClient() };
 
-    Vector<uint8_t> masterKey;
-
-    if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
-        masterKey = Vector(keyData->dataReference());
-
-    Vector<uint8_t> key;
-    if (unwrapSerializedCryptoKey(masterKey, wrappedKey, key)) {
-        completionHandler(WTFMove(key));
-        return;
+    std::optional<Vector<uint8_t>> masterKey = getWebCryptoMasterKey();
+    if (masterKey) {
+        Vector<uint8_t> key;
+        if (unwrapSerializedCryptoKey(*masterKey, wrappedKey, key)) {
+            completionHandler(WTFMove(key));
+            return;
+        }
     }
     completionHandler(std::optional<Vector<uint8_t>>());
 }

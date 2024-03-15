@@ -537,6 +537,7 @@ protected:
     void validateFreezerStatus();
 
 private:
+    std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
     using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, CheckedRef<WebProcessProxy>>;
     static WebProcessProxyMap& allProcessMap();
     static Vector<Ref<WebProcessProxy>> allProcesses();

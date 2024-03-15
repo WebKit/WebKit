@@ -2405,6 +2405,7 @@ public:
     bool hasAllowedToRunInTheBackgroundActivity() const;
 
 private:
+    std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
 

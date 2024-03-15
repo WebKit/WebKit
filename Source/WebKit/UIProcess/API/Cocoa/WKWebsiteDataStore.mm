@@ -91,21 +91,15 @@ public:
 
 private:
 
-    Vector<uint8_t> webCryptoMasterKey() final
+    std::optional<Vector<uint8_t>> webCryptoMasterKey() final
     {
-        if (!m_hasWebCryptoMasterKeySelector || !m_delegate) {
-            auto masterKey = WebCore::defaultWebCryptoMasterKey();
-            if (!masterKey)
-                return { };
-            return *masterKey;
-        }
+        if (!m_hasWebCryptoMasterKeySelector || !m_delegate)
+            return std::nullopt;
 
         RetainPtr<NSData> result = [m_delegate webCryptoMasterKey];
         if (!result)
-            return  { };
-        Vector<uint8_t> key;
-        key.append(static_cast<const uint8_t *>([result.get() bytes]), result.get().length);
-        return key;
+            return std::nullopt;
+        return Vector<uint8_t>(static_cast<const uint8_t *>([result.get() bytes]), result.get().length);
     }
 
     void requestStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler) final
