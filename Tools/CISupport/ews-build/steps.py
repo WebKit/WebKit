@@ -75,6 +75,9 @@ QUEUES_WITH_PUSH_ACCESS = ('commit-queue', 'merge-queue', 'unsafe-merge-queue')
 THRESHOLD_FOR_EXCESSIVE_LOGS_DEFAULT = 1000000
 MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_FOR_EXCESSIVE_LOGS_DEFAULT}'
 
+if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES:
+    CURRENT_HOSTNAME = 'ews-build.webkit.org'
+
 
 class ParseByLineLogObserver(logobserver.LineConsumerLogObserver):
     """A pretty wrapper for LineConsumerLogObserver to avoid
