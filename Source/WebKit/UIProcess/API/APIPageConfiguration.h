@@ -237,6 +237,24 @@ public:
     bool needsStorageAccessFromFileURLsQuirk() const { return m_data.needsStorageAccessFromFileURLsQuirk; }
     void setNeedsStorageAccessFromFileURLsQuirk(bool needs) { m_data.needsStorageAccessFromFileURLsQuirk = needs; }
 
+    bool legacyEncryptedMediaAPIEnabled() const { return m_data.legacyEncryptedMediaAPIEnabled; }
+    void setLegacyEncryptedMediaAPIEnabled(bool enabled) { m_data.legacyEncryptedMediaAPIEnabled = enabled; }
+
+    bool allowMediaContentTypesRequiringHardwareSupportAsFallback() const { return m_data.allowMediaContentTypesRequiringHardwareSupportAsFallback; }
+    void setAllowMediaContentTypesRequiringHardwareSupportAsFallback(bool allow) { m_data.allowMediaContentTypesRequiringHardwareSupportAsFallback = allow; }
+
+    bool colorFilterEnabled() const { return m_data.colorFilterEnabled; }
+    void setColorFilterEnabled(bool enabled) { m_data.colorFilterEnabled = enabled; }
+
+    bool incompleteImageBorderEnabled() const { return m_data.incompleteImageBorderEnabled; }
+    void setIncompleteImageBorderEnabled(bool enabled) { m_data.incompleteImageBorderEnabled = enabled; }
+
+    bool shouldDeferAsynchronousScriptsUntilAfterDocumentLoad() const { return m_data.shouldDeferAsynchronousScriptsUntilAfterDocumentLoad; }
+    void setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad(bool defer) { m_data.shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = defer; }
+
+    bool undoManagerAPIEnabled() const { return m_data.undoManagerAPIEnabled; }
+    void setUndoManagerAPIEnabled(bool enabled) { m_data.undoManagerAPIEnabled = enabled; }
+
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_data.shouldRelaxThirdPartyCookieBlocking; }
 
@@ -348,6 +366,12 @@ private:
         bool allowUniversalAccessFromFileURLs { false };
         bool allowTopNavigationToDataURLs { false };
         bool needsStorageAccessFromFileURLsQuirk { true };
+        bool legacyEncryptedMediaAPIEnabled { true };
+        bool allowMediaContentTypesRequiringHardwareSupportAsFallback { true };
+        bool colorFilterEnabled { false };
+        bool incompleteImageBorderEnabled { false };
+        bool shouldDeferAsynchronousScriptsUntilAfterDocumentLoad { true };
+        bool undoManagerAPIEnabled { false };
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
         WTF::String attributedBundleIdentifier { };

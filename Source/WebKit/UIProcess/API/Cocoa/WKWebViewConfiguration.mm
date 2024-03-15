@@ -159,13 +159,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(APPLE_PAY)
     BOOL _applePayEnabled;
 #endif
-    BOOL _legacyEncryptedMediaAPIEnabled;
-    BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback;
-    BOOL _colorFilterEnabled;
-    BOOL _incompleteImageBorderEnabled;
-    BOOL _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
-    BOOL _drawsBackground;
-    BOOL _undoManagerAPIEnabled;
 #if ENABLE(APP_HIGHLIGHTS)
     BOOL _appHighlightsEnabled;
 #endif
@@ -207,7 +200,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _mediaDataLoadsAutomatically = YES;
     _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
 #endif
-    _legacyEncryptedMediaAPIEnabled = YES;
     _mainContentUserGestureOverrideEnabled = NO;
     _invisibleAutoplayNotPermitted = NO;
     _attachmentElementEnabled = NO;
@@ -234,14 +226,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif // PLATFORM(IOS_FAMILY)
 
     _mediaContentTypesRequiringHardwareSupport = @"";
-    _allowMediaContentTypesRequiringHardwareSupportAsFallback = YES;
-
-    _colorFilterEnabled = NO;
-    _incompleteImageBorderEnabled = NO;
-    _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = YES;
-    _drawsBackground = YES;
-
-    _undoManagerAPIEnabled = NO;
 
 #if ENABLE(APPLE_PAY)
     _applePayEnabled = DEFAULT_VALUE_FOR_ApplePayEnabled;
@@ -416,16 +400,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
     configuration->_additionalSupportedImageTypes = adoptNS([self->_additionalSupportedImageTypes copyWithZone:zone]);
-    configuration->_legacyEncryptedMediaAPIEnabled = self->_legacyEncryptedMediaAPIEnabled;
-    configuration->_allowMediaContentTypesRequiringHardwareSupportAsFallback = self->_allowMediaContentTypesRequiringHardwareSupportAsFallback;
 
     configuration->_groupIdentifier = adoptNS([self->_groupIdentifier copyWithZone:zone]);
-    configuration->_colorFilterEnabled = self->_colorFilterEnabled;
-    configuration->_incompleteImageBorderEnabled = self->_incompleteImageBorderEnabled;
-    configuration->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = self->_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
-    configuration->_drawsBackground = self->_drawsBackground;
 
-    configuration->_undoManagerAPIEnabled = self->_undoManagerAPIEnabled;
 #if ENABLE(APP_HIGHLIGHTS)
     configuration->_appHighlightsEnabled = self->_appHighlightsEnabled;
 #endif
@@ -987,32 +964,32 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_colorFilterEnabled
 {
-    return _colorFilterEnabled;
+    return _pageConfiguration->colorFilterEnabled();
 }
 
 - (void)_setColorFilterEnabled:(BOOL)colorFilterEnabled
 {
-    _colorFilterEnabled = colorFilterEnabled;
+    _pageConfiguration->setColorFilterEnabled(colorFilterEnabled);
 }
 
 - (BOOL)_incompleteImageBorderEnabled
 {
-    return _incompleteImageBorderEnabled;
+    return _pageConfiguration->incompleteImageBorderEnabled();
 }
 
 - (void)_setIncompleteImageBorderEnabled:(BOOL)incompleteImageBorderEnabled
 {
-    _incompleteImageBorderEnabled = incompleteImageBorderEnabled;
+    _pageConfiguration->setIncompleteImageBorderEnabled(incompleteImageBorderEnabled);
 }
 
 - (BOOL)_shouldDeferAsynchronousScriptsUntilAfterDocumentLoad
 {
-    return _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
+    return _pageConfiguration->shouldDeferAsynchronousScriptsUntilAfterDocumentLoad();
 }
 
 - (void)_setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad:(BOOL)shouldDeferAsynchronousScriptsUntilAfterDocumentLoad
 {
-    _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad = shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
+    _pageConfiguration->setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad(shouldDeferAsynchronousScriptsUntilAfterDocumentLoad);
 }
 
 - (WKWebsiteDataStore *)_websiteDataStoreIfExists
@@ -1110,12 +1087,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_drawsBackground
 {
-    return _drawsBackground;
+    return _pageConfiguration->drawsBackground();
 }
 
 - (void)_setDrawsBackground:(BOOL)drawsBackground
 {
-    _drawsBackground = drawsBackground;
+    _pageConfiguration->setDrawsBackground(drawsBackground);
 }
 
 - (BOOL)_requiresUserActionForVideoPlayback
@@ -1324,22 +1301,22 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setLegacyEncryptedMediaAPIEnabled:(BOOL)enabled
 {
-    _legacyEncryptedMediaAPIEnabled = enabled;
+    _pageConfiguration->setLegacyEncryptedMediaAPIEnabled(enabled);
 }
 
 - (BOOL)_legacyEncryptedMediaAPIEnabled
 {
-    return _legacyEncryptedMediaAPIEnabled;
+    return _pageConfiguration->legacyEncryptedMediaAPIEnabled();
 }
 
 - (void)_setAllowMediaContentTypesRequiringHardwareSupportAsFallback:(BOOL)allow
 {
-    _allowMediaContentTypesRequiringHardwareSupportAsFallback = allow;
+    _pageConfiguration->setAllowMediaContentTypesRequiringHardwareSupportAsFallback(allow);
 }
 
 - (BOOL)_allowMediaContentTypesRequiringHardwareSupportAsFallback
 {
-    return _allowMediaContentTypesRequiringHardwareSupportAsFallback;
+    return _pageConfiguration->allowMediaContentTypesRequiringHardwareSupportAsFallback();
 }
 
 - (BOOL)_mediaCaptureEnabled
@@ -1354,12 +1331,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setUndoManagerAPIEnabled:(BOOL)enabled
 {
-    _undoManagerAPIEnabled = enabled;
+    _pageConfiguration->setUndoManagerAPIEnabled(enabled);
 }
 
 - (BOOL)_undoManagerAPIEnabled
 {
-    return _undoManagerAPIEnabled;
+    return _pageConfiguration->undoManagerAPIEnabled();
 }
 
 - (void)_setAppHighlightsEnabled:(BOOL)enabled
