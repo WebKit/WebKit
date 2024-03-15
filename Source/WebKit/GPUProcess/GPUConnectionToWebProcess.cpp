@@ -838,6 +838,16 @@ void GPUConnectionToWebProcess::releaseRemoteCommandListener(RemoteRemoteCommand
 
 void GPUConnectionToWebProcess::setMediaOverridesForTesting(MediaOverridesForTesting overrides)
 {
+    if (!allowTestOnlyIPC()) {
+        MESSAGE_CHECK(!overrides.systemHasAC && !overrides.systemHasBattery && !overrides.vp9HardwareDecoderDisabled && !overrides.vp9DecoderDisabled && !overrides.vp9ScreenSizeAndScale);
+#if PLATFORM(COCOA)
+#if ENABLE(VP9)
+        VP9TestingOverrides::singleton().resetOverridesToDefaultValues();
+#endif
+        SystemBatteryStatusTestingOverrides::singleton().resetOverridesToDefaultValues();
+#endif
+        return;
+    }
 #if ENABLE(VP9) && PLATFORM(COCOA)
     VP9TestingOverrides::singleton().setHardwareDecoderDisabled(WTFMove(overrides.vp9HardwareDecoderDisabled));
     VP9TestingOverrides::singleton().setVP9DecoderDisabled(WTFMove(overrides.vp9DecoderDisabled));
