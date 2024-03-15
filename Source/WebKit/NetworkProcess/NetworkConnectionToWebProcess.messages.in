@@ -62,6 +62,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterInternalBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
     RegisterInternalBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
     UnregisterBlobURL(URL url, std::optional<WebCore::SecurityOriginData> topOrigin)
+    BlobType(URL url) -> (String result) Synchronous
     BlobSize(URL url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFilesForIndexedDB(Vector<String> blobURLs) -> (Vector<String> fileNames)
     RegisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);

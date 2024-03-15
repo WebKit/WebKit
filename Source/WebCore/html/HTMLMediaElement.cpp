@@ -1589,7 +1589,7 @@ void HTMLMediaElement::loadNextSourceChild()
     loadResource(mediaURL, contentType, keySystem);
 }
 
-void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentType, const String& keySystem)
+void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& contentType, const String& keySystem)
 {
     ASSERT(initialURL.isEmpty() || isSafeToLoadURL(initialURL, Complain));
 
@@ -1719,11 +1719,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         m_blobURLForReading = { BlobURL::createPublicURL(document().protectedSecurityOrigin().ptr()), document().topOrigin().data() };
         ThreadableBlobRegistry::registerBlobURL(document().protectedSecurityOrigin().ptr(), document().policyContainer(), m_blobURLForReading, m_blob->url());
 
-        if (!player->load(m_blobURLForReading, contentType, keySystem, !!m_remotePlaybackConfiguration))
+        if (!player->load(m_blobURLForReading, contentType.isEmpty() ? ContentType { m_blob->type() } : contentType, keySystem, !!m_remotePlaybackConfiguration))
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
     }
 
-    if (!loadAttempted && !player->load(url, contentType, keySystem, !!m_remotePlaybackConfiguration))
+    if (!loadAttempted && !player->load(url, url.protocolIsBlob() && contentType.isEmpty() ? ContentType { ThreadableBlobRegistry::blobType(url) } : contentType, keySystem, !!m_remotePlaybackConfiguration))
         mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
 
     mediaPlayerRenderingModeChanged();

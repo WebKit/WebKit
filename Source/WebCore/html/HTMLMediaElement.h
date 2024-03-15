@@ -875,7 +875,7 @@ private:
     virtual void scheduleResizeEventIfSizeChanged(const FloatSize&) { }
 
     void selectMediaResource();
-    void loadResource(const URL&, ContentType&, const String& keySystem);
+    void loadResource(const URL&, const ContentType&, const String& keySystem);
     void scheduleNextSourceChild();
     void loadNextSourceChild();
     void userCancelledLoad();

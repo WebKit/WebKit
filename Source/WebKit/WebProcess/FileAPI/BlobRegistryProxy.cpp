@@ -87,6 +87,13 @@ void BlobRegistryProxy::unregisterBlobURLHandle(const URL& url, const std::optio
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURLHandle(url, topOrigin), 0);
 }
 
+String BlobRegistryProxy::blobType(const URL& url)
+{
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::BlobType(url), 0);
+    auto [result] = sendResult.takeReplyOr(emptyString());
+    return result;
+}
+
 unsigned long long BlobRegistryProxy::blobSize(const URL& url)
 {
     auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::BlobSize(url), 0);

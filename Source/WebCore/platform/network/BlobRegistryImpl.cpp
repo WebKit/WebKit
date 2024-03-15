@@ -301,6 +301,14 @@ BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url, const std::option
     return blobData;
 }
 
+String BlobRegistryImpl::blobType(const URL& url)
+{
+    ASSERT(isMainThread());
+    if (RefPtr data = getBlobDataFromURL(url))
+        return data->contentType();
+    return emptyString();
+}
+
 unsigned long long BlobRegistryImpl::blobSize(const URL& url)
 {
     ASSERT(isMainThread());

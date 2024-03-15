@@ -1021,6 +1021,12 @@ void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url, cons
     session->blobRegistry().unregisterBlobURLHandle(url, topOrigin);
 }
 
+void NetworkConnectionToWebProcess::blobType(const URL& url, CompletionHandler<void(String)>&& completionHandler)
+{
+    auto* session = networkSession();
+    completionHandler(session ? session->blobRegistry().blobType(url) : emptyString());
+}
+
 void NetworkConnectionToWebProcess::blobSize(const URL& url, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     auto* session = networkSession();
