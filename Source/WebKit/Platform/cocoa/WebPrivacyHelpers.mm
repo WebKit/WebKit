@@ -302,6 +302,7 @@ void StorageAccessPromptQuirkController::setCachedQuirks(Vector<WebCore::Organiz
 {
     m_cachedQuirks = WTFMove(quirks);
     m_cachedQuirks.shrinkToFit();
+    RELEASE_LOG_ERROR(ResourceLoadStatistics, "StorageAccessPromptQuirkController::setCachedQuirks: Loaded %lu storage access prompt(s) quirks from WebPrivacy.", quirks.size());
 }
 
 void StorageAccessPromptQuirkController::setCachedQuirksForTesting(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&& quirks)
@@ -313,13 +314,13 @@ void StorageAccessPromptQuirkController::setCachedQuirksForTesting(Vector<WebCor
     });
 }
 
-static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domainPairingsDictToMap(NSDictionary<NSString *, NSArray<NSString *> *> *domainPairings)
+static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomainsDictToMap(NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains)
 {
     HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> map;
-    auto* topDomains = domainPairings.allKeys;
+    auto* topDomains = quirkDomains.allKeys;
     for (NSString *topDomain : topDomains) {
         Vector<WebCore::RegistrableDomain> subFrameDomains;
-        for (NSString *subFrameDomain : [domainPairings objectForKey:topDomain])
+        for (NSString *subFrameDomain : [quirkDomains objectForKey:topDomain])
             subFrameDomains.append(WebCore::RegistrableDomain::fromRawString(subFrameDomain));
         map.add(WebCore::RegistrableDomain::fromRawString(String { topDomain }), WTFMove(subFrameDomains));
     }
@@ -337,6 +338,16 @@ void StorageAccessPromptQuirkController::initialize()
         });
     });
     m_wasInitialized = true;
+}
+
+static Vector<URL> quirkPagesArrayToVector(NSArray<NSString *> *triggerPages)
+{
+    Vector<URL> triggers;
+    for (NSString *page : triggerPages) {
+        if (![page isEqualToString:@"*"])
+            triggers.append(URL { page });
+    }
+    return triggers;
 }
 
 void StorageAccessPromptQuirkController::updateQuirks(CompletionHandler<void()>&& completionHandler)
@@ -361,8 +372,13 @@ void StorageAccessPromptQuirkController::updateQuirks(CompletionHandler<void()>&
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access quirks from WebPrivacy.");
         else {
             auto quirks = [data quirks];
-            for (WPStorageAccessPromptQuirk *quirk : quirks)
-                result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, domainPairingsDictToMap(quirk.domainPairings) });
+            auto hasQuirkDomainsAndTriggerPages = [PAL::getWPStorageAccessPromptQuirkClass() instancesRespondToSelector:@selector(quirkDomains)] && [PAL::getWPStorageAccessPromptQuirkClass() instancesRespondToSelector:@selector(triggerPages)];
+            for (WPStorageAccessPromptQuirk *quirk : quirks) {
+                if (hasQuirkDomainsAndTriggerPages)
+                    result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(quirk.quirkDomains), quirkPagesArrayToVector(quirk.triggerPages) });
+                else
+                    result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(quirk.domainPairings), { } });
+            }
             setCachedQuirks(WTFMove(result));
         }
 

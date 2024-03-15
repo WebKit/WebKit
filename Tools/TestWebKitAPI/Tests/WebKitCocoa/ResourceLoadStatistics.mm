@@ -1470,7 +1470,7 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithQuirk)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] completionHandler:^{
+    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] withTriggerPages:@[] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1498,6 +1498,119 @@ TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithQuirk)
 
     TestWebKitAPI::Util::run(&done);
     TestWebKitAPI::Util::run(&navigationDelegateDone);
+}
+
+TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithTrigger)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer httpServer({
+        { "http://site1.example/page1"_s, { "<body>Done</body>"_s  } },
+        { "http://site1.example/page2"_s, { "<body>Done</body>"_s  } },
+        { "http://site1.example/page3"_s, { "<body>Done</body>"_s  } },
+        { "http://site2.example/page1"_s, { "<body><script>alert(\"Loaded\");</script></body>"_s  } },
+        { "http://site2.example/page2"_s, { "<body>iframe Body</body>"_s  } },
+        { "http://site3.example/page1"_s, { "<body><script>if (window.internals) { internals.withUserGesture(() => { document.requestStorageAccess(); }); document.body.innerText = \"Requesting storage access\"; } else document.body.innerText = \"Internals not present\";</script></body>"_s  } },
+    });
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+    }];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+
+    __block bool done = false;
+    [dataStore _clearResourceLoadStatistics:^(void) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] withTriggerPages:@[@"http://site1.example/page2"] completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    __block bool gotRequestStorageAccessPanelForQuirksForDomain { false };
+    uiDelegate.get().requestStorageAccessPanelForQuirksForDomain = ^(WKWebView *, NSString *, NSString *, NSDictionary<NSString *, NSArray<NSString *> *> *, void  (^completionHandler)(BOOL)) {
+        gotRequestStorageAccessPanelForQuirksForDomain = true;
+        completionHandler(NO);
+    };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration]);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    __block bool didReceiveStorageAccessPrompt = false;
+    [navigationDelegate setDidPromptForStorageAccess:^(WKWebView *webview, NSString *topFrameDomain, NSString *subFrameDomain, BOOL hasQuirk) {
+        if ([webView.get().URL.absoluteString isEqualToString:@"http://site1.example/page1"] || [webView.get().URL.absoluteString isEqualToString:@"http://site1.example/page2"])
+            EXPECT_EQ(hasQuirk, YES);
+        else
+            EXPECT_EQ(hasQuirk, NO);
+        didReceiveStorageAccessPrompt = true;
+    }];
+
+    __block bool finishedNavigation = false;
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page1"]]];
+
+    Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site2.example/page1\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], @"Loaded");
+    EXPECT_FALSE(gotRequestStorageAccessPanelForQuirksForDomain);
+    didReceiveStorageAccessPrompt = false;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page2"]]];
+    Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site2.example/page2\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&didReceiveStorageAccessPrompt);
+    EXPECT_TRUE(gotRequestStorageAccessPanelForQuirksForDomain);
+    done = false;
+    didReceiveStorageAccessPrompt = false;
+    gotRequestStorageAccessPanelForQuirksForDomain = false;
+
+    [dataStore _logUserInteraction:[NSURL URLWithString:@"http://site3.example/"] completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/page3"]]];
+    Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"http://site3.example/page1\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&didReceiveStorageAccessPrompt);
+    EXPECT_FALSE(gotRequestStorageAccessPanelForQuirksForDomain);
+    done = false;
+    didReceiveStorageAccessPrompt = false;
 }
 
 TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithOutQuirk)
@@ -1597,8 +1710,14 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
     [configuration setWebsiteDataStore:dataStore.get()];
     [dataStore _setResourceLoadStatisticsEnabled:YES];
 
+    [dataStore _clearResourceLoadStatistics:^(void) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
     __block bool done = false;
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"webkit.org" withSubFrameDomains:[NSArray arrayWithObject:@"webkit1.org"] completionHandler:^{
+    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObjects:@"site2.example", @"site3.example", nil] withTriggerPages:@[] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1795,7 +1914,7 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] completionHandler:^{
+    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObject:@"site2.example"] withTriggerPages:@[] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1944,7 +2063,7 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObjects:@"site2.example", @"site3.example", nil] completionHandler:^{
+    [dataStore _setStorageAccessPromptQuirkForTesting:@"site1.example" withSubFrameDomains:[NSArray arrayWithObjects:@"site2.example", @"site3.example", nil] withTriggerPages:@[] completionHandler:^{
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

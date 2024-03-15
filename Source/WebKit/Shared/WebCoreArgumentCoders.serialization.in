@@ -7512,7 +7512,8 @@ struct WebCore::Length {
 
 struct WebCore::OrganizationStorageAccessPromptQuirk {
     String organizationName;
-    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domainPairings;
+    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomains;
+    Vector<URL> triggerPages;
 };
 
 #if ENABLE(SHAREABLE_RESOURCE)

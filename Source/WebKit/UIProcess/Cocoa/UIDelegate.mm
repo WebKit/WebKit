@@ -457,7 +457,7 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
 
             NSMutableDictionary<NSString *, NSArray<NSString *> *> *quirkDomains = [NSMutableDictionary dictionaryWithCapacity:1];
             if (organizationStorageAccessPromptQuirk) {
-                for (auto& [topFrameDomain, subFrameDomains] : organizationStorageAccessPromptQuirk->domainPairings) {
+                for (auto& [topFrameDomain, subFrameDomains] : organizationStorageAccessPromptQuirk->quirkDomains) {
                     NSMutableArray<NSString *> *mutableSubFrameDomains = [NSMutableArray arrayWithCapacity:subFrameDomains.size()];
                     for (auto& subFrameDomain : subFrameDomains)
                         [mutableSubFrameDomains addObject:subFrameDomain.string()];
@@ -479,7 +479,7 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
 
     if (organizationStorageAccessPromptQuirk) {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-        presentStorageAccessAlertSSOQuirk(m_uiDelegate->m_webView.get().get(), organizationStorageAccessPromptQuirk->organizationName, organizationStorageAccessPromptQuirk->domainPairings, WTFMove(completionHandler));
+        presentStorageAccessAlertSSOQuirk(m_uiDelegate->m_webView.get().get(), organizationStorageAccessPromptQuirk->organizationName, organizationStorageAccessPromptQuirk->quirkDomains, WTFMove(completionHandler));
 #endif
         return;
     }

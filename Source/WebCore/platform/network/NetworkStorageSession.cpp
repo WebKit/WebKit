@@ -494,12 +494,15 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
     return std::nullopt;
 }
 
-Vector<RegistrableDomain> NetworkStorageSession::storageAccessQuirkForTopFrameDomain(const TopFrameDomain& topDomain)
+Vector<RegistrableDomain> NetworkStorageSession::storageAccessQuirkForTopFrameDomain(const URL& topFrameURL)
 {
     for (auto&& quirk : updatableStorageAccessPromptQuirks()) {
-        auto& domainPairings = quirk.domainPairings;
-        auto entry = domainPairings.find(topDomain);
-        if (entry == domainPairings.end())
+        if (!quirk.triggerPages.isEmpty() && !quirk.triggerPages.contains(topFrameURL))
+            continue;
+
+        auto quirkDomains = quirk.quirkDomains;
+        auto entry = quirkDomains.find(RegistrableDomain { topFrameURL });
+        if (entry == quirkDomains.end())
             continue;
         return entry->value;
     }
@@ -509,9 +512,9 @@ Vector<RegistrableDomain> NetworkStorageSession::storageAccessQuirkForTopFrameDo
 std::optional<OrganizationStorageAccessPromptQuirk> NetworkStorageSession::storageAccessQuirkForDomainPair(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain)
 {
     for (auto&& quirk : updatableStorageAccessPromptQuirks()) {
-        auto& domainPairings = quirk.domainPairings;
-        auto entry = domainPairings.find(topDomain);
-        if (entry == domainPairings.end())
+        auto& quirkDomains = quirk.quirkDomains;
+        auto entry = quirkDomains.find(topDomain);
+        if (entry == quirkDomains.end())
             continue;
         if (!WTF::anyOf(entry->value, [&subDomain](auto&& entry) { return entry == subDomain; }))
             break;

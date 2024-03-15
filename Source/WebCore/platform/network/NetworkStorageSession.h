@@ -238,7 +238,7 @@ public:
     WEBCORE_EXPORT static std::optional<HashSet<RegistrableDomain>> subResourceDomainsInNeedOfStorageAccessForFirstParty(const RegistrableDomain&);
     WEBCORE_EXPORT static bool loginDomainMatchesRequestingDomain(const TopFrameDomain&, const SubResourceDomain&);
     WEBCORE_EXPORT static std::optional<RegistrableDomain> findAdditionalLoginDomain(const TopFrameDomain&, const SubResourceDomain&);
-    WEBCORE_EXPORT static Vector<RegistrableDomain> storageAccessQuirkForTopFrameDomain(const TopFrameDomain&);
+    WEBCORE_EXPORT static Vector<RegistrableDomain> storageAccessQuirkForTopFrameDomain(const URL& topFrameURL);
     WEBCORE_EXPORT static std::optional<OrganizationStorageAccessPromptQuirk> storageAccessQuirkForDomainPair(const TopFrameDomain&, const SubResourceDomain&);
 
 #if ENABLE(APP_BOUND_DOMAINS)

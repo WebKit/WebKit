@@ -97,6 +97,8 @@ constexpr NSInteger WPResourceTypeStorageAccessPromptQuirksData = 7;
 @interface WPStorageAccessPromptQuirk : NSObject
 @property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) NSDictionary<NSString *, NSArray<NSString *> *> *domainPairings;
+@property (nonatomic, readonly) NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains;
+@property (nonatomic, readonly) NSArray<NSString *> *triggerPages;
 @end
 
 @interface WPStorageAccessPromptQuirksData : NSObject

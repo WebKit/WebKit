@@ -1358,22 +1358,21 @@ void WebLocalFrameLoaderClient::loadStorageAccessQuirksIfNeeded()
 {
     RefPtr webPage = m_frame->page();
 
-    if (!webPage || !m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->isMainFrame() || !m_frame->coreLocalFrame()->document())
+    if (!webPage || !m_frame->isMainFrame() || !m_frame->coreLocalFrame()->document())
         return;
 
     auto* document = m_frame->coreLocalFrame()->document();
-    RegistrableDomain domain { document->url() };
-    if (!WebProcess::singleton().haveStorageAccessQuirksForDomain(domain))
+    URL documentURLWithoutFragmentOrQueries { document->url().viewWithoutQueryOrFragmentIdentifier().toStringWithoutCopying() };
+    if (!WebProcess::singleton().haveStorageAccessQuirksForDomain(RegistrableDomain { documentURLWithoutFragmentOrQueries }))
         return;
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::StorageAccessQuirkForTopFrameDomain(WTFMove(domain)), [weakDocument = WeakPtr { *document }](Vector<RegistrableDomain>&& domains) {
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::StorageAccessQuirkForTopFrameDomain(documentURLWithoutFragmentOrQueries), [weakDocument = WeakPtr { *document }](Vector<RegistrableDomain>&& domains) {
         if (!domains.size())
             return;
         if (!weakDocument)
             return;
         weakDocument->quirks().setSubFrameDomainsForStorageAccessQuirk(WTFMove(domains));
     });
-
 }
 
 String WebLocalFrameLoaderClient::generatedMIMETypeForURLScheme(StringView /*URLScheme*/) const

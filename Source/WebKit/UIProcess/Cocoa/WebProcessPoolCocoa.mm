@@ -518,7 +518,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedQuirks();
 
     for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
-        for (auto&& domain : entry.domainPairings.keys())
+        if (!entry.triggerPages.isEmpty()) {
+            for (auto&& page : entry.triggerPages)
+                parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { page });
+            continue;
+        }
+        for (auto&& domain : entry.quirkDomains.keys())
             parameters.storageAccessPromptQuirksDomains.add(domain);
     }
 #endif

@@ -1274,7 +1274,7 @@ void WebsiteDataStore::setResourceLoadStatisticsTimeAdvanceForTesting(Seconds ti
     protectedNetworkProcess()->setResourceLoadStatisticsTimeAdvanceForTesting(m_sessionID, time, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDomain, Vector<String>&& subFrameDomains, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDomain, Vector<String>&& subFrameDomains, Vector<String>&& triggerPages, CompletionHandler<void()>&& completionHandler)
 {
     auto registrableTopFrameDomain = WebCore::RegistrableDomain::fromRawString(WTFMove(topFrameDomain));
     auto registrableTopFrameDomainString = registrableTopFrameDomain.string();
@@ -1284,7 +1284,9 @@ void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDo
             KeyValuePair { WTFMove(registrableTopFrameDomain),
                 subFrameDomains.map([](auto& domain) { return WebCore::RegistrableDomain::fromRawString(String { domain }); })
             },
-        } }
+        } }, {
+            triggerPages.map([](auto& page) { return URL { page }; })
+        }
     } };
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

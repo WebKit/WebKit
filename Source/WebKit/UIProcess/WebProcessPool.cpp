@@ -322,7 +322,12 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         if (RefPtr protectedThis = weakThis.get()) {
             HashSet<WebCore::RegistrableDomain> domainSet;
             for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
-                for (auto&& domain : entry.domainPairings.keys())
+                if (!entry.triggerPages.isEmpty()) {
+                    for (auto&& page : entry.triggerPages)
+                        domainSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(page.string()));
+                    continue;
+                }
+                for (auto&& domain : entry.quirkDomains.keys())
                     domainSet.add(domain);
             }
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));

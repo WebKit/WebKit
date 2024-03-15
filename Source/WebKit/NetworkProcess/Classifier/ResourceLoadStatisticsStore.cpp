@@ -1825,7 +1825,7 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
                 return;
             }
             if (additionalDomainGrants) {
-                for (auto&& [quirkTopFrameDomain, subFrameDomains] : additionalDomainGrants->domainPairings) {
+                for (auto&& [quirkTopFrameDomain, subFrameDomains] : additionalDomainGrants->quirkDomains) {
                     for (auto&& quirkSubFrameDomain : subFrameDomains) {
                         if (quirkTopFrameDomain == topFrameDomain && quirkSubFrameDomain == subFrameDomain)
                             continue;

@@ -1133,9 +1133,9 @@ void NetworkConnectionToWebProcess::requestStorageAccess(RegistrableDomain&& sub
     completionHandler({ WebCore::StorageAccessWasGranted::Yes, WebCore::StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
 }
 
-void NetworkConnectionToWebProcess::storageAccessQuirkForTopFrameDomain(WebCore::RegistrableDomain&& topFrameDomain, CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
+void NetworkConnectionToWebProcess::storageAccessQuirkForTopFrameDomain(URL&& topFrameURL, CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
 {
-    completionHandler(NetworkStorageSession::storageAccessQuirkForTopFrameDomain(topFrameDomain));
+    completionHandler(NetworkStorageSession::storageAccessQuirkForTopFrameDomain(topFrameURL));
 }
 
 void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain)
