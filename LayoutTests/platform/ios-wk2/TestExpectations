@@ -2423,3 +2423,5 @@ imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iter
 imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html [ Pass Failure ]
 
 webkit.org/b/271018 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-012.svg [ ImageOnlyFailure ]
+
+webkit.org/b/271063 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Timeout ]
