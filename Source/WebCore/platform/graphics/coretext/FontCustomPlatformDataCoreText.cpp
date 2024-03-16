@@ -137,7 +137,7 @@ std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSe
 
 FontCustomPlatformSerializedData FontCustomPlatformData::serializedData() const
 {
-    return FontCustomPlatformSerializedData { { creationData.fontFaceData->dataAsSpanForContiguousData() }, creationData.itemInCollection, m_renderingResourceIdentifier };
+    return FontCustomPlatformSerializedData { { creationData.fontFaceData->bytes() }, creationData.itemInCollection, m_renderingResourceIdentifier };
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

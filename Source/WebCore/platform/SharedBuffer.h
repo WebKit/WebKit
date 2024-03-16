@@ -313,7 +313,7 @@ public:
     WEBCORE_EXPORT const uint8_t* data() const;
     WEBCORE_EXPORT const uint8_t& operator[](size_t) const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
-    std::span<const uint8_t> dataAsSpanForContiguousData() const { RELEASE_ASSERT(isContiguous()); return std::span(data(), size()); }
+    std::span<const uint8_t> bytes() const { return std::span(data(), size()); }
     WTF::Persistence::Decoder decoder() const;
 
     enum class MayUseFileMapping : bool { No, Yes };

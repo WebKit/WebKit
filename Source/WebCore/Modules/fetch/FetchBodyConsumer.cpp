@@ -271,7 +271,7 @@ void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, const St
 void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, const String& contentType, const FormData& formData, ScriptExecutionContext* context)
 {
     if (auto sharedBuffer = formData.asSharedBuffer()) {
-        resolveWithData(WTFMove(promise), contentType, sharedBuffer->makeContiguous()->dataAsSpanForContiguousData());
+        resolveWithData(WTFMove(promise), contentType, sharedBuffer->makeContiguous()->bytes());
         return;
     }
 
@@ -289,7 +289,7 @@ void FetchBodyConsumer::resolveWithFormData(Ref<DeferredPromise>&& promise, cons
         if (value.empty()) {
             auto protectedPromise = WTFMove(promise);
             auto buffer = builder.takeAsContiguous();
-            resolveWithData(WTFMove(protectedPromise), contentType, buffer->dataAsSpanForContiguousData());
+            resolveWithData(WTFMove(protectedPromise), contentType, buffer->bytes());
             return;
         }
 
@@ -348,7 +348,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
             if (!chunk) {
                 auto protectedPromise = WTFMove(promise);
                 auto buffer = data.takeAsContiguous();
-                resolveWithTypeAndData(WTFMove(protectedPromise), type, contentType, buffer->dataAsSpanForContiguousData());
+                resolveWithTypeAndData(WTFMove(protectedPromise), type, contentType, buffer->bytes());
                 return;
             }
 
@@ -383,7 +383,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
         return;
     case FetchBodyConsumer::Type::FormData: {
         auto buffer = takeData();
-        if (auto formData = packageFormData(promise->scriptExecutionContext(), contentType, buffer ? buffer->makeContiguous()->dataAsSpanForContiguousData() : std::span<const uint8_t> { }))
+        if (auto formData = packageFormData(promise->scriptExecutionContext(), contentType, buffer ? buffer->makeContiguous()->bytes() : std::span<const uint8_t> { }))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(ExceptionCode::TypeError);
@@ -438,7 +438,7 @@ String FetchBodyConsumer::takeAsText()
         return String();
 
     auto buffer = m_buffer.takeAsContiguous();
-    auto text = TextResourceDecoder::textFromUTF8(buffer->dataAsSpanForContiguousData());
+    auto text = TextResourceDecoder::textFromUTF8(buffer->bytes());
     return text;
 }
 

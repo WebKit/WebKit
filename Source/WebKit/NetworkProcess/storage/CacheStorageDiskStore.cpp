@@ -476,7 +476,7 @@ static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
         // FIXME: Store form data body.
         return Vector<uint8_t> { };
     }, [&](const Ref<WebCore::SharedBuffer>& buffer) {
-        return Vector<uint8_t> { buffer->dataAsSpanForContiguousData() };
+        return Vector<uint8_t> { buffer->bytes() };
     }, [](const std::nullptr_t&) {
         return Vector<uint8_t> { };
     });

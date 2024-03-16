@@ -260,7 +260,7 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
     if (isFormData())
         return &const_cast<FormData&>(formDataBody());
     if (auto* data = m_consumer.data())
-        return FormData::create(data->makeContiguous()->dataAsSpanForContiguousData());
+        return FormData::create(data->makeContiguous()->bytes());
 
     ASSERT_NOT_REACHED();
     return nullptr;
