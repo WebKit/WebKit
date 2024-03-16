@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://w3c.github.io/deviceorientation/#device-motion-event-api
+
 [
     Conditional=DEVICE_ORIENTATION,
-    Exposed=Window
+    Exposed=Window,
+    SecureContext
 ] interface DeviceMotionEvent : Event {
+    // FIXME: Add `constructor` by uncommenting below.
+    // constructor([AtomString] DOMString type, optional DeviceMotionEventInit eventInitDict = {});
     readonly attribute Acceleration? acceleration;
     readonly attribute Acceleration? accelerationIncludingGravity;
     readonly attribute RotationRate? rotationRate;
-    readonly attribute unrestricted double? interval;
+    readonly attribute unrestricted double interval;
 
     [CallWith=CurrentDocument, EnabledBySetting=DeviceOrientationPermissionAPIEnabled] static Promise<DeviceOrientationOrMotionPermissionState> requestPermission();
-
-    undefined initDeviceMotionEvent(optional [AtomString] DOMString type = "",
-                               optional boolean bubbles = false,
-                               optional boolean cancelable = false,
-                               optional Acceleration? acceleration = null,
-                               optional Acceleration? accelerationIncludingGravity = null,
-                               optional RotationRate? rotationRate = null,
-                               optional unrestricted double? interval = null);
 };
 
 [
@@ -48,9 +45,9 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] dictionary Acceleration {
-    double? x;
-    double? y;
-    double? z;
+    double? x = null;
+    double? y = null;
+    double? z = null;
 };
 
 [
@@ -58,7 +55,7 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject
 ] dictionary RotationRate {
-    double? alpha;
-    double? beta;
-    double? gamma;
+    double? alpha = null;
+    double? beta = null;
+    double? gamma = null;
 };

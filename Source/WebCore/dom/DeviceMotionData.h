@@ -92,22 +92,22 @@ public:
     };
 
     WEBCORE_EXPORT static Ref<DeviceMotionData> create();
-    WEBCORE_EXPORT static Ref<DeviceMotionData> create(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, std::optional<double> interval);
+    WEBCORE_EXPORT static Ref<DeviceMotionData> create(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, double interval);
 
     const Acceleration* acceleration() const { return m_acceleration.get(); }
     const Acceleration* accelerationIncludingGravity() const { return m_accelerationIncludingGravity.get(); }
     const RotationRate* rotationRate() const { return m_rotationRate.get(); }
     
-    std::optional<double> interval() const { return m_interval; }
+    double interval() const { return m_interval; }
 
 private:
     DeviceMotionData() = default;
-    DeviceMotionData(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, std::optional<double> interval);
+    DeviceMotionData(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, double interval);
 
     RefPtr<Acceleration> m_acceleration;
     RefPtr<Acceleration> m_accelerationIncludingGravity;
     RefPtr<RotationRate> m_rotationRate;
-    std::optional<double> m_interval;
+    double m_interval;
 };
 
 } // namespace WebCore
