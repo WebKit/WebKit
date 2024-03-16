@@ -149,6 +149,7 @@ public:
     float deviceScaleFactor() const override;
 
     WebCore::FloatRect rectForSelectionInPluginSpace(PDFSelection *) const;
+    Vector<WebCore::FloatRect> selectionBoundsAcrossDocumentInContentSpace(const PDFSelection *) const;
 
     RetainPtr<PDFPage> pageAtIndex(PDFDocumentLayout::PageIndex) const;
 

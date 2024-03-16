@@ -44,6 +44,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Scope.h>
 #include <wtf/Vector.h>
 #include <wtf/cocoa/VectorCocoa.h>
 #include <wtf/text/WTFString.h>
@@ -135,7 +136,7 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
 
     auto mousePositionInPluginSpace = plugin->mousePositionInView(event);
     bool mouseIsOverActiveHighlightButton = false;
-    RefPtr previousActiveHighlight = std::exchange(m_activeDataDetectorHighlight, nullptr);
+    m_staleDataDetectorItemWithHighlight = std::exchange(m_activeDataDetectorItemWithHighlight, { { }, { } });
     RefPtr<PDFDataDetectorItem> dataDetectorItemForActiveHighlight;
 
     if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end()) {
@@ -145,28 +146,31 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
                 continue;
 
             mouseIsOverActiveHighlightButton = isOverButton;
-            m_activeDataDetectorHighlight = coreHighlight.copyRef();
-            dataDetectorItemForActiveHighlight = dataDetectorItem.copyRef();
+            m_activeDataDetectorItemWithHighlight.first = dataDetectorItem.copyRef();
+            m_activeDataDetectorItemWithHighlight.second = coreHighlight.copyRef();
             break;
         }
     }
 
-    if (previousActiveHighlight != m_activeDataDetectorHighlight) {
+    RefPtr previousActiveHighlight = m_staleDataDetectorItemWithHighlight.second;
+    RefPtr activeHighlight = m_activeDataDetectorItemWithHighlight.second;
+
+    if (previousActiveHighlight != activeHighlight) {
         RefPtr overlay = protectedOverlay();
 
         if (previousActiveHighlight)
             previousActiveHighlight->fadeOut();
 
-        if (m_activeDataDetectorHighlight) {
-            overlay->layer().addChild(m_activeDataDetectorHighlight->layer());
-            m_activeDataDetectorHighlight->fadeIn();
+        if (activeHighlight) {
+            overlay->layer().addChild(activeHighlight->layer());
+            activeHighlight->fadeIn();
         }
 
         didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData::No, ActiveHighlightChanged::Yes);
     }
 
     if (event.type() == WebEventType::MouseDown && mouseIsOverActiveHighlightButton)
-        return handleDataDetectorAction(mousePositionInPluginSpace, *dataDetectorItemForActiveHighlight);
+        return handleDataDetectorAction(mousePositionInPluginSpace, *m_activeDataDetectorItemWithHighlight.first);
 
     return false;
 }
@@ -235,20 +239,39 @@ void PDFDataDetectorOverlayController::updatePlatformHighlightData(PDFDocumentLa
 
 void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
 {
+    // Regardless of what we repaint, we don't need the stale data after this.
+    auto resetStaleDataDetectorWithHighlight = makeScopeExit([&] {
+        m_staleDataDetectorItemWithHighlight = { { }, { } };
+    });
+
     if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::Yes) {
         WTF::forEach(m_pdfDataDetectorItemsWithHighlightsMap.keys(), [&](auto pageIndex) {
             updatePlatformHighlightData(pageIndex);
         });
     }
 
-    if (activeHighlightChanged == ActiveHighlightChanged::No && !m_activeDataDetectorHighlight)
+    auto [previousDataDetectorItem, previousActiveHighlight] = m_staleDataDetectorItemWithHighlight;
+    auto [activeDataDetectorItem, activeHighlight] = m_activeDataDetectorItemWithHighlight;
+    if (activeHighlightChanged == ActiveHighlightChanged::No && !activeHighlight && !previousActiveHighlight)
         return;
 
-    RefPtr overlay = protectedOverlay();
+    RefPtr plugin = protectedPlugin();
+    if (!plugin)
+        return;
 
-    // FIXME: Should specify the DDHighlight bounds as the dirty rect instead of repainting the world.
-    if (overlay)
-        overlay->setNeedsDisplay();
+    Vector<IntRect> dirtyRectsInContentSpace;
+    if (activeHighlight)
+        dirtyRectsInContentSpace.appendVector(plugin->selectionBoundsAcrossDocumentInContentSpace(activeDataDetectorItem->selection().get()));
+    if (previousActiveHighlight)
+        dirtyRectsInContentSpace.appendVector(plugin->selectionBoundsAcrossDocumentInContentSpace(previousDataDetectorItem->selection().get()));
+
+    RefPtr overlay = protectedOverlay();
+    if (!overlay)
+        return;
+
+    WTF::forEach(dirtyRectsInContentSpace, [&overlay](const auto& dirtyRectInContentSpace) {
+        overlay->setNeedsDisplay(dirtyRectInContentSpace);
+    });
 }
 
 #pragma mark - PageOverlay::Client

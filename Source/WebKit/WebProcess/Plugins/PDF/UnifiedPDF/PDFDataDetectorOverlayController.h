@@ -78,7 +78,7 @@ private:
     void didScrollFrame(WebCore::PageOverlay&, WebCore::LocalFrame&) final { }
 
     // DataDetectorHighlightClient
-    WebCore::DataDetectorHighlight* activeHighlight() const final { return m_activeDataDetectorHighlight.get(); }
+    WebCore::DataDetectorHighlight* activeHighlight() const final { return m_activeDataDetectorItemWithHighlight.second.get(); }
     void scheduleRenderingUpdate(OptionSet<WebCore::RenderingUpdateStep>) final;
     float deviceScaleFactor() const final;
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&) final;
@@ -99,13 +99,15 @@ private:
     RefPtr<WebCore::PageOverlay> m_overlay;
 
     using PDFDataDetectorItemWithHighlight = std::pair<Ref<PDFDataDetectorItem>, Ref<WebCore::DataDetectorHighlight>>;
+    using PDFDataDetectorItemWithHighlightPtr = std::pair<RefPtr<PDFDataDetectorItem>, RefPtr<WebCore::DataDetectorHighlight>>;
     using PDFDataDetectorItemsWithHighlights = Vector<PDFDataDetectorItemWithHighlight>;
     template <typename Key, typename Value>
     using HashMapWithUnsignedIntegralZeroKeyAllowed = HashMap<Key, Value, WTF::IntHash<Key>, WTF::UnsignedWithZeroKeyHashTraits<Key>>;
     using PDFDataDetectorItemsWithHighlightsMap = HashMapWithUnsignedIntegralZeroKeyAllowed<PDFDocumentLayout::PageIndex, PDFDataDetectorItemsWithHighlights>;
 
     PDFDataDetectorItemsWithHighlightsMap m_pdfDataDetectorItemsWithHighlightsMap;
-    RefPtr<WebCore::DataDetectorHighlight> m_activeDataDetectorHighlight;
+    PDFDataDetectorItemWithHighlightPtr m_activeDataDetectorItemWithHighlight;
+    PDFDataDetectorItemWithHighlightPtr m_staleDataDetectorItemWithHighlight;
 };
 
 } // namespace WebKit

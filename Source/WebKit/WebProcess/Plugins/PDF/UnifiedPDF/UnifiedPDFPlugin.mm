@@ -2760,6 +2760,13 @@ Vector<FloatRect> UnifiedPDFPlugin::selectionBoundsAcrossDocument(const PDFSelec
     });
 }
 
+Vector<FloatRect> UnifiedPDFPlugin::selectionBoundsAcrossDocumentInContentSpace(const PDFSelection *selection) const
+{
+    return selectionBoundsAcrossDocument(selection).map([&](const FloatRect& rectInDocumentSpace) {
+        return convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::Contents, rectInDocumentSpace);
+    });
+}
+
 void UnifiedPDFPlugin::repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason reason, const Vector<FloatRect>& additionalDocumentRectsToRepaint)
 {
     switch (reason) {
