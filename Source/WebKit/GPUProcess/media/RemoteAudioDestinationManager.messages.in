@@ -30,7 +30,7 @@ messages -> RemoteAudioDestinationManager NotRefCounted {
     StartAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying)
     StopAudioDestination(WebKit::RemoteAudioDestinationIdentifier identifier) -> (bool isPlaying)
 #if PLATFORM(COCOA)
-    AudioSamplesStorageChanged(WebKit::RemoteAudioDestinationIdentifier identifier, WebKit::ConsumerSharedCARingBuffer::Handle storageHandle)
+    AudioSamplesStorageChanged(WebKit::RemoteAudioDestinationIdentifier identifier, struct WebKit::ConsumerSharedCARingBufferHandle storageHandle)
 #endif
 }
 

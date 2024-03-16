@@ -26,4 +26,7 @@ header: "WebGPUOrigin2D.h"
     WebCore::WebGPU::IntegerCoordinate x;
     WebCore::WebGPU::IntegerCoordinate y;
 };
+
+using WebKit::WebGPU::Origin2D = std::variant<Vector<WebCore::WebGPU::IntegerCoordinate>, WebKit::WebGPU::Origin2DDict>;
+
 #endif

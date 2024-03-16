@@ -33,3 +33,5 @@ struct WebKit::DynamicViewportSizeUpdate {
     double minimumEffectiveDeviceWidth;
     WebKit::DynamicViewportSizeUpdateID identifier;
 };
+
+using WebKit::DynamicViewportSizeUpdateID = uint64_t;

@@ -52,7 +52,7 @@ struct WebKit::WebExtensionTabQueryParameters {
     std::optional<String> titlePattern;
 
     std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier;
-    std::optional<OptionSet<WebKit::WebExtensionWindow::TypeFilter>> windowType;
+    std::optional<OptionSet<WebKit::WebExtensionWindowTypeFilter>> windowType;
     std::optional<bool> currentWindow;
     std::optional<bool> frontmostWindow;
     std::optional<size_t> index;

@@ -24,7 +24,7 @@
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 messages -> RemoteMediaRecorder NotRefCounted {
-    AudioSamplesStorageChanged(WebKit::ConsumerSharedCARingBuffer::Handle storageHandle, WebCore::CAAudioStreamDescription description)
+    AudioSamplesStorageChanged(struct WebKit::ConsumerSharedCARingBufferHandle storageHandle, WebCore::CAAudioStreamDescription description)
     AudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
     VideoFrameAvailable(struct WebKit::SharedVideoFrame frame)
     FetchData() -> (std::span<const uint8_t> buffer, double timeCode)

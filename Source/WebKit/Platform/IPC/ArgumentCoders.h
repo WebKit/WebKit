@@ -51,22 +51,6 @@
 
 namespace IPC {
 
-// An argument coder works on POD types
-template<typename T> struct SimpleArgumentCoder {
-    static_assert(std::is_trivially_copyable_v<T>);
-
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const T& t)
-    {
-        encoder.encodeObject(t);
-    }
-
-    static std::optional<T> decode(Decoder& decoder)
-    {
-        return decoder.decodeObject<T>();
-    }
-};
-
 template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, std::span<T, Extent> span)

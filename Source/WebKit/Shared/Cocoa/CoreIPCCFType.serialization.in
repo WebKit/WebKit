@@ -29,3 +29,9 @@ webkit_platform_headers: "CoreIPCCFType.h"
 }
 
 #endif // USE(CF)
+
+#if HAVE(SEC_KEYCHAIN)
+using WebKit::CFObjectValue = std::variant<std::nullptr_t, WebKit::CoreIPCCFArray, WebKit::CoreIPCBoolean, WebKit::CoreIPCCFCharacterSet, WebKit::CoreIPCData, WebKit::CoreIPCDate, WebKit::CoreIPCCFDictionary, WebKit::CoreIPCNull, WebKit::CoreIPCNumber, WebKit::CoreIPCString, WebKit::CoreIPCCFURL, WebKit::CoreIPCSecCertificate, WebKit::CoreIPCSecTrust, WebKit::CoreIPCCGColorSpace, WebCore::Color, WebKit::CoreIPCSecKeychainItem, WebKit::CoreIPCSecAccessControl>
+#else
+using WebKit::CFObjectValue = std::variant<std::nullptr_t, WebKit::CoreIPCCFArray, WebKit::CoreIPCBoolean, WebKit::CoreIPCCFCharacterSet, WebKit::CoreIPCData, WebKit::CoreIPCDate, WebKit::CoreIPCCFDictionary, WebKit::CoreIPCNull, WebKit::CoreIPCNumber, WebKit::CoreIPCString, WebKit::CoreIPCCFURL, WebKit::CoreIPCSecCertificate, WebKit::CoreIPCSecTrust, WebKit::CoreIPCCGColorSpace, WebCore::Color, WebKit::CoreIPCSecAccessControl>
+#endif

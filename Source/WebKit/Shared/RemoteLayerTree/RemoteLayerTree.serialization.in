@@ -199,7 +199,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 };
 
 [Nested] struct WebKit::LayerProperties::AnimationChanges {
-    Vector<std::pair<String, WebKit::PlatformCAAnimationRemote::Properties>> addedAnimations;
+    Vector<std::pair<String, WebKit::PlatformCAAnimationRemoteProperties>> addedAnimations;
     HashSet<String> keysOfAnimationsToRemove;
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Vector<Ref<WebCore::AcceleratedEffect>> effects;
@@ -273,3 +273,5 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     [OptionalTupleBit=WebKit::LayerChange::VisibleRectChanged] WebCore::FloatRect visibleRect;
 #endif
 };
+
+using WebKit::LayerHostingContextID = uint32_t;

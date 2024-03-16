@@ -46,3 +46,5 @@ struct WebKit::PlatformCAAnimationRemoteProperties {
 
     Vector<WebKit::PlatformCAAnimationRemoteProperties> animations;
 };
+
+using WebKit::PlatformCAAnimationRemoteProperties::KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>

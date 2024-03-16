@@ -28,4 +28,6 @@ webkit_platform_headers: "ArgumentCodersCocoa.h" "CoreIPCNSCFObject.h"
     [Validator='WebKit::CoreIPCNSCFObject::valueIsAllowed(decoder, *value)'] UniqueRef<WebKit::ObjectValue> value();
 }
 
+using WebKit::ObjectValue = std::variant<std::nullptr_t, WebKit::CoreIPCArray, WebKit::CoreIPCCFType, WebKit::CoreIPCColor, WebKit::CoreIPCData, WebKit::CoreIPCDate, WebKit::CoreIPCDictionary, WebKit::CoreIPCError, WebKit::CoreIPCFont, WebKit::CoreIPCLocale, WebKit::CoreIPCNSShadow, WebKit::CoreIPCNSValue, WebKit::CoreIPCNumber, WebKit::CoreIPCNull, WebKit::CoreIPCSecureCoding, WebKit::CoreIPCString, WebKit::CoreIPCURL>
+
 #endif // USE(CF)

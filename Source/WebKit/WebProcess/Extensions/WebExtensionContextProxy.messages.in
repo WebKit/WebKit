@@ -68,7 +68,7 @@ messages -> WebExtensionContextProxy {
     // Runtime
     DispatchRuntimeMessageEvent(WebKit::WebExtensionContentWorldType contentWorldType, String messageJSON, std::optional<WebKit::WebExtensionFrameIdentifier> targetFrameIdentifier, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (String replyJSON)
     DispatchRuntimeConnectEvent(WebKit::WebExtensionContentWorldType contentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, std::optional<WebKit::WebExtensionFrameIdentifier> targetFrameIdentifier, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (HashCountedSet<WebKit::WebPageProxyIdentifier> addedPortCounts)
-    DispatchRuntimeInstalledEvent(WebKit::WebExtensionContext::InstallReason installReason, String previousVersion)
+    DispatchRuntimeInstalledEvent(enum:uint8_t WebKit::WebExtensionContextInstallReason installReason, String previousVersion)
     DispatchRuntimeStartupEvent()
 
     // Storage

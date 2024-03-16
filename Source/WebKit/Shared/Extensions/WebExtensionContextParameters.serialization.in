@@ -46,5 +46,6 @@ struct WebKit::WebExtensionContextParameters {
 }
 
 using WebKit::WebExtensionError = String;
+using WebKit::WebExtensionContext::PageIdentifierTuple = std::tuple<WebCore::PageIdentifier, std::optional<WebKit::WebExtensionTabIdentifier>, std::optional<WebKit::WebExtensionWindowIdentifier>>;
 
 #endif

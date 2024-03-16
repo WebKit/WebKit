@@ -673,7 +673,14 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 
     [typesNeedingDescriptions minusSet:typesHavingDescriptions];
     [typesNeedingDescriptions minusSet:fundamentalTypes];
-    EXPECT_LT(typesNeedingDescriptions.count, 150u); // FIXME: This should eventually be 0.
+    EXPECT_LT(typesNeedingDescriptions.count, 125u); // FIXME: This should eventually be 0.
+
+    for (NSString *type in typesNeedingDescriptions) {
+        // These are the last two types in the WebKit namespace with non-generated serializers.
+        if ([type isEqualToString:@"WebKit::RemoteObjectInvocation"] || [type isEqualToString:@"WebKit::ObjCObjectGraph"])
+            continue;
+        EXPECT_FALSE([type containsString:@"WebKit"]);
+    }
 }
 
 #endif

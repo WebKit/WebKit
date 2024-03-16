@@ -31,7 +31,9 @@
 #include "Connection.h"
 #include "ContentWorldShared.h"
 #include "DataTaskIdentifier.h"
+#include "DisplayLinkObserverID.h"
 #include "DownloadID.h"
+#include "DrawingAreaInfo.h"
 #include "GeolocationIdentifier.h"
 #include "GraphicsContextGLIdentifier.h"
 #include "IPCConnectionTesterIdentifier.h"
@@ -68,8 +70,10 @@
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #endif
 #include "RemoteMediaResourceIdentifier.h"
+#include "RemoteMediaSourceIdentifier.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
+#include "RemoteSourceBufferIdentifier.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -87,6 +91,7 @@
 #include "UserStyleSheetIdentifier.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
+#include "VisitedLinkTableIdentifier.h"
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionControllerIdentifier.h"
 #include "WebExtensionFrameIdentifier.h"
@@ -490,7 +495,9 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::AuthenticationChallengeIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::ContentWorldIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DataTaskIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::DisplayLinkObserverID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DownloadID));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::DrawingAreaIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GeolocationIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GraphicsContextGLIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCConnectionTesterIdentifier));
@@ -526,8 +533,10 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMSessionIdentifier));
 #endif
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaResourceIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaSourceIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteRemoteCommandListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSerializedImageBufferIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSourceBufferIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteVideoFrameIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingBackendIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingUpdateID));
@@ -540,12 +549,14 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaMapIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageNamespaceIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TapIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::TextCheckerRequestID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TransactionID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserContentControllerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserScriptIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserStyleSheetIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoDecoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoEncoderIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::VisitedLinkTableIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionContextIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionControllerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebExtensionFrameIdentifier));
@@ -602,7 +613,9 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::AuthenticationChallengeIdentifier"_s,
         "WebKit::ContentWorldIdentifier"_s,
         "WebKit::DataTaskIdentifier"_s,
+        "WebKit::DisplayLinkObserverID"_s,
         "WebKit::DownloadID"_s,
+        "WebKit::DrawingAreaIdentifier"_s,
         "WebKit::GeolocationIdentifier"_s,
         "WebKit::GraphicsContextGLIdentifier"_s,
         "WebKit::IPCConnectionTesterIdentifier"_s,
@@ -638,8 +651,10 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteLegacyCDMSessionIdentifier"_s,
 #endif
         "WebKit::RemoteMediaResourceIdentifier"_s,
+        "WebKit::RemoteMediaSourceIdentifier"_s,
         "WebKit::RemoteRemoteCommandListenerIdentifier"_s,
         "WebKit::RemoteSerializedImageBufferIdentifier"_s,
+        "WebKit::RemoteSourceBufferIdentifier"_s,
         "WebKit::RemoteVideoFrameIdentifier"_s,
         "WebKit::RenderingBackendIdentifier"_s,
         "WebKit::RenderingUpdateID"_s,
@@ -652,12 +667,14 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::StorageAreaMapIdentifier"_s,
         "WebKit::StorageNamespaceIdentifier"_s,
         "WebKit::TapIdentifier"_s,
+        "WebKit::TextCheckerRequestID"_s,
         "WebKit::TransactionID"_s,
         "WebKit::UserContentControllerIdentifier"_s,
         "WebKit::UserScriptIdentifier"_s,
         "WebKit::UserStyleSheetIdentifier"_s,
         "WebKit::VideoDecoderIdentifier"_s,
         "WebKit::VideoEncoderIdentifier"_s,
+        "WebKit::VisitedLinkTableIdentifier"_s,
         "WebKit::WebExtensionContextIdentifier"_s,
         "WebKit::WebExtensionControllerIdentifier"_s,
         "WebKit::WebExtensionFrameIdentifier"_s,
