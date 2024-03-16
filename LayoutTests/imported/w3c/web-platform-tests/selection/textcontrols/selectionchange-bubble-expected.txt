@@ -1,10 +1,8 @@
 
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT selectionchange bubbles from input Test timed out
-NOTRUN selectionchange bubbles from input when focused
-NOTRUN selectionchange bubbles from textarea
-NOTRUN selectionchange bubbles from textarea when focused
+PASS selectionchange bubbles from input
+PASS selectionchange bubbles from input when focused
+PASS selectionchange bubbles from textarea
+PASS selectionchange bubbles from textarea when focused
 

@@ -100,7 +100,7 @@ public:
 
     virtual bool dirAutoUsesValue() const = 0;
 
-    void selectionChanged(bool shouldFireSelectEvent);
+    bool selectionChanged(bool shouldFireSelectEvent);
     WEBCORE_EXPORT bool lastChangeWasUserEdit() const;
     void setInnerTextValue(String&&);
     String innerTextValue() const;

@@ -43,6 +43,7 @@
 #include "FloatQuad.h"
 #include "FocusController.h"
 #include "FrameTree.h"
+#include "GCReachableRef.h"
 #include "GraphicsContext.h"
 #include "HTMLBodyElement.h"
 #include "HTMLFormElement.h"
@@ -407,8 +408,11 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     }
 
     // Selection offsets should increase when LF is inserted before the caret in InsertLineBreakCommand. See <https://webkit.org/b/56061>.
-    if (RefPtr textControl = enclosingTextFormControl(newSelection.start()))
-        textControl->selectionChanged(options.contains(SetSelectionOption::FireSelectEvent));
+    // https://www.w3.org/TR/selection-api/#selectionchange-event
+    RefPtr textControl = enclosingTextFormControl(newSelection.start());
+    bool shouldScheduleSelectionChangeEvent = willMutateSelection;
+    if (textControl)
+        shouldScheduleSelectionChangeEvent = textControl->selectionChanged(options.contains(SetSelectionOption::FireSelectEvent));
 
     if (!willMutateSelection)
         return false;
@@ -430,9 +434,19 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     m_xPosForVerticalArrowNavigation = std::nullopt;
     selectFrameElementInParentIfFullySelected();
     document->editor().respondToChangedSelection(oldSelection, options);
-    // https://www.w3.org/TR/selection-api/#selectionchange-event
-    // FIXME: Spec doesn't specify which task source to use.
-    document->queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().selectionchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
+    if (shouldScheduleSelectionChangeEvent) {
+        if (textControl) {
+            document->eventLoop().queueTask(TaskSource::UserInteraction, [textControl = GCReachableRef { *textControl }] {
+                textControl->dispatchEvent(Event::create(eventNames().selectionchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+            });
+        } else {
+            document->eventLoop().queueTask(TaskSource::UserInteraction, [weakDocument = WeakPtr { document.get() }] {
+                if (RefPtr document = weakDocument.get())
+                    document->dispatchEvent(Event::create(eventNames().selectionchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+            });
+        }
+    }
 
     return true;
 }

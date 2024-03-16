@@ -15,7 +15,7 @@ PASS Setting the same selection range twice on the input element
 PASS Calling select() twice on the input element
 PASS Calling setRangeText() after select() on the input element
 PASS Calling setRangeText() repeatedly on the input element
-PASS Calling setRangeText() on empty the input element
+FAIL Calling setRangeText() on empty the input element assert_equals: expected 0 but got 1
 PASS Modifying selectionStart value of the disconnected input element
 PASS Modifying selectionEnd value of the disconnected input element
 PASS Calling setSelectionRange() on the disconnected input element
@@ -30,7 +30,7 @@ PASS Setting the same selection range twice on the disconnected input element
 PASS Calling select() twice on the disconnected input element
 PASS Calling setRangeText() after select() on the disconnected input element
 PASS Calling setRangeText() repeatedly on the disconnected input element
-PASS Calling setRangeText() on empty the disconnected input element
+FAIL Calling setRangeText() on empty the disconnected input element assert_equals: expected 0 but got 1
 PASS Modifying selectionStart value of the textarea element
 PASS Modifying selectionEnd value of the textarea element
 PASS Calling setSelectionRange() on the textarea element
@@ -60,5 +60,5 @@ PASS Setting the same selection range twice on the disconnected textarea element
 PASS Calling select() twice on the disconnected textarea element
 PASS Calling setRangeText() after select() on the disconnected textarea element
 PASS Calling setRangeText() repeatedly on the disconnected textarea element
-PASS Calling setRangeText() on empty the disconnected textarea element
+FAIL Calling setRangeText() on empty the disconnected textarea element assert_equals: expected 0 but got 1
 

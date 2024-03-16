@@ -555,24 +555,29 @@ void HTMLTextFormControlElement::restoreCachedSelection(SelectionRevealMode reve
         scheduleSelectEvent();
 }
 
-void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
+bool HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
 {
     if (!isTextField())
-        return;
+        return false;
 
     // FIXME: Don't re-compute selection start and end if this function was called inside setSelectionRange.
     // selectionStart() or selectionEnd() will return cached selection when this node doesn't have focus
+    unsigned previousSelectionStart = m_cachedSelectionStart;
+    unsigned previousSelectionEnd = m_cachedSelectionEnd;
     cacheSelection(computeSelectionStart(), computeSelectionEnd(), computeSelectionDirection());
 
     document().setHasEverHadSelectionInsideTextFormControl();
 
     if (shouldFireSelectEvent && m_cachedSelectionStart != m_cachedSelectionEnd)
         dispatchEvent(Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+
+    return previousSelectionStart != m_cachedSelectionStart || previousSelectionEnd != m_cachedSelectionEnd;
 }
 
 void HTMLTextFormControlElement::scheduleSelectEvent()
 {
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+    queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().selectionchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
 void HTMLTextFormControlElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
