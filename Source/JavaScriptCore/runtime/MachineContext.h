@@ -458,7 +458,7 @@ inline void setInstructionPointer(PlatformRegisters& regs, CodePtr<CFunctionPtrT
 {
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, value.taggedPtr());
-#elif USE(DARWIN_REGISTER_MACROS) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
+#elif USE(DARWIN_REGISTER_MACROS) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
     __darwin_arm_thread_state64_set_presigned_pc_fptr(regs, value.taggedPtr());
 #elif USE(DARWIN_REGISTER_MACROS)
     __darwin_arm_thread_state64_set_pc_fptr(regs, value.taggedPtr());
@@ -471,7 +471,7 @@ inline void setInstructionPointer(PlatformRegisters& regs, void* value)
 {
 #if USE(PLATFORM_REGISTERS_WITH_PROFILE)
     WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, value);
-#elif USE(DARWIN_REGISTER_MACROS) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#elif USE(DARWIN_REGISTER_MACROS) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
     __darwin_arm_thread_state64_set_presigned_pc_fptr(regs, value);
 #elif USE(DARWIN_REGISTER_MACROS)
     __darwin_arm_thread_state64_set_pc_fptr(regs, value);
