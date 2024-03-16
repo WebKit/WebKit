@@ -165,10 +165,10 @@ enum class IsPartOfFormattingContext : bool { No, Yes };
 static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainBorderStart = true, bool retainBorderEnd = true)
 {
     auto& style = renderer.style();
-    auto borderLeft = useComputedValues == UseComputedValues::No ? renderer.borderLeft() : LayoutUnit(style.borderLeft().width());
-    auto borderRight = useComputedValues == UseComputedValues::No ? renderer.borderRight() : LayoutUnit(style.borderRight().width());
-    auto borderTop = useComputedValues == UseComputedValues::No ? renderer.borderTop() : LayoutUnit(style.borderTop().width());
-    auto borderBottom = useComputedValues == UseComputedValues::No ? renderer.borderBottom() : LayoutUnit(style.borderBottom().width());
+    auto borderLeft = useComputedValues == UseComputedValues::No ? renderer.borderLeft() : LayoutUnit(style.borderLeftWidth());
+    auto borderRight = useComputedValues == UseComputedValues::No ? renderer.borderRight() : LayoutUnit(style.borderRightWidth());
+    auto borderTop = useComputedValues == UseComputedValues::No ? renderer.borderTop() : LayoutUnit(style.borderTopWidth());
+    auto borderBottom = useComputedValues == UseComputedValues::No ? renderer.borderBottom() : LayoutUnit(style.borderBottomWidth());
 
     if (blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop) {
         if (isLeftToRightInlineDirection)
@@ -334,6 +334,9 @@ void BoxGeometryUpdater::setGeometriesForLayout()
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(boxTree().rootRenderer())); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
 
+        if (is<RenderText>(renderer))
+            continue;
+
         if (is<RenderReplaced>(renderer) || is<RenderTable>(renderer) || is<RenderListItem>(renderer) || is<RenderBlock>(renderer) || is<RenderFrameSet>(renderer)) {
             updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
             continue;
@@ -358,6 +361,9 @@ void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMo
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(boxTree().rootRenderer())); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
 
+        if (is<RenderText>(renderer))
+            continue;
+
         if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
             updateLineBreakBoxDimensions(*renderLineBreak);
             continue;
@@ -366,7 +372,6 @@ void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMo
             updateInlineBoxDimensions(*renderInline, intrinsicWidthMode);
             continue;
         }
-        ASSERT(is<RenderText>(renderer));
     }
 }
 
