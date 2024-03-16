@@ -182,6 +182,9 @@ void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
     if (!SVGRenderSupport::paintInfoIntersectsRepaintRect(boundingBox, m_localTransform, paintInfo))
         return;
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     PaintInfo childPaintInfo(paintInfo);
     GraphicsContextStateSaver stateSaver(childPaintInfo.context());
     childPaintInfo.applyTransform(m_localTransform);

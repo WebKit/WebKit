@@ -296,6 +296,8 @@ public:
 
     void clearNeedsLayoutForSkippedContent();
 
+    bool hasPainted() const { return m_hasPainted; }
+
 protected:
     RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     RenderElement(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -337,6 +339,8 @@ protected:
 
     bool shouldApplyLayoutOrPaintContainment(bool) const;
     inline bool shouldApplySizeOrStyleContainment(bool) const;
+
+    void setHasPainted() { m_hasPainted = true; }
 
 private:
     RenderElement(Type, ContainerNode&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -406,6 +410,7 @@ private:
     unsigned m_isRegisteredForVisibleInViewportCallback : 1;
     unsigned m_visibleInViewportState : 2;
     unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1;
+    unsigned m_hasPainted : 1;
 
     // 4 bits free.
 

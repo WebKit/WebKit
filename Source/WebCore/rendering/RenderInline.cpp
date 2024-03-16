@@ -234,6 +234,9 @@ bool RenderInline::mayAffectLayout() const
 
 void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
         lineLayout->paint(paintInfo, paintOffset, this);
         return;

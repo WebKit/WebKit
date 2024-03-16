@@ -71,7 +71,10 @@ void RenderReplica::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Mask)
         return;
- 
+
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (paintInfo.phase == PaintPhase::Foreground) {

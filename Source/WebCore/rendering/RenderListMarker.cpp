@@ -169,6 +169,9 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (markerRect.isEmpty())
         return;
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     GraphicsContext& context = paintInfo.context();
 
     if (isImage()) {

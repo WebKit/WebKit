@@ -229,6 +229,9 @@ void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     ASSERT(hasSelfPaintingLayer());
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     paintOutlineForRowIfNeeded(paintInfo, paintOffset);
     for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
         // Paint the row background behind the cell.

@@ -3940,12 +3940,14 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         if (modernLineLayout()) {
             m_previousModernLineLayoutContentBoxLogicalHeight = modernLineLayout()->contentBoxLogicalHeight();
             // Since we eagerly remove the display content here, repaints issued between this invalidation (triggered by style change/content mutation) and the subsequent layout would produce empty rects.
-            repaint();
-            for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
-                auto& renderer = *walker.current(); 
-                if (!renderer.isInFlow())
-                    renderer.repaint();
-                renderer.setPreferredLogicalWidthsDirty(true);
+            if (hasPainted()) {
+                repaint();
+                for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
+                    auto& renderer = *walker.current();
+                    if (!renderer.isInFlow())
+                        renderer.repaint();
+                    renderer.setPreferredLogicalWidthsDirty(true);
+                }
             }
         }
         auto path = UndeterminedPath;

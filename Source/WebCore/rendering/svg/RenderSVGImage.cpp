@@ -155,6 +155,9 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
     }
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     ASSERT(paintInfo.phase == PaintPhase::Foreground);
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 

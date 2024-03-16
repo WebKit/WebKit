@@ -920,11 +920,15 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
     if (!parent.renderTreeBeingDestroyed() && child.everHadLayout()) {
-        bool shouldNotRepaint = is<RenderMultiColumnSet>(child.previousSibling());
-        if (child.isBody() && !shouldNotRepaint)
-            parent.view().repaintRootContents();
-        else if (!shouldNotRepaint)
-            child.repaint();
+        auto& repaintElement = is<RenderElement>(child) ? downcast<RenderElement>(child) : parent;
+//        WTFLogAlways("hasPainted %d", repaintElement.hasPainted());
+        bool shouldRepaint = repaintElement.hasPainted() && !is<RenderMultiColumnSet>(child.previousSibling());
+        if (shouldRepaint) {
+            if (!child.isBody())
+                parent.view().repaintRootContents();
+            else
+                child.repaint();
+        }
         child.setNeedsLayoutAndPrefWidthsRecalc();
     }
 

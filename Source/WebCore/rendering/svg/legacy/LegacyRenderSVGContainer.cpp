@@ -110,6 +110,9 @@ void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
     if (!SVGRenderSupport::paintInfoIntersectsRepaintRect(repaintRect, localToParentTransform(), paintInfo))
         return;
 
+    if (isVisualPaintPhase(paintInfo.phase))
+        setHasPainted();
+
     PaintInfo childPaintInfo(paintInfo);
     {
         GraphicsContextStateSaver stateSaver(childPaintInfo.context());

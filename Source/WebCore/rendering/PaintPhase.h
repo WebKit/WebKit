@@ -54,6 +54,11 @@ enum class PaintPhase : uint16_t {
     Accessibility            = 1 << 13,
 };
 
+static constexpr bool isVisualPaintPhase(PaintPhase phase)
+{
+    return phase < PaintPhase::TextClip;
+}
+
 enum class PaintBehavior : uint32_t {
     Normal                              = 0,
     SelectionOnly                       = 1 << 0,

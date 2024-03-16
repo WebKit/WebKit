@@ -136,6 +136,7 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     , m_isRegisteredForVisibleInViewportCallback(false)
     , m_visibleInViewportState(static_cast<unsigned>(VisibleInViewportState::Unknown))
     , m_didContributeToVisuallyNonEmptyPixelCount(false)
+    , m_hasPainted(false)
     , m_style(WTFMove(style))
 {
     ASSERT(RenderObject::isRenderElement());

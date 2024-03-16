@@ -1094,6 +1094,9 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (visualContentIsClippedOut(paintInfo.rect))
         return;
 
+    if (isVisualPaintPhase(phase))
+        setHasPainted();
+
     bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);
     paintObject(paintInfo, adjustedPaintOffset);
     if (pushedClip)
