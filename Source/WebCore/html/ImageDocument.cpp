@@ -73,7 +73,7 @@ private:
     bool operator==(const EventListener&) const override;
     void handleEvent(ScriptExecutionContext&, Event&) override;
 
-    ImageDocument& m_document;
+    WeakPtr<ImageDocument, WeakPtrImplWithEventTargetData> m_document;
 };
 #endif
 
@@ -104,14 +104,14 @@ public:
 private:
     ImageDocumentElement(ImageDocument& document)
         : HTMLImageElement(imgTag, document)
-        , m_imageDocument(&document)
+        , m_imageDocument(document)
     {
     }
 
     virtual ~ImageDocumentElement();
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;
 
-    ImageDocument* m_imageDocument;
+    WeakPtr<ImageDocument, WeakPtrImplWithEventTargetData> m_imageDocument;
 };
 
 inline Ref<ImageDocumentElement> ImageDocumentElement::create(ImageDocument& document)
@@ -426,8 +426,9 @@ void ImageDocument::imageClicked(int x, int y)
 
 void ImageEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
-    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames().clickEvent)
-        m_document.imageClicked(mouseEvent->offsetX(), mouseEvent->offsetY());
+    RefPtr document = m_document.get();
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames().clickEvent && document)
+        document->imageClicked(mouseEvent->offsetX(), mouseEvent->offsetY());
 }
 
 bool ImageEventListener::operator==(const EventListener& other) const
