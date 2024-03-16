@@ -410,7 +410,7 @@ public:
 
     // attribute getter methods
 
-    constexpr DisplayType display() const { return static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay); }
+    constexpr DisplayType display() const { return static_cast<DisplayType>(m_nonInheritedFlags.display); }
 
     inline const Length& left() const;
     inline const Length& right() const;
@@ -1099,12 +1099,12 @@ public:
 
     inline std::optional<Style::ScopedName> viewTransitionName() const;
 
-    void setDisplay(DisplayType value)
+    void setOriginalDisplay(DisplayType value)
     {
         m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(value);
-        m_nonInheritedFlags.effectiveDisplay = m_nonInheritedFlags.originalDisplay;
+        m_nonInheritedFlags.display = m_nonInheritedFlags.originalDisplay;
     }
-    void setEffectiveDisplay(DisplayType v) { m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(v); }
+    void setDisplay(DisplayType v) { m_nonInheritedFlags.display = static_cast<unsigned>(v); }
     void setPosition(PositionType v) { m_nonInheritedFlags.position = static_cast<unsigned>(v); }
     void setFloating(Float v) { m_nonInheritedFlags.floating = static_cast<unsigned>(v); }
 
@@ -2188,7 +2188,7 @@ private:
         bool hasPseudoStyle(PseudoId) const;
         void setHasPseudoStyles(PseudoIdSet);
 
-        unsigned effectiveDisplay : 5; // DisplayType
+        unsigned display : 5; // DisplayType
         unsigned originalDisplay : 5; // DisplayType
         unsigned overflowX : 3; // Overflow
         unsigned overflowY : 3; // Overflow

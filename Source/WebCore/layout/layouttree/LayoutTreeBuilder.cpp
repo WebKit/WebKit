@@ -194,7 +194,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
         auto clonedStyle = RenderStyle::clone(renderer.style());
 
         if (is<RenderLineBreak>(renderer)) {
-            clonedStyle.setDisplay(DisplayType::Inline);
+            clonedStyle.setOriginalDisplay(DisplayType::Inline);
             clonedStyle.setFloating(Float::None);
             clonedStyle.setPosition(PositionType::Static);
             childLayoutBox = createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
@@ -259,7 +259,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
             } else {
                 ASSERT_NOT_IMPLEMENTED_YET();
                 // Let's fall back to a regular block level container when the renderer type is not yet supported.
-                clonedStyle.setDisplay(DisplayType::Block);
+                clonedStyle.setOriginalDisplay(DisplayType::Block);
                 childLayoutBox = createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
             }
         }

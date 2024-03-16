@@ -160,7 +160,7 @@ RenderStyle RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle& pare
     auto newStyle = create();
     newStyle.inheritFrom(parentStyle);
     newStyle.inheritUnicodeBidiFrom(&parentStyle);
-    newStyle.setDisplay(display);
+    newStyle.setOriginalDisplay(display);
     return newStyle;
 }
 
@@ -209,7 +209,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.autosizeStatus = 0;
 #endif
 
-    m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(initialDisplay());
+    m_nonInheritedFlags.display = static_cast<unsigned>(initialDisplay());
     m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(initialDisplay());
     m_nonInheritedFlags.overflowX = static_cast<unsigned>(initialOverflowX());
     m_nonInheritedFlags.overflowY = static_cast<unsigned>(initialOverflowY());
@@ -389,7 +389,7 @@ void RenderStyle::fastPathInheritFrom(const RenderStyle& inheritParent)
 inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheritedFlags& other)
 {
     // Only some flags are copied because NonInheritedFlags contains things that are not actually style data.
-    effectiveDisplay = other.effectiveDisplay;
+    display = other.display;
     originalDisplay = other.originalDisplay;
     overflowX = other.overflowX;
     overflowY = other.overflowY;
@@ -1025,7 +1025,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         || m_nonInheritedFlags.originalDisplay != other.m_nonInheritedFlags.originalDisplay)
         return true;
 
-    if (static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay) >= DisplayType::Table) {
+    if (static_cast<DisplayType>(m_nonInheritedFlags.display) >= DisplayType::Table) {
         if (m_inheritedFlags.borderCollapse != other.m_inheritedFlags.borderCollapse
             || m_inheritedFlags.emptyCells != other.m_inheritedFlags.emptyCells
             || m_inheritedFlags.captionSide != other.m_inheritedFlags.captionSide
@@ -1046,7 +1046,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
             return true;
     }
 
-    if (static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay) == DisplayType::ListItem) {
+    if (static_cast<DisplayType>(m_nonInheritedFlags.display) == DisplayType::ListItem) {
         if (m_inheritedFlags.listStylePosition != other.m_inheritedFlags.listStylePosition || m_rareInheritedData->listStyleType != other.m_rareInheritedData->listStyleType)
             return true;
     }
@@ -1550,7 +1550,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextDecorationLine);
 
         // Non animated styles are followings.
-        // effectiveDisplay
+        // display
         // originalDisplay
         // unicodeBidi
         // usesViewportUnits

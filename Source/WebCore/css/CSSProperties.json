@@ -441,6 +441,7 @@
                 }
             ],
             "codegen-properties": {
+                "setter": "setOriginalDisplay",
                 "high-priority": true,
                 "parser-function": "consumeDisplay",
                 "parser-function-requires-context-mode": true,

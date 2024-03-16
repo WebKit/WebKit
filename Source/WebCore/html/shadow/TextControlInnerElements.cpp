@@ -121,7 +121,7 @@ std::optional<Style::ResolvedStyle> TextControlInnerElement::resolveCustomStyle(
     else
         newStyle->setMinHeight(Length { 0, LengthType::Fixed });
 
-    newStyle->setDisplay(DisplayType::Block);
+    newStyle->setOriginalDisplay(DisplayType::Block);
     newStyle->setDirection(TextDirection::LTR);
     // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
     newStyle->setUserModify(UserModify::ReadOnly);
@@ -223,7 +223,7 @@ std::optional<Style::ResolvedStyle> TextControlPlaceholderElement::resolveCustom
     auto style = resolveStyle(resolutionContext);
 
     Ref controlElement = checkedDowncast<HTMLTextFormControlElement>(*containingShadowRoot()->host());
-    style.style->setDisplay(controlElement->isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
+    style.style->setOriginalDisplay(controlElement->isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
 
     if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(controlElement)) {
         style.style->setTextOverflow(inputElement->shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
@@ -264,7 +264,7 @@ std::optional<Style::ResolvedStyle> SearchFieldResultsButtonElement::resolveCust
 
     if (searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(*shadowHostStyle)) {
         auto elementStyle = resolveStyle(resolutionContext);
-        elementStyle.style->setDisplay(DisplayType::None);
+        elementStyle.style->setOriginalDisplay(DisplayType::None);
         return elementStyle;
     }
 
@@ -340,7 +340,7 @@ std::optional<Style::ResolvedStyle> SearchFieldCancelButtonElement::resolveCusto
     elementStyle.style->setVisibility(elementStyle.style->visibility() == Visibility::Hidden || inputElement->value().isEmpty() ? Visibility::Hidden : Visibility::Visible);
 
     if (shadowHostStyle && searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(*shadowHostStyle))
-        elementStyle.style->setDisplay(DisplayType::None);
+        elementStyle.style->setOriginalDisplay(DisplayType::None);
 
     return elementStyle;
 }

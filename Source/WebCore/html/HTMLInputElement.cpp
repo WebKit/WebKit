@@ -2305,10 +2305,10 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
     textBlockStyle.setOverflowY(Overflow::Hidden);
     textBlockStyle.setTextOverflow(shouldTruncateText(style) ? TextOverflow::Ellipsis : TextOverflow::Clip);
 
-    textBlockStyle.setDisplay(DisplayType::Block);
+    textBlockStyle.setOriginalDisplay(DisplayType::Block);
 
     if (hasAutoFillStrongPasswordButton() && isMutable()) {
-        textBlockStyle.setDisplay(DisplayType::InlineBlock);
+        textBlockStyle.setOriginalDisplay(DisplayType::InlineBlock);
         textBlockStyle.setLogicalMaxWidth(Length { 100, LengthType::Percent });
         textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));
         textBlockStyle.setTextOverflow(TextOverflow::Clip);

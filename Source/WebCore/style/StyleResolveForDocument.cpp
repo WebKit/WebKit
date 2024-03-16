@@ -59,7 +59,7 @@ RenderStyle resolveForDocument(const Document& document)
 
     auto documentStyle = RenderStyle::create();
 
-    documentStyle.setDisplay(DisplayType::Block);
+    documentStyle.setOriginalDisplay(DisplayType::Block);
     documentStyle.setRTLOrdering(document.visuallyOrdered() ? Order::Visual : Order::Logical);
     documentStyle.setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
     documentStyle.setPageScaleTransform(renderView.frame().frameScaleFactor());
