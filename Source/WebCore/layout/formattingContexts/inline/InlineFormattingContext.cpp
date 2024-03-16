@@ -44,6 +44,7 @@
 #include "IntrinsicWidthHandler.h"
 #include "LayoutBox.h"
 #include "LayoutContext.h"
+#include "LayoutDescendantIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
@@ -180,6 +181,28 @@ std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContent
         minimumContentSize = minimumContentSize.value_or(0.f);
         maximumContentSize = maximumContentSize.value_or(0.f);
     }
+#ifndef NDEBUG
+    // FIXME: "Nominally, the smallest size a box could take that doesn’t lead to overflow that could be avoided by choosing a larger size.
+    // Formally, the size of the box when sized under a min-content constraint"
+    // 'nominally' seems to overrule 'formally' when inline content has negative text indent.
+    // This also undermines the idea of computing min/max values independently.
+    if (*minimumContentSize > *maximumContentSize) {
+        auto hasNegativeImplicitMargin = [](auto& style) {
+            return (style.textIndent().isFixed() && style.textIndent().value() < 0) || style.wordSpacing() < 0 || style.letterSpacing() < 0;
+        };
+        auto contentHasNegativeImplicitMargin = hasNegativeImplicitMargin(root().style());
+        if (!contentHasNegativeImplicitMargin) {
+            for (auto& layoutBox : descendantsOfType<Box>(root())) {
+                contentHasNegativeImplicitMargin = hasNegativeImplicitMargin(layoutBox.style());
+                if (contentHasNegativeImplicitMargin)
+                    break;
+            }
+        }
+        ASSERT(contentHasNegativeImplicitMargin);
+    }
+#endif
+    minimumContentSize = std::min(*minimumContentSize, *maximumContentSize);
+
     inlineContentCache.setMinimumContentSize(*minimumContentSize);
     inlineContentCache.setMaximumContentSize(*maximumContentSize);
     return { ceiledLayoutUnit(*minimumContentSize), ceiledLayoutUnit(*maximumContentSize) };
