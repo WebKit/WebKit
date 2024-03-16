@@ -7365,4 +7365,26 @@ void Internals::setHistoryTotalStateObjectPayloadLimitOverride(uint32_t limit)
     window->history().setTotalStateObjectPayloadLimitOverride(limit);
 }
 
+Vector<Internals::PDFAnnotationRect> Internals::pdfAnnotationRectsForTesting(Element& element) const
+{
+    Vector<PDFAnnotationRect> annotationRects;
+    if (RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element)) {
+        if (RefPtr pluginViewBase = pluginElement ? pluginElement->pluginWidget() : nullptr) {
+            for (auto& annotationRect : pluginViewBase->pdfAnnotationRectsForTesting())
+                annotationRects.append({ annotationRect.x(), annotationRect.y(), annotationRect.width(), annotationRect.height() });
+        }
+    }
+    return annotationRects;
+}
+
+void Internals::registerPDFTest(Ref<VoidCallback>&& callback, Element& element)
+{
+    RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (!pluginElement)
+        return;
+
+    if (RefPtr pluginViewBase = pluginElement->pluginWidget())
+        pluginViewBase->registerPDFTestCallback(WTFMove(callback));
+}
+
 } // namespace WebCore

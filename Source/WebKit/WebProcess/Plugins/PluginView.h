@@ -45,6 +45,7 @@ class HTMLPlugInElement;
 class LocalFrame;
 class RenderEmbeddedObject;
 class ShareableBitmap;
+class VoidCallback;
 }
 
 namespace WebKit {
@@ -203,6 +204,9 @@ private:
 
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<WebCore::ShareableBitmap> m_transientPaintingSnapshot;
+
+    Vector<WebCore::FloatRect> pdfAnnotationRectsForTesting() const override;
+    void registerPDFTestCallback(RefPtr<WebCore::VoidCallback> &&) final;
 };
 
 } // namespace WebKit

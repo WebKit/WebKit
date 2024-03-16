@@ -62,6 +62,7 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/VoidCallback.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -1175,6 +1176,14 @@ void PDFPluginBase::incrementalLoaderLog(const String& message)
 }
 
 #endif // !LOG_DISABLED
+
+void PDFPluginBase::registerPDFTest(RefPtr<WebCore::VoidCallback>&& callback)
+{
+    if (m_pdfDocument && callback)
+        callback->handleEvent();
+    else
+        m_pdfTestCallback = WTFMove(callback);
+}
 
 } // namespace WebKit
 

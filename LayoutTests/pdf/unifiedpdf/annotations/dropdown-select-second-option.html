@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-10;totalPixels=0-25" />
+</head>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+function runTest() {
+    let innerDocument = document.querySelector("iframe").contentDocument;
+    let pluginElement = innerDocument.querySelector("embed");
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        window.internals.registerPDFTest(async () => {
+            let annotationBounds = window.internals.pdfAnnotationRectsForTesting(pluginElement)[0];
+            let centerX = annotationBounds["x"] + annotationBounds["width"] / 2;
+            let centerY = annotationBounds["y"] + annotationBounds["height"] / 2;
+            UIHelper.activateAt(centerX, centerY);
+
+            let annotationSelectElement = innerDocument.querySelector("#annotationContainer > select");
+            annotationSelectElement.selectedIndex = 1;
+            
+            UIHelper.activateAt(0, 0);
+            await UIHelper.renderingUpdate();
+            testRunner.notifyDone();
+        }, pluginElement);
+    }
+}
+</script>
+<body>
+<iframe onload="runTest()" style="width: 100%; height: 100vh;" src="../resources/annotation-dropdown-first-option-selected.pdf"></iframe>
+</body>
+</html>

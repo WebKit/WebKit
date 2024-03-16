@@ -83,6 +83,7 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/ScrollbarsController.h>
+#include <WebCore/VoidCallback.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Algorithms.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -251,6 +252,12 @@ void UnifiedPDFPlugin::installPDFDocument()
 #endif
 
     scrollToFragmentIfNeeded();
+
+    if (m_pdfTestCallback) {
+        m_pdfTestCallback->handleEvent();
+        m_pdfTestCallback = nullptr;
+    }
+
 }
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
@@ -3474,6 +3481,28 @@ void UnifiedPDFPlugin::uninstallDataDetectorOverlay(PageOverlay& overlay)
 }
 
 #endif
+
+Vector<WebCore::FloatRect> UnifiedPDFPlugin::annotationRectsForTesting() const
+{
+    Vector<WebCore::FloatRect> annotationRects;
+
+    for (size_t pageIndex = 0; pageIndex < m_documentLayout.pageCount(); ++pageIndex) {
+        RetainPtr currentPage = m_documentLayout.pageAtIndex(pageIndex);
+        if (!currentPage)
+            break;
+
+        RetainPtr annotationsOnPage = [currentPage annotations];
+        if (!annotationsOnPage)
+            continue;
+
+        for (unsigned annotationIndex = 0; annotationIndex < [annotationsOnPage count]; ++annotationIndex) {
+            auto pageSpaceBounds = [[annotationsOnPage objectAtIndex:annotationIndex] bounds];
+            annotationRects.append(convertUp(CoordinateSpace::PDFPage, CoordinateSpace::Plugin, FloatRect { pageSpaceBounds }, pageIndex));
+        }
+    }
+
+    return annotationRects;
+}
 
 } // namespace WebKit
 

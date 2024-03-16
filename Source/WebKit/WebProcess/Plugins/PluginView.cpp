@@ -1025,6 +1025,16 @@ void PluginView::didSameDocumentNavigationForFrame(WebFrame& frame)
     return protectedPlugin()->didSameDocumentNavigationForFrame(frame);
 }
 
+Vector<WebCore::FloatRect> PluginView::pdfAnnotationRectsForTesting() const
+{
+    return protectedPlugin()->annotationRectsForTesting();
+}
+
+void PluginView::registerPDFTestCallback(RefPtr<VoidCallback>&& callback)
+{
+    protectedPlugin()->registerPDFTest(WTFMove(callback));
+}
+
 } // namespace WebKit
 
 #endif

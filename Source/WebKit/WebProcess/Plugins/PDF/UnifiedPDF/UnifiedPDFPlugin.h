@@ -123,6 +123,8 @@ public:
     static OptionSet<RepaintRequirement> repaintRequirementsForAnnotation(PDFAnnotation *, IsAnnotationCommit = IsAnnotationCommit::No);
     void repaintAnnotationsForFormField(NSString *fieldName);
 
+    Vector<WebCore::FloatRect> annotationRectsForTesting() const final;
+
     void attemptToUnlockPDF(const String& password) final;
     void windowActivityDidChange() final;
 

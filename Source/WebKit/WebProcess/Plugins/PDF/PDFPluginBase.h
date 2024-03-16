@@ -227,6 +227,9 @@ public:
     virtual void focusNextAnnotation() = 0;
     virtual void focusPreviousAnnotation() = 0;
 
+    virtual Vector<WebCore::FloatRect> annotationRectsForTesting() const { return { }; };
+    void registerPDFTest(RefPtr<WebCore::VoidCallback>&&);
+
     void navigateToURL(const URL&);
 
     virtual void attemptToUnlockPDF(const String& password) = 0;
@@ -385,6 +388,8 @@ protected:
     RefPtr<PDFIncrementalLoader> m_incrementalLoader;
     std::atomic<bool> m_incrementalPDFLoadingEnabled { false };
 #endif
+
+    RefPtr<WebCore::VoidCallback> m_pdfTestCallback;
 
     // Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
     // scrollbars on the body. We can't add annotations directly to the body, because overflow: hidden on the body

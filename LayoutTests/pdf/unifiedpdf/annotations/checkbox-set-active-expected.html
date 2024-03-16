@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<html>
+<script src="../../../resources/ui-helper.js"></script>
+<body>
+<embed style="width: 100%; height: 100vh;" id="plugin" src="../resources/annotation-checkbox-active.pdf"></embed>
+<script>
+    let pluginElement = document.getElementById("plugin");
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        window.internals.registerPDFTest(async () => {
+            await UIHelper.renderingUpdate();
+            testRunner.notifyDone();
+        }, pluginElement);
+    }
+</script>
+</body>
+</html>

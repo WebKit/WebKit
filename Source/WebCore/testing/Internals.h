@@ -1444,6 +1444,17 @@ public:
 
     bool hasScopeBreakingHasSelectors() const;
 
+
+    struct PDFAnnotationRect {
+        float x;
+        float y;
+        float width;
+        float height;
+    };
+
+    Vector<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element& pluginElement) const;
+    void registerPDFTest(Ref<VoidCallback>&&, Element&);
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

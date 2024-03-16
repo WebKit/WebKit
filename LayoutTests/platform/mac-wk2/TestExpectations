@@ -36,6 +36,7 @@ swipe [ Pass ]
 view-gestures [ Pass ]
 http/tests/swipe [ Pass ]
 http/tests/pdf [ Pass ]
+pdf/unifiedpdf [ Pass ]
 tiled-drawing [ Pass ]
 ipc/restrictedendpoints/mac [ Pass ]
 

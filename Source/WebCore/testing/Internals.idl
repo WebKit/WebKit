@@ -417,6 +417,16 @@ enum AV1ConfigurationRange {
     unsigned long attributes;
 };
 
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary PDFAnnotationRect {
+    double x;
+    double y;
+    double width;
+    double height; 
+};
+
 typedef (FetchRequest or FetchResponse) FetchObject;
 
 [
@@ -1329,4 +1339,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     DOMString getComputedRole(Element element);
 
     readonly attribute boolean hasScopeBreakingHasSelectors;
+
+    sequence<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element element);
+    undefined registerPDFTest(VoidCallback callback, Element element);
 };

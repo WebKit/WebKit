@@ -105,6 +105,7 @@ remote-layer-tree [ Skip ]
 inspector/page/setScreenSizeOverride.html [ Skip ]
 interaction-region [ Skip ]
 overlay-region [ Skip ]
+pdf/unifiedpdf [ Skip ]
 ipc/restrictedendpoints/mac [ Skip ]
 
 # Requires async overflow scrolling

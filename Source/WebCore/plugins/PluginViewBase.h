@@ -37,6 +37,7 @@ namespace WebCore {
 class Element;
 class GraphicsLayer;
 class Scrollbar;
+class VoidCallback;
 
 enum class PluginLayerHostingStrategy : uint8_t {
     None,
@@ -72,11 +73,16 @@ public:
     virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }
 #endif
     
+    virtual Vector<FloatRect> pdfAnnotationRectsForTesting() const { return { }; }
+
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
 
 private:
     bool isPluginViewBase() const final { return true; }
+
+    friend class Internals;
+    virtual void registerPDFTestCallback(RefPtr<VoidCallback>&&) { };
 };
 
 } // namespace WebCore
