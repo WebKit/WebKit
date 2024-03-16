@@ -2197,7 +2197,7 @@ TEST(WKWebExtensionAPITabs, ActiveTab)
         @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
         @"  browser.test.assertEq(tabId, currentTab.id, 'Only the tab we expect should be changing')",
 
-        @"  if ('url' in changeInfo) {",
+        @"  if ('url' in changeInfo && 'title' in changeInfo) {",
         @"    ++updateCount",
 
         @"    if (updateCount === 1) {",
@@ -2297,7 +2297,7 @@ TEST(WKWebExtensionAPITabs, UserGestureWithoutActiveTab)
         @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
         @"  browser.test.assertEq(tabId, currentTab.id, 'Only the tab we expect should be changing')",
 
-        @"  if ('url' in changeInfo) {",
+        @"  if ('url' in changeInfo && 'title' in changeInfo) {",
         @"    browser.test.assertEq(changeInfo.url, '', 'URL should be empty before user gesture')",
         @"    browser.test.assertEq(changeInfo.title, '', 'Title should be empty before user gesture')",
         @"    browser.test.yield('Perform User Gesture')",
