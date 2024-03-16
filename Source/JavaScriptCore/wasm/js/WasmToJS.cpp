@@ -80,8 +80,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition, CallRole::Callee);
     RegisterAtOffsetList savedResultRegisters = wasmCallInfo.computeResultsOffsetList();
 
-    // Note: WasmB3IRGenerator assumes that this stub treats SP as a callee save.
-    // If we ever change this, we will also need to change WasmB3IRGenerator.
+    // Note: WasmOMGIRGenerator assumes that this stub treats SP as a callee save.
+    // If we ever change this, we will also need to change WasmOMGIRGenerator.
 
     // Below, we assume that the JS calling convention is always on the stack.
     ASSERT_UNUSED(jsCC, !jsCC.jsrArgs.size());
@@ -116,7 +116,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
     });
 #endif
 
-    // Note: We don't need to perform a stack check here since WasmB3IRGenerator
+    // Note: We don't need to perform a stack check here since WasmOMGIRGenerator
     // will do the stack check for us. Whenever it detects that it might make
     // a call to this thunk, it'll make sure its stack check includes space
     // for us here.

@@ -37,7 +37,7 @@ if len(args) != 3:
 
 wasm = Wasm(args[0], args[1])
 opcodes = wasm.opcodes
-wasmB3IRGeneratorHFile = open(args[2], "w")
+wasmOMGIRGeneratorHFile = open(args[2], "w")
 
 opcodeRegex = re.compile('([a-zA-Z0-9]+)')
 argumentRegex = re.compile(r'(\@[0-9]+)')
@@ -197,7 +197,7 @@ def generateSimpleCode(op):
     args = ["ExpressionType arg" + str(param) for param in range(len(opcode["parameter"]))]
     args.append("ExpressionType& result")
     return """
-auto B3IRGenerator::add""" + wasm.toCpp(op["name"]) + "(" + ", ".join(args) + """) -> PartialResult
+auto OMGIRGenerator::add""" + wasm.toCpp(op["name"]) + "(" + ", ".join(args) + """) -> PartialResult
 {
 """ + generateB3Code(opcode, b3op) + """
     return { };
@@ -222,5 +222,5 @@ namespace JSC { namespace Wasm {
 
 """
 
-wasmB3IRGeneratorHFile.write(contents)
-wasmB3IRGeneratorHFile.close()
+wasmOMGIRGeneratorHFile.write(contents)
+wasmOMGIRGeneratorHFile.close()

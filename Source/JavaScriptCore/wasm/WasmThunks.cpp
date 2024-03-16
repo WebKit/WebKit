@@ -92,7 +92,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
     auto isWasmCallee = jit.branch64(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag));
     CCallHelpers::JumpList doneCases;
     {
-        // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
+        // FIXME: Handling precise allocations in WasmOMGIRGenerator catch entrypoints might be unnecessary
         // https://bugs.webkit.org/show_bug.cgi?id=231213
         auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
         jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);
@@ -140,7 +140,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> catchInWasmThunkGenerator(const AbstractLo
     auto isWasmCallee = jit.branch32(CCallHelpers::Equal, GPRInfo::regT3, CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag));
     CCallHelpers::JumpList isJSCallee;
     {
-        // FIXME: Handling precise allocations in WasmB3IRGenerator catch entrypoints might be unnecessary
+        // FIXME: Handling precise allocations in WasmOMGIRGenerator catch entrypoints might be unnecessary
         // https://bugs.webkit.org/show_bug.cgi?id=231213
         auto preciseAllocationCase = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0, CCallHelpers::TrustedImm32(PreciseAllocation::halfAlignment));
         jit.andPtr(CCallHelpers::TrustedImmPtr(MarkedBlock::blockMask), GPRInfo::regT0);

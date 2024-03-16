@@ -28,10 +28,10 @@
 #if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
 
 #include "InternalFunction.h"
-#include "WasmB3IRGenerator.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
 #include "WasmModuleInformation.h"
+#include "WasmOMGIRGenerator.h"
 #include "WasmTypeDefinition.h"
 #include <wtf/Forward.h>
 
