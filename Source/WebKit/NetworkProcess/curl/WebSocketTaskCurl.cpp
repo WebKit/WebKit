@@ -175,7 +175,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
         switch (opCode) {
         case WebCore::WebSocketFrame::OpCodeText:
             {
-                String message = length ? String::fromUTF8(data) : emptyString();
+                String message = data.size() ? String::fromUTF8(data) : emptyString();
                 if (!message.isNull())
                     m_channel.didReceiveText(message);
                 else
@@ -188,9 +188,9 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
             break;
 
         case WebCore::WebSocketFrame::OpCodeClose:
-            if (!length)
+            if (!data.size())
                 m_closeEventCode = WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeNoStatusRcvd;
-            else if (length == 1) {
+            else if (data.size() == 1) {
                 m_closeEventCode = WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure;
                 didFail("Received a broken close frame containing an invalid size body."_s);
                 return;
