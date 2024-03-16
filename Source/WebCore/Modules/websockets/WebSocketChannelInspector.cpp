@@ -103,14 +103,13 @@ WebSocketChannelIdentifier WebSocketChannelInspector::progressIdentifier() const
     return m_progressIdentifier;
 }
 
-WebSocketFrame WebSocketChannelInspector::createFrame(const uint8_t* data, size_t length, WebSocketFrame::OpCode opCode)
+WebSocketFrame WebSocketChannelInspector::createFrame(std::span<const uint8_t> data, WebSocketFrame::OpCode opCode)
 {
     // This is an approximation since frames can be merged on a single message.
     WebSocketFrame frame;
     frame.opCode = opCode;
     frame.masked = false;
     frame.payload = data;
-    frame.payloadLength = length;
 
     // WebInspector does not use them.
     frame.final = false;

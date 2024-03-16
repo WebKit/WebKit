@@ -175,8 +175,8 @@ Ref<Inspector::Protocol::Network::WebSocketFrame> buildWebSocketMessage(const We
     return Inspector::Protocol::Network::WebSocketFrame::create()
         .setOpcode(frame.opCode)
         .setMask(frame.masked)
-        .setPayloadData(frame.opCode == 1 ? String::fromUTF8WithLatin1Fallback(frame.payload, frame.payloadLength) : base64EncodeToString(frame.payload, frame.payloadLength))
-        .setPayloadLength(frame.payloadLength)
+        .setPayloadData(frame.opCode == 1 ? String::fromUTF8WithLatin1Fallback(frame.payload) : base64EncodeToString(frame.payload))
+        .setPayloadLength(frame.payload.size())
         .release();
 }
 

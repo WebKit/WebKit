@@ -175,13 +175,14 @@ void WebSocketTask::didReceiveMessageCallback(WebSocketTask* task, SoupWebsocket
 
     gsize dataSize;
     const auto* data = g_bytes_get_data(message, &dataSize);
+    std::span dataSpan { static_cast<const uint8_t*>(data), dataSize };
 
     switch (dataType) {
     case SOUP_WEBSOCKET_DATA_TEXT:
-        task->m_channel.didReceiveText(String::fromUTF8(static_cast<const char*>(data), dataSize));
+        task->m_channel.didReceiveText(String::fromUTF8(dataSpan));
         break;
     case SOUP_WEBSOCKET_DATA_BINARY:
-        task->m_channel.didReceiveBinaryData(static_cast<const uint8_t*>(data), dataSize);
+        task->m_channel.didReceiveBinaryData(dataSpan);
         break;
     }
 }

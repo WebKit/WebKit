@@ -529,13 +529,13 @@ String String::fromUTF8(const CString& s)
     return fromUTF8(s.data());
 }
 
-String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
+String String::fromUTF8WithLatin1Fallback(std::span<const LChar> string)
 {
-    String utf8 = fromUTF8(string, size);
+    String utf8 = fromUTF8(string);
     if (!utf8) {
         // Do this assertion before chopping the size_t down to unsigned.
-        RELEASE_ASSERT(size <= String::MaxLength);
-        return String(string, size);
+        RELEASE_ASSERT(string.size() <= String::MaxLength);
+        return String(string);
     }
     return utf8;
 }

@@ -64,7 +64,7 @@ WebSocketTask::~WebSocketTask()
 void WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void()>&& callback)
 {
     if (m_state == State::Opened) {
-        if (!sendFrame(WebCore::WebSocketFrame::OpCodeText, utf8.data(), utf8.size()))
+        if (!sendFrame(WebCore::WebSocketFrame::OpCodeText, utf8))
             didFail("Failed to send WebSocket frame."_s);
     }
     callback();
@@ -73,7 +73,7 @@ void WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<
 void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
     if (m_state == State::Opened) {
-        if (!sendFrame(WebCore::WebSocketFrame::OpCodeBinary, data.data(), data.size()))
+        if (!sendFrame(WebCore::WebSocketFrame::OpCodeBinary, data))
             didFail("Failed to send WebSocket frame."_s);
     }
     callback();
@@ -168,14 +168,14 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
     if (!validateResult.value())
         return;
 
-    auto frameResult = receiveFrames([this, weakThis = WeakPtr { *this }](WebCore::WebSocketFrame::OpCode opCode, const uint8_t* data, size_t length) {
+    auto frameResult = receiveFrames([this, weakThis = WeakPtr { *this }](WebCore::WebSocketFrame::OpCode opCode, std::span<const uint8_t> data) {
         if (!weakThis)
             return;
 
         switch (opCode) {
         case WebCore::WebSocketFrame::OpCodeText:
             {
-                String message = length ? String::fromUTF8(data, length) : emptyString();
+                String message = length ? String::fromUTF8(data) : emptyString();
                 if (!message.isNull())
                     m_channel.didReceiveText(message);
                 else
@@ -184,7 +184,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
             break;
 
         case WebCore::WebSocketFrame::OpCodeBinary:
-            m_channel.didReceiveBinaryData(reinterpret_cast<const uint8_t*>(data), length);
+            m_channel.didReceiveBinaryData(data);
             break;
 
         case WebCore::WebSocketFrame::OpCodeClose:
@@ -206,8 +206,8 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
                     return;
                 }
             }
-            if (length >= 3)
-                m_closeEventReason = String::fromUTF8(&data[2], length - 2);
+            if (data.size() >= 3)
+                m_closeEventReason = String::fromUTF8(&data[2], data.size() - 2);
             else
                 m_closeEventReason = emptyString();
 
@@ -217,7 +217,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
             break;
 
         case WebCore::WebSocketFrame::OpCodePing:
-            if (!sendFrame(WebCore::WebSocketFrame::OpCodePong, data, length))
+            if (!sendFrame(WebCore::WebSocketFrame::OpCodePong, data))
                 didFail("Failed to send WebSocket frame."_s);
             break;
 
@@ -317,7 +317,7 @@ Expected<bool, String> WebSocketTask::validateOpeningHandshake()
     return true;
 }
 
-std::optional<String> WebSocketTask::receiveFrames(Function<void(WebCore::WebSocketFrame::OpCode, const uint8_t*, size_t)>&& callback)
+std::optional<String> WebSocketTask::receiveFrames(Function<void(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t>)>&& callback)
 {
     if (m_state != State::Opened && m_state != State::Closing)
         return std::nullopt;
@@ -345,15 +345,15 @@ std::optional<String> WebSocketTask::receiveFrames(Function<void(WebCore::WebSoc
                 m_continuousFrameOpCode = frame.opCode;
             }
 
-            m_continuousFrameData.append(frame.payload, frame.payloadLength);
+            m_continuousFrameData.append(frame.payload);
 
             if (frame.final) {
-                callback(m_continuousFrameOpCode, m_continuousFrameData.data(), m_continuousFrameData.size());
+                callback(m_continuousFrameOpCode, m_continuousFrameData.span());
                 m_hasContinuousFrame = false;
                 m_continuousFrameData.clear();
             }
         } else
-            callback(frame.opCode, frame.payload, frame.payloadLength);
+            callback(frame.opCode, frame.payload);
 
         if (!m_receiveBuffer.isEmpty())
             skipReceivedBuffer(frameEnd - m_receiveBuffer.data());
@@ -379,8 +379,8 @@ std::optional<String> WebSocketTask::validateFrame(const WebCore::WebSocketFrame
 
     // All control frames must have a payload of 125 bytes or less, which means the frame must not contain
     // the "extended payload length" field.
-    if (WebCore::WebSocketFrame::isControlOpCode(frame.opCode) && WebCore::WebSocketFrame::needsExtendedLengthField(frame.payloadLength))
-        return makeString("Received control frame having too long payload: "_s, frame.payloadLength, " bytes"_s);
+    if (WebCore::WebSocketFrame::isControlOpCode(frame.opCode) && WebCore::WebSocketFrame::needsExtendedLengthField(frame.payload.size()))
+        return makeString("Received control frame having too long payload: "_s, frame.payload.size(), " bytes"_s);
 
     // A new data frame is received before the previous continuous frame finishes.
     // Note that control frames are allowed to come in the middle of continuous frames.
@@ -409,19 +409,19 @@ void WebSocketTask::sendClosingHandshakeIfNeeded(int32_t code, const String& rea
         buf.append(reasonUTF8.data(), reasonUTF8.length());
     }
 
-    if (!sendFrame(WebCore::WebSocketFrame::OpCodeClose, buf.data(), buf.size()))
+    if (!sendFrame(WebCore::WebSocketFrame::OpCodeClose, buf.span()))
         didFail("Failed to send WebSocket frame."_s);
 
     m_state = State::Closing;
     m_didSendClosingHandshake = true;
 }
 
-bool WebSocketTask::sendFrame(WebCore::WebSocketFrame::OpCode opCode, const uint8_t* data, size_t dataLength)
+bool WebSocketTask::sendFrame(WebCore::WebSocketFrame::OpCode opCode, std::span<const uint8_t> data)
 {
     if (m_didSendClosingHandshake)
         return true;
 
-    WebCore::WebSocketFrame frame(opCode, true, false, true, data, dataLength);
+    WebCore::WebSocketFrame frame(opCode, true, false, true, data);
 
     auto deflateResult = m_deflateFramer.deflate(frame);
     if (!deflateResult->succeeded()) {

@@ -72,7 +72,7 @@ public:
 private:
     void didConnect(const String& subprotocol, const String& extensions);
     void didReceiveText(const String&);
-    void didReceiveBinaryData(const uint8_t* data, size_t length);
+    void didReceiveBinaryData(std::span<const uint8_t>);
     void didClose(unsigned short code, const String& reason);
     void didReceiveMessageError(String&&);
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);

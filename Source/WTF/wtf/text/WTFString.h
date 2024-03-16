@@ -276,8 +276,11 @@ public:
     static String fromUTF8ReplacingInvalidSequences(const LChar*, size_t);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
-    WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
-    static String fromUTF8WithLatin1Fallback(const char* characters, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(characters), length); }
+    WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(std::span<const LChar>);
+
+    // FIXME: Update all call sites to pass a span and remove these 2 overloads.
+    static String fromUTF8WithLatin1Fallback(const LChar* characters, size_t length) { return fromUTF8WithLatin1Fallback(std::span { characters, length }); }
+    static String fromUTF8WithLatin1Fallback(const char* characters, size_t length) { return fromUTF8WithLatin1Fallback(std::span { reinterpret_cast<const LChar*>(characters), length }); }
 
     WTF_EXPORT_PRIVATE static String fromCodePoint(char32_t codePoint);
 

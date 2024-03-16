@@ -560,7 +560,7 @@ void WebSocket::didReceiveMessage(String&& message)
         if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
             if (auto* inspector = m_channel->channelInspector()) {
                 auto utf8Message = message.utf8();
-                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(utf8Message.dataAsUInt8Ptr(), utf8Message.length(), WebSocketFrame::OpCode::OpCodeText));
+                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(utf8Message.bytes(), WebSocketFrame::OpCode::OpCodeText));
             }
         }
         ASSERT(scriptExecutionContext());
@@ -577,7 +577,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
 
         if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
             if (auto* inspector = m_channel->channelInspector())
-                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(binaryData.data(), binaryData.size(), WebSocketFrame::OpCode::OpCodeBinary));
+                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(binaryData.span(), WebSocketFrame::OpCode::OpCodeBinary));
         }
 
         switch (m_binaryType) {

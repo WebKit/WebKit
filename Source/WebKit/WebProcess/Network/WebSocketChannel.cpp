@@ -54,19 +54,20 @@ Ref<WebSocketChannel> WebSocketChannel::create(WebPageProxyIdentifier webPagePro
     return adoptRef(*new WebSocketChannel(webPageProxyID, document, client));
 }
 
-void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, const uint8_t* data, size_t length)
+void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, std::span<const uint8_t> data)
 {
-    WebSocketFrame frame(opCode, true, false, true, data, length);
+    WebSocketFrame frame(opCode, true, false, true, data);
     m_inspector.didSendWebSocketFrame(frame);
 }
 
 NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSocketChannel& channel)
 {
     return { document, [&channel](auto& utf8String) {
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, utf8String.dataAsUInt8Ptr(), utf8String.length());
-        channel.sendMessage(Messages::NetworkSocketChannel::SendString { utf8String.bytes() }, utf8String.length());
+        auto data = utf8String.bytes();
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, data);
+        channel.sendMessage(Messages::NetworkSocketChannel::SendString { data }, utf8String.length());
     }, [&channel](auto span) {
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, span.data(), span.size());
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, span);
         channel.sendMessage(Messages::NetworkSocketChannel::SendData { span }, span.size());
     }, [&channel](ExceptionCode exceptionCode) {
         auto code = static_cast<int>(exceptionCode);

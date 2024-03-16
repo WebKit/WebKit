@@ -34,6 +34,7 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ThreadableWebSocketChannel.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
@@ -91,7 +92,7 @@ void WebSocketTask::readNextMessage()
         if (message.type == NSURLSessionWebSocketMessageTypeString)
             m_channel.didReceiveText(message.string);
         else
-            m_channel.didReceiveBinaryData(static_cast<const uint8_t*>(message.data.bytes), message.data.length);
+            m_channel.didReceiveBinaryData(toSpan(message.data));
 
         readNextMessage();
     }).get()];
