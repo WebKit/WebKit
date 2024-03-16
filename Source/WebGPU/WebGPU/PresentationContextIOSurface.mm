@@ -84,6 +84,10 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         return format == WGPUTextureFormat_BGRA8Unorm || format == WGPUTextureFormat_RGBA8Unorm || format == WGPUTextureFormat_RGBA16Float;
     };
 
+    auto allowedViewFormat = ^(WGPUTextureFormat format) {
+        return allowedFormat(Texture::removeSRGBSuffix(format));
+    };
+
     auto& limits = device.limits();
     auto width = std::min<uint32_t>(limits.maxTextureDimension2D, descriptor.width);
     auto height = std::min<uint32_t>(limits.maxTextureDimension2D, descriptor.height);
@@ -100,8 +104,8 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         effectiveFormat,
         1,
         1,
-        1,
-        &effectiveFormat,
+        descriptor.viewFormats.size() ?: 1,
+        descriptor.viewFormats.size() ? &descriptor.viewFormats[0] : &effectiveFormat,
     };
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
@@ -117,7 +121,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
             textureDescriptor.usage |= MTLTextureUsageShaderRead;
             id<MTLTexture> luminanceClampTexture = [device.device() newTextureWithDescriptor:textureDescriptor];
             luminanceClampTexture.label = fromAPI(descriptor.label);
-            auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(effectiveFormat) };
+            auto viewFormats = descriptor.viewFormats;
             parentLuminanceClampTexture = Texture::create(luminanceClampTexture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
             parentLuminanceClampTexture->makeCanvasBacking();
             textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
@@ -128,7 +132,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
 
         id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
         texture.label = fromAPI(descriptor.label);
-        auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(effectiveFormat) };
+        auto viewFormats = descriptor.viewFormats;
         auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
         parentTexture->makeCanvasBacking();
         m_renderBuffers.append({ parentTexture, parentLuminanceClampTexture });
@@ -146,7 +150,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     }
 
     for (auto viewFormat : descriptor.viewFormats) {
-        if (!allowedFormat(viewFormat)) {
+        if (!allowedViewFormat(viewFormat)) {
             device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
             return;
         }
