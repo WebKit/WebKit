@@ -180,7 +180,7 @@ private:
     uint64_t m_vertexDynamicOffset { 0 };
     uint64_t m_fragmentDynamicOffset { 0 };
 
-    RenderPassEncoder* m_renderPassEncoder { nullptr };
+    WeakPtr<RenderPassEncoder> m_renderPassEncoder;
     id<MTLIndirectRenderCommand> m_currentCommand { nil };
     WGPURenderBundleEncoderDescriptor m_descriptor;
     Vector<WGPUTextureFormat> m_descriptorColorFormats;
