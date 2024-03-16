@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WYHash.h>
 
 namespace WebCore {
 namespace ContentExtensions {
@@ -400,9 +401,7 @@ struct ActionKey {
         , actionsLength(actionsLength)
         , state(Valid)
     {
-        SuperFastHash hasher;
-        hasher.addCharactersAssumingAligned(reinterpret_cast<const UChar*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(UChar));
-        hash = hasher.hash();
+        hash = WYHash::computeHash(reinterpret_cast<const UChar*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(UChar));
     }
 
     bool isEmptyValue() const { return state == Empty; }

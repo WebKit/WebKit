@@ -31,7 +31,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringCommon.h>
-#include <wtf/text/SuperFastHash.h>
+#include <wtf/text/WYHash.h>
 
 namespace WTF {
 
@@ -137,10 +137,7 @@ unsigned CString::hash() const
 {
     if (isNull())
         return 0;
-    SuperFastHash hasher;
-    for (const char* ptr = data(); *ptr; ++ptr)
-        hasher.addCharacter(*ptr);
-    return hasher.hash();
+    return WYHash::computeHash(data(), length());
 }
 
 bool operator<(const CString& a, const CString& b)

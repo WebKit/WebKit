@@ -22,17 +22,11 @@
 #pragma once
 
 #include <array>
-#include <unicode/utypes.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/text/LChar.h>
+#include <wtf/text/HasherHelpers.h>
+#include <wtf/text/StreamingWYHash.h>
+#include <wtf/text/SuperFastHash.h>
 
 namespace WTF {
-
-// Golden ratio. Arbitrary start value to avoid mapping all zeros to a hash value of zero.
-static constexpr unsigned stringHashingStartValue = 0x9E3779B9U;
-
-class SuperFastHash;
-class WYHash;
 
 class StringHasher {
     WTF_MAKE_FAST_ALLOCATED;
@@ -47,17 +41,9 @@ public:
     // 3. Manually update all CompactHashIndex's in JSDollarVM.cpp by using createHashTable in hasher.py.
     static constexpr unsigned smallStringThreshold = numberOfCharactersInLargestBulkForWYHash * 2;
 
-    struct DefaultConverter {
-        template<typename CharType>
-        static constexpr UChar convert(CharType character)
-        {
-            return static_cast<std::make_unsigned_t<CharType>>((character));
-        }
-    };
-
     StringHasher() = default;
 
-    template<typename T, typename Converter = DefaultConverter>
+    template<typename T, typename Converter = HasherHelpers::DefaultConverter>
     static unsigned computeHashAndMaskTop8Bits(const T* data, unsigned characterCount);
 
     template<typename T, unsigned characterCount>
@@ -69,44 +55,9 @@ public:
     unsigned hashWithTop8BitsMasked();
 
 private:
+    friend class StreamingWYHash;
     friend class SuperFastHash;
     friend class WYHash;
-
-    ALWAYS_INLINE static constexpr unsigned avalancheBits(unsigned hash)
-    {
-        unsigned result = hash;
-
-        result ^= result << 3;
-        result += result >> 5;
-        result ^= result << 2;
-        result += result >> 15;
-        result ^= result << 10;
-
-        return result;
-    }
-
-    ALWAYS_INLINE static constexpr unsigned finalize(unsigned hash)
-    {
-        return avoidZero(avalancheBits(hash));
-    }
-
-    ALWAYS_INLINE static constexpr unsigned finalizeAndMaskTop8Bits(unsigned hash)
-    {
-        // Reserving space from the high bits for flags preserves most of the hash's
-        // value, since hash lookup typically masks out the high bits anyway.
-        return avoidZero(avalancheBits(hash) & StringHasher::maskHash);
-    }
-
-    // This avoids ever returning a hash code of 0, since that is used to
-    // signal "hash not computed yet". Setting the high bit maintains
-    // reasonable fidelity to a hash code of 0 because it is likely to yield
-    // exactly 0 when hash lookup masks out the high bits.
-    ALWAYS_INLINE static constexpr unsigned avoidZero(unsigned hash)
-    {
-        if (hash)
-            return hash;
-        return 0x80000000 >> flagCount;
-    }
 
 #if ENABLE(WYHASH_STRING_HASHER)
     bool m_pendingHashValue { false };
@@ -118,7 +69,7 @@ private:
     unsigned m_bufferSize { 0 };
     std::array<UChar, smallStringThreshold> m_buffer;
 #else
-    unsigned m_hash { stringHashingStartValue };
+    unsigned m_hash { SuperFastHash::stringHashingStartValue };
     UChar m_pendingCharacter { 0 };
     bool m_hasPendingCharacter { false };
 #endif

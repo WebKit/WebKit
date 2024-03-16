@@ -31,7 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/SuperFastHash.h>
+#include <wtf/text/WYHash.h>
 
 OBJC_CLASS NSString;
 
@@ -112,9 +112,7 @@ inline unsigned ASCIILiteral::hash() const
 {
     if (isNull())
         return 0;
-    SuperFastHash hasher;
-    hasher.addCharacters(characters(), length());
-    return hasher.hash();
+    return WYHash::computeHash(characters(), length());
 }
 
 struct ASCIILiteralHash {

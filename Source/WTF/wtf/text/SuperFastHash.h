@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <wtf/text/StringHasher.h>
+#include <wtf/text/HasherHelpers.h>
 
 namespace WTF {
 
@@ -36,9 +36,12 @@ namespace WTF {
 class SuperFastHash {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static constexpr unsigned flagCount = StringHasher::flagCount;
-    static constexpr unsigned maskHash = StringHasher::maskHash;
-    typedef StringHasher::DefaultConverter DefaultConverter;
+    using DefaultConverter = HasherHelpers::DefaultConverter;
+
+    // Golden ratio. Arbitrary start value to avoid mapping all zeros to a hash value of zero.
+    static constexpr unsigned stringHashingStartValue = 0x9E3779B9U;
+
+    friend class StringHasher;
 
     SuperFastHash() = default;
 
@@ -135,31 +138,31 @@ public:
 
     unsigned hash() const
     {
-        return StringHasher::finalize(processPendingCharacter());
+        return HasherHelpers::finalize(avalancheBits(processPendingCharacter()));
     }
 
     template<typename T, typename Converter = DefaultConverter>
     ALWAYS_INLINE static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
     {
-        return StringHasher::finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data, length));
+        return HasherHelpers::finalizeAndMaskTop8Bits(avalancheBits(computeHashImpl<T, Converter>(data, length)));
     }
 
     template<typename T, typename Converter = DefaultConverter>
     ALWAYS_INLINE static constexpr unsigned computeHashAndMaskTop8Bits(const T* data)
     {
-        return StringHasher::finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data));
+        return HasherHelpers::finalizeAndMaskTop8Bits(avalancheBits(computeHashImpl<T, Converter>(data)));
     }
 
     template<typename T, typename Converter = DefaultConverter>
     static constexpr unsigned computeHash(const T* data, unsigned length)
     {
-        return StringHasher::finalize(computeHashImpl<T, Converter>(data, length));
+        return HasherHelpers::finalize(avalancheBits(computeHashImpl<T, Converter>(data, length)));
     }
 
     template<typename T, typename Converter = DefaultConverter>
     static constexpr unsigned computeHash(const T* data)
     {
-        return StringHasher::finalize(computeHashImpl<T, Converter>(data));
+        return HasherHelpers::finalize(avalancheBits(computeHashImpl<T, Converter>(data)));
     }
 
     template<typename T, unsigned charactersCount>
@@ -175,8 +178,6 @@ public:
     }
 
 private:
-    friend class StringHasher;
-
     static void addCharactersAssumingAlignedImpl(UChar a, UChar b, unsigned& hash)
     {
         hash = calculateWithTwoCharacters(hash, a, b);
@@ -253,7 +254,7 @@ private:
 
     static unsigned hashWithTop8BitsMaskedImpl(const bool hasPendingCharacter, const UChar pendingCharacter, const unsigned hash)
     {
-        return StringHasher::finalizeAndMaskTop8Bits(processPendingCharacterImpl(hasPendingCharacter, pendingCharacter, hash));
+        return HasherHelpers::finalizeAndMaskTop8Bits(avalancheBits(processPendingCharacterImpl(hasPendingCharacter, pendingCharacter, hash)));
     }
 
     static unsigned processPendingCharacterImpl(const bool hasPendingCharacter, const UChar pendingCharacter, const unsigned hash)
@@ -263,6 +264,19 @@ private:
         // Handle end case.
         if (hasPendingCharacter)
             return calculateWithRemainingLastCharacter(result, pendingCharacter);
+        return result;
+    }
+
+    ALWAYS_INLINE static constexpr unsigned avalancheBits(unsigned hash)
+    {
+        unsigned result = hash;
+
+        result ^= result << 3;
+        result += result >> 5;
+        result ^= result << 2;
+        result += result >> 15;
+        result ^= result << 10;
+
         return result;
     }
 

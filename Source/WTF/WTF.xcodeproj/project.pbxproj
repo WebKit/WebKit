@@ -831,6 +831,7 @@
 		E361DB69289115D000B2A2B8 /* bigint.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB60289115D000B2A2B8 /* bigint.h */; };
 		E36BA9DE29E275DB00300057 /* WTFProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E36BA9DC29E275DB00300057 /* WTFProcess.cpp */; };
 		E36BA9DF29E275DB00300057 /* WTFProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E36BA9DD29E275DB00300057 /* WTFProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E370B8322B773C460008687B /* StreamingWYHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E370B8312B773C460008687B /* StreamingWYHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E37E96542702AD0B00E1C36A /* ApproximateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E37E96522702AD0700E1C36A /* ApproximateTime.cpp */; };
 		E383AAC92B6C730B00058E60 /* AdaptiveStringSearcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E383AAC82B6C730B00058E60 /* AdaptiveStringSearcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E388886F20C9095100E632BC /* WorkerPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E388886D20C9095100E632BC /* WorkerPool.cpp */; };
@@ -840,6 +841,7 @@
 		E3B8E6032961EA7600A8AEE3 /* AccessibleAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E6012961EA7600A8AEE3 /* AccessibleAddress.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */; };
 		E3DA37E7287AD1A10066808F /* StringCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DA37E6287AD1A10066808F /* StringCommon.cpp */; };
+		E3E629302B77468000EC599E /* HasherHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E6292F2B77467F00EC599E /* HasherHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		EB2C86D9267B275D0052CB9A /* CPUTimePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB2C86D8267B275C0052CB9A /* CPUTimePOSIX.cpp */; };
@@ -1767,6 +1769,7 @@
 		E36895CC23A445EE008DD4C8 /* PackedRefPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PackedRefPtr.h; sourceTree = "<group>"; };
 		E36BA9DC29E275DB00300057 /* WTFProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFProcess.cpp; sourceTree = "<group>"; };
 		E36BA9DD29E275DB00300057 /* WTFProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFProcess.h; sourceTree = "<group>"; };
+		E370B8312B773C460008687B /* StreamingWYHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamingWYHash.h; sourceTree = "<group>"; };
 		E37E96522702AD0700E1C36A /* ApproximateTime.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApproximateTime.cpp; sourceTree = "<group>"; };
 		E37E96532702AD0700E1C36A /* ApproximateTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApproximateTime.h; sourceTree = "<group>"; };
 		E38020DB2401C0930037CA9E /* CompactRefPtrTuple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompactRefPtrTuple.h; sourceTree = "<group>"; };
@@ -1786,6 +1789,7 @@
 		E3DA37E6287AD1A10066808F /* StringCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringCommon.cpp; sourceTree = "<group>"; };
 		E3E0F04F26197157004640FC /* FixedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixedVector.h; sourceTree = "<group>"; };
 		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
+		E3E6292F2B77467F00EC599E /* HasherHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HasherHelpers.h; sourceTree = "<group>"; };
 		E3E64F0B22813428001E55B4 /* Nonmovable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nonmovable.h; sourceTree = "<group>"; };
 		E3E8162F2764799300BAA45B /* RefCountedFixedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefCountedFixedVector.h; sourceTree = "<group>"; };
 		E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericHashKey.h; sourceTree = "<group>"; };
@@ -2549,12 +2553,14 @@
 				50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */,
 				50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */,
 				461229712ACF6B3100BB1CCC /* FastCharacterComparison.h */,
+				E3E6292F2B77467F00EC599E /* HasherHelpers.h */,
 				26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */,
 				93AC91A718942FC400244939 /* LChar.h */,
 				C2BCFC531F621F3F00C9222C /* LineEnding.cpp */,
 				C2BCFC541F621F3F00C9222C /* LineEnding.h */,
 				DD4901ED27B474D900D7E50D /* NullTextBreakIterator.h */,
 				14E785E71DFB330100209BD1 /* OrdinalNumber.h */,
+				E370B8312B773C460008687B /* StreamingWYHash.h */,
 				0F95B63620CB5EFD00479635 /* StringBuffer.cpp */,
 				A8A47323151A825B004123FF /* StringBuffer.h */,
 				A8A47324151A825B004123FF /* StringBuilder.cpp */,
@@ -3182,6 +3188,7 @@
 				DD3DC8F927A4BF8E007E5B61 /* GregorianDateTime.h in Headers */,
 				DD3DC8E427A4BF8E007E5B61 /* HashCountedSet.h in Headers */,
 				DD3DC91227A4BF8E007E5B61 /* Hasher.h in Headers */,
+				E3E629302B77468000EC599E /* HasherHelpers.h in Headers */,
 				DD3DC97927A4BF8E007E5B61 /* HashFunctions.h in Headers */,
 				DD3DC86427A4BF8E007E5B61 /* HashIterators.h in Headers */,
 				DD3DC85F27A4BF8E007E5B61 /* HashMap.h in Headers */,
@@ -3402,6 +3409,7 @@
 				DD3DC93427A4BF8E007E5B61 /* StdUnorderedSet.h in Headers */,
 				DD3DC98027A4BF8E007E5B61 /* Stopwatch.h in Headers */,
 				DD3DC8A527A4BF8E007E5B61 /* StreamBuffer.h in Headers */,
+				E370B8322B773C460008687B /* StreamingWYHash.h in Headers */,
 				DDF307D827C086DF006A526F /* StringBuffer.h in Headers */,
 				DDF307CC27C086DF006A526F /* StringBuilder.h in Headers */,
 				DDF307D927C086DF006A526F /* StringBuilderInternals.h in Headers */,

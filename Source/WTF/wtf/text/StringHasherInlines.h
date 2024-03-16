@@ -115,7 +115,7 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
         }
 
         const uint64_t totalByteCount = (static_cast<uint64_t>(m_numberOfProcessedCharacters) + static_cast<uint64_t>(m_bufferSize)) << 1;
-        hashValue = StringHasher::avoidZero(WYHash::handleEndCase(a, b, m_seed, totalByteCount) & StringHasher::maskHash);
+        hashValue = HasherHelpers::finalizeAndMaskTop8Bits(WYHash::handleEndCase(a, b, m_seed, totalByteCount));
 
         m_pendingHashValue = false;
         m_numberOfProcessedCharacters = m_seed = m_see1 = m_see2 = 0;
@@ -126,7 +126,7 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
     unsigned hashValue = SuperFastHash::hashWithTop8BitsMaskedImpl(m_hasPendingCharacter, m_pendingCharacter, m_hash);
     m_hasPendingCharacter = false;
     m_pendingCharacter = 0;
-    m_hash = stringHashingStartValue;
+    m_hash = SuperFastHash::stringHashingStartValue;
     return hashValue;
 #endif
 }
