@@ -706,7 +706,7 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
     if (layer != m_contentsLayer.get())
         return;
 
-    paintPDFContent(context, clipRect);
+    paintPDFContent(context, clipRect, PaintingBehavior::All, AllowsAsyncRendering::Yes);
 }
 
 PDFPageCoverage UnifiedPDFPlugin::pageCoverageForRect(const FloatRect& clipRect) const
@@ -747,7 +747,7 @@ PDFPageCoverage UnifiedPDFPlugin::pageCoverageForRect(const FloatRect& clipRect)
     return pageCoverage;
 }
 
-void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect& clipRect, PaintingBehavior behavior)
+void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect& clipRect, PaintingBehavior behavior, AllowsAsyncRendering allowsAsyncRendering)
 {
     if (m_size.isEmpty() || documentSize().isEmpty())
         return;
@@ -789,7 +789,9 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
             context.fillRect(pageDestinationRect, Color::white);
         }
 
-        RefPtr asyncRenderer = asyncRendererIfExists();
+        RefPtr<AsyncPDFRenderer> asyncRenderer;
+        if (allowsAsyncRendering == AllowsAsyncRendering::Yes)
+            asyncRenderer = asyncRendererIfExists();
         if (asyncRenderer) {
             auto pageBoundsInPaintingCoordinates = pageDestinationRect;
             pageBoundsInPaintingCoordinates.scale(documentScale);
@@ -2090,6 +2092,21 @@ void UnifiedPDFPlugin::finishTrackingAnnotation(PDFAnnotation* annotationUnderMo
     setNeedsRepaintInDocumentRect(repaintRequirements, annotationRect);
 }
 
+void UnifiedPDFPlugin::scrollToPointInContentsSpace(FloatPoint pointInContentsSpace)
+{
+    auto oldScrollType = currentScrollType();
+    setCurrentScrollType(ScrollType::Programmatic);
+    scrollToPositionWithoutAnimation(roundedIntPoint(pointInContentsSpace));
+    setCurrentScrollType(oldScrollType);
+}
+
+void UnifiedPDFPlugin::revealRectInContentsSpace(FloatRect rectInContentsSpace)
+{
+    auto pluginRectInContentsCoordinates = convertDown(CoordinateSpace::Plugin, CoordinateSpace::ScrolledContents, FloatRect { { 0, 0 }, size() });
+    auto rectToExpose = getRectToExposeForScrollIntoView(LayoutRect(pluginRectInContentsCoordinates), LayoutRect(rectInContentsSpace), ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, std::nullopt);
+    scrollToPointInContentsSpace(rectToExpose.location());
+}
+
 void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
 {
     auto unspecifiedValue = get_PDFKit_kPDFDestinationUnspecifiedValue();
@@ -2106,8 +2123,7 @@ void UnifiedPDFPlugin::scrollToPDFDestination(PDFDestination *destination)
 
 void UnifiedPDFPlugin::scrollToPointInPage(FloatPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex pageIndex)
 {
-    auto pointInContentsSpace = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::ScrolledContents, pointInPDFPageSpace, pageIndex);
-    scrollToPositionWithoutAnimation(roundedIntPoint(pointInContentsSpace));
+    scrollToPointInContentsSpace(convertUp(CoordinateSpace::PDFPage, CoordinateSpace::ScrolledContents, pointInPDFPageSpace, pageIndex));
 }
 
 void UnifiedPDFPlugin::scrollToPage(PDFDocumentLayout::PageIndex pageIndex)
@@ -2116,7 +2132,8 @@ void UnifiedPDFPlugin::scrollToPage(PDFDocumentLayout::PageIndex pageIndex)
 
     auto pageBounds = m_documentLayout.layoutBoundsForPageAtIndex(pageIndex);
     auto boundsInScrolledContents = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::ScrolledContents, pageBounds);
-    scrollToPositionWithoutAnimation(boundsInScrolledContents.location());
+
+    scrollToPointInContentsSpace(boundsInScrolledContents.location());
 }
 
 void UnifiedPDFPlugin::scrollToFragmentIfNeeded()
@@ -2905,10 +2922,8 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
     if (!firstPageIndex)
         return false;
 
-    auto selectionScrolledContentsSpaceBounds = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::ScrolledContents, FloatRect { [selection boundsForPage:firstPageForSelection.get()] }, *firstPageIndex);
-    auto currentScrollPositionY = scrollPosition().y();
-    if (selectionScrolledContentsSpaceBounds.y() < currentScrollPositionY || selectionScrolledContentsSpaceBounds.y() > currentScrollPositionY + size().height())
-        scrollToPositionWithoutAnimation(selectionScrolledContentsSpaceBounds.location());
+    auto selectionBoundsInContentsCoordinates = convertUp(CoordinateSpace::PDFPage, CoordinateSpace::ScrolledContents, FloatRect { [selection boundsForPage:firstPageForSelection.get()] }, *firstPageIndex);
+    revealRectInContentsSpace(selectionBoundsInContentsCoordinates);
 
     setCurrentSelection(WTFMove(selection));
     return true;
@@ -3286,9 +3301,7 @@ void UnifiedPDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation
         protectedActiveAnnotation()->attach(m_annotationContainer.get());
 
         auto newAnnotationRectInContentsCoordinates = convertUp(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::ScrolledContents, documentRectForAnnotation(protectedActiveAnnotation()->annotation()));
-        auto pluginRectInContentsCoordinates = convertDown(CoordinateSpace::Plugin, CoordinateSpace::ScrolledContents, FloatRect { { 0, 0 }, size() });
-        auto rectToExpose = getRectToExposeForScrollIntoView(LayoutRect(pluginRectInContentsCoordinates), LayoutRect(newAnnotationRectInContentsCoordinates), ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, std::nullopt);
-        scrollToPositionWithoutAnimation(rectToExpose.location());
+        revealRectInContentsSpace(newAnnotationRectInContentsCoordinates);
     } else
         m_activeAnnotation = nullptr;
 #endif

@@ -344,8 +344,9 @@ private:
     // Package up the data needed to paint a set of pages for the given clip, for use by UnifiedPDFPlugin::paintPDFContent and async rendering.
     PDFPageCoverage pageCoverageForRect(const WebCore::FloatRect& clipRect) const;
 
-    enum class PaintingBehavior : uint8_t { All, PageContentsOnly };
-    void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, PaintingBehavior = PaintingBehavior::All);
+    enum class PaintingBehavior : bool { All, PageContentsOnly };
+    enum class AllowsAsyncRendering : bool { No, Yes };
+    void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, PaintingBehavior = PaintingBehavior::All, AllowsAsyncRendering = AllowsAsyncRendering::No);
 
     void ensureLayers();
     void updatePageBackgroundLayers();
@@ -377,6 +378,8 @@ private:
     WebCore::ScrollingCoordinator* scrollingCoordinator();
     void createScrollingNodeIfNecessary();
 
+    void revealRectInContentsSpace(WebCore::FloatRect);
+    void scrollToPointInContentsSpace(WebCore::FloatPoint);
     void scrollToPDFDestination(PDFDestination *);
     void scrollToPointInPage(WebCore::FloatPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
     void scrollToPage(PDFDocumentLayout::PageIndex);
