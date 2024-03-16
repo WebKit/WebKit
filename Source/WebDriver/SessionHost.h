@@ -56,9 +56,7 @@ public:
     }
     ~SessionHost();
 
-#if USE(INSPECTOR_SOCKET_SERVER)
     void setHostAddress(const String& ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }
-#endif
     bool isConnected() const;
 
     const String& sessionID() const { return m_sessionID; }
@@ -116,14 +114,16 @@ private:
 
     HashMap<long, Function<void (CommandResponse&&)>> m_commandRequests;
 
+    String m_targetIp;
+    uint16_t m_targetPort { 0 };
+
 #if USE(GLIB)
     Function<void (bool, std::optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
+    bool m_isRemoteBrowser { false };
 #elif USE(INSPECTOR_SOCKET_SERVER)
-    String m_targetIp;
-    uint16_t m_targetPort { 0 };
     Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
     std::optional<Inspector::ConnectionID> m_clientID;
 #endif

@@ -29,6 +29,7 @@
 #include "Capabilities.h"
 #include "CommandResult.h"
 #include <wtf/JSONValues.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebDriver {
 
@@ -157,6 +158,15 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
             ASSERT(!certificateFile.isNull());
 
             capabilities.certificates->append({ WTFMove(host), WTFMove(certificateFile) });
+        }
+    }
+
+    String targetString;
+    if (browserOptions->getString("targetAddress"_s, targetString)) {
+        auto position = targetString.reverseFind(':');
+        if (position != notFound) {
+            capabilities.targetAddr = targetString.left(position);
+            capabilities.targetPort = parseIntegerAllowingTrailingJunk<uint16_t>(StringView { targetString }.substring(position + 1)).value_or(0);
         }
     }
 }

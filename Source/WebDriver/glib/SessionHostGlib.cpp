@@ -101,7 +101,7 @@ void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&
 bool SessionHost::isConnected() const
 {
     // Session is connected when launching or when socket connection hasn't been closed.
-    return m_browser && (!m_socketConnection || !m_socketConnection->isClosed());
+    return (m_browser || m_isRemoteBrowser) && (!m_socketConnection || !m_socketConnection->isClosed());
 }
 
 struct ConnectToBrowserAsyncData {
@@ -134,10 +134,28 @@ static guint16 freePort()
 
 void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& completionHandler)
 {
+    String targetIp;
+    uint16_t targetPort = 0;
+
+    if (!m_targetIp.isEmpty() && m_targetPort) {
+        targetIp = m_targetIp;
+        targetPort = m_targetPort;
+    } else if (m_capabilities.targetAddr && m_capabilities.targetPort) {
+        targetIp = m_capabilities.targetAddr.value();
+        targetPort = m_capabilities.targetPort.value();
+    }
+
     m_cancellable = adoptGRef(g_cancellable_new());
+    GUniquePtr<char> inspectorAddress(
+        g_strdup_printf("%s:%u", targetIp.isEmpty() ? "127.0.0.1" : targetIp.latin1().data(), targetPort > 0 ? targetPort : freePort())
+    );
+    if (!targetIp.isEmpty()) {
+        m_isRemoteBrowser = true;
+        connectToBrowser(makeUnique<ConnectToBrowserAsyncData>(this, WTFMove(inspectorAddress), m_cancellable.get(), WTFMove(completionHandler)));
+        return;
+    }
+
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_NONE));
-    guint16 port = freePort();
-    GUniquePtr<char> inspectorAddress(g_strdup_printf("127.0.0.1:%u", port));
     g_subprocess_launcher_setenv(launcher.get(), "WEBKIT_INSPECTOR_SERVER", inspectorAddress.get(), TRUE);
 #if PLATFORM(GTK)
     g_subprocess_launcher_setenv(launcher.get(), "GTK_OVERLAY_SCROLLING", m_capabilities.useOverlayScrollbars.value() ? "1" : "0", TRUE);
@@ -170,7 +188,7 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
 
 void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& data)
 {
-    if (!m_browser)
+    if (!m_browser && !m_isRemoteBrowser)
         return;
 
     RunLoop::main().dispatchAfter(100_ms, [connectToBrowserData = WTFMove(data)]() mutable {
@@ -192,10 +210,10 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                         data->sessionHost->connectToBrowser(WTFMove(data));
                         return;
                     }
-
                     data->completionHandler(String::fromUTF8(error->message));
                     return;
                 }
+
                 data->sessionHost->setupConnection(SocketConnection::create(WTFMove(connection), messageHandlers(), data->sessionHost));
                 data->completionHandler(std::nullopt);
         }, data);
@@ -205,6 +223,8 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
 void SessionHost::connectionDidClose()
 {
     m_browser = nullptr;
+    m_isRemoteBrowser = false;
+
     inspectorDisconnected();
     m_socketConnection = nullptr;
 }
