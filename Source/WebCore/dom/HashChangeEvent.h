@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,17 +46,6 @@ public:
     static Ref<HashChangeEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
         return adoptRef(*new HashChangeEvent(type, initializer, isTrusted));
-    }
-
-    void initHashChangeEvent(const AtomString& eventType, bool canBubble, bool cancelable, const String& oldURL, const String& newURL)
-    {
-        if (isBeingDispatched())
-            return;
-
-        initEvent(eventType, canBubble, cancelable);
-
-        m_oldURL = oldURL;
-        m_newURL = newURL;
     }
 
     const String& oldURL() const { return m_oldURL; }
