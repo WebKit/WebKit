@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.44.0
+================
+
+What's new in WebKitGTK 2.44.0?
+
+  - Fix connection of UI and web process accessibility tree in GTK4.
+  - Add BubblewrapLauncher sandbox directory for the gstreamer user registry cache directory.
+  - Fix bug causing preferred language to not be passed to NetworkProcess if set in WebContext before creating WebView.
+  - Do not use real time priority for the display link thread.
+  - Use a shorter web process cache lifetime.
+  - Fix several crashes and rendering issues.
+  - Translation updates: German, Polish, Swedish, Turkish.
+
+================
 WebKitGTK 2.43.4
 ================
 
