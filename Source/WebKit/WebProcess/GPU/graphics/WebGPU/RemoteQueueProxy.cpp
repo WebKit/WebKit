@@ -81,7 +81,7 @@ void RemoteQueueProxy::writeBuffer(
     if (!convertedBuffer)
         return;
 
-    auto sendResult = send(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, std::span { static_cast<const uint8_t*>(source) + dataOffset, size.value_or(byteLength - dataOffset) }));
+    auto sendResult = send(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, std::span { static_cast<const uint8_t*>(source) + dataOffset, static_cast<size_t>(size.value_or(byteLength - dataOffset)) }));
     UNUSED_VARIABLE(sendResult);
 }
 
