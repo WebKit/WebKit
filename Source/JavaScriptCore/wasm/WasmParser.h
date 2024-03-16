@@ -63,6 +63,7 @@ public:
 
     const uint8_t* source() const { return m_source; }
     size_t length() const { return m_sourceLength; }
+    std::span<const uint8_t> sourceSpan() const { return { m_source, m_sourceLength }; }
     size_t offset() const { return m_offset; }
 
 protected:

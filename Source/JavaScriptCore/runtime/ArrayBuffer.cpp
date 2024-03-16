@@ -276,7 +276,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(const void* source, size_t byteLength
     return createInternal(WTFMove(contents), source, byteLength);
 }
 
-RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(std::span<uint8_t> span)
+RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(std::span<const uint8_t> span)
 {
     return tryCreate(span.data(), span.size_bytes());
 }

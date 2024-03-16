@@ -147,7 +147,7 @@ void RemoteRenderBundleEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index
     if (!convertedBindGroup)
         return;
 
-    auto sendResult = send(Messages::RemoteRenderBundleEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength)));
+    auto sendResult = send(Messages::RemoteRenderBundleEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(std::span { dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength })));
     UNUSED_VARIABLE(sendResult);
 }
 

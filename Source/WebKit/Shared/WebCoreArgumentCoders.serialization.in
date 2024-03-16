@@ -3956,7 +3956,7 @@ struct WebCore::CookieRequestHeaderFieldProxy {
     Vector<WebCore::FormDataElement> m_elements;
     int64_t m_identifier;
     bool m_alwaysStream;
-    Vector<char> m_boundary;
+    Vector<uint8_t> m_boundary;
     [NotSerialized] std::optional<uint64_t> m_lengthInBytes;
 };
 
@@ -4107,7 +4107,7 @@ enum class WebCore::MediaDecodingType : uint8_t {
 enum class WebCore::MediaEncodingType : bool;
 
 class WebCore::BufferSource {
-    std::span<const uint8_t> span()
+    std::span<const uint8_t> bytes()
 }
 
 struct WebCore::FontShadow {

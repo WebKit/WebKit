@@ -822,7 +822,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
     size_t initExprOffset;
     WASM_FAIL_IF_HELPER_FAILS(parseExtendedConstExpr(source() + initialOffset, length() - initialOffset, initialOffset + m_offsetInSource, initExprOffset, m_info, expectedType));
     m_offset += (initExprOffset - (m_offset - initialOffset));
-    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(source() + initialOffset, initExprOffset), "could not allocate memory for init expr");
+    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(sourceSpan().subspan(initialOffset, initExprOffset)), "could not allocate memory for init expr");
     bitsOrImportNumber = m_info->constantExpressions.size() - 1;
     isExtendedConstantExpression = true;
     resultType = expectedType;

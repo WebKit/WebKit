@@ -51,7 +51,7 @@ Vector<uint8_t> identifyingDataFromCookieStorage(CFHTTPCookieStorageRef cookieSt
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     auto cfData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, cookieStorage));
-    return vectorFromCFData(cfData.get());
+    return toVector(cfData.get());
 }
 
 } // namespace WebKit

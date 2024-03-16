@@ -189,7 +189,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         storageTexturesPerStage[shaderStage] = 0;
     }
 
-    Vector<WGPUBindGroupLayoutEntry> descriptorEntries(descriptor.entries, descriptor.entryCount);
+    Vector<WGPUBindGroupLayoutEntry> descriptorEntries(std::span { descriptor.entries, descriptor.entryCount });
     std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupLayoutEntry& a, const WGPUBindGroupLayoutEntry& b) {
         return a.metalBinding < b.metalBinding;
     });

@@ -4184,8 +4184,7 @@ Ref<ArrayBuffer> Internals::serializeObject(const RefPtr<SerializedScriptValue>&
 
 Ref<SerializedScriptValue> Internals::deserializeBuffer(ArrayBuffer& buffer) const
 {
-    Vector<uint8_t> bytes { static_cast<const uint8_t*>(buffer.data()), buffer.byteLength() };
-    return SerializedScriptValue::createFromWireBytes(WTFMove(bytes));
+    return SerializedScriptValue::createFromWireBytes(buffer.toVector());
 }
 
 bool Internals::isFromCurrentWorld(JSC::JSValue value) const
@@ -7235,12 +7234,7 @@ void Internals::retainTextIteratorForDocumentContent()
 
 RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
 {
-    auto myEndpoint = endpoint;
-    Vector<uint8_t> myServerVAPIDPublicKey { static_cast<const uint8_t*>(serverVAPIDPublicKey.data()), serverVAPIDPublicKey.byteLength() };
-    Vector<uint8_t> myClientECDHPublicKey { static_cast<const uint8_t*>(clientECDHPublicKey.data()), clientECDHPublicKey.byteLength() };
-    Vector<uint8_t> myAuth { static_cast<const uint8_t*>(auth.data()), auth.byteLength() };
-
-    return PushSubscription::create(PushSubscriptionData { { }, WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
+    return PushSubscription::create(PushSubscriptionData { { }, { endpoint }, expirationTime, serverVAPIDPublicKey.toVector(), clientECDHPublicKey.toVector(), auth.toVector() });
 }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)

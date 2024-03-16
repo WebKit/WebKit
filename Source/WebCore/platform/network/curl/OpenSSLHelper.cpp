@@ -124,7 +124,7 @@ public:
         if (length < 0)
             return std::nullopt;
 
-        return Vector { data, static_cast<size_t>(length) };
+        return Vector(std::span<const uint8_t> { data, static_cast<size_t>(length) });
     }
 
     String getDataAsString() const

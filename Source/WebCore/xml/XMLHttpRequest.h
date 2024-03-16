@@ -178,7 +178,7 @@ private:
     ExceptionOr<void> send(DOMFormData&);
     ExceptionOr<void> send(JSC::ArrayBuffer&);
     ExceptionOr<void> send(JSC::ArrayBufferView&);
-    ExceptionOr<void> sendBytesData(const void*, size_t);
+    ExceptionOr<void> sendBytesData(std::span<const uint8_t>);
 
     void changeState(State);
     void callReadyStateChangeListener();

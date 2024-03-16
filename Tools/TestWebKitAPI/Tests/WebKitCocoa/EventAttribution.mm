@@ -48,6 +48,7 @@
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
@@ -259,8 +260,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
         (__bridge id)kSecAttrKeyType: (__bridge id)kSecAttrKeyTypeRSA,
         (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPublic
     }, nil));
-    Vector<uint8_t> rawKeyBytes(static_cast<const uint8_t*>(publicKey.get().bytes), publicKey.get().length);
-    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(WTFMove(rawKeyBytes));
+    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(toVector(publicKey.get()));
 
     auto keyData = base64URLEncodeToString(wrappedKeyBytes.data(), wrappedKeyBytes.size());
     // The server.

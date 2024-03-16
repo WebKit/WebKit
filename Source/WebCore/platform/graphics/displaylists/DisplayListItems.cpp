@@ -296,7 +296,7 @@ DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, PositionedGly
 
 DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     : m_fontIdentifier(font.renderingResourceIdentifier())
-    , m_positionedGlyphs { { glyphs, count }, { advances, count }, localAnchor, smoothingMode }
+    , m_positionedGlyphs { Vector(std::span { glyphs, count }), Vector(std::span { advances, count }), localAnchor, smoothingMode }
 {
 }
 

@@ -64,7 +64,7 @@ void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore:
 
         auto mappedRange = protectedThis->m_backing->getMappedRange(0, std::nullopt);
         protectedThis->m_mappedRange = mappedRange;
-        callback(Vector<uint8_t>(static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength));
+        callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));
     });
 }
 
@@ -75,7 +75,7 @@ void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<
     m_mapModeFlags = { WebCore::WebGPU::MapMode::Write };
     m_isMapped = true;
 
-    callback(Vector<uint8_t>(static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength));
+    callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));
 }
 
 void RemoteBuffer::unmap(Vector<uint8_t>&& data)

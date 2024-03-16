@@ -224,7 +224,7 @@ auto StreamingParser::consume(const uint8_t* bytes, size_t bytesSize, size_t& of
     }
 
     if (m_remaining.size() > requiredSize) {
-        Vector<uint8_t> result { m_remaining.data(), requiredSize };
+        auto result = m_remaining.subvector(0, requiredSize);
         m_remaining.remove(0, requiredSize);
         m_nextOffset += requiredSize;
         return result;

@@ -1578,7 +1578,7 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
         return { };
     }
-    Vector<UChar, 32> buffer(formattedStringPointer, formattedStringLength);
+    Vector<UChar, 32> buffer(std::span<const UChar> { formattedStringPointer, static_cast<size_t>(formattedStringLength) });
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
     return jsString(vm, String(WTFMove(buffer)));
@@ -1694,7 +1694,7 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
         return { };
     }
-    Vector<UChar, 32> buffer(formattedStringPointer, formattedStringLength);
+    Vector<UChar, 32> buffer(std::span<const UChar> { formattedStringPointer, static_cast<size_t>(formattedStringLength) });
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
     StringView resultStringView(buffer.data(), buffer.size());

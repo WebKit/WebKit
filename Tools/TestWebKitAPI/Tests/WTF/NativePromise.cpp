@@ -1855,7 +1855,7 @@ private:
             // Note that you can resolve a NativePromise on any threads. Unlike with a CompletionHandler it is not the responsibility of the producer to resolve the promise
             // on a particular thread.
             // The consumer specifies the thread on which it wants to be called back.
-            producer.resolve(std::make_pair<Vector<uint8_t>, String>({ image.data(), image.size() }, { mimeType.data(), static_cast<unsigned>(mimeType.size()) }));
+            producer.resolve(std::make_pair<Vector<uint8_t>, String>(std::span { image }, { mimeType.data(), static_cast<unsigned>(mimeType.size()) }));
         }));
 
         // Return the promise which the producer will resolve at a later stage.

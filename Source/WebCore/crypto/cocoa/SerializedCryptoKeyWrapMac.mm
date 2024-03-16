@@ -255,7 +255,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!serialization)
         return false;
 
-    result = vectorFromNSData(serialization);
+    result = toVector(serialization);
     return true;
 }
 
@@ -276,17 +276,17 @@ bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<ui
     id wrappedKEKObject = [dictionary objectForKey:wrappedKEKKey];
     if (![wrappedKEKObject isKindOfClass:[NSData class]])
         return false;
-    Vector<uint8_t> wrappedKEK = vectorFromNSData(wrappedKEKObject);
+    Vector<uint8_t> wrappedKEK = toVector(wrappedKEKObject);
 
     id encryptedKeyObject = [dictionary objectForKey:encryptedKeyKey];
     if (![encryptedKeyObject isKindOfClass:[NSData class]])
         return false;
-    Vector<uint8_t> encryptedKey = vectorFromNSData(encryptedKeyObject);
+    Vector<uint8_t> encryptedKey = toVector(encryptedKeyObject);
 
     id tagObject = [dictionary objectForKey:tagKey];
     if (![tagObject isKindOfClass:[NSData class]])
         return false;
-    Vector<uint8_t> tag = vectorFromNSData(tagObject);
+    Vector<uint8_t> tag = toVector(tagObject);
     if (tag.size() != 16)
         return false;
 

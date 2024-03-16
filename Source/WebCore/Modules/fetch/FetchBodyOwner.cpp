@@ -109,7 +109,7 @@ void FetchBodyOwner::arrayBuffer(Ref<DeferredPromise>&& promise)
     }
 
     if (isBodyNullOrOpaque()) {
-        fulfillPromiseWithArrayBuffer(WTFMove(promise), nullptr, 0);
+        fulfillPromiseWithArrayBufferFromSpan(WTFMove(promise), { });
         return;
     }
     if (isDisturbedOrLocked()) {
@@ -190,7 +190,7 @@ void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
     if (isBodyNullOrOpaque()) {
         if (isBodyNull()) {
             // If the content-type is 'application/x-www-form-urlencoded', a body is not required and we should package an empty byte sequence as per the specification.
-            if (auto formData = FetchBodyConsumer::packageFormData(promise->scriptExecutionContext(), contentType(), nullptr, 0)) {
+            if (auto formData = FetchBodyConsumer::packageFormData(promise->scriptExecutionContext(), contentType(), { })) {
                 promise->resolve<IDLInterface<DOMFormData>>(*formData);
                 return;
             }

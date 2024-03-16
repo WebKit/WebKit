@@ -80,6 +80,7 @@
 		463CCFBC2B251D77009AB04E /* SingleThreadIntegralWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 463CCFBB2B251D77009AB04E /* SingleThreadIntegralWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46449E8B2822E5680005A8BC /* WeakHashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 46449E8A2822E5670005A8BC /* WeakHashCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4655743627F5FC4A002D5522 /* ASCIILiteralCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */; };
+		466D69112BA4E433005D43F4 /* SpanCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 466D69102BA4E433005D43F4 /* SpanCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46BEB6EB22FFE24900269867 /* RefCounted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BEB6E922FFDDD500269867 /* RefCounted.cpp */; };
 		46E93049271F1205005BA6E5 /* SafeStrerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E43647271F10AA00C88C90 /* SafeStrerror.cpp */; };
 		50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */; };
@@ -1162,6 +1163,7 @@
 		463CCFBB2B251D77009AB04E /* SingleThreadIntegralWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleThreadIntegralWrapper.h; sourceTree = "<group>"; };
 		46449E8A2822E5670005A8BC /* WeakHashCountedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakHashCountedSet.h; sourceTree = "<group>"; };
 		4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ASCIILiteralCocoa.mm; sourceTree = "<group>"; };
+		466D69102BA4E433005D43F4 /* SpanCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpanCocoa.h; sourceTree = "<group>"; };
 		46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandler.h; sourceTree = "<group>"; };
 		46BEB6E922FFDDD500269867 /* RefCounted.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefCounted.cpp; sourceTree = "<group>"; };
 		46E43646271F10AA00C88C90 /* SafeStrerror.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeStrerror.h; sourceTree = "<group>"; };
@@ -2976,6 +2978,7 @@
 				1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp */,
 				1CA85CA7241B0B110071C2F5 /* RuntimeApplicationChecksCocoa.h */,
 				A30D412C1F0DE0BA00B71954 /* SoftLinking.h */,
+				466D69102BA4E433005D43F4 /* SpanCocoa.h */,
 				EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */,
 				4434F91B27948A65007E3E8A /* TollFreeBridging.h */,
 				44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */,
@@ -3383,6 +3386,7 @@
 				DDF3076727C086CD006A526F /* SoftLinking.h in Headers */,
 				DD3DC8D727A4BF8E007E5B61 /* SoftLinking.h in Headers */,
 				DD3DC91F27A4BF8E007E5B61 /* SortedArrayMap.h in Headers */,
+				466D69112BA4E433005D43F4 /* SpanCocoa.h in Headers */,
 				DD3DC8CD27A4BF8E007E5B61 /* SpanningTree.h in Headers */,
 				DD3DC87727A4BF8E007E5B61 /* Spectrum.h in Headers */,
 				DD3DC97F27A4BF8E007E5B61 /* StackBounds.h in Headers */,

@@ -336,7 +336,7 @@ public:
 
 void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
-void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
+void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
 WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::CatchScope&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };

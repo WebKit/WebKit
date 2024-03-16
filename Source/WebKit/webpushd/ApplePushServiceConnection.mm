@@ -51,7 +51,7 @@
     ASSERT(isMainRunLoop());
 
     if (_connection && publicToken.length)
-        _connection->didReceivePublicToken(Vector<uint8_t> { static_cast<const uint8_t*>(publicToken.bytes), publicToken.length });
+        _connection->didReceivePublicToken(toVector(publicToken));
 }
 
 - (void)connection:(APSConnection *)connection didReceiveIncomingMessage:(APSIncomingMessage *)message

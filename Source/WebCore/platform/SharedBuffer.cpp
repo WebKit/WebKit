@@ -275,11 +275,11 @@ void FragmentedSharedBuffer::append(const FragmentedSharedBuffer& data)
     ASSERT(internallyConsistent());
 }
 
-void FragmentedSharedBuffer::append(const uint8_t* data, size_t length)
+void FragmentedSharedBuffer::append(std::span<const uint8_t> data)
 {
     ASSERT(!m_contiguous);
-    m_segments.append({ m_size, DataSegment::create(Vector { data, length }) });
-    m_size += length;
+    m_segments.append({ m_size, DataSegment::create(data) });
+    m_size += data.size();
     ASSERT(internallyConsistent());
 }
 

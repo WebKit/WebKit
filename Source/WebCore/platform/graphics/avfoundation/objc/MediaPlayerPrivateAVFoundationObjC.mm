@@ -2150,7 +2150,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         auto keyURIArray = Uint16Array::create(initDataBuffer.copyRef(), 4, keyURI.length());
         keyURIArray->setRange(reinterpret_cast<const UniChar*>(StringView(keyURI).upconvertedCharacters().get()), keyURI.length() / sizeof(unsigned char), 0);
 
-        auto initData = SharedBuffer::create(Vector<uint8_t> { static_cast<uint8_t*>(initDataBuffer->data()), byteLength });
+        Ref initData = SharedBuffer::create(initDataBuffer->toVector());
         player->keyNeeded(initData);
 #if ENABLE(ENCRYPTED_MEDIA)
         if (!m_shouldContinueAfterKeyNeeded)

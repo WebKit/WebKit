@@ -31,7 +31,7 @@
 namespace WebCore {
 
 WebCodecsEncodedVideoChunk::WebCodecsEncodedVideoChunk(Init&& init)
-    : m_storage { WebCodecsEncodedVideoChunkStorage::create(init.type, init.timestamp, init.duration, std::span { init.data.data(), init.data.length() }) }
+    : m_storage { WebCodecsEncodedVideoChunkStorage::create(init.type, init.timestamp, init.duration, init.data.bytes()) }
 {
 }
 

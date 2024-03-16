@@ -36,6 +36,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSSharingServiceSPI.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/WTFString.h>
 
 // FIXME: We probably need to hang on the picker itself until the context menu operation is done, and this object will probably do that.
@@ -129,7 +130,7 @@
 
     if ([item isKindOfClass:[NSAttributedString class]]) {
         NSData *data = [item RTFDFromRange:NSMakeRange(0, [item length]) documentAttributes:@{ }];
-        dataReference = std::span(static_cast<const uint8_t*>([data bytes]), [data length]);
+        dataReference = toSpan(data);
 
         types.append(NSPasteboardTypeRTFD);
         types.append(WebCore::legacyRTFDPasteboardType());
@@ -141,7 +142,7 @@
         if (!image)
             return;
 
-        dataReference = std::span(static_cast<const uint8_t*>([data bytes]), [data length]);
+        dataReference = toSpan(data);
         types.append(NSPasteboardTypeTIFF);
     } else if ([item isKindOfClass:[NSItemProvider class]]) {
         NSItemProvider *itemProvider = (NSItemProvider *)item;

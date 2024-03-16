@@ -164,6 +164,7 @@
 #import <wtf/SystemTracing.h>
 #import <wtf/UUID.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -3089,7 +3090,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
     // FIXME: This should not use the legacy session state decoder.
     WebKit::SessionState sessionState;
-    if (!WebKit::decodeLegacySessionState(std::span { static_cast<const uint8_t*>(sessionStateData.bytes), sessionStateData.length }, sessionState))
+    if (!WebKit::decodeLegacySessionState(toSpan(sessionStateData), sessionState))
         return;
 
     _page->restoreFromSessionState(WTFMove(sessionState), true);

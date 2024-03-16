@@ -46,6 +46,7 @@
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "TextDecorationPainter.h"
+#import <wtf/cocoa/SpanCocoa.h>
 
 #if PLATFORM(MAC)
 
@@ -798,7 +799,7 @@ std::span<const uint8_t> AXRemoteFrame::generateRemoteToken() const
     if (auto* parent = parentObject()) {
         // We use the parent's wrapper so that the remote frame acts as a pass through for the remote token bridge.
         NSData *data = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()];
-        return std::span(static_cast<const uint8_t*>([data bytes]), [data length]);
+        return toSpan(data);
     }
 
     return std::span<const uint8_t> { };

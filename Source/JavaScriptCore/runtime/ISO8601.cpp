@@ -696,8 +696,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneBrackete
         if (!isValidComponent(currentNameComponentStartIndex, nameLength))
             return std::nullopt;
 
-        Vector<LChar> result(buffer.position(), nameLength);
-        buffer.advanceBy(nameLength);
+        Vector<LChar> result(buffer.consume(nameLength));
 
         if (buffer.atEnd())
             return std::nullopt;
@@ -834,8 +833,7 @@ static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<Character
     if (!isValidComponent(currentNameComponentStartIndex, nameLength))
         return std::nullopt;
 
-    Vector<LChar, maxCalendarLength> result(buffer.position(), nameLength);
-    buffer.advanceBy(nameLength);
+    Vector<LChar, maxCalendarLength> result(buffer.consume(nameLength));
 
     if (buffer.atEnd())
         return std::nullopt;

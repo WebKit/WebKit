@@ -803,7 +803,7 @@ void LibWebRTCCodecs::setEncodingConfiguration(WebKit::VideoEncoderIdentifier id
     if (encoder->descriptionCallback) {
         std::optional<Vector<uint8_t>> decoderDescriptionData;
         if (description.size())
-            decoderDescriptionData = Vector<uint8_t> { description.data(), description.size() };
+            decoderDescriptionData = Vector<uint8_t> { description };
         encoder->descriptionCallback(WebCore::VideoEncoderActiveConfiguration { { }, { }, { }, { }, { }, WTFMove(decoderDescriptionData), WTFMove(colorSpace) });
     }
 }

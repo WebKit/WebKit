@@ -103,7 +103,7 @@ Vector<uint8_t> encodeData(cairo_surface_t* image, const String& mimeType, std::
     if (!encodeImage(image, mimeType, quality, buffer, bufferSize))
         return { };
 
-    return { reinterpret_cast<const uint8_t*>(buffer.get()), bufferSize };
+    return std::span { reinterpret_cast<const uint8_t*>(buffer.get()), bufferSize };
 }
 #endif // !PLATFORM(GTK)
 

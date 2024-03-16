@@ -885,7 +885,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     Vector<id<MTLResource>> stageResources[stagesPlusUndefinedCount][maxResourceUsageValue];
     Vector<BindGroupEntryUsageData> stageResourceUsages[stagesPlusUndefinedCount][maxResourceUsageValue];
     auto& bindGroupLayoutEntries = bindGroupLayout.entries();
-    Vector<WGPUBindGroupEntry> descriptorEntries(descriptor.entries, descriptor.entryCount);
+    Vector<WGPUBindGroupEntry> descriptorEntries(std::span { descriptor.entries, descriptor.entryCount });
     std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupEntry& a, const WGPUBindGroupEntry& b) {
         return a.binding < b.binding;
     });

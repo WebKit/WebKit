@@ -50,6 +50,7 @@
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
@@ -385,7 +386,7 @@ void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
     if (!data)
         return;
 
-    page()->replaceImageForRemoveBackground(*elementContext, { String(type.get()) }, std::span(static_cast<const uint8_t*>([data bytes]), [data length]));
+    page()->replaceImageForRemoveBackground(*elementContext, { String(type.get()) }, toSpan(data.get()));
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 

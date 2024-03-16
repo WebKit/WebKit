@@ -843,8 +843,8 @@ static void registerLogHook()
             qos = Thread::QOS::UserInteractive;
         }
 
-        Vector<uint8_t> buffer(msg->buffer, msg->buffer_sz);
-        Vector<uint8_t> privdata(msg->privdata, msg->privdata_sz);
+        Vector<uint8_t> buffer(std::span { msg->buffer, msg->buffer_sz });
+        Vector<uint8_t> privdata(std::span { msg->privdata, msg->privdata_sz });
 
         logQueue()->dispatchWithQOS([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata), qos] {
             os_log_message_s msg;

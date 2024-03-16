@@ -160,9 +160,14 @@ template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>
     return vector;
 }
 
-inline Vector<uint8_t> vectorFromCFData(CFDataRef data)
+inline std::span<const uint8_t> toSpan(CFDataRef data)
 {
     return { reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(data)), Checked<size_t>(CFDataGetLength(data)) };
+}
+
+inline Vector<uint8_t> toVector(CFDataRef data)
+{
+    return toSpan(data);
 }
 
 // Conversion function implementations. See also StringCF.cpp.
@@ -183,6 +188,6 @@ inline std::optional<float> makeVectorElement(const float*, CFNumberRef cfNumber
 
 using WTF::createCFArray;
 using WTF::makeVector;
-using WTF::vectorFromCFData;
+using WTF::toVector;
 
 #endif // USE(CF)

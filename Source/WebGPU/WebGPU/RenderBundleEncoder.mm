@@ -174,7 +174,7 @@ RenderBundleEncoder::RenderBundleEncoder(MTLIndirectCommandBufferDescriptor *ind
     , m_icbDescriptor(indirectCommandBufferDescriptor)
     , m_resources([NSMapTable strongToStrongObjectsMapTable])
     , m_descriptor(descriptor)
-    , m_descriptorColorFormats(descriptor.colorFormats ? Vector<WGPUTextureFormat>(descriptor.colorFormats, descriptor.colorFormatCount) : Vector<WGPUTextureFormat>())
+    , m_descriptorColorFormats(descriptor.colorFormats ? Vector<WGPUTextureFormat>(std::span { descriptor.colorFormats, descriptor.colorFormatCount }) : Vector<WGPUTextureFormat>())
 {
     if (m_descriptorColorFormats.size())
         m_descriptor.colorFormats = &m_descriptorColorFormats[0];

@@ -125,7 +125,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
 
     for (const auto& element : httpBody.elements) {
         switchOn(element.data, [&] (const Vector<uint8_t>& data) {
-            formData->appendData(data.data(), data.size());
+            formData->appendData(data.span());
         }, [&] (const HTTPBody::Element::FileData& data) {
             formData->appendFileRange(data.filePath, data.fileStart, data.fileLength.value_or(BlobDataItem::toEndOfFile), data.expectedFileModificationTime);
         }, [&] (const String& blobURLString) {

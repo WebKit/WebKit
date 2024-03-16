@@ -93,7 +93,7 @@ Vector<uint8_t> NfcConnection::transact(Vector<uint8_t>&& data) const
 {
     // The method will return an empty NSData if the tag is disconnected.
     auto *responseData = [m_session transceive:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).get()];
-    return vectorFromNSData(responseData);
+    return toVector(responseData);
 }
 
 void NfcConnection::stop() const

@@ -73,6 +73,7 @@
 #import <wtf/Condition.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/TextStream.h>
 #import <wtf/threads/BinarySemaphore.h>
 #import "AppKitSoftLink.h"
@@ -791,7 +792,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         [self _updateRemoteAccessibilityRegistration:YES];
         storeAccessibilityRemoteConnectionInformation(self, _page->process().processID(), uuid);
 
-        std::span<const uint8_t> elementToken(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
+        auto elementToken = toSpan(remoteElementToken);
         _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);
     }
 }

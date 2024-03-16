@@ -67,6 +67,7 @@
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/WeakLinking.h>
@@ -923,7 +924,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             }
         }
 
-        auto resumeDataReference = resumeData ? std::span { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : std::span<const uint8_t> { };
+        auto resumeDataReference = toSpan(resumeData);
         download->didFail(error, resumeDataReference);
     }
 }

@@ -727,25 +727,23 @@ public:
         }
     }
 
-    template<typename U = T>
-    Vector(const U* data, size_t dataSize)
-        : Base(dataSize, dataSize)
-    {
-        asanSetInitialBufferSizeTo(dataSize);
-
-        if (begin())
-            VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, data + dataSize, begin());
-    }
-
     // Include this non-template conversion from std::span to guide implicit conversion from arrays.
     Vector(std::span<const T> span)
-        : Vector(span.data(), span.size())
+        : Base(span.size(), span.size())
     {
+        asanSetInitialBufferSizeTo(span.size());
+
+        if (begin())
+            VectorCopier<std::is_trivial<T>::value, T>::uninitializedCopy(span.data(), span.data() + span.size(), begin());
     }
 
     template<typename U, size_t Extent> Vector(std::span<U, Extent> span)
-        : Vector(span.data(), span.size())
+        : Base(span.size(), span.size())
     {
+        asanSetInitialBufferSizeTo(span.size());
+
+        if (begin())
+            VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(span.data(), span.data() + span.size(), begin());
     }
 
     Vector(std::initializer_list<T> initializerList)
@@ -802,6 +800,11 @@ public:
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
     std::span<const T> span() const { return { data(), size() }; }
+
+    Vector<T> subvector(size_t offset, size_t length = std::dynamic_extent) const
+    {
+        return { span().subspan(offset, length) };
+    }
 
     T& at(size_t i)
     {
@@ -2097,7 +2100,8 @@ inline Vector<typename CopyOrMoveToVectorResult<Collection>::Type> moveToVector(
     return moveToVectorOf<typename CopyOrMoveToVectorResult<Collection>::Type>(collection);
 }
 
-template<typename U> Vector(const U*, size_t) -> Vector<U>;
+template<typename T> Vector(const T*, size_t) -> Vector<T>;
+template<typename T, size_t Extent> Vector(std::span<const T, Extent>) -> Vector<T>;
 
 } // namespace WTF
 

@@ -155,7 +155,7 @@ TEST(VectorCF, VectorFromCFData)
     EXPECT_EQ(elementCount, byteLength);
     auto cfData = adoptCF(CFDataCreate(nullptr, static_cast<const UInt8*>(&bytes[0]), Checked<CFIndex>(byteLength)));
 
-    auto vectorData = vectorFromCFData(cfData.get());
+    auto vectorData = toVector(cfData.get());
 
     CFIndex cfDataLength = CFDataGetLength(cfData.get());
     EXPECT_EQ(byteLength, Checked<size_t>(cfDataLength));

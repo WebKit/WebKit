@@ -59,7 +59,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     , m_parentEncoder(parentEncoder)
     , m_visibilityResultBuffer(visibilityResultBuffer)
     , m_descriptor(descriptor)
-    , m_descriptorColorAttachments(descriptor.colorAttachmentCount ? Vector<WGPURenderPassColorAttachment>(descriptor.colorAttachments, descriptor.colorAttachmentCount) : Vector<WGPURenderPassColorAttachment>())
+    , m_descriptorColorAttachments(descriptor.colorAttachmentCount ? Vector<WGPURenderPassColorAttachment>(std::span { descriptor.colorAttachments, descriptor.colorAttachmentCount }) : Vector<WGPURenderPassColorAttachment>())
     , m_descriptorDepthStencilAttachment(descriptor.depthStencilAttachment ? *descriptor.depthStencilAttachment : WGPURenderPassDepthStencilAttachment())
     , m_descriptorTimestampWrites(descriptor.timestampWrites ? *descriptor.timestampWrites : WGPURenderPassTimestampWrites())
     , m_maxDrawCount(maxDrawCount)
@@ -818,7 +818,7 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
 
     m_maxBindGroupSlot = std::max(groupIndex, m_maxBindGroupSlot);
     if (dynamicOffsetCount)
-        m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
+        m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(std::span { dynamicOffsets, dynamicOffsetCount }));
 
     for (const auto& resource : group.resources()) {
         if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))

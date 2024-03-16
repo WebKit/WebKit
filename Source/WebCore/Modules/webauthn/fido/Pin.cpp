@@ -172,8 +172,8 @@ std::optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CB
 cbor::CBORValue::MapValue encodeCOSEPublicKey(const Vector<uint8_t>& rawPublicKey)
 {
     ASSERT(rawPublicKey.size() == 65);
-    Vector<uint8_t> x { rawPublicKey.data() + 1, ES256FieldElementLength };
-    Vector<uint8_t> y { rawPublicKey.data() + 1 + ES256FieldElementLength, ES256FieldElementLength };
+    auto x = rawPublicKey.subvector(1, ES256FieldElementLength);
+    auto y = rawPublicKey.subvector(1 + ES256FieldElementLength, ES256FieldElementLength);
 
     cbor::CBORValue::MapValue publicKeyMap;
     publicKeyMap[cbor::CBORValue(COSE::kty)] = cbor::CBORValue(COSE::EC2);

@@ -72,7 +72,7 @@ public:
         }, m_variant);
     }
 
-    std::span<const uint8_t> span() const { return { data(), length() }; }
+    std::span<const uint8_t> bytes() const { return { data(), length() }; }
 
 private:
     VariantType m_variant;

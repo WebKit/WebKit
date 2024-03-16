@@ -77,6 +77,14 @@ public:
         return character;
     }
 
+    std::span<const CharacterType> consume(size_t count)
+    {
+        ASSERT(count <= lengthRemaining());
+        std::span result { m_position, count };
+        m_position += count;
+        return result;
+    }
+
     CharacterType operator[](unsigned i) const
     {
         ASSERT(i < lengthRemaining());

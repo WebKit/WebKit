@@ -27,12 +27,18 @@
 #include "config.h"
 #include "TextCodec.h"
 #include <unicode/uchar.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #include <array>
 #include <cstdio>
 
 namespace PAL {
+
+String TextCodec::decode(std::span<const uint8_t> data, bool flush, bool stopOnError, bool& sawError)
+{
+    return decode(reinterpret_cast<const char*>(data.data()), data.size(), flush, stopOnError, sawError);
+}
 
 int TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
 {

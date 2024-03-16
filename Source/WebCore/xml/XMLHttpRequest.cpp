@@ -558,7 +558,7 @@ ExceptionOr<void> XMLHttpRequest::send(DOMFormData& body)
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
         m_requestEntityBody = FormData::createMultiPart(body);
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
-            m_requestHeaders.set(HTTPHeaderName::ContentType, makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary().data()));
+            m_requestHeaders.set(HTTPHeaderName::ContentType, makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary()));
     }
 
     return createRequest();
@@ -568,21 +568,21 @@ ExceptionOr<void> XMLHttpRequest::send(ArrayBuffer& body)
 {
     ASCIILiteral consoleMessage { "ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead."_s };
     scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
-    return sendBytesData(body.data(), body.byteLength());
+    return sendBytesData(body.bytes());
 }
 
 ExceptionOr<void> XMLHttpRequest::send(ArrayBufferView& body)
 {
-    return sendBytesData(body.baseAddress(), body.byteLength());
+    return sendBytesData(body.bytes());
 }
 
-ExceptionOr<void> XMLHttpRequest::sendBytesData(const void* data, size_t length)
+ExceptionOr<void> XMLHttpRequest::sendBytesData(std::span<const uint8_t> data)
 {
     if (auto result = prepareToSend())
         return WTFMove(result.value());
 
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
-        m_requestEntityBody = FormData::create(data, length);
+        m_requestEntityBody = FormData::create(data);
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }

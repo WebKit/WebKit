@@ -50,6 +50,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Scope.h>
 #import <wtf/WorkQueue.h>
+#include <wtf/cocoa/VectorCocoa.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -1151,7 +1152,7 @@ void AVVideoCaptureSource::captureOutputDidFinishProcessingPhoto(RetainPtr<AVCap
     }
 
     NSData* data = [photo fileDataRepresentation];
-    resolvePendingPhotoRequest({ static_cast<const uint8_t*>(data.bytes), data.length }, "image/jpeg"_s);
+    resolvePendingPhotoRequest(toVector(data), "image/jpeg"_s);
 }
 
 void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)

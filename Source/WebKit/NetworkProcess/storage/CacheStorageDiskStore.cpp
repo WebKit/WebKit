@@ -467,7 +467,7 @@ static Vector<uint8_t> encodeRecordHeader(CacheStorageRecord&& record)
     encoder << record.responseBodySize;
     encoder.encodeChecksum();
 
-    return { encoder.buffer(), encoder.bufferSize() };
+    return { encoder.bytes() };
 }
 
 static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
@@ -476,7 +476,7 @@ static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
         // FIXME: Store form data body.
         return Vector<uint8_t> { };
     }, [&](const Ref<WebCore::SharedBuffer>& buffer) {
-        return Vector<uint8_t> { buffer->data(), buffer->size() };
+        return Vector<uint8_t> { buffer->dataAsSpanForContiguousData() };
     }, [](const std::nullptr_t&) {
         return Vector<uint8_t> { };
     });
@@ -495,9 +495,9 @@ static Vector<uint8_t> encodeRecord(const NetworkCache::Key& key, const Vector<u
     encoder << isBodyInline;
     encoder.encodeChecksum();
 
-    auto metaData = Vector<uint8_t> { encoder.buffer(), encoder.bufferSize() };
+    auto metaData = encoder.bytes();
     Vector<uint8_t> result;
-    result.appendVector(metaData);
+    result.append(metaData);
     result.appendVector(headerData);
 
     StringBuilder sb;

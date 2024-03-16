@@ -623,7 +623,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
 template<>
 Vector<uint8_t> GstMappedBuffer::createVector() const
 {
-    return { data(), size() };
+    return std::span<const uint8_t> { data(), size() };
 }
 
 Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()

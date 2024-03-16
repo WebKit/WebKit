@@ -47,7 +47,7 @@ FaceDetectorImpl::~FaceDetectorImpl() = default;
 
 static Vector<FloatPoint> convertLandmark(VNFaceLandmarkRegion2D *landmark, const FloatSize& imageSize)
 {
-    return Vector { [landmark pointsInImageOfSize:imageSize], landmark.pointCount }.map([&imageSize](const CGPoint& point) {
+    return Vector(std::span { [landmark pointsInImageOfSize:imageSize], landmark.pointCount }).map([&imageSize](const CGPoint& point) {
         return convertPointFromUnnormalizedVisionToWeb(imageSize, point);
     });
 }

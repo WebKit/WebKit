@@ -123,7 +123,7 @@ Vector<uint8_t> encodeData(SkImage* image, const String& mimeType, std::optional
         if (!data)
             return { };
 
-        return { reinterpret_cast<const uint8_t*>(data->data()), data->size() };
+        return std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(data->data()), data->size() };
     }
 
     SkPixmap pixmap;

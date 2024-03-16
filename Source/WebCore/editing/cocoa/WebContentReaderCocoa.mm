@@ -515,8 +515,7 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
             subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
         auto subframeMarkup = sanitizeMarkupWithArchive(frame, destinationDocument, subframeContent, MSOListQuirks::Disabled, canShowMIMETypeAsHTML);
 
-        CString utf8 = subframeMarkup.utf8();
-        auto blob = Blob::create(&destinationDocument, Vector { utf8.dataAsUInt8Ptr(), utf8.length() }, type);
+        auto blob = Blob::create(&destinationDocument, Vector(subframeMarkup.utf8().bytes()), type);
 
         String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
         blobURLMap.set(AtomString { subframeURL.string() }, AtomString { subframeBlobURL });

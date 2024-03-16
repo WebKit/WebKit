@@ -79,6 +79,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
@@ -421,8 +422,7 @@ void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
 
 void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken, FrameIdentifier frameID)
 {
-    std::span dataToken(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
-    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken, frameID));
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(toSpan(remoteToken.get()), frameID));
 }
 
 void WebPage::accessibilityManageRemoteElementStatus(bool registerStatus, int processIdentifier)
@@ -461,9 +461,7 @@ void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::Fram
     registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken);
 
     // Get our remote token data and send back to the RemoteFrame.
-    auto remoteToken = accessibilityRemoteTokenData();
-    std::span remoteDataToken(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
-    completionHandler(remoteDataToken, getpid());
+    completionHandler(toSpan(accessibilityRemoteTokenData().get()), getpid());
 }
 
 #if ENABLE(APPLE_PAY)

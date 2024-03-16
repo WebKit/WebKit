@@ -836,7 +836,7 @@ static std::optional<AuthenticationExtensionsClientOutputs> toExtensionOutputs(N
 {
     if (!extensionOutputsCBOR)
         return std::nullopt;
-    return AuthenticationExtensionsClientOutputs::fromCBOR(vectorFromNSData(extensionOutputsCBOR));
+    return AuthenticationExtensionsClientOutputs::fromCBOR(toVector(extensionOutputsCBOR));
 }
 
 bool WebAuthenticatorCoordinatorProxy::isASCAvailable()

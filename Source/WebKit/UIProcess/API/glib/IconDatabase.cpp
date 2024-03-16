@@ -638,7 +638,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const uint8_t* iconD
         return;
     }
 
-    Vector<uint8_t> data { iconData, iconDataSize };
+    Vector<uint8_t> data(std::span { iconData, iconDataSize });
     m_workQueue->dispatch([this, protectedThis = Ref { *this }, iconURL = iconURL.isolatedCopy(), iconData = WTFMove(data), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         bool result = false;
         if (m_db.isOpen()) {

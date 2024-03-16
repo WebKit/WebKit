@@ -415,9 +415,9 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
         for (auto& message : iterator->value) {
             auto data = message.payload.utf8();
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) });
+            resultMessages.append(WebKit::WebPushMessage { Vector(data.bytes()), message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) });
 #else
-            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, { } });
+            resultMessages.append(WebKit::WebPushMessage { Vector(data.bytes()), message.pushPartitionString, message.registrationURL, { } });
 #endif
         }
         m_testingPushMessages.remove(iterator);

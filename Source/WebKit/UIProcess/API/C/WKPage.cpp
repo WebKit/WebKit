@@ -263,14 +263,12 @@ static std::span<const uint8_t> dataFrom(const String& string)
 {
     if (string.isNull() || !string.is8Bit())
         return { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
-    return { string.characters8(), string.length() * sizeof(LChar) };
+    return string.span8();
 }
 
 static Ref<WebCore::DataSegment> dataReferenceFrom(const String& string)
 {
-    if (string.isNull() || !string.is8Bit())
-        return WebCore::DataSegment::create(Vector<uint8_t>(reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar)));
-    return WebCore::DataSegment::create(Vector<uint8_t>(string.characters8(), string.length() * sizeof(LChar)));
+    return WebCore::DataSegment::create(dataFrom(string));
 }
 
 static void loadString(WKPageRef pageRef, WKStringRef stringRef, const String& mimeType, const String& baseURL, WKTypeRef userDataRef)

@@ -55,7 +55,7 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
     }, [&](RefPtr<DOMFormData>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<DOMFormData> domFormData = value.releaseNonNull();
         auto formData = FormData::createMultiPart(domFormData.get());
-        contentType = makeString("multipart/form-data; boundary=", formData->boundary().data());
+        contentType = makeString("multipart/form-data; boundary=", formData->boundary());
         return FetchBody(WTFMove(formData));
     }, [&](RefPtr<URLSearchParams>& value) mutable -> ExceptionOr<FetchBody> {
         Ref<const URLSearchParams> params = value.releaseNonNull();
@@ -202,20 +202,20 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 
 void FetchBody::consumeArrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), static_cast<const uint8_t*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
+    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), arrayBufferBody().bytes());
     m_data = nullptr;
 }
 
 void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
+    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), arrayBufferViewBody().bytes());
     m_data = nullptr;
 }
 
 void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& text)
 {
     auto data = PAL::TextCodecUTF8::encodeUTF8(text);
-    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), data.data(), data.size());
+    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), data.span());
     m_data = nullptr;
 }
 
@@ -254,13 +254,13 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
         return body;
     }
     if (isArrayBuffer())
-        return FormData::create(arrayBufferBody().data(), arrayBufferBody().byteLength());
+        return FormData::create(arrayBufferBody().bytes());
     if (isArrayBufferView())
-        return FormData::create(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength());
+        return FormData::create(arrayBufferViewBody().bytes());
     if (isFormData())
         return &const_cast<FormData&>(formDataBody());
     if (auto* data = m_consumer.data())
-        return FormData::create(data->makeContiguous()->data(), data->size());
+        return FormData::create(data->makeContiguous()->dataAsSpanForContiguousData());
 
     ASSERT_NOT_REACHED();
     return nullptr;

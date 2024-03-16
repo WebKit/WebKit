@@ -64,7 +64,7 @@ Vector<AtomString> AtomStringVectorReader::consumeSubvector(size_t subvectorSize
         return { };
     auto subvectorIndex = index;
     index += subvectorSize;
-    return { vector.data() + subvectorIndex, subvectorSize };
+    return vector.subvector(subvectorIndex, subvectorSize);
 }
 
 // ----------------------------------------------------------------------------

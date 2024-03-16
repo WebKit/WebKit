@@ -68,7 +68,7 @@ public:
     static Ref<WebSocketChannel> create(Document& document, WebSocketChannelClient& client, SocketProvider& provider) { return adoptRef(*new WebSocketChannel(document, client, provider)); }
     virtual ~WebSocketChannel();
 
-    bool send(const uint8_t* data, int length);
+    bool send(std::span<const uint8_t> data);
 
     // ThreadableWebSocketChannel functions.
     ConnectStatus connect(const URL&, const String& protocol) final;
@@ -149,7 +149,7 @@ private:
         RefPtr<Blob> blobData;
     };
     void enqueueTextFrame(CString&&);
-    void enqueueRawFrame(WebSocketFrame::OpCode, const uint8_t* data, size_t dataLength);
+    void enqueueRawFrame(WebSocketFrame::OpCode, std::span<const uint8_t> data);
     void enqueueBlobFrame(WebSocketFrame::OpCode, Blob&);
 
     void processOutgoingFrameQueue();

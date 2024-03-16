@@ -89,8 +89,7 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_
     auto caps = adoptGRef(gst_audio_info_to_caps(&info));
     GST_TRACE("Creating raw audio wrapper with caps %" GST_PTR_FORMAT, caps.get());
 
-    Vector<uint8_t> dataStorage { sourceData.data(), sourceData.size() };
-    auto data = SharedBuffer::create(WTFMove(dataStorage));
+    Ref data = SharedBuffer::create(Vector<uint8_t>(sourceData));
     gpointer bufferData = const_cast<void*>(static_cast<const void*>(data->data()));
     auto bufferLength = data->size();
     auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferLength, 0, bufferLength, reinterpret_cast<gpointer>(&data.leakRef()), [](gpointer data) {

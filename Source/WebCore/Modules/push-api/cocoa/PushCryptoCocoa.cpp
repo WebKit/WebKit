@@ -46,20 +46,20 @@ P256DHKeyPair P256DHKeyPair::generate(void)
     CCCryptorStatus status = CCECCryptorGeneratePair(256, &ccPublicKey, &ccPrivateKey);
     RELEASE_ASSERT(status == kCCSuccess);
 
-    uint8_t publicKey[p256dhPublicKeyLength];
-    size_t publicKeyLength = sizeof(publicKey);
-    status = CCECCryptorExportKey(kCCImportKeyBinary, publicKey, &publicKeyLength, ccECKeyPublic, ccPublicKey);
-    RELEASE_ASSERT(status == kCCSuccess && publicKeyLength == sizeof(publicKey));
+    std::array<uint8_t, p256dhPublicKeyLength> publicKey;
+    size_t publicKeyLength = publicKey.size();
+    status = CCECCryptorExportKey(kCCImportKeyBinary, publicKey.data(), &publicKeyLength, ccECKeyPublic, ccPublicKey);
+    RELEASE_ASSERT(status == kCCSuccess && publicKeyLength == p256dhPublicKeyLength);
 
     // CommonCrypto expects the binary format to be 65 byte public key followed by the 32 byte private key, so we want to extract the last 32 bytes from the buffer.
-    uint8_t key[p256dhPublicKeyLength + p256dhPrivateKeyLength];
-    size_t keyLength = sizeof(key);
-    status = CCECCryptorExportKey(kCCImportKeyBinary, key, &keyLength, ccECKeyPrivate, ccPrivateKey);
-    RELEASE_ASSERT(status == kCCSuccess && keyLength == sizeof(key));
+    std::array<uint8_t, p256dhPublicKeyLength + p256dhPrivateKeyLength> key;
+    size_t keyLength = key.size();
+    status = CCECCryptorExportKey(kCCImportKeyBinary, key.data(), &keyLength, ccECKeyPrivate, ccPrivateKey);
+    RELEASE_ASSERT(status == kCCSuccess && keyLength == key.size());
 
     return P256DHKeyPair {
-        Vector<uint8_t> { publicKey, p256dhPublicKeyLength },
-        Vector<uint8_t> { key + p256dhPublicKeyLength, p256dhPrivateKeyLength }
+        Vector<uint8_t> { publicKey },
+        Vector<uint8_t> { std::span { key }.subspan(p256dhPublicKeyLength, p256dhPrivateKeyLength) }
     };
 }
 

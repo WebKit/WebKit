@@ -28,6 +28,7 @@
 
 #include <cstring>
 #include <memory>
+#include <span>
 #include <type_traits>
 #include <utility>
 #include <variant>

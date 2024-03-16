@@ -99,6 +99,7 @@ public:
     String serialize(CSSParserToken::SerializationMode = CSSParserToken::SerializationMode::Normal) const;
 
     const CSSParserToken* begin() const { return m_first; }
+    std::span<const CSSParserToken> span() const { return std::span { begin(), size() }; }
 
     static CSSParserToken& eofToken();
 

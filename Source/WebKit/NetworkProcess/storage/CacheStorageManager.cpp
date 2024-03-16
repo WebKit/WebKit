@@ -144,7 +144,7 @@ static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
     auto value = String::number(size).utf8();
-    return FileSystem::overwriteEntireFile(sizeFilePath, std::span(reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length())) != -1;
+    return FileSystem::overwriteEntireFile(sizeFilePath, value.bytes()) != -1;
 }
 
 static String saltFilePath(const String& saltDirectory)

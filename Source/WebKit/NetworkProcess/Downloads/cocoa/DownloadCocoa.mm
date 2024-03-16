@@ -31,6 +31,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSProgressSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
@@ -69,8 +70,7 @@ void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const 
     ASSERT(m_downloadTask);
     [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSData *resumeData) mutable {
         ensureOnMainRunLoop([resumeData = retainPtr(resumeData), completionHandler = WTFMove(completionHandler)] () mutable  {
-            auto resumeDataReference = resumeData ? std::span { static_cast<const uint8_t*>([resumeData bytes]), [resumeData length] } : std::span<const uint8_t> { };
-            completionHandler(resumeDataReference);
+            completionHandler(toSpan(resumeData.get()));
         });
     }).get()];
 }

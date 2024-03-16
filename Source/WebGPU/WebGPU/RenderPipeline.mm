@@ -1556,7 +1556,7 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, M
     , m_descriptor(descriptor)
     , m_descriptorDepthStencil(descriptor.depthStencil ? *descriptor.depthStencil : WGPUDepthStencilState())
     , m_descriptorFragment(descriptor.fragment ? *descriptor.fragment : WGPUFragmentState())
-    , m_descriptorTargets(descriptor.fragment && descriptor.fragment->targetCount ? Vector<WGPUColorTargetState>(descriptor.fragment->targets, descriptor.fragment->targetCount) : Vector<WGPUColorTargetState>())
+    , m_descriptorTargets(descriptor.fragment && descriptor.fragment->targetCount ? Vector<WGPUColorTargetState>(std::span { descriptor.fragment->targets, descriptor.fragment->targetCount }) : Vector<WGPUColorTargetState>())
 {
     if (descriptor.depthStencil)
         m_descriptor.depthStencil = &m_descriptorDepthStencil;

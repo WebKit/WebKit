@@ -141,7 +141,7 @@ Vector<uint8_t> signatureForPrivateKey(RetainPtr<SecKeyRef> privateKey, const Ve
         ASSERT(!errorRef);
     }
 
-    return vectorFromNSData((NSData *)signature.get());
+    return toVector((NSData *)signature.get());
 }
 
 } // namespace WebKit

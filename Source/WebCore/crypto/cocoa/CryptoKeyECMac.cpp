@@ -349,7 +349,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length, InitialOctet
 
     // KeyBinary = uncompressed point + private key
-    Vector<uint8_t> keyBinary { keyData.data() + index, keyData.size() - index };
+    auto keyBinary = keyData.subvector(index);
     if (!doesUncompressedPointMatchNamedCurve(curve, keyBinary.size()))
         return nullptr;
     keyBinary.append(keyData.data() + privateKeyPos, privateKeySize);

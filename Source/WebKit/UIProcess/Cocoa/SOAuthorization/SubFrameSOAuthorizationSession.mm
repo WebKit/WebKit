@@ -35,6 +35,7 @@
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -71,7 +72,7 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPathInternal: navigationAction=%p", navigationAction());
     ASSERT(navigationAction());
-    appendRequestToLoad(URL(navigationAction()->request().url()), Vector { reinterpret_cast<const uint8_t*>(soAuthorizationPostDidCancelMessageToParent), strlen(soAuthorizationPostDidCancelMessageToParent) });
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(std::span { soAuthorizationPostDidCancelMessageToParent, strlen(soAuthorizationPostDidCancelMessageToParent) }));
     appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
 }
 
@@ -88,7 +89,7 @@ void SubFrameSOAuthorizationSession::completeInternal(const WebCore::ResourceRes
         fallBackToWebPathInternal();
         return;
     }
-    appendRequestToLoad(URL(response.url()), Vector { reinterpret_cast<const uint8_t*>(data.bytes), data.length });
+    appendRequestToLoad(URL(response.url()), toVector(data));
 }
 
 void SubFrameSOAuthorizationSession::beforeStart()
@@ -97,7 +98,7 @@ void SubFrameSOAuthorizationSession::beforeStart()
     // Cancelled the current load before loading the data to post SOAuthorizationDidStart to the parent frame.
     invokeCallback(true);
     ASSERT(navigationAction());
-    appendRequestToLoad(URL(navigationAction()->request().url()), Vector { reinterpret_cast<const uint8_t*>(soAuthorizationPostDidStartMessageToParent), strlen(soAuthorizationPostDidStartMessageToParent) });
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(std::span { soAuthorizationPostDidStartMessageToParent, strlen(soAuthorizationPostDidStartMessageToParent) }));
 }
 
 void SubFrameSOAuthorizationSession::didFinishLoad()

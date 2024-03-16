@@ -51,7 +51,7 @@ RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, Re
     , m_renderBundleEncoder(encoder)
     , m_renderBundlesResources(resources)
     , m_descriptor(descriptor)
-    , m_descriptorColorFormats(descriptor.colorFormats ? Vector<WGPUTextureFormat>(descriptor.colorFormats, descriptor.colorFormatCount) : Vector<WGPUTextureFormat>())
+    , m_descriptorColorFormats(descriptor.colorFormats ? Vector<WGPUTextureFormat>(std::span { descriptor.colorFormats, descriptor.colorFormatCount }) : Vector<WGPUTextureFormat>())
     , m_commandCount(commandCount)
 {
     if (m_descriptorColorFormats.size())

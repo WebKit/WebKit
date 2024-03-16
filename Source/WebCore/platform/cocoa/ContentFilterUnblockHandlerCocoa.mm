@@ -35,6 +35,7 @@
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -86,7 +87,7 @@ Vector<uint8_t> ContentFilterUnblockHandler::webFilterEvaluatorData() const
 {
     NSError *error { nil };
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:m_webFilterEvaluator.get() requiringSecureCoding:YES error:&error];
-    return { static_cast<const uint8_t*>(data.bytes), data.length };
+    return toVector(data);
 }
 
 RetainPtr<WebFilterEvaluator> ContentFilterUnblockHandler::unpackWebFilterEvaluatorData(Vector<uint8_t>&& vector)

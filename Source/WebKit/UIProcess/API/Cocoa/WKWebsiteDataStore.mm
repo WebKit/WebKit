@@ -62,6 +62,7 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 #if HAVE(NW_PROXY_CONFIG)
 #import <Network/Network.h>
@@ -99,7 +100,7 @@ private:
         RetainPtr<NSData> result = [m_delegate webCryptoMasterKey];
         if (!result)
             return std::nullopt;
-        return Vector<uint8_t>(static_cast<const uint8_t *>([result.get() bytes]), result.get().length);
+        return toVector(result.get());
     }
 
     void requestStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler) final
@@ -505,7 +506,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         uuid_t proxyIdentifier;
         nw_proxy_config_get_identifier(proxyConfig, proxyIdentifier);
 
-        configDataVector.append({ vectorFromNSData(agentData.get()), WTF::UUID(proxyIdentifier) });
+        configDataVector.append({ toVector(agentData.get()), WTF::UUID(proxyIdentifier) });
     }
     
     _websiteDataStore->setProxyConfigData(WTFMove(configDataVector));

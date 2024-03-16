@@ -545,7 +545,7 @@ static std::optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCr
                 return std::nullopt;
             },
             [] (auto& bufferSource) -> std::optional<KeyData> {
-                return KeyData { Vector { static_cast<const uint8_t*>(bufferSource->data()), bufferSource->byteLength() } };
+                return KeyData { Vector(bufferSource->bytes()) };
             }
         );
     case SubtleCrypto::KeyFormat::Jwk:
@@ -566,7 +566,7 @@ static std::optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCr
 
 static Vector<uint8_t> copyToVector(BufferSource&& data)
 {
-    return { data.data(), data.length() };
+    return data.bytes();
 }
 
 static bool isSupportedExportKey(JSGlobalObject& state, CryptoAlgorithmIdentifier identifier)
@@ -663,7 +663,7 @@ void SubtleCrypto::encrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& cipherText) mutable {
         if (auto promise = getPromise(index, weakThis))
-            fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), cipherText.data(), cipherText.size());
+            fulfillPromiseWithArrayBufferFromSpan(promise.releaseNonNull(), cipherText.span());
     };
     auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
         if (auto promise = getPromise(index, weakThis))
@@ -703,7 +703,7 @@ void SubtleCrypto::decrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& plainText) mutable {
         if (auto promise = getPromise(index, weakThis))
-            fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), plainText.data(), plainText.size());
+            fulfillPromiseWithArrayBufferFromSpan(promise.releaseNonNull(), plainText.span());
     };
     auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
         if (auto promise = getPromise(index, weakThis))
@@ -741,7 +741,7 @@ void SubtleCrypto::sign(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algori
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& signature) mutable {
         if (auto promise = getPromise(index, weakThis))
-            fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), signature.data(), signature.size());
+            fulfillPromiseWithArrayBufferFromSpan(promise.releaseNonNull(), signature.span());
     };
     auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
         if (auto promise = getPromise(index, weakThis))
@@ -808,7 +808,7 @@ void SubtleCrypto::digest(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algo
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& digest) mutable {
         if (auto promise = getPromise(index, weakThis))
-            fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), digest.data(), digest.size());
+            fulfillPromiseWithArrayBufferFromSpan(promise.releaseNonNull(), digest.span());
     };
     auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
         if (auto promise = getPromise(index, weakThis))
@@ -968,7 +968,7 @@ void SubtleCrypto::deriveBits(JSC::JSGlobalObject& state, AlgorithmIdentifier&& 
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& derivedKey) mutable {
         if (auto promise = getPromise(index, weakThis))
-            fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), derivedKey.data(), derivedKey.size());
+            fulfillPromiseWithArrayBufferFromSpan(promise.releaseNonNull(), derivedKey.span());
     };
     auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
         if (auto promise = getPromise(index, weakThis))
@@ -1045,7 +1045,7 @@ void SubtleCrypto::exportKey(KeyFormat format, CryptoKey& key, Ref<DeferredPromi
             case SubtleCrypto::KeyFormat::Pkcs8:
             case SubtleCrypto::KeyFormat::Raw: {
                 Vector<uint8_t>& rawKey = std::get<Vector<uint8_t>>(key);
-                fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), rawKey.data(), rawKey.size());
+                fulfillPromiseWithArrayBufferFromSpan(promise.releaseNonNull(), rawKey.span());
                 return;
             }
             case SubtleCrypto::KeyFormat::Jwk:
@@ -1136,7 +1136,7 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
 
         auto callback = [index, weakThis](const Vector<uint8_t>& wrappedKey) mutable {
             if (auto promise = getPromise(index, weakThis))
-                fulfillPromiseWithArrayBuffer(promise.releaseNonNull(), wrappedKey.data(), wrappedKey.size());
+                fulfillPromiseWithArrayBufferFromSpan(promise.releaseNonNull(), wrappedKey.span());
         };
         auto exceptionCallback = [index, weakThis](ExceptionCode ec) mutable {
             if (auto promise = getPromise(index, weakThis))

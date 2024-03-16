@@ -30,6 +30,7 @@
 
 #import "Document.h"
 #import "SharedBuffer.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBu
         if (auto cgImage = [image CGImageForProposedRect:nil context:nil hints:nil]) {
             auto representation = adoptNS([[NSBitmapImageRep alloc] initWithCGImage:cgImage]);
             NSData* nsData = [representation representationUsingType:NSBitmapImageFileTypePNG properties:@{ }];
-            m_result = Blob::create(m_document.get(), Vector { static_cast<const uint8_t*>(nsData.bytes), nsData.length }, m_mimeType);
+            m_result = Blob::create(m_document.get(), toVector(nsData), m_mimeType);
         }
     }
 }

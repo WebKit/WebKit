@@ -79,6 +79,7 @@ class DataSegment : public ThreadSafeRefCounted<DataSegment> {
 public:
     WEBCORE_EXPORT const uint8_t* data() const;
     WEBCORE_EXPORT size_t size() const;
+    std::span<const uint8_t> bytes() const { return std::span { data(), size() }; }
 
     WEBCORE_EXPORT static Ref<DataSegment> create(Vector<uint8_t>&&);
 
@@ -265,8 +266,8 @@ protected:
 private:
     friend class SharedBufferBuilder;
     WEBCORE_EXPORT void append(const FragmentedSharedBuffer&);
-    WEBCORE_EXPORT void append(const uint8_t*, size_t);
-    void append(std::span<const uint8_t> value) { append(value.data(), value.size()); }
+    WEBCORE_EXPORT void append(std::span<const uint8_t>);
+    void append(const uint8_t* data, size_t length) { append(std::span { data, length }); } // FIXME: Call sites should pass in a span.
     void append(const char* data, size_t length) { append(reinterpret_cast<const uint8_t*>(data), length); }
     WEBCORE_EXPORT void append(Vector<uint8_t>&&);
 #if USE(FOUNDATION)

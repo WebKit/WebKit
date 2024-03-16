@@ -275,7 +275,7 @@ public:
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(size_t numElements, unsigned elementByteSize, std::optional<size_t> maxByteLength = std::nullopt);
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(ArrayBuffer&);
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(const void* source, size_t byteLength);
-    JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(std::span<uint8_t>);
+    JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreate(std::span<const uint8_t>);
     JS_EXPORT_PRIVATE static RefPtr<ArrayBuffer> tryCreateShared(VM&, size_t numElements, unsigned elementByteSize, size_t maxByteLength);
 
     // Only for use by Uint8ClampedArray::tryCreateUninitialized and FragmentedSharedBuffer::tryCreateArrayBuffer.
@@ -331,7 +331,8 @@ public:
     Expected<int64_t, GrowFailReason> grow(VM&, size_t newByteLength);
     Expected<int64_t, GrowFailReason> resize(VM&, size_t newByteLength);
 
-    Vector<uint8_t> toVector() const { return { static_cast<const uint8_t*>(data()), byteLength() }; };
+    std::span<const uint8_t> bytes() const { return std::span { static_cast<const uint8_t*>(data()), byteLength() }; }
+    Vector<uint8_t> toVector() const { return { bytes() }; }
 
 private:
     static Ref<ArrayBuffer> create(size_t numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy);

@@ -167,7 +167,7 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer&
         return ThreadableWebSocketChannel::SendSuccess;
 
     LOG(Network, "WebSocketChannel %p send() Sending ArrayBuffer %p byteOffset=%u byteLength=%u", this, &binaryData, byteOffset, byteLength);
-    enqueueRawFrame(WebSocketFrame::OpCodeBinary, static_cast<const uint8_t*>(binaryData.data()) + byteOffset, byteLength);
+    enqueueRawFrame(WebSocketFrame::OpCodeBinary, binaryData.bytes().subspan(byteOffset, byteLength));
     processOutgoingFrameQueue();
     return ThreadableWebSocketChannel::SendSuccess;
 }
@@ -183,13 +183,13 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(Blob& binaryData)
     return ThreadableWebSocketChannel::SendSuccess;
 }
 
-bool WebSocketChannel::send(const uint8_t* data, int length)
+bool WebSocketChannel::send(std::span<const uint8_t> data)
 {
     if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
         return ThreadableWebSocketChannel::SendSuccess;
 
-    LOG(Network, "WebSocketChannel %p send() Sending uint8_t* data=%p length=%d", this, data, length);
-    enqueueRawFrame(WebSocketFrame::OpCodeBinary, data, length);
+    LOG(Network, "WebSocketChannel %p send() Sending uint8_t* data=%p length=%zu", this, data.data(), data.size());
+    enqueueRawFrame(WebSocketFrame::OpCodeBinary, data);
     processOutgoingFrameQueue();
     return true;
 }
@@ -515,7 +515,7 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         auto reasonUTF8 = reason.utf8();
         buf.append(reasonUTF8.dataAsUInt8Ptr(), reasonUTF8.length());
     }
-    enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.data(), buf.size());
+    enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.span());
     Ref<WebSocketChannel> protectedThis(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
     processOutgoingFrameQueue();
 
@@ -696,7 +696,7 @@ bool WebSocketChannel::processFrame()
         break;
 
     case WebSocketFrame::OpCodePing:
-        enqueueRawFrame(WebSocketFrame::OpCodePong, frame.payload, frame.payloadLength);
+        enqueueRawFrame(WebSocketFrame::OpCodePong, std::span { frame.payload, frame.payloadLength });
         skipBuffer(frameEnd - m_buffer.data());
         processOutgoingFrameQueue();
         break;
@@ -730,13 +730,13 @@ void WebSocketChannel::enqueueTextFrame(CString&& string)
     m_outgoingFrameQueue.append(WTFMove(frame));
 }
 
-void WebSocketChannel::enqueueRawFrame(WebSocketFrame::OpCode opCode, const uint8_t* data, size_t dataLength)
+void WebSocketChannel::enqueueRawFrame(WebSocketFrame::OpCode opCode, std::span<const uint8_t> data)
 {
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
     auto frame = makeUnique<QueuedFrame>();
     frame->opCode = opCode;
     frame->frameType = QueuedFrameTypeVector;
-    frame->vectorData = { data, dataLength };
+    frame->vectorData = data;
     m_outgoingFrameQueue.append(WTFMove(frame));
 }
 

@@ -651,7 +651,7 @@ Vector<char> asciiDebug(StringImpl* impl)
         }
     }
     CString narrowString = buffer.toString().ascii();
-    return { reinterpret_cast<const char*>(narrowString.data()), narrowString.length() + 1 };
+    return { narrowString.bytesInludingNullTerminator() };
 }
 
 Vector<char> asciiDebug(String& string)

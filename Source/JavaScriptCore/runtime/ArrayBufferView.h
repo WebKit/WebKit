@@ -77,6 +77,7 @@ public:
     }
 
     void* data() const { return baseAddress(); }
+    std::span<const uint8_t> bytes() const { return { static_cast<const uint8_t*>(data()), byteLength() }; }
 
     size_t byteOffsetRaw() const { return m_byteOffset; }
 

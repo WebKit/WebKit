@@ -38,7 +38,7 @@ std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const C
 #else
     cccurve25519(derivedKey, baseKey.platformKey().data(), publicKey.platformKey().data());
 #endif
-    return Vector<uint8_t>(derivedKey, 32);
+    return Vector<uint8_t>(std::span { derivedKey, 32 });
 }
 
 } // namespace WebCore

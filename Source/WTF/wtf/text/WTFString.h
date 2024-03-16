@@ -271,7 +271,8 @@ public:
     static String fromUTF8(const char* characters, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(characters), length); }
     static String fromUTF8(const char* string) { return fromUTF8(reinterpret_cast<const LChar*>(string)); }
     WTF_EXPORT_PRIVATE static String fromUTF8(const CString&);
-    static String fromUTF8(const Vector<LChar>& characters);
+    static String fromUTF8(const std::span<const LChar>& characters);
+    static String fromUTF8(const Vector<LChar>& characters) { return fromUTF8(characters.span()); }
     static String fromUTF8ReplacingInvalidSequences(const LChar*, size_t);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
@@ -534,9 +535,9 @@ inline bool codePointCompareLessThan(const String& a, const String& b)
     return codePointCompare(a.impl(), b.impl()) < 0;
 }
 
-inline String String::fromUTF8(const Vector<LChar>& characters)
+inline String String::fromUTF8(const std::span<const LChar>& characters)
 {
-    if (characters.isEmpty())
+    if (characters.empty())
         return emptyString();
     return fromUTF8(characters.data(), characters.size());
 }

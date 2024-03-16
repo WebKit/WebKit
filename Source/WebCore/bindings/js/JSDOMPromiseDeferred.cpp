@@ -283,9 +283,9 @@ void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&& promise, ArrayBuffer* 
     promise->resolve<IDLInterface<ArrayBuffer>>(*arrayBuffer);
 }
 
-void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&& promise, const void* data, size_t length)
+void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&& promise, std::span<const uint8_t> data)
 {
-    fulfillPromiseWithArrayBuffer(WTFMove(promise), ArrayBuffer::tryCreate(data, length).get());
+    fulfillPromiseWithArrayBuffer(WTFMove(promise), ArrayBuffer::tryCreate(data).get());
 }
 
 bool DeferredPromise::handleTerminationExceptionIfNeeded(CatchScope& scope, JSDOMGlobalObject& lexicalGlobalObject)

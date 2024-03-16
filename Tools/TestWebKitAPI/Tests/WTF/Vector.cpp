@@ -321,7 +321,7 @@ TEST(WTF_Vector, CopyFromOtherMinCapacity)
 TEST(WTF_Vector, ConstructorOtherRawPointerTypeAndLength)
 {
     const UChar uchars[] = { 'b', 'a', 'r' };
-    Vector<LChar> vector(uchars, 3);
+    Vector<LChar> vector(std::span { uchars });
     EXPECT_EQ(vector.size(), 3U);
     EXPECT_EQ(vector[0], 'b');
     EXPECT_EQ(vector[1], 'a');
@@ -1715,9 +1715,9 @@ TEST(WTF_Vector, HashKeyString)
 TEST(WTF_Vector, ConstructorFromRawPointerAndSize)
 {
     constexpr size_t inputSize = 5;
-    uint8_t input[inputSize] = { 1, 2, 3, 4, 5 };
+    std::array<uint8_t, inputSize> input { 1, 2, 3, 4, 5 };
 
-    Vector<uint8_t> vector { input, inputSize };
+    Vector<uint8_t> vector { input };
     ASSERT_EQ(vector.size(), inputSize);
     EXPECT_EQ(vector[0], 1);
     EXPECT_EQ(vector[1], 2);

@@ -51,7 +51,7 @@ namespace {
 template<typename S, int I, typename T>
 Vector<S> vectorCopyCast(const T& arrayReference)
 {
-    return { reinterpret_cast<const S*>(arrayReference.template data<I>()), arrayReference.size() };
+    return Vector(std::span { reinterpret_cast<const S*>(arrayReference.template data<I>()), arrayReference.size() });
 }
 }
 

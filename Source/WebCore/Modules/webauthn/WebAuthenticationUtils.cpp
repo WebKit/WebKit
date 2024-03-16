@@ -41,7 +41,7 @@ namespace WebCore {
 
 Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length)
 {
-    return { byteArray, length };
+    return { std::span { byteArray, length } };
 }
 
 Vector<uint8_t> produceRpIdHash(const String& rpId)

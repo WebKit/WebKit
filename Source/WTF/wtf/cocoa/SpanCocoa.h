@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ContentExtensionStringSerialization.h"
+#pragma once
 
-#if ENABLE(CONTENT_EXTENSIONS)
+#include <span>
 
-namespace WebCore::ContentExtensions {
+namespace WTF {
 
-String deserializeString(std::span<const uint8_t> span)
+inline std::span<const uint8_t> toSpan(NSData *data)
 {
-    auto serializedLength = *reinterpret_cast<const uint32_t*>(span.data());
-    return String::fromUTF8(span.data() + sizeof(uint32_t), serializedLength - sizeof(uint32_t));
+    if (!data)
+        return { };
+    return { static_cast<const uint8_t*>(data.bytes), data.length };
 }
 
-void serializeString(Vector<uint8_t>& actions, const String& string)
-{
-    auto utf8 = string.utf8();
-    uint32_t serializedLength = sizeof(uint32_t) + utf8.length();
-    actions.reserveCapacity(actions.size() + serializedLength);
-    actions.append(std::span { reinterpret_cast<const uint8_t*>(&serializedLength), sizeof(serializedLength) });
-    actions.append(utf8.bytes());
-}
+} // namespace WTF
 
-size_t stringSerializedLength(std::span<const uint8_t> span)
-{
-    return *reinterpret_cast<const uint32_t*>(span.data());
-}
-
-} // namespace WebCore::ContentExtensions
-
-#endif // ENABLE(CONTENT_EXTENSIONS)
+using WTF::toSpan;

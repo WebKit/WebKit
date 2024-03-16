@@ -41,14 +41,13 @@ static Vector<uint8_t> dataFromPushMessageDataInit(PushMessageDataInit& data)
     return WTF::switchOn(data, [](RefPtr<JSC::ArrayBuffer>& value) -> Vector<uint8_t> {
         if (!value)
             return { };
-        return { reinterpret_cast<const uint8_t*>(value->data()), value->byteLength() };
+        return value->bytes();
     }, [](RefPtr<JSC::ArrayBufferView>& value) -> Vector<uint8_t> {
         if (!value)
             return { };
-        return { reinterpret_cast<const uint8_t*>(value->baseAddress()), value->byteLength() };
+        return value->bytes();
     }, [](String& value) -> Vector<uint8_t> {
-        auto utf8 = value.utf8();
-        return Vector<uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() };
+        return value.utf8().bytes();
     });
 }
 

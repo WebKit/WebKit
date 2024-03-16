@@ -71,6 +71,7 @@ public:
 
     const uint8_t* buffer() const { return m_buffer.data(); }
     size_t bufferSize() const { return m_buffer.size(); }
+    std::span<const uint8_t> bytes() const { return m_buffer.span(); }
 
     WTF_EXPORT_PRIVATE static void updateChecksumForData(SHA1&, std::span<const uint8_t>);
     template <typename Type> static void updateChecksumForNumber(SHA1&, Type);

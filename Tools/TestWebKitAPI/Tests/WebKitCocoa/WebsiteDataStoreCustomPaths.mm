@@ -51,6 +51,7 @@
 #import <wtf/Deque.h>
 #import <wtf/FileSystem.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/WTFString.h>
 
@@ -709,7 +710,7 @@ static void respondToRangeRequests(const TestWebKitAPI::Connection& connection, 
             rangeBegin, rangeEnd, static_cast<uint64_t>(data.get().length), rangeEnd - rangeBegin];
         NSData *responseHeader = [responseHeaderString dataUsingEncoding:NSUTF8StringEncoding];
         NSData *responseBody = [data subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)];
-        Vector<uint8_t> response { static_cast<const uint8_t*>(responseHeader.bytes), responseHeader.length };
+        auto response = toVector(responseHeader);
         response.append(static_cast<const uint8_t*>(responseBody.bytes), responseBody.length);
         connection.send(WTFMove(response), [=] {
             respondToRangeRequests(connection, data);

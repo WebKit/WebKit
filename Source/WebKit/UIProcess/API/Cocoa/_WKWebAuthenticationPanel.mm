@@ -282,7 +282,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 
     auto result = adoptNS([[NSMutableArray alloc] init]);
     for (NSDictionary *attributes in (NSArray *)attributesArrayRef) {
-        auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[bridge_id_cast(kSecAttrApplicationTag)]));
+        auto decodedResponse = cbor::CBORReader::read(toVector(attributes[bridge_id_cast(kSecAttrApplicationTag)]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
             return nullptr;
@@ -428,7 +428,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         return;
     }
     auto attributes = adoptNS((__bridge NSDictionary *)attributesArrayRef);
-    auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]));
+    auto decodedResponse = cbor::CBORReader::read(toVector(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]));
     if (!decodedResponse || !decodedResponse->isMap()) {
         ASSERT_NOT_REACHED();
         return;
@@ -491,7 +491,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         return;
     }
     auto attributes = adoptNS((__bridge NSDictionary *)attributesArrayRef);
-    auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]));
+    auto decodedResponse = cbor::CBORReader::read(toVector(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]));
     if (!decodedResponse || !decodedResponse->isMap()) {
         ASSERT_NOT_REACHED();
         return;
@@ -549,7 +549,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 + (NSData *)importLocalAuthenticatorWithAccessGroup:(NSString *)accessGroup credential:(NSData *)credentialBlob error:(NSError **)error
 {
 #if ENABLE(WEB_AUTHN)
-    auto credential = cbor::CBORReader::read(vectorFromNSData(credentialBlob));
+    auto credential = cbor::CBORReader::read(toVector(credentialBlob));
     if (!credential || !credential->isMap()) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
         return nullptr;
@@ -728,7 +728,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     credentialMap[cbor::CBORValue(WebCore::keyTypeKey)] = cbor::CBORValue(keyType);
     credentialMap[cbor::CBORValue(WebCore::keySizeKey)] = cbor::CBORValue(keySize);
     credentialMap[cbor::CBORValue(WebCore::relyingPartyKey)] = cbor::CBORValue(String(attributes.get()[bridge_id_cast(kSecAttrLabel)]));
-    auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]));
+    auto decodedResponse = cbor::CBORReader::read(toVector(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]));
     if (!decodedResponse || !decodedResponse->isMap()) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
         return nullptr;
@@ -1003,7 +1003,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<NSInteger>(exception.code) userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
         });
     };
-    _panel->handleRequest({ vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, String(), nullptr, toWebCore(mediation), std::nullopt }, WTFMove(callback));
+    _panel->handleRequest({ toVector(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, String(), nullptr, toWebCore(mediation), std::nullopt }, WTFMove(callback));
 #endif
 }
 
@@ -1071,7 +1071,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<NSInteger>(exception.code) userInfo:@{ NSLocalizedDescriptionKey: exception.message }]);
         });
     };
-    _panel->handleRequest({ vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, String(), nullptr, toWebCore(mediation), std::nullopt }, WTFMove(callback));
+    _panel->handleRequest({ toVector(clientDataHash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, String(), nullptr, toWebCore(mediation), std::nullopt }, WTFMove(callback));
 #endif
 }
 
@@ -1154,7 +1154,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 {
     RetainPtr<NSData> encodedCommand;
 #if ENABLE(WEB_AUTHN)
-    auto encodedVector = fido::encodeMakeCredentialRequestAsCBOR(vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
+    auto encodedVector = fido::encodeMakeCredentialRequestAsCBOR(toVector(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
     encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
 #endif
 
@@ -1170,7 +1170,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 {
     RetainPtr<NSData> encodedCommand;
 #if ENABLE(WEB_AUTHN)
-    auto encodedVector = fido::encodeGetAssertionRequestAsCBOR(vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
+    auto encodedVector = fido::encodeGetAssertionRequestAsCBOR(toVector(clientDataHash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
     encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
 #endif
 

@@ -288,8 +288,7 @@ String SQLiteStatement::columnBlobAsString(int col)
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)
 {
-    auto span = columnBlobAsSpan(col);
-    return { span.data(), span.size() };
+    return { columnBlobAsSpan(col) };
 }
 
 std::span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col)

@@ -330,7 +330,7 @@ bool parseOpusPrivateData(size_t codecPrivateSize, const uint8_t* codecPrivateDa
 static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& cookie)
 {
 #if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    return { cookie.cookieData->data(), cookie.cookieData->size() };
+    return { cookie.cookieData->dataAsSpanForContiguousData() };
 #else
     auto samplesPerPacket = cookie.framesPerPacket * (cookie.frameDuration.seconds() * cookie.sampleRate);
 

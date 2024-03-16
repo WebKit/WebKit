@@ -296,7 +296,7 @@ void WebSWContextManagerConnection::firePushEvent(ServiceWorkerIdentifier identi
 
     std::optional<Vector<uint8_t>> data;
     if (ipcData)
-        data = Vector<uint8_t> { ipcData->data(), ipcData->size() };
+        data = Vector<uint8_t> { *ipcData };
 
     auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result, std::optional<NotificationPayload>&& resultPayload) mutable {
         queue->dispatch([result, resultPayload = crossThreadCopy(WTFMove(resultPayload)), callback = WTFMove(callback)]() mutable {
