@@ -59,6 +59,9 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PluginDocument.h>
+#import <WebCore/RenderEmbeddedObject.h>
+#import <WebCore/RenderLayer.h>
+#import <WebCore/RenderLayerScrollableArea.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/SharedBuffer.h>
@@ -663,8 +666,22 @@ IntRect PDFPluginBase::scrollCornerRect() const
 
 ScrollableArea* PDFPluginBase::enclosingScrollableArea() const
 {
-    // FIXME: Walk up the frame tree and look for a scrollable parent frame or RenderLayer.
-    return nullptr;
+    if (!m_element)
+        return nullptr;
+
+    RefPtr renderer = dynamicDowncast<RenderEmbeddedObject>(m_element->renderer());
+    if (!renderer)
+        return nullptr;
+
+    CheckedPtr layer = renderer->enclosingLayer();
+    if (!layer)
+        return nullptr;
+
+    CheckedPtr enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No);
+    if (!enclosingScrollableLayer)
+        return nullptr;
+
+    return enclosingScrollableLayer->scrollableArea();
 }
 
 IntRect PDFPluginBase::scrollableAreaBoundingBox(bool*) const

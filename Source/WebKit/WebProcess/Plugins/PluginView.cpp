@@ -714,6 +714,14 @@ void PluginView::willDetachRenderer()
     protectedPlugin()->willDetachRenderer();
 }
 
+ScrollableArea* PluginView::scrollableArea() const
+{
+    if (!m_isInitialized)
+        return nullptr;
+
+    return m_plugin.ptr();
+}
+
 bool PluginView::usesAsyncScrolling() const
 {
     if (!m_isInitialized)
@@ -721,7 +729,6 @@ bool PluginView::usesAsyncScrolling() const
 
     return protectedPlugin()->usesAsyncScrolling();
 }
-
 
 ScrollingNodeID PluginView::scrollingNodeID() const
 {

@@ -2009,6 +2009,11 @@ ScrollableArea* EventHandler::enclosingScrollableArea(Node* node)
                 return scrollableArea;
         }
 
+        if (RefPtr plugin = dynamicDowncast<RenderEmbeddedObject>(renderer)) {
+            if (auto* scrollableArea = plugin->scrollableArea())
+                return scrollableArea;
+        }
+
         auto* layer = renderer->enclosingLayer();
         if (!layer)
             return nullptr;
@@ -4614,17 +4619,16 @@ bool EventHandler::startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(Scroll
     return false;
 }
 
-bool EventHandler::startKeyboardScrollAnimationOnPlugin(ScrollDirection direction, ScrollGranularity granularity, RenderEmbeddedObject& plugin, bool isKeyRepeat)
+bool EventHandler::startKeyboardScrollAnimationOnPlugin(ScrollDirection direction, ScrollGranularity granularity, RenderEmbeddedObject& pluginRenderer, bool isKeyRepeat)
 {
-    if (!plugin.usesAsyncScrolling())
-        return false;
-    ScrollingNodeID scroller = plugin.scrollingNodeID();
-    ScrollableArea* scrollableArea = m_frame->view()->scrollableAreaForScrollingNodeID(scroller);
+    auto* scrollableArea = pluginRenderer.scrollableArea();
     if (!scrollableArea)
         return false;
+
     auto* animator = scrollableArea->scrollAnimator().keyboardScrollingAnimator();
     if (!animator)
         return false;
+
     return beginKeyboardScrollGesture(animator, direction, granularity, isKeyRepeat);
 }
 

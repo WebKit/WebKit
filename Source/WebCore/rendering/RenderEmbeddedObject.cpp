@@ -111,9 +111,18 @@ bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
     return pluginViewBase->layerHostingStrategy() != PluginLayerHostingStrategy::None;
 }
 
+ScrollableArea* RenderEmbeddedObject::scrollableArea() const
+{
+    RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    if (!pluginViewBase)
+        return nullptr;
+
+    return pluginViewBase->scrollableArea();
+}
+
 bool RenderEmbeddedObject::usesAsyncScrolling() const
 {
-    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
         return false;
     return pluginViewBase->usesAsyncScrolling();
@@ -121,7 +130,7 @@ bool RenderEmbeddedObject::usesAsyncScrolling() const
 
 ScrollingNodeID RenderEmbeddedObject::scrollingNodeID() const
 {
-    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
         return { };
     return pluginViewBase->scrollingNodeID();
@@ -129,7 +138,7 @@ ScrollingNodeID RenderEmbeddedObject::scrollingNodeID() const
 
 void RenderEmbeddedObject::willAttachScrollingNode()
 {
-    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
         return;
     pluginViewBase->willAttachScrollingNode();
@@ -137,7 +146,7 @@ void RenderEmbeddedObject::willAttachScrollingNode()
 
 void RenderEmbeddedObject::didAttachScrollingNode()
 {
-    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
         return;
     pluginViewBase->didAttachScrollingNode();

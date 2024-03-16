@@ -61,6 +61,7 @@ public:
 
     const String& pluginReplacementTextIfUnavailable() const { return m_unavailablePluginReplacementText; }
 
+    ScrollableArea* scrollableArea() const;
     bool usesAsyncScrolling() const;
     ScrollingNodeID scrollingNodeID() const;
     void willAttachScrollingNode();

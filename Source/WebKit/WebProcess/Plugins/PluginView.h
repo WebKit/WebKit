@@ -159,6 +159,7 @@ private:
     bool shouldAllowNavigationFromDrags() const final;
     void willDetachRenderer() final;
 
+    WebCore::ScrollableArea* scrollableArea() const final;
     bool usesAsyncScrolling() const final;
     WebCore::ScrollingNodeID scrollingNodeID() const final;
     void willAttachScrollingNode() final;

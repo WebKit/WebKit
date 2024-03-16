@@ -36,6 +36,7 @@ namespace WebCore {
 
 class Element;
 class GraphicsLayer;
+class ScrollableArea;
 class Scrollbar;
 class VoidCallback;
 
@@ -64,6 +65,7 @@ public:
     virtual bool shouldAllowNavigationFromDrags() const { return false; }
     virtual void willDetachRenderer() { }
 
+    virtual ScrollableArea* scrollableArea() const { return nullptr; }
     virtual bool usesAsyncScrolling() const { return false; }
     virtual ScrollingNodeID scrollingNodeID() const { return { }; }
     virtual void willAttachScrollingNode() { }
