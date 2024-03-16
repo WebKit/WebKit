@@ -40,6 +40,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/_WKIconLoadingDelegate.h>
@@ -839,12 +840,22 @@ static BOOL isJavaScriptURL(NSURL *url)
 
 #pragma mark WKNavigationDelegate
 
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
     LOG(@"decidePolicyForNavigationAction");
 
+    preferences._networkConnectionIntegrityPolicy = ^{
+        if (!NSApplication.sharedApplication.browserAppDelegate.settingsController.advancedPrivacyProtectionsEnabled)
+            return _WKWebsiteNetworkConnectionIntegrityPolicyNone;
+
+        return _WKWebsiteNetworkConnectionIntegrityPolicyEnabled
+            | _WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry
+            | _WKWebsiteNetworkConnectionIntegrityPolicyRequestValidation
+            | _WKWebsiteNetworkConnectionIntegrityPolicySanitizeLookalikeCharacters;
+    }();
+
     if (navigationAction._canHandleRequest) {
-        decisionHandler(WKNavigationActionPolicyAllow);
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
         return;
     }
 
@@ -855,7 +866,7 @@ static BOOL isJavaScriptURL(NSURL *url)
         [[NSWorkspace sharedWorkspace] openURL:url];
     }
 
-    decisionHandler(WKNavigationActionPolicyCancel);
+    decisionHandler(WKNavigationActionPolicyCancel, preferences);
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
