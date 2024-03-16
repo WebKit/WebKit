@@ -98,9 +98,11 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <dt hidden="" aria-hidden="false" id="dt"></dt>
     AXRole: AXDescriptionTerm
+    computedRoleString: term
 
 <dd hidden="" aria-hidden="false" id="dd"></dd>
     AXRole: AXDescriptionValue
+    computedRoleString: definition
 
 <dl hidden="" aria-hidden="false" id="dl"></dl>
     AXRole: AXDescriptionList
@@ -170,6 +172,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <details hidden="" aria-hidden="false" id="details"></details>
     AXRole: AXUnknown
+    computedRoleString: group
 
 <summary hidden="" aria-hidden="false" id="summary"></summary>
     AXRole: AXUnknown

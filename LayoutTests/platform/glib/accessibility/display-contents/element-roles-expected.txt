@@ -30,6 +30,7 @@ This test ensures elements with CSS display: contents have the correct role.
 
 <details class="testcase" id="details"></details>
     AXRole: AXUnknown
+    computedRoleString: group
 
 <summary class="testcase" id="summary"></summary>
     AXRole: AXUnknown
@@ -47,9 +48,11 @@ This test ensures elements with CSS display: contents have the correct role.
 
 <dt class="testcase" id="dt"></dt>
     AXRole: AXDescriptionTerm
+    computedRoleString: term
 
 <dd class="testcase" id="dd"></dd>
     AXRole: AXDescriptionValue
+    computedRoleString: definition
 
 <legend class="testcase" id="legend"></legend>
     AXRole: AXLabel

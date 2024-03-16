@@ -373,7 +373,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
 
     if (element->hasTagName(codeTag))
         return AccessibilityRole::Code;
-    if (element->hasTagName(delTag))
+    if (element->hasTagName(delTag) || element->hasTagName(sTag))
         return AccessibilityRole::Deletion;
     if (element->hasTagName(insTag))
         return AccessibilityRole::Insertion;
@@ -381,6 +381,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Subscript;
     if (element->hasTagName(supTag))
         return AccessibilityRole::Superscript;
+    if (element->hasTagName(strongTag))
+        return AccessibilityRole::Strong;
 
     if (element->hasTagName(kbdTag)
         || element->hasTagName(preTag)
@@ -508,6 +510,10 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Time;
     if (element->hasTagName(hrTag))
         return AccessibilityRole::HorizontalRule;
+    if (element->hasTagName(emTag))
+        return AccessibilityRole::Emphasis;
+    if (element->hasTagName(hgroupTag))
+        return AccessibilityRole::ApplicationGroup;
 
     // If the element does not have role, but it has ARIA attributes, or accepts tab focus, accessibility should fallback to exposing it as a group.
     if (supportsARIAAttributes() || canSetFocusAttribute() || element->isFocusable())
