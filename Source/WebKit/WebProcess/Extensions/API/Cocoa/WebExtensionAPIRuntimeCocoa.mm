@@ -565,19 +565,14 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
     auto *senderInfo = toWebAPI(senderParameters);
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
-    auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTFMove(completionHandler)](id replyMessage, IsDefaultReply defaultReply) mutable {
+    auto callbackAggregator = ReplyCallbackAggregator::create([completionHandler = WTFMove(completionHandler)](JSValue *replyMessage, IsDefaultReply defaultReply) mutable {
         if (defaultReply == IsDefaultReply::Yes) {
             // A null reply to the completionHandler means no listeners replied.
             completionHandler({ });
             return;
         }
 
-        NSString *replyMessageJSON;
-        if (JSValue *value = dynamic_objc_cast<JSValue>(replyMessage))
-            replyMessageJSON = value._toJSONString;
-        else
-            replyMessageJSON = encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed);
-
+        auto *replyMessageJSON = encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed);
         if (replyMessageJSON.length > webExtensionMaxMessageLength)
             replyMessageJSON = @"";
 
@@ -614,7 +609,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
             // Using BlockPtr for this call does not work, since JSValue needs a compiled block
             // with a signature to translate the JS function arguments. Having the block capture
             // callbackAggregatorWrapper ensures that callbackAggregator remains in scope.
-            id returnValue = listener->call(message, senderInfo, ^(id replyMessage) {
+            id returnValue = listener->call(message, senderInfo, ^(JSValue *replyMessage) {
                 callbackAggregatorWrapper.get().aggregator(replyMessage, IsDefaultReply::No);
             });
 
@@ -629,7 +624,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
 
             anyListenerHandledMessage = true;
 
-            [value _awaitThenableResolutionWithCompletionHandler:^(id replyMessage, id error) {
+            [value _awaitThenableResolutionWithCompletionHandler:^(JSValue *replyMessage, id error) {
                 if (error)
                     return;
 

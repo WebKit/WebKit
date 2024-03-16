@@ -265,7 +265,7 @@ TEST(WKWebExtensionAPIStorage, SetCustomObject)
 TEST(WKWebExtensionAPIStorage, Get)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null }",
+        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null, 'nan': NaN }",
         @"await browser?.storage?.local?.set(data)",
 
         @"var result = await browser?.storage?.local?.get()",
@@ -273,6 +273,9 @@ TEST(WKWebExtensionAPIStorage, Get)
 
         @"result = await browser?.storage?.local?.get('boolean')",
         @"browser.test.assertTrue(result?.boolean)",
+
+        @"result = await browser?.storage?.local?.get('nan')",
+        @"browser.test.assertEq(result?.nan, null)",
 
         @"result = await browser?.storage?.local?.get([ 'string', 'number' ])",
         @"browser.test.assertDeepEq({ 'string': 'string', 'number': 1 }, result)",

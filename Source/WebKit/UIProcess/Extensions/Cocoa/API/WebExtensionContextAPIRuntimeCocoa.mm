@@ -219,7 +219,7 @@ void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, 
 
     auto *applicationIdentifier = !applicationID.isNull() ? (NSString *)applicationID : nil;
 
-    [delegate webExtensionController:extensionController()->wrapper() sendMessage:message toApplicationIdentifier:applicationIdentifier forExtensionContext:wrapper() replyHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (id replyMessage, NSError *error) mutable {
+    [delegate webExtensionController:extensionController()->wrapper() sendMessage:message toApplicationIdentifier:applicationIdentifier forExtensionContext:wrapper() replyHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id replyMessage, NSError *error) mutable {
         if (error) {
             completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
             return;
