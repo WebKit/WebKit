@@ -75,16 +75,6 @@ public:
 
     void markDirty(bool dirty = true) final;
 
-    using LegacyInlineBox::hasHyphen;
-    using LegacyInlineBox::setHasHyphen;
-    using LegacyInlineBox::canHaveLeftExpansion;
-    using LegacyInlineBox::setCanHaveLeftExpansion;
-    using LegacyInlineBox::canHaveRightExpansion;
-    using LegacyInlineBox::setCanHaveRightExpansion;
-    using LegacyInlineBox::forceRightExpansion;
-    using LegacyInlineBox::setForceRightExpansion;
-    using LegacyInlineBox::forceLeftExpansion;
-    using LegacyInlineBox::setForceLeftExpansion;
     using LegacyInlineBox::setIsInGlyphDisplayListCache;
 
     LayoutUnit baselinePosition(FontBaseline) const final;
@@ -149,10 +139,8 @@ private:
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
 
-    String text(bool ignoreCombinedText = false, bool ignoreHyphen = false) const; // The effective text for the run.
-    TextRun createTextRun(bool ignoreCombinedText = false, bool ignoreHyphen = false) const;
-
-    ExpansionBehavior expansionBehavior() const;
+    String text(bool ignoreCombinedText = false) const; // The effective text for the run.
+    TextRun createTextRun(bool ignoreCombinedText = false) const;
 
     LegacyInlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
     LegacyInlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject

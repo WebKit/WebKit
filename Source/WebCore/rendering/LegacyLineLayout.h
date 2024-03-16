@@ -83,7 +83,7 @@ private:
     inline BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns, BidiContext* currentContext);
     LegacyRootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo&);
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
-    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const LegacyInlineIterator& cleanLineStart, unsigned consecutiveHyphenatedLines);
+    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const LegacyInlineIterator& cleanLineStart);
     void linkToEndLineIfNeeded(LineLayoutState&);
     LegacyRootInlineBox* determineStartPosition(LineLayoutState&, InlineBidiResolver&);
     void determineEndPosition(LineLayoutState&, LegacyRootInlineBox* startLine, LegacyInlineIterator& cleanLineStart);

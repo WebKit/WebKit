@@ -82,8 +82,6 @@ public:
 
     void childRemoved(LegacyInlineBox*);
 
-    bool isHyphenated() const;
-
     LayoutUnit baselinePosition(FontBaseline baselineType) const final;
     LayoutUnit lineHeight() const final;
 

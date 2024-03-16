@@ -45,7 +45,7 @@ struct SameSizeAsLegacyInlineBox {
     void* a[3];
     SingleThreadWeakPtr<RenderObject> r;
     FloatPoint b;
-    float c[2];
+    float c[1];
     unsigned d : 23;
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     unsigned s;
@@ -136,8 +136,6 @@ float LegacyInlineBox::logicalHeight() const
     const RenderStyle& lineStyle = this->lineStyle();
     if (renderer().isRenderTextOrLineBreak())
         return lineStyle.metricsOfPrimaryFont().intHeight();
-    if (auto* box = dynamicDowncast<RenderBox>(renderer()); box && parent())
-        return isHorizontal() ? box->height() : box->width();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
@@ -178,12 +176,6 @@ void LegacyInlineBox::dirtyLineBoxes()
 void LegacyInlineBox::adjustPosition(float dx, float dy)
 {
     m_topLeft.move(dx, dy);
-
-    if (renderer().isOutOfFlowPositioned())
-        return;
-
-    if (renderer().isReplacedOrInlineBlock())
-        downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
 const LegacyRootInlineBox& LegacyInlineBox::root() const

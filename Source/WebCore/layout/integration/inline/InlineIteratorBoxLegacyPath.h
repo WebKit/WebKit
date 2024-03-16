@@ -56,7 +56,7 @@ public:
 
     unsigned char bidiLevel() const { return m_inlineBox->bidiLevel(); }
 
-    bool hasHyphen() const { return inlineTextBox()->hasHyphen(); }
+    bool hasHyphen() const { return false; }
     StringView originalText() const { return StringView(inlineTextBox()->renderer().text()).substring(inlineTextBox()->start(), inlineTextBox()->len()); }
     size_t lineIndex() const
     {
@@ -74,9 +74,8 @@ public:
     TextRun textRun(TextRunMode mode = TextRunMode::Painting) const
     {
         bool ignoreCombinedText = mode == TextRunMode::Editing;
-        bool ignoreHyphen = mode == TextRunMode::Editing;
         if (isText())
-            return inlineTextBox()->createTextRun(ignoreCombinedText, ignoreHyphen);
+            return inlineTextBox()->createTextRun(ignoreCombinedText);
         ASSERT_NOT_REACHED();
         return TextRun { emptyString() };
     }

@@ -64,16 +64,6 @@ LegacyRootInlineBox::~LegacyRootInlineBox()
 {
 }
 
-bool LegacyRootInlineBox::isHyphenated() const
-{
-    for (auto* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
-        auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*box);
-        if (textBox && textBox->hasHyphen())
-            return true;
-    }
-    return false;
-}
-
 LayoutUnit LegacyRootInlineBox::baselinePosition(FontBaseline baselineType) const
 {
     return renderer().baselinePosition(baselineType, isFirstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);

@@ -30,11 +30,6 @@
 
 namespace WebCore {
 
-void LineBreaker::reset()
-{
-    m_hyphenated = false;
-}
-
 void LineBreaker::skipTrailingWhitespace(LegacyInlineIterator& iterator, const LineInfo& lineInfo)
 {
     while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace))
@@ -57,10 +52,8 @@ void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& 
     resolver.commitExplicitEmbedding();
 }
 
-LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
+LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, WordMeasurements& wordMeasurements)
 {
-    reset();
-
     ASSERT(resolver.position().root() == &m_block);
 
     bool appliedStartWidth = resolver.position().offset();
@@ -79,7 +72,7 @@ LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, Li
         if (context.currentObject()->isRenderInline()) {
             context.handleEmptyInline();
         } else if (context.currentObject()->isRenderText()) {
-            if (context.handleText(wordMeasurements, m_hyphenated, consecutiveHyphenatedLines)) {
+            if (context.handleText(wordMeasurements)) {
                 // We've hit a hard text line break. Our line break iterator is updated, so early return.
                 return context.lineBreak();
             }

@@ -277,8 +277,6 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
         if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*box)) {
             textBox->setStart(r->m_start);
             textBox->setLen(r->m_stop - r->m_start);
-            if (r->m_hasHyphen)
-                textBox->setHasHyphen(true);
         }
     }
 
@@ -671,12 +669,6 @@ void LegacyLineLayout::layoutRunsAndFloats(LineLayoutState& layoutState, bool ha
     // We want to skip ahead to the first dirty line
     InlineBidiResolver resolver;
     LegacyRootInlineBox* startLine = determineStartPosition(layoutState, resolver);
-    
-    unsigned consecutiveHyphenatedLines = 0;
-    if (startLine) {
-        for (auto* line = startLine->prevRootBox(); line && line->isHyphenated(); line = line->prevRootBox())
-            consecutiveHyphenatedLines++;
-    }
 
     // FIXME: This would make more sense outside of this function, but since
     // determineStartPosition can change the fullLayout flag we have to do this here. Failure to call
@@ -704,13 +696,13 @@ void LegacyLineLayout::layoutRunsAndFloats(LineLayoutState& layoutState, bool ha
         deleteLineRange(layoutState, startLine);
     }
 
-    layoutRunsAndFloatsInRange(layoutState, resolver, cleanLineStart, consecutiveHyphenatedLines);
+    layoutRunsAndFloatsInRange(layoutState, resolver, cleanLineStart);
     linkToEndLineIfNeeded(layoutState);
     if (firstRootBox())
         repaintSelfPaintInlineBoxes(*firstRootBox(), layoutState.endLine() ? *layoutState.endLine() : *lastRootBox());
 }
 
-void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, InlineBidiResolver& resolver, const LegacyInlineIterator& cleanLineStart, unsigned consecutiveHyphenatedLines)
+void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, InlineBidiResolver& resolver, const LegacyInlineIterator& cleanLineStart)
 {
     const RenderStyle& styleToUse = style();
     LineWhitespaceCollapsingState& lineWhitespaceCollapsingState = resolver.whitespaceCollapsingState();
@@ -739,7 +731,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
 
         WordMeasurements wordMeasurements;
-        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, consecutiveHyphenatedLines, wordMeasurements);
+        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, wordMeasurements);
         m_flow.cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIteratorFactory);
         renderTextInfo.lineBreakIteratorFactory.priorContext().reset();
         if (resolver.position().atEnd()) {
@@ -772,12 +764,6 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
 
             if (!layoutState.lineInfo().previousLineBrokeCleanly())
                 handleTrailingSpaces(bidiRuns, resolver.context());
-
-            if (bidiRuns.runCount() && lineBreaker.lineWasHyphenated()) {
-                bidiRuns.logicallyLastRun()->m_hasHyphen = true;
-                consecutiveHyphenatedLines++;
-            } else
-                consecutiveHyphenatedLines = 0;
 
             // Now that the runs have been ordered, we create the line boxes.
             // At the same time we figure out where border/padding/margin should be applied for

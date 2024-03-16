@@ -281,14 +281,11 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const
 {
-    // Fix up the offset if we are combined text or have a hyphen because we manage these embellishments.
+    // Fix up the offset if we are combined text because we manage these embellishments.
     // That is, they are not reflected in renderer().text(). We treat combined text as a single unit.
-    // We also treat the last codepoint in this box and the hyphen as a single unit.
     auto additionalLengthAtEnd = [&] {
         if (auto* combinedText = this->combinedText())
             return combinedText->combinedStringForRendering().length() - m_len;
-        if (hasHyphen())
-            return lineStyle().hyphenString().length();
         return 0u;
     }();
 
@@ -329,15 +326,15 @@ float LegacyInlineTextBox::textPos() const
     return logicalLeft() - root().logicalLeft();
 }
 
-TextRun LegacyInlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen) const
+TextRun LegacyInlineTextBox::createTextRun(bool ignoreCombinedText) const
 {
     const auto& style = lineStyle();
-    TextRun textRun { text(ignoreCombinedText, ignoreHyphen), textPos(), expansion(), expansionBehavior(), direction(), style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
+    TextRun textRun { text(ignoreCombinedText), textPos(), 0, ExpansionBehavior::forbidAll(), direction(), style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
     textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     return textRun;
 }
 
-String LegacyInlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
+String LegacyInlineTextBox::text(bool ignoreCombinedText) const
 {
     String result;
     if (auto* combinedText = this->combinedText()) {
@@ -345,11 +342,6 @@ String LegacyInlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) con
             result = renderer().text().substring(m_start, m_len);
         else
             result = combinedText->combinedStringForRendering();
-    } else if (hasHyphen()) {
-        if (ignoreHyphen)
-            result = renderer().text().substring(m_start, m_len);
-        else
-            result = makeString(StringView(renderer().text()).substring(m_start, m_len), lineStyle().hyphenString());
     } else
         result = renderer().text().substring(m_start, m_len);
 
@@ -365,27 +357,6 @@ const RenderCombineText* LegacyInlineTextBox::combinedText() const
 
     auto* renderCombineText = dynamicDowncast<RenderCombineText>(renderer());
     return renderCombineText && renderCombineText->isCombined() ? renderCombineText : nullptr;
-}
-
-ExpansionBehavior LegacyInlineTextBox::expansionBehavior() const
-{
-    ExpansionBehavior behavior;
-
-    if (forceLeftExpansion())
-        behavior.left = ExpansionBehavior::Behavior::Force;
-    else if (canHaveLeftExpansion())
-        behavior.left = ExpansionBehavior::Behavior::Allow;
-    else
-        behavior.left = ExpansionBehavior::Behavior::Forbid;
-
-    if (forceRightExpansion())
-        behavior.right = ExpansionBehavior::Behavior::Force;
-    else if (expansion() && nextLeafOnLine() && !nextLeafOnLine()->isLineBreak())
-        behavior.right = ExpansionBehavior::Behavior::Allow;
-    else
-        behavior.right = ExpansionBehavior::Behavior::Forbid;
-
-    return behavior;
 }
 
 #if ENABLE(TREE_DEBUGGING)

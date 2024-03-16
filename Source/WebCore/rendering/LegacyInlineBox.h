@@ -242,25 +242,6 @@ public:
     bool knownToHaveNoOverflow() const { return m_bitfields.knownToHaveNoOverflow(); }
     void clearKnownToHaveNoOverflow();
 
-    void setExpansion(float newExpansion)
-    {
-        m_logicalWidth -= m_expansion;
-        m_expansion = newExpansion;
-        m_logicalWidth += m_expansion;
-    }
-    void setExpansionWithoutGrowing(float newExpansion)
-    {
-        ASSERT(!m_expansion);
-        m_expansion = newExpansion;
-    }
-    float expansion() const { return m_expansion; }
-
-    void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }
-    void setCanHaveLeftExpansion(bool canHaveLeftExpansion) { m_bitfields.setCanHaveLeftExpansion(canHaveLeftExpansion); }
-    void setCanHaveRightExpansion(bool canHaveRightExpansion) { m_bitfields.setCanHaveRightExpansion(canHaveRightExpansion); }
-    void setForceRightExpansion() { m_bitfields.setForceRightExpansion(true); }
-    void setForceLeftExpansion() { m_bitfields.setForceLeftExpansion(true); }
-
 private:
     LegacyInlineBox* m_nextOnLine { nullptr }; // The next element on the same line as us.
     LegacyInlineBox* m_previousOnLine { nullptr }; // The previous element on the same line as us.
@@ -271,7 +252,6 @@ private:
 
 private:
     float m_logicalWidth { 0 };
-    float m_expansion { 0 };
     FloatPoint m_topLeft;
 
 #define ADD_BOOLEAN_BITFIELD(name, Name) \
@@ -292,12 +272,7 @@ private:
             , m_hasVirtualLogicalHeight(false)
             , m_isHorizontal(isHorizontal)
             , m_endsWithBreak(false)
-            , m_canHaveLeftExpansion(false)
-            , m_canHaveRightExpansion(false)
-            , m_knownToHaveNoOverflow(true)  
-            , m_hasEllipsisBoxOrHyphen(false)
-            , m_forceRightExpansion(false)
-            , m_forceLeftExpansion(false)
+            , m_knownToHaveNoOverflow(true)
             , m_determinedIfNextOnLineExists(false)
             , m_nextOnLineExists(false)
         {
@@ -322,13 +297,8 @@ private:
         // for RootInlineBox
         ADD_BOOLEAN_BITFIELD(endsWithBreak, EndsWithBreak); // Whether the line ends with a <br>.
         // shared between RootInlineBox and LegacyInlineTextBox
-        ADD_BOOLEAN_BITFIELD(canHaveLeftExpansion, CanHaveLeftExpansion);
-        ADD_BOOLEAN_BITFIELD(canHaveRightExpansion, CanHaveRightExpansion);
         ADD_BOOLEAN_BITFIELD(knownToHaveNoOverflow, KnownToHaveNoOverflow);
-        ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
         // for LegacyInlineTextBox
-        ADD_BOOLEAN_BITFIELD(forceRightExpansion, ForceRightExpansion);
-        ADD_BOOLEAN_BITFIELD(forceLeftExpansion, ForceLeftExpansion);
         ADD_BOOLEAN_BITFIELD(isInGlyphDisplayListCache, IsInGlyphDisplayListCache);
 
     private:
@@ -371,11 +341,6 @@ protected:
     void setEndsWithBreak(bool endsWithBreak) { m_bitfields.setEndsWithBreak(endsWithBreak); }
 
     // For LegacyInlineTextBox
-    bool hasHyphen() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
-    bool canHaveLeftExpansion() const { return m_bitfields.canHaveLeftExpansion(); }
-    bool canHaveRightExpansion() const { return m_bitfields.canHaveRightExpansion(); }
-    bool forceRightExpansion() const { return m_bitfields.forceRightExpansion(); }
-    bool forceLeftExpansion() const { return m_bitfields.forceLeftExpansion(); }
     bool isInGlyphDisplayListCache() const { return m_bitfields.isInGlyphDisplayListCache(); }
     void setIsInGlyphDisplayListCache(bool inCache = true) { m_bitfields.setIsInGlyphDisplayListCache(inCache); }
     

@@ -47,21 +47,15 @@ public:
     explicit LineBreaker(RenderBlockFlow& block)
         : m_block(block)
     {
-        reset();
     }
 
-    LegacyInlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, unsigned consecutiveHyphenatedLines, WordMeasurements&);
-
-    bool lineWasHyphenated() { return m_hyphenated; }
+    LegacyInlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, WordMeasurements&);
 
 private:
-    void reset();
-
     void skipTrailingWhitespace(LegacyInlineIterator&, const LineInfo&);
     void skipLeadingWhitespace(InlineBidiResolver&, LineInfo&);
 
     RenderBlockFlow& m_block;
-    bool m_hyphenated;
 };
 
 } // namespace WebCore
