@@ -231,7 +231,11 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
 
     if (intrinsicWidthMode) {
         boxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
-        boxGeometry.setContentBoxWidth(*intrinsicWidthMode == Layout::IntrinsicWidthMode::Minimum ? renderBox.minPreferredLogicalWidth() : renderBox.maxPreferredLogicalWidth());
+        auto contentBoxLogicalWidth = [&] {
+            auto preferredWidth = *intrinsicWidthMode == Layout::IntrinsicWidthMode::Minimum ? renderBox.minPreferredLogicalWidth() : renderBox.maxPreferredLogicalWidth();
+            return preferredWidth - (border.horizontal.start + border.horizontal.end + padding.horizontal.start + padding.horizontal.end);
+        };
+        boxGeometry.setContentBoxWidth(contentBoxLogicalWidth());
         boxGeometry.setHorizontalMargin(inlineMargin);
         boxGeometry.setHorizontalBorder(border.horizontal);
         boxGeometry.setHorizontalPadding(padding.horizontal);
@@ -371,6 +375,11 @@ void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMo
         if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
             updateInlineBoxDimensions(*renderInline, intrinsicWidthMode);
             continue;
+        }
+        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
+            // FIXME: Add support for flexing boxes.
+            ASSERT(renderBox->style().logicalWidth().isFixed());
+            updateLayoutBoxDimensions(*renderBox, intrinsicWidthMode);
         }
     }
 }

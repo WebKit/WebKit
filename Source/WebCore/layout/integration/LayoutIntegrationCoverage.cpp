@@ -78,6 +78,13 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
             continue;
         if (is<RenderInline>(renderer))
             continue;
+        if (renderer.isInFlow() && renderer.style().isHorizontalWritingMode() && renderer.style().logicalWidth().isFixed()) {
+            // FIXME: Implement this image special in line builder.
+            auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
+            if (!allowImagesToBreak)
+                return false;
+            continue;
+        }
         return false;
     }
     return true;
