@@ -3275,3 +3275,9 @@ fast/text/simple-line-layout-hyphen-limit-lines.html [ ImageOnlyFailure ]
 # Failure only on Buildbot
 fast/text/justify-ideograph-leading-expansion.html [ Pass Failure ]
 fast/text/tatechuyoko.html [ Pass Failure ]
+
+webkit.org/b/271132 [ Debug ] fast/text/crash-grapheme-cluster-spanning-adjacent-textitems.html [ Skip ] # Crash
+webkit.org/b/271132 [ Debug ] fast/text/minimum-width-break-on-empty-content-crash.html [ Skip ] # Crash
+webkit.org/b/271132 [ Debug ] fast/text/word-break-column-gap-display-flex-utf16-surrogates.html [ Skip ] # Crash
+
+http/tests/workers/service/indexeddb-cryptokey-put-get.https.html [ Failure ]
