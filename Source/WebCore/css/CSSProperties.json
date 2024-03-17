@@ -6487,7 +6487,6 @@
             "codegen-properties": {
                 "converter": "Contain",
                 "initial": "initialContainment",
-                "settings-flag": "cssContainmentEnabled",
                 "parser-function": "consumeContain",
                 "parser-grammar-unused": "none | strict | content | [ size || layout || paint ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
@@ -6512,7 +6511,6 @@
         },
         "container-name": {
             "codegen-properties": {
-                "settings-flag": "cssContainerQueriesEnabled",
                 "converter": "ContainerName",
                 "name-for-methods": "ContainerNames",
                 "parser-function": "consumeContainerName",
@@ -6531,7 +6529,6 @@
                 "inline-size"
             ],
             "codegen-properties": {
-                "settings-flag": "cssContainerQueriesEnabled",
                 "parser-grammar": "<<values>>"
             },
             "specification": {
