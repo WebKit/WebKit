@@ -32,15 +32,16 @@
 
 namespace WebCore {
 
-Ref<DigitalCredential> DigitalCredential::create(Ref<ArrayBuffer>&& data)
+Ref<DigitalCredential> DigitalCredential::create(Ref<ArrayBuffer>&& data, IdentityCredentialProtocol protocol)
 {
-    return adoptRef(*new DigitalCredential(WTFMove(data)));
+    return adoptRef(*new DigitalCredential(WTFMove(data), protocol));
 }
 
 DigitalCredential::~DigitalCredential() = default;
 
-DigitalCredential::DigitalCredential(Ref<ArrayBuffer>&& data)
+DigitalCredential::DigitalCredential(Ref<ArrayBuffer>&& data, IdentityCredentialProtocol protocol)
     : BasicCredential(base64URLEncodeToString(data->data(), data->byteLength()), Type::DigitalCredential, Discovery::CredentialStore)
+    , m_protocol(protocol)
     , m_data(WTFMove(data))
 {
 }

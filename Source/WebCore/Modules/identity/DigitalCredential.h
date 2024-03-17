@@ -29,6 +29,7 @@
 
 #include "BasicCredential.h"
 #include "IDLTypes.h"
+#include "IdentityCredentialProtocol.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -42,7 +43,7 @@ using DigitalCredentialPromise = DOMPromiseDeferred<IDLInterface<DigitalCredenti
 
 class DigitalCredential final : public BasicCredential {
 public:
-    static Ref<DigitalCredential> create(Ref<ArrayBuffer>&& data);
+    static Ref<DigitalCredential> create(Ref<ArrayBuffer>&& data, IdentityCredentialProtocol);
 
     virtual ~DigitalCredential();
 
@@ -51,11 +52,17 @@ public:
         return m_data.get();
     };
 
+    IdentityCredentialProtocol protocol() const
+    {
+        return m_protocol;
+    }
+
 private:
-    DigitalCredential(Ref<ArrayBuffer>&& data);
+    DigitalCredential(Ref<ArrayBuffer>&& data, IdentityCredentialProtocol);
 
     Type credentialType() const final { return Type::DigitalCredential; }
 
+    IdentityCredentialProtocol m_protocol;
     RefPtr<ArrayBuffer> m_data;
 };
 
