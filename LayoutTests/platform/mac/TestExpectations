@@ -2672,3 +2672,5 @@ imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-l
 webkit.org/b/270939 [ Ventura ] tables/mozilla/bugs/bug12384.html [ Failure ]
 
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
+
+webkit.org/b/271194 accessibility/mac/custom-text-editor.html [ Pass Timeout ]
