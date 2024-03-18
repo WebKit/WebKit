@@ -3150,20 +3150,6 @@ ImageControlsEnabled:
     WebCore:
       default: false
 
-ImperativeSlotAPIEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Imperative Slot API"
-  humanReadableDescription: "Imperative Shadow DOM Distribution API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 InWindowFullscreenEnabled:
   type: bool
   status: internal
