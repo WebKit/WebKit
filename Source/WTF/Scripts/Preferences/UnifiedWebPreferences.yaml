@@ -2726,20 +2726,6 @@ ForceWebGLUsesLowPower:
     WebCore:
       default: false
 
-FormAssociatedCustomElementsEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Form-associated custom elements"
-  humanReadableDescription: "Support for form-associated custom elements"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 FullScreenEnabled:
   type: bool
   status: embedder

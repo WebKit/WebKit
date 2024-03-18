@@ -51,7 +51,7 @@
 
     [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString innerText;
 
-    [EnabledBySetting=FormAssociatedCustomElementsEnabled] ElementInternals attachInternals();
+    ElementInternals attachInternals();
 
     [CEReactions=Needed, Reflect] attribute boolean inert;
 
