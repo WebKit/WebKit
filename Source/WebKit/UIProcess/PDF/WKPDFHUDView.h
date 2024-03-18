@@ -38,6 +38,9 @@ class WebPageProxy;
 - (instancetype)initWithFrame:(NSRect)frame pluginIdentifier:(WebKit::PDFPluginIdentifier)pluginIdentifier page:(WebKit::WebPageProxy&)page;
 - (void)setDeviceScaleFactor:(CGFloat)deviceScaleFactor;
 
+- (BOOL)handleMouseDown:(NSEvent *)event;
+- (BOOL)handleMouseUp:(NSEvent *)event;
+
 @end
 
 #endif // ENABLE(PDF_HUD)

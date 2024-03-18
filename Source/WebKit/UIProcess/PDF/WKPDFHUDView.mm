@@ -177,29 +177,31 @@ static NSArray<NSString *> *controlArray()
         [self _setVisible:false];
 }
 
-- (void)mouseDown:(NSEvent *)event
+- (BOOL)handleMouseDown:(NSEvent *)event
 {
     _activeControl = [self _controlForEvent:event];
     if ([_activeControl isEqualToString:PDFHUDSeparatorControl])
         _activeControl = nil;
-    if (_activeControl) {
-        // Update rendering to highlight it..
-        _activeLayer = [self _layerForEvent:event];
-        
-        // Update layer image; do not animate
-        [CATransaction begin];
-        [CATransaction setDisableActions:YES];
-        
-        [_activeLayer setOpacity:controlLayerDownAlpha];
-        
-        [CATransaction commit];
-    }
+    if (!_activeControl)
+        return false;
+
+    // Update rendering to highlight it..
+    _activeLayer = [self _layerForEvent:event];
+
+    // Update layer image; do not animate
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    [_activeLayer setOpacity:controlLayerDownAlpha];
+
+    [CATransaction commit];
+    return true;
 }
 
-- (void)mouseUp:(NSEvent *)event
+- (BOOL)handleMouseUp:(NSEvent *)event
 {
     if (!_activeControl)
-        return;
+        return false;
     
     NSString* mouseUpControl = [self _controlForEvent:event];
     if ([_activeControl isEqualToString:mouseUpControl])
@@ -212,6 +214,8 @@ static NSArray<NSString *> *controlArray()
 
     _activeLayer = nil;
     _activeControl = nil;
+
+    return true;
 }
 
 - (std::optional<NSUInteger>)_controlIndexForEvent:(NSEvent *)event

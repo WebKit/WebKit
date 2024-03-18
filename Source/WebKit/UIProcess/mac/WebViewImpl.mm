@@ -5647,11 +5647,13 @@ void WebViewImpl::mouseDown(NSEvent *event)
     if (m_ignoresNonWheelEvents)
         return;
 
-    for (auto& hud : _pdfHUDViews.values())
-        [hud mouseDown:event];
-
     setLastMouseDownEvent(event);
     setIgnoresMouseDraggedEvents(false);
+
+    for (auto& hud : _pdfHUDViews.values()) {
+        if ([hud handleMouseDown:event])
+            return;
+    }
 
     mouseDownInternal(event);
 }
@@ -5661,10 +5663,13 @@ void WebViewImpl::mouseUp(NSEvent *event)
     if (m_ignoresNonWheelEvents)
         return;
 
-    for (auto& hud : _pdfHUDViews.values())
-        [hud mouseUp:event];
-
     setLastMouseDownEvent(nil);
+
+    for (auto& hud : _pdfHUDViews.values()) {
+        if ([hud handleMouseUp:event])
+            return;
+    }
+
     mouseUpInternal(event);
 }
 
