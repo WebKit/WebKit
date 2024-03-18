@@ -104,10 +104,6 @@
 
 /* Do not use PLATFORM() tests in this section ! */
 
-#if !defined(ENABLE_3D_TRANSFORMS)
-#define ENABLE_3D_TRANSFORMS 0
-#endif
-
 #if !defined(ENABLE_ACCESSIBILITY_ANIMATION_CONTROL)
 #define ENABLE_ACCESSIBILITY_ANIMATION_CONTROL 0
 #endif

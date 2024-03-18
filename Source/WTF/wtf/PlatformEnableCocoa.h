@@ -39,10 +39,6 @@
 /* Please keep the following in alphabetical order so we can notice duplicates. */
 /* Items should only be here if they are different from the defaults in PlatformEnable.h. */
 
-#if !defined(ENABLE_3D_TRANSFORMS)
-#define ENABLE_3D_TRANSFORMS 1
-#endif
-
 #if !defined(ENABLE_ACCESSIBILITY_ANIMATION_CONTROL) \
     && (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000) \
     || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170000) \

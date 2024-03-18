@@ -1539,16 +1539,11 @@ void RenderObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, T
 
 bool RenderObject::shouldUseTransformFromContainer(const RenderObject* containerObject) const
 {
-#if ENABLE(3D_TRANSFORMS)
     if (isTransformed())
         return true;
     if (containerObject && containerObject->style().hasPerspective())
         return containerObject == parent();
     return false;
-#else
-    UNUSED_PARAM(containerObject);
-    return isTransformed();
-#endif
 }
 
 // FIXME: Now that it's no longer passed a container maybe this should be renamed?
@@ -1559,8 +1554,7 @@ void RenderObject::getTransformFromContainer(const LayoutSize& offsetInContainer
     CheckedPtr<RenderLayer> layer;
     if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
-    
-#if ENABLE(3D_TRANSFORMS)
+
     CheckedPtr perspectiveObject = parent();
 
     if (perspectiveObject && perspectiveObject->hasLayer() && perspectiveObject->style().hasPerspective()) {
@@ -1575,7 +1569,6 @@ void RenderObject::getTransformFromContainer(const LayoutSize& offsetInContainer
         transform = perspectiveMatrix * transform;
         transform.translateRight3d(perspectiveOrigin.x(), perspectiveOrigin.y(), 0);
     }
-#endif
 }
 
 void RenderObject::pushOntoTransformState(TransformState& transformState, OptionSet<MapCoordinatesMode> mode, const RenderLayerModelObject* repaintContainer, const RenderElement* container, const LayoutSize& offsetInContainer, bool containerSkipped) const

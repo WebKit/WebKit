@@ -280,13 +280,8 @@ private:
 
 void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
 {
-#if !ENABLE(3D_TRANSFORMS)
-    UNUSED_PARAM(has3DRendering);
-    matrix.makeAffine();
-#else
     if (!has3DRendering)
         matrix.makeAffine();
-#endif
 }
 
 #if !LOG_DISABLED

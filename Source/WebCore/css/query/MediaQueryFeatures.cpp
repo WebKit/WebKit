@@ -616,13 +616,8 @@ const FeatureSchema& transform3d()
     static MainThreadNeverDestroyed<BooleanSchema> schema {
         "-webkit-transform-3d"_s,
         [](auto& context) {
-#if ENABLE(3D_TRANSFORMS)
             CheckedPtr view = context.document->renderView();
             return view && view->compositor().canRender3DTransforms();
-#else
-            UNUSED_PARAM(context);
-            return false;
-#endif
         }
     };
     return schema;

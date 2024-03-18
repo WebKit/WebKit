@@ -146,7 +146,6 @@ my (
     $systemMallocSupport,
     $telephoneNumberDetectionSupport,
     $textAutosizingSupport,
-    $threeDTransformsSupport,
     $touchEventsSupport,
     $unifiedBuildsSupport,
     $userMessageHandlersSupport,
@@ -177,9 +176,6 @@ my (
 my @features = (
     { option => "fatal-warnings", desc => "Toggle warnings as errors (CMake only)",
       define => "DEVELOPER_MODE_FATAL_WARNINGS", value => \$fatalWarnings },
-
-    { option => "3d-rendering", desc => "Toggle 3D rendering support",
-      define => "ENABLE_3D_TRANSFORMS", value => \$threeDTransformsSupport },
 
     { option => "accessibility-isolated-tree", desc => "Toggle accessibility isolated tree support",
       define => "ENABLE_ACCESSIBILITY_ISOLATED_TREE", value => \$accessibilityIsolatedTreeSupport },
