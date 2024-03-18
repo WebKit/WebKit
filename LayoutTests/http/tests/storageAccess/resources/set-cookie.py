@@ -12,7 +12,7 @@ message = query.get('message', [''])[0]
 exp_time = datetime.utcnow() + timedelta(days=30)
 
 sys.stdout.write(
-    'Set-Cookie: {}={}; expires={} GMT; Max-Age={}; path=/\r\n'
+    'Set-Cookie: {}={}; expires={} GMT; Max-Age={}; SameSite=None; path=/\r\n'
     'Content-Type: text/html\r\n\r\n'
     '{}<br>'.format(name, value, exp_time.strftime('%a, %d-%b-%Y %H:%M:%S'), 60*60*24*30, message)
 )
