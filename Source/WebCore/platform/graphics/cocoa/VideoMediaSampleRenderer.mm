@@ -115,6 +115,7 @@ void VideoMediaSampleRenderer::initializeDecompressionSession()
         m_decompressionSession->invalidate();
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
     m_decompressionSession->setTimebase([m_renderer timebase]);
+    m_decompressionSession->setResourceOwner(m_resourceOwner);
     m_decompressionSession->decodedFrameWhenAvailable([weakThis = ThreadSafeWeakPtr { *this }](RetainPtr<CMSampleBufferRef>&& sample) {
         if (RefPtr protectedThis = weakThis.get())
             [protectedThis->m_renderer enqueueSampleBuffer:sample.get()];

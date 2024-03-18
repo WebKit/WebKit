@@ -1285,6 +1285,7 @@ void SourceBufferPrivateAVFObjC::setVideoRenderer(WebSampleBufferVideoRendering 
 
     if (renderer) {
         m_videoRenderer = VideoMediaSampleRenderer::create(renderer);
+        m_videoRenderer->setResourceOwner(m_resourceOwner);
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
         if (m_cdmInstance && shouldAddContentKeyRecipients())
             [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_videoRenderer->displayLayer()];

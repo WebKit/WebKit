@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#include "ProcessIdentity.h"
 #include "SourceBufferParser.h"
 #include "SourceBufferPrivate.h"
 #include "WebAVSampleBufferListener.h"
@@ -142,6 +143,8 @@ public:
     const Logger& sourceBufferLogger() const final { return m_logger.get(); }
     const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
+
+    void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
 
 private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC&, Ref<SourceBufferParser>&&);
@@ -263,6 +266,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
+
+    ProcessIdentity m_resourceOwner;
 };
 
 } // namespace WebCore

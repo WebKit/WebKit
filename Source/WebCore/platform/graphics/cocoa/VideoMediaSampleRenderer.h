@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ProcessIdentity.h"
 #include "SampleMap.h"
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
@@ -60,6 +61,9 @@ public:
     RetainPtr<CVPixelBufferRef> copyDisplayedPixelBuffer() const;
     CGRect bounds() const;
 #endif
+
+    void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
+
 private:
     VideoMediaSampleRenderer(WebSampleBufferVideoRendering *);
     void resetReadyForMoreSample();
@@ -75,6 +79,8 @@ private:
     bool m_requestMediaDataWhenReadySet { false };
     std::optional<uint32_t> m_currentCodec;
     std::optional<MediaTime> m_minimumUpcomingPresentationTime;
+
+    ProcessIdentity m_resourceOwner;
 };
 
 } // namespace WebCore

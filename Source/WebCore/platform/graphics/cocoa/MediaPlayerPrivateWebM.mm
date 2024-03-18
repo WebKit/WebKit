@@ -1426,6 +1426,7 @@ void MediaPlayerPrivateWebM::ensureLayer()
     }
 
     m_videoRenderer = VideoMediaSampleRenderer::create(displayLayer.get());
+    m_videoRenderer->setResourceOwner(m_resourceOwner);
     m_videoRenderer->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, this] {
         if (weakThis && m_enabledVideoTrackID)
             didBecomeReadyForMoreSamples(*m_enabledVideoTrackID);
@@ -1450,7 +1451,8 @@ void MediaPlayerPrivateWebM::ensureDecompressionSession()
 
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
     m_decompressionSession->setTimebase([m_synchronizer timebase]);
-    
+    m_decompressionSession->setResourceOwner(m_resourceOwner);
+
     m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, this] {
         if (weakThis && m_enabledVideoTrackID)
             didBecomeReadyForMoreSamples(*m_enabledVideoTrackID);
