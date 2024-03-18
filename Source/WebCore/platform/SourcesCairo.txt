@@ -25,6 +25,7 @@ platform/graphics/cairo/CairoOperations.cpp
 platform/graphics/cairo/CairoUtilities.cpp @no-unify
 platform/graphics/cairo/FloatRectCairo.cpp
 platform/graphics/cairo/FontCairo.cpp
+platform/graphics/cairo/FontRenderOptionsCairo.cpp
 platform/graphics/cairo/GradientCairo.cpp
 platform/graphics/cairo/GraphicsContextCairo.cpp
 platform/graphics/cairo/GraphicsContextGLCairo.cpp

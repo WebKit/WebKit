@@ -27,6 +27,7 @@
 #include "SkiaAcceleratedBufferPool.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
+#include "FontRenderOptions.h"
 #include "GLContext.h"
 #include "PlatformDisplay.h"
 #include <skia/gpu/GrBackendSurface.h>
@@ -79,7 +80,8 @@ RefPtr<Nicosia::Buffer> SkiaAcceleratedBufferPool::createAcceleratedBuffer(const
     auto* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
     RELEASE_ASSERT(grContext);
     auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height());
-    auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, nullptr);
+    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
+    auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, &properties);
     if (!surface)
         return nullptr;
     return Nicosia::AcceleratedBuffer::create(WTFMove(surface), supportsAlpha ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);

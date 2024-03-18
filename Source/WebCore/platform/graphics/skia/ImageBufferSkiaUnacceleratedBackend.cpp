@@ -27,7 +27,7 @@
 #include "ImageBufferSkiaUnacceleratedBackend.h"
 
 #if USE(SKIA)
-
+#include "FontRenderOptions.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include <skia/core/SkPixmap.h>
@@ -44,7 +44,8 @@ std::unique_ptr<ImageBufferSkiaUnacceleratedBackend> ImageBufferSkiaUnaccelerate
         return nullptr;
 
     auto imageInfo = SkImageInfo::MakeN32Premul(backendSize.width(), backendSize.height());
-    auto surface = SkSurfaces::Raster(imageInfo, nullptr);
+    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
+    auto surface = SkSurfaces::Raster(imageInfo, &properties);
     return std::unique_ptr<ImageBufferSkiaUnacceleratedBackend>(new ImageBufferSkiaUnacceleratedBackend(parameters, WTFMove(surface)));
 }
 

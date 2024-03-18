@@ -32,6 +32,7 @@
 #include <wtf/FastMalloc.h>
 
 #if USE(SKIA)
+#include "FontRenderOptions.h"
 #include "PlatformDisplay.h"
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkImage.h>
@@ -90,7 +91,8 @@ UnacceleratedBuffer::UnacceleratedBuffer(const WebCore::IntSize& size, Flags fla
 #if USE(SKIA)
     auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height());
     // FIXME: ref buffer and unref on release proc?
-    m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.get(), imageInfo.minRowBytes64(), nullptr);
+    SkSurfaceProps properties = { 0, WebCore::FontRenderOptions::singleton().subpixelOrder() };
+    m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.get(), imageInfo.minRowBytes64(), &properties);
 #endif
 }
 

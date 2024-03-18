@@ -27,6 +27,7 @@
 #include "ShareableBitmap.h"
 
 #include "BitmapImage.h"
+#include "FontRenderOptions.h"
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
 #include <skia/core/SkSurface.h>
@@ -51,9 +52,10 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     ref();
+    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
     auto surface = SkSurfaces::WrapPixels(m_configuration.imageInfo(), data(), bytesPerRow(), [](void*, void* context) {
         static_cast<ShareableBitmap*>(context)->deref();
-    }, this);
+    }, this, &properties);
     return makeUnique<GraphicsContextSkia>(WTFMove(surface), RenderingMode::Unaccelerated, RenderingPurpose::ShareableSnapshot);
 }
 

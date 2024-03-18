@@ -33,6 +33,7 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessExtensionManager.h"
 
+#include <WebCore/FontRenderOptions.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ScreenProperties.h>
 
@@ -195,10 +196,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);
 #endif
 
-#if USE(CAIRO)
     if (parameters.disableFontHintingForTesting)
-        disableCairoFontHintingForTesting();
-#endif
+        FontRenderOptions::singleton().disableHintingForTesting();
 
 #if PLATFORM(GTK)
     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));

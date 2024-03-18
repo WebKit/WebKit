@@ -77,11 +77,6 @@ private:
 
 const cairo_font_options_t* getDefaultCairoFontOptions();
 
-void setDefaultCairoHintOptions(cairo_hint_metrics_t, cairo_hint_style_t);
-void setDefaultCairoAntialiasOptions(cairo_antialias_t, cairo_subpixel_order_t);
-
-void disableCairoFontHintingForTesting();
-
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
 void setSourceRGBAFromColor(cairo_t*, const Color&);
 void appendPathToCairoContext(cairo_t* to, cairo_t* from);

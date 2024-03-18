@@ -34,6 +34,7 @@ platform/graphics/skia/FontCascadeSkia.cpp
 platform/graphics/skia/FontCustomPlatformDataSkia.cpp
 platform/graphics/skia/FontDescriptionSkia.cpp
 platform/graphics/skia/FontPlatformDataSkia.cpp
+platform/graphics/skia/FontRenderOptionsSkia.cpp
 platform/graphics/skia/FontSkia.cpp
 platform/graphics/skia/FontVariationsSkia.cpp
 platform/graphics/skia/GlyphPageSkia.cpp

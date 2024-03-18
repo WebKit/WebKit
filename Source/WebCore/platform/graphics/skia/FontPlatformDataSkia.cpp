@@ -28,6 +28,7 @@
 
 #include "FontCache.h"
 #include "FontCustomPlatformData.h"
+#include "FontRenderOptions.h"
 #include "FontVariationsSkia.h"
 #include "NotImplemented.h"
 #include "OpenTypeTypes.h"
@@ -45,6 +46,8 @@ FontPlatformData::FontPlatformData(sk_sp<SkTypeface>&& typeface, float size, boo
     m_font = SkFont(typeface, m_size);
     m_font.setEmbolden(m_syntheticBold);
     m_font.setSkewX(m_syntheticOblique ? -SK_Scalar1 / 4 : 0);
+    m_font.setEdging(FontRenderOptions::singleton().antialias());
+    m_font.setHinting(FontRenderOptions::singleton().hinting());
 
     m_hbFont = SkiaHarfBuzzFont::getOrCreate(*m_font.getTypeface());
 

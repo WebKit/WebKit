@@ -1913,6 +1913,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/FontPaletteValues.h
     platform/graphics/FontPlatformData.h
     platform/graphics/FontRanges.h
+    platform/graphics/FontRenderOptions.h
     platform/graphics/FontSelectionAlgorithm.h
     platform/graphics/FontSelector.h
     platform/graphics/FontSelectorClient.h

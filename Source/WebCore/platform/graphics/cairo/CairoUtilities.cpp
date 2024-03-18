@@ -33,6 +33,7 @@
 #include "Color.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "FontRenderOptions.h"
 #include "IntRect.h"
 #include "Path.h"
 #include "RefPtrCairo.h"
@@ -60,40 +61,9 @@ RecursiveLock& cairoFontLock()
 }
 #endif
 
-static cairo_font_options_t* defaultCairoFontOptions()
-{
-    static cairo_font_options_t* s_defaultCairoFontOptions = cairo_font_options_create();
-    return s_defaultCairoFontOptions;
-}
-
 const cairo_font_options_t* getDefaultCairoFontOptions()
 {
-    return defaultCairoFontOptions();
-}
-
-static bool s_disableCairoFontHintingForTesting = false;
-
-void disableCairoFontHintingForTesting()
-{
-    cairo_font_options_set_hint_metrics(defaultCairoFontOptions(), CAIRO_HINT_METRICS_ON);
-    cairo_font_options_set_hint_style(defaultCairoFontOptions(), CAIRO_HINT_STYLE_NONE);
-
-    s_disableCairoFontHintingForTesting = true;
-}
-
-void setDefaultCairoHintOptions(cairo_hint_metrics_t hintMetrics, cairo_hint_style_t hintStyle)
-{
-    if (s_disableCairoFontHintingForTesting)
-        return;
-
-    cairo_font_options_set_hint_metrics(defaultCairoFontOptions(), hintMetrics);
-    cairo_font_options_set_hint_style(defaultCairoFontOptions(), hintStyle);
-}
-
-void setDefaultCairoAntialiasOptions(cairo_antialias_t antialias, cairo_subpixel_order_t subpixelOrder)
-{
-    cairo_font_options_set_antialias(defaultCairoFontOptions(), antialias);
-    cairo_font_options_set_subpixel_order(defaultCairoFontOptions(), subpixelOrder);
+    return FontRenderOptions::singleton().fontOptions();
 }
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)

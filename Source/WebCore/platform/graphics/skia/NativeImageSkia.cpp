@@ -28,6 +28,7 @@
 
 #if USE(SKIA)
 
+#include "GLContext.h"
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
 #include "PlatformDisplay.h"
