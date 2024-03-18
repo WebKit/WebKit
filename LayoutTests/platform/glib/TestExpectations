@@ -1209,6 +1209,10 @@ http/wpt/webcodecs/encoder-task-failing.html [ Pass ]
 # expected to pass again once we update to GStreamer 1.24.
 fast/mediastream/play-newly-added-audio-track.html [ Pass Crash ]
 
+# H.264 high-4:2:2 encoding is supported in the GStreamer ports, so this test (checking that profile
+# is not supported) is expected to fail.
+http/wpt/webcodecs/H264-422.html [ Failure ]
+
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-webgl.html [ Pass Failure ]
 
 webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
