@@ -2844,7 +2844,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                callLinkInfo->setCodeLocations(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
+                callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
             });
         } else {
             ASSERT(accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomAccessorGetter || accessCase.m_type == AccessCase::CustomValueSetter || accessCase.m_type == AccessCase::CustomAccessorSetter);
@@ -3583,7 +3583,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
     restoreLiveRegistersFromStackForCall(spillState, dontRestore);
 
     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-        callLinkInfo->setCodeLocations(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
+        callLinkInfo->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
     });
     succeed();
 }

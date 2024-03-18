@@ -2009,7 +2009,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
             if (codeBlock)
                 jit.storePtr(CCallHelpers::TrustedImmPtr(codeBlock), CCallHelpers::calleeFrameCodeBlockBeforeCall());
             jit.nearCallThunk(CodeLocationLabel { codePtr });
-            jit.jumpThunk(callLinkInfo.doneLocation());
+            jit.jumpThunk(static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation());
         }
     }
 
@@ -2020,7 +2020,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         jit.nearTailCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::PolymorphicRepatchThunk).code() });
     else {
         jit.nearCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::PolymorphicRepatchThunk).code() });
-        jit.jumpThunk(callLinkInfo.doneLocation());
+        jit.jumpThunk(static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation());
     }
 
     LinkBuffer patchBuffer(jit, owner, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
@@ -2033,7 +2033,7 @@ void linkPolymorphicCall(VM& vm, JSCell* owner, CallFrame* callFrame, CallLinkIn
         FINALIZE_CODE_FOR(
             callerCodeBlock, patchBuffer, JITStubRoutinePtrTag, "PolymorphicCall"_s,
             "Polymorphic call stub for %s, return point %p, targets %s",
-                isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), callLinkInfo.doneLocation().taggedPtr(),
+                isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), static_cast<OptimizingCallLinkInfo&>(callLinkInfo).doneLocation().taggedPtr(),
                 toCString(listDump(callSlots.map([&](auto& slot) { return PolymorphicCallCase(CallVariant(slot.m_calleeOrExecutable), slot.m_codeBlock); }))).data()),
         vm, owner, callerFrame, callLinkInfo, callSlots, WTFMove(fastCounts), notUsingCounting, isClosureCall);
 

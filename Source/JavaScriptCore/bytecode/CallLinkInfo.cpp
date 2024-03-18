@@ -131,9 +131,19 @@ void CallLinkInfo::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBloc
     RELEASE_ASSERT(!isOnList(), static_cast<unsigned>(mode));
 }
 
-CodeLocationLabel<JSInternalPtrTag> CallLinkInfo::doneLocation()
+CodeLocationLabel<JSInternalPtrTag> CallLinkInfo::doneLocationIfExists()
 {
-    return m_doneLocation;
+    switch (type()) {
+    case Type::Baseline:
+        return { };
+    case Type::Optimizing:
+#if ENABLE(JIT)
+        return static_cast<const OptimizingCallLinkInfo*>(this)->doneLocation();
+#else
+        return { };
+#endif
+    }
+    return { };
 }
 
 void CallLinkInfo::setMonomorphicCallee(VM& vm, JSCell* owner, JSObject* callee, CodeBlock* codeBlock, CodePtr<JSEntryPtrTag> codePtr)

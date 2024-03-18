@@ -49,6 +49,7 @@
 #include "StackAlignment.h"
 #include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
+#include <wtf/BubbleSort.h>
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -993,8 +994,14 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
     auto jitCode = adoptRef(*new BaselineJITCode(result, withArityCheck));
 
     jitCode->m_unlinkedCalls = FixedVector<BaselineUnlinkedCallLinkInfo>(m_unlinkedCalls.size());
-    if (jitCode->m_unlinkedCalls.size())
+    if (jitCode->m_unlinkedCalls.size()) {
         std::move(m_unlinkedCalls.begin(), m_unlinkedCalls.end(), jitCode->m_unlinkedCalls.begin());
+        // It is almost always already sorted.
+        WTF::bubbleSort(jitCode->m_unlinkedCalls.begin(), jitCode->m_unlinkedCalls.end(),
+            [](const auto& lhs, const auto& rhs) {
+                return lhs.bytecodeIndex < rhs.bytecodeIndex;
+            });
+    }
     jitCode->m_unlinkedStubInfos = FixedVector<BaselineUnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
     if (jitCode->m_unlinkedStubInfos.size())
         std::move(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), jitCode->m_unlinkedStubInfos.begin());

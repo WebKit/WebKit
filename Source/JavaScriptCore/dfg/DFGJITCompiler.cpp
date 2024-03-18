@@ -284,13 +284,13 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
     for (auto& record : m_jsCalls) {
         std::visit([&](auto* info) {
-            info->setCodeLocations(linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
+            info->setDoneLocation(linkBuffer.locationOf<JSInternalPtrTag>(record.doneLocation));
         }, record.info);
     }
     
     for (auto& record : m_jsDirectCalls) {
         auto& info = *record.info;
-        info.setCodeLocations(linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath));
+        info.setSlowPathStart(linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath));
     }
 
     if (m_graph.m_plan.isUnlinked()) {

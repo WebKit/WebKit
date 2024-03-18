@@ -70,8 +70,8 @@ CallLinkStatus CallLinkStatus::computeFor(
     CallLinkInfo* callLinkInfo = map.get(CodeOrigin(bytecodeIndex)).callLinkInfo;
     if (!callLinkInfo)
         return CallLinkStatus();
-    // doneLocation is nullptr when it is tied to LLInt (not Baseline).
-    if (!callLinkInfo->doneLocation()) {
+    // m_jitData is nullptr when it is tied to LLInt (not Baseline).
+    if (callLinkInfo->type() == CallLinkInfo::Type::Baseline && !profiledBlock->m_jitData) {
         if (exitSiteData.takesSlowPath)
             return takesSlowPath();
 #if ENABLE(DFG_JIT)

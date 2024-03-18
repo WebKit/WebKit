@@ -766,11 +766,6 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
         ConcurrentJSLocker locker(m_lock);
         ASSERT(!m_jitData);
         auto baselineJITData = BaselineJITData::create(jitCode->m_unlinkedStubInfos.size(), jitCode->m_constantPool.size(), this);
-        for (auto& unlinkedCallLinkInfo : jitCode->m_unlinkedCalls) {
-            CallLinkInfo* callLinkInfo = getCallLinkInfoForBytecodeIndex(locker, unlinkedCallLinkInfo.bytecodeIndex);
-            ASSERT(callLinkInfo);
-            static_cast<BaselineCallLinkInfo*>(callLinkInfo)->setCodeLocations(unlinkedCallLinkInfo.doneLocation);
-        }
 
         for (unsigned index = 0; index < jitCode->m_unlinkedStubInfos.size(); ++index) {
             BaselineUnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];

@@ -155,7 +155,7 @@ public:
         m_allowStubs = false;
     }
 
-    CodeLocationLabel<JSInternalPtrTag> doneLocation();
+    CodeLocationLabel<JSInternalPtrTag> doneLocationIfExists();
 
     void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, CodeBlock*, CodePtr<JSEntryPtrTag>);
     void clearCallee();
@@ -342,7 +342,6 @@ protected:
     uint8_t m_maxArgumentCountIncludingThisForVarargs { 0 }; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
     uint32_t m_slowPathCount { 0 };
 
-    CodeLocationLabel<JSInternalPtrTag> m_doneLocation;
     union UnionType {
         UnionType()
             : dataIC { nullptr, nullptr }
@@ -376,11 +375,6 @@ public:
 
     void initialize(VM&, CodeBlock*, CallType, BytecodeIndex);
 
-    void setCodeLocations(CodeLocationLabel<JSInternalPtrTag> doneLocation)
-    {
-        m_doneLocation = doneLocation;
-    }
-
     CodeOrigin codeOrigin() const { return CodeOrigin { m_bytecodeIndex }; }
 
 private:
@@ -395,7 +389,7 @@ inline CodeOrigin getCallLinkInfoCodeOrigin(CallLinkInfo& callLinkInfo)
 struct UnlinkedCallLinkInfo {
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
 
-    void setCodeLocations(CodeLocationLabel<JSInternalPtrTag> doneLocation)
+    void setDoneLocation(CodeLocationLabel<JSInternalPtrTag> doneLocation)
     {
         this->doneLocation = doneLocation;
     }
@@ -454,7 +448,7 @@ public:
         return specializationFromIsConstruct(callType == DirectConstruct);
     }
 
-    void setCodeLocations(CodeLocationLabel<JSInternalPtrTag> slowPathStart)
+    void setSlowPathStart(CodeLocationLabel<JSInternalPtrTag> slowPathStart)
     {
         m_slowPathStart = slowPathStart;
     }
@@ -524,10 +518,12 @@ public:
         m_callType = callType;
     }
 
-    void setCodeLocations(CodeLocationLabel<JSInternalPtrTag> doneLocation)
+    void setDoneLocation(CodeLocationLabel<JSInternalPtrTag> doneLocation)
     {
         m_doneLocation = doneLocation;
     }
+
+    CodeLocationLabel<JSInternalPtrTag> doneLocation() const { return m_doneLocation; }
 
     void setSlowPathCallDestination(CodePtr<JSEntryPtrTag>);
 
@@ -549,6 +545,7 @@ private:
     CodeOrigin m_codeOrigin;
     CodePtr<JSEntryPtrTag> m_slowPathCallDestination;
     CodeLocationNearCall<JSInternalPtrTag> m_callLocation NO_UNIQUE_ADDRESS;
+    CodeLocationLabel<JSInternalPtrTag> m_doneLocation;
 };
 
 #endif
