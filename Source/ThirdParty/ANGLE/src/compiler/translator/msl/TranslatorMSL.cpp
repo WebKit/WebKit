@@ -65,12 +65,6 @@ namespace
 constexpr Name kFlippedPointCoordName("flippedPointCoord", SymbolType::AngleInternal);
 constexpr Name kFlippedFragCoordName("flippedFragCoord", SymbolType::AngleInternal);
 
-constexpr const TVariable kgl_VertexIDMetal(BuiltInId::gl_VertexID,
-                                            ImmutableString("gl_VertexID"),
-                                            SymbolType::BuiltIn,
-                                            TExtension::UNDEFINED,
-                                            StaticType::Get<EbtUInt, EbpHigh, EvqVertexID, 1, 1>());
-
 class DeclareStructTypesTraverser : public TIntermTraverser
 {
   public:
@@ -293,17 +287,17 @@ void AddFragColorDeclaration(TIntermBlock &root, TSymbolTable &symbolTable, cons
     root.insertChildNodes(FindMainIndex(&root), TIntermSequence{new TIntermDeclaration{&var}});
 }
 
-void AddFragDepthDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
+void AddVeriableDeclaration(TIntermBlock &root, TSymbolTable &symbolTable, const TVariable *buildInVariable, const ImmutableString symbolName)
 {
     // Check if the variable has been already declared.
-    const TIntermSymbol *fragDepthBuiltIn = new TIntermSymbol(BuiltInVariable::gl_FragDepth());
-    const TIntermSymbol *fragDepthSymbol  = FindSymbolNode(&root, ImmutableString("gl_FragDepth"));
-    if (fragDepthSymbol && fragDepthSymbol->uniqueId() != fragDepthBuiltIn->uniqueId())
+    const TIntermSymbol *builtInSymbol = new TIntermSymbol(buildInVariable);
+    const TIntermSymbol *foundSymbol  = FindSymbolNode(&root, symbolName);
+    if (foundSymbol && foundSymbol->uniqueId() != builtInSymbol->uniqueId())
     {
         return;
     }
     root.insertChildNodes(FindMainIndex(&root),
-                          TIntermSequence{new TIntermDeclaration{BuiltInVariable::gl_FragDepth()}});
+                          TIntermSequence{new TIntermDeclaration{buildInVariable}});
 }
 
 void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbolTable &symbolTable)
@@ -316,7 +310,7 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
     {
         return;
     }
-    AddFragDepthDeclaration(root, symbolTable);
+    AddVeriableDeclaration(root, symbolTable, BuiltInVariable::gl_FragDepth(), BuiltInVariable::gl_FragDepth()->name());
 }
 
 [[nodiscard]] bool AddNumSamplesDeclaration(TCompiler &compiler,
@@ -1138,11 +1132,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
         }
         if (usesVertexId)
         {
-            if (!ReplaceVariable(this, root, BuiltInVariable::gl_VertexID(), &kgl_VertexIDMetal))
-            {
-                return false;
-            }
-            DeclareRightBeforeMain(*root, kgl_VertexIDMetal);
+            AddVeriableDeclaration(*root, symbolTable, BuiltInVariable::gl_VertexID(), BuiltInVariable::gl_VertexID()->name());
         }
     }
     SymbolEnv symbolEnv(*this, *root);
@@ -1248,7 +1238,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
 
         if (usesFragDepth)
         {
-            AddFragDepthDeclaration(*root, symbolTable);
+            AddVeriableDeclaration(*root, symbolTable, BuiltInVariable::gl_FragDepth(), BuiltInVariable::gl_FragDepth()->name());
         }
         else if (usesFragDepthEXT)
         {
@@ -1378,11 +1368,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
 
         if (FindSymbolNode(root, BuiltInVariable::gl_VertexIndex()->name()))
         {
-            if (!ReplaceVariable(this, root, BuiltInVariable::gl_VertexIndex(), &kgl_VertexIDMetal))
-            {
-                return false;
-            }
-            DeclareRightBeforeMain(*root, kgl_VertexIDMetal);
+            AddVeriableDeclaration(*root, symbolTable, BuiltInVariable::gl_VertexIndex(), BuiltInVariable::gl_VertexIndex()->name());
         }
 
         // Append a macro for transform feedback substitution prior to modifying depth.

@@ -904,3 +904,10 @@ void main(){
 })";
     compile(kShader);
 }
+
+TEST_F(MSLVertexOutputTest, VertexIDIvecNoCrash)
+{
+    const char kShader[] = R"(#version 300 es
+void main(){ivec2 xy=ivec2((+gl_VertexID));gl_Position=vec4((xy), 0,1);})";
+    compile(kShader);
+}

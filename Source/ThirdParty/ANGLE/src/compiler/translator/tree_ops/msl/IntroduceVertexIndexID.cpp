@@ -17,8 +17,8 @@ namespace
 {
 
 constexpr const TVariable kgl_VertexIDMetal(BuiltInId::gl_VertexID,
-                                            ImmutableString("gl_VertexID"),
-                                            SymbolType::BuiltIn,
+                                            ImmutableString("vertexIDMetal"),
+                                            SymbolType::AngleInternal,
                                             TExtension::UNDEFINED,
                                             StaticType::Get<EbtUInt, EbpHigh, EvqVertexID, 1, 1>());
 
