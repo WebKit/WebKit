@@ -26,7 +26,6 @@
 // https://drafts.css-houdini.org/css-typed-om/#cssunitvalue
 [
     InterfaceName=CSSUnitValue,
-    EnabledBySetting=CSSTypedOMEnabled,
     Exposed=(Window,Worker,PaintWorklet),
 ] interface CSSUnitValue : CSSNumericValue {
     constructor(double value, USVString unit);

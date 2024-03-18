@@ -27,7 +27,6 @@ typedef (double or CSSNumericValue) CSSNumberish;
 
 // https://drafts.css-houdini.org/css-typed-om/#cssmathinvert
 [
-    EnabledBySetting=CSSTypedOMEnabled,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSMathInvert : CSSMathValue {
     constructor(CSSNumberish arg);

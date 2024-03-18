@@ -54,17 +54,11 @@ Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
     return adoptRef(*new WebInspectorUI(page));
 }
 
-void WebInspectorUI::enableFrontendFeatures(WebPage& page)
-{
-    page.corePage()->settings().setCSSTypedOMEnabled(true);
-}
-
 WebInspectorUI::WebInspectorUI(WebPage& page)
     : m_page(page)
     , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*page.corePage()))
     , m_debuggableInfo(DebuggableInfoData::empty())
 {
-    WebInspectorUI::enableFrontendFeatures(page);
 }
 
 WebInspectorUI::~WebInspectorUI() = default;

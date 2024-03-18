@@ -27,7 +27,6 @@ typedef (double or CSSNumericValue) CSSNumberish;
 
 // https://drafts.css-houdini.org/css-typed-om/#cssmathmax
 [
-    EnabledBySetting=CSSTypedOMEnabled,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSMathMax : CSSMathValue {
     constructor(CSSNumberish... args);

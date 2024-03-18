@@ -27,7 +27,6 @@ typedef (double or CSSNumericValue) CSSNumberish;
 
 // https://drafts.css-houdini.org/css-typed-om/#cssrotate
 [
-    EnabledBySetting=CSSTypedOMEnabled,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSRotate : CSSTransformComponent {
     constructor(CSSNumericValue angle);

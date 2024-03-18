@@ -1411,20 +1411,6 @@ CSSTypedOMColorEnabled:
     WebCore:
       default: false
 
-CSSTypedOMEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Typed OM"
-  humanReadableDescription: "Enable the CSS Typed OM"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSUnprefixedBackdropFilterEnabled:
   type: bool
   status: Backdropfilter_feature_status
