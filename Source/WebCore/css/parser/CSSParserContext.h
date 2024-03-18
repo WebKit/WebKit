@@ -83,7 +83,6 @@ struct CSSParserContext {
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
     bool transformStyleOptimized3DEnabled : 1 { false };
 #endif
-    bool useLegacyBackgroundSizeShorthandBehavior : 1 { false };
     bool focusVisibleEnabled : 1 { false };
     bool cascadeLayersEnabled : 1 { false };
     bool gradientPremultipliedAlphaInterpolationEnabled : 1 { false };

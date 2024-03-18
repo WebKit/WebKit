@@ -6971,17 +6971,6 @@ UseImageDocumentForSubframePDF:
       PLATFORM(IOS_FAMILY): true
       default: false
 
-UseLegacyBackgroundSizeShorthandBehavior:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: WebKit::defaultUseLegacyBackgroundSizeShorthandBehavior()
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 UsePreHTML5ParserQuirks:
   type: bool
   status: embedder

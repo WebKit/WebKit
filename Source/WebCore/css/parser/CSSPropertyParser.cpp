@@ -1955,8 +1955,6 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
 
     for (size_t i = 0; i < longhandCount; ++i) {
         CSSPropertyID property = shorthand.properties()[i];
-        if (property == CSSPropertyBackgroundSize && !longhands[i].isEmpty() && m_context.useLegacyBackgroundSizeShorthandBehavior)
-            continue;
         if (longhands[i].size() == 1)
             addProperty(property, shorthand.id(), WTFMove(longhands[i][0]), important);
         else
