@@ -303,7 +303,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL CSSOMViewSmoothScrollingEnabled;
 @property (nonatomic) BOOL webAnimationsCompositeOperationsEnabled;
 @property (nonatomic) BOOL webAnimationsMutableTimelinesEnabled;
-@property (nonatomic) BOOL maskWebGLStringsEnabled;
 @property (nonatomic) BOOL privateClickMeasurementEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
@@ -322,6 +321,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
 
+@property (nonatomic) BOOL maskWebGLStringsEnabled;
 @property (nonatomic) BOOL CSSCustomPropertiesAndValuesEnabled;
 @property (nonatomic) BOOL syntheticEditingCommandsEnabled;
 @property (nonatomic) BOOL allowCrossOriginSubresourcesToAskForCredentials;

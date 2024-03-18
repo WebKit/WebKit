@@ -3072,8 +3072,6 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
         return nullptr;
     switch (pname) {
     case GraphicsContextGL::SHADING_LANGUAGE_VERSION:
-        if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
-            return makeString("WebGL GLSL ES 3.00 (", m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION), ')');
         return "WebGL GLSL ES 3.00"_str;
     case GraphicsContextGL::VERSION:
         return "WebGL 2.0"_str;

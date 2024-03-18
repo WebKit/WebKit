@@ -2895,16 +2895,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey];
 }
 
-- (BOOL)maskWebGLStringsEnabled
-{
-    return [self _boolValueForKey:WebKitMaskWebGLStringsEnabledPreferenceKey];
-}
-
-- (void)setMaskWebGLStringsEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitMaskWebGLStringsEnabledPreferenceKey];
-}
-
 - (BOOL)privateClickMeasurementEnabled
 {
     return [self _boolValueForKey:WebKitPrivateClickMeasurementEnabledPreferenceKey];
@@ -3011,6 +3001,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (BOOL)maskWebGLStringsEnabled
+{
+    return YES;
+}
+
+- (void)setMaskWebGLStringsEnabled:(BOOL)enabled
+{
+}
 
 - (BOOL)CSSCustomPropertiesAndValuesEnabled
 {

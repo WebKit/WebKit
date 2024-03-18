@@ -4142,21 +4142,6 @@ ManagedMediaSourceNeedsAirPlay:
     WebCore:
       default: false
 
-MaskWebGLStringsEnabled:
-  type: bool
-  status: stable
-  category: privacy
-  humanReadableName: "Mask WebGL Strings"
-  humanReadableDescription: "Mask WebGL Vendor, Renderer, Shader Language Strings"
-  condition: ENABLE(WEBGL)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 MasonryEnabled:
   type: bool
   status: stable

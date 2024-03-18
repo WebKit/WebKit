@@ -1989,8 +1989,6 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::SCISSOR_TEST:
         return getBooleanParameter(pname);
     case GraphicsContextGL::SHADING_LANGUAGE_VERSION:
-        if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
-            return makeString("WebGL GLSL ES 1.0 (", m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION), ')');
         return "WebGL GLSL ES 1.0 (1.0)"_str;
     case GraphicsContextGL::STENCIL_BACK_FAIL:
         return getUnsignedIntParameter(pname);
@@ -2054,23 +2052,13 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, OES_standard_derivatives not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
-        if (m_webglDebugRendererInfo) {
-#if !PLATFORM(IOS_FAMILY)
-            if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
-                return m_context->getString(GraphicsContextGL::RENDERER);
-#endif
+        if (m_webglDebugRendererInfo)
             return "Apple GPU"_str;
-        }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
-        if (m_webglDebugRendererInfo) {
-#if !PLATFORM(IOS_FAMILY)
-            if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
-                return m_context->getString(GraphicsContextGL::VENDOR);
-#endif
+        if (m_webglDebugRendererInfo)
             return "Apple Inc."_str;
-        }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case GraphicsContextGL::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
