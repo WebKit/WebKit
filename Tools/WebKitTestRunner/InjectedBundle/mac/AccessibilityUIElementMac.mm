@@ -35,6 +35,7 @@
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/JSObjectRef.h>
+#import <WebCore/DateComponents.h>
 #import <WebKit/WKBundleFrame.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -933,7 +934,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue()
     if (![value isKindOfClass:[NSDate class]])
         return nullptr;
 
+    // Adjust the returned date per time zone and daylight savings in an equivalent way to what VoiceOver does.
     NSInteger offset = [[NSTimeZone localTimeZone] secondsFromGMTForDate:[NSDate date]];
+    auto type = attributeValue(@"AXDateTimeComponentsType");
+    if ([type unsignedShortValue] != (uint8_t)WebCore::DateComponentsType::DateTimeLocal && [[NSTimeZone localTimeZone] isDaylightSavingTimeForDate:[NSDate date]])
+        offset -= 3600;
     value = [NSDate dateWithTimeInterval:offset sinceDate:value.get()];
     if (auto description = descriptionOfValue(value.get()))
         return concatenateAttributeAndValue(@"AXDateValue", description.get());

@@ -96,6 +96,8 @@ struct AccessibilityText;
 struct CharacterRange;
 struct ScrollRectToVisibleOptions;
 
+enum class DateComponentsType : uint8_t;
+
 enum class AXIDType { };
 using AXID = ObjectIdentifier<AXIDType>;
 
@@ -995,9 +997,7 @@ public:
     virtual AXTextMarkerRange textInputMarkedTextMarkerRange() const = 0;
 
     virtual WallTime dateTimeValue() const = 0;
-#if PLATFORM(MAC)
-    virtual unsigned dateTimeComponents() const = 0;
-#endif
+    virtual DateComponentsType dateTimeComponentsType() const = 0;
     virtual bool supportsDatetimeAttribute() const = 0;
     virtual String datetimeAttributeValue() const = 0;
 

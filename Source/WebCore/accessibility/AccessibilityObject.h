@@ -241,9 +241,7 @@ public:
     AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
 
     WallTime dateTimeValue() const override { return { }; }
-#if PLATFORM(MAC)
-    unsigned dateTimeComponents() const override;
-#endif
+    DateComponentsType dateTimeComponentsType() const override;
     bool supportsDatetimeAttribute() const override;
     String datetimeAttributeValue() const override;
 

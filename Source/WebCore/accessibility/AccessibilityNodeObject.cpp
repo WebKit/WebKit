@@ -37,6 +37,7 @@
 #include "AccessibilityListBox.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
+#include "DateComponents.h"
 #include "Editing.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -2462,6 +2463,15 @@ WallTime AccessibilityNodeObject::dateTimeValue() const
 
     auto* input = dynamicDowncast<HTMLInputElement>(node());
     return input ? input->accessibilityValueAsDate() : WallTime();
+}
+
+DateComponentsType AccessibilityObject::dateTimeComponentsType() const
+{
+    if (!isDateTime())
+        return DateComponentsType::Invalid;
+
+    auto* input = dynamicDowncast<HTMLInputElement>(node());
+    return input ? input->dateType() : DateComponentsType::Invalid;
 }
 
 SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const

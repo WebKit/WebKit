@@ -2,20 +2,20 @@ This tests input type=time label and value properties.
 
 inputtime1:
 PASS: inputtime.title === 'AXTitle: Meeting time:'
-AXValue: 8:30 AM
-PASS: inputtime.dateValue === 'AXDateValue: 1970-01-01 08:30:00 +0000'
+AXValue: 8:30 AM
+
 inputtime2:
 PASS: inputtime.title === 'AXTitle: Meeting time:'
-AXValue: 8:30 AM
-PASS: inputtime.dateValue === 'AXDateValue: 1970-01-01 08:30:00 +0000'
+AXValue: 8:30 AM
+
 inputtime3:
 PASS: inputtime.title === 'AXTitle: Meeting time:'
-AXValue: 8:30 AM
-PASS: inputtime.dateValue === 'AXDateValue: 1970-01-01 08:30:00 +0000'
+AXValue: 8:30 AM
+
 inputtime4:
 PASS: inputtime.title === 'AXTitle: '
-AXValue: 3:45 PM
-PASS: inputtime.dateValue === 'AXDateValue: 1970-01-01 15:45:12 +0000'
+AXValue: 3:45 PM
+
 
 PASS successfullyParsed is true
 

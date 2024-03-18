@@ -32,6 +32,7 @@
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
 #include "AXTextRun.h"
+#include "DateComponents.h"
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/HIServicesSPI.h>
@@ -269,9 +270,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
     if (object.isDateTime()) {
         setProperty(AXPropertyName::DateTimeValue, object.dateTimeValue().isolatedCopy());
-#if PLATFORM(MAC)
-        setProperty(AXPropertyName::DateTimeComponents, object.dateTimeComponents());
-#endif
+        setProperty(AXPropertyName::DateTimeComponentsType, object.dateTimeComponentsType());
     }
 
     if (object.isSpinButton()) {
@@ -487,6 +486,7 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
         [](AXTextRuns& runs) { return !runs.size(); },
 #endif
         [] (WallTime& time) { return !time; },
+        [] (DateComponentsType& typedValue) { return typedValue == DateComponentsType::Invalid; },
         [](auto&) {
             ASSERT_NOT_REACHED();
             return false;
