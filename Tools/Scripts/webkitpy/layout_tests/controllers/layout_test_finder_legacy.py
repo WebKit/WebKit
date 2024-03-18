@@ -131,19 +131,13 @@ class LayoutTestFinder(object):
         fs = self._filesystem
         tests = []
         for filename in filenames:
-            try:
-                if test_path_separator != fs.sep:
-                    filename = filename.replace(test_path_separator, fs.sep)
-                file_contents = fs.read_text_file(filename).split('\n')
-                for line in file_contents:
-                    line = self._strip_comments(line)
-                    if line:
-                        tests.append(line)
-            except IOError as e:
-                if e.errno == errno.ENOENT:
-                    _log.critical('')
-                    _log.critical('--test-list file "{}" not found'.format(filenames))
-                raise
+            if test_path_separator != fs.sep:
+                filename = filename.replace(test_path_separator, fs.sep)
+            file_contents = fs.read_text_file(filename).split('\n')
+            for line in file_contents:
+                line = self._strip_comments(line)
+                if line:
+                    tests.append(line)
         return tests
 
     @staticmethod
