@@ -292,10 +292,42 @@ void GraphicsContextSkia::drawLine(const FloatPoint& point1, const FloatPoint& p
     if (!makeGLContextCurrentIfNeeded())
         return;
 
-    // FIXME: Use stroke style to handle dashed/dotted lines, see https://bugs.webkit.org/show_bug.cgi?id=271044
-    SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
-    canvas().drawLine(SkFloatToScalar(point1.x()), SkFloatToScalar(point1.y()), SkFloatToScalar(point2.x()), SkFloatToScalar(point2.y()), paint);
+    SkPaint paint = createStrokePaint();
+    paint.setColor(SkColor(strokeColor().colorWithAlphaMultipliedBy(alpha())));
+
+    const bool isVertical = (point1.x() + strokeThickness() == point2.x());
+    float strokeWidth = isVertical ? point2.y() - point1.y() : point2.x() - point1.x();
+    if (!strokeThickness() || !strokeWidth)
+        return;
+
+    float cornerWidth = 0;
+
+    if (strokeStyle() == StrokeStyle::DottedStroke || strokeStyle() == StrokeStyle::DashedStroke) {
+        // Figure out end points to ensure we always paint corners.
+        cornerWidth = dashedLineCornerWidthForStrokeWidth(strokeWidth);
+        if (isVertical) {
+            fillRect(FloatRect(point1.x(), point1.y(), strokeThickness(), cornerWidth), strokeColor());
+            fillRect(FloatRect(point1.x(), point2.y() - cornerWidth, strokeThickness(), cornerWidth), strokeColor());
+        } else {
+            fillRect(FloatRect(point1.x(), point1.y(), cornerWidth, strokeThickness()), strokeColor());
+            fillRect(FloatRect(point2.x() - cornerWidth, point1.y(), cornerWidth, strokeThickness()), strokeColor());
+        }
+        strokeWidth -= 2 * cornerWidth;
+        const float patternWidth = dashedLinePatternWidthForStrokeWidth(strokeWidth);
+        // Check if corner drawing sufficiently covers the line.
+        if (strokeWidth <= patternWidth + 1)
+            return;
+
+        const SkScalar dashIntervals[] = { SkFloatToScalar(patternWidth), SkFloatToScalar(patternWidth) };
+        const float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
+        paint.setPathEffect(SkDashPathEffect::Make(dashIntervals, 2, patternOffset));
+    }
+
+    const auto centeredPoints = centerLineAndCutOffCorners(isVertical, cornerWidth, point1, point2);
+    const auto& centeredPoint1 = centeredPoints[0];
+    const auto& centeredPoint2 = centeredPoints[1];
+
+    canvas().drawLine(SkFloatToScalar(centeredPoint1.x()), SkFloatToScalar(centeredPoint1.y()), SkFloatToScalar(centeredPoint2.x()), SkFloatToScalar(centeredPoint2.y()), paint);
 }
 
 // This method is only used to draw the little circles used in lists.
