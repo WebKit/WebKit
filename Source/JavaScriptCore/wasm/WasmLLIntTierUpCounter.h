@@ -58,10 +58,7 @@ public:
 
     void optimizeAfterWarmUp()
     {
-        if (Options::wasmLLIntTiersUpToBBQ())
-            setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
-        else
-            setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
+        setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
     }
 
     bool checkIfOptimizationThresholdReached()
@@ -71,10 +68,7 @@ public:
 
     void optimizeSoon()
     {
-        if (Options::wasmLLIntTiersUpToBBQ())
-            setNewThreshold(Options::thresholdForBBQOptimizeSoon());
-        else
-            setNewThreshold(Options::thresholdForOMGOptimizeSoon());
+        setNewThreshold(Options::thresholdForBBQOptimizeSoon());
     }
 
     void addOSREntryDataForLoop(WasmInstructionStream::Offset, OSREntryData&&);
