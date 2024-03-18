@@ -1680,20 +1680,6 @@ ConstantPropertiesEnabled:
     WebCore:
       default: false
 
-ConstructableStylesheetsEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "Constructable Stylesheets"
-  humanReadableDescription: "Enable Constructable Stylesheets"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 ContactPickerAPIEnabled:
   type: bool
   status: testable

@@ -29,6 +29,6 @@ partial interface mixin DocumentOrShadowRoot {
 
     // FIXME: This should use an ObservableArray<CSSStyleSheet> but we don't support this yet.
     // https://bugs.webkit.org/show_bug.cgi?id=238281
-    [EnabledBySetting=ConstructableStylesheetsEnabled, CallWith=CurrentGlobalObject, ImplementedAs=adoptedStyleSheetWrapper, CachedAttribute, CustomSetter] attribute any adoptedStyleSheets;
+    [CallWith=CurrentGlobalObject, ImplementedAs=adoptedStyleSheetWrapper, CachedAttribute, CustomSetter] attribute any adoptedStyleSheets;
 };
 
