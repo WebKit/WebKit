@@ -70,7 +70,7 @@ public:
             ancestorContainer = ancestorsOfType<RenderLayerModelObject>(*stopAtRenderer).first();
         }
 
-        TransformState transformState(true, TransformState::ApplyTransformDirection, FloatPoint { });
+        TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint { });
         transformState.setTransformMatrixTracking(trackingMode);
 
         renderer->mapLocalToContainer(ancestorContainer, transformState, { UseTransforms, ApplyContainerFlip });

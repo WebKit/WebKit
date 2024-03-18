@@ -73,7 +73,7 @@ struct RenderGeometryMapStep {
 class RenderGeometryMap {
     WTF_MAKE_NONCOPYABLE(RenderGeometryMap);
 public:
-    explicit RenderGeometryMap(OptionSet<MapCoordinatesMode> = UseTransforms, bool useCSS3DTransformInterop = false);
+    explicit RenderGeometryMap(OptionSet<MapCoordinatesMode> = UseTransforms);
     ~RenderGeometryMap();
 
     OptionSet<MapCoordinatesMode> mapCoordinatesFlags() const { return m_mapCoordinatesFlags; }
@@ -130,7 +130,6 @@ private:
     RenderGeometryMapSteps m_mapping;
     LayoutSize m_accumulatedOffset;
     OptionSet<MapCoordinatesMode> m_mapCoordinatesFlags;
-    bool m_useCSS3DTransformInterop { false };
 #if ASSERT_ENABLED
     bool m_accumulatedOffsetMightBeSaturated { false };
 #endif

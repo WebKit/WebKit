@@ -120,7 +120,6 @@ public:
     virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const { return true; }
 
     virtual bool useGiantTiles() const { return false; }
-    virtual bool useCSS3DTransformInteroperability() const { return false; }
 
     virtual bool needsPixelAligment() const { return false; }
 

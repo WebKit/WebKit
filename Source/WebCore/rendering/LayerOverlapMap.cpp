@@ -279,7 +279,7 @@ String OverlapMapContainer::dump(unsigned indent) const
 }
 
 LayerOverlapMap::LayerOverlapMap(const RenderLayer& rootLayer)
-    : m_geometryMap(UseTransforms, true)
+    : m_geometryMap(UseTransforms)
     , m_rootLayer(rootLayer)
 {
     // Begin assuming the root layer will be composited so that there is
