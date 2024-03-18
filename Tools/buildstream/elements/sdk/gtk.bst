@@ -3,7 +3,7 @@ sources:
 - kind: git_repo
   url: gitlab_gnome_org:GNOME/gtk.git
   track: 4.*
-  ref: 4.13.2-0-g004a8815218355daa4e569f91d9f5066648d5445
+  ref: 4.14.1-0-gc648bb7b19bede75d3af4acaed468b922269ed05
 build-depends:
 - sdk-build-depends/sassc.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
@@ -27,7 +27,6 @@ depends:
 
 variables:
   meson-local: >-
-    -Dmedia-ffmpeg=disabled
     -Dvulkan=disabled
     -Dbuild-tests=false
     -Dbuild-testsuite=false
