@@ -2598,20 +2598,6 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
-FetchMetadataEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Fetch Metadata"
-  humanReadableDescription: "Enable Fetch Metadata headers"
-  defaultValue:
-    WebCore:
-      default: true
-    WebKit:
-      default: true
-    WebKitLegacy:
-      default: true
-
 FetchPriorityEnabled:
   type: bool
   status: stable

@@ -755,7 +755,7 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     RefPtr frame = m_documentLoader->frame();
-    if (frame && frame->settings().fetchMetadataEnabled() && (!frame->document() || !frame->document()->quirks().shouldDisableFetchMetadata())) {
+    if (frame && (!frame->document() || !frame->document()->quirks().shouldDisableFetchMetadata())) {
         Ref requestOrigin = SecurityOrigin::create(request.url());
 
         // In the case of a protocol downgrade we strip all FetchMetadata headers.
@@ -927,7 +927,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
-    if (frameLoader.frame().settings().fetchMetadataEnabled() && (!frameLoader.frame().document() || !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata())) {
+    if (!frameLoader.frame().document() || !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata()) {
         auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame().document()->protectedSecurityOrigin());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }

@@ -133,7 +133,7 @@ void CrossOriginPreflightChecker::startPreflight()
     options.serviceWorkersMode = ServiceWorkersMode::None;
     options.initiatorContext = loader->options().initiatorContext;
 
-    bool includeFetchMetadata = loader->document().settings().fetchMetadataEnabled() && !loader->document().quirks().shouldDisableFetchMetadata();
+    bool includeFetchMetadata = !loader->document().quirks().shouldDisableFetchMetadata();
     CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, loader->securityOrigin(), loader->referrer(), includeFetchMetadata), options);
     preflightRequest.setInitiatorType(AtomString { loader->options().initiatorType });
 
@@ -148,7 +148,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     if (!loader.document().frame())
         return;
 
-    bool includeFetchMetadata = loader.document().settings().fetchMetadataEnabled() && !loader.document().quirks().shouldDisableFetchMetadata();
+    bool includeFetchMetadata = !loader.document().quirks().shouldDisableFetchMetadata();
     ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin(), loader.referrer(), includeFetchMetadata);
     ResourceError error;
     ResourceResponse response;
