@@ -285,7 +285,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
 
     Ref protector { scriptFetcher };
     {
-        auto& promise = JSExecState::loadModule(globalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(vm, { &scriptFetcher }));
+        auto* promise = JSExecState::loadModule(globalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(vm, { &scriptFetcher }));
         scope.assertNoExceptionExceptTermination();
         RETURN_IF_EXCEPTION(scope, false);
 
@@ -365,7 +365,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
             return JSValue::encode(jsUndefined());
         });
 
-        promise.then(&globalObject, &fulfillHandler, &rejectHandler);
+        promise->then(&globalObject, &fulfillHandler, &rejectHandler);
     }
     m_globalScope->eventLoop().performMicrotaskCheckpoint();
 
@@ -442,9 +442,9 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
 
     auto parameters = ModuleFetchParameters::create(JSC::ScriptFetchParameters::Type::JavaScript, emptyString(), /* isTopLevelModule */ true);
     auto scriptFetcher = WorkerScriptFetcher::create(WTFMove(parameters), credentials, globalScope()->destination(), globalScope()->referrerPolicy());
-    {
-        auto& promise = JSExecState::loadModule(globalObject, moduleURL, JSC::JSScriptFetchParameters::create(vm, scriptFetcher->parameters()), JSC::JSScriptFetcher::create(vm, { scriptFetcher.ptr() }));
 
+    auto* promise = JSExecState::loadModule(globalObject, moduleURL, JSC::JSScriptFetchParameters::create(vm, scriptFetcher->parameters()), JSC::JSScriptFetcher::create(vm, { scriptFetcher.ptr() }));
+    if (LIKELY(promise)) {
         auto task = createSharedTask<void(std::optional<Exception>&&)>([completionHandler = WTFMove(completionHandler)](std::optional<Exception>&& exception) mutable {
             completionHandler(WTFMove(exception));
         });
@@ -537,7 +537,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
             return JSValue::encode(jsUndefined());
         });
 
-        promise.then(&globalObject, &fulfillHandler, &rejectHandler);
+        promise->then(&globalObject, &fulfillHandler, &rejectHandler);
     }
     m_globalScope->eventLoop().performMicrotaskCheckpoint();
 }
