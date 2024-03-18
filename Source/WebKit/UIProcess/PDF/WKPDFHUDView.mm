@@ -89,7 +89,6 @@ static NSArray<NSString *> *controlArray()
     CGFloat _deviceScaleFactor;
     RetainPtr<CALayer> _layer;
     RetainPtr<CALayer> _activeLayer;
-    CGSize _frameSize;
     RetainPtr<NSMutableDictionary<NSString *, NSImage *>> _cachedIcons;
     BOOL _visible;
     BOOL _mouseMovedToHUD;
@@ -123,15 +122,14 @@ static NSArray<NSString *> *controlArray()
     [super dealloc];
 }
 
-- (void)setFrame:(NSRect)rect
+- (void)layout
 {
-    [super setFrame:rect];
-    _frameSize = rect.size;
+    [super layout];
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     CGRect layerBounds = [_layer bounds];
-    [_layer setFrame:CGRectMake(rect.size.width / 2.0 - layerBounds.size.width / 2.0, layerVerticalOffset, layerBounds.size.width, layerBounds.size.height)];
+    [_layer setFrame:CGRectMake(self.frame.size.width / 2.0 - layerBounds.size.width / 2.0, layerVerticalOffset, layerBounds.size.width, layerBounds.size.height)];
     [CATransaction commit];
 }
 
@@ -272,9 +270,9 @@ static NSArray<NSString *> *controlArray()
     _layer = adoptNS([[CALayer alloc] init]);
     [_layer setCornerRadius:layerCornerRadius];
     [_layer setCornerCurve:kCACornerCurveCircular];
-
     [_layer setBackgroundColor:WebCore::cachedCGColor({ WebCore::SRGBA<float>(layerGrayComponent, layerGrayComponent, layerGrayComponent) }).get()];
     [self _setLayerOpacity:layerAlpha];
+    [self setNeedsLayout:YES];
     
     [self _loadIconImages];
     CGFloat minIconImageHeight = std::numeric_limits<CGFloat>::max();
@@ -324,7 +322,6 @@ static NSArray<NSString *> *controlArray()
     CALayer *parentLayer = [_layer superlayer];
     [_layer removeFromSuperlayer];
     [self _setupLayer:parentLayer];
-    [self setFrameSize:_frameSize];
 }
 
 - (NSImage *)_getImageForControlName:(NSString *)control
