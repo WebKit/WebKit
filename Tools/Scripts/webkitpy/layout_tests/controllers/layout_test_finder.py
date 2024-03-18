@@ -196,6 +196,7 @@ class LayoutTestFinder(object):
                         for p in self.fs.glob(
                             self.fs.join(self.layout_tests_base_dir, dirname)
                         )
+                        if self.fs.isdir(p)
                     },
                     key=natsort,
                 )

@@ -1617,3 +1617,14 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                     )
                 ],
             )
+
+    def test_dir_glob_matches_file(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        # The first `*` here will match several files, which must be ignored.
+        tests = [t.test_path for t in finder.find_tests_by_path(["passes/*/*"])]
+        self.assertEqual(
+            tests,
+            ["passes/skipped/skip.html"],
+        )
