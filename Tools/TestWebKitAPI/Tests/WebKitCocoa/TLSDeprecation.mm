@@ -193,26 +193,6 @@ TEST(TLSVersion, NetworkSession)
     }
 }
 
-TEST(TLSVersion, NetworkSessionNSUserDefaults)
-{
-    NSString *defaultsKey = @"WebKitEnableLegacyTLS";
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:defaultsKey];
-
-    HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);
-    auto delegate = adoptNS([TestNavigationDelegate new]);
-    {
-        auto webView = makeWebViewWith([WKWebsiteDataStore defaultDataStore], delegate);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
-        [delegate waitForDidFailProvisionalNavigation];
-    }
-    {
-        auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore], delegate);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
-        [delegate waitForDidFailProvisionalNavigation];
-    }
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:defaultsKey];
-}
-
 TEST(TLSVersion, ShouldAllowDeprecatedTLS)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);

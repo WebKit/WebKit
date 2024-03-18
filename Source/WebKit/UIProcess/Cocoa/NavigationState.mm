@@ -1127,33 +1127,18 @@ void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPag
     }).get()];
 }
 
-static bool systemAllowsLegacyTLSFor(WebPageProxy& page)
-{
-    bool enableLegacyTLS = page.websiteDataStore().configuration().legacyTLSEnabled();
-    if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitEnableLegacyTLS"])
-        enableLegacyTLS = [value boolValue];
-    if (!enableLegacyTLS) {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-        enableLegacyTLS = [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitTLS"] == MCRestrictedBoolExplicitYes;
-#elif PLATFORM(MAC)
-        enableLegacyTLS = CFPreferencesGetAppBooleanValue(CFSTR("allowDeprecatedWebKitTLS"), CFSTR("com.apple.applicationaccess"), nullptr);
-#endif
-    }
-    return enableLegacyTLS;
-}
-
 void NavigationState::NavigationClient::shouldAllowLegacyTLS(WebPageProxy& page, AuthenticationChallengeProxy& authenticationChallenge, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!m_navigationState)
-        return completionHandler(systemAllowsLegacyTLSFor(page));
+        return completionHandler(page.websiteDataStore().configuration().legacyTLSEnabled());
 
     if (!m_navigationState->m_navigationDelegateMethods.webViewAuthenticationChallengeShouldAllowLegacyTLS
         && !m_navigationState->m_navigationDelegateMethods.webViewAuthenticationChallengeShouldAllowDeprecatedTLS)
-        return completionHandler(systemAllowsLegacyTLSFor(page));
+        return completionHandler(page.websiteDataStore().configuration().legacyTLSEnabled());
 
     auto navigationDelegate = m_navigationState->navigationDelegate();
     if (!navigationDelegate)
-        return completionHandler(systemAllowsLegacyTLSFor(page));
+        return completionHandler(page.websiteDataStore().configuration().legacyTLSEnabled());
 
     if (m_navigationState->m_navigationDelegateMethods.webViewAuthenticationChallengeShouldAllowDeprecatedTLS) {
         auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:authenticationChallenge:shouldAllowDeprecatedTLS:));
