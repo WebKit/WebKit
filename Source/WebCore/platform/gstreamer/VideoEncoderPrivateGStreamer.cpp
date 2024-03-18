@@ -687,9 +687,9 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                         pixelFormat = "Y444";
                 } else if (g_str_has_prefix(profileString, "high-4:2:2")) {
                     if (supports10BitsLittleEndian)
-                        pixelFormat = "Y422_10LE";
+                        pixelFormat = "I422_10LE";
                     else if (supports10BitsBigEndian)
-                        pixelFormat = "Y422_10BE";
+                        pixelFormat = "I422_10BE";
                     else
                         pixelFormat = "Y42B";
                 } else if (g_str_has_prefix(profileString, "high-10")) {
@@ -915,9 +915,9 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                             pixelFormat = "Y444";
                     } else if (isY422) {
                         if (supports12BitsLittleEndian)
-                            pixelFormat = "Y422_12LE";
+                            pixelFormat = "I422_12LE";
                         else if (supports12BitsBigEndian)
-                            pixelFormat = "Y422_12BE";
+                            pixelFormat = "I422_12BE";
                         else
                             pixelFormat = "Y42B";
                     }
