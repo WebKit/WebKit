@@ -193,7 +193,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         auto newResolvedRange = resolveCharacterRange(*sessionRange, newRangeWithOffset);
 
         auto markerData = WebCore::DocumentMarker::UnifiedTextReplacementData { replacementData.originalString.string, replacementData.uuid, WebCore::DocumentMarker::UnifiedTextReplacementData::State::Pending };
-        addMarker(resolvedRange, WebCore::DocumentMarker::Type::UnifiedTextReplacement, markerData);
+        addMarker(newResolvedRange, WebCore::DocumentMarker::Type::UnifiedTextReplacement, markerData);
 
         additionalOffset += replacementData.replacement.length() - replacementData.originalRange.length;
     }
