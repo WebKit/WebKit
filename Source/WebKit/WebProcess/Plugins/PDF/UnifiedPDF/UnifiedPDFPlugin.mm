@@ -1047,6 +1047,9 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
             origin->move(0, std::round(frameView->topContentInset()));
     }
 
+    if (scale != 1.0)
+        m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
+
     setScaleFactor(scale, origin);
 }
 
