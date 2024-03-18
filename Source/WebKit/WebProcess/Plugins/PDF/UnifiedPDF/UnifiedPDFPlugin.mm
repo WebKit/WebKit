@@ -47,6 +47,7 @@
 #include "WebEventModifier.h"
 #include "WebEventType.h"
 #include "WebHitTestResultData.h"
+#include "WebKeyboardEvent.h"
 #include "WebMouseEvent.h"
 #include "WebPageProxyMessages.h"
 #include <CoreGraphics/CoreGraphics.h>
@@ -80,6 +81,7 @@
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/ScreenProperties.h>
+#include <WebCore/ScrollAnimator.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/ScrollbarsController.h>
@@ -2009,8 +2011,21 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 #endif // ENABLE(CONTEXT_MENUS)
 }
 
-bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)
+bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
 {
+#if PLATFORM(MAC)
+    auto& commands = event.commands();
+    if (commands.size() != 1)
+        return false;
+    auto commandName = commands[0].commandName;
+
+    CheckedPtr keyboardAnimator = scrollAnimator().keyboardScrollingAnimator();
+    if (commandName == "scrollToBeginningOfDocument:"_s)
+        return keyboardAnimator->beginKeyboardScrollGesture(ScrollDirection::ScrollUp, ScrollGranularity::Document, false);
+    if (commandName == "scrollToEndOfDocument:"_s)
+        return keyboardAnimator->beginKeyboardScrollGesture(ScrollDirection::ScrollDown, ScrollGranularity::Document, false);
+#endif
+
     return false;
 }
 
