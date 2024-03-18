@@ -29,9 +29,9 @@
     EnabledBySetting=FullScreenEnabled,
     DisabledByQuirk=shouldDisableElementFullscreen
 ] partial interface Element {
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] Promise<undefined> requestFullscreen(optional FullscreenOptions options = {});
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenchange;
-    [EnabledBySetting=UnprefixedFullscreenAPIEnabled] attribute EventHandler onfullscreenerror;
+    Promise<undefined> requestFullscreen(optional FullscreenOptions options = {});
+    attribute EventHandler onfullscreenchange;
+    attribute EventHandler onfullscreenerror;
 
     // Non-standard: WebKit prefixed variants.
     [ImplementedAs=webkitRequestFullscreen] undefined webkitRequestFullScreen(); // Prefixed Mozilla version.

@@ -6783,20 +6783,6 @@ UnifiedPDFEnabled:
       "ENABLE(UNIFIED_PDF_BY_DEFAULT)": true
       default: false
 
-UnprefixedFullscreenAPIEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Unprefixed Fullscreen API"
-  humanReadableDescription: "Enable Unprefixed Fullscreen API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 UpgradeKnownHostsToHTTPSEnabled:
   type: bool
   status: internal

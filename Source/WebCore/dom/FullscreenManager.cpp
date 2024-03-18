@@ -671,19 +671,16 @@ void FullscreenManager::notifyAboutFullscreenChangeOrError()
 
 void FullscreenManager::dispatchEventForNode(Node& node, EventType eventType)
 {
-    bool supportsUnprefixedAPI = document().settings().unprefixedFullscreenAPIEnabled();
     switch (eventType) {
     case EventType::Change: {
-        if (supportsUnprefixedAPI)
-            node.dispatchEvent(Event::create(eventNames().fullscreenchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
+        node.dispatchEvent(Event::create(eventNames().fullscreenchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
         bool shouldEmitUnprefixed = !(node.hasEventListeners(eventNames().webkitfullscreenchangeEvent) && node.hasEventListeners(eventNames().fullscreenchangeEvent)) && !(node.document().hasEventListeners(eventNames().webkitfullscreenchangeEvent) && node.document().hasEventListeners(eventNames().fullscreenchangeEvent));
-        if (!supportsUnprefixedAPI || shouldEmitUnprefixed)
+        if (shouldEmitUnprefixed)
             node.dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
         break;
     }
     case EventType::Error:
-        if (supportsUnprefixedAPI)
-            node.dispatchEvent(Event::create(eventNames().fullscreenerrorEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
+        node.dispatchEvent(Event::create(eventNames().fullscreenerrorEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
         node.dispatchEvent(Event::create(eventNames().webkitfullscreenerrorEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
         break;
     }
