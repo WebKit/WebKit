@@ -35,9 +35,9 @@ interface TrustedTypePolicyFactory {
     readonly attribute TrustedHTML emptyHTML;
     readonly attribute TrustedScript emptyScript;
 
-    DOMString? getAttributeType(DOMString tagName, DOMString attribute, optional DOMString elementNamespace = "", optional DOMString attrNamespace = "");
+    DOMString? getAttributeType(DOMString tagName, DOMString attribute, optional DOMString? elementNamespace = "", optional DOMString? attrNamespace = "");
 
-    DOMString? getPropertyType(DOMString tagName, DOMString property, optional DOMString elementNamespace = "");
+    DOMString? getPropertyType(DOMString tagName, DOMString property, optional DOMString? elementNamespace = "");
 
     readonly attribute TrustedTypePolicy? defaultPolicy;
 };

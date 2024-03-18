@@ -52,7 +52,7 @@ public:
     Ref<TrustedHTML> emptyHTML() const;
     Ref<TrustedScript> emptyScript() const;
 
-    String getAttributeType(const String& tagName, const String& attribute, const String& elementNamespace, const String& attrNamespace) const;
+    String getAttributeType(const String& tagName, const String& attribute, const String& elementNamespace, const String& attributeNamespace) const;
     String getPropertyType(const String& tagName, const String& property, const String& elementNamespace) const;
 
     RefPtr<TrustedTypePolicy> defaultPolicy() const { return m_defaultPolicy; }

@@ -1,26 +1,26 @@
 
-FAIL sanity check trustedTypes.getPropertyType for the HTML script element. assert_equals: expected (string) "TrustedScript" but got (object) null
-FAIL sanity check trustedTypes.getAttributeType. assert_equals: expected (string) "TrustedScript" but got (object) null
+PASS sanity check trustedTypes.getPropertyType for the HTML script element.
+PASS sanity check trustedTypes.getAttributeType.
 FAIL sanity check trustedTypes.getTypeMapping trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
-FAIL getPropertyType tests adapted from w3c/trusted-types polyfill assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL getAttributeType tests adapted from w3c/trusted-types polyfill assert_equals: expected (string) "TrustedScriptURL" but got (object) null
+PASS getPropertyType tests adapted from w3c/trusted-types polyfill
+PASS getAttributeType tests adapted from w3c/trusted-types polyfill
 FAIL getTypeMapping tests adapted from w3c/trusted-types polyfill trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
-FAIL object[codeBase] is defined assert_true: expected true got false
-FAIL object.codeBase is maybe defined assert_equals: expected true but got false
-FAIL OBJECT[codeBase] is defined assert_true: expected true got false
-FAIL OBJECT.codeBase is maybe defined assert_equals: expected true but got false
-FAIL oBjEcT[codeBase] is defined assert_true: expected true got false
-FAIL oBjEcT.codeBase is maybe defined assert_equals: expected true but got false
-FAIL object[CODEBASE] is defined assert_true: expected true got false
+PASS object[codeBase] is defined
+PASS object.codeBase is maybe defined
+PASS OBJECT[codeBase] is defined
+PASS OBJECT.codeBase is maybe defined
+PASS oBjEcT[codeBase] is defined
+PASS oBjEcT.codeBase is maybe defined
+PASS object[CODEBASE] is defined
 PASS object.CODEBASE is maybe defined
-FAIL OBJECT[CODEBASE] is defined assert_true: expected true got false
+PASS OBJECT[CODEBASE] is defined
 PASS OBJECT.CODEBASE is maybe defined
-FAIL oBjEcT[CODEBASE] is defined assert_true: expected true got false
+PASS oBjEcT[CODEBASE] is defined
 PASS oBjEcT.CODEBASE is maybe defined
-FAIL object[codebase] is defined assert_true: expected true got false
+PASS object[codebase] is defined
 PASS object.codebase is maybe defined
-FAIL OBJECT[codebase] is defined assert_true: expected true got false
+PASS OBJECT[codebase] is defined
 PASS OBJECT.codebase is maybe defined
-FAIL oBjEcT[codebase] is defined assert_true: expected true got false
+PASS oBjEcT[codebase] is defined
 PASS oBjEcT.codebase is maybe defined
 

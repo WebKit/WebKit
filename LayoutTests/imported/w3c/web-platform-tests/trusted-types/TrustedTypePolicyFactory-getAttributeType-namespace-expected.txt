@@ -1,23 +1,23 @@
 
-FAIL 0: getAttributeType with full namespace info. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 0: getAttributeType with element namespace and empty attribute namespace assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 0: getAttributeType without namespaces. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 0: getAttributeType with undefined and empty namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 0: getAttributeType with empty and undefined namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 0: getAttributeType with empty namespaces. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 0: getAttributeType with element namespace and empty attribute namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 1: getAttributeType with full namespace info. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 1: getAttributeType with element namespace and empty attribute namespace assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 1: getAttributeType without namespaces. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 1: getAttributeType with undefined and empty namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 1: getAttributeType with empty and undefined namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 1: getAttributeType with empty namespaces. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 1: getAttributeType with element namespace and empty attribute namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 2: getAttributeType with full namespace info. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 2: getAttributeType with element namespace and empty attribute namespace assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 2: getAttributeType without namespaces. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 2: getAttributeType with undefined and empty namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 2: getAttributeType with empty and undefined namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 2: getAttributeType with empty namespaces. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
-FAIL 2: getAttributeType with element namespace and empty attribute namespace. assert_equals: expected (string) "TrustedScriptURL" but got (object) null
+PASS 0: getAttributeType with full namespace info.
+PASS 0: getAttributeType with element namespace and empty attribute namespace
+PASS 0: getAttributeType without namespaces.
+PASS 0: getAttributeType with undefined and empty namespace.
+PASS 0: getAttributeType with empty and undefined namespace.
+PASS 0: getAttributeType with empty namespaces.
+PASS 0: getAttributeType with element namespace and empty attribute namespace.
+PASS 1: getAttributeType with full namespace info.
+PASS 1: getAttributeType with element namespace and empty attribute namespace
+PASS 1: getAttributeType without namespaces.
+PASS 1: getAttributeType with undefined and empty namespace.
+PASS 1: getAttributeType with empty and undefined namespace.
+PASS 1: getAttributeType with empty namespaces.
+PASS 1: getAttributeType with element namespace and empty attribute namespace.
+PASS 2: getAttributeType with full namespace info.
+PASS 2: getAttributeType with element namespace and empty attribute namespace
+PASS 2: getAttributeType without namespaces.
+PASS 2: getAttributeType with undefined and empty namespace.
+PASS 2: getAttributeType with empty and undefined namespace.
+PASS 2: getAttributeType with empty namespaces.
+PASS 2: getAttributeType with element namespace and empty attribute namespace.
 

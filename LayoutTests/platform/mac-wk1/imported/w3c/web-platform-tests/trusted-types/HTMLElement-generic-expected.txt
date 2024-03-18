@@ -1,5 +1,7 @@
 Blocked access to external URL https://example.test/
 Blocked access to external URL https://example.test/
+Blocked access to external URL https://example.test/
+Blocked access to external URL https://example.test/
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
@@ -14,8 +16,6 @@ CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the followin
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-Blocked access to external URL https://example.test/
-Blocked access to external URL https://example.test/
 
 hello
 hello

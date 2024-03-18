@@ -16,22 +16,22 @@ PASS Test assignment of TrustedScript on madeup.id
 PASS Test assignment of TrustedScript on madeup.setAttribute(id,..)
 PASS Test assignment of TrustedScriptURL on madeup.id
 PASS Test assignment of TrustedScriptURL on madeup.setAttribute(id,..)
-PASS Test assignment of string on madeup.onerror
-PASS Test assignment of string on madeup.setAttribute(onerror,..)
-PASS Test assignment of TrustedHTML on madeup.onerror
-PASS Test assignment of TrustedHTML on madeup.setAttribute(onerror,..)
+FAIL Test assignment of string on madeup.onerror assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of string on madeup.setAttribute(onerror,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
+FAIL Test assignment of TrustedHTML on madeup.onerror assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of TrustedHTML on madeup.setAttribute(onerror,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
 PASS Test assignment of TrustedScript on madeup.onerror
 PASS Test assignment of TrustedScript on madeup.setAttribute(onerror,..)
-PASS Test assignment of TrustedScriptURL on madeup.onerror
-PASS Test assignment of TrustedScriptURL on madeup.setAttribute(onerror,..)
-PASS Test assignment of string on madeup.onclick
-PASS Test assignment of string on madeup.setAttribute(onclick,..)
-PASS Test assignment of TrustedHTML on madeup.onclick
-PASS Test assignment of TrustedHTML on madeup.setAttribute(onclick,..)
+FAIL Test assignment of TrustedScriptURL on madeup.onerror assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of TrustedScriptURL on madeup.setAttribute(onerror,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
+FAIL Test assignment of string on madeup.onclick assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of string on madeup.setAttribute(onclick,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
+FAIL Test assignment of TrustedHTML on madeup.onclick assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of TrustedHTML on madeup.setAttribute(onclick,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
 PASS Test assignment of TrustedScript on madeup.onclick
 PASS Test assignment of TrustedScript on madeup.setAttribute(onclick,..)
-PASS Test assignment of TrustedScriptURL on madeup.onclick
-PASS Test assignment of TrustedScriptURL on madeup.setAttribute(onclick,..)
+FAIL Test assignment of TrustedScriptURL on madeup.onclick assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of TrustedScriptURL on madeup.setAttribute(onclick,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
 PASS Test assignment of string on b.madeup
 PASS Test assignment of string on b.setAttribute(madeup,..)
 PASS Test assignment of TrustedHTML on b.madeup
@@ -48,20 +48,20 @@ PASS Test assignment of TrustedScript on b.id
 PASS Test assignment of TrustedScript on b.setAttribute(id,..)
 PASS Test assignment of TrustedScriptURL on b.id
 PASS Test assignment of TrustedScriptURL on b.setAttribute(id,..)
-PASS Test assignment of string on b.onerror
-PASS Test assignment of string on b.setAttribute(onerror,..)
-PASS Test assignment of TrustedHTML on b.onerror
-PASS Test assignment of TrustedHTML on b.setAttribute(onerror,..)
+FAIL Test assignment of string on b.onerror assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of string on b.setAttribute(onerror,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
+FAIL Test assignment of TrustedHTML on b.onerror assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of TrustedHTML on b.setAttribute(onerror,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
 PASS Test assignment of TrustedScript on b.onerror
 PASS Test assignment of TrustedScript on b.setAttribute(onerror,..)
-PASS Test assignment of TrustedScriptURL on b.onerror
-PASS Test assignment of TrustedScriptURL on b.setAttribute(onerror,..)
-PASS Test assignment of string on b.onclick
-PASS Test assignment of string on b.setAttribute(onclick,..)
-PASS Test assignment of TrustedHTML on b.onclick
-PASS Test assignment of TrustedHTML on b.setAttribute(onclick,..)
+FAIL Test assignment of TrustedScriptURL on b.onerror assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of TrustedScriptURL on b.setAttribute(onerror,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
+FAIL Test assignment of string on b.onclick assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of string on b.setAttribute(onclick,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
+FAIL Test assignment of TrustedHTML on b.onclick assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of TrustedHTML on b.setAttribute(onclick,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
 PASS Test assignment of TrustedScript on b.onclick
 PASS Test assignment of TrustedScript on b.setAttribute(onclick,..)
-PASS Test assignment of TrustedScriptURL on b.onclick
-PASS Test assignment of TrustedScriptURL on b.setAttribute(onclick,..)
+FAIL Test assignment of TrustedScriptURL on b.onclick assert_throws_js: throws function "_ => { element[property] = value; }" did not throw
+FAIL Test assignment of TrustedScriptURL on b.setAttribute(onclick,..) assert_throws_js: throws function "_ => { element.setAttribute(property, value); }" did not throw
 
