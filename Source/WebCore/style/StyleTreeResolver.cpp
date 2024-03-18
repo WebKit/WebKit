@@ -967,14 +967,24 @@ void TreeResolver::resolveComposedTree()
         ASSERT(node.parentElement() == parent.element || is<ShadowRoot>(node.parentNode()) || node.parentElement()->shadowRoot());
 
         if (RefPtr text = dynamicDowncast<Text>(node)) {
-            if ((text->hasInvalidRenderer() && parent.change != Change::Renderer) || parent.style.display() == DisplayType::Contents) {
+            auto containsOnlyASCIIWhitespace = text->containsOnlyASCIIWhitespace();
+            auto needsTextUpdate = [&] {
+                if ((text->hasInvalidRenderer() && parent.change != Change::Renderer) || parent.style.display() == DisplayType::Contents)
+                    return true;
+                if (!text->renderer() && containsOnlyASCIIWhitespace && parent.style.preserveNewline()) {
+                    // FIXME: This really needs to be done only when parent.style.preserveNewline() changes value.
+                    return true;
+                }
+                return false;
+            };
+            if (needsTextUpdate()) {
                 TextUpdate textUpdate;
                 textUpdate.inheritedDisplayContentsStyle = createInheritedDisplayContentsStyleIfNeeded(parent.style, parentBoxStyle());
 
                 m_update->addText(*text, parent.element, WTFMove(textUpdate));
             }
 
-            if (!text->containsOnlyASCIIWhitespace())
+            if (!containsOnlyASCIIWhitespace)
                 parent.resolvedFirstLineAndLetterChild = true;
 
             text->setHasValidStyle();
