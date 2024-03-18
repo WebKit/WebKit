@@ -159,7 +159,7 @@ FormDataElement FormDataElement::isolatedCopy() const
 {
     return WTF::switchOn(data,
         [] (const Vector<uint8_t>& bytes) {
-            return FormDataElement(Vector { bytes });
+            return FormDataElement(Vector<uint8_t> { bytes });
         }, [] (const FormDataElement::EncodedFileData& fileData) {
             return FormDataElement(fileData.isolatedCopy());
         }, [] (const FormDataElement::EncodedBlobData& blobData) {

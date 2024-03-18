@@ -321,7 +321,7 @@ TEST(WTF_Vector, CopyFromOtherMinCapacity)
 TEST(WTF_Vector, ConstructorOtherRawPointerTypeAndLength)
 {
     const UChar uchars[] = { 'b', 'a', 'r' };
-    Vector<LChar> vector(std::span { uchars });
+    Vector<LChar> vector(std::span(uchars, static_cast<size_t>(3)));
     EXPECT_EQ(vector.size(), 3U);
     EXPECT_EQ(vector[0], 'b');
     EXPECT_EQ(vector[1], 'a');
