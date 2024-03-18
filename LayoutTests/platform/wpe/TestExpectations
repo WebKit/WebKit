@@ -233,9 +233,6 @@ http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html [ Pass 
 webkit.org/b/226521 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass Failure ]
 webkit.org/b/226521 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass ]
 
-# Nicosia
-webkit.org/b/213228 fast/viewport/viewport-1.html [ Crash Timeout Pass ]
-
 # We don't yet support EXIF-based resolution
 webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
 

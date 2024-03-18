@@ -3859,7 +3859,6 @@ webkit.org/b/169918 compositing/visibility/visibility-image-layers-dynamic.html 
 webkit.org/b/186667 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure Pass ]
 # Probably categorized under the wrong bug.
 webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
-webkit.org/b/213228 fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html [ Pass Crash ]
 compositing/canvas/hidpi-canvas-backing-store-invalidation-2.html [ Failure ]
 compositing/canvas/hidpi-canvas-backing-store-invalidation.html [ Failure ]
 compositing/canvas/hidpi-canvas-backing-store.html [ Failure ]
