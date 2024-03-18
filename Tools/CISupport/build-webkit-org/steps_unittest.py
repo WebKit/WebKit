@@ -403,7 +403,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=3600,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
             ) + 0,
@@ -420,9 +420,9 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=3600,
                 logEnviron=True,
-                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--architecture', 'x86_64 arm64', 'WK_VALIDATE_DEPENDENCIES=YES'],
+                command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --no-fatal-warnings --release --architecture "x86_64 arm64" WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -435,7 +435,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=3600,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
             ) + 0,
@@ -451,7 +451,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=3600,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
             ) + 0,
@@ -467,7 +467,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=3600,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--wpe'],
             ) + 0,
@@ -482,7 +482,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=3600,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--debug'],
             ) + 2
@@ -507,7 +507,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=3600,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-jsc', '--release'],
             ) + 0,
@@ -522,7 +522,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=3600,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
             ) + 2

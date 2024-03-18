@@ -46,8 +46,7 @@ if 'uat' in CURRENT_HOSTNAME:
     custom_suffix = '-uat'
 
 BUILD_WEBKIT_HOSTNAMES = ['build.webkit.org', 'build']
-TESTING_ENVIRONMENT_HOSTNAMES = ['build.webkit-uat.org', 'build-uat']
-DEV_ENVIRONMENT_HOSTNAMES = ['build.webkit-dev.org', 'build-dev']
+TESTING_ENVIRONMENT_HOSTNAMES = ['build.webkit-uat.org', 'build-uat', 'build.webkit-dev.org', 'build-dev']
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
@@ -72,6 +71,15 @@ class CustomFlagsMixin(object):
                 if additionalArgument.startswith('--cross-target='):
                     self.command.append(additionalArgument)
                     return
+
+    def customBuildFlag(self, platform, fullPlatform):
+        if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
+            return []
+        if 'simulator' in fullPlatform:
+            platform = platform + '-simulator'
+        elif platform in ['ios', 'tvos', 'watchos']:
+            platform = platform + '-device'
+        return ['--' + platform]
 
     def appendCustomBuildFlags(self, platform, fullPlatform):
         if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
@@ -346,7 +354,9 @@ class InstallWpeDependencies(shell.ShellCommandNewStyle, CustomFlagsMixin):
 
 
 class CompileWebKit(shell.Compile, CustomFlagsMixin):
-    command = ["perl", "Tools/Scripts/build-webkit", "--no-fatal-warnings", WithProperties("--%(configuration)s")]
+    build_command = ["perl", "Tools/Scripts/build-webkit", "--no-fatal-warnings"]
+    filter_command = ['perl', 'Tools/Scripts/filter-build-webkit', '-logfile', 'build-log.txt']
+    APPLE_PLATFORMS = ('mac', 'ios', 'tvos', 'watchos')
     env = {'MFLAGS': ''}
     name = "compile-webkit"
     description = ["compiling"]
@@ -360,39 +370,49 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
         buildOnly = self.getProperty('buildOnly')
         architecture = self.getProperty('architecture')
         additionalArguments = self.getProperty('additionalArguments')
+        configuration = self.getProperty('configuration')
 
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
 
+        build_command = self.build_command + [f'--{configuration}']
+
         if additionalArguments:
-            self.setCommand(self.command + additionalArguments)
-        if platform in ('mac', 'ios', 'tvos', 'watchos'):
+            build_command += additionalArguments
+        if platform in self.APPLE_PLATFORMS:
             # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
             # be removed here. We can't have build-webkit pass this by default
             # without invalidating local builds made by Xcode, and we set it
             # via xcconfigs until all building of Xcode-based webkit is done in
             # workspaces (rdar://88135402).
             if architecture:
-                self.setCommand(self.command + ['--architecture', architecture])
-            self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
+                build_command += ['--architecture', f'"{architecture}"']
+            build_command += ['WK_VALIDATE_DEPENDENCIES=YES']
             if buildOnly:
                 # For build-only bots, the expectation is that tests will be run on separate machines,
                 # so we need to package debug info as dSYMs. Only generating line tables makes
                 # this much faster than full debug info, and crash logs still have line numbers.
                 # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
-                self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
-                self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)'])
+                build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym']
+                build_command += ['CLANG_DEBUG_INFORMATION_LEVEL=\\$\\(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only\\)']
         if platform == 'gtk':
             prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration").title(), "install")
-            self.setCommand(self.command + [f'--prefix={prefix}'])
+            build_command += [f'--prefix={prefix}']
 
-        self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
+        build_command += self.customBuildFlag(platform, self.getProperty('fullPlatform'))
+
+        # filter-build-webkit is specifically designed for Xcode and doesn't work generally
+        if platform in self.APPLE_PLATFORMS:
+            full_command = f"{' '.join(build_command)} 2>&1 | {' '.join(self.filter_command)}"
+            self.setCommand(['/bin/sh', '-c', full_command])
+        else:
+            self.setCommand(build_command)
 
         return shell.Compile.start(self)
 
     def buildCommandKwargs(self, warnings):
         kwargs = super(CompileWebKit, self).buildCommandKwargs(warnings)
-        kwargs['timeout'] = 60 * 30
+        kwargs['timeout'] = 60 * 60
         return kwargs
 
     def parseOutputLine(self, line):
@@ -413,6 +433,21 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
         self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
         self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
+    def follow_up_steps(self):
+        if self.getProperty('platform') in self.APPLE_PLATFORMS and CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
+            return [
+                GenerateS3URL(
+                    f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                    extension='txt',
+                    content_type='text/plain',
+                ), UploadFileToS3(
+                    'build-log.txt',
+                    links={self.name: 'Full build log'},
+                    content_type='text/plain',
+                )
+            ]
+        return []
+
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
         try:
@@ -423,8 +458,11 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
 
     def evaluateCommand(self, cmd):
         rc = super().evaluateCommand(cmd)
+        steps_to_add = self.follow_up_steps()
         if rc in (SUCCESS, WARNINGS) and self.getProperty('user_provided_git_hash'):
-            self.build.addStepsAfterCurrentStep([ArchiveMinifiedBuiltProduct(), UploadMinifiedBuiltProduct(), TransferToS3(terminate_build=True)])
+            steps_to_add += [ArchiveMinifiedBuiltProduct(), UploadMinifiedBuiltProduct(), TransferToS3(terminate_build=True)]
+        # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
+        self.build.addStepsAfterCurrentStep(steps_to_add)
         return rc
 
     def getResultSummary(self):
@@ -436,17 +474,17 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
 
 
 class CompileLLINTCLoop(CompileWebKit):
-    command = ["perl", "Tools/Scripts/build-jsc", "--cloop", WithProperties("--%(configuration)s")]
+    build_command = ["perl", "Tools/Scripts/build-jsc", "--cloop"]
 
 
 class Compile32bitJSC(CompileWebKit):
     name = 'compile-jsc-32bit'
-    command = ["perl", "Tools/Scripts/build-jsc", "--32-bit", WithProperties("--%(configuration)s")]
+    build_command = ["perl", "Tools/Scripts/build-jsc", "--32-bit"]
 
 
 class CompileJSCOnly(CompileWebKit):
     name = 'compile-jsc'
-    command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
+    build_command = ["perl", "Tools/Scripts/build-jsc"]
 
 
 class InstallBuiltProduct(shell.ShellCommandNewStyle):
