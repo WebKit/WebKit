@@ -1000,6 +1000,22 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (Instance* instance,
     return throwWasmToJSException(callFrame, type, instance);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationCrashDueToBBQStackOverflow, void, ())
+{
+    // We have crashed because of a mismatch between the stack check in the wasm slow path loop_osr and the BBQ JIT LoopOSREntrypoint.
+    // This really should never happen. We make this separate operation to have a clean crash log.
+    bool hiddenReturn = true;
+    if (hiddenReturn)
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(false);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCrashDueToOMGStackOverflow, void, ())
+{
+    bool hiddenReturn = true;
+    if (hiddenReturn)
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(false);
+}
+
 #if USE(JSVALUE64)
 JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, ThrownExceptionInfo, (Instance* instance))
 {

@@ -66,6 +66,33 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
     return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "throwExceptionFromWasmThunk"_s, "Throw exception from Wasm");
 }
 
+// This is just here to give us a unique backtrace if we ever actually hit this.
+MacroAssemblerCodeRef<JITThunkPtrTag> crashDueToBBQStackOverflowGenerator(const AbstractLocker&)
+{
+    CCallHelpers jit;
+    JIT_COMMENT(jit, "crashDueToBBQStackOverflow");
+
+    CCallHelpers::Call call = jit.call(OperationPtrTag);
+    jit.breakpoint(); // We should not reach this.
+
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+    linkBuffer.link<OperationPtrTag>(call, operationCrashDueToBBQStackOverflow);
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "crashDueToBBQStackOverflow"_s, "Throw stack overflow from Wasm");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> crashDueToOMGStackOverflowGenerator(const AbstractLocker&)
+{
+    CCallHelpers jit;
+    JIT_COMMENT(jit, "crashDueToOMGStackOverflow");
+
+    CCallHelpers::Call call = jit.call(OperationPtrTag);
+    jit.breakpoint(); // We should not reach this.
+
+    LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk);
+    linkBuffer.link<OperationPtrTag>(call, operationCrashDueToOMGStackOverflow);
+    return FINALIZE_WASM_CODE(linkBuffer, JITThunkPtrTag, "crashDueToBBQStackOverflow"_s, "Throw stack overflow from Wasm");
+}
+
 MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
 {
     CCallHelpers jit;

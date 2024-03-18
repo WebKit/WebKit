@@ -702,6 +702,7 @@ public:
     using Stack = FunctionParser<BBQJIT>::Stack;
     using ControlStack = FunctionParser<BBQJIT>::ControlStack;
 
+    unsigned stackCheckSize() const { return WTF::roundUpToMultipleOf(stackAlignmentBytes(), m_maxCalleeStackSize + m_frameSize); }
 private:
     unsigned m_loggingIndent = 0;
 
