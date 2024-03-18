@@ -2194,10 +2194,10 @@ enum TransparencyClipBoxMode {
     RootOfTransparencyClipBox
 };
 
-static LayoutRect transparencyClipBox(const RenderLayer&, const RenderLayer* rootLayer, TransparencyClipBoxBehavior, TransparencyClipBoxMode, OptionSet<PaintBehavior> = { });
+static LayoutRect transparencyClipBox(const RenderLayer&, const RenderLayer* rootLayer, TransparencyClipBoxBehavior, TransparencyClipBoxMode, OptionSet<PaintBehavior> = { }, const LayoutRect* paintDirtyRect = nullptr);
 
 static void expandClipRectForDescendantsAndReflection(LayoutRect& clipRect, const RenderLayer& layer, const RenderLayer* rootLayer,
-    TransparencyClipBoxBehavior transparencyBehavior, OptionSet<PaintBehavior> paintBehavior)
+    TransparencyClipBoxBehavior transparencyBehavior, OptionSet<PaintBehavior> paintBehavior, const LayoutRect* paintDirtyRect)
 {
     // If we have a mask, then the clip is limited to the border box area (and there is
     // no need to examine child layers).
@@ -2206,7 +2206,7 @@ static void expandClipRectForDescendantsAndReflection(LayoutRect& clipRect, cons
         // a stacking container. This means we can just walk the layer tree directly.
         for (RenderLayer* curr = layer.firstChild(); curr; curr = curr->nextSibling()) {
             if (!layer.isReflectionLayer(*curr))
-                clipRect.unite(transparencyClipBox(*curr, rootLayer, transparencyBehavior, DescendantsOfTransparencyClipBox, paintBehavior));
+                clipRect.unite(transparencyClipBox(*curr, rootLayer, transparencyBehavior, DescendantsOfTransparencyClipBox, paintBehavior, paintDirtyRect));
         }
     }
 
@@ -2223,7 +2223,7 @@ static void expandClipRectForDescendantsAndReflection(LayoutRect& clipRect, cons
 }
 
 static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLayer* rootLayer, TransparencyClipBoxBehavior transparencyBehavior,
-    TransparencyClipBoxMode transparencyMode, OptionSet<PaintBehavior> paintBehavior)
+    TransparencyClipBoxMode transparencyMode, OptionSet<PaintBehavior> paintBehavior, const LayoutRect* paintDirtyRect)
 {
     // FIXME: Although this function completely ignores CSS-imposed clipping, we did already intersect with the
     // paintDirtyRect, and that should cut down on the amount we have to paint.  Still it
@@ -2245,33 +2245,36 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
         // We don't use fragment boxes when collecting a transformed layer's bounding box, since it always
         // paints unfragmented.
         LayoutRect clipRect = layer.boundingBox(&layer);
-        expandClipRectForDescendantsAndReflection(clipRect, layer, &layer, transparencyBehavior, paintBehavior);
+        expandClipRectForDescendantsAndReflection(clipRect, layer, &layer, transparencyBehavior, paintBehavior, paintDirtyRect);
         clipRect.expand(toLayoutBoxExtent(layer.filterOutsets()));
         LayoutRect result = transform.mapRect(clipRect);
-        if (!paginationLayer)
+        if (!paginationLayer) {
+            if (paintDirtyRect)
+                result = intersection(result, *paintDirtyRect);
             return result;
-        
+        }
+
         // We have to break up the transformed extent across our columns.
         // Split our box up into the actual fragment boxes that render in the columns/pages and unite those together to
         // get our true bounding box.
         auto& enclosingFragmentedFlow = downcast<RenderFragmentedFlow>(paginationLayer->renderer());
         result = enclosingFragmentedFlow.fragmentsBoundingBox(result);
         result.move(paginationLayer->offsetFromAncestor(rootLayer));
+        if (paintDirtyRect)
+            result = intersection(result, *paintDirtyRect);
         return result;
     }
 
     OptionSet<RenderLayer::CalculateLayerBoundsFlag> flags = transparencyBehavior == HitTestingTransparencyClipBox ? RenderLayer::UseFragmentBoxesIncludingCompositing : RenderLayer::UseFragmentBoxesExcludingCompositing;
     flags.add(RenderLayer::IncludeRootBackgroundPaintingArea);
     auto clipRect = layer.boundingBox(rootLayer, layer.offsetFromAncestor(rootLayer), flags);
-    expandClipRectForDescendantsAndReflection(clipRect, layer, rootLayer, transparencyBehavior, paintBehavior);
+    expandClipRectForDescendantsAndReflection(clipRect, layer, rootLayer, transparencyBehavior, paintBehavior, paintDirtyRect);
     clipRect.expand(toLayoutBoxExtent(layer.filterOutsets()));
 
-    return clipRect;
-}
+    if (paintDirtyRect)
+        clipRect = intersection(clipRect, *paintDirtyRect);
 
-static LayoutRect paintingExtent(const RenderLayer& currentLayer, const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, OptionSet<PaintBehavior> paintBehavior)
-{
-    return intersection(transparencyClipBox(currentLayer, rootLayer, PaintingTransparencyClipBox, RootOfTransparencyClipBox, paintBehavior), paintDirtyRect);
+    return clipRect;
 }
 
 void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const LayoutRect& dirtyRect)
@@ -2292,7 +2295,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
             return;
         }
         context.save();
-        LayoutRect adjustedClipRect = paintingExtent(*this, paintingInfo.rootLayer, dirtyRect, paintingInfo.paintBehavior);
+        LayoutRect adjustedClipRect = transparencyClipBox(*this, paintingInfo.rootLayer, PaintingTransparencyClipBox, RootOfTransparencyClipBox, paintingInfo.paintBehavior, &dirtyRect);
         adjustedClipRect.move(paintingInfo.subpixelOffset);
         auto snappedClipRect = snapRectToDevicePixelsIfNeeded(adjustedClipRect, renderer());
         context.clip(snappedClipRect);
