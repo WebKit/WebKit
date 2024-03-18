@@ -9869,7 +9869,6 @@
         "@property": {
             "syntax": {
                 "codegen-properties": {
-                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
                     "parser-grammar": "<string>"
                 },
                 "specification": {
@@ -9879,7 +9878,6 @@
             },
             "inherits": {
                 "codegen-properties": {
-                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
                     "parser-grammar": "true | false"
                 },
                 "specification": {
@@ -9889,7 +9887,6 @@
             },
             "initial-value": {
                 "codegen-properties": {
-                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
                     "parser-grammar": "<declaration-value>"
                 },
                 "specification": {

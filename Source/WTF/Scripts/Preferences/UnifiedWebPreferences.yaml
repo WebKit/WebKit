@@ -973,20 +973,6 @@ CSSCounterStyleAtRulesEnabled:
     WebCore:
       default: true
 
-CSSCustomPropertiesAndValuesEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Custom Properties and Values API"
-  humanReadableDescription: "Enable CSS Custom Properties and Values API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSFieldSizingEnabled:
   type: bool
   status: testable

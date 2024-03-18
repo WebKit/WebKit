@@ -1206,9 +1206,6 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
 
 RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
-    if (!m_context.propertySettings.cssCustomPropertiesAndValuesEnabled)
-        return nullptr;
-
     auto nameToken = prelude.consumeIncludingWhitespace();
     if (nameToken.type() != IdentToken || !prelude.atEnd())
         return nullptr;

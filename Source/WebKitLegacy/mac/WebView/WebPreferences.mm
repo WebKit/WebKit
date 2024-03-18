@@ -2905,16 +2905,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:enabled forKey:WebKitMaskWebGLStringsEnabledPreferenceKey];
 }
 
-- (BOOL)CSSCustomPropertiesAndValuesEnabled
-{
-    return [self _boolValueForKey:WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey];
-}
-
-- (void)setCSSCustomPropertiesAndValuesEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey];
-}
-
 - (BOOL)privateClickMeasurementEnabled
 {
     return [self _boolValueForKey:WebKitPrivateClickMeasurementEnabledPreferenceKey];
@@ -3021,6 +3011,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (BOOL)CSSCustomPropertiesAndValuesEnabled
+{
+    return YES;
+}
+
+- (void)setCSSCustomPropertiesAndValuesEnabled:(BOOL)flag
+{
+}
 
 - (BOOL)syntheticEditingCommandsEnabled
 {

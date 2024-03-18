@@ -25,7 +25,6 @@
 
 // https://drafts.css-houdini.org/css-properties-values-api-1/#registering-custom-properties
 [
-    EnabledBySetting=CSSCustomPropertiesAndValuesEnabled,
     ImplementedBy=DOMCSSRegisterCustomProperty
 ] partial namespace DOMCSSNamespace {
     [CallWith=CurrentDocument] undefined registerProperty(DOMCSSCustomPropertyDescriptor descriptor);

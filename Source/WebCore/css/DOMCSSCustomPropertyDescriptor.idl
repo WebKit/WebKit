@@ -24,8 +24,7 @@
 */
 
 [
-    JSGenerateToJSObject,
-    EnabledBySetting=CSSCustomPropertiesAndValuesEnabled
+    JSGenerateToJSObject
 ] dictionary DOMCSSCustomPropertyDescriptor {
     required [AtomString] DOMString name;
              DOMString syntax       = "*";
