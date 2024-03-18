@@ -5057,19 +5057,16 @@ bool AXObjectCache::addRelation(Element& origin, const QualifiedName& attribute)
 
     bool addedRelation = false;
     auto relationType = attributeToRelationType(attribute);
-    if (m_document->settings().ariaReflectionForElementReferencesEnabled()) {
-        Ref settings = m_document->settings();
-        if (Element::isElementReflectionAttribute(settings, attribute)) {
-            if (auto reflectedElement = origin.getElementAttribute(attribute))
-                return addRelation(&origin, reflectedElement.get(), relationType);
-        } else if (Element::isElementsArrayReflectionAttribute(settings, attribute)) {
-            if (auto reflectedElements = origin.getElementsArrayAttribute(attribute)) {
-                for (auto reflectedElement : reflectedElements.value()) {
-                    if (addRelation(&origin, reflectedElement.get(), relationType))
-                        addedRelation = true;
-                }
-                return addedRelation;
+    if (Element::isElementReflectionAttribute(Ref { m_document->settings() }, attribute)) {
+        if (auto reflectedElement = origin.getElementAttribute(attribute))
+            return addRelation(&origin, reflectedElement.get(), relationType);
+    } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
+        if (auto reflectedElements = origin.getElementsArrayAttribute(attribute)) {
+            for (auto reflectedElement : reflectedElements.value()) {
+                if (addRelation(&origin, reflectedElement.get(), relationType))
+                    addedRelation = true;
             }
+            return addedRelation;
         }
     }
 

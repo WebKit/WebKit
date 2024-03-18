@@ -2055,16 +2055,13 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
 
 bool Element::isElementReflectionAttribute(const Settings& settings, const QualifiedName& name)
 {
-    return (settings.ariaReflectionForElementReferencesEnabled() && name == HTMLNames::aria_activedescendantAttr)
+    return name == HTMLNames::aria_activedescendantAttr
         || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr)
         || (settings.invokerAttributesEnabled() && name == HTMLNames::invoketargetAttr);
 }
 
-bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const QualifiedName& name)
+bool Element::isElementsArrayReflectionAttribute(const QualifiedName& name)
 {
-    if (!settings.ariaReflectionForElementReferencesEnabled())
-        return false;
-
     switch (name.nodeName()) {
     case AttributeNames::aria_controlsAttr:
     case AttributeNames::aria_describedbyAttr:
@@ -2166,7 +2163,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
     }
     default: {
         Ref document = this->document();
-        if (isElementReflectionAttribute(document->settings(), name) || isElementsArrayReflectionAttribute(document->settings(), name)) {
+        if (isElementReflectionAttribute(document->settings(), name) || isElementsArrayReflectionAttribute(name)) {
             if (auto* map = explicitlySetAttrElementsMapIfExists())
                 map->remove(name);
         }
@@ -2245,7 +2242,7 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
 
 std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const QualifiedName& attributeName) const
 {
-    ASSERT(isElementsArrayReflectionAttribute(document().settings(), attributeName));
+    ASSERT(isElementsArrayReflectionAttribute(attributeName));
 
     if (auto* map = explicitlySetAttrElementsMapIfExists()) {
         if (auto it = map->find(attributeName); it != map->end()) {
@@ -2275,7 +2272,7 @@ std::optional<Vector<RefPtr<Element>>> Element::getElementsArrayAttribute(const 
 
 void Element::setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<RefPtr<Element>>>&& elements)
 {
-    ASSERT(isElementsArrayReflectionAttribute(document().settings(), attributeName));
+    ASSERT(isElementsArrayReflectionAttribute(attributeName));
 
     if (!elements) {
         if (auto* map = explicitlySetAttrElementsMapIfExists())

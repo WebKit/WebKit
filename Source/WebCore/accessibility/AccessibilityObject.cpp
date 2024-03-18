@@ -4120,19 +4120,17 @@ Vector<Ref<Element>> AccessibilityObject::elementsFromAttribute(const QualifiedN
     if (!element)
         return { };
 
-    if (document()->settings().ariaReflectionForElementReferencesEnabled()) {
-        if (Element::isElementReflectionAttribute(document()->settings(), attribute)) {
-            if (RefPtr reflectedElement = element->getElementAttribute(attribute)) {
-                Vector<Ref<Element>> elements;
-                elements.append(reflectedElement.releaseNonNull());
-                return elements;
-            }
-        } else if (Element::isElementsArrayReflectionAttribute(document()->settings(), attribute)) {
-            if (auto reflectedElements = element->getElementsArrayAttribute(attribute)) {
-                return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Ref<Element> {
-                    return *element;
-                });
-            }
+    if (Element::isElementReflectionAttribute(document()->settings(), attribute)) {
+        if (RefPtr reflectedElement = element->getElementAttribute(attribute)) {
+            Vector<Ref<Element>> elements;
+            elements.append(reflectedElement.releaseNonNull());
+            return elements;
+        }
+    } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
+        if (auto reflectedElements = element->getElementsArrayAttribute(attribute)) {
+            return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Ref<Element> {
+                return *element;
+            });
         }
     }
 

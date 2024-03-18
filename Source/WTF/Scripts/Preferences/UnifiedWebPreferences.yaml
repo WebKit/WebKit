@@ -561,20 +561,6 @@ ApplePayEnabled:
       "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
 
-AriaReflectionForElementReferencesEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "ARIA Reflection for Element References"
-  humanReadableDescription: "Enable ARIA reflection for attributes that refer to elements"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 # FIXME: This is on by default in WebKit2 PLATFORM(COCOA). Perhaps we should consider turning it on for WebKitLegacy as well.
 AsyncClipboardAPIEnabled:
   type: bool
