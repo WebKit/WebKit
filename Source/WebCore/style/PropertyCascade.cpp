@@ -130,9 +130,8 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
     }
 
     auto& property = m_properties[id];
-    if (!m_propertyIsPresent[id])
+    if (!m_propertyIsPresent.testAndSet(id))
         property.cssValue = { };
-    m_propertyIsPresent.set(id);
     setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
 }
 

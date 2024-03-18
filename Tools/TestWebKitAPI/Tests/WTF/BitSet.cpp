@@ -763,6 +763,68 @@ void testBitSetForEachSetBit()
 }
 
 template<typename WordType>
+void testBitSetForEachSetBitWithStartIndex()
+{
+    DECLARE_AND_INIT_BITMAPS_FOR_TEST();
+
+    size_t count = 0;
+    ASSERT_TRUE(bitSetZeroes.isEmpty());
+    bitSetZeroes.forEachSetBit(0, [&](size_t i) {
+        constexpr bool notReached = false;
+        ASSERT_TRUE(notReached);
+        count++;
+    });
+    ASSERT_EQ(count, zeroSize);
+
+    bitSetZeroes.forEachSetBit(10, [&](size_t i) {
+        constexpr bool notReached = false;
+        ASSERT_TRUE(notReached);
+        count++;
+    });
+    ASSERT_EQ(count, zeroSize);
+
+    count = 0;
+    bitSet1.forEachSetBit(0, [&](size_t i) {
+        ASSERT_TRUE(bitSet1.get(i));
+        ASSERT_EQ(bitSet1.get(i), expectedBits1[i]);
+        count++;
+    });
+    ASSERT_EQ(count, expectedNumberOfSetBits1);
+
+    count = 0;
+    bitSet1.forEachSetBit(2, [&](size_t i) {
+        ASSERT_TRUE(bitSet1.get(i));
+        ASSERT_EQ(bitSet1.get(i), expectedBits1[i]);
+        count++;
+    });
+    ASSERT_EQ(count, expectedNumberOfSetBits1);
+
+    count = 0;
+    bitSet1.forEachSetBit(3, [&](size_t i) {
+        ASSERT_TRUE(bitSet1.get(i));
+        ASSERT_EQ(bitSet1.get(i), expectedBits1[i]);
+        count++;
+    });
+    ASSERT_EQ(count, expectedNumberOfSetBits1 - 1);
+
+    count = 0;
+    bitSet1.forEachSetBit(16, [&](size_t i) {
+        ASSERT_TRUE(bitSet1.get(i));
+        ASSERT_EQ(bitSet1.get(i), expectedBits1[i]);
+        count++;
+    });
+    ASSERT_EQ(count, expectedNumberOfSetBits1 - 2);
+
+    count = 0;
+    bitSet1.forEachSetBit(125, [&](size_t i) {
+        ASSERT_TRUE(bitSet1.get(i));
+        ASSERT_EQ(bitSet1.get(i), expectedBits1[i]);
+        count++;
+    });
+    ASSERT_EQ(count, 3U);
+}
+
+template<typename WordType>
 void testBitSetFindBit()
 {
     DECLARE_AND_INIT_BITMAPS_FOR_TEST();
@@ -1415,6 +1477,7 @@ TEST(WTF_BitSet, Exclude_uint32_t) { testBitSetExclude<uint32_t>(); }
 TEST(WTF_BitSet, ConcurrentFilter_uint32_t) { testBitSetConcurrentFilter<uint32_t>(); }
 TEST(WTF_BitSet, Subsumes_uint32_t) { testBitSetSubsumes<uint32_t>(); }
 TEST(WTF_BitSet, ForEachSetBit_uint32_t) { testBitSetForEachSetBit<uint32_t>(); }
+TEST(WTF_BitSet, ForEachSetBitWithStartIndex_uint32_t) { testBitSetForEachSetBitWithStartIndex<uint32_t>(); }
 TEST(WTF_BitSet, FindBit_uint32_t) { testBitSetFindBit<uint32_t>(); }
 TEST(WTF_BitSet, Iteration_uint32_t) { testBitSetIteration<uint32_t>(); }
 TEST(WTF_BitSet, MergeAndClear_uint32_t) { testBitSetMergeAndClear<uint32_t>(); }
@@ -1451,6 +1514,7 @@ TEST(WTF_BitSet, Exclude_uint64_t) { testBitSetExclude<uint64_t>(); }
 TEST(WTF_BitSet, ConcurrentFilter_uint64_t) { testBitSetConcurrentFilter<uint64_t>(); }
 TEST(WTF_BitSet, Subsumes_uint64_t) { testBitSetSubsumes<uint64_t>(); }
 TEST(WTF_BitSet, ForEachSetBit_uint64_t) { testBitSetForEachSetBit<uint64_t>(); }
+TEST(WTF_BitSet, ForEachSetBitWithStartIndex_uint64_t) { testBitSetForEachSetBitWithStartIndex<uint64_t>(); }
 TEST(WTF_BitSet, FindBit_uint64_t) { testBitSetFindBit<uint64_t>(); }
 TEST(WTF_BitSet, Iteration_uint64_t) { testBitSetIteration<uint64_t>(); }
 TEST(WTF_BitSet, MergeAndClear_uint64_t) { testBitSetMergeAndClear<uint64_t>(); }

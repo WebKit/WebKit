@@ -28,7 +28,7 @@
 #include "CascadeLevel.h"
 #include "MatchResult.h"
 #include "WebAnimationTypes.h"
-#include <bitset>
+#include <wtf/BitSet.h>
 
 namespace WebCore {
 
@@ -39,6 +39,8 @@ namespace Style {
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using PropertyBitSet = WTF::BitSet<lastLowPriorityProperty + 1>;
+
     enum class PropertyType : uint8_t {
         NonInherited = 1 << 0,
         Inherited = 1 << 1,
@@ -64,7 +66,7 @@ public:
         std::array<CSSValue*, 3> cssValue; // Values for link match states MatchDefault, MatchLink and MatchVisited
     };
 
-    bool isEmpty() const { return m_propertyIsPresent.none() && !m_seenDeferredPropertyCount; }
+    bool isEmpty() const { return m_propertyIsPresent.isEmpty() && !m_seenDeferredPropertyCount; }
 
     bool hasNormalProperty(CSSPropertyID) const;
     const Property& normalProperty(CSSPropertyID) const;
@@ -80,6 +82,9 @@ public:
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
     const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const;
+
+    PropertyBitSet& propertyIsPresent() { return m_propertyIsPresent; }
+    const PropertyBitSet& propertyIsPresent() const { return m_propertyIsPresent; }
 
 private:
     void buildCascade();
@@ -125,7 +130,7 @@ private:
     // It could actually be 2 units smaller, but then we would have to subtract 'firstCSSProperty', which may not be worth it.
     // 'm_propertyIsPresent' is not used for deferred properties, so we only need to cover up to the last low priority one.
     std::array<Property, lastDeferredProperty + 1> m_properties;
-    std::bitset<lastLowPriorityProperty + 1> m_propertyIsPresent;
+    PropertyBitSet m_propertyIsPresent;
 
     static constexpr unsigned deferredPropertyCount = lastDeferredProperty - firstDeferredProperty + 1;
     std::array<unsigned, deferredPropertyCount> m_deferredPropertyIndices { };
@@ -141,7 +146,7 @@ private:
 inline bool PropertyCascade::hasNormalProperty(CSSPropertyID id) const
 {
     ASSERT(id < firstDeferredProperty);
-    return m_propertyIsPresent[id];
+    return m_propertyIsPresent.get(id);
 }
 
 inline const PropertyCascade::Property& PropertyCascade::normalProperty(CSSPropertyID id) const

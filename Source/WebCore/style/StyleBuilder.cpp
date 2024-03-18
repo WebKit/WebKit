@@ -144,22 +144,32 @@ void Builder::applyProperties(int firstProperty, int lastProperty)
 template<Builder::CustomPropertyCycleTracking trackCycles>
 inline void Builder::applyPropertiesImpl(int firstProperty, int lastProperty)
 {
-    for (int id = firstProperty; id <= lastProperty; ++id) {
-        CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
-        if (!m_cascade.hasNormalProperty(propertyID))
-            continue;
+    auto applyProperty = [&](size_t index) ALWAYS_INLINE_LAMBDA {
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>(index);
         ASSERT(propertyID != CSSPropertyCustom);
         auto& property = m_cascade.normalProperty(propertyID);
 
-        if (trackCycles == CustomPropertyCycleTracking::Enabled) {
+        if constexpr (trackCycles == CustomPropertyCycleTracking::Enabled) {
             m_state.m_inProgressProperties.set(propertyID);
             applyCascadeProperty(property);
             m_state.m_inProgressProperties.clear(propertyID);
-            continue;
+            return;
         }
 
         // If we don't have any custom properties, then there can't be any cycles.
         applyCascadeProperty(property);
+    };
+
+    if (m_cascade.propertyIsPresent().size() == static_cast<size_t>(lastProperty + 1)) {
+        m_cascade.propertyIsPresent().forEachSetBit(firstProperty, applyProperty);
+        return;
+    }
+
+    for (int id = firstProperty; id <= lastProperty; ++id) {
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
+        if (!m_cascade.hasNormalProperty(propertyID))
+            continue;
+        applyProperty(id);
     }
 }
 

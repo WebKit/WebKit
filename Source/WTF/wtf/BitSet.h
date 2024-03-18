@@ -78,9 +78,12 @@ public:
     // void, in which case, we'll iterate every set bit.
     template<typename Func>
     constexpr ALWAYS_INLINE void forEachSetBit(const Func&) const;
-    
+
+    template<typename Func>
+    constexpr ALWAYS_INLINE void forEachSetBit(size_t startIndex, const Func&) const;
+
     constexpr size_t findBit(size_t startIndex, bool value) const;
-    
+
     class iterator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -409,13 +412,14 @@ ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(const F
         // a fast hardware instruction. Otherwise, this will actually result in
         // worse performance.
         while (word) {
+            WordType temp = word & -word;
             size_t offset = ctz(word);
             if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
                 if (func(base + offset) == IterationStatus::Done)
                     return;
             } else
                 func(base + offset);
-            word &= ~(1ull << offset);
+            word ^= temp;
         }
 #else
         for (size_t j = 0; j < wordSize; ++j) {
@@ -429,6 +433,59 @@ ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(const F
             word >>= 1;
         }
 #endif
+    }
+}
+
+template<size_t bitSetSize, typename WordType>
+template<typename Func>
+ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(size_t startIndex, const Func& func) const
+{
+    auto iterate = [&](WordType word, size_t i) ALWAYS_INLINE_LAMBDA {
+        size_t base = i * wordSize;
+
+#if COMPILER(GCC_COMPATIBLE) && (CPU(X86_64) || CPU(ARM64))
+        // We should only use ctz() when we know that ctz() is implementated using
+        // a fast hardware instruction. Otherwise, this will actually result in
+        // worse performance.
+        while (word) {
+            WordType temp = word & -word;
+            size_t offset = ctz(word);
+            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
+                if (func(base + offset) == IterationStatus::Done)
+                    return;
+            } else
+                func(base + offset);
+            word ^= temp;
+        }
+#else
+        for (size_t j = 0; j < wordSize; ++j) {
+            if (word & 1) {
+                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
+                    if (func(base + j) == IterationStatus::Done)
+                        return;
+                } else
+                    func(base + j);
+            }
+            word >>= 1;
+        }
+#endif
+    };
+
+    size_t startWord = startIndex / wordSize;
+    if (startWord == words)
+        return;
+
+    WordType word = bits[startWord];
+    size_t startIndexInWord = startIndex - startWord * wordSize;
+    WordType masked = word & (~((static_cast<WordType>(1) << startIndexInWord) - 1));
+    if (masked)
+        iterate(masked, startWord);
+
+    for (size_t i = startWord + 1; i < words; ++i) {
+        WordType word = bits[i];
+        if (!word)
+            continue;
+        iterate(word, i);
     }
 }
 
