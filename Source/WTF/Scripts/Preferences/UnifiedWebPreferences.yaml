@@ -889,20 +889,6 @@ CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
     WebCore:
       default: false
 
-CSS3DTransformInteroperabilityEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS 3D Transform Interoperability"
-  humanReadableDescription: "Enable 3D transform behavior that is specification-compliant but backwards incompatible"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSCascadeLayersEnabled:
   type: bool
   status: stable

@@ -1137,8 +1137,7 @@ private:
         const LayoutSize& translationOffset = LayoutSize());
     HitLayer hitTestList(LayerList, RenderLayer* rootLayer, const HitTestRequest&, HitTestResult&,
         const LayoutRect& hitTestRect, const HitTestLocation&,
-        const HitTestingTransformState*, double* zOffsetForDescendants, double* zOffset,
-        const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
+        const HitTestingTransformState*, double* zOffsetForDescendants, bool depthSortDescendants);
 
     Ref<HitTestingTransformState> createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
         const LayoutRect& hitTestRect, const HitTestLocation&,

@@ -606,7 +606,7 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
             break;
         LayoutSize containerOffset = renderer->offsetFromContainer(*container, LayoutPoint());
         TransformationMatrix localTransform;
-        renderer->getTransformFromContainer(container, containerOffset, localTransform);
+        renderer->getTransformFromContainer(containerOffset, localTransform);
         transform = localTransform * transform;
         renderer = container;
     }

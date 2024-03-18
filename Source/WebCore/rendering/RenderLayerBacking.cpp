@@ -3956,11 +3956,6 @@ bool RenderLayerBacking::useGiantTiles() const
     return renderer().settings().useGiantTiles();
 }
 
-bool RenderLayerBacking::useCSS3DTransformInteroperability() const
-{
-    return renderer().settings().css3DTransformInteroperabilityEnabled();
-}
-
 void RenderLayerBacking::logFilledVisibleFreshTile(unsigned blankPixelCount)
 {
     if (auto* loggingClient = renderer().page().performanceLoggingClient())

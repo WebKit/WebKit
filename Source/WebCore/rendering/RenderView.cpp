@@ -274,7 +274,7 @@ void RenderView::mapLocalToContainer(const RenderLayerModelObject* ancestorConta
 
     if (!ancestorContainer && mode.contains(UseTransforms) && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
-        getTransformFromContainer(nullptr, LayoutSize(), t);
+        getTransformFromContainer(LayoutSize(), t);
         transformState.applyTransform(t);
     }
 }
@@ -289,7 +289,7 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
 
     if (!ancestorToStopAt && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
-        getTransformFromContainer(nullptr, LayoutSize(), t);
+        getTransformFromContainer(LayoutSize(), t);
         geometryMap.pushView(this, toLayoutSize(scrollPosition), &t);
     } else
         geometryMap.pushView(this, toLayoutSize(scrollPosition));
@@ -301,7 +301,7 @@ void RenderView::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, Tra
 {
     if (mode & UseTransforms && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
-        getTransformFromContainer(nullptr, LayoutSize(), t);
+        getTransformFromContainer(LayoutSize(), t);
         transformState.applyTransform(t);
     }
 
