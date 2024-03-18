@@ -89,7 +89,6 @@ struct CSSParserContext {
     bool cascadeLayersEnabled : 1 { false };
     bool gradientPremultipliedAlphaInterpolationEnabled : 1 { false };
     bool gradientInterpolationColorSpacesEnabled : 1 { false };
-    bool subgridEnabled : 1 { false };
     bool masonryEnabled : 1 { false };
     bool cssNestingEnabled : 1 { false };
     bool cssPaintingAPIEnabled : 1 { false };

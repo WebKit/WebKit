@@ -6555,20 +6555,6 @@ StorageBlockingPolicy:
     WebCore:
       default: StorageBlockingPolicy::AllowAll
 
-SubgridEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS subgrid support"
-  humanReadableDescription: "Enable CSS subgrid support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 SuppressesIncrementalRendering:
   type: bool
   status: embedder

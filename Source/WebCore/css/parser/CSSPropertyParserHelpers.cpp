@@ -8032,7 +8032,7 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, const CSSParse
     if (context.masonryEnabled && range.peek().id() == CSSValueMasonry)
         return consumeIdent(range);
     bool seenAutoRepeat = false;
-    if (trackListType == GridTemplate && context.subgridEnabled && range.peek().id() == CSSValueSubgrid) {
+    if (trackListType == GridTemplate && range.peek().id() == CSSValueSubgrid) {
         consumeIdent(range);
         CSSValueListBuilder values;
         while (!range.atEnd() && range.peek().type() != DelimiterToken) {
