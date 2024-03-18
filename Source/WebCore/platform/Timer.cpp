@@ -263,7 +263,11 @@ struct SameSizeAsTimer {
 
     WeakPtr<TimerAlignment> timerAlignment;
     double times[2];
-    void* pointers[3];
+    void* pointers[2];
+#if CPU(ADDRESS32)
+    uint8_t bitfields;
+#endif
+    void* pointer;
 };
 
 static_assert(sizeof(Timer) == sizeof(SameSizeAsTimer), "Timer should stay small");
