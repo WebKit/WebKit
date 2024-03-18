@@ -117,7 +117,9 @@ void ScrollingTreeFrameScrollingNodeNicosia::currentScrollPositionChanged(Scroll
 void ScrollingTreeFrameScrollingNodeNicosia::repositionScrollingLayers()
 {
     auto* scrollLayer = static_cast<Nicosia::PlatformLayer*>(scrolledContentsLayer());
-    ASSERT(scrollLayer);
+    if (!scrollLayer)
+        return;
+
     auto& compositionLayer = downcast<Nicosia::CompositionLayer>(*scrollLayer);
 
     auto scrollPosition = currentScrollPosition();
