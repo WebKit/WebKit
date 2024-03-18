@@ -123,8 +123,6 @@ const TestFeatures& TestOptions::defaults()
             { "DigitalCredentialsEnabled", false },
             { "GenericCueAPIEnabled", false },
             { "IsLoggedInAPIEnabled", false },
-            { "LazyIframeLoadingEnabled", false },
-            { "LazyImageLoadingEnabled", false },
             { "RequestIdleCallbackEnabled", false },
             { "WebAuthenticationEnabled", false },
 #elif PLATFORM(WIN)
