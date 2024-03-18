@@ -85,7 +85,6 @@ struct CSSParserContext {
 #endif
     bool useLegacyBackgroundSizeShorthandBehavior : 1 { false };
     bool focusVisibleEnabled : 1 { false };
-    bool hasPseudoClassEnabled : 1 { false };
     bool cascadeLayersEnabled : 1 { false };
     bool gradientPremultipliedAlphaInterpolationEnabled : 1 { false };
     bool gradientInterpolationColorSpacesEnabled : 1 { false };

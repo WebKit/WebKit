@@ -130,8 +130,7 @@
             "conditional": "ENABLE(VIDEO)"
         },
         "has": {
-            "argument": "required",
-            "settings-flag": "hasPseudoClassEnabled"
+            "argument": "required"
         },
         "horizontal": {
             "comment": "For scrollbar styling.",
