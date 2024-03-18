@@ -996,7 +996,7 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
 
     // Delete collapsed whitespace so that inserting nbsps doesn't uncollapse it.
     Position upstreamPos = position.upstream();
-    deleteInsignificantText(position.upstream(), position.downstream());
+    deleteInsignificantText(upstreamPos, position.downstream());
     position = upstreamPos.downstream();
 
     VisiblePosition visiblePos(position);
