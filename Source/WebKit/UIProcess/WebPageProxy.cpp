@@ -5709,7 +5709,9 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
             return callback();
         protectedThis->callAfterNextPresentationUpdate(WTFMove(callback));
     });
-    sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [aggregator] { });
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [aggregator] { }, pageID);
+    });
 }
 
 void WebPageProxy::preferencesDidChange()
