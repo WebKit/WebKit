@@ -2261,7 +2261,8 @@ header: <WebCore/NetworkLoadInformation.h>
 [Nested] enum class WebCore::NetworkTransactionInformation::Type : bool
 
 class WebCore::ContentType {
-    String raw()
+    String raw();
+    bool typeWasInferredFromExtension();
 }
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)

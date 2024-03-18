@@ -921,8 +921,6 @@ webkit.org/b/140022 http/tests/media/track-in-band-hls-metadata.html [ Pass Time
 http/tests/media/remove-while-loading.html [ Skip ]
 http/tests/media/video-accept-encoding.html [ Failure ]
 http/tests/media/video-cancel-load.html [ Skip ]
-http/tests/media/video-served-as-text.html [ Failure ]
-http/tests/media/video-throttled-load-metadata.html [ Failure ]
 http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 webkit.org/b/229101 http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html [ Pass Failure ]

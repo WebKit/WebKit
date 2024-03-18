@@ -485,7 +485,7 @@ void RemoteMediaPlayerProxy::mediaPlayerRateChanged()
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RateChanged(m_player->effectiveRate(), timeUpdateData(*m_player, m_player->currentTime())), m_id);
 }
 
-void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad() const
+void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad()
 {
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::EngineFailedToLoad(m_player->platformErrorCode()), m_id);
 }

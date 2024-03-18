@@ -35,6 +35,7 @@ namespace WebCore {
     macro(alternative, "alternative") \
     macro(applicationXHTMLContentType, "application/xhtml+xml") \
     macro(applicationXMLContentType, "application/xml") \
+    macro(applicationOctetStream, "application/octet-stream") \
     macro(auto, "auto") \
     macro(captions, "captions") \
     macro(commentary, "commentary") \

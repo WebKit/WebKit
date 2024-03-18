@@ -1348,7 +1348,12 @@ public:
         assertIsDead();
     }
 
-    explicit operator bool() const { return m_promise && m_promise->isSettled(); }
+    bool isSettled() const
+    {
+        ASSERT(m_promise, "used after moved");
+        return m_promise && m_promise->isSettled();
+    }
+    explicit operator bool() const { return isSettled(); }
     bool isNothing() const
     {
         ASSERT(m_promise, "used after moved");

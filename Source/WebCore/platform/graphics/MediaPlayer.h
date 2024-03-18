@@ -265,7 +265,7 @@ public:
 
     virtual String mediaPlayerElementId() const { return emptyString(); }
 
-    virtual void mediaPlayerEngineFailedToLoad() const { }
+    virtual void mediaPlayerEngineFailedToLoad() { }
 
     virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
     virtual MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const { return MediaPlayerEnums::VideoFullscreenModeNone; }
@@ -632,6 +632,7 @@ public:
 #endif
 
     static void resetMediaEngines();
+    void reset();
 
 #if USE(GSTREAMER)
     void simulateAudioInterruption();
@@ -659,9 +660,9 @@ public:
     void setShouldDisableSleep(bool);
     bool shouldDisableSleep() const;
 
-    String contentMIMEType() const { return m_contentType.containerType(); }
-    String contentTypeCodecs() const { return m_contentType.parameter(ContentType::codecsParameter()); }
-    bool contentMIMETypeWasInferredFromExtension() const { return m_contentMIMETypeWasInferredFromExtension; }
+    String contentMIMEType() const;
+    String contentTypeCodecs() const;
+    bool contentMIMETypeWasInferredFromExtension() const;
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     void setShouldCheckHardwareSupport(bool);
@@ -774,7 +775,6 @@ private:
     bool m_inPrivateBrowsingMode { false };
     bool m_shouldPrepareToPlay { false };
     bool m_shouldPrepareToRender { false };
-    bool m_contentMIMETypeWasInferredFromExtension { false };
     bool m_initializingMediaEngine { false };
     DynamicRangeMode m_preferredDynamicRangeMode;
     PitchCorrectionAlgorithm m_pitchCorrectionAlgorithm { PitchCorrectionAlgorithm::BestAllAround };

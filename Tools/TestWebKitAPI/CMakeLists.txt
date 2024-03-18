@@ -205,6 +205,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/IntSizeTests.cpp
         Tests/WebCore/KeyedCoding.cpp
         Tests/WebCore/LayoutUnitTests.cpp
+        Tests/WebCore/MIMESniffer.cpp
         Tests/WebCore/MIMETypeRegistry.cpp
         Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp

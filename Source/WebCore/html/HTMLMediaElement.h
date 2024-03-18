@@ -41,6 +41,7 @@
 #include "MediaElementSession.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
+#include "MediaResourceSniffer.h"
 #include "MediaUniqueIdentifier.h"
 #include "ReducedResolutionSeconds.h"
 #include "TextTrackClient.h"
@@ -830,7 +831,7 @@ private:
     void mediaPlayerGetRawCookies(const URL&, MediaPlayerClient::GetRawCookiesCallback&&) const final;
 #endif
 
-    void mediaPlayerEngineFailedToLoad() const final;
+    void mediaPlayerEngineFailedToLoad() final;
 
     double mediaPlayerRequestedPlaybackRate() const final;
     VideoFullscreenMode mediaPlayerFullscreenMode() const final { return fullscreenMode(); }
@@ -875,6 +876,7 @@ private:
     virtual void scheduleResizeEventIfSizeChanged(const FloatSize&) { }
 
     void selectMediaResource();
+    void queueLoadMediaResourceTask();
     void loadResource(const URL&, const ContentType&, const String& keySystem);
     void scheduleNextSourceChild();
     void loadNextSourceChild();
@@ -1052,6 +1054,11 @@ private:
     void setInActiveDocument(bool);
 
     void checkForAudioAndVideo();
+
+    bool needsContentTypeToPlay() const;
+    using SnifferPromise = MediaResourceSniffer::Promise;
+    Ref<SnifferPromise> sniffForContentType(const URL&);
+    void cancelSniffer();
 
     void playPlayer();
     void pausePlayer();
@@ -1348,6 +1355,9 @@ private:
     bool m_changingSynthesisState { false };
 
     FloatSize m_videoLayerSize { };
+    RefPtr<MediaResourceSniffer> m_sniffer;
+    bool m_networkErrorOccured { false };
+    std::optional<ContentType> m_lastContentTypeUsed;
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;

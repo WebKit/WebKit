@@ -1936,21 +1936,32 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
         return MediaPlayerAVAssetStatusDoesNotExist;
 
     if (!m_cachedAssetIsLoaded) {
-        for (NSString *keyName in assetMetadataKeyNames()) {
-            NSError *error = nil;
-            AVKeyValueStatus keyStatus = [m_avAsset statusOfValueForKey:keyName error:&error];
+        NSError *error = nil;
+        auto status = [&] {
+            for (NSString *keyName in assetMetadataKeyNames()) {
+                AVKeyValueStatus keyStatus = [m_avAsset statusOfValueForKey:keyName error:&error];
 
-            if (error)
-                ERROR_LOG(LOGIDENTIFIER, "failed for ", keyName, ", error = ", error);
+                if (error)
+                    ERROR_LOG(LOGIDENTIFIER, "failed for ", keyName, ", error = ", error);
 
-            if (keyStatus < AVKeyValueStatusLoaded)
-                return MediaPlayerAVAssetStatusLoading; // At least one key is not loaded yet.
+                if (keyStatus < AVKeyValueStatusLoaded)
+                    return MediaPlayerAVAssetStatusLoading; // At least one key is not loaded yet.
 
-            if (keyStatus == AVKeyValueStatusFailed)
-                return MediaPlayerAVAssetStatusFailed; // At least one key could not be loaded.
+                if (keyStatus == AVKeyValueStatusFailed)
+                    return MediaPlayerAVAssetStatusFailed; // At least one key could not be loaded.
 
-            if (keyStatus == AVKeyValueStatusCancelled)
-                return MediaPlayerAVAssetStatusCancelled; // Loading of at least one key was cancelled.
+                if (keyStatus == AVKeyValueStatusCancelled)
+                    return MediaPlayerAVAssetStatusCancelled; // Loading of at least one key was cancelled.
+            }
+            return MediaPlayerAVAssetStatusLoaded;
+        }();
+        if (status != MediaPlayerAVAssetStatusLoaded) {
+            if (status != MediaPlayerAVAssetStatusFailed)
+                return status;
+            if (([error.domain isEqualToString:@"AVFoundationErrorDomain"] && error.code == AVErrorServerIncorrectlyConfigured)
+                || [error.domain isEqualToString:@"NSURLErrorDomain"])
+                return MediaPlayerAVAssetStatusNetworkError;
+            return status;
         }
         m_cachedAssetIsLoaded = true;
     }

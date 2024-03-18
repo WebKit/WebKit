@@ -527,11 +527,8 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                     } else
                         newNetworkState = MediaPlayer::NetworkState::Idle;
                 }
-            } else {
-                // FIX ME: fetch the error associated with the @"playable" key to distinguish between format 
-                // and network errors.
-                newNetworkState = MediaPlayer::NetworkState::FormatError;
-            }
+            } else
+                newNetworkState = assetStatus == MediaPlayerAVAssetStatusNetworkError ? MediaPlayer::NetworkState::NetworkError : MediaPlayer::NetworkState::FormatError;
         }
 
         if (!hasAvailableVideoFrame())

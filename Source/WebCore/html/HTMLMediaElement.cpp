@@ -90,6 +90,7 @@
 #include "MediaPlayer.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaResourceLoader.h"
+#include "MediaResourceSniffer.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkingContext.h"
 #include "NodeName.h"
@@ -644,6 +645,8 @@ HTMLMediaElement::~HTMLMediaElement()
         m_isolatedWorld->clearWrappers();
 
     m_completelyLoaded = true;
+
+    cancelSniffer();
 
     if (RefPtr player = m_player) {
         player->invalidate();
@@ -1589,11 +1592,11 @@ void HTMLMediaElement::loadNextSourceChild()
     loadResource(mediaURL, contentType, keySystem);
 }
 
-void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& contentType, const String& keySystem)
+void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& initialContentType, const String& keySystem)
 {
     ASSERT(initialURL.isEmpty() || isSafeToLoadURL(initialURL, Complain));
 
-    INFO_LOG(LOGIDENTIFIER, initialURL, contentType, keySystem);
+    INFO_LOG(LOGIDENTIFIER, initialURL, initialContentType, keySystem);
 
     RefPtr frame = document().frame();
     if (!frame) {
@@ -1638,7 +1641,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& co
         // Resources that are not present in the manifest will always fail to load (at least, after the
         // cache has been primed the first time), making the testing of offline applications simpler.
         if (!resource || resource->path().isEmpty()) {
-            mediaLoadingFailed(MediaPlayer::NetworkState::NetworkError);
+            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
             return;
         }
     }
@@ -1678,55 +1681,107 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& co
 
     updateVolume();
 
-    bool loadAttempted = false;
-#if ENABLE(MEDIA_SOURCE)
-    if (!m_mediaSource && url.protocolIs(mediaSourceBlobProtocol) && !m_remotePlaybackConfiguration) {
-        if (RefPtr mediaSource = MediaSource::lookup(url.string()))
-            m_mediaSource = MediaSourceInterfaceMainThread::create(mediaSource.releaseNonNull());
-    }
+    auto contentType = initialContentType;
 
-    if (m_mediaSource) {
-        loadAttempted = true;
-
-        ALWAYS_LOG(LOGIDENTIFIER, "loading MSE blob");
-        if (!m_mediaSource->attachToElement(WeakPtr { *this })) {
-            // Forget our reference to the MediaSource, so we leave it alone
-            // while processing remainder of load failure.
-            m_mediaSource = nullptr;
-            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
-        } else if (RefPtr mediaSource = m_mediaSource; !mediaSource->client() || !player->load(url, contentType, *mediaSource->client())) {
-            // We have to detach the MediaSource before we forget the reference to it.
-            mediaSource->detachFromElement();
-            m_mediaSource = nullptr;
-            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
-        }
-    }
-#endif
-#if ENABLE(MEDIA_STREAM)
-    if (!loadAttempted && m_mediaStreamSrcObject && !m_remotePlaybackConfiguration) {
-        loadAttempted = true;
-        ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob ", m_mediaStreamSrcObject->logIdentifier());
-        if (!player->load(m_mediaStreamSrcObject->protectedPrivateStream()))
-            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
-    }
-#endif
-
-    if (!loadAttempted && m_blob && !m_remotePlaybackConfiguration) {
-        loadAttempted = true;
+    if (m_blob && !m_remotePlaybackConfiguration) {
         ALWAYS_LOG(LOGIDENTIFIER, "loading generic blob");
         if (!m_blobURLForReading.isEmpty())
             ThreadableBlobRegistry::unregisterBlobURL(m_blobURLForReading);
         m_blobURLForReading = { BlobURL::createPublicURL(document().protectedSecurityOrigin().ptr()), document().topOrigin().data() };
         ThreadableBlobRegistry::registerBlobURL(document().protectedSecurityOrigin().ptr(), document().policyContainer(), m_blobURLForReading, m_blob->url());
 
-        if (!player->load(m_blobURLForReading, contentType.isEmpty() ? ContentType { m_blob->type() } : contentType, keySystem, !!m_remotePlaybackConfiguration))
-            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+        url = m_blobURLForReading;
+        if (contentType.isEmpty())
+            contentType = ContentType { m_blob->type() };
     }
 
-    if (!loadAttempted && !player->load(url, url.protocolIsBlob() && contentType.isEmpty() ? ContentType { ThreadableBlobRegistry::blobType(url) } : contentType, keySystem, !!m_remotePlaybackConfiguration))
-        mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+    auto completionHandler = [url, player = m_player, keySystem, weakThis = WeakPtr { *this }, this](SnifferPromise::Result&& result) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
 
-    mediaPlayerRenderingModeChanged();
+        if (!result) {
+            if (result.error() != PlatformMediaError::Cancelled)
+                mediaLoadingFailed(MediaPlayer::NetworkState::NetworkError);
+            return;
+        }
+
+#if ENABLE(MEDIA_SOURCE)
+        if (!m_mediaSource && url.protocolIs(mediaSourceBlobProtocol) && !m_remotePlaybackConfiguration) {
+            if (RefPtr mediaSource = MediaSource::lookup(url.string()))
+                m_mediaSource = MediaSourceInterfaceMainThread::create(mediaSource.releaseNonNull());
+        }
+
+        if (m_mediaSource) {
+            ALWAYS_LOG(LOGIDENTIFIER, "loading MSE blob");
+            if (!m_mediaSource->attachToElement(*this)) {
+                // Forget our reference to the MediaSource, so we leave it alone
+                // while processing remainder of load failure.
+                m_mediaSource = nullptr;
+            } else  if (RefPtr mediaSource = m_mediaSource; !mediaSource->client() || !player->load(url, *result, *mediaSource->client())) {
+                // We have to detach the MediaSource before we forget the reference to it.
+                mediaSource->detachFromElement();
+                m_mediaSource = nullptr;
+            }
+            if (!m_mediaSource)
+                mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+            else
+                mediaPlayerRenderingModeChanged();
+            return;
+        }
+#endif
+#if ENABLE(MEDIA_STREAM)
+        if (m_mediaStreamSrcObject && !m_remotePlaybackConfiguration) {
+            ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob ", m_mediaStreamSrcObject->logIdentifier());
+            if (!player->load(m_mediaStreamSrcObject->protectedPrivateStream()))
+                mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+            else
+                mediaPlayerRenderingModeChanged();
+            return;
+        }
+#endif
+
+        if (!player->load(url, *result, keySystem, !!m_remotePlaybackConfiguration))
+            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+        else
+            mediaPlayerRenderingModeChanged();
+    };
+
+    if (needsContentTypeToPlay() && !url.isEmpty()) {
+        if (contentType.isEmpty() && url.protocolIsData())
+            contentType = ContentType(mimeTypeFromDataURL(url.string()));
+        else {
+            // If the MIME type is missing or is not meaningful, try to figure it out from the URL.
+            AtomString containerType { contentType.containerType() };
+            if (containerType.isEmpty() || containerType == applicationOctetStreamAtom() || containerType == textPlainContentTypeAtom())
+                contentType = ContentType::fromURL(url);
+        }
+        m_lastContentTypeUsed = contentType;
+    }
+
+    completionHandler(WTFMove(contentType));
+}
+
+bool HTMLMediaElement::needsContentTypeToPlay() const
+{
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSource || (currentSrc().protocolIs(mediaSourceBlobProtocol) && MediaSource::lookup(currentSrc().string())))
+        return false;
+#endif
+#if ENABLE(MEDIA_STREAM)
+        if (m_mediaStreamSrcObject)
+            return false;
+#endif
+    return !m_remotePlaybackConfiguration;
+}
+
+Ref<HTMLMediaElement::SnifferPromise> HTMLMediaElement::sniffForContentType(const URL& url)
+{
+    ResourceRequest request(url);
+    request.setAllowCookies(true);
+    // https://mimesniff.spec.whatwg.org/#reading-the-resource-header defines a maximum size of 1445 bytes fetch.
+    m_sniffer = MediaResourceSniffer::create(*mediaPlayerCreateResourceLoader(), WTFMove(request), 1445);
+    return m_sniffer->promise();
 }
 
 void HTMLMediaElement::mediaSourceWasDetached()
@@ -2693,6 +2748,27 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         m_networkState = NETWORK_EMPTY;
         updateBufferingState();
         updateStalledState();
+        return;
+    }
+
+    if (state == MediaPlayer::NetworkState::FormatError && m_readyState < HAVE_METADATA && m_loadState == LoadingFromSrcAttr && needsContentTypeToPlay() && m_firstTimePlaying && !m_sniffer && !m_networkErrorOccured && m_lastContentTypeUsed) {
+        // We couldn't find a suitable MediaPlayer, this could be due to the content-type having been initially set incorrectly.
+        auto url = m_blob ? m_blobURLForReading.url() : currentSrc();
+        sniffForContentType(url)->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *this }, this, url, player = m_player, lastContentType = *m_lastContentTypeUsed](auto&& result) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            if (!result) {
+                if (result.error() != PlatformMediaError::Cancelled)
+                    mediaLoadingFailed(MediaPlayer::NetworkState::NetworkError);
+                return;
+            }
+            player->reset();
+            if (result->isEmpty() || lastContentType == *result || !player->load(url, *result, String { }, !!m_remotePlaybackConfiguration))
+                mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+            else
+                mediaPlayerRenderingModeChanged();
+        });
         return;
     }
 
@@ -6237,6 +6313,13 @@ void HTMLMediaElement::cancelPendingTasks()
 #if !HAVE(MEDIA_VOLUME_PER_ELEMENT)
     m_volumeRevertTaskCancellationGroup.cancel();
 #endif
+    cancelSniffer();
+}
+
+void HTMLMediaElement::cancelSniffer()
+{
+    if (auto sniffer = std::exchange(m_sniffer, { }))
+        sniffer->cancel();
 }
 
 void HTMLMediaElement::userCancelledLoad()
@@ -7488,8 +7571,13 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         setIsPlayingToWirelessTarget(false);
 #endif
 
-    if (RefPtr player = std::exchange(m_player, { }))
+    m_networkErrorOccured = false;
+    m_lastContentTypeUsed.reset();
+    if (RefPtr player = std::exchange(m_player, { })) {
+        // The sniffer completionHandler would have taken a reference to the old MediaPlayer.
+        cancelSniffer();
         player->invalidate();
+    }
 
     m_player = MediaPlayer::create(*this);
     RefPtr player = m_player;
@@ -7956,10 +8044,13 @@ void HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, MediaPlayerClien
 
 #endif
 
-void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
+void HTMLMediaElement::mediaPlayerEngineFailedToLoad()
 {
     if (!m_player)
         return;
+
+    if (m_player->networkState() == MediaPlayer::NetworkState::NetworkError)
+        m_networkErrorOccured = true;
 
     if (RefPtr page = document().page())
         page->diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::engineFailedToLoadKey(), m_player->engineDescription(), m_player->platformErrorCode(), 4, ShouldSample::No);

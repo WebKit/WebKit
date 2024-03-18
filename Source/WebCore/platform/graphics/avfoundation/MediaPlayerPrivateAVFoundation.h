@@ -239,6 +239,7 @@ protected:
         MediaPlayerAVAssetStatusLoading,
         MediaPlayerAVAssetStatusFailed,
         MediaPlayerAVAssetStatusCancelled,
+        MediaPlayerAVAssetStatusNetworkError,
         MediaPlayerAVAssetStatusLoaded,
         MediaPlayerAVAssetStatusPlayable,
     };
