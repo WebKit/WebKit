@@ -1364,7 +1364,7 @@ sub XcodeOptionStringNoConfig
 
 sub XcodeCoverageSupportOptions()
 {
-    return ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig");
+    return ("CLANG_COVERAGE_MAPPING=YES");
 }
 
 sub XcodeExportCompileCommandsOptions()

@@ -96,6 +96,14 @@ XCODE_OPTIONS += CC=$(CC)
 endif
 endif
 
+ifeq ($(CODE_COVERAGE),YES)
+CONFIG_OPTIONS += --coverage
+else
+ifeq ($(CODE_COVERAGE),NO)
+CONFIG_OPTIONS += --no-coverage
+endif
+endif
+
 ifneq ($(CPLUSPLUS),)
 XCODE_OPTIONS += CPLUSPLUS=$(CPLUSPLUS)
 endif
