@@ -99,7 +99,10 @@ int AccessibilityObject::accessibilitySecureFieldLength()
     if (!isSecureField())
         return 0;
 
-    auto* renderObject = downcast<AccessibilityRenderObject>(*this).renderer();
+    CheckedPtr renderObject = [this] {
+        auto* accessibilityRenderObject = dynamicDowncast<AccessibilityRenderObject>(*this);
+        return accessibilityRenderObject ? accessibilityRenderObject->renderer() : nullptr;
+    }();
     if (!renderObject)
         return 0;
 
