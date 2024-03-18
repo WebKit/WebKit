@@ -40,6 +40,8 @@ public:
     static std::unique_ptr<ImageBufferSkiaAcceleratedBackend> create(const Parameters&, const ImageBufferCreationContext&);
     ~ImageBufferSkiaAcceleratedBackend();
 
+    static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
+
 private:
     ImageBufferSkiaAcceleratedBackend(const Parameters&, sk_sp<SkSurface>&&);
 
