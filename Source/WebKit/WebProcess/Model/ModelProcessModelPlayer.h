@@ -62,6 +62,7 @@ private:
 
     // Messages
     void didCreateLayer(WebCore::LayerHostingContextIdentifier);
+    void didFinishLoading();
 
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) final;

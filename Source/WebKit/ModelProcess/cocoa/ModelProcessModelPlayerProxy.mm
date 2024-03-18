@@ -311,6 +311,8 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     updateTransform();
     updateOpacity();
     startAnimating();
+
+    send(Messages::ModelProcessModelPlayer::DidFinishLoading());
 }
 
 void ModelProcessModelPlayerProxy::didFailLoading(WebCore::REModelLoader& loader, const WebCore::ResourceError& error)

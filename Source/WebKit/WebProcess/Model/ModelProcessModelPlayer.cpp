@@ -60,7 +60,8 @@ ALWAYS_INLINE void ModelProcessModelPlayer::send(T&& message)
     WebProcess::singleton().modelProcessModelPlayerManager().modelProcessConnection().connection().send(std::forward<T>(message), m_id);
 }
 
-// Messages
+// MARK: - Messages
+
 void ModelProcessModelPlayer::didCreateLayer(LayerHostingContextIdentifier identifier)
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer obtained new layerHostingContextIdentifier id=%" PRIu64, this, m_id.toUInt64());
@@ -68,7 +69,14 @@ void ModelProcessModelPlayer::didCreateLayer(LayerHostingContextIdentifier ident
     m_client->didUpdateLayerHostingContextIdentifier(*this, identifier);
 }
 
-// ModelPlayer
+void ModelProcessModelPlayer::didFinishLoading()
+{
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer didFinishLoading id=%" PRIu64, this, m_id.toUInt64());
+    m_client->didFinishLoading(*this);
+}
+
+// MARK: - WebCore::ModelPlayer
+
 void ModelProcessModelPlayer::load(WebCore::Model& model, WebCore::LayoutSize size)
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer load model id=%" PRIu64, this, m_id.toUInt64());

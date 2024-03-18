@@ -24,6 +24,7 @@
 
 messages -> ModelProcessModelPlayer {
     DidCreateLayer(WebCore::LayerHostingContextIdentifier identifier)
+    DidFinishLoading()
 }
 
 #endif // ENABLE(MODEL_PROCESS)
