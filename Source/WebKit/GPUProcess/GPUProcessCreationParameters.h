@@ -55,6 +55,7 @@ struct GPUProcessCreationParameters {
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
+    String containerCachesDirectory;
 #endif
 #if PLATFORM(IOS_FAMILY)
     Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
