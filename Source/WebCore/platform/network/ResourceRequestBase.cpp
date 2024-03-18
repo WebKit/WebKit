@@ -827,20 +827,12 @@ void ResourceRequestBase::setCachePartition(const String& cachePartition)
 
 String ResourceRequestBase::partitionName(const String& domain)
 {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (domain.isNull())
         return emptyString();
     String highLevel = topPrivatelyControlledDomain(domain);
     if (highLevel.isNull())
         return emptyString();
     return highLevel;
-#else
-    UNUSED_PARAM(domain);
-#if ENABLE(CACHE_PARTITIONING)
-#error Cache partitioning requires PUBLIC_SUFFIX_LIST
-#endif
-    return emptyString();
-#endif
 }
 
 bool ResourceRequestBase::isThirdParty() const

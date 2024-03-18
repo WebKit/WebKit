@@ -414,7 +414,6 @@ bool SecurityOrigin::isSameOriginAs(const SecurityOrigin& other) const
 
 bool SecurityOrigin::isSameSiteAs(const SecurityOrigin& other) const
 {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     // https://html.spec.whatwg.org/#same-site
     if (isOpaque() != other.isOpaque())
         return false;
@@ -429,9 +428,6 @@ bool SecurityOrigin::isSameSiteAs(const SecurityOrigin& other) const
         return host() == other.host();
 
     return topDomain == topPrivatelyControlledDomain(other.domain());
-#else
-    return isSameOriginAs(other);
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)
 }
 
 bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffix, bool treatIPAddressAsDomain) const
@@ -448,11 +444,7 @@ bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffi
     if (domainSuffix.length() == host().length())
         return true;
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     return !isPublicSuffix(domainSuffix);
-#else
-    return true;
-#endif
 }
 
 bool SecurityOrigin::isPotentiallyTrustworthy() const

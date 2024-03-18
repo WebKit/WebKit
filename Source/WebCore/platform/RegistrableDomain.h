@@ -91,14 +91,10 @@ public:
     
     static RegistrableDomain uncheckedCreateFromHost(const String& host)
     {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
         auto registrableDomain = topPrivatelyControlledDomain(host);
         if (registrableDomain.isEmpty())
             return uncheckedCreateFromRegistrableDomainString(host);
         return RegistrableDomain { WTFMove(registrableDomain) };
-#else
-        return uncheckedCreateFromRegistrableDomainString(host);
-#endif
     }
 
 private:
@@ -120,11 +116,7 @@ private:
 
     static inline String registrableDomainFromHost(const String& host)
     {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
         auto domain = topPrivatelyControlledDomain(host);
-#else
-        auto domain = host;
-#endif
         if (host.isEmpty())
             domain = "nullOrigin"_s;
         else if (domain.isEmpty())

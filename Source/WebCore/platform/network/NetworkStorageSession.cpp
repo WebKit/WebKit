@@ -31,15 +31,12 @@
 #include "CookieJar.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "NotImplemented.h"
+#include "PublicSuffix.h"
 #include "ResourceRequest.h"
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-#include "PublicSuffix.h"
-#endif
 
 namespace WebCore {
 

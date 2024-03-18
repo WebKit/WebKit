@@ -205,11 +205,6 @@ static bool isRestrictedDirectiveForMode(const String& directive, ContentSecurit
 
 bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const ContentSecurityPolicySourceList::Source& parsedSource)
 {
-    bool hostIsPublicSuffix = false;
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    hostIsPublicSuffix = isPublicSuffix(parsedSource.host.value);
-#endif
-
     switch (m_contentSecurityPolicyModeForExtension) {
     case ContentSecurityPolicyModeForExtension::None:
         return true;
@@ -217,7 +212,7 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
         if (!isRestrictedDirectiveForMode(m_directiveName, ContentSecurityPolicyModeForExtension::ManifestV2))
             return true;
 
-        if (parsedSource.host.hasWildcard && hostIsPublicSuffix)
+        if (parsedSource.host.hasWildcard && isPublicSuffix(parsedSource.host.value))
             return false;
 
         if (equalLettersIgnoringASCIICase(parsedSource.scheme, "blob"_s))

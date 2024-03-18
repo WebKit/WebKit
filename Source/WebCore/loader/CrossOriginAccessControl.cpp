@@ -335,10 +335,8 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedder
     if (policy == CrossOriginResourcePolicy::SameSite) {
         if (origin.isOpaque())
             return true;
-#if ENABLE(PUBLIC_SUFFIX_LIST)
         if (!RegistrableDomain::uncheckedCreateFromHost(origin.host()).matches(responseURL))
             return true;
-#endif
         if (origin.protocol() == "http"_s && responseURL.protocol() == "https"_s)
             return true;
     }

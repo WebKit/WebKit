@@ -1196,7 +1196,6 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
 
     shutDown();
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     // FIXME: Perhaps this should consider ProcessTerminationReasons ExceededMemoryLimit, ExceededCPULimit, Unresponsive as well.
     if (pages.size() == 1 && reason == ProcessTerminationReason::Crash) {
         auto& page = pages[0];
@@ -1204,7 +1203,6 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
         if (!domain.isEmpty())
             page->logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingCrashKey(), domain, WebCore::ShouldSample::No);
     }
-#endif
 
 #if ENABLE(ROUTING_ARBITRATION)
     m_routingArbitrator->processDidTerminate();
@@ -2010,7 +2008,6 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
     bool hasAllowedToRunInTheBackgroundActivity = false;
 
     for (auto& page : this->pages()) {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
         String pageDomain = topPrivatelyControlledDomain(URL({ }, page->currentURL()).host().toString());
         if (domain.isEmpty())
             domain = WTFMove(pageDomain);
@@ -2019,7 +2016,6 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
 
         wasPrivateRelayed = wasPrivateRelayed || page->pageLoadState().wasPrivateRelayed();
         hasAllowedToRunInTheBackgroundActivity = hasAllowedToRunInTheBackgroundActivity || page->hasAllowedToRunInTheBackgroundActivity();
-#endif
     }
 
     if (domain.isEmpty())

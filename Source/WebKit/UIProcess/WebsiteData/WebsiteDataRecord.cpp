@@ -56,11 +56,7 @@ String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
 
 String WebsiteDataRecord::displayNameForHostName(const String& hostName)
 {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     return WebCore::topPrivatelyControlledDomain(hostName);
-#endif
-
-    return String();
 }
 
 String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData& securityOrigin)
@@ -70,10 +66,8 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData
     if (protocol == "file"_s)
         return displayNameForLocalFiles();
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (protocol == "http"_s || protocol == "https"_s)
         return WebCore::topPrivatelyControlledDomain(securityOrigin.host());
-#endif
 
     return String();
 }
@@ -144,13 +138,11 @@ bool WebsiteDataRecord::matches(const WebCore::RegistrableDomain& domain) const
 
 String WebsiteDataRecord::topPrivatelyControlledDomain()
 {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (!cookieHostNames.isEmpty())
         return WebCore::topPrivatelyControlledDomain(cookieHostNames.takeAny());
     
     if (!origins.isEmpty())
         return WebCore::topPrivatelyControlledDomain(origins.takeAny().securityOrigin().get().host());
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)
     
     return emptyString();
 }

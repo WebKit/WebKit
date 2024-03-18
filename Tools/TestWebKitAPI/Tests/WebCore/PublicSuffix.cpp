@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-
 #include "Test.h"
 #include "WTFTestUtilities.h"
 #include <WebCore/PublicSuffix.h>
@@ -186,5 +184,3 @@ TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
 }
 
 }
-
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)

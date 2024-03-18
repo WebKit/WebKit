@@ -27,8 +27,6 @@
 
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-
 namespace WebCore {
 
 WEBCORE_EXPORT bool isPublicSuffix(StringView domain);
@@ -37,5 +35,3 @@ WEBCORE_EXPORT void setTopPrivatelyControlledDomain(const String& domain, const 
 String decodeHostName(const String& domain);
 
 } // namespace WebCore
-
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)

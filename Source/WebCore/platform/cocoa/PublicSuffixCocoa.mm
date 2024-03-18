@@ -26,8 +26,6 @@
 #import "config.h"
 #import "PublicSuffix.h"
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/text/StringHash.h>
@@ -94,5 +92,3 @@ String decodeHostName(const String& domain)
 }
 
 }
-
-#endif

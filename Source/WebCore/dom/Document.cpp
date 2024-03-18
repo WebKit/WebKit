@@ -4064,7 +4064,6 @@ const URL& Document::urlForBindings() const
         if (preNavigationURL.isEmpty() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data()))
             return false;
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
         auto areSameSiteIgnoringPublicSuffix = [](StringView domain, StringView otherDomain) {
             auto domainString = topPrivatelyControlledDomain(domain.toStringWithoutCopying());
             auto otherDomainString = topPrivatelyControlledDomain(otherDomain.toStringWithoutCopying());
@@ -4081,7 +4080,6 @@ const URL& Document::urlForBindings() const
         auto currentHost = securityOrigin().data().host();
         if (areSameSiteIgnoringPublicSuffix(preNavigationURL.host(), currentHost))
             return false;
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)
 
         if (!m_hasLoadedThirdPartyScript)
             return false;
@@ -4090,10 +4088,8 @@ const URL& Document::urlForBindings() const
             if (RegistrableDomain { sourceURL }.matches(securityOrigin().data()))
                 return false;
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
             if (areSameSiteIgnoringPublicSuffix(sourceURL.host(), currentHost))
                 return false;
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)
         }
 
         return true;

@@ -285,11 +285,8 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
     std::optional<WebsitePoliciesData> websitePoliciesData;
     if (websitePolicies)
         websitePoliciesData = websitePolicies->data();
-    
-    std::optional<String> topPrivatelyControlledDomain;
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(URL(item.url()).host().toString());
-#endif
+
+    auto topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(URL(item.url()).host().toString());
 
     send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)));
 

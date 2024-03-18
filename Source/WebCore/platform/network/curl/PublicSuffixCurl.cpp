@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PublicSuffix.h"
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-
 #include <libpsl.h>
 #include <wtf/URL.h>
 
@@ -86,5 +84,3 @@ void setTopPrivatelyControlledDomain(const String&, const String&)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PublicSuffix.h"
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-
 #include <libsoup/soup.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -107,5 +105,3 @@ void setTopPrivatelyControlledDomain(const String&, const String&)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)

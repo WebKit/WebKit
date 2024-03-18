@@ -25,10 +25,8 @@ enum class WebCore::LockBackForwardList : bool;
 enum class WebKit::NavigatingToAppBoundDomain : bool;
 
 [RValue] struct WebKit::LoadParameters {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     String topPrivatelyControlledDomain;
     String host;
-#endif
     uint64_t navigationID;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
     [EncodeRequestBody] WebCore::ResourceRequest request;
