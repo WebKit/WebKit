@@ -27,15 +27,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import sys
-import unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.port.wpe import WPEPort
 from webkitpy.port import port_testcase
-from webkitpy.thirdparty.mock import Mock, patch
+from webkitpy.thirdparty.mock import patch
 from webkitpy.tool.mocktool import MockOptions
 from webkitcorepy import OutputCapture
 import logging
@@ -45,7 +42,7 @@ class WPEPortTest(port_testcase.PortTestCase):
     port_maker = WPEPort
 
     def _mock_port_cog_is_built(self, port):
-        port._filesystem = MockFileSystem({
+        port._filesystem = MockCompatibleFileSystem({
             '/mock-build/Tools/cog-prefix/src/cog-build/launcher/cog': '',
         })
 

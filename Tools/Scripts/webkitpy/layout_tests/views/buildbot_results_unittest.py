@@ -26,8 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import StringIO
 
 from webkitpy.common.host_mock import MockHost
@@ -37,7 +36,10 @@ from webkitpy.layout_tests.models import test_run_results_unittest
 from webkitpy.layout_tests.views import buildbot_results
 
 
-class BuildBotPrinterTests(unittest.TestCase):
+class BuildBotPrinterTests(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def assertEmpty(self, stream):
         self.assertFalse(stream.getvalue())
 

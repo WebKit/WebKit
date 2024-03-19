@@ -27,12 +27,29 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.suggestnominations import SuggestNominations
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
 
 class SuggestNominationsTest(CommandsTest):
+    def setUp(self):
+        super(SuggestNominationsTest, self).setUp()
+
+        self.pause()
+
+        # Find the path to the (real) contributors.json file
+        webkit_finder = WebKitFinder(FileSystem())
+        contributors_path = webkit_finder.path_from_webkit_base(
+            "metadata", "contributors.json"
+        )
+
+        # Map the (real) contributors.json file into the fake filesystem
+        self.fs.add_real_file(contributors_path)
+
+        self.resume()
 
     mock_git_output = """commit a7df8145fd61987ec39092defb94dbab072fa541
 Author: fpizlo@apple.com <fpizlo@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>

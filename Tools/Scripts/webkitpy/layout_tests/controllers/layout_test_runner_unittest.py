@@ -28,7 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import pickle
-import unittest
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.systemhost_mock import MockSystemHost
@@ -75,7 +76,10 @@ class FakePrinter(object):
         pass
 
 
-class LayoutTestRunnerTests(unittest.TestCase):
+class LayoutTestRunnerTests(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def _runner(self, port=None):
         # FIXME: we shouldn't have to use run_webkit_tests.py to get the options we need.
         options = run_webkit_tests.parse_args(['--platform', 'test-mac-snowleopard'])[0]
@@ -270,7 +274,10 @@ class LayoutTestRunnerTests(unittest.TestCase):
         self.assertEqual(self.web_platform_test_server_stopped, False)
 
 
-class SharderTests(unittest.TestCase):
+class SharderTests(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     test_list = [
         "http/tests/websocket/tests/unicode.htm",
@@ -328,7 +335,10 @@ class SharderTests(unittest.TestCase):
              ('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])
 
 
-class ShardTests(unittest.TestCase):
+class ShardTests(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_pickle(self):
         tests = [
             Test(

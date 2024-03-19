@@ -29,9 +29,8 @@
 
 import logging
 import re
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import Port
 from webkitpy.port.server_process_mock import MockServerProcess
@@ -54,7 +53,10 @@ class WestonXvfbDriverDisplayTest():
         return True
 
 
-class WestonDriverTest(unittest.TestCase):
+class WestonDriverTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def make_driver(self):
         port = Port(MockSystemHost(log_executive=True), 'westondrivertestport', options=MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: "/mock_build"

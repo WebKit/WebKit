@@ -26,14 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.port import test
 from webkitpy.layout_tests.servers.http_server_base import HttpServerBase
 
 
-class TestHttpServerBase(unittest.TestCase):
+class TestHttpServerBase(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_corrupt_pid_file(self):
         # This tests that if the pid file is corrupt or invalid,
         # both start() and stop() deal with it correctly and delete the file.

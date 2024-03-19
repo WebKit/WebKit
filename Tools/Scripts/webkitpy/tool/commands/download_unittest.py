@@ -27,18 +27,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
-
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture, mocks
 
 from webkitpy.common.checkout.checkout_mock import MockCheckout
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
 
-class AbstractRevertPrepCommandTest(unittest.TestCase):
+class AbstractRevertPrepCommandTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_commit_info(self):
         command = AbstractRevertPrepCommand()
         tool = MockTool()
@@ -59,7 +62,8 @@ class AbstractRevertPrepCommandTest(unittest.TestCase):
 
     def test_prepare_state(self):
         command = AbstractRevertPrepCommand()
-        mock_commit_info = MockCheckout().commit_info_for_revision(123)
+        filesystem = MockCompatibleFileSystem()
+        mock_commit_info = MockCheckout(filesystem).commit_info_for_revision(123)
         command._commit_info = lambda revision: mock_commit_info
 
         state = command._prepare_state(None, ["124 123 125", "Reason"], None)

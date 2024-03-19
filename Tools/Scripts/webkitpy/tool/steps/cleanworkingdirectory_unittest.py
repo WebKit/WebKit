@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.thirdparty.mock import Mock
@@ -34,7 +34,10 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.cleanworkingdirectory import CleanWorkingDirectory
 
 
-class CleanWorkingDirectoryTest(unittest.TestCase):
+class CleanWorkingDirectoryTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_run_working_directory_changes_no_force(self):
         tool = MockTool()
         tool._scm = Mock()

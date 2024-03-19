@@ -28,15 +28,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture
 
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.applywatchlist import ApplyWatchList
 
 
-class ApplyWatchListTest(unittest.TestCase):
+class ApplyWatchListTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_apply_watch_list_local(self):
         step = ApplyWatchList(MockTool(log_executive=True), MockOptions())
         state = {

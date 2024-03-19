@@ -33,7 +33,7 @@ import datetime
 import json
 import logging
 import re
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.port.driver import DriverOutput
@@ -159,7 +159,10 @@ class TestDriver:
         """do nothing"""
 
 
-class MainTest(unittest.TestCase):
+class MainTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def _normalize_output(self, log):
         return re.sub(r'(stdev=\s+\d+\.\d{5})\d+', r'\1', re.sub(r'Finished: [0-9\.]+ s', 'Finished: 0.1 s', log))
 

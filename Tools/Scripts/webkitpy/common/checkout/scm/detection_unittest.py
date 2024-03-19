@@ -29,18 +29,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
-from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 
 from webkitcorepy import OutputCapture
 
 
-class SCMDetectorTest(unittest.TestCase):
+class SCMDetectorTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_detect_scm_system(self):
-        filesystem = MockFileSystem()
+        filesystem = MockCompatibleFileSystem()
         executive = MockExecutive(should_log=True)
         detector = SCMDetector(filesystem, executive)
 

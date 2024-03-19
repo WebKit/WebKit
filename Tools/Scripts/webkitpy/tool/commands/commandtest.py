@@ -28,15 +28,24 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import OutputCapture
 
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
 
-class CommandsTest(unittest.TestCase):
-    def assert_execute_outputs(self, command, args=[], expected_stdout="", expected_stderr="", expected_exception=None, expected_logs=None, options=MockOptions(), tool=MockTool()):
+class CommandsTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
+    def assert_execute_outputs(self, command, args=[], expected_stdout="", expected_stderr="", expected_exception=None, expected_logs=None, options=None, tool=None):
+        if options is None:
+            options = MockOptions()
+
+        if tool is None:
+            tool = MockTool()
+
         options.blocks = None
         if getattr(options, "cc", None) == None:
             options.cc = 'MOCK cc'

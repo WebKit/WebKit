@@ -29,11 +29,11 @@
 
 import optparse
 import tempfile
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system import executive_mock
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.host_mock import MockHost
@@ -47,7 +47,11 @@ from webkitscmpy import mocks
 def cmp(a, b):
     return (a > b) - (a < b)
 
-class PortTest(unittest.TestCase):
+
+class PortTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def make_port(self, executive=None, with_tests=False, port_name=None, **kwargs):
         host = MockHost(create_stub_repository_files=True)
         if executive:
@@ -222,7 +226,7 @@ class PortTest(unittest.TestCase):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'
         self.assertFalse(port.uses_test_expectations_file())
-        port._filesystem = MockFileSystem({'/mock-checkout/LayoutTests/platform/foo/TestExpectations': ''})
+        port._filesystem = MockCompatibleFileSystem({'/mock-checkout/LayoutTests/platform/foo/TestExpectations': ''})
         self.assertTrue(port.uses_test_expectations_file())
 
     def test_reference_files(self):
@@ -317,11 +321,19 @@ class PortTest(unittest.TestCase):
         )
 
     def test_commits_for_upload(self):
+        self.fs.pause()
+        mocks.add_datafiles_to_pyfakefs(self.fs)
+        self.fs.resume()
+
         with mocks.local.Svn(path='/'), mocks.local.Git():
             port = self.make_port(port_name='foo')
             self.assertEqual([{'repository_id': 'webkit', 'id': '6', 'branch': 'trunk'}], port.commits_for_upload())
 
     def test_commits_for_upload_git_svn(self):
+        self.fs.pause()
+        mocks.add_datafiles_to_pyfakefs(self.fs)
+        self.fs.resume()
+
         with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True), OutputCapture():
             port = self.make_port(port_name='foo')
             self.assertEqual([{
@@ -337,8 +349,10 @@ class PortTest(unittest.TestCase):
             }], port.commits_for_upload())
 
 
-class NaturalCompareTest(unittest.TestCase):
+class NaturalCompareTest(fake_filesystem_unittest.TestCase):
     def setUp(self):
+        self.setUpPyfakefs()
+
         self._port = TestPort(MockSystemHost())
 
     def assert_cmp(self, x, y, result):
@@ -365,8 +379,10 @@ class NaturalCompareTest(unittest.TestCase):
         self.assert_cmp('foo_23.html', 'foo_100.html', -1)
 
 
-class KeyCompareTest(unittest.TestCase):
+class KeyCompareTest(fake_filesystem_unittest.TestCase):
     def setUp(self):
+        self.setUpPyfakefs()
+
         self._port = TestPort(MockSystemHost())
 
     def assert_cmp(self, x, y, result):

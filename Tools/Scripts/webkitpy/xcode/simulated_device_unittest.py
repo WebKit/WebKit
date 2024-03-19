@@ -21,12 +21,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
-from webkitcorepy import string_utils, Version
+from webkitcorepy import Version
 
 from webkitpy.common.system.executive_mock import MockExecutive2
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
@@ -506,7 +506,10 @@ simctl_json_output = """{
  ]
 }"""
 
-class SimulatedDeviceTest(unittest.TestCase):
+
+class SimulatedDeviceTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
 
     @staticmethod
     def reset_simulated_device_manager():
@@ -559,7 +562,7 @@ class SimulatedDeviceTest(unittest.TestCase):
 
         return MockSystemHost(
             executive=MockExecutive2(output=simctl_json_output),
-            filesystem=MockFileSystem(files=filesystem_map),
+            filesystem=MockCompatibleFileSystem(files=filesystem_map),
         )
 
     def test_available_devices(self):
@@ -645,8 +648,13 @@ class SimulatedDeviceTest(unittest.TestCase):
     def test_no_state_files(self):
         SimulatedDeviceTest.reset_simulated_device_manager()
         host = SimulatedDeviceTest.mock_host_for_simctl()
-        host.filesystem = MockFileSystem()
+        host.filesystem.reset()
         devices = SimulatedDeviceManager.available_devices(host)
+
+        # We used to check all the devices were shut down, but nowadays we find no
+        # devices. Unclear if this is deliberate, but at least ensure we notice if this
+        # changes.
+        self.assertEqual([], devices)
 
         for device in devices:
             self.assertEqual(SimulatedDevice.DeviceState.SHUT_DOWN, device.state(force_update=True))

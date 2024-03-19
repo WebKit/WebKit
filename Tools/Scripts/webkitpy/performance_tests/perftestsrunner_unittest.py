@@ -31,8 +31,8 @@
 
 import json
 import logging
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import BytesIO
 
 from webkitpy.common.host_mock import MockHost
@@ -42,7 +42,10 @@ from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 from webkitcorepy import OutputCapture
 
 
-class MainTest(unittest.TestCase):
+class MainTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def create_runner(self, args=[]):
         options, parsed_args = PerfTestsRunner._parse_args(args)
         test_port = TestPort(host=MockHost(), options=options)
@@ -52,7 +55,7 @@ class MainTest(unittest.TestCase):
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Parser')
         return runner, test_port
 
-    def _add_file(self, runner, dirname, filename, content=True):
+    def _add_file(self, runner, dirname, filename, content=""):
         dirname = runner._host.filesystem.join(runner._base_path, dirname) if dirname else runner._base_path
         runner._host.filesystem.maybe_make_directory(dirname)
         runner._host.filesystem.files[runner._host.filesystem.join(dirname, filename)] = content

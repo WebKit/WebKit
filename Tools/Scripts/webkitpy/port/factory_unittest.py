@@ -27,7 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitcorepy import Version
 
@@ -40,12 +40,13 @@ from webkitpy.port import mac
 from webkitpy.port import win
 
 
-class FactoryTest(unittest.TestCase):
+class FactoryTest(fake_filesystem_unittest.TestCase):
     """Test that the factory creates the proper port object for given combination of port_name, host.platform, and options."""
     # FIXME: The ports themselves should expose what options they require,
     # instead of passing generic "options".
 
     def setUp(self):
+        self.setUpPyfakefs()
         self.webkit_options = MockOptions(pixel_tests=False)
 
     def assert_port(self, port_name=None, os_name=None, os_version=None, options=None, cls=None):

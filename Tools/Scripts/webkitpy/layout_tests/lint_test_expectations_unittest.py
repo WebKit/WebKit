@@ -27,8 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import optparse
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import StringIO
 
 from webkitpy.common.host_mock import MockHost
@@ -78,7 +78,10 @@ class FakeFactory(object):
         return sorted(self.ports.keys())
 
 
-class LintTest(unittest.TestCase):
+class LintTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_all_configurations(self):
         host = MockHost()
         host.ports_parsed = []
@@ -127,7 +130,10 @@ class LintTest(unittest.TestCase):
         self.assertIn('bar:1', logging_stream.getvalue())
 
 
-class MainTest(unittest.TestCase):
+class MainTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_success(self):
         orig_lint_fn = lint_test_expectations.lint
 
@@ -145,7 +151,7 @@ class MainTest(unittest.TestCase):
         stderr = StringIO()
         try:
             lint_test_expectations.lint = interrupting_lint
-            res = lint_test_expectations.main([], stdout, stderr)
+            res = lint_test_expectations.main(['--platform', 'test'], stdout, stderr)
             self.assertEqual(res, lint_test_expectations.INTERRUPTED_EXIT_STATUS)
 
             lint_test_expectations.lint = successful_lint
@@ -153,7 +159,7 @@ class MainTest(unittest.TestCase):
             self.assertEqual(res, 0)
 
             lint_test_expectations.lint = exception_raising_lint
-            res = lint_test_expectations.main([], stdout, stderr)
+            res = lint_test_expectations.main(['--platform', 'test'], stdout, stderr)
             self.assertEqual(res, lint_test_expectations.EXCEPTIONAL_EXIT_STATUS)
         finally:
             lint_test_expectations.lint = orig_lint_fn

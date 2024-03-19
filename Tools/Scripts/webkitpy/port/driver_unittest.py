@@ -26,8 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
 import optparse
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
@@ -44,7 +45,10 @@ import os
 import sys
 
 
-class DriverOutputTest(unittest.TestCase):
+class DriverOutputTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_strip_metrics(self):
         patterns = [
             ('RenderView at (0,0) size 800x600', 'RenderView '),
@@ -85,7 +89,10 @@ class DriverOutputTest(unittest.TestCase):
             self.assertEqual(driver_output.text, pattern[1])
 
 
-class DriverTest(unittest.TestCase):
+class DriverTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def make_port(self, host=None, options=None):
         port = Port(host or MockSystemHost(), 'test', options or MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: '/mock-build'

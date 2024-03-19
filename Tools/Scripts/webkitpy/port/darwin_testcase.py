@@ -26,7 +26,7 @@ import time
 
 from webkitpy.port import port_testcase
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, MockProcess, ScriptError
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import VersionNameMap
@@ -95,7 +95,7 @@ class DarwinTest(port_testcase.PortTestCase):
         port = self.make_port()
         self.assertEqual(port.path_to_crash_logs(), '/Users/mock/Library/Logs/CrashReporter')
 
-        host = MockSystemHost(filesystem=MockFileSystem(files={'/Users/mock/Library/Logs/DiagnosticReports/crashlog.crash': None}))
+        host = MockSystemHost(filesystem=MockCompatibleFileSystem(files={'/Users/mock/Library/Logs/DiagnosticReports/crashlog.crash': None}))
         port = self.make_port(host)
         self.assertEqual(port.path_to_crash_logs(), '/Users/mock/Library/Logs/DiagnosticReports')
 
@@ -116,7 +116,7 @@ class DarwinTest(port_testcase.PortTestCase):
 ['/usr/sbin/spindump', '-i', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt', '-file', '/__im_tmp/tmp_0_/test-42-tailspin.txt', '-noBulkSymbolication']
 """,
         )
-        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-tailspin.txt'], 'Symbolocated tailspin file')
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-tailspin.txt'], b'Symbolocated tailspin file')
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin-temp.txt'])
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin.txt'])
 
@@ -129,7 +129,7 @@ class DarwinTest(port_testcase.PortTestCase):
             return 0
 
         port = self.make_port()
-        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = 'Sample file'
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = b'Sample file'
         port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
         with OutputCapture() as captured:
             port.sample_process('test', 42)
@@ -137,7 +137,7 @@ class DarwinTest(port_testcase.PortTestCase):
             captured.stdout.getvalue(),
             "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n",
         )
-        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-sample.txt'], 'Sample file')
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-sample.txt'], b'Sample file')
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'])
 
     def test_sample_process_exception(self):

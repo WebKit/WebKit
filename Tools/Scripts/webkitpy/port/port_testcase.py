@@ -35,17 +35,17 @@ import os
 import socket
 import sys
 import time
-import unittest
 
 from contextlib import contextmanager
 
+from pyfakefs import fake_filesystem_unittest
+
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import INTERNAL_TABLE
 from webkitpy.port.base import Port
 from webkitpy.port.config import apple_additions
-from webkitpy.port.driver import DriverOutput
 from webkitpy.port.image_diff import ImageDiffer, ImageDiffResult
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base
@@ -106,7 +106,10 @@ def bind_mock_apple_additions():
     VersionNameMap.map._results_cache = {}
 
 
-class PortTestCase(unittest.TestCase):
+class PortTestCase(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     """Tests that all Port implementations must pass."""
     HTTP_PORTS = (8000, 8080, 8443)
     WEBSOCKET_PORTS = (8880,)
@@ -119,9 +122,10 @@ class PortTestCase(unittest.TestCase):
     disable_setup = False
 
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
-        host = host or MockSystemHost(os_name=(os_name or self.os_name), os_version=(os_version or self.os_version))
+        host = host or MockSystemHost(os_name=(os_name or self.os_name), os_version=(os_version or self.os_version), filesystem=MockCompatibleFileSystem())
         options = options or MockOptions(configuration='Release')
         port_name = port_name or self.port_name
+        assert port_name is not None
         port_name = self.port_maker.determine_full_port_name(host, options, port_name)
         port = self.port_maker(host, port_name, options=options, **kwargs)
         port._config.build_directory = lambda configuration, for_host=False: '/mock-build'
@@ -618,20 +622,26 @@ MOCK output of child process
     def _assert_config_file_for_platform(self, port, platform, config_file):
         self.assertEqual(port._apache_config_file_name_for_platform(platform), config_file)
 
-    def test_linux_distro_detection(self):
+    def test_linux_distro_detection_empty(self):
         port = TestWebKitPort()
         self.assertFalse(port._is_redhat_based())
         self.assertFalse(port._is_debian_based())
 
-        port._filesystem = MockFileSystem({'/etc/redhat-release': ''})
+    def test_linux_distro_detection_redhat(self):
+        port = TestWebKitPort()
+        port._filesystem = MockCompatibleFileSystem({'/etc/redhat-release': ''})
         self.assertTrue(port._is_redhat_based())
         self.assertFalse(port._is_debian_based())
 
-        port._filesystem = MockFileSystem({'/etc/debian_version': ''})
+    def test_linux_distro_detection_debian(self):
+        port = TestWebKitPort()
+        port._filesystem = MockCompatibleFileSystem({'/etc/debian_version': ''})
         self.assertFalse(port._is_redhat_based())
         self.assertTrue(port._is_debian_based())
 
-        port._filesystem = MockFileSystem({'/etc/arch-release': ''})
+    def test_linux_distro_detection_arch(self):
+        port = TestWebKitPort()
+        port._filesystem = MockCompatibleFileSystem({'/etc/arch-release': ''})
         self.assertFalse(port._is_redhat_based())
         self.assertTrue(port._is_arch_based())
 
@@ -659,7 +669,8 @@ MOCK output of child process
     def test_path_to_apache_config_file(self):
         port = TestWebKitPort()
 
-        saved_environ = os.environ.copy()
+        saved_environ = os.environ
+        os.environ = saved_environ.copy()
         try:
             os.environ['WEBKIT_HTTP_SERVER_CONF_PATH'] = '/path/to/httpd.conf'
             self.assertRaises(IOError, port._path_to_apache_config_file)
@@ -674,7 +685,8 @@ MOCK output of child process
         self.assertEqual(port._path_to_apache_config_file(), '/mock-checkout/LayoutTests/http/conf/httpd.conf')
 
         # Check that even if we mock out _apache_config_file_name, the environment variable takes precedence.
-        saved_environ = os.environ.copy()
+        saved_environ = os.environ
+        os.environ = saved_environ.copy()
         try:
             os.environ['WEBKIT_HTTP_SERVER_CONF_PATH'] = '/existing/httpd.conf'
             self.assertEqual(port._path_to_apache_config_file(), '/existing/httpd.conf')

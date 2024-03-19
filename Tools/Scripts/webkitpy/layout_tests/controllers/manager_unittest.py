@@ -30,19 +30,21 @@
 """Unit tests for manager.py."""
 
 import time
-import unittest
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
-from webkitpy.port.test import TestPort
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.xcode.device_type import DeviceType
 
 
-class ManagerTest(unittest.TestCase):
+class ManagerTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_look_for_new_crash_logs(self):
         def get_manager():
             host = MockHost()

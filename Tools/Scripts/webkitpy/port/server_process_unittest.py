@@ -30,6 +30,7 @@
 import sys
 import time
 import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.port.factory import PortFactory
 from webkitpy.port import server_process
@@ -203,6 +204,11 @@ class TestServerProcess(unittest.TestCase):
         self.assertEqual(True, proc.has_crashed())
 
         proc.stop(0)
+
+
+class TestFakeServerProcess(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
 
     def test_cleanup(self):
         port_obj = TrivialMockPort()

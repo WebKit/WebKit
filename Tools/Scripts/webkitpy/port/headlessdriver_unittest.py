@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import Port
@@ -39,7 +39,10 @@ from webkitpy.tool.mocktool import MockOptions
 _log = logging.getLogger(__name__)
 
 
-class HeadlessDriverTest(unittest.TestCase):
+class HeadlessDriverTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def make_driver(self, worker_number=0, xorg_running=False, executive=None):
         port = Port(MockSystemHost(log_executive=True, executive=executive), 'headlessdrivertestport', options=MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: '/mock-build'

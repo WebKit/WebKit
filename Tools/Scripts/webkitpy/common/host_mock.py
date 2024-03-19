@@ -47,7 +47,7 @@ class MockHost(MockSystemHost):
             add_checkout_information_json_to_mock_filesystem(self.filesystem)
         self.web = web or MockWeb()
 
-        self._checkout = MockCheckout()
+        self._checkout = MockCheckout(self.filesystem)
         self._scm = None
         # FIXME: we should never initialize the SCM by default, since the real
         # object doesn't either. This has caused at least one bug (see bug 89498).

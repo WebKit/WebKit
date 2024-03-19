@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers import test_result_writer
@@ -33,7 +33,10 @@ from webkitpy.port.test import TestPort
 from webkitpy.port.image_diff import ImageDiffResult
 
 
-class TestResultWriterTest(unittest.TestCase):
+class TestResultWriterTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
 
     def test_reftest_diff_image(self):
         """A write_test_result should call port.diff_image with tolerance=0 in case of FailureReftestMismatch."""

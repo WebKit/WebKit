@@ -36,6 +36,8 @@ import traceback
 
 from webkitpy.common.host import Host
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
 from webkitpy.port import configuration_options, platform_options
@@ -387,13 +389,12 @@ def parse_args(args):
     if options.webgl_test_suite:
         if not args:
             args.append('webgl')
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/webgl/TestExpectations'))
+
+        fs = FileSystem()
+        webkit_finder = WebKitFinder(fs)
+        options.additional_expectations.insert(0, fs.join(webkit_finder.webkit_base(), 'LayoutTests/webgl/TestExpectations'))
 
     if options.use_gpu_process:
-        host = Host()
-        host.initialize_scm()
         if not options.internal_feature:
             options.internal_feature = []
         options.internal_feature.append('CaptureAudioInGPUProcessEnabled')
@@ -414,16 +415,15 @@ def parse_args(args):
         options.experimental_feature.append('UseGPUProcessForDOMRenderingEnabled=0')
 
     if options.accessibility_isolated_tree:
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, host.filesystem.join(host.scm().checkout_root, 'LayoutTests/accessibility-isolated-tree/TestExpectations'))
+        fs = FileSystem()
+        webkit_finder = WebKitFinder(fs)
+        options.additional_expectations.insert(0, fs.join(webkit_finder.webkit_base(), 'LayoutTests/accessibility-isolated-tree/TestExpectations'))
+
         if options.result_report_flavor:
             raise RuntimeError('--accessibility-isolated-tree implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'accessibility-isolated-tree'
 
     if options.no_use_async_uikit_interactions:
-        host = Host()
-        host.initialize_scm()
         if not options.internal_feature:
             options.internal_feature = []
         options.internal_feature.append('UseAsyncUIKitInteractions=0')
@@ -470,21 +470,25 @@ def _set_up_derived_options(port, options):
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
 
     if port.port_name == "mac" and options.use_gpu_process and options.remote_layer_tree:
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup/TestExpectations'))
+        fs = FileSystem()
+        webkit_finder = WebKitFinder(fs)
+        platform = fs.join(webkit_finder.webkit_base(), 'LayoutTests/mac-gpup')
+        options.additional_expectations.insert(0, fs.join(platform, 'TestExpectations'))
         if not options.additional_platform_directory:
             options.additional_platform_directory = []
-        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup'))
+        options.additional_platform_directory.insert(0, platform)
 
     if port.port_name == "mac" and options.site_isolation:
         options.self_compare_with_header = 'SiteIsolationEnabled=true runInCrossOriginFrame=true'
-        host = Host()
-        host.initialize_scm()
-        options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation/TestExpectations'))
+
+        fs = FileSystem()
+        webkit_finder = WebKitFinder(fs)
+        platform = fs.join(webkit_finder.webkit_base(), 'LayoutTests/mac-site-isolation')
+        options.additional_expectations.insert(0, fs.join(platform, 'TestExpectations'))
         if not options.additional_platform_directory:
             options.additional_platform_directory = []
-        options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation'))
+        options.additional_platform_directory.insert(0, platform)
+
         if options.result_report_flavor:
             raise RuntimeError('--site-isolation implicitly sets the result flavor, this should not be overridden')
         options.result_report_flavor = 'site-isolation'

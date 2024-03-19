@@ -32,7 +32,7 @@
 from webkitcorepy import OutputCapture
 
 from webkitpy.common.checkout import changelog_unittest
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
 
@@ -109,7 +109,7 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
             end_file = final_entry + self._rolled_over_footer
 
             path = "ChangeLog"
-            step._tool.filesystem = MockFileSystem()
+            step._tool.filesystem = MockCompatibleFileSystem()
             step._tool.filesystem.write_text_file(path, start_file)
             step._resolve_existing_entry(path)
             actual_output = step._tool.filesystem.read_text_file(path)
@@ -124,7 +124,7 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
             "bug_id": 1234,
             "changelogs": [changelog_path],
         }
-        step._tool.filesystem = MockFileSystem()
+        step._tool.filesystem = MockCompatibleFileSystem()
         step._tool.filesystem.write_text_file(changelog_path, changelog_contents)
 
         with OutputCapture():

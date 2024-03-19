@@ -28,12 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-import unittest
+
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 
 from webkitcorepy import OutputCapture
@@ -41,10 +42,13 @@ from webkitcorepy import OutputCapture
 import webkitpy.port.config as config
 
 
-class ConfigTest(unittest.TestCase):
+class ConfigTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def make_config(self, output='', files=None, exit_code=0, exception=None, run_command_fn=None, stderr='', port_implementation=None):
         e = MockExecutive2(output=output, exit_code=exit_code, exception=exception, run_command_fn=run_command_fn, stderr=stderr)
-        fs = MockFileSystem(files)
+        fs = MockCompatibleFileSystem(files)
         return config.Config(e, fs, port_implementation=port_implementation)
 
     def assert_configuration(self, contents, expected):
@@ -122,6 +126,8 @@ class ConfigTest(unittest.TestCase):
         # caching / reset bugs. See https://bugs.webkit.org/show_bug.cgi?id=49360
         # for the motivation. We can remove this test when we remove the
         # global configuration cache in config.py.
+        self.fs.pause()
+
         e = Executive()
         fs = FileSystem()
         c = config.Config(e, fs)
@@ -153,5 +159,7 @@ class ConfigTest(unittest.TestCase):
     def test_asan(self):
         config = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': 'Release', 'foo/ASan': 'YES'})
         self.assertEqual(config.asan, True)
+
+    def test_asan_default(self):
         config = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': 'Release'})
         self.assertEqual(config.asan, False)

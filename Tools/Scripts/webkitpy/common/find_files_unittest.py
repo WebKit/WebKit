@@ -29,12 +29,12 @@
 import itertools
 import random
 import sys
-import unittest
+
+from pyfakefs import fake_filesystem_unittest
 
 import webkitpy.common.find_files as find_files
-
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 
 
 class MockWinFileSystem(object):
@@ -45,7 +45,10 @@ class MockWinFileSystem(object):
         return path.replace('/', '\\')
 
 
-class TestWinNormalize(unittest.TestCase):
+class TestWinNormalize(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def assert_filesystem_normalizes(self, filesystem):
         self.assertEqual(
             find_files._normalize(
@@ -74,12 +77,20 @@ class TestWinNormalize(unittest.TestCase):
         self.assert_filesystem_normalizes(FileSystem())
 
 
-class TestFindFiles(unittest.TestCase):
+class TestFindFiles(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_directory_sort_key(self):
         filenames = [chr(o) for o in range(ord("a"), ord("z") + 1)]
-        fs = MockFileSystem(
+        fs = MockCompatibleFileSystem(
             files={c: "" for c in random.sample(filenames, len(filenames))}
         )
+
+        # pyfakefs adds a /tmp by default; remove it.
+        if fs.exists("/tmp"):
+            fs.remove("/tmp")
+
         self.assertEqual(
             list(find_files.find(fs, "", directory_sort_key=lambda x: x)),
             sorted(filenames),
@@ -87,7 +98,7 @@ class TestFindFiles(unittest.TestCase):
 
     def test_directory_sort_key_with_paths(self):
         filenames = ["/".join(i) for i in itertools.product("abcde", "12345")]
-        fs = MockFileSystem(
+        fs = MockCompatibleFileSystem(
             files={c: "" for c in random.sample(filenames, len(filenames))}
         )
 

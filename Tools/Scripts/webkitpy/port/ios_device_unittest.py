@@ -65,7 +65,7 @@ class IOSDeviceTest(ios_testcase.IOSTest):
 """,
         )
 
-        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-tailspin.txt'], 'Symbolocated tailspin file')
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-tailspin.txt'], b'Symbolocated tailspin file')
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin-temp.txt'])
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin.txt'])
 
@@ -77,7 +77,7 @@ class IOSDeviceTest(ios_testcase.IOSTest):
             return 0
 
         port = self.make_port()
-        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = 'Sample file'
+        port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = b'Sample file'
         port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
 
         with OutputCapture() as captured:
@@ -87,7 +87,7 @@ class IOSDeviceTest(ios_testcase.IOSTest):
             "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n",
         )
 
-        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-sample.txt'], 'Sample file')
+        self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-sample.txt'], b'Sample file')
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'])
 
     def test_sample_process_exception(self):

@@ -31,19 +31,21 @@ import logging
 import os
 import unittest
 
+from pyfakefs import fake_filesystem_unittest
+
 from webkitpy.common.checkout.checkout import Checkout
 from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.checkout.scm import CommitMessage, SCMDetector
 from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.filesystem import FileSystem  # FIXME: This should not be needed.
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.thirdparty.mock import Mock
 
 from webkitcorepy import string_utils, OutputCapture
-from webkitscmpy import mocks
 
 
 _changelog1entry1 = u"""2010-03-25  Fr\u00e9d\u00e9ric Wang  <fred.wang@free.fr>
@@ -169,7 +171,7 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
         detector = SCMDetector(self.filesystem, executive)
         real_scm = detector.detect_scm_system(self.webkit_base)
 
-        mock_scm = MockSCM()
+        mock_scm = MockSCM(MockFileSystem(), MockExecutive())
         mock_scm.run = mock_run
 
         real_checkout = Checkout(real_scm)
@@ -332,9 +334,23 @@ Patch by Daniel Bates <dabates@apple.com> on 2014-06-23
         self.assertMultiLineEqual(commit_message.message(), expected_commit_message)
 
 
-class CheckoutTest(unittest.TestCase):
+class CheckoutTest(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
+        self.pause()
+        webkit_finder = WebKitFinder(FileSystem())
+        contributors_path = webkit_finder.path_from_webkit_base(
+            "metadata", "contributors.json"
+        )
+        self.resume()
+
+        self.fs.add_real_file(contributors_path)
+
     def _make_checkout(self):
-        return Checkout(scm=MockSCM(), filesystem=MockFileSystem(), executive=MockExecutive())
+        fs = MockCompatibleFileSystem()
+        executive = MockExecutive()
+        return Checkout(scm=MockSCM(fs, executive), filesystem=fs, executive=executive)
 
     def test_latest_entry_for_changelog_at_revision(self):
         def mock_contents_at_revision(changelog_path, revision):

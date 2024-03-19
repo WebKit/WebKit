@@ -28,15 +28,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os
-import sys
-import unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.filesystem_mockcompatible import MockCompatibleFileSystem
 from webkitpy.port.gtk import GtkPort
 from webkitpy.port import port_testcase
-from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitcorepy import OutputCapture
@@ -64,7 +60,7 @@ class GtkPortTest(port_testcase.PortTestCase):
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)
-        port._filesystem = MockFileSystem({
+        port._filesystem = MockCompatibleFileSystem({
             "/mock-build/bin/MiniBrowser": ""
         })
         with OutputCapture(level=logging.INFO) as captured:
@@ -99,7 +95,7 @@ class GtkPortTest(port_testcase.PortTestCase):
 
     def test_gtk4_expectations_binary_only(self):
         port = self.make_port()
-        port._filesystem = MockFileSystem({
+        port._filesystem = MockCompatibleFileSystem({
             "/mock-build/lib/libwebkitgtk-6.0.so": ""
         })
         with OutputCapture() as _:
@@ -112,7 +108,7 @@ class GtkPortTest(port_testcase.PortTestCase):
 
     def test_gtk3_expectations_binary_only(self):
         port = self.make_port()
-        port._filesystem = MockFileSystem({
+        port._filesystem = MockCompatibleFileSystem({
             "/mock-build/lib/libwebkit2gtk-4.0.so": ""
         })
 
@@ -125,7 +121,7 @@ class GtkPortTest(port_testcase.PortTestCase):
 
     def test_gtk_expectations_both_binaries(self):
         port = self.make_port()
-        port._filesystem = MockFileSystem({
+        port._filesystem = MockCompatibleFileSystem({
             "/mock-build/lib/libwebkit2gtk-4.0.so": "",
             "/mock-build/lib/libwebkitgtk-6.0.so": ""
         })

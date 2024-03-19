@@ -30,8 +30,8 @@
 
 import optparse
 import sys
-import unittest
 
+from pyfakefs import fake_filesystem_unittest
 from webkitcorepy import StringIO
 
 from webkitpy.common.host_mock import MockHost
@@ -47,13 +47,19 @@ def get_options(args):
     return option_parser.parse_args(args)
 
 
-class TestUtilityFunctions(unittest.TestCase):
+class TestUtilityFunctions(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_print_options(self):
         options, args = get_options([])
         self.assertIsNotNone(options)
 
 
-class  Testprinter(unittest.TestCase):
+class Testprinter(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def assertEmpty(self, stream):
         self.assertFalse(stream.getvalue())
 

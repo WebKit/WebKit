@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-import unittest
+from pyfakefs import fake_filesystem_unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost
@@ -38,7 +38,10 @@ from webkitpy.layout_tests.servers.apache_http_server import LayoutTestApacheHtt
 from webkitcorepy import OutputCapture
 
 
-class TestLayoutTestApacheHttpd(unittest.TestCase):
+class TestLayoutTestApacheHttpd(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+
     def test_start_cmd(self):
         # Fails on win - see https://bugs.webkit.org/show_bug.cgi?id=84726
         if sys.platform.startswith('win') or sys.platform == 'cygwin':
