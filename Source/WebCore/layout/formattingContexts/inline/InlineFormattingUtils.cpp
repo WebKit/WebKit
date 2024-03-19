@@ -440,6 +440,11 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
             return true;
         }
         // Both previous and next items are non-whitespace text.
+        // [text][text] : is a continuous content.
+        // [text-][text] : after [hyphen] position is a soft wrap opportunity.
+        auto previousAndNextHaveSameParent = &previousInlineTextItem.layoutBox().parent() == &nextInlineTextItem.layoutBox().parent();
+        if (previousAndNextHaveSameParent && !TextUtil::isWrappingAllowed(previousInlineTextItem.style()))
+            return false;
         // For soft wrap opportunities defined by the boundary between two characters, the white-space property on the nearest common ancestor of the two characters controls breaking.
         if (!endsWithSoftWrapOpportunity(previousInlineTextItem, nextInlineTextItem))
             return false;
