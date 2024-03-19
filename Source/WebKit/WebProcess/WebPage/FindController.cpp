@@ -226,6 +226,11 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         if (!m_findPageOverlay) {
             auto findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
             m_findPageOverlay = findPageOverlay.ptr();
+#if ENABLE(PDF_PLUGIN)
+            // FIXME: Remove this once UnifiedPDFPlugin makes the overlay scroll along with the contents.
+            if (pluginView && !pluginView->drawsFindOverlay())
+                m_findPageOverlay->setNeedsSynchronousScrolling(true);
+#endif
             m_webPage->corePage()->pageOverlayController().installPageOverlay(WTFMove(findPageOverlay), PageOverlay::FadeMode::Fade);
         }
         m_findPageOverlay->setNeedsDisplay();

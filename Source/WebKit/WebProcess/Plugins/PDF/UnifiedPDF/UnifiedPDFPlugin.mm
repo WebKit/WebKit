@@ -1020,8 +1020,7 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
     auto newScrollPosition = IntPoint { scrolledContentsPoint - originInPluginCoordinates };
     newScrollPosition = newScrollPosition.expandedTo({ 0, 0 });
 
-    auto options = ScrollPositionChangeOptions::createUser();
-    page->protectedScrollingCoordinator()->requestScrollToPosition(*this, newScrollPosition, options);
+    scrollToPointInContentsSpace(newScrollPosition);
 
     scheduleRenderingUpdate();
 
