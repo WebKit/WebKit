@@ -41,6 +41,7 @@
 #include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #include <pal/spi/mac/DataDetectorsSPI.h>
 #include <wtf/Algorithms.h>
+#include <wtf/IteratorRange.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -162,7 +163,7 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebMouseEvent& eve
             activeHighlight->fadeIn();
         }
 
-        didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData::No, ActiveHighlightChanged::Yes);
+        didInvalidateHighlightOverlayRects(pageIndex, ShouldUpdatePlatformHighlightData::No, ActiveHighlightChanged::Yes);
     }
 
     if (event.type() == WebEventType::MouseDown && mouseIsOverActiveHighlightButton)
@@ -233,7 +234,7 @@ void PDFDataDetectorOverlayController::updatePlatformHighlightData(PDFDocumentLa
     });
 }
 
-void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
+void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> pageIndex, ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
 {
     // Regardless of what we repaint, we don't need the stale data after this.
     auto resetStaleDataDetectorWithHighlight = makeScopeExit([&] {
@@ -249,7 +250,16 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(Should
         return;
 
     if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::Yes) {
-        WTF::forEach(m_pdfDataDetectorItemsWithHighlightsMap.keys(), [&](auto pageIndex) {
+        auto pageIndices = [&] {
+            if (pageIndex) {
+                if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(*pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end())
+                    return makeSizedIteratorRange(m_pdfDataDetectorItemsWithHighlightsMap, iterator.keys(), std::next(iterator).keys());
+            }
+
+            return m_pdfDataDetectorItemsWithHighlightsMap.keys();
+        }();
+
+        WTF::forEach(pageIndices, [this](auto pageIndex) {
             updatePlatformHighlightData(pageIndex);
         });
     }

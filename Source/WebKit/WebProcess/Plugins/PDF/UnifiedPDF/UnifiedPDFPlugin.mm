@@ -1221,7 +1221,9 @@ void UnifiedPDFPlugin::didChangeScrollOffset()
 
     // FIXME: Make the overlay scroll with the tiles instead of repainting constantly.
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-    dataDetectorOverlayController().didInvalidateHighlightOverlayRects();
+    auto lastKnownMousePositionInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
+    auto pageIndex = pageIndexForDocumentPoint(lastKnownMousePositionInDocumentSpace);
+    dataDetectorOverlayController().didInvalidateHighlightOverlayRects(pageIndex);
 #endif
 
     scheduleRenderingUpdate();

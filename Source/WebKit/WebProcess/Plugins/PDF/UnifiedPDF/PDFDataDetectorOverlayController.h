@@ -67,7 +67,7 @@ public:
 
     enum class ShouldUpdatePlatformHighlightData : bool { No, Yes };
     enum class ActiveHighlightChanged : bool { No, Yes };
-    void didInvalidateHighlightOverlayRects(ShouldUpdatePlatformHighlightData = ShouldUpdatePlatformHighlightData::Yes, ActiveHighlightChanged = ActiveHighlightChanged::No);
+    void didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> = { }, ShouldUpdatePlatformHighlightData = ShouldUpdatePlatformHighlightData::Yes, ActiveHighlightChanged = ActiveHighlightChanged::No);
 
 private:
     // PageOverlay::Client
