@@ -1971,8 +1971,6 @@ fast/events/shadow-event-path-2.html [ Failure ]
 fast/events/shadow-event-path.html [ Failure ]
 fast/events/special-key-events-in-input-text.html [ Failure ]
 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
-fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Failure ]
-fast/events/wheel/wheel-events-become-non-cancelable.html [ Failure ]
 fast/events/wheel/wheelevent-basic.html [ Failure ]
 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
@@ -3245,7 +3243,8 @@ http/tests/misc/embed-image-load-outlives-gc-without-crashing.html [ Pass Timeou
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
 
-webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Failure Pass ]
+#  webkit.org/b/259464 fast/events/wheel/redispatched-wheel-event.html [ Failure Pass ]
+webkit.org/b/271223 fast/events/wheel/redispatched-wheel-event.html [ Skip ] # Timeout
 
 # Trusted Types aren't implemented yet
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Skip ]
@@ -3281,3 +3280,14 @@ webkit.org/b/271132 [ Debug ] fast/text/minimum-width-break-on-empty-content-cra
 webkit.org/b/271132 [ Debug ] fast/text/word-break-column-gap-display-flex-utf16-surrogates.html [ Skip ] # Crash
 
 http/tests/workers/service/indexeddb-cryptokey-put-get.https.html [ Failure ]
+
+webkit.org/b/271223 fast/events/wheel/wheel-event-after-document-open.html [ Skip ] # Timeout
+webkit.org/b/271223 fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ] # Timeout
+webkit.org/b/271223 fast/events/wheel/wheel-event-in-passive-region-non-cancelable.html [ Skip ] # Timeout
+webkit.org/b/271223 fast/events/wheel/wheel-event-listeners-on-body-made-passive.html [ Skip ] # Timeout
+webkit.org/b/271223 fast/events/wheel/wheel-event-listeners-on-document-made-passive.html [ Skip ] # Timeout
+webkit.org/b/271223 fast/events/wheel/wheel-event-listeners-on-window-left-active.html [ Skip ] # Timeout
+webkit.org/b/271223 fast/events/wheel/wheel-event-listeners-on-window-made-passive.html [ Skip ] # Timeout
+webkit.org/b/271223 fast/events/wheel/wheel-events-become-non-cancelable.html [ Skip ] # Timeout
+
+imported/w3c/web-platform-tests/trusted-types/HTMLElement-generic.html [ Failure ]
