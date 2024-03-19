@@ -224,11 +224,11 @@ sub buildUpToProject
 {
     my ($projectDirectory, $projectName) = @_;
     my $result;
+
     chdir $projectDirectory or die "Can't find $projectName directory to build from";
     if (isAppleCocoaWebKit()) {
-        if (!configuredXcodeWorkspace()) {
-            system("$FindBin::Bin/set-webkit-configuration", "--workspace=" . sourceDir() . "/WebKit.xcworkspace") == 0 or die;
-        }
+        configuredXcodeWorkspace() or die "Can't determine configured Xcode workspace";
+
         # By convention, projects that support this build workflow
         # (JavaScriptCore, WebGPU) have a scheme which builds that project
         # and its implicit dependencies.
@@ -256,7 +256,7 @@ sub buildUpToProject
 
         print "\n";
         print "building ", $projectName, "\n";
-        print "running build command '", $command, "' in ", $projectDirectory, "\n\n";
+        print "running build command '", $command, "' in ", Cwd::cwd(), "\n\n";
 
         $result = system $command;
     } else {

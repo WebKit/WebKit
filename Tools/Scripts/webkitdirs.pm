@@ -1262,7 +1262,7 @@ sub argumentsForXcode()
     return @args;
 }
 
-sub determineConfiguredXcodeWorkspace()
+sub determineConfiguredXcodeWorkspaceOrDefault()
 {
     return if defined $configuredXcodeWorkspace;
     determineBaseProductDir();
@@ -1271,12 +1271,23 @@ sub determineConfiguredXcodeWorkspace()
         $configuredXcodeWorkspace = <WORKSPACE>;
         close WORKSPACE;
         chomp $configuredXcodeWorkspace;
+        return;
     }
+
+    # No configured workspace, time to find the default one.
+    # If we're using an internal SDK use the internal workspace.
+    if (xcodeSDK() =~ /\.internal$/) {
+        $configuredXcodeWorkspace = Cwd::realpath(sourceDir() . "/../Internal/Safari.xcworkspace");
+        die "using internal SDK but unable to find adjacent Internal directory: $configuredXcodeWorkspace. SDK: $xcodeSDK" unless -e $configuredXcodeWorkspace;
+        return;
+    }
+
+    $configuredXcodeWorkspace = sourceDir() . "/WebKit.xcworkspace";
 }
 
 sub configuredXcodeWorkspace()
 {
-    determineConfiguredXcodeWorkspace();
+    determineConfiguredXcodeWorkspaceOrDefault();
     return $configuredXcodeWorkspace;
 }
 
@@ -1301,15 +1312,14 @@ sub XcodeOptions
     determineLTOMode();
     if (isAppleCocoaWebKit()) {
       determineXcodeSDK();
-      determineConfiguredXcodeWorkspace();
+      determineConfiguredXcodeWorkspaceOrDefault();
     }
 
     my @options;
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, "-ShowBuildOperationDuration=YES";
     if (!checkForArgumentAndRemoveFromARGV("--no-use-workspace")) {
-        my $workspace = $configuredXcodeWorkspace // sourceDir() . "/WebKit.xcworkspace";
-        push @options, ("-workspace", $workspace) if $workspace;
+        push @options, ("-workspace", $configuredXcodeWorkspace) if $configuredXcodeWorkspace;
     }
     push @options, ("-configuration", $configuration);
     push @options, ("-destination", $destination) if $destination;
