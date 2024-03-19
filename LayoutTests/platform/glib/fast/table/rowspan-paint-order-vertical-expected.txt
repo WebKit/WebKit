@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (20,1) size 18x4
                 text run at (20,-18) width 5: " "
             RenderTableCell {TD} at (0,558) size 96x-1 [bgcolor=#AAAAAA] [border: (1px inset #808080)] [r=0 c=13 rs=3 cs=1]
-              RenderText {#text} at (21,2) size 53x36
+              RenderText {#text} at (21,1) size 53x36
                 text run at (21,-18) width 35: "Right"
                 text run at (39,4) width 13: "(3"
                 text run at (57,-19) width 36: "rows)"
