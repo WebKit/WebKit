@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebSWContextManagerConnection {
-    InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, struct WebCore::ServiceWorkerData workerData, String userAgent, enum:bool WebCore::WorkerThreadMode workerThreadMode, enum:bool WebCore::ServiceWorkerIsInspectable inspectable)
+    InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, struct WebCore::ServiceWorkerData workerData, String userAgent, enum:bool WebCore::WorkerThreadMode workerThreadMode, enum:bool WebCore::ServiceWorkerIsInspectable inspectable, OptionSet<WebCore::AdvancedPrivacyProtections> protections)
     UpdateAppInitiatedValue(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:bool WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
     StartFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody, String referrer, bool isServiceWorkerNavigationPreloadEnabled, String clientIdentifier, String resutlingClientIdentifier)
     CancelFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier fetchIdentifier)

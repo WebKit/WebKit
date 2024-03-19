@@ -222,6 +222,7 @@ void Worker::notifyFinished()
     WorkerInitializationData initializationData {
         m_scriptLoader->takeServiceWorkerData(),
         m_clientIdentifier,
+        m_scriptLoader->advancedPrivacyProtections(),
         context->userAgent(m_scriptLoader->responseURL())
     };
     m_contextProxy.startWorkerGlobalScope(m_scriptLoader->responseURL(), *sessionID, m_options.name, WTFMove(initializationData), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);

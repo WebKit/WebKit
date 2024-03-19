@@ -70,6 +70,7 @@ void SharedWorkerScriptLoader::notifyFinished()
     m_completionHandler(WTFMove(fetchResult), WorkerInitializationData {
         m_loader->takeServiceWorkerData(),
         m_loader->clientIdentifier(),
+        m_loader->advancedPrivacyProtections(),
         m_loader->userAgentForSharedWorker()
     }); // deletes this.
 }

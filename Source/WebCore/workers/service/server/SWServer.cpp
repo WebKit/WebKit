@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SWServer.h"
 
+#include "AdvancedPrivacyProtections.h"
 #include "BackgroundFetchEngine.h"
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchOptions.h"
@@ -743,17 +744,28 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
     callback(WTFMove(matchingClients));
 }
 
+template<typename ClientDataType, typename ClientsByIDType>
+void forEachClientForOriginImpl(const Vector<ScriptExecutionContextIdentifier>& identifiers, ClientsByIDType& clientsById, const Function<void(ClientDataType&)>& apply)
+{
+    for (auto& clientIdentifier : identifiers) {
+        auto clientIterator = clientsById.find(clientIdentifier);
+        ASSERT(clientIterator != clientsById.end());
+        apply(clientIterator->value);
+    }
+}
+
+void SWServer::forEachClientForOrigin(const ClientOrigin& origin, const Function<void(const ServiceWorkerClientData&)>& apply) const
+{
+    auto iterator = m_clientIdentifiersPerOrigin.find(origin);
+    if (iterator != m_clientIdentifiersPerOrigin.end())
+        forEachClientForOriginImpl(iterator->value.identifiers, m_clientsById, apply);
+}
+
 void SWServer::forEachClientForOrigin(const ClientOrigin& origin, const Function<void(ServiceWorkerClientData&)>& apply)
 {
     auto iterator = m_clientIdentifiersPerOrigin.find(origin);
-    if (iterator == m_clientIdentifiersPerOrigin.end())
-        return;
-
-    for (auto& clientIdentifier : iterator->value.identifiers) {
-        auto clientIterator = m_clientsById.find(clientIdentifier);
-        ASSERT(clientIterator != m_clientsById.end());
-        apply(clientIterator->value);
-    }
+    if (iterator != m_clientIdentifiersPerOrigin.end())
+        forEachClientForOriginImpl(iterator->value.identifiers, m_clientsById, apply);
 }
 
 std::optional<ExceptionData> SWServer::claim(SWServerWorker& worker)
@@ -893,6 +905,15 @@ void SWServer::terminateContextConnectionWhenPossible(const RegistrableDomain& r
     contextConnection->terminateWhenPossible();
 }
 
+OptionSet<AdvancedPrivacyProtections> SWServer::advancedPrivacyProtectionsFromClient(const ClientOrigin& origin) const
+{
+    OptionSet<AdvancedPrivacyProtections> result;
+    forEachClientForOrigin(origin, [&result](auto& clientData) {
+        result.add(clientData.advancedPrivacyProtections);
+    });
+    return result;
+}
+
 void SWServer::installContextData(const ServiceWorkerContextData& data)
 {
     ASSERT_WITH_MESSAGE(!data.loadedFromDisk, "Workers we just read from disk should only be launched as needed");
@@ -916,7 +937,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, worker.copyRef());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    connection->installServiceWorkerContext(data, worker->data(), userAgent, worker->workerThreadMode());
+    connection->installServiceWorkerContext(data, worker->data(), userAgent, worker->workerThreadMode(), advancedPrivacyProtectionsFromClient(worker->registrationKey().clientOrigin()));
 }
 
 void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, RunServiceWorkerCallback&& callback)
@@ -993,7 +1014,7 @@ bool SWServer::runServiceWorker(SWServerWorker& worker)
     CheckedPtr contextConnection = worker.contextConnection();
     ASSERT(contextConnection);
 
-    contextConnection->installServiceWorkerContext(worker.contextData(), worker.data(), worker.userAgent(), worker.workerThreadMode());
+    contextConnection->installServiceWorkerContext(worker.contextData(), worker.data(), worker.userAgent(), worker.workerThreadMode(), advancedPrivacyProtectionsFromClient(worker.registrationKey().clientOrigin()));
 
     return true;
 }

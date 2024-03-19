@@ -4901,6 +4901,7 @@ struct WebCore::ServiceWorkerClientData {
     std::optional<WebCore::PageIdentifier> pageIdentifier;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
     WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     bool isVisible;
     bool isFocused;
     uint64_t focusOrder;
@@ -5591,6 +5592,7 @@ struct WebCore::WorkerOptions {
 struct WebCore::WorkerInitializationData {
     std::optional<WebCore::ServiceWorkerData> serviceWorkerData;
     std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     String userAgent;
 };
 

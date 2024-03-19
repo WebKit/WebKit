@@ -81,6 +81,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         *document.sessionID(),
         WTFMove(initializationData.serviceWorkerData),
         *initializationData.clientIdentifier,
+        document.advancedPrivacyProtections(),
         document.noiseInjectionHashSalt()
     };
 }

@@ -21,6 +21,7 @@
 #include "Page.h"
 
 #include "ActivityStateChangeObserver.h"
+#include "AdvancedPrivacyProtections.h"
 #include "AlternativeTextClient.h"
 #include "AnimationFrameRate.h"
 #include "AppHighlightStorage.h"
@@ -4443,7 +4444,7 @@ ModelPlayerProvider& Page::modelPlayerProvider()
     return m_modelPlayerProvider.get();
 }
 
-void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& topOrigin, const String& referrerPolicy)
+void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& topOrigin, const String& referrerPolicy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!localMainFrame)
@@ -4458,6 +4459,9 @@ void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& 
     URL originAsURL = origin->toURL();
     document->setSiteForCookies(originAsURL);
     document->setFirstPartyForCookies(originAsURL);
+
+    if (RefPtr documentLoader = localMainFrame->checkedLoader()->documentLoader())
+        documentLoader->setAdvancedPrivacyProtections(advancedPrivacyProtections);
 
     if (document->settings().storageBlockingPolicy() != StorageBlockingPolicy::BlockThirdParty)
         document->setDomainForCachePartition(String { emptyString() });
