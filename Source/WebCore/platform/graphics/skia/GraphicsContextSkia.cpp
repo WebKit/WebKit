@@ -508,9 +508,15 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fil
     canvas().drawRect(boundaries, paint);
 }
 
-void GraphicsContextSkia::fillRect(const FloatRect&, Gradient&, const AffineTransform&)
+void GraphicsContextSkia::fillRect(const FloatRect& boundaries, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
 {
-    notImplemented();
+    if (!makeGLContextCurrentIfNeeded())
+        return;
+
+    SkPaint paint = createFillPaint();
+    paint.setShader(gradient.shader(alpha(), gradientSpaceTransform));
+    paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
+    canvas().drawRect(boundaries, paint);
 }
 
 void GraphicsContextSkia::resetClip()
