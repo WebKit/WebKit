@@ -57,7 +57,7 @@ static std::optional<bool>& cachedAllowsRequest()
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload()
 {
     if (!cachedAllowsRequest())
-        cachedAllowsRequest() = [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;
+        cachedAllowsRequest() = [(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;
     return *cachedAllowsRequest();
 }
 

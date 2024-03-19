@@ -755,7 +755,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedDomainsKey];
 #elif !PLATFORM(MACCATALYST)
         if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingPreventionRelaxedDomains)])
-            crossSiteTrackingPreventionRelaxedDomains = [[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
+            crossSiteTrackingPreventionRelaxedDomains = [(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
         else
             crossSiteTrackingPreventionRelaxedDomains = @[];
 #endif

@@ -4480,7 +4480,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return NO;
 
 #if !PLATFORM(MACCATALYST)
-        if ([[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:PAL::get_ManagedConfiguration_MCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
+        if ([(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:PAL::get_ManagedConfiguration_MCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
             return NO;
 #endif
             
@@ -4492,7 +4492,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return NO;
 
 #if !PLATFORM(MACCATALYST)
-        if ([[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:PAL::get_ManagedConfiguration_MCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
+        if ([(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:PAL::get_ManagedConfiguration_MCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
             return NO;
 #endif
 
