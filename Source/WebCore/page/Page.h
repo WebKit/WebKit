@@ -372,6 +372,7 @@ public:
     const DragController& dragController() const { return m_dragController.get(); }
 #endif
     FocusController& focusController() const { return *m_focusController; }
+    WEBCORE_EXPORT CheckedRef<FocusController> checkedFocusController() const;
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuController& contextMenuController() { return m_contextMenuController.get(); }
     const ContextMenuController& contextMenuController() const { return m_contextMenuController.get(); }

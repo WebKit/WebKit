@@ -37,12 +37,19 @@
 #include "VisibleUnits.h"
 #include <stdio.h>
 #include <wtf/Assertions.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+
+const VisibleSelection& VisibleSelection::emptySelection()
+{
+    static NeverDestroyed<VisibleSelection> selection;
+    return selection.get();
+}
 
 VisibleSelection::VisibleSelection()
     : m_anchorIsFirst(true)

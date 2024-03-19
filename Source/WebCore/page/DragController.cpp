@@ -240,7 +240,10 @@ bool DragController::performDragOperation(DragData&& dragData)
     removeAllDroppedImagePlaceholders();
 
     SetForScope isPerformingDrop(m_isPerformingDrop, true);
-    IgnoreSelectionChangeForScope ignoreSelectionChanges { m_page.focusController().focusedOrMainFrame() };
+    RefPtr focusedOrMainFrame = m_page.focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return false;
+    IgnoreSelectionChangeForScope ignoreSelectionChanges { *focusedOrMainFrame };
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     if (!localMainFrame)

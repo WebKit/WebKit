@@ -2391,9 +2391,9 @@ bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& platform
 
     if (!m_frame->page())
         return false;
-    LocalFrame& focusFrame = CheckedRef(m_frame->page()->focusController())->focusedOrMainFrame();
+    RefPtr focusFrame = m_frame->page()->checkedFocusController()->focusedOrMainFrame();
     // Do not paste here if the focus was moved somewhere else.
-    if (m_frame.ptr() == &focusFrame && m_frame->editor().client()->supportsGlobalSelection())
+    if (m_frame.ptr() == focusFrame.get() && m_frame->editor().client()->supportsGlobalSelection())
         return protectedFrame()->editor().command("PasteGlobalSelection"_s).execute();
 
     return false;
@@ -2954,7 +2954,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 
     // If focus shift is blocked, we eat the event.
     RefPtr page = frame->page();
-    if (page && !CheckedRef(page->focusController())->setFocusedElement(element.get(), protectedFrame(), { { }, { }, { }, FocusTrigger::Click, { } }))
+    if (page && !page->checkedFocusController()->setFocusedElement(element.get(), protectedFrame(), { { }, { }, { }, FocusTrigger::Click, { } }))
         return false;
 
     if (element && m_mouseDownDelegatedFocus)
@@ -3835,7 +3835,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     if (initialKeyEvent.type() == PlatformEvent::Type::RawKeyDown) {
         element->dispatchEvent(keydown);
         // If frame changed as a result of keydown dispatch, then return true to avoid sending a subsequent keypress message to the new frame.
-        bool changedFocusedFrame = frame->page() && frame.ptr() != &frame->page()->focusController().focusedOrMainFrame();
+        bool changedFocusedFrame = frame->page() && frame.ptr() != frame->page()->focusController().focusedOrMainFrame();
         return keydown->defaultHandled() || keydown->defaultPrevented() || changedFocusedFrame;
     }
 
@@ -3869,7 +3869,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     }
 
     // If frame changed as a result of keydown dispatch, then return early to avoid sending a subsequent keypress message to the new frame.
-    bool changedFocusedFrame = frame->page() && frame.ptr() != &frame->page()->focusController().focusedOrMainFrame();
+    bool changedFocusedFrame = frame->page() && frame.ptr() != frame->page()->focusController().focusedOrMainFrame();
     bool keydownResult = keydown->defaultHandled() || keydown->defaultPrevented() || changedFocusedFrame;
     if (keydownResult && !backwardCompatibilityMode)
         return keydownResult;
@@ -4739,7 +4739,7 @@ void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, Keybo
     if (m_frame->document()->inDesignMode())
         return;
 
-    if (CheckedRef(page->focusController())->advanceFocus(focusDirection, &event))
+    if (page->checkedFocusController()->advanceFocus(focusDirection, &event))
         event.setDefaultHandled();
 }
 
@@ -4764,7 +4764,7 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent& event)
     if (!page->tabKeyCyclesThroughElements())
         return;
 
-    if (CheckedRef(page->focusController())->advanceFocus(event.shiftKey() ? FocusDirection::Backward : FocusDirection::Forward, &event))
+    if (page->checkedFocusController()->advanceFocus(event.shiftKey() ? FocusDirection::Backward : FocusDirection::Forward, &event))
         event.setDefaultHandled();
 }
 
@@ -5175,7 +5175,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget*)
 void EventHandler::focusDocumentView()
 {
     if (RefPtr page = m_frame->page())
-        CheckedRef(page->focusController())->setFocusedFrame(protectedFrame().ptr());
+        page->checkedFocusController()->setFocusedFrame(protectedFrame().ptr());
 }
 #endif // !PLATFORM(COCOA)
 

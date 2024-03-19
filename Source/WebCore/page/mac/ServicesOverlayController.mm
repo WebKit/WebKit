@@ -283,7 +283,10 @@ Seconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(Data
         return 0_s;
 
     Seconds minimumTimeUntilHighlightShouldBeShown = 200_ms;
-    if (CheckedRef(m_page.focusController())->focusedOrMainFrame().selection().selection().isContentEditable())
+    RefPtr focusedOrMainFrame = CheckedRef(m_page.focusController())->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return 0_s;
+    if (focusedOrMainFrame->selection().selection().isContentEditable())
         minimumTimeUntilHighlightShouldBeShown = 1_s;
 
     bool mousePressed = localMainFrame->eventHandler().mousePressed();
@@ -479,7 +482,10 @@ void ServicesOverlayController::createOverlayIfNeeded()
 
 Vector<SimpleRange> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
 {
-    return CheckedRef(m_page.focusController())->focusedOrMainFrame().editor().detectedTelephoneNumberRanges();
+    RefPtr focusedOrMainFrame = CheckedRef(m_page.focusController())->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return { };
+    return focusedOrMainFrame->editor().detectedTelephoneNumberRanges();
 }
 
 DataDetectorHighlight* ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight(DataDetectorHighlight& selectionHighlight)
@@ -643,14 +649,18 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
 
     IntPoint windowPoint = frameView->contentsToWindow(clickPoint);
 
+    RefPtr focusedOrMainFrame = CheckedRef(m_page.focusController())->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return;
+
     if (highlight.type() == DataDetectorHighlight::Type::Selection) {
         auto selectedTelephoneNumbers = telephoneNumberRangesForFocusedFrame().map([](auto& range) {
             return plainText(range);
         });
 
-        m_page.chrome().client().handleSelectionServiceClick(CheckedRef(m_page.focusController())->focusedOrMainFrame().selection(), WTFMove(selectedTelephoneNumbers), windowPoint);
+        m_page.chrome().client().handleSelectionServiceClick(focusedOrMainFrame->selection(), WTFMove(selectedTelephoneNumbers), windowPoint);
     } else if (highlight.type() == DataDetectorHighlight::Type::TelephoneNumber)
-        m_page.chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, frameView->contentsToWindow(CheckedRef(m_page.focusController())->focusedOrMainFrame().editor().firstRectForRange(highlight.range())));
+        m_page.chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, frameView->contentsToWindow(focusedOrMainFrame->editor().firstRectForRange(highlight.range())));
 }
 
 } // namespace WebKit

@@ -313,7 +313,11 @@ std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAt
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
-    auto selection = CheckedRef(frame->page()->focusController())->focusedOrMainFrame().selection().selection();
+    RefPtr focusedOrMainFrame = frame->page()->checkedFocusController()->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return std::nullopt;
+
+    auto selection = focusedOrMainFrame->selection().selection();
     NSRange selectionRange;
     NSUInteger hitIndex;
     std::optional<SimpleRange> fullCharacterRange;

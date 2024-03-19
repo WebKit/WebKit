@@ -493,8 +493,8 @@ bool FindController::shouldHideFindIndicatorOnScroll() const
 
 void FindController::showFindIndicatorInSelection()
 {
-    Ref selectedFrame = CheckedRef(m_webPage->corePage()->focusController())->focusedOrMainFrame();
-    updateFindIndicator(selectedFrame, false);
+    if (RefPtr selectedFrame = CheckedRef(m_webPage->corePage()->focusController())->focusedOrMainFrame())
+        updateFindIndicator(*selectedFrame, false);
 }
 
 void FindController::deviceScaleFactorDidChange()

@@ -202,7 +202,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     auto result = localMainFrame->eventHandler().hitTestResultAtPoint(localMainFrame->view()->windowToContents(roundedIntPoint(floatPoint)), hitType);
 
-    RefPtr frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -226,8 +226,11 @@ void WebPage::performDictionaryLookupForSelection(LocalFrame& frame, const Visib
 
 void WebPage::performDictionaryLookupOfCurrentSelection()
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    performDictionaryLookupForSelection(frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
     
 void WebPage::performDictionaryLookupForRange(LocalFrame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
@@ -301,10 +304,12 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 
 void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&& options)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
 
     if (replacementEditingRange.location != notFound) {
-        auto replacementRange = EditingRange::toRange(frame, replacementEditingRange);
+        auto replacementRange = EditingRange::toRange(*frame, replacementEditingRange);
         if (replacementRange)
             frame->selection().setSelection(VisibleSelection { *replacementRange });
     }
@@ -329,7 +334,10 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
 
 void WebPage::addDictationAlternative(const String& text, DictationContext context, CompletionHandler<void(bool)>&& completion)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document) {
         completion(false);
@@ -365,7 +373,10 @@ void WebPage::addDictationAlternative(const String& text, DictationContext conte
 
 void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document) {
         completion({ });
@@ -390,7 +401,10 @@ void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<Dic
 
 void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document)
         return;
@@ -655,7 +669,10 @@ private:
 
 void WebPage::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     auto element = elementForContext(elementContext);
     if (!element || !element->isContentEditable())
         return;
@@ -680,7 +697,7 @@ void WebPage::replaceImageForRemoveBackground(const ElementContext& elementConte
 
     {
         OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
-        IgnoreSelectionChangeForScope ignoreSelectionChanges { frame.get() };
+        IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
         frame->editor().replaceNodeFromPasteboard(*element, replaceSelectionPasteboardName(), EditAction::RemoveBackground);
 
         auto position = frame->selection().selection().visibleStart();
@@ -728,7 +745,9 @@ void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, co
 
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, CompletionHandler<void(bool&&)>&& completionHandler)
 {
-    Ref frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler(false);
     if (frame->selection().isNone())
         return completionHandler(false);
     frame->editor().readSelectionFromPasteboard(pasteboardName);
