@@ -232,7 +232,7 @@ void NetworkRTCProvider::sendToSocket(LibWebRTCSocketIdentifier identifier, std:
     auto iterator = m_sockets.find(identifier);
     if (iterator == m_sockets.end())
         return;
-    iterator->second->sendTo(data.data(), data.size(), address.rtcAddress(), options.options);
+    iterator->second->sendTo(data, address.rtcAddress(), options.options);
 }
 
 void NetworkRTCProvider::closeSocket(LibWebRTCSocketIdentifier identifier)

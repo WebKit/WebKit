@@ -558,7 +558,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
             }
 
             if (auto* chunk = result.returnValue())
-                compiler->addBytes(chunk->data(), chunk->size());
+                compiler->addBytes(*chunk);
             else
                 compiler->finalize(globalObject);
         });
@@ -569,7 +569,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
     WTF::switchOn(body, [&](Ref<FormData>&) {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](Ref<SharedBuffer>& buffer) {
-        compiler->addBytes(buffer->data(), buffer->size());
+        compiler->addBytes(buffer->bytes());
         compiler->finalize(globalObject);
     }, [&](std::nullptr_t&) {
         compiler->finalize(globalObject);

@@ -354,8 +354,7 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
         end++;
     }
 
-    Vector<char, 32> result;
-    result.append(buffer.data(), extensionIndex + 2); // "-u" is included.
+    Vector<char, 32> result(buffer.subspan(0, extensionIndex + 2)); // "-u" is included.
     StringView extension = locale.substring(extensionIndex, extensionLength);
     ASSERT(extension.is8Bit());
     auto subtags = unicodeExtensionComponents(extension);
@@ -363,7 +362,7 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
         auto subtag = subtags[index];
         ASSERT(subtag.is8Bit());
         result.append('-');
-        result.append(subtag.characters8(), subtag.length());
+        result.append(subtag.span8());
 
         if (subtag.length() != 2) {
             ++index;
@@ -384,15 +383,13 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
             auto value = subtags[valueIndex];
             if (value != "true"_s) {
                 result.append('-');
-                result.append(value.characters8(), value.length());
+                result.append(value.span8());
             }
         }
         index = valueIndexEnd;
     }
 
-    unsigned remainingStart = extensionIndex + extensionLength;
-    unsigned remainingLength = buffer.size() - remainingStart;
-    result.append(buffer.data() + remainingStart, remainingLength);
+    result.append(buffer.subspan(extensionIndex + extensionLength));
     return result;
 }
 
@@ -432,10 +429,10 @@ static void addScriptlessLocaleIfNeeded(LocaleSet& availableLocales, StringView 
 
     Vector<char, 12> buffer;
     ASSERT(subtags[0].is8Bit() && subtags[0].containsOnlyASCII());
-    buffer.append(reinterpret_cast<const char*>(subtags[0].characters8()), subtags[0].length());
+    buffer.append(subtags[0].span8());
     buffer.append('-');
     ASSERT(subtags[2].is8Bit() && subtags[2].containsOnlyASCII());
-    buffer.append(reinterpret_cast<const char*>(subtags[2].characters8()), subtags[2].length());
+    buffer.append(subtags[2].span8());
 
     availableLocales.add(StringImpl::createStaticStringImpl(buffer.data(), buffer.size()));
 }

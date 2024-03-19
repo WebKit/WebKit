@@ -86,9 +86,8 @@ public:
         m_freeDataFunction(const_cast<uint8_t*>(m_span.data()), m_context);
     }
 
-    const unsigned char* bytes() const { return m_span.data(); }
     size_t size() const { return m_span.size(); }
-    std::span<const uint8_t> dataReference() const { return m_span; }
+    std::span<const uint8_t> bytes() const { return m_span; }
 
 private:
     Data(std::span<const uint8_t> span, FreeDataFunction freeDataFunction, const void* context)

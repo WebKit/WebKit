@@ -68,6 +68,8 @@ public:
     bool is8Bit() const { return m_string.is8Bit(); }
     const LChar* characters8() const { return m_string.characters8(); }
     const UChar* characters16() const { return m_string.characters16(); }
+    std::span<const LChar> span8() const { return m_string.span8(); }
+    std::span<const UChar> span16() const { return m_string.span16(); }
     unsigned length() const { return m_string.length(); }
 
     UChar operator[](unsigned int i) const { return m_string[i]; }

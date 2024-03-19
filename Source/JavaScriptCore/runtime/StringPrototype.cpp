@@ -1971,9 +1971,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncNormalize, (JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, JSValue::encode(normalize(globalObject, string, form)));
 }
 
-static inline std::optional<unsigned> illFormedIndex(const UChar* characters, unsigned length)
+static inline std::optional<unsigned> illFormedIndex(std::span<const UChar> characters)
 {
-    for (unsigned index = 0; index < length; ++index) {
+    for (unsigned index = 0; index < characters.size(); ++index) {
         UChar character = characters[index];
         if (!U16_IS_SURROGATE(character))
             continue;
@@ -1982,7 +1982,7 @@ static inline std::optional<unsigned> illFormedIndex(const UChar* characters, un
             return index;
 
         ASSERT(U16_IS_SURROGATE_LEAD(character));
-        if ((index + 1) == length)
+        if ((index + 1) == characters.size())
             return index;
         UChar nextCharacter = characters[index + 1];
 
@@ -2015,7 +2015,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIsWellFormed, (JSGlobalObject* globalObj
 
     if (string.is8Bit())
         return JSValue::encode(jsBoolean(true));
-    return JSValue::encode(jsBoolean(!illFormedIndex(string.characters16(), string.length())));
+    return JSValue::encode(jsBoolean(!illFormedIndex(string.span16())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -2043,16 +2043,15 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
     if (string.is8Bit())
         return JSValue::encode(stringValue);
 
-    const UChar* characters = string.characters16();
-    unsigned length = string.length();
-    auto firstIllFormedIndex = illFormedIndex(characters, length);
+    auto characters = string.span16();
+    auto firstIllFormedIndex = illFormedIndex(characters);
     if (!firstIllFormedIndex)
         return JSValue::encode(stringValue);
 
     Vector<UChar> buffer;
-    buffer.reserveInitialCapacity(length);
-    buffer.append(characters, firstIllFormedIndex.value());
-    for (unsigned index = firstIllFormedIndex.value(); index < length; ++index) {
+    buffer.reserveInitialCapacity(characters.size());
+    buffer.append(characters.first(*firstIllFormedIndex));
+    for (unsigned index = firstIllFormedIndex.value(); index < characters.size(); ++index) {
         UChar character = characters[index];
 
         if (!U16_IS_SURROGATE(character)) {
@@ -2066,7 +2065,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
         }
 
         ASSERT(U16_IS_SURROGATE_LEAD(character));
-        if ((index + 1) == length) {
+        if ((index + 1) == characters.size()) {
             buffer.append(replacementCharacter);
             continue;
         }

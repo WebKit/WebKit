@@ -442,7 +442,7 @@ static bool appendEncodedHostname(Vector<UChar, 512>& buffer, StringView string)
         string.upconvertedCharacters(), string.length(), hostnameBuffer, URLParser::hostnameBufferLength, &processingDetails, &error);
 
     if (U_SUCCESS(error) && !(processingDetails.errors & ~URLParser::allowedNameToASCIIErrors) && numCharactersConverted) {
-        buffer.append(hostnameBuffer, numCharactersConverted);
+        buffer.append(std::span(hostnameBuffer, numCharactersConverted));
         return true;
     }
     return false;

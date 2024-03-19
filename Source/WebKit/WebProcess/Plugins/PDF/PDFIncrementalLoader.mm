@@ -64,7 +64,7 @@ public:
     NetscapePlugInStreamLoader* streamLoader() { return m_streamLoader; }
     void setStreamLoader(NetscapePlugInStreamLoader* loader) { m_streamLoader = loader; }
     void clearStreamLoader();
-    void addData(const uint8_t* data, size_t count) { m_accumulatedData.append(data, count); }
+    void addData(std::span<const uint8_t> data) { m_accumulatedData.append(data); }
 
     void completeWithBytes(const uint8_t*, size_t, PDFIncrementalLoader&);
     void completeWithAccumulatedData(PDFIncrementalLoader&);
@@ -224,7 +224,7 @@ void PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* str
     if (!request)
         return;
 
-    request->addData(data.data(), data.size());
+    request->addData(data.bytes());
 }
 
 void PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader* streamLoader, const ResourceError&)

@@ -210,7 +210,7 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
         break;
     case MIMEHeader::SevenBit:
     case MIMEHeader::Binary:
-        data.append(contiguousContent->data(), contiguousContent->size());
+        data.append(contiguousContent->bytes());
         break;
     default:
         LOG_ERROR("Invalid encoding for MHTML part.");

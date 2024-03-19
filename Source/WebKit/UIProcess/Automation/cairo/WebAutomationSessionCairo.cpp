@@ -44,7 +44,7 @@ static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
     Vector<unsigned char> pngData;
     cairo_surface_write_to_png_stream(surface, [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
         auto* pngData = static_cast<Vector<unsigned char>*>(userData);
-        pngData->append(data, length);
+        pngData->append(std::span { data, length });
         return CAIRO_STATUS_SUCCESS;
     }, &pngData);
 

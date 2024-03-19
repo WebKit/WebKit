@@ -43,7 +43,7 @@ public:
         if (!m_counterVector.isEmpty() || !counter.length())
             return m_counterVector;
 
-        m_counterVector.append(counter.data(), counter.length());
+        m_counterVector.append(counter.bytes());
         return m_counterVector;
     }
 

@@ -631,7 +631,7 @@ public:
         const uint8_t* data = m_buffer;
         m_buffer += size;
 
-        value.append(data, size);
+        value.append(std::span { data, static_cast<size_t>(size) });
         return *this;
     }
 
@@ -648,7 +648,7 @@ public:
         const uint8_t* data = m_buffer;
         m_buffer += size;
 
-        value.append(data, size);
+        value.append(std::span { data, static_cast<size_t>(size) });
         return *this;
     }
 

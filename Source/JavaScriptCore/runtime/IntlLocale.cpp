@@ -154,9 +154,9 @@ void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringVi
 
         ASSERT(subtag.containsOnlyASCII());
         if (subtag.is8Bit())
-            buffer.append(subtag.characters8(), subtag.length());
+            buffer.append(subtag.span8());
         else
-            buffer.append(subtag.characters16(), subtag.length());
+            buffer.append(subtag.span16());
     }
 
     if (endOfLanguageScriptRegionVariant != length) {
@@ -164,9 +164,9 @@ void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringVi
 
         ASSERT(rest.containsOnlyASCII());
         if (rest.is8Bit())
-            buffer.append(rest.characters8(), rest.length());
+            buffer.append(rest.span8());
         else
-            buffer.append(rest.characters16(), rest.length());
+            buffer.append(rest.span16());
     }
 
     buffer.append('\0');

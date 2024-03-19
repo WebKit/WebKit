@@ -214,12 +214,12 @@ static String getFullCFHTML(IDataObject* data)
 
 static void append(Vector<char>& vector, const char* string)
 {
-    vector.append(string, strlen(string));
+    vector.append(std::span { string, strlen(string) });
 }
 
 static void append(Vector<char>& vector, const CString& string)
 {
-    vector.append(string.data(), string.length());
+    vector.append(string.bytes());
 }
 
 // Find the markup between "<!--StartFragment -->" and "<!--EndFragment -->", accounting for browser quirks.

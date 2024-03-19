@@ -43,7 +43,7 @@ public:
         if (!m_publicExponentVector.isEmpty() || !publicExponent->byteLength())
             return m_publicExponentVector;
 
-        m_publicExponentVector.append(publicExponent->data(), publicExponent->byteLength());
+        m_publicExponentVector.append(publicExponent->bytes());
         return m_publicExponentVector;
     }
 private:

@@ -209,7 +209,7 @@ void SincResampler::processBuffer(std::span<const float> source, std::span<float
         size_t framesToCopy = std::min(source.size(), framesToProcess);
 
         IGNORE_WARNINGS_BEGIN("restrict")
-        memcpySpan(buffer.subspan(0, framesToCopy), source.subspan(0, framesToCopy));
+        memcpySpan(buffer.first(framesToCopy), source.first(framesToCopy));
         IGNORE_WARNINGS_END
 
         // Zero-pad if necessary.
@@ -278,7 +278,7 @@ void SincResampler::process(std::span<float> destination, size_t framesToProcess
 
         // Step (3) Copy r3 to r1.
         // This wraps the last input frames back to the start of the buffer.
-        memcpySpan(m_r1.subspan(0, kernelSize), m_r3.subspan(0, kernelSize));
+        memcpySpan(m_r1.first(kernelSize), m_r3.first(kernelSize));
 
         // Step (4) -- Reinitialize regions if necessary.
         if (m_r0.data() == m_r2.data())

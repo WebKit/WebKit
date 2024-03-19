@@ -321,15 +321,15 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle& handle)
     deref();
 }
 
-void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, const uint8_t* data, size_t length)
+void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, std::span<const uint8_t> data)
 {
-    LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData() Received %zu bytes", this, length);
+    LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData() Received %zu bytes", this, data.size());
     Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
     ASSERT(&handle == m_handle);
     if (!m_document) {
         return;
     }
-    if (!length) {
+    if (data.empty()) {
         handle.disconnect();
         return;
     }
@@ -340,7 +340,7 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, co
     }
     if (m_shouldDiscardReceivedData)
         return;
-    if (!appendToBuffer(data, length)) {
+    if (!appendToBuffer(data)) {
         m_shouldDiscardReceivedData = true;
         fail("Ran out of memory while receiving WebSocket data."_s);
         return;
@@ -422,14 +422,14 @@ void WebSocketChannel::didFail(ExceptionCode errorCode)
     deref();
 }
 
-bool WebSocketChannel::appendToBuffer(const uint8_t* data, size_t len)
+bool WebSocketChannel::appendToBuffer(std::span<const uint8_t> data)
 {
-    size_t newBufferSize = m_buffer.size() + len;
+    size_t newBufferSize = m_buffer.size() + data.size();
     if (newBufferSize < m_buffer.size()) {
-        LOG(Network, "WebSocketChannel %p appendToBuffer() Buffer overflow (%u bytes already in receive buffer and appending %u bytes)", this, static_cast<unsigned>(m_buffer.size()), static_cast<unsigned>(len));
+        LOG(Network, "WebSocketChannel %p appendToBuffer() Buffer overflow (%u bytes already in receive buffer and appending %zu bytes)", this, static_cast<unsigned>(m_buffer.size()), data.size());
         return false;
     }
-    m_buffer.append(data, len);
+    m_buffer.append(data);
     return true;
 }
 

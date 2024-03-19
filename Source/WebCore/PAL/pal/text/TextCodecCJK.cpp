@@ -1118,7 +1118,7 @@ static void appendDecimal(char32_t c, Vector<uint8_t>& result)
 {
     uint8_t buffer[lengthOfIntegerAsString(std::numeric_limits<decltype(c)>::max())];
     writeIntegerToBuffer(c, buffer);
-    result.append(buffer, lengthOfIntegerAsString(c));
+    result.append(std::span { buffer, lengthOfIntegerAsString(c) });
 }
 
 static void urlEncodedEntityUnencodableHandler(char32_t c, Vector<uint8_t>& result)

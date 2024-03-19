@@ -188,6 +188,7 @@ inline std::optional<float> makeVectorElement(const float*, CFNumberRef cfNumber
 
 using WTF::createCFArray;
 using WTF::makeVector;
+using WTF::toSpan;
 using WTF::toVector;
 
 #endif // USE(CF)

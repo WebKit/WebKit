@@ -350,11 +350,11 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
     result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
-    result.append(RSAOIDHeader, sizeof(RSAOIDHeader));
+    result.append(std::span { RSAOIDHeader });
     result.append(BitStringMark);
     addEncodedASN1Length(result, keySize + 1);
     result.append(InitialOctet);
-    result.append(keyBytes.data(), keyBytes.size());
+    result.append(keyBytes.span());
 
     return WTFMove(result);
 }
@@ -409,11 +409,11 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
     result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
-    result.append(Version, sizeof(Version));
-    result.append(RSAOIDHeader, sizeof(RSAOIDHeader));
+    result.append(std::span { Version });
+    result.append(std::span { RSAOIDHeader });
     result.append(OctetStringMark);
     addEncodedASN1Length(result, keySize);
-    result.append(keyBytes.data(), keyBytes.size());
+    result.append(keyBytes.span());
 
     return WTFMove(result);
 }

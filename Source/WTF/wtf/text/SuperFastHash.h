@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/text/StringHasher.h>
 
 namespace WTF {
@@ -119,6 +120,12 @@ public:
     }
 
     template<typename T, typename Converter = DefaultConverter>
+    void addCharacters(std::span<const T> data)
+    {
+        addCharacters(data.data(), data.size());
+    }
+
+    template<typename T, typename Converter = DefaultConverter>
     void addCharacters(const T* data)
     {
         if (m_hasPendingCharacter && *data) {
@@ -154,6 +161,12 @@ public:
     static constexpr unsigned computeHash(const T* data, unsigned length)
     {
         return StringHasher::finalize(computeHashImpl<T, Converter>(data, length));
+    }
+
+    template<typename T, typename Converter = DefaultConverter>
+    static constexpr unsigned computeHash(std::span<const T> data)
+    {
+        return StringHasher::finalize(computeHashImpl<T, Converter>(data.data(), data.size()));
     }
 
     template<typename T, typename Converter = DefaultConverter>

@@ -76,7 +76,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
         offset += signature[offset] - keyLengthInBytes;
     offset++; // skip length
     ASSERT_WITH_SECURITY_IMPLICATION(signature.size() > offset + bytesToCopy);
-    newSignature.append(signature.data() + offset, bytesToCopy);
+    newSignature.append(signature.subspan(offset, bytesToCopy));
     offset += bytesToCopy + 1; // skip r, tag
 
     // If s < keyLengthInBytes, fill the head of s with 0s.
@@ -90,7 +90,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
         offset += signature[offset] - keyLengthInBytes;
     ++offset; // skip length
     ASSERT_WITH_SECURITY_IMPLICATION(signature.size() >= offset + bytesToCopy);
-    newSignature.append(signature.data() + offset, bytesToCopy);
+    newSignature.append(signature.subspan(offset, bytesToCopy));
 
     return WTFMove(newSignature);
 }
@@ -139,12 +139,12 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
     addEncodedASN1Length(newSignature, keyLengthInBytes + rNeedsInitialOctet - rStart);
     if (rNeedsInitialOctet)
         newSignature.append(InitialOctet);
-    newSignature.append(signature.data() + rStart, keyLengthInBytes - rStart);
+    newSignature.append(signature.subspan(rStart, keyLengthInBytes - rStart));
     newSignature.append(IntegerMark);
     addEncodedASN1Length(newSignature, keyLengthInBytes * 2 + sNeedsInitialOctet - sStart);
     if (sNeedsInitialOctet)
         newSignature.append(InitialOctet);
-    newSignature.append(signature.data() + sStart, keyLengthInBytes * 2 - sStart);
+    newSignature.append(signature.subspan(sStart, keyLengthInBytes * 2 - sStart));
 
     uint32_t valid;
     CCCryptorStatus status = CCECCryptorVerifyHash(key, digestData.data(), digestData.size(), newSignature.data(), newSignature.size(), &valid);

@@ -4684,7 +4684,7 @@ static void getContentsAsMHTMLDataCallback(API::Data* wkData, GTask* taskPtr)
     if (g_task_get_source_tag(task.get()) == webkit_web_view_save_to_file) {
         ASSERT(G_IS_FILE(data->file.get()));
         GCancellable* cancellable = g_task_get_cancellable(task.get());
-        g_file_replace_contents_async(data->file.get(), reinterpret_cast<const gchar*>(data->webData->bytes()), data->webData->size(),
+        g_file_replace_contents_async(data->file.get(), reinterpret_cast<const gchar*>(data->webData->bytes().data()), data->webData->size(),
             0, FALSE, G_FILE_CREATE_REPLACE_DESTINATION, cancellable, fileReplaceContentsCallback, task.leakRef());
         return;
     }
@@ -4750,9 +4750,9 @@ GInputStream* webkit_web_view_save_finish(WebKitWebView* webView, GAsyncResult* 
 
     GInputStream* dataStream = g_memory_input_stream_new();
     ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_task_get_task_data(task));
-    gsize length = data->webData->size();
-    if (length)
-        g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), fastMemDup(data->webData->bytes(), length), length, fastFree);
+    auto bytes = data->webData->bytes();
+    if (!bytes.empty())
+        g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), fastMemDup(bytes.data(), bytes.size()), bytes.size(), fastFree);
 
     return dataStream;
 }

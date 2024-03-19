@@ -606,7 +606,7 @@ String IconDatabase::iconURLForPageURL(const String& pageURL)
     return m_pageURLToIconURLMap.get(pageURL);
 }
 
-void IconDatabase::setIconForPageURL(const String& iconURL, const uint8_t* iconData, size_t iconDataSize, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
+void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint8_t> iconData, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
@@ -616,10 +616,10 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const uint8_t* iconD
         {
             Locker locker { m_loadedIconsLock };
             auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, { }));
-            if (iconDataSize) {
+            if (iconData.size()) {
                 RefPtr<NativeImage> nativeImage;
-                auto image = BitmapImage::create();
-                if (image->setData(SharedBuffer::create(iconData, iconDataSize), true) >= EncodedDataStatus::SizeAvailable && (nativeImage = image->nativeImageForCurrentFrame()))
+                Ref image = BitmapImage::create();
+                if (image->setData(SharedBuffer::create(iconData), true) >= EncodedDataStatus::SizeAvailable && (nativeImage = image->nativeImageForCurrentFrame()))
                     addResult.iterator->value.first = nativeImage->platformImage();
                 else
                     result = false;
@@ -638,8 +638,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const uint8_t* iconD
         return;
     }
 
-    Vector<uint8_t> data(std::span<const uint8_t> { iconData, static_cast<size_t>(iconDataSize) });
-    m_workQueue->dispatch([this, protectedThis = Ref { *this }, iconURL = iconURL.isolatedCopy(), iconData = WTFMove(data), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, iconURL = iconURL.isolatedCopy(), iconData = Vector(iconData), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         bool result = false;
         if (m_db.isOpen()) {
             SQLiteTransaction transaction(m_db);

@@ -215,7 +215,7 @@ static Vector<uint8_t> encodeComplexWindowsLatin1(StringView string, Unencodable
             // No way to encode this character with Windows Latin-1.
             UnencodableReplacementArray replacement;
             int replacementLength = TextCodec::getUnencodableReplacement(character, handling, replacement);
-            result.append(replacement.data(), replacementLength);
+            result.append(std::span(replacement.data(), replacementLength));
             continue;
         }
     gotByte:

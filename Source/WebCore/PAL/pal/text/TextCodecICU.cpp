@@ -313,7 +313,7 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
         char* targetLimit = target + ConversionBufferSize;
         error = U_ZERO_ERROR;
         ucnv_fromUnicode(m_converter.get(), &target, targetLimit, &source, sourceLimit, 0, true, &error);
-        result.append(reinterpret_cast<uint8_t*>(buffer), target - buffer);
+        result.append(std::span(reinterpret_cast<uint8_t*>(buffer), target - buffer));
     } while (needsToGrowToProduceBuffer(error));
     return result;
 }

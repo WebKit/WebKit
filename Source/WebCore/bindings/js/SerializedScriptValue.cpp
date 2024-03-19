@@ -117,6 +117,7 @@
 
 #if PLATFORM(COCOA)
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/cf/VectorCF.h>
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -965,7 +966,7 @@ static std::optional<Vector<uint8_t>> unwrapCryptoKey(JSGlobalObject* lexicalGlo
 #if ASSUME_LITTLE_ENDIAN
 template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
 {
-    buffer.append(reinterpret_cast<uint8_t*>(&value), sizeof(value));
+    buffer.append(std::span { reinterpret_cast<uint8_t*>(&value), sizeof(value) });
 }
 #else
 template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
@@ -982,15 +983,15 @@ template <> void writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, uint8_t val
     buffer.append(value);
 }
 
-template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, const T* values, uint32_t length)
+template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, std::span<const T> values)
 {
-    if (length > std::numeric_limits<uint32_t>::max() / sizeof(T))
+    if (values.size() > std::numeric_limits<uint32_t>::max() / sizeof(T))
         return false;
 
 #if ASSUME_LITTLE_ENDIAN
-    buffer.append(reinterpret_cast<const uint8_t*>(values), length * sizeof(T));
+    buffer.append(std::span { reinterpret_cast<const uint8_t*>(values.data()), values.size() * sizeof(T) });
 #else
-    for (unsigned i = 0; i < length; i++) {
+    for (unsigned i = 0; i < values.size(); i++) {
         T value = values[i];
         for (unsigned j = 0; j < sizeof(T); j++) {
             buffer.append(static_cast<uint8_t>(value & 0xFF));
@@ -1001,9 +1002,9 @@ template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, con
     return true;
 }
 
-template <> bool writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, const uint8_t* values, uint32_t length)
+template <> bool writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, std::span<const uint8_t> values)
 {
-    buffer.append(values, length);
+    buffer.append(values);
     return true;
 }
 
@@ -1092,10 +1093,10 @@ public:
         writeLittleEndian<uint8_t>(out, StringTag);
         if (string.is8Bit()) {
             writeLittleEndian(out, string.length() | StringDataIs8BitFlag);
-            return writeLittleEndian(out, string.characters8(), string.length());
+            return writeLittleEndian(out, string.span8());
         }
         writeLittleEndian(out, string.length());
-        return writeLittleEndian(out, string.characters16(), string.length());
+        return writeLittleEndian(out, string.span16());
     }
 
 #if ASSERT_ENABLED
@@ -1610,7 +1611,7 @@ private:
             return;
         }
         write(byteLength);
-        write(static_cast<const uint8_t*>(arrayBuffer->data()), byteLength);
+        write(arrayBuffer->bytes());
     }
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -1853,7 +1854,7 @@ private:
                     return true;
                 }
                 write(dataLength);
-                write(data->data().data(), dataLength);
+                write(data->data().bytes());
                 write(data->colorSpace());
                 return true;
             }
@@ -1974,7 +1975,7 @@ private:
                     write(byteLength);
                     uint64_t maxByteLength = arrayBuffer->maxByteLength().value_or(0);
                     write(maxByteLength);
-                    write(static_cast<const uint8_t*>(arrayBuffer->data()), byteLength);
+                    write(arrayBuffer->bytes());
                     return true;
                 }
 
@@ -1982,7 +1983,7 @@ private:
                 write(ArrayBufferTag);
                 uint64_t byteLength = arrayBuffer->byteLength();
                 write(byteLength);
-                write(static_cast<const uint8_t*>(arrayBuffer->data()), byteLength);
+                write(arrayBuffer->bytes());
                 return true;
             }
             if (obj->inherits<JSArrayBufferView>()) {
@@ -2319,11 +2320,11 @@ private:
         if (!length)
             return;
         if (str.is8Bit()) {
-            if (!writeLittleEndian(m_buffer, str.characters8(), length))
+            if (!writeLittleEndian(m_buffer, str.span8()))
                 fail();
             return;
         }
-        if (!writeLittleEndian(m_buffer, str.characters16(), length))
+        if (!writeLittleEndian(m_buffer, str.span16()))
             fail();
     }
 
@@ -2347,7 +2348,7 @@ private:
     {
         uint32_t size = vector.size();
         write(size);
-        writeLittleEndian(m_buffer, vector.data(), size);
+        writeLittleEndian(m_buffer, vector.span());
     }
 
     void write(const File& file)
@@ -2377,9 +2378,9 @@ private:
 #if PLATFORM(COCOA)
     void write(const RetainPtr<CFDataRef>& data)
     {
-        uint32_t dataLength = CFDataGetLength(data.get());
-        write(dataLength);
-        write(CFDataGetBytePtr(data.get()), dataLength);
+        auto span = toSpan(data.get());
+        write(static_cast<uint32_t>(span.size()));
+        write(span);
     }
 #endif
 
@@ -2639,9 +2640,9 @@ private:
         }
     }
 
-    void write(const uint8_t* data, unsigned length)
+    void write(std::span<const uint8_t> data)
     {
-        m_buffer.append(data, length);
+        m_buffer.append(data);
     }
 
     Vector<uint8_t>& m_buffer;
@@ -3758,9 +3759,9 @@ private:
         uint32_t size;
         if (!read(size))
             return false;
-        if (m_ptr + size > m_end)
+        if (static_cast<uint32_t>(m_end - m_ptr) < size)
             return false;
-        result.append(m_ptr, size);
+        result.append(std::span { m_ptr, size });
         m_ptr += size;
         return true;
     }

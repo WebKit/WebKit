@@ -133,7 +133,7 @@ inline bool is8ByteAligned(void* p)
 }
 
 template<typename ToType, typename FromType>
-inline ToType bitwise_cast(FromType from)
+constexpr inline ToType bitwise_cast(FromType from)
 {
     static_assert(sizeof(FromType) == sizeof(ToType), "bitwise_cast size of FromType and ToType must be equal!");
 #if COMPILER_SUPPORTS(BUILTIN_IS_TRIVIALLY_COPYABLE)

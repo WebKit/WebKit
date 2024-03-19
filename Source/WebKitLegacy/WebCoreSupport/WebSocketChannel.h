@@ -88,7 +88,7 @@ public:
     // SocketStreamHandleClient functions.
     void didOpenSocketStream(SocketStreamHandle&) final;
     void didCloseSocketStream(SocketStreamHandle&) final;
-    void didReceiveSocketStreamData(SocketStreamHandle&, const uint8_t*, size_t) final;
+    void didReceiveSocketStreamData(SocketStreamHandle&, std::span<const uint8_t>) final;
     void didFailToReceiveSocketStreamData(SocketStreamHandle&) final;
     void didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount) final;
     void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) final;
@@ -116,7 +116,7 @@ private:
     void refThreadableWebSocketChannel() override { ref(); }
     void derefThreadableWebSocketChannel() override { deref(); }
 
-    bool appendToBuffer(const uint8_t* data, size_t len);
+    bool appendToBuffer(std::span<const uint8_t>);
     void skipBuffer(size_t len);
     bool processBuffer();
     void resumeTimerFired();

@@ -142,12 +142,12 @@ public:
         m_callbacks.append(makeUnique<PendingEndElementNSCallback>());
     }
 
-    void appendCharactersCallback(const xmlChar* s, int len)
+    void appendCharactersCallback(std::span<const xmlChar> s)
     {
         auto callback = makeUnique<PendingCharactersCallback>();
 
-        callback->s = xmlStrndup(s, len);
-        callback->len = len;
+        callback->s = xmlStrndup(s.data(), s.size());
+        callback->len = s.size();
 
         m_callbacks.append(WTFMove(callback));
     }
@@ -265,7 +265,7 @@ private:
 
         void call(XMLDocumentParser* parser) override
         {
-            parser->characters(s, len);
+            parser->characters(std::span { s, static_cast<size_t>(len) });
         }
 
         xmlChar* s;
@@ -923,19 +923,19 @@ void XMLDocumentParser::endElementNs()
     popCurrentNode();
 }
 
-void XMLDocumentParser::characters(const xmlChar* characters, int length)
+void XMLDocumentParser::characters(std::span<const xmlChar> characters)
 {
     if (isStopped())
         return;
 
     if (m_parserPaused) {
-        m_pendingCallbacks->appendCharactersCallback(characters, length);
+        m_pendingCallbacks->appendCharactersCallback(characters);
         return;
     }
 
     if (!m_leafTextNode)
         createLeafTextNode();
-    m_bufferedText.append(characters, length);
+    m_bufferedText.append(characters);
 }
 
 void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va_list args)
@@ -1085,7 +1085,7 @@ static void endElementNsHandler(void* closure, const xmlChar*, const xmlChar*, c
 
 static void charactersHandler(void* closure, const xmlChar* s, int len)
 {
-    getParser(closure)->characters(s, len);
+    getParser(closure)->characters(std::span { s, static_cast<size_t>(len) });
 }
 
 static void processingInstructionHandler(void* closure, const xmlChar* target, const xmlChar* data)

@@ -1218,7 +1218,7 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
         RefPtr<AudioInfo> formatDescription;
         auto& privateData = track().codec_private.value();
         if (codec() == CodecType::Vorbis)
-            formatDescription = createVorbisAudioInfo(privateData.size(), privateData.data());
+            formatDescription = createVorbisAudioInfo(privateData);
         else if (codec() == CodecType::Opus) {
             auto contiguousBuffer = contiguousCompleteBlockBuffer(0, kOpusMinimumFrameDataSize);
             if (!contiguousBuffer) {

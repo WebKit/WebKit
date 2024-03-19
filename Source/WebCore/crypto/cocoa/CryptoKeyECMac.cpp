@@ -287,12 +287,12 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
     addEncodedASN1Length(result, totalSize);
     result.append(SequenceMark);
     addEncodedASN1Length(result, sizeof(IdEcPublicKey) + oidSize);
-    result.append(IdEcPublicKey, sizeof(IdEcPublicKey));
-    result.append(oid, oidSize);
+    result.append(std::span { IdEcPublicKey });
+    result.append(std::span { oid, oidSize });
     result.append(BitStringMark);
     addEncodedASN1Length(result, keySize + 1);
     result.append(InitialOctet);
-    result.append(keyBytes.data(), keyBytes.size());
+    result.appendVector(keyBytes);
 
     return result;
 }
@@ -352,7 +352,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     auto keyBinary = keyData.subvector(index);
     if (!doesUncompressedPointMatchNamedCurve(curve, keyBinary.size()))
         return nullptr;
-    keyBinary.append(keyData.data() + privateKeyPos, privateKeySize);
+    keyBinary.append(keyData.subspan(privateKeyPos, privateKeySize));
 
     CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorImportKey(kCCImportKeyBinary, keyBinary.data(), keyBinary.size(), ccECKeyPrivate, &ccPrivateKey))
@@ -391,25 +391,25 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     result.reserveInitialCapacity(totalSize + bytesNeededForEncodedLength(totalSize) + 1);
     result.append(SequenceMark);
     addEncodedASN1Length(result, totalSize);
-    result.append(Version, sizeof(Version));
+    result.append(std::span { Version });
     result.append(SequenceMark);
     addEncodedASN1Length(result, sizeof(IdEcPublicKey) + oidSize);
-    result.append(IdEcPublicKey, sizeof(IdEcPublicKey));
-    result.append(oid, oidSize);
+    result.append(std::span { IdEcPublicKey });
+    result.append(std::span { oid, oidSize });
     result.append(OctetStringMark);
     addEncodedASN1Length(result, privateKeySize);
     result.append(SequenceMark);
     addEncodedASN1Length(result, ecPrivateKeySize);
-    result.append(PrivateKeyVersion, sizeof(PrivateKeyVersion));
+    result.append(std::span { PrivateKeyVersion });
     result.append(OctetStringMark);
     addEncodedASN1Length(result, keySizeInBytes);
-    result.append(keyBytes.data() + publicKeySize - 1, keySizeInBytes);
+    result.append(keyBytes.subspan(publicKeySize - 1, keySizeInBytes));
     result.append(TaggedType1);
     addEncodedASN1Length(result, taggedTypeSize);
     result.append(BitStringMark);
     addEncodedASN1Length(result, publicKeySize);
     result.append(InitialOctet);
-    result.append(keyBytes.data(), publicKeySize - 1);
+    result.append(keyBytes.subspan(0, publicKeySize - 1));
 
     return result;
 }

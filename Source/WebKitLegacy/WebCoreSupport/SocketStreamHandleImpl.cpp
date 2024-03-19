@@ -75,7 +75,7 @@ static std::span<const uint8_t> removeTerminationCharacters(std::span<const uint
 #endif
 
     // Remove the terminating '\r\n'
-    return data.subspan(0, data.size() - 2);
+    return data.first(data.size() - 2);
 }
 
 static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(const NetworkStorageSession* networkStorageSession, const CookieRequestHeaderFieldProxy& headerFieldProxy)
@@ -87,11 +87,9 @@ static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(co
     if (cookieDataString.isEmpty())
         return std::pair<Vector<uint8_t>, bool> { { }, secureCookiesAccessed };
 
-    CString cookieData = cookieDataString.utf8();
-
     Vector<uint8_t> data = { 'C', 'o', 'o', 'k', 'i', 'e', ':', ' ' };
-    data.append(cookieData.data(), cookieData.length());
-    data.appendVector(Vector<uint8_t>({ '\r', '\n', '\r', '\n' }));
+    data.append(cookieDataString.utf8().bytes());
+    data.append("\r\n\r\n"_span);
 
     return std::pair<Vector<uint8_t>, bool> { data, secureCookiesAccessed };
 }
@@ -129,7 +127,7 @@ void SocketStreamHandleImpl::platformSendHandshake(std::span<const uint8_t> data
         Vector<uint8_t> sendData;
         sendData.reserveInitialCapacity(data.size() + cookieData.size());
         sendData.append(data);
-        sendData.append(cookieData.data(), cookieData.size());
+        sendData.appendVector(cookieData);
 
         if (auto result = platformSendInternal(sendData.span()))
             bytesWritten = result.value();

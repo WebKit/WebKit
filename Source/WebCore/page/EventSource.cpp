@@ -376,7 +376,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
     unsigned valueLength = lineLength - step;
 
     if (field == "data"_s) {
-        m_data.append(&m_receiveBuffer[position], valueLength);
+        m_data.append(m_receiveBuffer.subspan(position, valueLength));
         m_data.append('\n');
     } else if (field == "event"_s)
         m_eventName = { &m_receiveBuffer[position], valueLength };

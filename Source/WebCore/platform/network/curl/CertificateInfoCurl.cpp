@@ -50,10 +50,10 @@ String CertificateInfo::verificationErrorDescription() const
     return String::fromLatin1(X509_verify_cert_error_string(m_verificationError));
 }
 
-CertificateInfo::Certificate CertificateInfo::makeCertificate(const uint8_t* buffer, size_t size)
+CertificateInfo::Certificate CertificateInfo::makeCertificate(std::span<const uint8_t> buffer)
 {
     Certificate certificate;
-    certificate.append(buffer, size);
+    certificate.append(buffer);
     return certificate;
 }
 

@@ -1095,7 +1095,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
     auto fillBuffer = [&] (bool isStart = false) {
         // \uXXXX unicode characters or Surrogate pairs.
         if (identifierStart != currentSourcePtr())
-            m_buffer16.append(identifierStart, currentSourcePtr() - identifierStart);
+            m_buffer16.append(std::span(identifierStart, currentSourcePtr() - identifierStart));
 
         if (m_current == '\\') {
             tokenData->escaped = true;
@@ -1150,7 +1150,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
     const Identifier* ident = nullptr;
     if (shouldCreateIdentifier) {
         if (identifierStart != currentSourcePtr())
-            m_buffer16.append(identifierStart, currentSourcePtr() - identifierStart);
+            m_buffer16.append(std::span(identifierStart, currentSourcePtr() - identifierStart));
         ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
 
         tokenData->ident = ident;
@@ -1431,7 +1431,7 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
                     ASSERT_WITH_MESSAGE(rawStringStart != currentSourcePtr(), "We should have at least shifted the escape.");
 
                     if (rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings) {
-                        m_bufferForRawTemplateString16.append(rawStringStart, currentSourcePtr() - rawStringStart);
+                        m_bufferForRawTemplateString16.append(std::span(rawStringStart, currentSourcePtr() - rawStringStart));
                         m_bufferForRawTemplateString16.append('\n');
                     }
 
@@ -1474,7 +1474,7 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
                     if (stringStart != currentSourcePtr())
                         append16(stringStart, currentSourcePtr() - stringStart);
                     if (rawStringStart != currentSourcePtr() && rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
-                        m_bufferForRawTemplateString16.append(rawStringStart, currentSourcePtr() - rawStringStart);
+                        m_bufferForRawTemplateString16.append(std::span(rawStringStart, currentSourcePtr() - rawStringStart));
 
                     record16('\n');
                     if (rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
@@ -1497,7 +1497,7 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
     if (currentSourcePtr() != stringStart)
         append16(stringStart, currentSourcePtr() - stringStart);
     if (rawStringStart != currentSourcePtr() && rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
-        m_bufferForRawTemplateString16.append(rawStringStart, currentSourcePtr() - rawStringStart);
+        m_bufferForRawTemplateString16.append(std::span(rawStringStart, currentSourcePtr() - rawStringStart));
 
     if (!parseCookedFailed)
         tokenData->cooked = makeIdentifier(m_buffer16.data(), m_buffer16.size());

@@ -134,8 +134,9 @@ private:
     void record16(int);
     void record16(T);
     void recordUnicodeCodePoint(char32_t);
+    // FIXME: These should take in spans.
     void append16(const LChar*, size_t);
-    void append16(const UChar* characters, size_t length) { m_buffer16.append(characters, length); }
+    void append16(const UChar* characters, size_t length) { m_buffer16.append(std::span { characters, length }); }
 
     static constexpr char32_t errorCodePoint = 0xFFFFFFFFu;
     char32_t currentCodePoint() const;

@@ -3697,7 +3697,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
         case Script::CodeSource::File: {
             fileName = String::fromLatin1(scripts[i].argument);
             if (scripts[i].strictMode == Script::StrictMode::Strict)
-                scriptBuffer.append("\"use strict\";\n", strlen("\"use strict\";\n"));
+                scriptBuffer.append("\"use strict\";\n"_span);
 
             if (isModule) {
                 // If necessary, prepend "./" so the module loader doesn't think this is a bare-name specifier.

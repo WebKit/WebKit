@@ -208,7 +208,7 @@ template <typename T> static bool readLittleEndian(const uint8_t*& ptr, const ui
 #else
 template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
 {
-    buffer.append(reinterpret_cast<uint8_t*>(&value), sizeof(value));
+    buffer.append(std::span { reinterpret_cast<uint8_t*>(&value), sizeof(value) });
 }
 
 template <typename T> static bool readLittleEndian(const uint8_t*& ptr, const uint8_t* end, T& value)
@@ -263,7 +263,7 @@ static void encodeKey(Vector<uint8_t>& data, const IDBKeyData& key)
         auto* bufferData = buffer.data();
         ASSERT(bufferData || !size);
         if (bufferData)
-            data.append(bufferData->data(), bufferData->size());
+            data.append(bufferData->span());
 
         break;
     }
@@ -353,9 +353,7 @@ static WARN_UNUSED_RETURN bool decodeKey(const uint8_t*& data, const uint8_t* en
             return false;
 
         size_t size = static_cast<size_t>(size64);
-        Vector<uint8_t> dataVector;
-
-        dataVector.append(data, size);
+        Vector<uint8_t> dataVector(std::span { data, size });
         data += size;
 
         result.setBinaryValue(ThreadSafeDataBuffer::create(WTFMove(dataVector)));

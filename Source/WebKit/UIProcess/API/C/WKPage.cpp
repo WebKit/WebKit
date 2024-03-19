@@ -243,13 +243,13 @@ void WKPageLoadFileWithUserData(WKPageRef pageRef, WKURLRef fileURL, WKURLRef re
 void WKPageLoadData(WKPageRef pageRef, WKDataRef dataRef, WKStringRef MIMETypeRef, WKStringRef encodingRef, WKURLRef baseURLRef)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->loadData(toImpl(dataRef)->dataReference(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef));
+    toImpl(pageRef)->loadData(toImpl(dataRef)->bytes(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef));
 }
 
 void WKPageLoadDataWithUserData(WKPageRef pageRef, WKDataRef dataRef, WKStringRef MIMETypeRef, WKStringRef encodingRef, WKURLRef baseURLRef, WKTypeRef userDataRef)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->loadData(toImpl(dataRef)->dataReference(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef), toImpl(userDataRef));
+    toImpl(pageRef)->loadData(toImpl(dataRef)->bytes(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef), toImpl(userDataRef));
 }
 
 static String encodingOf(const String& string)
@@ -582,7 +582,7 @@ static void restoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef
 
     // FIXME: This is for backwards compatibility with Safari. Remove it once Safari no longer depends on it.
     if (toImpl(sessionStateRef)->type() == API::Object::Type::Data) {
-        if (!decodeLegacySessionState(toImpl(static_cast<WKDataRef>(sessionStateRef))->dataReference(), sessionState))
+        if (!decodeLegacySessionState(toImpl(static_cast<WKDataRef>(sessionStateRef))->bytes(), sessionState))
             return;
     } else {
         ASSERT(toImpl(sessionStateRef)->type() == API::Object::Type::SessionState);

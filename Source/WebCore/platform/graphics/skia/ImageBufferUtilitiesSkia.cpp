@@ -52,7 +52,7 @@ public:
 
     bool write(const void* data, size_t length) override
     {
-        m_vector.append(static_cast<const uint8_t*>(data), length);
+        m_vector.append(std::span { static_cast<const uint8_t*>(data), length });
         return true;
     }
 

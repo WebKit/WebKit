@@ -66,9 +66,9 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
     }
 }
 
-void LibWebRTCSocketClient::sendTo(const uint8_t* data, size_t size, const rtc::SocketAddress& socketAddress, const rtc::PacketOptions& options)
+void LibWebRTCSocketClient::sendTo(std::span<const uint8_t> data, const rtc::SocketAddress& socketAddress, const rtc::PacketOptions& options)
 {
-    m_socket->SendTo(data, size, socketAddress, options);
+    m_socket->SendTo(data.data(), data.size(), socketAddress, options);
     auto error = m_socket->GetError();
     RELEASE_LOG_ERROR_IF(error && m_sendError != error, Network, "LibWebRTCSocketClient::sendTo (ID=%" PRIu64 ") failed with error %d", m_identifier.toUInt64(), error);
     m_sendError = error;

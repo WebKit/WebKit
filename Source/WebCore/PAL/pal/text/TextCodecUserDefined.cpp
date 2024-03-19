@@ -68,7 +68,7 @@ static Vector<uint8_t> encodeComplexUserDefined(StringView string, UnencodableHa
             // No way to encode this character with x-user-defined.
             UnencodableReplacementArray replacement;
             int replacementLength = TextCodec::getUnencodableReplacement(character, handling, replacement);
-            result.append(replacement.data(), replacementLength);
+            result.append(std::span(replacement.data(), replacementLength));
         }
     }
 

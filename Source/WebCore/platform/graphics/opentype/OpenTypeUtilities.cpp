@@ -188,8 +188,8 @@ void EOTHeader::appendBigEndianString(const BigEndianUShort* string, unsigned sh
 
 void EOTHeader::appendPaddingShort()
 {
-    unsigned short padding = 0;
-    m_buffer.append(reinterpret_cast<uint8_t*>(&padding), sizeof(padding));
+    std::array<uint8_t, sizeof(unsigned short)> padding = { };
+    m_buffer.append(std::span { padding });
 }
 
 // adds fontName to the font table in fontData, and writes the new font table to rewrittenFontTable

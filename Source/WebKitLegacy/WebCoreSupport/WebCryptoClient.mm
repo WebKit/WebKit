@@ -29,6 +29,7 @@
 #import "WebUIDelegatePrivate.h"
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <optional>
+#import <wtf/cocoa/SpanCocoa.h>
 
 std::optional<Vector<uint8_t>> WebCryptoClient::wrapCryptoKey(const Vector<uint8_t>& key) const
 {
@@ -36,8 +37,7 @@ std::optional<Vector<uint8_t>> WebCryptoClient::wrapCryptoKey(const Vector<uint8
     Vector<uint8_t> wrappedKey;
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
         NSData *keyData = CallUIDelegate(m_webView, selector);
-        Vector<uint8_t> masterKey;
-        masterKey.append(static_cast<uint8_t*>(const_cast<void*>([keyData bytes])), [keyData length]);
+        Vector<uint8_t> masterKey(toSpan(keyData));
         if (!WebCore::wrapSerializedCryptoKey(masterKey, key, wrappedKey))
             return std::nullopt;
         return wrappedKey;
@@ -56,9 +56,8 @@ std::optional<Vector<uint8_t>> WebCryptoClient::unwrapCryptoKey(const Vector<uin
     SEL selector = @selector(webCryptoMasterKeyForWebView:);
     Vector<uint8_t> key;
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        Vector<uint8_t> masterKey;
         NSData *keyData = CallUIDelegate(m_webView, selector);
-        masterKey.append(static_cast<uint8_t*>(const_cast<void*>([keyData bytes])), [keyData length]);
+        Vector<uint8_t> masterKey(toSpan(keyData));
         if (!WebCore::unwrapSerializedCryptoKey(masterKey, wrappedKey, key))
             return std::nullopt;
         return key;

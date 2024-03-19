@@ -68,7 +68,7 @@ static void computeSHA1HashStringForCairoSurface(cairo_surface_t* surface, char 
 static cairo_status_t writeFunction(void* closure, const unsigned char* data, unsigned length)
 {
     Vector<unsigned char>* in = reinterpret_cast<Vector<unsigned char>*>(closure);
-    in->append(data, length);
+    in->append(std::span { data, length });
     return CAIRO_STATUS_SUCCESS;
 }
 

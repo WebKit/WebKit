@@ -149,9 +149,7 @@ void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
     if (m_state != State::Blocked)
         return;
 
-    m_replacementData.clear();
-    const CString utf8BlockedString = settings().blockedString().utf8();
-    m_replacementData.append(utf8BlockedString.data(), utf8BlockedString.length());
+    m_replacementData = settings().blockedString().utf8().bytes();
 }
 
 } // namespace WebCore

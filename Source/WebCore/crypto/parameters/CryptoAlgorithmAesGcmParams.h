@@ -45,7 +45,7 @@ public:
         if (!m_ivVector.isEmpty() || !iv.length())
             return m_ivVector;
 
-        m_ivVector.append(iv.data(), iv.length());
+        m_ivVector.append(iv.bytes());
         return m_ivVector;
     }
 
@@ -59,7 +59,7 @@ public:
         if (!additionalDataBuffer.length())
             return m_additionalDataVector;
 
-        m_additionalDataVector.append(additionalDataBuffer.data(), additionalDataBuffer.length());
+        m_additionalDataVector.append(additionalDataBuffer.bytes());
         return m_additionalDataVector;
     }
 

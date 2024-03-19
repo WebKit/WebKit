@@ -153,7 +153,7 @@ WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
     Vector<unsigned char> output;
 #if USE(CAIRO)
     cairo_surface_write_to_png_stream(mainWebView()->windowSnapshotImage(), [](void* output, const unsigned char* data, unsigned length) -> cairo_status_t {
-        reinterpret_cast<Vector<unsigned char>*>(output)->append(data, length);
+        reinterpret_cast<Vector<unsigned char>*>(output)->append(std::span { data, length });
         return CAIRO_STATUS_SUCCESS;
     }, &output);
 #elif USE(SKIA)

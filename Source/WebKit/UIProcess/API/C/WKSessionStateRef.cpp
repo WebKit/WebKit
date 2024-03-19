@@ -40,7 +40,7 @@ WKTypeID WKSessionStateGetTypeID()
 WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data)
 {
     WebKit::SessionState sessionState;
-    if (!WebKit::decodeLegacySessionState(WebKit::toImpl(data)->dataReference(), sessionState))
+    if (!WebKit::decodeLegacySessionState(WebKit::toImpl(data)->bytes(), sessionState))
         return nullptr;
 
     return WebKit::toAPI(&API::SessionState::create(WTFMove(sessionState)).leakRef());

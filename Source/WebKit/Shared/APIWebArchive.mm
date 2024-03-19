@@ -83,7 +83,7 @@ WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& su
 
 WebArchive::WebArchive(API::Data* data)
 {
-    m_legacyWebArchive = LegacyWebArchive::create(SharedBuffer::create(data->dataReference()).get());
+    m_legacyWebArchive = LegacyWebArchive::create(SharedBuffer::create(data->bytes()).get());
 }
 
 WebArchive::WebArchive(RefPtr<LegacyWebArchive>&& legacyWebArchive)

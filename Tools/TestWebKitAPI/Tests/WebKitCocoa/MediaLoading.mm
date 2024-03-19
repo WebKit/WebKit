@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -133,10 +134,7 @@ constexpr auto videoPlayTestHTML ="<script>"
 
 static Vector<uint8_t> testVideoBytes()
 {
-    NSData *data = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]];
-    Vector<uint8_t> vector;
-    vector.append(static_cast<const uint8_t*>(data.bytes), data.length);
-    return vector;
+    return toVector([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]]);
 }
 
 static void runVideoTest(NSURLRequest *request, const char* expectedMessage)
@@ -205,10 +203,7 @@ TEST(MediaLoading, LockdownModeHLS)
     "<body onload='createVideoElement()'></body>"_s;
 
     auto testTransportStreamBytes = [&] () -> Vector<uint8_t> {
-        NSData *data = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"start-offset" withExtension:@"ts" subdirectory:@"TestWebKitAPI.resources"]];
-        Vector<uint8_t> vector;
-        vector.append(static_cast<const uint8_t*>(data.bytes), data.length);
-        return vector;
+        return toVector([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"start-offset" withExtension:@"ts" subdirectory:@"TestWebKitAPI.resources"]]);
     };
 
     HTTPServer server({

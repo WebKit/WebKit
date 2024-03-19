@@ -46,7 +46,7 @@ namespace JSC { namespace Wasm {
 LLIntPlan::LLIntPlan(VM& vm, Vector<uint8_t>&& source, CompilerMode compilerMode, CompletionTask&& task)
     : Base(vm, WTFMove(source), compilerMode, WTFMove(task))
 {
-    if (parseAndValidateModule(m_source.data(), m_source.size()))
+    if (parseAndValidateModule(m_source.span()))
         prepare();
 }
 

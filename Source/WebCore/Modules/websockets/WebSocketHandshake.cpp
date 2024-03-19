@@ -439,7 +439,7 @@ const uint8_t* WebSocketHandshake::readHTTPHeaders(const uint8_t* start, const u
     bool sawSecWebSocketProtocolHeaderField = false;
     auto p = start;
     for (; p < end; p++) {
-        size_t consumedLength = parseHTTPHeader(p, end - p, m_failureReason, name, value);
+        size_t consumedLength = parseHTTPHeader(std::span { p, static_cast<size_t>(end - p) }, m_failureReason, name, value);
         if (!consumedLength)
             return nullptr;
         p += consumedLength;

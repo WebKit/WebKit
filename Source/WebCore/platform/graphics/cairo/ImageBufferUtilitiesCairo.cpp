@@ -53,7 +53,7 @@ namespace WebCore {
 #if !PLATFORM(GTK)
 static cairo_status_t writeFunction(void* output, const unsigned char* data, unsigned length)
 {
-    if (!reinterpret_cast<Vector<uint8_t>*>(output)->tryAppend(data, length))
+    if (!reinterpret_cast<Vector<uint8_t>*>(output)->tryAppend(std::span { data, length }))
         return CAIRO_STATUS_WRITE_ERROR;
     return CAIRO_STATUS_SUCCESS;
 }

@@ -78,7 +78,7 @@ void EntryPlan::moveToState(State state)
     m_state = state;
 }
 
-bool EntryPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLength)
+bool EntryPlan::parseAndValidateModule(std::span<const uint8_t> source)
 {
     if (m_state != State::Initial)
         return true;
@@ -88,7 +88,7 @@ bool EntryPlan::parseAndValidateModule(const uint8_t* source, size_t sourceLengt
     if (WasmEntryPlanInternal::verbose || Options::reportCompileTimes())
         startTime = MonotonicTime::now();
 
-    m_streamingParser.addBytes(source, sourceLength);
+    m_streamingParser.addBytes(source);
     {
         Locker locker { m_lock };
         if (failed())

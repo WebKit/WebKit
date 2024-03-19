@@ -118,7 +118,7 @@ public:
         int numNamespaces, const xmlChar** namespaces,
         int numAttributes, int numDefaulted, const xmlChar** libxmlAttributes);
     void endElementNs();
-    void characters(const xmlChar*, int length);
+    void characters(std::span<const xmlChar>);
     void processingInstruction(const xmlChar* target, const xmlChar* data);
     void cdataBlock(const xmlChar*, int length);
     void comment(const xmlChar*);

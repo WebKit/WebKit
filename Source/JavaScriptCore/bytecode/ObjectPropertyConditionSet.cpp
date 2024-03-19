@@ -107,7 +107,7 @@ ObjectPropertyConditionSet ObjectPropertyConditionSet::mergedWith(
     Vector<ObjectPropertyCondition, 16> result;
     
     if (!isEmpty())
-        result.append(m_data->begin(), m_data->size());
+        result.append(m_data->span());
     
     for (const ObjectPropertyCondition& newCondition : other) {
         bool foundMatch = false;

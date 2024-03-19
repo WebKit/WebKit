@@ -199,7 +199,7 @@ static std::optional<Vector<char>> fileContents(const String& path, bool shouldL
     Vector<char> contents;
     contents.reserveInitialCapacity(chunkSize);
     while (size_t bytesRead = file.read(chunk, chunkSize))
-        contents.append(chunk, bytesRead);
+        contents.append(std::span { chunk, bytesRead });
     contents.shrinkToFit();
 
     return contents;
@@ -424,11 +424,11 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
 
     Vector<char> cacheFile;
     cacheFile.reserveInitialCapacity(expectedFileSize);
-    cacheFile.append(bitwise_cast<uint8_t*>(&cachedHeader), sizeof(CachedSandboxHeader));
-    cacheFile.append(info.header.data(), info.header.length());
+    cacheFile.append(std::span { bitwise_cast<uint8_t*>(&cachedHeader), sizeof(CachedSandboxHeader) });
+    cacheFile.append(info.header.bytes());
     if (haveBuiltin)
-        cacheFile.append(sandboxProfile->builtin, cachedHeader.builtinSize);
-    cacheFile.append(sandboxProfile->data, cachedHeader.dataSize);
+        cacheFile.append(std::span { sandboxProfile->builtin, cachedHeader.builtinSize });
+    cacheFile.append(std::span { sandboxProfile->data, cachedHeader.dataSize });
 
     if (!writeSandboxDataToCacheFile(info, cacheFile))
         WTFLogAlways("%s: Unable to cache compiled sandbox\n", getprogname());

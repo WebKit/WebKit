@@ -174,7 +174,7 @@ void toRbsp(Vector<uint8_t>& frame, size_t offset)
 
     Vector<uint8_t> newFrame;
     newFrame.reserveInitialCapacity(frame.size() + count);
-    newFrame.append(frame.data(), offset);
+    newFrame.append(frame.subspan(0, offset));
 
     findEscapeRbspPatterns(frame, offset, [data = frame.data(), &newFrame](size_t position, bool shouldBeEscaped) {
         if (shouldBeEscaped)
@@ -199,7 +199,7 @@ size_t computeVP8PrefixOffset(const uint8_t* frame, size_t size)
 SFrameCompatibilityPrefixBuffer computeVP8PrefixBuffer(const uint8_t* frame, size_t size)
 {
     Vector<uint8_t> prefix;
-    prefix.append(frame, isVP8KeyFrame(frame, size) ? 10 : 3);
+    prefix.append(std::span(frame, isVP8KeyFrame(frame, size) ? 10 : 3));
     return { prefix.data(), prefix.size(), WTFMove(prefix) };
 }
 

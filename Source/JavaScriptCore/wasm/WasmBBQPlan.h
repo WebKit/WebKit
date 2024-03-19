@@ -72,7 +72,7 @@ public:
 
     bool parseAndValidateModule()
     {
-        return Base::parseAndValidateModule(m_source.data(), m_source.size());
+        return Base::parseAndValidateModule(m_source.span());
     }
 
     static FunctionAllowlist& ensureGlobalBBQAllowlist();

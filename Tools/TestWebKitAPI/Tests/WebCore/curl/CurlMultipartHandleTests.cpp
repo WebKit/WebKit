@@ -71,7 +71,7 @@ public:
 
     void didReceiveDataFromMultipart(std::span<const uint8_t> receivedData) final
     {
-        m_data.append(receivedData.data(), receivedData.size());
+        m_data.append(receivedData);
     }
 
     void didCompleteFromMultipart() final
@@ -769,18 +769,18 @@ TEST(CurlMultipartHandleTests, CompleteWhileHeaderProcessing)
 TEST(CurlMultipartHandleTests, MaxHeaderSize)
 {
     Vector<uint8_t> data;
-    data.append("--boundary\r\n", 12);
+    data.append("--boundary\r\n"_span);
 
     for (auto i = 0; i < 300 * 1024 - 4; i++)
-        data.append("a", 1);
+        data.append('a');
 
-    data.append("\r\n\r\n", 4);
-    data.append("\r\n--boundary\r\n", 14);
+    data.append("\r\n\r\n"_span);
+    data.append("\r\n--boundary\r\n"_span);
 
     for (auto i = 0; i < 300 * 1024 - 3; i++)
-        data.append("a", 1);
+        data.append('a');
 
-    data.append("\r\n\r\n", 4);
+    data.append("\r\n\r\n"_span);
 
     MultipartHandleClient client;
 

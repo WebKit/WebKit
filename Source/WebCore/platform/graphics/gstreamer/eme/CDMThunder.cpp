@@ -281,7 +281,7 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
     m_thunderSessionCallbacks.key_update_callback = [](OpenCDMSession*, void* userData, const uint8_t keyIDData[], const uint8_t keyIDLength) {
         GST_DEBUG("Got 'key updated' OCDM notification");
         KeyIDType keyID;
-        keyID.append(keyIDData, keyIDLength);
+        keyID.append(std::span { keyIDData, keyIDLength });
         callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, keyID = WTFMove(keyID)]() mutable {
             if (!session)
                 return;

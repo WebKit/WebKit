@@ -130,7 +130,7 @@ void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& 
             messageArgumentsVector = consoleMessage->arguments()->getArgumentsAsStrings();
             if (!messageArgumentsVector.isEmpty()) {
                 message = messageArgumentsVector.first();
-                additionalArguments = messageArgumentsVector.span().subspan(1);
+                additionalArguments = messageArgumentsVector.subspan(1);
             }
         } else
             message = consoleMessage->message();
@@ -188,7 +188,7 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
     Vector<String> messageArgumentsVector = arguments->getArgumentsAsStrings();
     if (!messageArgumentsVector.isEmpty()) {
         messageText = messageArgumentsVector.first();
-        additionalArguments = messageArgumentsVector.span().subspan(1);
+        additionalArguments = messageArgumentsVector.subspan(1);
     }
 
     auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), lexicalGlobalObject);

@@ -89,7 +89,7 @@ TEST(CtapPinTest, TestSetPinRequest)
 
     // Decode the CBOR binary to check if each field is encoded correctly.
     Vector<uint8_t> buffer;
-    buffer.append(result.data() + 1, result.size() - 1);
+    buffer.append(result.subspan(1));
     auto decodedResponse = cbor::CBORReader::read(buffer);
     EXPECT_TRUE(decodedResponse);
     EXPECT_TRUE(decodedResponse->isMap());
@@ -254,8 +254,8 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
     Vector<uint8_t> expectedRawKey;
     expectedRawKey.reserveCapacity(65);
     expectedRawKey.append(0x04);
-    expectedRawKey.append(TestData::kCtapClientPinKeyAgreementResponse + 14, 32); // X
-    expectedRawKey.append(TestData::kCtapClientPinKeyAgreementResponse + 49, 32); // Y
+    expectedRawKey.append(std::span { TestData::kCtapClientPinKeyAgreementResponse + 14, 32 }); // X
+    expectedRawKey.append(std::span { TestData::kCtapClientPinKeyAgreementResponse + 49, 32 }); // Y
     EXPECT_TRUE(exportedRawKey.returnValue() == expectedRawKey);
 }
 
@@ -277,7 +277,7 @@ TEST(CtapPinTest, TestTokenRequest)
 
     // Decode the CBOR binary to check if each field is encoded correctly.
     Vector<uint8_t> buffer;
-    buffer.append(result.data() + 1, result.size() - 1);
+    buffer.append(result.subspan(1));
     auto decodedResponse = cbor::CBORReader::read(buffer);
     EXPECT_TRUE(decodedResponse);
     EXPECT_TRUE(decodedResponse->isMap());

@@ -145,6 +145,15 @@ constexpr ASCIILiteral operator"" _s(const char* characters, size_t n)
     return ASCIILiteral::fromLiteralUnsafe(characters);
 }
 
+constexpr std::span<const LChar> operator"" _span(const char* characters, size_t n)
+{
+#if ASSERT_ENABLED
+    for (size_t i = 0; i < n; ++i)
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(characters[i]));
+#endif
+    return std::span { bitwise_cast<const LChar*>(characters), n };
+}
+
 } // inline StringLiterals
 
 } // namespace WTF

@@ -245,7 +245,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
     result.append(BitStringMark);
     addEncodedASN1Length(result, keySize + 1);
     result.append(InitialOctet);
-    result.append(platformKey().data(), platformKey().size());
+    result.append(platformKey().span());
 
     ASSERT(result.size() == totalSize);
 
@@ -360,7 +360,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
     addEncodedASN1Length(result, keySize + 2);
     result.append(OctetStringMark);
     addEncodedASN1Length(result, keySize);
-    result.append(platformKey().data(), platformKey().size());
+    result.append(platformKey().span());
 
     ASSERT(result.size() == totalSize);
 

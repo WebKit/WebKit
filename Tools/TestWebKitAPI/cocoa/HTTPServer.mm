@@ -348,7 +348,7 @@ static Vector<uint8_t> vectorFromData(dispatch_data_t content)
     ASSERT(content);
     __block Vector<uint8_t> request;
     dispatch_data_apply(content, ^bool(dispatch_data_t, size_t, const void* buffer, size_t size) {
-        request.append(static_cast<const char*>(buffer), size);
+        request.append(std::span { static_cast<const uint8_t*>(buffer), size });
         return true;
     });
     return request;
@@ -356,8 +356,7 @@ static Vector<uint8_t> vectorFromData(dispatch_data_t content)
 
 static void appendUTF8ToVector(Vector<uint8_t>& vector, const String& string)
 {
-    auto utf8 = string.utf8();
-    vector.append(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
+    vector.append(string.utf8().bytes());
 }
 
 String HTTPServer::parsePath(const Vector<char>& request)
@@ -662,7 +661,7 @@ void H2::Connection::receive(CompletionHandler<void(Frame&&)>&& completionHandle
                 + (static_cast<uint32_t>(m_receiveBuffer[7]) << 8)
                 + (static_cast<uint32_t>(m_receiveBuffer[8]) << 0);
             Vector<uint8_t> payload;
-            payload.append(m_receiveBuffer.data() + frameHeaderLength, payloadLength);
+            payload.append(m_receiveBuffer.subspan(frameHeaderLength, payloadLength));
             m_receiveBuffer.remove(0, frameHeaderLength + payloadLength);
             return completionHandler(Frame(type, flags, streamID, WTFMove(payload)));
         }

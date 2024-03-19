@@ -291,7 +291,7 @@ Vector<uint8_t> FormData::flatten() const
     Vector<uint8_t> data;
     for (auto& element : m_elements) {
         if (auto* vector = std::get_if<Vector<uint8_t>>(&element.data))
-            data.append(vector->data(), vector->size());
+            data.append(vector->span());
     }
     return data;
 }

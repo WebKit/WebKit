@@ -97,7 +97,7 @@ public:
 
         virtual void close() = 0;
         virtual void setOption(int option, int value) = 0;
-        virtual void sendTo(const uint8_t*, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&) = 0;
+        virtual void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&) = 0;
     };
 
     std::unique_ptr<Socket> takeSocket(WebCore::LibWebRTCSocketIdentifier);

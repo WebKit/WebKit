@@ -421,7 +421,7 @@ inline void HTMLToken::appendToComment(char character)
 inline void HTMLToken::appendToComment(ASCIILiteral literal)
 {
     ASSERT(m_type == Type::Comment);
-    m_data.append(literal.characters8(), literal.length());
+    m_data.append(literal.span8());
 }
 
 inline void HTMLToken::appendToComment(UChar character)

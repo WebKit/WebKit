@@ -269,7 +269,7 @@ bool WebSocketTask::appendReceivedBuffer(const WebCore::SharedBuffer& buffer)
     if (newBufferSize < m_receiveBuffer.size())
         return false;
 
-    m_receiveBuffer.append(buffer.data(), buffer.size());
+    m_receiveBuffer.append(buffer.bytes());
     return true;
 }
 
@@ -405,8 +405,7 @@ void WebSocketTask::sendClosingHandshakeIfNeeded(int32_t code, const String& rea
         unsigned char lowByte = static_cast<unsigned short>(code);
         buf.append(static_cast<char>(highByte));
         buf.append(static_cast<char>(lowByte));
-        auto reasonUTF8 = reason.utf8();
-        buf.append(reasonUTF8.data(), reasonUTF8.length());
+        buf.append(reason.utf8().bytes());
     }
 
     if (!sendFrame(WebCore::WebSocketFrame::OpCodeClose, buf.span()))

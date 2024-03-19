@@ -2476,7 +2476,7 @@ void WebsiteDataStore::resumeDownload(const DownloadProxy& downloadProxy, const 
             sandboxExtensionHandle = WTFMove(*handle);
     }
 
-    protectedNetworkProcess()->send(Messages::NetworkProcess::ResumeDownload(m_sessionID, downloadProxy.downloadID(), resumeData.dataReference(), path, WTFMove(sandboxExtensionHandle), callDownloadDidStart), 0);
+    protectedNetworkProcess()->send(Messages::NetworkProcess::ResumeDownload(m_sessionID, downloadProxy.downloadID(), resumeData.bytes(), path, WTFMove(sandboxExtensionHandle), callDownloadDidStart), 0);
 }
 
 bool WebsiteDataStore::hasActivePages()

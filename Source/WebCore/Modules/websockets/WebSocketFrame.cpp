@@ -162,7 +162,7 @@ void WebSocketFrame::makeFrameData(Vector<uint8_t>& frameData)
             remaining >>= 8;
         }
         ASSERT(!remaining);
-        frameData.append(extendedPayloadLength, 8);
+        frameData.append(std::span { extendedPayloadLength });
     }
 
     appendFramePayload(*this, frameData);

@@ -33,12 +33,13 @@
 
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
 static const size_t maximumLineLength = 76;
 
-static const char crlfLineEnding[] = "\r\n";
+static constexpr auto crlfLineEnding = "\r\n"_s;
 
 static size_t lengthOfLineEndingAtIndex(const uint8_t* input, size_t inputLength, size_t index)
 {
@@ -81,7 +82,7 @@ Vector<uint8_t> quotedPrintableEncode(const uint8_t* input, size_t inputLength)
         if (!isLastCharacter) {
             size_t lengthOfLineEnding = lengthOfLineEndingAtIndex(input, inputLength, i);
             if (lengthOfLineEnding) {
-                out.append(crlfLineEnding, strlen(crlfLineEnding));
+                out.append(crlfLineEnding.span8());
                 currentLineLength = 0;
                 i += (lengthOfLineEnding - 1); // -1 because we'll ++ in the for() above.
                 continue;
@@ -97,7 +98,7 @@ Vector<uint8_t> quotedPrintableEncode(const uint8_t* input, size_t inputLength)
         // Insert a soft line break if necessary.
         if (currentLineLength + lengthOfEncodedCharacter > maximumLineLength) {
             out.append('=');
-            out.append(crlfLineEnding, strlen(crlfLineEnding));
+            out.append(crlfLineEnding.span8());
             currentLineLength = 0;
         }
 

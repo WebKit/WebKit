@@ -73,7 +73,7 @@ SVGTextChunk::SVGTextChunk(const Vector<SVGInlineTextBox*>& lineLayoutBoxes, uns
         }
     }
 
-    m_boxes.append(&lineLayoutBoxes[first], limit - first);
+    m_boxes.append(lineLayoutBoxes.subspan(first, limit - first));
 }
 
 unsigned SVGTextChunk::totalCharacters() const

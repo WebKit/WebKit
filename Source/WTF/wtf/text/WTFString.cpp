@@ -174,19 +174,16 @@ String String::foldCase() const
 Expected<Vector<UChar>, UTF8ConversionError> String::charactersWithoutNullTermination() const
 {
     Vector<UChar> result;
+    if (!m_impl)
+        return result;
 
-    if (m_impl) {
-        if (!result.tryReserveInitialCapacity(length() + 1))
-            return makeUnexpected(UTF8ConversionError::OutOfMemory);
+    if (!result.tryReserveInitialCapacity(length() + 1))
+        return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
-        if (is8Bit()) {
-            const LChar* characters8 = m_impl->characters8();
-            result.append(characters8, m_impl->length());
-        } else {
-            const UChar* characters16 = m_impl->characters16();
-            result.append(characters16, m_impl->length());
-        }
-    }
+    if (is8Bit())
+        result.append(span8());
+    else
+        result.append(span16());
 
     return result;
 }

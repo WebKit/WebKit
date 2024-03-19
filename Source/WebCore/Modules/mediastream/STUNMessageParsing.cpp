@@ -41,13 +41,13 @@ static inline bool isStunMessage(uint16_t messageType)
     return !(messageType & 0xC000);
 }
 
-std::optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(const uint8_t* data, size_t size)
+std::optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(std::span<const uint8_t> data)
 {
-    if (size < 4)
+    if (data.size() < 4)
         return { };
 
-    auto messageType = be16toh(*reinterpret_cast<const uint16_t*>(data));
-    auto messageLength = be16toh(*reinterpret_cast<const uint16_t*>(data + 2));
+    auto messageType = be16toh(*reinterpret_cast<const uint16_t*>(data.data()));
+    auto messageLength = be16toh(*reinterpret_cast<const uint16_t*>(data.data() + 2));
 
     // STUN data message header is 20 bytes.
     if (isStunMessage(messageType)) {
@@ -63,25 +63,23 @@ std::optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(const uint8_t* dat
 
 static inline Vector<uint8_t> extractSTUNOrTURNMessages(Vector<uint8_t>&& buffered, const Function<void(const uint8_t* data, size_t size)>& processMessage)
 {
-    auto* data = buffered.data();
-    size_t size = buffered.size();
+    auto data = buffered.span();
 
     while (true) {
-        auto lengths = getSTUNOrTURNMessageLengths(data, size);
+        auto lengths = getSTUNOrTURNMessageLengths(data);
 
-        if (!lengths || lengths->messageLengthWithPadding > size) {
-            if (!size)
+        if (!lengths || lengths->messageLengthWithPadding > data.size()) {
+            if (!data.size())
                 return { };
 
-            std::memcpy(buffered.data(), data, size);
-            buffered.resize(size);
+            std::memcpy(buffered.data(), data.data(), data.size());
+            buffered.resize(data.size());
             return WTFMove(buffered);
         }
 
-        processMessage(data, lengths->messageLength);
+        processMessage(data.data(), lengths->messageLength);
 
-        data += lengths->messageLengthWithPadding;
-        size -= lengths->messageLengthWithPadding;
+        data = data.subspan(lengths->messageLengthWithPadding);
     }
 }
 

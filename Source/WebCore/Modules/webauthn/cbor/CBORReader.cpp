@@ -239,7 +239,7 @@ std::optional<CBORValue> CBORReader::readBytes(uint64_t numBytes)
 
     Vector<uint8_t> cborByteString;
     ASSERT(numBytes <= std::numeric_limits<size_t>::max());
-    cborByteString.append(m_data.data() + std::distance(m_data.begin(), m_it), static_cast<size_t>(numBytes));
+    cborByteString.append(m_data.subspan(std::distance(m_data.begin(), m_it), static_cast<size_t>(numBytes)));
     m_it += numBytes;
 
     return CBORValue(WTFMove(cborByteString));

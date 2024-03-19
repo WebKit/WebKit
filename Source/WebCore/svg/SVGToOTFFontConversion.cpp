@@ -515,7 +515,7 @@ void SVGToOTFFontConverter::appendOS2Table()
     append16(0); // No classification
 
     unsigned numPanoseBytes = 0;
-    const unsigned panoseSize = 10;
+    constexpr unsigned panoseSize = 10;
     char panoseBytes[panoseSize];
     if (m_fontFaceElement) {
         auto segments = StringView(m_fontFaceElement->attributeWithoutSynchronization(SVGNames::panose_1Attr)).split(' ');
@@ -530,7 +530,7 @@ void SVGToOTFFontConverter::appendOS2Table()
     }
     if (numPanoseBytes != panoseSize)
         memset(panoseBytes, 0, panoseSize);
-    m_result.append(panoseBytes, panoseSize);
+    m_result.append(std::span { panoseBytes });
 
     for (int i = 0; i < 4; ++i)
         append32(0); // "Bit assignments are pending. Set to 0"

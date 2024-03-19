@@ -88,7 +88,7 @@ static RetainPtr<NSKeyedUnarchiver> createUnarchiver(std::span<const uint8_t> da
 
 static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const API::Data& data)
 {
-    return createUnarchiver(data.dataReference());
+    return createUnarchiver(data.bytes());
 }
 
 bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)

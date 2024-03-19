@@ -711,7 +711,7 @@ static void respondToRangeRequests(const TestWebKitAPI::Connection& connection, 
         NSData *responseHeader = [responseHeaderString dataUsingEncoding:NSUTF8StringEncoding];
         NSData *responseBody = [data subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)];
         auto response = toVector(responseHeader);
-        response.append(static_cast<const uint8_t*>(responseBody.bytes), responseBody.length);
+        response.append(toSpan(responseBody));
         connection.send(WTFMove(response), [=] {
             respondToRangeRequests(connection, data);
         });

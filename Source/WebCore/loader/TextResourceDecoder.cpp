@@ -631,7 +631,7 @@ String TextResourceDecoder::decode(std::span<const uint8_t> data)
         memcpy(m_buffer.data() + oldSize, data.data(), data.size());
     }
 
-    String result = m_codec->decode(m_buffer.span().subspan(lengthOfBOM), false, m_contentType == XML && !m_useLenientXMLDecoding, m_sawError);
+    String result = m_codec->decode(m_buffer.subspan(lengthOfBOM), false, m_contentType == XML && !m_useLenientXMLDecoding, m_sawError);
     m_buffer.clear();
     return result;
 }

@@ -39,7 +39,7 @@ class SharedBuffer;
 WEBCORE_EXPORT bool isVorbisDecoderAvailable();
 WEBCORE_EXPORT bool registerVorbisDecoderIfNeeded();
 static constexpr size_t kVorbisMinimumFrameDataSize = 1;
-RefPtr<AudioInfo> createVorbisAudioInfo(size_t, const uint8_t*);
+RefPtr<AudioInfo> createVorbisAudioInfo(std::span<const uint8_t>);
 
 struct OpusCookieContents {
     uint8_t version { 0 };

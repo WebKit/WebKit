@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-using PutBytesCallback = size_t(const void*, size_t);
+using PutBytesCallback = size_t(std::span<const uint8_t>);
 
 uint8_t verifyImageBufferIsBigEnough(const void* buffer, size_t bufferSize)
 {
@@ -121,7 +121,7 @@ static bool encode(CGImageRef image, const String& mimeType, std::optional<doubl
     CGDataConsumerCallbacks callbacks {
         [](void* context, const void* buffer, size_t count) -> size_t {
             auto functor = *static_cast<const ScopedLambda<PutBytesCallback>*>(context);
-            return functor(buffer, count);
+            return functor(std::span { static_cast<const uint8_t*>(buffer), count });
         },
         nullptr
     };
@@ -206,7 +206,7 @@ static bool encode(const std::span<const uint8_t>& data, const String& mimeType,
     CGDataConsumerCallbacks callbacks {
         [](void* context, const void* buffer, size_t count) -> size_t {
             auto functor = *static_cast<const ScopedLambda<PutBytesCallback>*>(context);
-            return functor(buffer, count);
+            return functor(std::span { static_cast<const uint8_t*>(buffer), count });
         },
         nullptr
     };
@@ -224,9 +224,9 @@ template<typename Source> static Vector<uint8_t> encodeToVector(Source&& source,
 {
     Vector<uint8_t> result;
 
-    bool success = encode(std::forward<Source>(source), mimeType, quality, scopedLambdaRef<PutBytesCallback>([&] (const void* data, size_t length) {
-        result.append(static_cast<const uint8_t*>(data), length);
-        return length;
+    bool success = encode(std::forward<Source>(source), mimeType, quality, scopedLambdaRef<PutBytesCallback>([&] (std::span<const uint8_t> data) {
+        result.append(data);
+        return data.size();
     }));
     if (!success)
         return { };

@@ -253,7 +253,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
             if (!dataValue)
                 continue;
 
-            auto span = dataValue->dataReference();
+            auto span = dataValue->bytes();
             if (span.size() != 16)
                 continue;
 
