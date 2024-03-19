@@ -3127,8 +3127,11 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
 
     // We enabled automatic media selection because we want alternate audio tracks to be enabled/disabled automatically,
     // but set the selected legible track to nil so text tracks will not be automatically configured.
-    if (!m_textTracks.size())
+    if (!m_textTracks.size()) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
         [m_avPlayerItem selectMediaOption:nil inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
+END_BLOCK_OBJC_EXCEPTIONS
+    }
 
     Vector<RefPtr<InbandTextTrackPrivateAVF>> removedTextTracks = m_textTracks;
     NSArray *legibleOptions = [PAL::getAVMediaSelectionGroupClass() playableMediaSelectionOptionsFromArray:[legibleGroup options]];
@@ -3221,18 +3224,27 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [m_avPlayer setClosedCaptionDisplayEnabled:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(AVF_CAPTIONS)
-        else if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand)
+        else if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand) {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
             [m_avPlayerItem selectMediaOption:static_cast<OutOfBandTextTrackPrivateAVF*>(track)->mediaSelectionOption() inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
+END_BLOCK_OBJC_EXCEPTIONS
 #endif
-        else
+        } else {
+BEGIN_BLOCK_OBJC_EXCEPTIONS
             [m_avPlayerItem selectMediaOption:static_cast<InbandTextTrackPrivateAVFObjC*>(track)->mediaSelectionOption() inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
-    } else {
-        [m_avPlayerItem selectMediaOption:0 inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [m_avPlayer setClosedCaptionDisplayEnabled:NO];
-ALLOW_DEPRECATED_DECLARATIONS_END
+END_BLOCK_OBJC_EXCEPTIONS
+        }
+
+        return;
     }
 
+BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_avPlayerItem selectMediaOption:0 inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
+END_BLOCK_OBJC_EXCEPTIONS
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [m_avPlayer setClosedCaptionDisplayEnabled:NO];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
