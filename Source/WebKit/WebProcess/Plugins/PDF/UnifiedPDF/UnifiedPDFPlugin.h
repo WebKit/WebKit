@@ -149,7 +149,34 @@ public:
     float deviceScaleFactor() const override;
 
     WebCore::FloatRect rectForSelectionInPluginSpace(PDFSelection *) const;
-    Vector<WebCore::FloatRect> selectionBoundsAcrossDocumentInContentSpace(const PDFSelection *) const;
+
+    /*
+        Unified PDF Plugin coordinate spaces, in depth order:
+
+        - "root view": same as the rest of WebKit.
+
+        - "plugin": the space of the plugin element (origin at the top left,
+            ignoring all internal transforms).
+
+        - "contents": the space of the contents layer, with scrolling subtracted
+            out and page scale multiplied in; the painting space.
+
+        - "document": the space that the PDF pages are laid down in, with
+            PDFDocumentLayout's width-fitting scale divided out; includes margins.
+
+        - "page": the space of each actual PDFPage, as used by PDFKit; origin at
+            the bottom left of the crop box; page rotation multiplied in.
+    */
+
+    enum class CoordinateSpace : uint8_t {
+        PDFPage,
+        PDFDocumentLayout,
+        Contents, // aka "ScaledDocument" aka "Painting"
+        ScrolledContents,
+        Plugin
+    };
+
+    Vector<WebCore::FloatRect> boundsForSelection(const PDFSelection *, CoordinateSpace inSpace) const;
 
     RetainPtr<PDFPage> pageAtIndex(PDFDocumentLayout::PageIndex) const;
 
@@ -310,7 +337,6 @@ private:
     void stopTrackingSelection();
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
     RetainPtr<PDFSelection> protectedCurrentSelection() const;
-    Vector<WebCore::FloatRect> selectionBoundsAcrossDocument(const PDFSelection *) const;
     void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason, const Vector<WebCore::FloatRect>& additionalDocumentRectsToRepaint = { });
     bool isSelectionActiveAfterContextMenuInteraction() const;
 
@@ -425,32 +451,6 @@ private:
 
     void setNeedsRepaintInDocumentRect(OptionSet<RepaintRequirement>, const WebCore::FloatRect&);
     void setNeedsRepaintInDocumentRects(OptionSet<RepaintRequirement>, const Vector<WebCore::FloatRect>&);
-
-    /*
-        Unified PDF Plugin coordinate spaces, in depth order:
-
-        - "root view": same as the rest of WebKit.
-
-        - "plugin": the space of the plugin element (origin at the top left,
-            ignoring all internal transforms).
-
-        - "contents": the space of the contents layer, with scrolling subtracted
-            out and page scale multiplied in; the painting space.
-
-        - "document": the space that the PDF pages are laid down in, with
-            PDFDocumentLayout's width-fitting scale divided out; includes margins.
-
-        - "page": the space of each actual PDFPage, as used by PDFKit; origin at
-            the bottom left of the crop box; page rotation multiplied in.
-    */
-
-    enum class CoordinateSpace : uint8_t {
-        PDFPage,
-        PDFDocumentLayout,
-        Contents, // aka "ScaledDocument" aka "Painting"
-        ScrolledContents,
-        Plugin
-    };
 
     // "Up" is inside-out.
     template <typename T>

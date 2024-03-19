@@ -260,10 +260,12 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(Should
         return;
 
     Vector<IntRect> dirtyRectsInContentSpace;
+
     if (activeHighlight)
-        dirtyRectsInContentSpace.appendVector(plugin->selectionBoundsAcrossDocumentInContentSpace(activeDataDetectorItem->selection().get()));
+        dirtyRectsInContentSpace.appendVector(plugin->boundsForSelection(activeDataDetectorItem->selection().get(), UnifiedPDFPlugin::CoordinateSpace::Contents));
+
     if (previousActiveHighlight)
-        dirtyRectsInContentSpace.appendVector(plugin->selectionBoundsAcrossDocumentInContentSpace(previousDataDetectorItem->selection().get()));
+        dirtyRectsInContentSpace.appendVector(plugin->boundsForSelection(previousDataDetectorItem->selection().get(), UnifiedPDFPlugin::CoordinateSpace::Contents));
 
     RefPtr overlay = protectedOverlay();
     if (!overlay)
