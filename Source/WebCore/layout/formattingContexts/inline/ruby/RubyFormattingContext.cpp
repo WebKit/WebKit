@@ -112,13 +112,13 @@ static bool annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox,
     return false;
 }
 
-static bool canBreakAtCharacter(UChar character)
+static bool canBreakBefore(UChar character)
 {
     auto lineBreak = (ULineBreak)u_getIntPropertyValue(character, UCHAR_LINE_BREAK);
     // UNICODE LINE BREAKING ALGORITHM
     // http://www.unicode.org/reports/tr14/
     // And Requirements for Japanese Text Layout, 3.1.7 Characters Not Starting a Line
-    // http://www.w3.org/TR/2012/NOTE-jlreq-20120403/#characters_not_starting_a_line
+    // https://www.w3.org/TR/jlreq/#characters_not_starting_a_line
     switch (lineBreak) {
     case U_LB_NONSTARTER:
     case U_LB_CLOSE_PARENTHESIS:
@@ -147,6 +147,33 @@ static bool canBreakAtCharacter(UChar character)
     return true;
 }
 
+static bool canBreakAfter(UChar character)
+{
+    // https://www.w3.org/TR/jlreq/#characters_not_ending_a_line
+    switch (character) {
+    case 0x2018: // LEFT SINGLE QUOTATION MARK
+    case 0x201C: // LEFT DOUBLE QUOTATION MARK
+    case 0x0028: // LEFT PARENTHESIS
+    case 0x3014: // LEFT TORTOISE SHELL BRACKET
+    case 0x005B: // LEFT SQUARE BRACKET
+    case 0x007B: // LEFT CURLY BRACKET
+    case 0x3008: // LEFT ANGLE BRACKET
+    case 0x300A: // LEFT DOUBLE ANGLE BRACKET
+    case 0x300C: // LEFT CORNER BRACKET
+    case 0x300E: // LEFT WHITE CORNER BRACKET
+    case 0x3010: // LEFT BLACK LENTICULAR BRACKET
+    case 0x2985: // LEFT WHITE PARENTHESIS
+    case 0x3018: // LEFT WHITE TORTOISE SHELL BRACKET
+    case 0x3016: // LEFT WHITE LENTICULAR BRACKET
+    case 0x00AB: // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+    case 0x301D: // REVERSED DOUBLE PRIME QUOTATION MARK
+        return false;
+    default:
+        break;
+    }
+    return true;
+}
+
 bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current)
 {
     auto& previousLayoutBox = previous.layoutBox();
@@ -166,7 +193,7 @@ bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, 
                 return true;
             }
             auto lastCharacter = leadingTextItem->inlineTextBox().content()[leadingTextItem->end() - 1];
-            return canBreakAtCharacter(lastCharacter);
+            return canBreakAfter(lastCharacter);
         }
         // Don't break between base end and <ruby> end.
         return false;
@@ -190,7 +217,7 @@ bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, 
                 return true;
             }
             auto firstCharacter = trailingTextItem->inlineTextBox().content()[trailingTextItem->start()];
-            return canBreakAtCharacter(firstCharacter);
+            return canBreakBefore(firstCharacter);
         }
         // We should handled this case already when looking at current: base, previous: ruby.
         ASSERT_NOT_REACHED();
