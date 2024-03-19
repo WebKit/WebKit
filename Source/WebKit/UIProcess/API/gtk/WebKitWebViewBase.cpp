@@ -2581,6 +2581,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     }
 
     priv->pageProxy = processPool->createWebPage(*priv->pageClient, WTFMove(configuration));
+    priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
     priv->pageProxy->initializeWebPage();
 
@@ -2588,7 +2589,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
         priv->pageProxy->windowScreenDidChange(priv->displayID);
 
     // We attach this here, because changes in scale factor are passed directly to the page proxy.
-    priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
 }
 
