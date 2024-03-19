@@ -93,7 +93,14 @@ void ModelProcessModelPlayerProxy::createLayer()
     m_layer = adoptNS([[WKModelProcessModelLayer alloc] init]);
     [m_layer setName:@"WKModelProcessModelLayer"];
     [m_layer setValue:@YES forKeyPath:@"separatedOptions.isPortal"];
-    [m_layer setValue:(__bridge id)CGColorGetConstantColor(kCGColorWhite) forKeyPath:@"separatedOptions.material.clearColor"];
+    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.transform"];
+    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.collider"];
+    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.mesh"];
+    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.material"];
+    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.texture"];
+    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.clippingPrimitive"];
+    updateBackgroundColor();
+
     [m_layer setPlayer:RefPtr { this }];
 
     LayerHostingContextOptions contextOptions;
@@ -167,6 +174,17 @@ static CGFloat effectivePointsPerMeter(CALayer *caLayer)
     } while (layer);
 
     return defaultPointsPerMeter;
+}
+
+void ModelProcessModelPlayerProxy::updateBackgroundColor()
+{
+    if (!m_layer)
+        return;
+
+    if (m_backgroundColor.isValid())
+        [m_layer setValue:(__bridge id)cachedCGColor(m_backgroundColor).get() forKeyPath:@"separatedOptions.material.clearColor"];
+    else
+        [m_layer setValue:(__bridge id)CGColorGetConstantColor(kCGColorWhite) forKeyPath:@"separatedOptions.material.clearColor"];
 }
 
 void ModelProcessModelPlayerProxy::updateTransform()
@@ -283,14 +301,6 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
 
     REEntitySubtreeAddNetworkComponentRecursive(m_model->rootEntity());
 
-    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.transform"];
-    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.collider"];
-    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.mesh"];
-    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.material"];
-    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.texture"];
-    [m_layer setValue:@YES forKeyPath:@"separatedOptions.updates.clippingPrimitive"];
-    [m_layer setValue:(__bridge id)CGColorGetConstantColor(kCGColorWhite) forKeyPath:@"separatedOptions.material.clearColor"];
-
     REPtr<REEntityRef> hostingEntity = adoptRE(REEntityCreate());
     REEntitySetName(hostingEntity.get(), "WebKit:EntityWithRootComponent");
 
@@ -308,6 +318,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     REEntitySetName(m_model->rootEntity(), "WebKit:ModelRootEntity");
     REEntitySetParent(m_model->rootEntity(), rootEntity);
 
+    updateBackgroundColor();
     updateTransform();
     updateOpacity();
     startAnimating();
@@ -356,6 +367,12 @@ PlatformLayer* ModelProcessModelPlayerProxy::layer()
 std::optional<WebCore::LayerHostingContextIdentifier> ModelProcessModelPlayerProxy::layerHostingContextIdentifier()
 {
     return WebCore::LayerHostingContextIdentifier(m_layerHostingContext->contextID());
+}
+
+void ModelProcessModelPlayerProxy::setBackgroundColor(WebCore::Color color)
+{
+    m_backgroundColor = color.opaqueColor();
+    updateBackgroundColor();
 }
 
 void ModelProcessModelPlayerProxy::enterFullscreen()

@@ -110,6 +110,11 @@ void ModelProcessModelPlayer::enterFullscreen()
 {
 }
 
+void ModelProcessModelPlayer::setBackgroundColor(WebCore::Color color)
+{
+    send(Messages::ModelProcessModelPlayerProxy::SetBackgroundColor(color));
+}
+
 void ModelProcessModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&& completionHandler)
 {
     completionHandler(std::nullopt);

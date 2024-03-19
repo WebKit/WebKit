@@ -26,9 +26,15 @@
 #include "config.h"
 #include "ModelPlayer.h"
 
+#include "Color.h"
+
 namespace WebCore {
 
 ModelPlayer::~ModelPlayer() = default;
+
+void ModelPlayer::setBackgroundColor(Color)
+{
+}
 
 bool ModelPlayer::supportsMouseInteraction()
 {

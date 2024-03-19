@@ -369,6 +369,14 @@ PlatformLayerIdentifier HTMLModelElement::platformLayerID()
     return graphicsLayer->contentsLayerIDForModel();
 }
 
+// MARK: - Background Color support.
+
+void HTMLModelElement::applyBackgroundColor(Color color)
+{
+    if (m_modelPlayer)
+        m_modelPlayer->setBackgroundColor(color);
+}
+
 // MARK: - Fullscreen support.
 
 void HTMLModelElement::enterFullscreen()

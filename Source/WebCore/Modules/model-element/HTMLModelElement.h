@@ -78,6 +78,8 @@ public:
 
     std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() const;
 
+    void applyBackgroundColor(Color);
+
     void enterFullscreen();
 
     using CameraPromise = DOMPromiseDeferred<IDLDictionary<HTMLModelElementCamera>>;

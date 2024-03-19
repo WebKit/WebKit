@@ -31,6 +31,7 @@
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include <CoreRE/CoreRE.h>
+#include <WebCore/Color.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerIdentifier.h>
@@ -68,6 +69,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     template<typename T> void send(T&& message);
 
+    void updateBackgroundColor();
     void updateTransform();
     void updateOpacity();
     void startAnimating();
@@ -85,6 +87,7 @@ public:
     void sizeDidChange(WebCore::LayoutSize) final;
     PlatformLayer* layer() final;
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() final;
+    void setBackgroundColor(WebCore::Color) final;
     void enterFullscreen() final;
     bool supportsMouseInteraction() final;
     bool supportsDragging() final;
@@ -119,6 +122,7 @@ private:
     RefPtr<WebCore::REModel> m_model;
     REPtr<RESceneRef> m_scene;
 
+    WebCore::Color m_backgroundColor;
     simd_float3 m_originalBoundingBoxExtents { simd_make_float3(0, 0, 0) };
     float m_pitch { 0 };
     float m_yaw { 0 };
