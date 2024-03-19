@@ -311,7 +311,7 @@ UIViewController *VideoPresentationModelContext::presentingViewController()
         return nullptr;
 
     if (auto* page = m_manager->m_page.get())
-        return page->uiClient().presentingViewController();
+        return page->protectedPageClient()->presentingViewController();
     return nullptr;
 }
 

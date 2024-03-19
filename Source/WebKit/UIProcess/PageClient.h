@@ -81,6 +81,7 @@ OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
 OBJC_CLASS UIScrollView;
 OBJC_CLASS UIView;
+OBJC_CLASS UIViewController;
 OBJC_CLASS WKBaseScrollView;
 OBJC_CLASS WKBEScrollViewScrollUpdate;
 OBJC_CLASS _WKRemoteObjectRegistry;
@@ -715,6 +716,10 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     virtual WebKitWebResourceLoadManager* webResourceLoadManager() = 0;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    virtual UIViewController *presentingViewController() const = 0;
 #endif
 };
 

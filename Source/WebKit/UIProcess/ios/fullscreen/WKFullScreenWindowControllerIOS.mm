@@ -830,6 +830,11 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     return _webViewPlaceholder.get();
 }
 
+- (WKFullScreenViewController *)fullScreenViewController
+{
+    return _fullscreenViewController.get();
+}
+
 #pragma mark -
 #pragma mark External Interface
 

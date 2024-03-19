@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIData.h"
+#import "APIUIClient.h"
 #import "ApplicationStateTracker.h"
 #import "DrawingAreaProxy.h"
 #import "EndowmentStateTracker.h"
@@ -47,6 +48,7 @@
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKEditCommand.h"
+#import "WKFullScreenViewController.h"
 #import "WKGeolocationProviderIOS.h"
 #import "WKPasswordView.h"
 #import "WKProcessPoolInternal.h"
@@ -1203,6 +1205,21 @@ bool PageClientImpl::hasResizableWindows() const
 #else
     return false;
 #endif
+}
+
+UIViewController *PageClientImpl::presentingViewController() const
+{
+    RetainPtr webView = this->webView();
+
+#if ENABLE(FULLSCREEN_API)
+    if ([webView fullScreenWindowController].isFullScreen)
+        return [webView fullScreenWindowController].fullScreenViewController;
+#endif
+
+    if (auto page = webView->_page)
+        return page->uiClient().presentingViewController();
+
+    return nil;
 }
 
 } // namespace WebKit

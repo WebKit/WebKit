@@ -392,6 +392,9 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
     AUTHORIZATIONSESSION_RELEASE_LOG("presentViewController: Calling beginSheet on %p for sheet %p.", presentingWindow, m_sheetWindow.get());
     [presentingWindow beginSheet:m_sheetWindow.get() completionHandler:nil];
 #elif PLATFORM(IOS) || PLATFORM(VISION)
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     UIViewController *presentingViewController = m_page->uiClient().presentingViewController();
     if (!presentingViewController) {
         uiCallback(NO, adoptNS([[NSError alloc] initWithDomain:SOErrorDomain code:kSOErrorAuthorizationPresentationFailed userInfo:nil]).get());

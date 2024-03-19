@@ -215,6 +215,9 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     if (!_previewController)
         return nil;
 
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     return _previewController->page().uiClient().presentingViewController();
 }
 
@@ -378,6 +381,9 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
     if (m_qlPreviewController)
         return completionHandler();
 
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
 
     if (!presentingViewController)
