@@ -1482,6 +1482,17 @@ bool Quirks::allowLayeredFullscreenVideos() const
 }
 #endif
 
+#if PLATFORM(VISION)
+// twitter.com: rdar://124180748
+bool Quirks::shouldDisableFullscreenVideoAspectRatioAdaptiveSizing() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return isDomain("twitter.com"_s);
+}
+#endif
+
 // mail.google.com rdar://97351877
 bool Quirks::shouldEnableApplicationCacheQuirk() const
 {
