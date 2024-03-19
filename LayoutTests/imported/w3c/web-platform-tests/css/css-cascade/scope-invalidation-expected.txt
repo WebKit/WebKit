@@ -3,7 +3,7 @@ PASS Element becoming scope root
 PASS Element becoming scope root (selector list)
 FAIL Element becoming scope root, with inner :scope rule assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 PASS Parent element becoming scope limit
-FAIL Parent element becoming scope limit (selector list) assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
+PASS Parent element becoming scope limit (selector list)
 PASS Subject element becoming scope limit
 PASS Parent element affecting scope limit
 PASS Sibling element affecting scope limit

@@ -647,14 +647,12 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
                 ++distance;
             }
         };
-        /* @scope (a,b) to (c,d) would create 4 scopes for elements in between
-                [a,c]
-                [a,d]
-                [b,c]
-                [b,d]
-         For an element to not be in the rule @scope, it needs to not be inside any of those scopes
+        /* 
+        An element is in scope if:
+            It is an inclusive descendant of the scoping root, and
+            It is not an inclusive descendant of a scoping limit.
         */
-        auto isWithinScopingRootsAndScopeEnd = [&](const auto& selectorList) {
+        auto isWithinScopingRootsAndScopeEnd = [&](const CSSSelectorList& scopeEnd) {
             auto match = [&] (const auto* scopingRoot, const auto* selector) {
                 auto subContext = context;
                 subContext.scope = scopingRoot;
@@ -674,10 +672,15 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
 
             Vector<ScopingRootWithDistance> scopingRootsWithinScope;
             for (auto scopingRootWithDistance : scopingRoots) {
-                for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-                    if (!match(scopingRootWithDistance.scopingRoot, selector))
-                        scopingRootsWithinScope.append(scopingRootWithDistance);
+                bool anyScopingLimitMatch = false;
+                for (const auto* selector = scopeEnd.first(); selector; selector = CSSSelectorList::next(selector)) {
+                    if (match(scopingRootWithDistance.scopingRoot, selector)) {
+                        anyScopingLimitMatch = true;
+                        break;
+                    }
                 }
+                if (!anyScopingLimitMatch)
+                    scopingRootsWithinScope.append(scopingRootWithDistance);
             }
             return scopingRootsWithinScope;
         };
