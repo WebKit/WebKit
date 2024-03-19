@@ -28,6 +28,6 @@ PASS url input with placeholder and tooltip label
 PASS textarea with placeholder and tooltip label
 PASS abbr with tooltip label
 PASS kbd with tooltip label
-FAIL summary with tooltip label and contents assert_equals: <summary title="title" data-expectedlabel="contents" data-testname="summary with tooltip label and contents" class="ex">contents</summary> expected "contents" but got "title"
+PASS summary with tooltip label and contents
 PASS iframe with tooltip label
 
