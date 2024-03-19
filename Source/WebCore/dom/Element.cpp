@@ -4784,7 +4784,7 @@ bool Element::isWritingSuggestionsEnabled() const
     // not in the `default` state and the nearest such ancestor's `writingsuggestions` content attribute
     // is in the `false` state, then return `false`.
 
-    for (auto* ancestor = this; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+    for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parentElementInComposedTree()) {
         auto& value = ancestor->attributeWithoutSynchronization(HTMLNames::writingsuggestionsAttr);
 
         if (value.isNull())
@@ -4794,6 +4794,12 @@ bool Element::isWritingSuggestionsEnabled() const
         if (equalLettersIgnoringASCIICase(value, "false"_s))
             return false;
     }
+
+    // This is not yet part of the spec, but it improves web-compatibility; if autocomplete
+    // is intentionally off, the site author probably wants writingsuggestions off too.
+    auto autocompleteValue = attributeWithoutSynchronization(HTMLNames::autocompleteAttr);
+    if (equalLettersIgnoringASCIICase(autocompleteValue, "off"_s))
+        return false;
 
     if (protectedDocument()->quirks().shouldDisableWritingSuggestionsByDefaultQuirk())
         return false;

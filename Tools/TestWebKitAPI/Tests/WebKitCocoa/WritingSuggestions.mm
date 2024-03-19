@@ -117,4 +117,12 @@ TEST(WritingSuggestionsWebAPI, ExplicitlyDisabledOnParent)
     EXPECT_EQ(UITextInlinePredictionTypeNo, [webView effectiveTextInputTraits].inlinePredictionType);
 }
 
+TEST(WritingSuggestionsWebAPI, DefaultStateWithDisabledAutocomplete)
+{
+    auto webView = adoptNS([[WritingSuggestionsWebAPIWKWebView alloc] initWithHTMLString:@"<body><input id='input' type='text' autocomplete='off'></input></body>"]);
+    [webView focusElementAndEnsureEditorStateUpdate:@"document.getElementById('input')"];
+
+    EXPECT_EQ(UITextInlinePredictionTypeNo, [webView effectiveTextInputTraits].inlinePredictionType);
+}
+
 #endif
