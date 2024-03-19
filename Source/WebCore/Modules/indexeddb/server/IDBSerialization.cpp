@@ -353,7 +353,7 @@ static WARN_UNUSED_RETURN bool decodeKey(const uint8_t*& data, const uint8_t* en
             return false;
 
         size_t size = static_cast<size_t>(size64);
-        Vector<uint8_t> dataVector(std::span { data, size });
+        Vector<uint8_t> dataVector(std::span<const uint8_t>(data, size));
         data += size;
 
         result.setBinaryValue(ThreadSafeDataBuffer::create(WTFMove(dataVector)));
