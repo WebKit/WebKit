@@ -71,11 +71,10 @@ public:
 
     TextBoxSelectableRange selectableRange() const { return inlineTextBox()->selectableRange(); }
 
-    TextRun textRun(TextRunMode mode = TextRunMode::Painting) const
+    TextRun textRun(TextRunMode = TextRunMode::Painting) const
     {
-        bool ignoreCombinedText = mode == TextRunMode::Editing;
         if (isText())
-            return inlineTextBox()->createTextRun(ignoreCombinedText);
+            return inlineTextBox()->createTextRun();
         ASSERT_NOT_REACHED();
         return TextRun { emptyString() };
     }

@@ -139,9 +139,6 @@ const LegacyInlineBox* LegacyRootInlineBox::lastSelectedBox() const
 LayoutUnit LegacyRootInlineBox::selectionTop() const
 {
     LayoutUnit selectionTop = m_lineTop;
-    
-    if (m_hasAnnotationsBefore)
-        selectionTop -= !renderer().style().isFlippedLinesWritingMode() ? computeOverAnnotationAdjustment(m_lineTop) : computeUnderAnnotationAdjustment(m_lineTop);
 
     if (renderer().style().isFlippedLinesWritingMode())
         return selectionTop;
@@ -151,18 +148,6 @@ LayoutUnit LegacyRootInlineBox::selectionTop() const
         prevBottom = previousBox->selectionBottom();
     else
         prevBottom = selectionTop;
-
-    if (prevBottom < selectionTop && blockFlow().containsFloats()) {
-        // This line has actually been moved further down, probably from a large line-height, but possibly because the
-        // line was forced to clear floats. If so, let's check the offsets, and only be willing to use the previous
-        // line's bottom if the offsets are greater on both sides.
-        LayoutUnit prevLeft = blockFlow().logicalLeftOffsetForLine(prevBottom, DoNotIndentText);
-        LayoutUnit prevRight = blockFlow().logicalRightOffsetForLine(prevBottom, DoNotIndentText);
-        LayoutUnit newLeft = blockFlow().logicalLeftOffsetForLine(selectionTop, DoNotIndentText);
-        LayoutUnit newRight = blockFlow().logicalRightOffsetForLine(selectionTop, DoNotIndentText);
-        if (prevLeft > newLeft || prevRight < newRight)
-            return selectionTop;
-    }
 
     return prevBottom;
 }
@@ -176,26 +161,10 @@ LayoutUnit LegacyRootInlineBox::selectionBottom() const
 {
     LayoutUnit selectionBottom = m_lineBottom;
 
-    if (m_hasAnnotationsAfter)
-        selectionBottom += !renderer().style().isFlippedLinesWritingMode() ? computeUnderAnnotationAdjustment(m_lineBottom) : computeOverAnnotationAdjustment(m_lineBottom);
-    
     if (!renderer().style().isFlippedLinesWritingMode() || !nextRootBox())
         return selectionBottom;
 
-    LayoutUnit nextTop = nextRootBox()->selectionTop();
-    if (nextTop > selectionBottom && blockFlow().containsFloats()) {
-        // The next line has actually been moved further over, probably from a large line-height, but possibly because the
-        // line was forced to clear floats. If so, let's check the offsets, and only be willing to use the next
-        // line's top if the offsets are greater on both sides.
-        LayoutUnit nextLeft = blockFlow().logicalLeftOffsetForLine(nextTop, DoNotIndentText);
-        LayoutUnit nextRight = blockFlow().logicalRightOffsetForLine(nextTop, DoNotIndentText);
-        LayoutUnit newLeft = blockFlow().logicalLeftOffsetForLine(selectionBottom, DoNotIndentText);
-        LayoutUnit newRight = blockFlow().logicalRightOffsetForLine(selectionBottom, DoNotIndentText);
-        if (nextLeft > newLeft || nextRight < newRight)
-            return selectionBottom;
-    }
-
-    return nextTop;
+    return nextRootBox()->selectionTop();
 }
 
 RenderBlockFlow& LegacyRootInlineBox::blockFlow() const

@@ -109,33 +109,6 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
         if (blockFlow->hasTextDescendants())
             setHasTextDescendantsOnAncestors(this);
     }
-    if (descendantsHaveSameLineHeightAndBaseline()) {
-        const RenderStyle& parentStyle = lineStyle();
-        const RenderStyle& childStyle = child->lineStyle();
-        bool shouldClearDescendantsHaveSameLineHeightAndBaseline = false;
-        if (child->isInlineTextBox()) {
-            if (child->renderer().parent() != &renderer()) {
-                if (!parentStyle.fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().metricsOfPrimaryFont())
-                    || parentStyle.lineHeight() != childStyle.lineHeight()
-                    || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline)
-                    shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
-            }
-            if (childStyle.hasTextCombine() || childStyle.textEmphasisMark() != TextEmphasisMark::None)
-                shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
-        } else {
-            auto& childFlowBox = downcast<LegacyInlineFlowBox>(*child);
-            // Check the child's bit, and then also check for differences in font, line-height, vertical-align
-            if (!childFlowBox.descendantsHaveSameLineHeightAndBaseline()
-                || !parentStyle.fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().metricsOfPrimaryFont())
-                || parentStyle.lineHeight() != childStyle.lineHeight()
-                || (parentStyle.verticalAlign() != VerticalAlign::Baseline && !isRootInlineBox()) || childStyle.verticalAlign() != VerticalAlign::Baseline
-                || childStyle.hasBorder() || childStyle.hasPadding() || childStyle.hasTextCombine())
-                shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
-        }
-
-        if (shouldClearDescendantsHaveSameLineHeightAndBaseline)
-            clearDescendantsHaveSameLineHeightAndBaseline();
-    }
 
     const RenderStyle& childStyle = child->lineStyle();
     if (child->isInlineTextBox()) {
@@ -247,7 +220,7 @@ void LegacyInlineFlowBox::adjustPosition(float dx, float dy)
     for (auto* child = firstChild(); child; child = child->nextOnLine())
         child->adjustPosition(dx, dy);
     if (m_overflow)
-        m_overflow->move(LayoutUnit(dx), LayoutUnit(dy)); // FIXME: Rounding error here since overflow was pixel snapped, but nobody other than list markers passes non-integral values here.
+        m_overflow->move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
 inline void LegacyInlineFlowBox::addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow)
@@ -574,54 +547,6 @@ LegacyInlineBox* LegacyInlineFlowBox::lastLeafDescendant() const
 RenderObject::HighlightState LegacyInlineFlowBox::selectionState() const
 {
     return RenderObject::HighlightState::None;
-}
-
-LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosition) const
-{
-    LayoutUnit result;
-    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
-            result = std::max(result, flowBox->computeOverAnnotationAdjustment(allowedPosition));
-
-        if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
-            const RenderStyle& childLineStyle = child->lineStyle();
-            auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(textBox->renderer(), childLineStyle);
-            if (markExistsAndIsAbove && *markExistsAndIsAbove) {
-                if (!childLineStyle.isFlippedLinesWritingMode()) {
-                    int topOfEmphasisMark = child->logicalTop() - childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
-                    result = std::max(result, allowedPosition - topOfEmphasisMark);
-                } else {
-                    int bottomOfEmphasisMark = child->logicalBottom() + childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
-                    result = std::max(result, bottomOfEmphasisMark - allowedPosition);
-                }
-            }
-        }
-    }
-    return result;
-}
-
-LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPosition) const
-{
-    LayoutUnit result;
-    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-        if (auto* flowBox = dynamicDowncast<LegacyInlineFlowBox>(*child))
-            result = std::max(result, flowBox->computeUnderAnnotationAdjustment(allowedPosition));
-
-        if (auto* textBox = dynamicDowncast<LegacyInlineTextBox>(*child)) {
-            const RenderStyle& childLineStyle = child->lineStyle();
-            auto markExistsAndIsAbove = RenderText::emphasisMarkExistsAndIsAbove(textBox->renderer(), childLineStyle);
-            if (markExistsAndIsAbove && !*markExistsAndIsAbove) {
-                if (!childLineStyle.isFlippedLinesWritingMode()) {
-                    LayoutUnit bottomOfEmphasisMark { child->logicalBottom() + childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString()) };
-                    result = std::max(result, bottomOfEmphasisMark - allowedPosition);
-                } else {
-                    LayoutUnit topOfEmphasisMark { child->logicalTop() - childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString()) };
-                    result = std::max(result, allowedPosition - topOfEmphasisMark);
-                }
-            }
-        }
-    }
-    return result;
 }
 
 #if ENABLE(TREE_DEBUGGING)

@@ -26,7 +26,6 @@
 #include "LineBreaker.h"
 
 #include "BreakingContext.h"
-#include "RenderCombineText.h"
 
 namespace WebCore {
 
@@ -38,17 +37,9 @@ void LineBreaker::skipTrailingWhitespace(LegacyInlineIterator& iterator, const L
 
 void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& lineInfo)
 {
-    while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
-        RenderObject& object = *resolver.position().renderer();
-        if (object.style().hasTextCombine()) {
-            if (CheckedPtr combineText = dynamicDowncast<RenderCombineText>(object)) {
-                combineText->combineTextIfNeeded();
-                if (combineText->isCombined())
-                    continue;
-            }
-        }
+    while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace))
         resolver.increment();
-    }
+
     resolver.commitExplicitEmbedding();
 }
 

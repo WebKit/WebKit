@@ -88,12 +88,6 @@ LegacyInlineTextBox::~LegacyInlineTextBox()
 
 bool LegacyInlineTextBox::hasTextContent() const
 {
-    if (m_len > 1)
-        return true;
-    if (auto* combinedText = this->combinedText()) {
-        ASSERT(m_len == 1);
-        return !combinedText->combinedStringForRendering().isEmpty();
-    }
     return m_len;
 }
 
@@ -161,7 +155,7 @@ RenderObject::HighlightState LegacyInlineTextBox::selectionState() const
 
 const FontCascade& LegacyInlineTextBox::lineFont() const
 {
-    return combinedText() ? combinedText()->textCombineFont() : lineStyle().fontCascade();
+    return lineStyle().fontCascade();
 }
 
 LayoutRect snappedSelectionRect(const LayoutRect& selectionRect, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal)
@@ -283,16 +277,10 @@ TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const
 {
     // Fix up the offset if we are combined text because we manage these embellishments.
     // That is, they are not reflected in renderer().text(). We treat combined text as a single unit.
-    auto additionalLengthAtEnd = [&] {
-        if (auto* combinedText = this->combinedText())
-            return combinedText->combinedStringForRendering().length() - m_len;
-        return 0u;
-    }();
-
     return {
         m_start,
         m_len,
-        additionalLengthAtEnd,
+        0u,
         isLineBreak()
     };
 }
@@ -326,37 +314,21 @@ float LegacyInlineTextBox::textPos() const
     return logicalLeft() - root().logicalLeft();
 }
 
-TextRun LegacyInlineTextBox::createTextRun(bool ignoreCombinedText) const
+TextRun LegacyInlineTextBox::createTextRun() const
 {
     const auto& style = lineStyle();
-    TextRun textRun { text(ignoreCombinedText), textPos(), 0, ExpansionBehavior::forbidAll(), direction(), style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
+    TextRun textRun { text(), textPos(), 0, ExpansionBehavior::forbidAll(), direction(), style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
     textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     return textRun;
 }
 
-String LegacyInlineTextBox::text(bool ignoreCombinedText) const
+String LegacyInlineTextBox::text() const
 {
-    String result;
-    if (auto* combinedText = this->combinedText()) {
-        if (ignoreCombinedText)
-            result = renderer().text().substring(m_start, m_len);
-        else
-            result = combinedText->combinedStringForRendering();
-    } else
-        result = renderer().text().substring(m_start, m_len);
+    String result = renderer().text().substring(m_start, m_len);
 
     // This works because this replacement doesn't affect string indices. We're replacing a single Unicode code unit with another Unicode code unit.
     // How convenient.
     return RenderBlock::updateSecurityDiscCharacters(lineStyle(), WTFMove(result));
-}
-
-const RenderCombineText* LegacyInlineTextBox::combinedText() const
-{
-    if (!lineStyle().hasTextCombine())
-        return nullptr;
-
-    auto* renderCombineText = dynamicDowncast<RenderCombineText>(renderer());
-    return renderCombineText && renderCombineText->isCombined() ? renderCombineText : nullptr;
 }
 
 #if ENABLE(TREE_DEBUGGING)

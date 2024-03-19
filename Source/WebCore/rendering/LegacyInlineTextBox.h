@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-class RenderCombineText;
-
 namespace InlineIterator {
 class BoxLegacyPath;
 }
@@ -56,12 +54,6 @@ public:
 
     bool hasTextContent() const;
 
-    // These functions do not account for combined text. For combined text this box will always have len() == 1
-    // regardless of whether the resulting composition is the empty string. Use hasTextContent() if you want to
-    // know whether this box has text content.
-    //
-    // FIXME: These accessors should ASSERT(!isDirty()). See https://bugs.webkit.org/show_bug.cgi?id=97264
-    // Note len() == 1 for combined text regardless of whether the composition is empty. Use hasTextContent() to
     unsigned start() const { return m_start; }
     unsigned end() const { return m_start + m_len; }
     unsigned len() const { return m_len; }
@@ -136,11 +128,10 @@ public:
 private:
     friend class InlineIterator::BoxLegacyPath;
 
-    const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
 
-    String text(bool ignoreCombinedText = false) const; // The effective text for the run.
-    TextRun createTextRun(bool ignoreCombinedText = false) const;
+    String text() const; // The effective text for the run.
+    TextRun createTextRun() const;
 
     LegacyInlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
     LegacyInlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject

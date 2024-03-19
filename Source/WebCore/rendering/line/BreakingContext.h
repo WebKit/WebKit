@@ -32,7 +32,6 @@
 #include "LineLayoutState.h"
 #include "LineWidth.h"
 #include "RenderBlockInlines.h"
-#include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -359,11 +358,6 @@ inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
     return 0;
 }
 
-inline bool iteratorIsBeyondEndOfRenderCombineText(const LegacyInlineIterator& iter, RenderCombineText& renderer)
-{
-    return iter.renderer() == &renderer && iter.offset() >= renderer.text().length();
-}
-
 inline void nextCharacter(UChar& currentCharacter, UChar& lastCharacter, UChar& secondToLastCharacter)
 {
     secondToLastCharacter = lastCharacter;
@@ -376,7 +370,7 @@ ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, con
 
     GlyphOverflow glyphOverflow;
     // FIXME: This is not the right level of abstraction for isFixedPitch. Font fallback may make it such that the fixed pitch font is never actually used!
-    if (isFixedPitch || (!from && len == text.text().length()) || style.hasTextCombine())
+    if (isFixedPitch || (!from && len == text.text().length()))
         return text.width(from, len, font, xPos, &fallbackFonts, &glyphOverflow);
 
     if (layout)
@@ -433,18 +427,6 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements)
     // then we need to mark the start of the autowrap inline as a potential linebreak now.
     if (m_autoWrap && m_lastObjectTextWrap == TextWrapMode::NoWrap && m_ignoringSpaces)
         commitLineBreakAtCurrentWidth(renderer);
-
-    if (renderer.style().hasTextCombine()) {
-        if (auto* combineRenderer = dynamicDowncast<RenderCombineText>(renderer)) {
-            combineRenderer->combineTextIfNeeded();
-            // The length of the renderer's text may have changed. Increment stale iterator positions
-            if (iteratorIsBeyondEndOfRenderCombineText(m_lineBreak, *combineRenderer)) {
-                ASSERT(iteratorIsBeyondEndOfRenderCombineText(m_resolver.position(), *combineRenderer));
-                m_lineBreak.increment();
-                m_resolver.increment();
-            }
-        }
-    }
 
     const RenderStyle& style = lineStyle(renderer, m_lineInfo);
     const FontCascade& font = style.fontCascade();

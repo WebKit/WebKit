@@ -196,7 +196,6 @@ LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const 
     unsigned lineDepth = 1;
     LegacyInlineFlowBox* parentBox = nullptr;
     LegacyInlineFlowBox* result = nullptr;
-    bool hasDefaultLineBoxContain = style().lineBoxContain() == RenderStyle::initialLineBoxContain();
     do {
         RenderInline* inlineFlow = obj != &m_flow ? &checkedDowncast<RenderInline>(*obj) : nullptr;
 
@@ -217,8 +216,6 @@ LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const 
             parentBox = downcast<LegacyInlineFlowBox>(newBox);
             parentBox->setIsFirstLine(lineInfo.isFirstLine());
             parentBox->setIsHorizontal(m_flow.isHorizontalWritingMode());
-            if (!hasDefaultLineBoxContain)
-                parentBox->clearDescendantsHaveSameLineHeightAndBaseline();
             constructedNewBox = true;
         }
 
@@ -864,21 +861,11 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
         layoutRunsAndFloats(layoutState, hasInlineChild);
     }
 
-    // Expand the last line to accommodate Ruby and emphasis marks.
-    int lastLineAnnotationsAdjustment = 0;
-    if (lastRootBox()) {
-        LayoutUnit lowestAllowedPosition = std::max(lastRootBox()->lineBottom(), m_flow.logicalHeight() + m_flow.paddingAfter());
-        if (!style().isFlippedLinesWritingMode())
-            lastLineAnnotationsAdjustment = lastRootBox()->computeUnderAnnotationAdjustment(lowestAllowedPosition);
-        else
-            lastLineAnnotationsAdjustment = lastRootBox()->computeOverAnnotationAdjustment(lowestAllowedPosition);
-    }
-    
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information. This collapse is only necessary
     // if our last child was an anonymous inline block that might need to propagate margin information out to
     // us.
-    LayoutUnit afterEdge = m_flow.borderAndPaddingAfter() + m_flow.scrollbarLogicalHeight() + lastLineAnnotationsAdjustment;
+    LayoutUnit afterEdge = m_flow.borderAndPaddingAfter() + m_flow.scrollbarLogicalHeight();
     m_flow.setLogicalHeight(m_flow.logicalHeight() + afterEdge);
 
     if (!firstRootBox() && m_flow.hasLineIfEmpty())
