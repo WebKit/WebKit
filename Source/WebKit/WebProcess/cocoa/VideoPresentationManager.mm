@@ -281,7 +281,7 @@ bool VideoPresentationManager::supportsVideoFullscreen(WebCore::HTMLMediaElement
 
 bool VideoPresentationManager::supportsVideoFullscreenStandby() const
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(VISION)
     return true;
 #else
     return false;
