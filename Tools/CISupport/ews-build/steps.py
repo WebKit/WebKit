@@ -535,7 +535,7 @@ class GitHubMixin(object):
 
 
 class ShellMixin(object):
-    WINDOWS_SHELL_PLATFORMS = ['wincairo']
+    WINDOWS_SHELL_PLATFORMS = ['win']
 
     def has_windows_shell(self):
         return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
@@ -815,7 +815,7 @@ class CleanUpGitIndexLock(shell.ShellCommand):
 
     def start(self):
         platform = self.getProperty('platform', '*')
-        if platform == 'wincairo':
+        if platform == 'win':
             self.command = ['del', r'.git\index.lock']
 
         self.send_email_for_git_issue()
@@ -2455,7 +2455,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
     LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-skia', 'wpe-wk2', 'api-wpe']
-    WINDOWS_CHECKS = ['wincairo']
+    WINDOWS_CHECKS = ['win']
     EWS_WEBKIT_FAILED = 0
     EWS_WEBKIT_PASSED = 1
     EWS_WEBKIT_PENDING = 2
@@ -3078,9 +3078,20 @@ class InstallWpeDependencies(shell.ShellCommandNewStyle):
         super().__init__(logEnviron=False, **kwargs)
 
 
+class InstallWinDependencies(shell.ShellCommandNewStyle):
+    name = 'win-deps'
+    description = ['Updating Win dependencies']
+    descriptionDone = ['Updated Win dependencies']
+    command = ['python3', 'Tools/Scripts/update-webkit-windows-libs.py']
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+
 def customBuildFlag(platform, fullPlatform):
     # FIXME: Make a common 'supported platforms' list.
-    if platform not in ('gtk', 'wincairo', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
+    if platform not in ('gtk', 'win', 'ios', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
         return []
     if 'simulator' in fullPlatform:
         platform = platform + '-simulator'
@@ -3152,7 +3163,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         architecture = self.getProperty('architecture')
         configuration = self.getProperty('configuration')
 
-        if platform in ['wincairo']:
+        if platform in ['win']:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False, thresholdExceedCallBack=self.handleExcessiveLogging))
         else:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, thresholdExceedCallBack=self.handleExcessiveLogging))
@@ -3451,7 +3462,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             platform = self.getProperty('platform', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             logs = self.error_logs.get(self.compile_webkit_step)
-            if platform in ['wincairo']:
+            if platform in ['win']:
                 logs = self.filter_logs_containing_error(logs, searchString='error ')
             else:
                 logs = self.filter_logs_containing_error(logs)
@@ -3484,7 +3495,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             identifier = self.getProperty('identifier', None)
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             logs = self.error_logs.get(self.compile_webkit_step)
-            if platform in ['wincairo']:
+            if platform in ['win']:
                 logs = self.filter_logs_containing_error(logs, searchString='error ')
             else:
                 logs = self.filter_logs_containing_error(logs)
@@ -5707,7 +5718,7 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
 
     def run(self):
         self.commands = []
-        if self.getProperty('platform', '*') == 'wincairo':
+        if self.getProperty('platform', '*') == 'win':
             self.commands.append(util.ShellArg(
                 command=self.shell_command(r'del .git\gc.log || {}'.format(self.shell_exit_0())),
                 logname='stdio',

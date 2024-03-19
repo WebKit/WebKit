@@ -1117,9 +1117,9 @@ class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Deleted .git/index.lock')
         return self.runStep()
 
-    def test_success_wincairo(self):
+    def test_success_windows(self):
         self.setupStep(CleanUpGitIndexLock())
-        self.setProperty('platform', 'wincairo')
+        self.setProperty('platform', 'win')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=120,
@@ -3912,9 +3912,9 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
         return self.runStep()
 
-    def test_success_wincairo(self):
+    def test_success_windows(self):
         self.setupStep(CheckOutPullRequest())
-        self.setProperty('platform', 'wincairo')
+        self.setProperty('platform', 'win')
         self.setProperty('github.number', '1234')
         self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
@@ -4271,7 +4271,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
                   'macOS-Catalina-Release-Build-EWS', 'macOS-Catalina-Release-WK2-Tests-EWS', 'macOS-Catalina-Debug-Build-EWS',
-                  'WinCairo-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS', 'WPE-Skia-Build-EWS']
+                  'Win-Build-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS', 'WPE-Skia-Build-EWS']
         for queue in queues:
             self.setupStep(CheckChangeRelevance())
             self.setProperty('buildername', queue)
@@ -5683,10 +5683,10 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Cleaned up git repository')
         return self.runStep()
 
-    def test_success_wincairo(self):
+    def test_success_windows(self):
         self.setupStep(CleanGitRepo())
-        self.setProperty('buildername', 'WinCairo-EWS')
-        self.setProperty('platform', 'wincairo')
+        self.setProperty('buildername', 'Win-Build-EWS')
+        self.setProperty('platform', 'win')
 
         self.expectRemoteCommands(
             ExpectShell(command=['sh', '-c', r'del .git\gc.log || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
@@ -6067,7 +6067,7 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
                         {'context': 'watch-sim', 'state': 'SUCCESS'},
                         {'context': 'webkitperl', 'state': 'SUCCESS'},
                         {'context': 'webkitpy', 'state': 'SUCCESS'},
-                        {'context': 'wincairo', 'state': 'SUCCESS'},
+                        {'context': 'win', 'state': 'SUCCESS'},
                         {'context': 'wpe', 'state': 'SUCCESS'},
                         {'context': 'wpe-wk2', 'state': 'SUCCESS'}]}}}]}}},
             {'node':
@@ -6177,7 +6177,7 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
                             {'context': 'watch-sim', 'state': 'SUCCESS'},
                             {'context': 'webkitperl', 'state': 'SUCCESS'},
                             {'context': 'webkitpy', 'state': 'SUCCESS'},
-                            {'context': 'wincairo', 'state': 'SUCCESS'},
+                            {'context': 'win', 'state': 'SUCCESS'},
                             {'context': 'wpe', 'state': 'SUCCESS'},
                             {'context': 'wpe-wk2', 'state': 'SUCCESS'}]}}}]}}},
             {'node':

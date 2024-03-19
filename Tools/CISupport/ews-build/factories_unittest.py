@@ -339,7 +339,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'WinCairo-EWS': [
+        'Win-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
