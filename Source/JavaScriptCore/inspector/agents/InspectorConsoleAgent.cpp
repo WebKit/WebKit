@@ -100,7 +100,13 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::disable()
 
 Protocol::ErrorStringOr<void> InspectorConsoleAgent::clearMessages()
 {
-    clearMessages(Inspector::Protocol::Console::ClearReason::ConsoleAPI);
+    clearMessages(Inspector::Protocol::Console::ClearReason::Frontend);
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorConsoleAgent::setConsoleClearAPIEnabled(bool enabled)
+{
+    m_consoleClearAPIEnabled = enabled;
     return { };
 }
 
@@ -119,6 +125,9 @@ void InspectorConsoleAgent::mainFrameNavigated()
 
 void InspectorConsoleAgent::clearMessages(Inspector::Protocol::Console::ClearReason reason)
 {
+    if (!m_consoleClearAPIEnabled && reason == Inspector::Protocol::Console::ClearReason::ConsoleAPI)
+        return;
+
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
 
@@ -131,7 +140,7 @@ void InspectorConsoleAgent::clearMessages(Inspector::Protocol::Console::ClearRea
 void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> message)
 {
     if (message->type() == MessageType::Clear)
-        clearMessages();
+        clearMessages(Inspector::Protocol::Console::ClearReason::ConsoleAPI);
 
     addConsoleMessage(WTFMove(message));
 }
@@ -237,20 +246,13 @@ void InspectorConsoleAgent::countReset(JSC::JSGlobalObject* globalObject, const 
     // FIXME: Web Inspector should have a better UI for counters, but for now we just log an updated counter value.
 }
 
-static bool isGroupMessage(MessageType type)
-{
-    return type == MessageType::StartGroup
-        || type == MessageType::StartGroupCollapsed
-        || type == MessageType::EndGroup;
-}
-
 void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> consoleMessage)
 {
     ASSERT_ARG(consoleMessage, consoleMessage);
 
     ConsoleMessage* previousMessage = m_consoleMessages.isEmpty() ? nullptr : m_consoleMessages.last().get();
 
-    if (previousMessage && !isGroupMessage(previousMessage->type()) && previousMessage->isEqual(consoleMessage.get())) {
+    if (previousMessage && previousMessage->isEqual(consoleMessage.get())) {
         previousMessage->incrementCount();
         if (m_enabled)
             previousMessage->updateRepeatCountInConsole(*m_frontendDispatcher);

@@ -177,6 +177,7 @@ localizedStrings["All items in \u0022%s\u0022 must be valid DOM nodes"] = "All i
 /* Label for setting that allows the user to inspect the Web Inspector user interface. */
 localizedStrings["Allow Inspecting Web Inspector @ Experimental Settings"] = "Allow Inspecting Web Inspector";
 localizedStrings["Allow media capture on insecure sites"] = "Allow media capture on insecure sites";
+localizedStrings["Allow page to clear Console"] = "Allow page to clear Console";
 /* Label for checkbox that controls whether network throttling functionality is enabled. */
 localizedStrings["Allow throttling"] = "Allow throttling";
 localizedStrings["Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint\u2019s location."] = "Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint\u2019s location.";
@@ -366,6 +367,7 @@ localizedStrings["Clear log (%s or %s)"] = "Clear log (%s or %s)";
 localizedStrings["Clear object store"] = "Clear object store";
 localizedStrings["Clear samples"] = "Clear samples";
 localizedStrings["Clear watch expressions"] = "Clear watch expressions";
+localizedStrings["Clear:"] = "Clear:";
 localizedStrings["Click Listener"] = "Click Listener";
 localizedStrings["Click to create a Local Override from this content"] = "Click to create a Local Override from this content";
 localizedStrings["Click to import a file and create a Local Override\nShift-click to create a Local Override from this content"] = "Click to import a file and create a Local Override\nShift-click to create a Local Override from this content";

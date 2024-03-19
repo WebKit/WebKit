@@ -64,7 +64,6 @@ public:
 
     void disconnect();
 
-    void clearConsoleMessages();
     void copyText(const String& text);
 
     class InspectableObject {

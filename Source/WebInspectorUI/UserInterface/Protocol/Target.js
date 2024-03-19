@@ -82,6 +82,7 @@ WI.Target = class Target extends WI.Object
         // Intentionally defer ConsoleAgent initialization to the end. We do this so that any
         // previous initialization messages will have their responses arrive before a stream
         // of console message added events come in after enabling Console.
+        // See WI.ConsoleManager.prototype.initializeTarget.
         this.ConsoleAgent.enable();
 
         setTimeout(() => {

@@ -163,18 +163,6 @@ void CommandLineAPIHost::gatherRTCLogs(JSGlobalObject& globalObject, RefPtr<RTCL
 }
 #endif
 
-void CommandLineAPIHost::clearConsoleMessages()
-{
-    if (!m_instrumentingAgents)
-        return;
-
-    auto* consoleAgent = m_instrumentingAgents->webConsoleAgent();
-    if (!consoleAgent)
-        return;
-
-    consoleAgent->clearMessages();
-}
-
 void CommandLineAPIHost::copyText(const String& text)
 {
     Pasteboard::createForCopyAndPaste({ })->writePlainText(text, Pasteboard::CannotSmartReplace);

@@ -33,7 +33,6 @@
 [
     LegacyNoInterfaceObject,
 ] interface CommandLineAPIHost {
-    undefined clearConsoleMessages();
     undefined copyText(DOMString text);
 
     [CallWith=CurrentGlobalObject] undefined inspect(any objectToInspect, any hints);
