@@ -3739,7 +3739,7 @@ LegacyOverflowScrollingTouchEnabled:
 
 LinearMediaPlayerEnabled:
   type: bool
-  status: unstable
+  status: internal
   category: media
   humanReadableName: "Linear Media Player"
   humanReadableDescription: "Enable LinearMediaPlayer for fullscreen video"
@@ -3748,7 +3748,7 @@ LinearMediaPlayerEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
       default: false
 
