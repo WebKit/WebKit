@@ -298,10 +298,16 @@ void EventRegionContext::shrinkWrapInteractionRegions()
             region.cornerRadius = 0;
         }
 
-        for (auto& region : toAddAfterMerge) {
-            auto rectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
-            region.contentHint = m_interactionRectsAndContentHints.get(rectForTracking);
-            m_interactionRegions.insert(++i, WTFMove(region));
+        auto finalRegionRectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
+        for (auto& extraRegion : toAddAfterMerge) {
+            auto extraRectForTracking = enclosingIntRect(extraRegion.rectInLayerCoordinates);
+            // Do not insert a new region if it creates a duplicated Interaction Rect.
+            if (finalRegionRectForTracking == extraRectForTracking) {
+                region.contentHint = m_interactionRectsAndContentHints.get(extraRectForTracking);
+                continue;
+            }
+            extraRegion.contentHint = m_interactionRectsAndContentHints.get(extraRectForTracking);
+            m_interactionRegions.insert(++i, WTFMove(extraRegion));
         }
     }
 }
