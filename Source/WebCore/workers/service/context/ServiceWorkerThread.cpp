@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ServiceWorkerThread.h"
 
+#include "AdvancedPrivacyProtections.h"
 #include "BackgroundFetchManager.h"
 #include "BackgroundFetchUpdateUIEvent.h"
 #include "CacheStorageProvider.h"
@@ -81,7 +82,7 @@ private:
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use valid runtime flags
 
-static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData& contextData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, PAL::SessionID sessionID, std::optional<uint64_t> noiseInjectionHashSalt)
+static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData& contextData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, PAL::SessionID sessionID, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<uint64_t> noiseInjectionHashSalt)
 {
     return {
         contextData.scriptURL,
@@ -102,12 +103,13 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
         sessionID,
         { },
         { },
+        advancedPrivacyProtections,
         noiseInjectionHashSalt
     };
 }
 
-ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerBadgeProxy& badgeProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID, std::optional<uint64_t> noiseInjectionHashSalt)
-    : WorkerThread(generateWorkerParameters(contextData, WTFMove(userAgent), workerThreadMode, settingsValues, sessionID, noiseInjectionHashSalt), contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), badgeProxy, WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
+ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, WorkerBadgeProxy& badgeProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient, PAL::SessionID sessionID, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
+    : WorkerThread(generateWorkerParameters(contextData, WTFMove(userAgent), workerThreadMode, settingsValues, sessionID, advancedPrivacyProtections, noiseInjectionHashSalt), contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), badgeProxy, WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
     , m_serviceWorkerIdentifier(contextData.serviceWorkerIdentifier)
     , m_jobDataIdentifier(contextData.jobDataIdentifier)
     , m_contextData(crossThreadCopy(WTFMove(contextData)))

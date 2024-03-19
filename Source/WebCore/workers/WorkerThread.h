@@ -62,6 +62,8 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
+enum class AdvancedPrivacyProtections : uint16_t;
+
 struct WorkerThreadStartupData;
 
 struct WorkerParameters {
@@ -84,6 +86,7 @@ public:
     PAL::SessionID sessionID;
     std::optional<ServiceWorkerData> serviceWorkerData;
     ScriptExecutionContextIdentifier clientIdentifier;
+    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     std::optional<uint64_t> noiseInjectionHashSalt;
 
     WorkerParameters isolatedCopy() const;

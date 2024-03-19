@@ -124,7 +124,8 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
     if (!initializationData.clientIdentifier)
         initializationData.clientIdentifier = WebCore::ScriptExecutionContextIdentifier::generate();
 
-    page->setupForRemoteWorker(workerFetchResult.responseURL, origin.topOrigin, workerFetchResult.referrerPolicy);
+    page->setupForRemoteWorker(workerFetchResult.responseURL, origin.topOrigin, workerFetchResult.referrerPolicy, initializationData.advancedPrivacyProtections);
+
     auto sharedWorkerThreadProxy = WebCore::SharedWorkerThreadProxy::create(WTFMove(page), sharedWorkerIdentifier, origin, WTFMove(workerFetchResult), WTFMove(workerOptions), WTFMove(initializationData), WebProcess::singleton().cacheStorageProvider());
 
     WebCore::SharedWorkerContextManager::singleton().registerSharedWorkerThread(WTFMove(sharedWorkerThreadProxy));

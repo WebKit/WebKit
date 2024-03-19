@@ -38,6 +38,7 @@ namespace WebCore {
 class SWClientConnection;
 class ScriptExecutionContext;
 
+enum class AdvancedPrivacyProtections : uint16_t;
 enum class LastNavigationWasAppInitiated : bool { No, Yes };
 
 struct ServiceWorkerClientData {
@@ -51,6 +52,7 @@ struct ServiceWorkerClientData {
     std::optional<PageIdentifier> pageIdentifier;
     std::optional<FrameIdentifier> frameIdentifier;
     LastNavigationWasAppInitiated lastNavigationWasAppInitiated;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     bool isVisible { false };
     bool isFocused { false };
     uint64_t focusOrder { 0 };
