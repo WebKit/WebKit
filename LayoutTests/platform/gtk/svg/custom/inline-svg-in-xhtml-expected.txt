@@ -18,7 +18,7 @@ layer at (48,38) size 722x542 layerType: foreground only
           RenderText {#text} at (2,0) size 84x17
             text run at (2,0) width 84: "HTML Form"
         RenderBlock {p} at (14,39) size 688x25
-          RenderInline {label} at (0,0) size 107x17
+          RenderInline {label} at (0,3) size 107x17
             RenderText {#text} at (0,3) size 107x17
               text run at (0,3) width 107: "Enter something:"
           RenderText {#text} at (107,3) size 4x17

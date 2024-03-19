@@ -10,7 +10,7 @@ layer at (8,8) size 154x98 clip at (18,18) size 134x78
       RenderText {#text} at (92,0) size 5x12
         text run at (92,0) width 5: "x"
     RenderBlock {DIV} at (10,22) size 134x66
-      RenderText {#text} at (92,0) size 130x66
+      RenderText {#text} at (0,0) size 130x66
         text run at (92,0) width 38: "Ted and"
         text run at (92,12) width 15: "the"
         text run at (0,54) width 75: "miniature Teddy"
