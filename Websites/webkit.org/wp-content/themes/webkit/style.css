@@ -1414,6 +1414,7 @@ article h1 a {
     letter-spacing: 0.004rem;
     line-height: 1.10746;
     text-align: center;
+    text-wrap: balance;
     text-decoration: none;
     color: hsl(0, 0%, 26.7%);
     color: var(--text-color-heading);
