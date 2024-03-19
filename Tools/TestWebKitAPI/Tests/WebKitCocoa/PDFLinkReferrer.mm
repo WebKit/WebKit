@@ -105,6 +105,10 @@ TEST(WebKit, PDFLinkReferrer)
         EXPECT_NULL([action.request valueForHTTPHeaderField:@"Referer"]);
         decisionHandler(WKNavigationActionPolicyAllow);
     };
+
+    // We need to make sure the WKWebView's layout is up to date
+    // or the clicks might get eaten by the PDF's HUD.
+    [webView layoutSubtreeIfNeeded];
     
     [webView sendClicksAtPoint:NSMakePoint(75, 75) numberOfClicks:1];
     [navigationDelegate waitForDidFinishNavigation];
