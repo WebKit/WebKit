@@ -437,6 +437,20 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 #endif
 }
 
+// rdar://123642870
+bool Quirks::shouldDisableWritingSuggestionsByDefaultQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return isDomain("reddit.com"_s)
+        || isDomain("discord.com"_s)
+        || isDomain("twitch.tv"_s)
+        || isDomain("godbolt.org"_s)
+        || m_document->url().host().endsWith("officeapps.live.com"_s)
+        || m_document->url().host().endsWith("onedrive.live.com"_s);
+}
+
 #if ENABLE(TOUCH_EVENTS)
 bool Quirks::isAmazon() const
 {

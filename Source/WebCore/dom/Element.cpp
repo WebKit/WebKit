@@ -4795,6 +4795,9 @@ bool Element::isWritingSuggestionsEnabled() const
             return false;
     }
 
+    if (protectedDocument()->quirks().shouldDisableWritingSuggestionsByDefaultQuirk())
+        return false;
+
     // Otherwise, return `true`.
     return true;
 }

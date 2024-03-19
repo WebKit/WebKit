@@ -189,6 +189,7 @@ public:
     bool needsDisableDOMPasteAccessQuirk() const;
 
     bool shouldDisableElementFullscreenQuirk() const;
+    bool shouldDisableWritingSuggestionsByDefaultQuirk() const;
     bool shouldIgnorePlaysInlineRequirementQuirk() const;
     WEBCORE_EXPORT bool shouldUseEphemeralPartitionedStorageForDOMCookies(const URL&) const;
 
