@@ -86,11 +86,13 @@ div {
 
 @scope (.root) to (.limit) {
   :scope.outer .green-17 {
-      color: green;
-    }
+    color: green;
   }
 }
 
+@scope (#green-18) {
+  * { color: red; font-style: italic; }
+}
 </style>
 
 <div class="a">
@@ -203,4 +205,41 @@ div {
       <span class="green-17">should not be green</span>
     </div>
   </div>
+</div>
+
+<div id="green-18">
+ <div>
+  <style>
+    @scope {
+      * { color: green; }
+    }
+  </style>
+  <span>should be green and italic</span>
+</div>
+</div>
+
+<div id="green-19">
+ <div>
+  <style>
+    @scope {
+    * { color: green; }
+    }
+    @scope (#green-19) {
+    * { color: red; font-style: italic}
+    }
+  </style>
+  <span>should be green and italic</span>
+</div>
+</div>
+
+<div id="green-20">
+  <style>
+    @scope (#green-20) {
+    * { color: red; font-style: italic; }
+    }
+    @scope {
+    * { color: green; }
+    }
+  </style>
+<span>should be green and italic</span>
 </div>

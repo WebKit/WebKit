@@ -702,16 +702,17 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
                 // Verify that the node is in the current document
                 if (client->ownerDocument() != &this->element().document())
                     return;
-                // Find the implicit parent node
+                // The owner node should be the <style> node
                 const auto* owner = client->ownerNode();
                 if (!owner)
                     return;
+                // Find the parent node of the <style>
                 const auto* implicitParentNode = owner->parentNode();
                 const auto* implicitParentContainerNode = dynamicDowncast<ContainerNode>(implicitParentNode);
                 const auto* ancestor = &element();
                 unsigned distance = 0;
                 while (ancestor) {
-                    if (ancestor == owner)
+                    if (ancestor == implicitParentNode)
                         break;
                     ancestor = ancestor->parentElement();
                     ++distance;
