@@ -7302,6 +7302,15 @@
    },
    {
       "emails" : [
+         "tpanigrahi@apple.com",
+         "tanmoy.panigrahi2@gmail.com",
+         "hello.tanmoy@icloud.com"
+      ],
+      "github" : "TanmoyPanigrahi",
+      "name" : "Tanmoy Panigrahi"
+   },
+   {
+      "emails" : [
          "tdanderson@chromium.org"
       ],
       "name" : "Terry Anderson",
