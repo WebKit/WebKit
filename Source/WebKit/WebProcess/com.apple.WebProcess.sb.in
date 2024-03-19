@@ -1824,14 +1824,25 @@
 
 (define (allow-thread-adopt-exception-handler)
     (when (defined? 'thread_adopt_exception_handler)
-        (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))))
+        (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))
+    )
+)
 
 (define (allow-mach-exceptions)
 #if HAVE(HARDENED_MACH_EXCEPTIONS)
+(if (equal? (param "CPU") "arm64")
     (when (defined? 'task_register_hardened_exception_handler)
-        (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))))
+        (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))
+    )
+    ; else (
+        (when (defined? 'task_register_hardened_exception_handler)
+            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))
+        )
+    )
+))
 #else
-    (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+    (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))
+)
 #endif
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))

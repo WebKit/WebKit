@@ -134,7 +134,7 @@ void initMachExceptionHandlerThread(bool enable, uint32_t signingKey, exception_
         flags |= MPO_PROVISIONAL_ID_PROT_OPTOUT;
 #endif
 
-#if defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
         flags |= MPO_EXCEPTION_PORT;
 #endif
         mach_port_options_t opts = {
@@ -145,7 +145,7 @@ void initMachExceptionHandlerThread(bool enable, uint32_t signingKey, exception_
         kern_return_t kr = mach_port_construct(mach_task_self(), &opts, 0, &handlers.exceptionPort);
         RELEASE_ASSERT(kr == KERN_SUCCESS);
 
-#if defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
         uint64_t exceptionsAllowed = mask;
         uint64_t behaviorsAllowed = EXCEPTION_STATE_IDENTITY_PROTECTED | MACH_EXCEPTION_CODES;
         uint64_t flavorsAllowed = MACHINE_THREAD_STATE;
@@ -350,7 +350,7 @@ inline void setExceptionPorts(const AbstractLocker& threadGroupLocker, Thread& t
     UNUSED_PARAM(threadGroupLocker);
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
 
-#if defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
     exception_behavior_t newBehavior = MACH_EXCEPTION_CODES;
     if (WTF::isX86BinaryRunningOnARM()) {
         // If we are a translated process in rosetta, use the old exception style
@@ -365,9 +365,9 @@ inline void setExceptionPorts(const AbstractLocker& threadGroupLocker, Thread& t
         }
         return;
     }
-#else // defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#else // CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
     exception_behavior_t newBehavior = EXCEPTION_STATE | MACH_EXCEPTION_CODES;
-#endif // defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
 
     kern_return_t result = thread_set_exception_ports(thread.machThread(), handlers.addedExceptions &activeExceptions, handlers.exceptionPort, newBehavior, MACHINE_THREAD_STATE);
     if (result != KERN_SUCCESS) {

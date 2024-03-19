@@ -131,13 +131,13 @@ using WTF::threadStatePCInternal;
 #define WTF_READ_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs) \
     threadStatePCInternal(const_cast<PlatformRegisters&>(regs))
 
-#if defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
 #define WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, newPointer) \
     arm_thread_state64_set_pc_presigned_fptr(regs, newPointer)
-#else // defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#else // CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
 #define WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, newPointer) \
     arm_thread_state64_set_pc_fptr(regs, newPointer)
-#endif // defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
 
 #define WTF_READ_MACHINE_CONTEXT_SP_WITH_PROFILE(machineContext) \
     WTF_READ_PLATFORM_REGISTERS_SP_WITH_PROFILE(machineContext->__ss)
