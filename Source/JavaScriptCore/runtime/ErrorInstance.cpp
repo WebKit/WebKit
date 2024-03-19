@@ -257,7 +257,9 @@ void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
 void ErrorInstance::computeErrorInfo(VM& vm)
 {
     ASSERT(!m_errorInfoMaterialized);
-    DeferGC deferGC(vm);
+    // Here we use DeferGCForAWhile instead of DeferGC since GC's Heap::runEndPhase can trigger this function. In
+    // that case, DeferGC's destructor might trigger another GC cycle which is unexpected.
+    DeferGCForAWhile deferGC(vm);
 
     if (m_stackTrace && !m_stackTrace->isEmpty()) {
         getLineColumnAndSource(vm, m_stackTrace.get(), m_lineColumn, m_sourceURL);
