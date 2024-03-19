@@ -132,6 +132,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import "AccessibilityUtilitiesSPI.h"
 #import "UIKitSPI.h"
 #import <bmalloc/MemoryStatusSPI.h>
 #endif
@@ -183,12 +184,6 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
-
-#if PLATFORM(IOS_FAMILY)
-@interface NSObject (UIAccessibilitySafeCategory)
-- (id)safeValueForKey:(NSString *)key;
-@end
-#endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 // FIXME: This is only for binary compatibility with versions of UIKit in macOS 11 that are missing the change in <rdar://problem/68524148>.
