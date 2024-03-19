@@ -33,6 +33,7 @@
 #import <cstring>
 #import <dlfcn.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {
@@ -40,7 +41,7 @@ namespace WebGPU {
 Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
 {
     if (!descriptor.nextInChain)
-        return adoptRef(*new Instance(nullptr));
+        return Instance::createInvalid();
 
     if (descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor))
         return Instance::createInvalid();
@@ -50,11 +51,12 @@ Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
     if (cocoaDescriptor.chain.next)
         return Instance::createInvalid();
 
-    return adoptRef(*new Instance(cocoaDescriptor.scheduleWorkBlock));
+    return adoptRef(*new Instance(cocoaDescriptor.scheduleWorkBlock, reinterpret_cast<const WTF::MachSendRight*>(cocoaDescriptor.webProcessResourceOwner)));
 }
 
-Instance::Instance(WGPUScheduleWorkBlock scheduleWorkBlock)
-    : m_scheduleWorkBlock(scheduleWorkBlock ? WTFMove(scheduleWorkBlock) : ^(WGPUWorkItem workItem) { defaultScheduleWork(WTFMove(workItem)); })
+Instance::Instance(WGPUScheduleWorkBlock scheduleWorkBlock, const MachSendRight* webProcessResourceOwner)
+    : m_webProcessID(webProcessResourceOwner ? std::optional<MachSendRight>(*webProcessResourceOwner) : std::nullopt)
+    , m_scheduleWorkBlock(scheduleWorkBlock ? WTFMove(scheduleWorkBlock) : ^(WGPUWorkItem workItem) { defaultScheduleWork(WTFMove(workItem)); })
 {
 }
 
@@ -68,12 +70,17 @@ Instance::~Instance() = default;
 
 Ref<PresentationContext> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)
 {
-    return PresentationContext::create(descriptor);
+    return PresentationContext::create(descriptor, *this);
 }
 
 void Instance::scheduleWork(WorkItem&& workItem)
 {
     m_scheduleWorkBlock(makeBlockPtr(WTFMove(workItem)).get());
+}
+
+const std::optional<const MachSendRight>& Instance::webProcessID() const
+{
+    return m_webProcessID;
 }
 
 void Instance::defaultScheduleWork(WGPUWorkItem&& workItem)

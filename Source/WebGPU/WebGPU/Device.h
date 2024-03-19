@@ -125,6 +125,9 @@ public:
     uint32_t maxBuffersForFragmentStage() const;
     uint32_t maxBuffersForComputeStage() const;
     uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
+    id<MTLBuffer> newBufferWithBytes(const void*, size_t, MTLResourceOptions) const;
+    id<MTLBuffer> newBufferWithBytesNoCopy(void*, size_t, MTLResourceOptions) const;
+    id<MTLTexture> newTextureWithDescriptor(MTLTextureDescriptor *, IOSurfaceRef = nullptr, NSUInteger plane = 0) const;
 
     static bool isStencilOnlyFormat(MTLPixelFormat);
     bool shouldStopCaptureAfterSubmit();
@@ -158,6 +161,7 @@ private:
         simd::float4x3 colorSpaceConversionMatrix;
     };
     ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WGPUColorSpace) const;
+    void setOwnerWithIdentity(id<MTLResource>) const;
 
     struct Error {
         WGPUErrorType type;

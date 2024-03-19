@@ -1129,9 +1129,7 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 #if HAVE(WEBGPU_IMPLEMENTATION)
 RefPtr<WebCore::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 {
-    return WebCore::WebGPU::create([](WebCore::WebGPU::WorkItem&& workItem) {
-        callOnMainRunLoop(WTFMove(workItem));
-    });
+    return nullptr;
 }
 #endif
 

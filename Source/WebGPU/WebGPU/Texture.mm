@@ -2620,6 +2620,7 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
         return Texture::createInvalid(*this);
     }
 
+    setOwnerWithIdentity(texture);
     texture.label = fromAPI(descriptor.label);
 
     return Texture::create(texture, descriptor, WTFMove(viewFormats), *this);
