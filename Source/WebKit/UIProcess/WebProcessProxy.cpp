@@ -85,6 +85,7 @@
 #include <WebCore/PrewarmInformation.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SuddenTermination.h>
 #include <pal/system/Sound.h>
@@ -1948,6 +1949,8 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
         return;
 
     String domain;
+    bool wasPrivateRelayed = false;
+
     for (auto& page : this->pages()) {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
         String pageDomain = topPrivatelyControlledDomain(URL({ }, page->currentURL()).host().toString());
@@ -1955,6 +1958,8 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
             domain = WTFMove(pageDomain);
         else if (domain != pageDomain)
             domain = "multiple"_s;
+
+        wasPrivateRelayed = wasPrivateRelayed || page->pageLoadState().wasPrivateRelayed();
 #endif
     }
 
@@ -1962,7 +1967,7 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
         domain = "unknown"_s;
 
     auto activeTime = totalForegroundTime() + totalBackgroundTime() + totalSuspendedTime();
-    dataStore->client().didExceedMemoryFootprintThreshold(footprint, domain, pageCount(), activeTime, throttler().currentState() == ProcessThrottleState::Foreground);
+    dataStore->client().didExceedMemoryFootprintThreshold(footprint, domain, pageCount(), activeTime, throttler().currentState() == ProcessThrottleState::Foreground, wasPrivateRelayed ? WebCore::WasPrivateRelayed::Yes : WebCore::WasPrivateRelayed::No);
 }
 
 void WebProcessProxy::didExceedCPULimit()
