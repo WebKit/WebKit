@@ -45,7 +45,7 @@ IdentityCredentialsContainer::IdentityCredentialsContainer(WeakPtr<Document, Wea
 
 void IdentityCredentialsContainer::get(CredentialRequestOptions&& options, CredentialPromise&& promise)
 {
-    if (!performCommonChecks(std::forward<CredentialRequestOptions>(options), promise))
+    if (!performCommonChecks(options, promise))
         return;
 
     if (!options.digital) {
@@ -67,7 +67,7 @@ void IdentityCredentialsContainer::get(CredentialRequestOptions&& options, Crede
 
 void IdentityCredentialsContainer::isCreate(CredentialCreationOptions&& options, CredentialPromise&& promise)
 {
-    if (!performCommonChecks(std::forward<CredentialCreationOptions>(options), promise))
+    if (!performCommonChecks(options, promise))
         return;
 
     // Default as per Cred Man spec is to resolve with null.
