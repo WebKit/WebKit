@@ -1015,6 +1015,20 @@ void WebPage::requestFocusedElementInformation(CompletionHandler<void(const std:
     completionHandler(information);
 }
 
+void WebPage::updateFocusedElementInformation()
+{
+    m_updateFocusedElementInformationTimer.stop();
+
+    if (!m_focusedElement)
+        return;
+
+    auto information = focusedElementInformation();
+    if (!information)
+        return;
+
+    send(Messages::WebPageProxy::UpdateFocusedElementInformation(*information));
+}
+
 #if ENABLE(DRAG_SUPPORT)
 void WebPage::requestDragStart(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask)
 {

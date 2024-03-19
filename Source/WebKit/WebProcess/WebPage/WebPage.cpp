@@ -453,6 +453,10 @@ static const Seconds pageScrollHysteresisDuration { 300_ms };
 static const Seconds initialLayerVolatilityTimerInterval { 20_ms };
 static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
+#if PLATFORM(IOS_FAMILY)
+static constexpr Seconds updateFocusedElementInformationDebounceInterval { 100_ms };
+#endif
+
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 #define WEBPAGE_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
@@ -581,6 +585,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_deviceOrientation(parameters.deviceOrientation)
     , m_keyboardIsAttached(parameters.keyboardIsAttached)
     , m_canShowWhileLocked(parameters.canShowWhileLocked)
+    , m_updateFocusedElementInformationTimer(*this, &WebPage::updateFocusedElementInformation, updateFocusedElementInformationDebounceInterval)
 #endif
     , m_layerVolatilityTimer(*this, &WebPage::layerVolatilityTimerFired)
     , m_activityState(parameters.activityState)
@@ -1850,6 +1855,10 @@ void WebPage::close()
 
 #if ENABLE(TEXT_AUTOSIZING)
     m_textAutoSizingAdjustmentTimer.stop();
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    m_updateFocusedElementInformationTimer.stop();
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -7077,6 +7086,10 @@ static bool isTextFormControlOrEditableContent(const WebCore::Element& element)
 
 void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
 {
+#if PLATFORM(IOS_FAMILY)
+    m_updateFocusedElementInformationTimer.stop();
+#endif
+
     if (!shouldDispatchUpdateAfterFocusingElement(element)) {
         updateInputContextAfterBlurringAndRefocusingElementIfNeeded(element);
         m_focusedElement = &element;
@@ -7164,11 +7177,7 @@ void WebPage::focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElem
     if (m_focusedElement != &element)
         return;
 
-    auto information = focusedElementInformation();
-    if (!information)
-        return;
-
-    send(Messages::WebPageProxy::UpdateFocusedElementInformation(*information));
+    m_updateFocusedElementInformationTimer.restart();
 #else
     UNUSED_PARAM(element);
 #endif
