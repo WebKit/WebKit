@@ -185,10 +185,9 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
             weakThis->m_client->cancel([weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis)
                     return;
-                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest)) {
-                    weakThis->m_isCancelling = false;
+                weakThis->m_isCancelling = false;
+                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest))
                     queuedRequest();
-                }
             });
         });
     }
@@ -289,10 +288,9 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
             weakThis->m_client->cancel([weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis)
                     return;
-                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest)) {
-                    weakThis->m_isCancelling = false;
+                weakThis->m_isCancelling = false;
+                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest))
                     queuedRequest();
-                }
             });
         });
     }
