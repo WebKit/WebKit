@@ -3214,9 +3214,6 @@ webkit.org/b/207858 fast/canvas/webgl/uninitialized-test.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failure ]
 webkit.org/b/207858 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
 
-# <rdar://problem/59635486> REGRESSION: http/wpt/webauthn/public-key-credential-get-success-local.https.html is crashing
-http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
-
 webkit.org/b/208023 fast/text/international/system-language/declarative-language.html [ Failure ]
 
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]
@@ -4721,3 +4718,9 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ Imag
 webkit.org/b/269852 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
 
 webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Pass Failure ]
+
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [ Failure ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Failure ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Failure ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Failure ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Failure ]
