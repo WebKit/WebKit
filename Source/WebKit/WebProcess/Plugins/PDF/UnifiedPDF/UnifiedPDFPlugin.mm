@@ -1114,6 +1114,8 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
         auto initialScaleFactor = initialScale();
         LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - on first layout, chose scale for actual size " << initialScaleFactor);
         setScaleFactor(initialScaleFactor);
+
+        m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
     }
 }
 
@@ -2430,9 +2432,10 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
     case ContextMenuItemTag::AutoSize:
         if (m_documentLayout.shouldUpdateAutoSizeScale() == PDFDocumentLayout::ShouldUpdateAutoSizeScale::No) {
             m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::Yes);
-            resetZoom();
+            setScaleFactor(1.0);
             updateLayout();
-        }
+        } else
+            m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
         break;
     case ContextMenuItemTag::WebSearch:
         performWebSearch(selectionString());
