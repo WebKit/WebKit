@@ -10,15 +10,16 @@ async def wait_for_navigation(bidi_session, context, url, wait, expect_timeout):
     if expect_timeout:
         with pytest.raises(asyncio.TimeoutError):
             await asyncio.wait_for(
-                bidi_session.browsing_context.navigate(
+                asyncio.shield(bidi_session.browsing_context.navigate(
                     context=context, url=url, wait=wait
-                ),
-              timeout=1,
+                )),
+                timeout=1,
             )
     else:
         await bidi_session.browsing_context.navigate(
             context=context, url=url, wait=wait
         )
+
 
 @pytest.mark.parametrize("value", ["none", "interactive", "complete"])
 async def test_expected_url(bidi_session, inline, new_tab, value):
@@ -42,13 +43,16 @@ async def test_expected_url(bidi_session, inline, new_tab, value):
         ("complete", True),
     ],
 )
-async def test_slow_image(bidi_session, inline, new_tab, wait, expect_timeout):
-    script_url = "/webdriver/tests/bidi/browsing_context/navigate/support/empty.svg"
-    url = inline(f"<img src='{script_url}?pipe=trickle(d10)'>")
+async def test_slow_image_blocks_load(bidi_session, inline, new_tab, wait, expect_timeout):
+    image_url = "/webdriver/tests/bidi/browsing_context/support/empty.svg"
+    url = inline(f"<img src='{image_url}?pipe=trickle(d10)'>")
 
     await wait_for_navigation(bidi_session, new_tab["context"], url, wait, expect_timeout)
 
-    if wait != "none":
+    # We cannot assert the URL for "none" by definition, and for "complete", since
+    # we expect a timeout. For the timeout case, the wait_for_navigation helper will
+    # resume  after 1 second, there is no guarantee that the URL has been updated.
+    if wait == "interactive":
         contexts = await bidi_session.browsing_context.get_tree(
             root=new_tab["context"], max_depth=0
         )
@@ -65,7 +69,7 @@ async def test_slow_image(bidi_session, inline, new_tab, wait, expect_timeout):
 )
 async def test_slow_page(bidi_session, new_tab, url, wait, expect_timeout):
     page_url = url(
-        "/webdriver/tests/bidi/browsing_context/navigate/support/empty.html?pipe=trickle(d10)"
+        "/webdriver/tests/bidi/browsing_context/support/empty.html?pipe=trickle(d10)"
     )
 
     await wait_for_navigation(bidi_session, new_tab["context"], page_url, wait, expect_timeout)
@@ -82,14 +86,13 @@ async def test_slow_page(bidi_session, new_tab, url, wait, expect_timeout):
         ("complete", True),
     ],
 )
-async def test_slow_script(bidi_session, inline, new_tab, wait, expect_timeout):
-    script_url = "/webdriver/tests/bidi/browsing_context/navigate/support/empty.js"
+async def test_slow_script_blocks_domContentLoaded(bidi_session, inline, new_tab, wait, expect_timeout):
+    script_url = "/webdriver/tests/bidi/browsing_context/support/empty.js"
     url = inline(f"<script src='{script_url}?pipe=trickle(d10)'></script>")
 
     await wait_for_navigation(bidi_session, new_tab["context"], url, wait, expect_timeout)
 
-    if wait != "none":
-        contexts = await bidi_session.browsing_context.get_tree(
-            root=new_tab["context"], max_depth=0
-        )
-        assert contexts[0]["url"] == url
+    # In theory we could also assert the top context URL has been updated here
+    # but since we expect both "interactive" and "complete" to timeout, the
+    # wait_for_navigation helper will resume arbitrarily after 1 second, and
+    # there is no guarantee that the URL has been updated.

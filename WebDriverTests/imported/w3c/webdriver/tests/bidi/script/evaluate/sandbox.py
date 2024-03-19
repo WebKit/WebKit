@@ -1,6 +1,6 @@
 import pytest
 
-from webdriver.bidi.modules.script import ContextTarget, ScriptEvaluateResultException
+from webdriver.bidi.modules.script import ContextTarget, RealmTarget, ScriptEvaluateResultException
 
 from ... import any_int, any_string, recursive_compare
 from .. import any_stack_trace
@@ -49,15 +49,14 @@ async def test_sandbox(bidi_session, new_tab):
 
 @pytest.mark.asyncio
 async def test_sandbox_with_empty_name(bidi_session, new_tab):
-    # BiDi specification doesn't have restrictions of a sandbox name,
-    # that's why we want to make sure that it works with an empty name
+    # An empty string as a `sandbox` means the default realm should be used.
     await bidi_session.script.evaluate(
         expression="window.foo = 'bar'",
         target=ContextTarget(new_tab["context"], ""),
         await_promise=True,
     )
 
-    # Make sure that we can find the sandbox with the empty name
+    # Make sure that we can find the sandbox with the empty name.
     result = await bidi_session.script.evaluate(
         expression="window.foo",
         target=ContextTarget(new_tab["context"], ""),
@@ -65,13 +64,13 @@ async def test_sandbox_with_empty_name(bidi_session, new_tab):
     )
     assert result == {"type": "string", "value": "bar"}
 
-    # Make sure that changes didn't leak from sandbox
+    # Make sure that we can find the value in the default realm.
     result = await bidi_session.script.evaluate(
         expression="window.foo",
         target=ContextTarget(new_tab["context"]),
         await_promise=True,
     )
-    assert result == {"type": "undefined"}
+    assert result == {"type": "string", "value": "bar"}
 
 
 @pytest.mark.asyncio
@@ -129,6 +128,23 @@ async def test_sandbox_with_side_effects(bidi_session, new_tab):
 
 
 @pytest.mark.asyncio
+async def test_sandbox_returns_same_node(bidi_session, new_tab):
+    node = await bidi_session.script.evaluate(
+        expression="document.querySelector('body')",
+        target=ContextTarget(new_tab["context"]),
+        await_promise=True,
+    )
+    recursive_compare({"type": "node", "sharedId": any_string}, node)
+
+    node_sandbox = await bidi_session.script.evaluate(
+        expression="document.querySelector('body')",
+        target=ContextTarget(new_tab["context"], sandbox="sandbox_1"),
+        await_promise=True,
+    )
+    assert node_sandbox == node
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("await_promise", [True, False])
 async def test_exception_details(bidi_session, new_tab, await_promise):
     if await_promise:
@@ -155,4 +171,29 @@ async def test_exception_details(bidi_session, new_tab, await_promise):
             },
         },
         exception.value.result,
+    )
+
+
+@pytest.mark.asyncio
+async def test_target_realm(bidi_session, top_context, default_realm):
+    result = await bidi_session.script.evaluate(
+        raw_result=True,
+        expression="window.foo = 3",
+        target=ContextTarget(top_context["context"], "sandbox"),
+        await_promise=True,
+    )
+    realm = result["realm"]
+
+    # Make sure that sandbox realm id is different from default
+    assert realm != default_realm
+
+    result = await bidi_session.script.evaluate(
+        raw_result=True,
+        expression="window.foo",
+        target=RealmTarget(realm),
+        await_promise=True,
+    )
+
+    recursive_compare(
+        {"realm": realm, "result": {"type": "number", "value": 3}}, result
     )

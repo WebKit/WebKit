@@ -1,7 +1,5 @@
 # mypy: allow-untyped-defs
-
 import importlib
-import imp
 
 from .browsers import product_list
 
@@ -10,12 +8,7 @@ def product_module(config, product):
     if product not in product_list:
         raise ValueError("Unknown product %s" % product)
 
-    path = config.get("products", {}).get(product, None)
-    if path:
-        module = imp.load_source('wptrunner.browsers.' + product, path)
-    else:
-        module = importlib.import_module("wptrunner.browsers." + product)
-
+    module = importlib.import_module("wptrunner.browsers." + product)
     if not hasattr(module, "__wptrunner__"):
         raise ValueError("Product module does not define __wptrunner__ variable")
 
@@ -38,7 +31,7 @@ class Product:
         self.env_options = getattr(module, data["env_options"])()
         self.get_env_extras = getattr(module, data["env_extras"])
         self.run_info_extras = (getattr(module, data["run_info_extras"])
-                                if "run_info_extras" in data else lambda **kwargs:{})
+                                if "run_info_extras" in data else lambda product, **kwargs:{})
         self.get_timeout_multiplier = getattr(module, data["timeout_multiplier"])
 
         self.executor_classes = {}

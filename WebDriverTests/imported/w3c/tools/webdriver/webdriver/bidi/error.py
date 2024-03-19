@@ -9,12 +9,11 @@ class BidiException(Exception):
     # The error_code class variable is used to map the JSON Error Code (see
     # https://w3c.github.io/webdriver/#errors) to a BidiException subclass.
     # TODO: Match on error and let it be a class variables only.
-    error_code = None  # type: ClassVar[str]
+    error_code: ClassVar[str]
 
-    def __init__(self, error: str, message: str, stacktrace: Optional[str]):
+    def __init__(self, message: str, stacktrace: Optional[str] = None):
         super()
 
-        self.error = error
         self.message = message
         self.stacktrace = stacktrace
 
@@ -24,9 +23,9 @@ class BidiException(Exception):
 
     def __str__(self):
         """Return the string representation of the object."""
-        message = f"{self.error} ({self.message})"
+        message = f"{self.error_code} ({self.message})"
 
-        if self.stacktrace:
+        if self.stacktrace is not None:
             message += f"\n\nRemote-end stacktrace:\n\n{self.stacktrace}"
 
         return message
@@ -36,8 +35,60 @@ class InvalidArgumentException(BidiException):
     error_code = "invalid argument"
 
 
+class InvalidSelectorException(BidiException):
+    error_code = "invalid selector"
+
+
+class InvalidSessionIDError(BidiException):
+    error_code = "invalid session id"
+
+
+class MoveTargetOutOfBoundsException(BidiException):
+    error_code = "move target out of bounds"
+
+
+class NoSuchAlertException(BidiException):
+    error_code = "no such alert"
+
+
+class NoSuchElementException(BidiException):
+    error_code = "no such element"
+
+
 class NoSuchFrameException(BidiException):
     error_code = "no such frame"
+
+
+class NoSuchInterceptException(BidiException):
+    error_code = "no such intercept"
+
+
+class NoSuchHandleException(BidiException):
+    error_code = "no such handle"
+
+
+class NoSuchHistoryEntryException(BidiException):
+    error_code = "no such history entry"
+
+
+class NoSuchNodeException(BidiException):
+    error_code = "no such node"
+
+
+class NoSuchRequestException(BidiException):
+    error_code = "no such request"
+
+
+class NoSuchScriptException(BidiException):
+    error_code = "no such script"
+
+
+class UnableToCaptureScreenException(BidiException):
+    error_code = "unable to capture screen"
+
+
+class UnableToSetCookieException(BidiException):
+    error_code = "unable to set cookie"
 
 
 class UnknownCommandException(BidiException):
@@ -48,13 +99,17 @@ class UnknownErrorException(BidiException):
     error_code = "unknown error"
 
 
+class UnsupportedOperationException(BidiException):
+    error_code = "unsupported operation"
+
+
 def from_error_details(error: str, message: str, stacktrace: Optional[str]) -> BidiException:
     """Create specific WebDriver BiDi exception class from error details.
 
     Defaults to ``UnknownErrorException`` if `error` is unknown.
     """
     cls = get(error)
-    return cls(error, message, stacktrace)
+    return cls(message, stacktrace)
 
 
 def get(error_code: str) -> Type[BidiException]:
@@ -67,5 +122,5 @@ def get(error_code: str) -> Type[BidiException]:
 
 _errors: DefaultDict[str, Type[BidiException]] = collections.defaultdict()
 for item in list(locals().values()):
-    if type(item) == type and issubclass(item, BidiException):
+    if isinstance(item, type) and item != BidiException and issubclass(item, BidiException):
         _errors[item.error_code] = item

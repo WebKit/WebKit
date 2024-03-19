@@ -2,7 +2,6 @@
 
 import copy
 import functools
-import imp
 import io
 import os
 from collections import OrderedDict, defaultdict
@@ -10,15 +9,16 @@ from datetime import datetime
 
 from mozlog import reader
 from mozlog.formatters import JSONFormatter
-from mozlog.handlers import BaseHandler, StreamHandler, LogLevelFilter
+from mozlog.handlers import BaseHandler, LogLevelFilter, StreamHandler
+
+from tools.wpt.utils import load_source
 
 from . import wptrunner
 
 here = os.path.dirname(__file__)
-localpaths = imp.load_source("localpaths", os.path.abspath(os.path.join(here, os.pardir, os.pardir, "localpaths.py")))
+localpaths = load_source("localpaths", os.path.abspath(os.path.join(here, os.pardir, os.pardir, "localpaths.py")))  # type: ignore
 from ci.tc.github_checks_output import get_gh_checks_outputter  # type: ignore
 from wpt.markdown import markdown_adjust, table  # type: ignore
-
 
 # If a test takes more than (FLAKY_THRESHOLD*timeout) and does not consistently
 # time out, it is considered slow (potentially flaky).
@@ -357,7 +357,7 @@ def check_stability(logger, repeat_loop=10, repeat_restart=5, chaos_mode=True, m
                     output_results=True, **kwargs):
     kwargs_extras = [{}]
     if chaos_mode and kwargs["product"] == "firefox":
-        kwargs_extras.append({"chaos_mode_flags": "0xfb"})
+        kwargs_extras.append({"chaos_mode_flags": int("0xfb", base=16)})
 
     steps = get_steps(logger, repeat_loop, repeat_restart, kwargs_extras)
 
