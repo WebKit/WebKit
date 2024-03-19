@@ -201,6 +201,7 @@ public:
     bool useDarkAppearanceForScrollbars() const;
 
     virtual ScrollingNodeID scrollingNodeID() const { return { }; }
+    ScrollingNodeID scrollingNodeIDForTesting();
 
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
     ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }
@@ -482,6 +483,8 @@ private:
     bool m_inLiveResize { false };
     bool m_scrollOriginChanged { false };
     bool m_scrollShouldClearLatchedState { false };
+
+    Markable<ScrollingNodeID> m_scrollingNodeIDForTesting;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);

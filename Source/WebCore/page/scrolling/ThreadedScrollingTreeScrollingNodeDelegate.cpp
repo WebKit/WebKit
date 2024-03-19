@@ -186,7 +186,7 @@ ScrollExtents ThreadedScrollingTreeScrollingNodeDelegate::scrollExtents() const
     };
 }
 
-void ThreadedScrollingTreeScrollingNodeDelegate::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason reason) const
+void ThreadedScrollingTreeScrollingNodeDelegate::deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason reason) const
 {
     if (!scrollingTree().isMonitoringWheelEvents())
         return;
@@ -195,7 +195,7 @@ void ThreadedScrollingTreeScrollingNodeDelegate::deferWheelEventTestCompletionFo
     scrollingTree().deferWheelEventTestCompletionForReason(scrollingNode().scrollingNodeID(), reason);
 }
 
-void ThreadedScrollingTreeScrollingNodeDelegate::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason reason) const
+void ThreadedScrollingTreeScrollingNodeDelegate::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason reason) const
 {
     if (!scrollingTree().isMonitoringWheelEvents())
         return;
@@ -223,6 +223,12 @@ void ThreadedScrollingTreeScrollingNodeDelegate::handleKeyboardScrollRequest(con
         break;
     }
 }
+
+ScrollingNodeID ThreadedScrollingTreeScrollingNodeDelegate::scrollingNodeIDForTesting() const
+{
+    return scrollingNode().scrollingNodeID();
+}
+
 
 } // namespace WebCore
 

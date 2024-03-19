@@ -2819,7 +2819,7 @@ void LocalFrameView::didChangeScrollOffset()
 void LocalFrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& oldOffset, const ScrollOffset& newOffset)
 {
 #if PLATFORM(COCOA)
-    auto deferrer = WheelEventTestMonitorCompletionDeferrer { m_frame->page()->wheelEventTestMonitor().get(), this, WheelEventTestMonitor::DeferReason::ContentScrollInProgress };
+    auto deferrer = WheelEventTestMonitorCompletionDeferrer { m_frame->page()->wheelEventTestMonitor().get(), scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::ContentScrollInProgress };
 #endif
 
     updateLayerPositionsAfterScrolling();

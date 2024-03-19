@@ -175,13 +175,13 @@ void RemoteScrollingCoordinator::receivedWheelEventWithPhases(WebCore::PlatformW
 void RemoteScrollingCoordinator::startDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason> reason)
 {
     if (auto monitor = page()->wheelEventTestMonitor())
-        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID.object().toUInt64()), reason);
+        monitor->deferForReason(nodeID, reason);
 }
 
 void RemoteScrollingCoordinator::stopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason> reason)
 {
     if (auto monitor = page()->wheelEventTestMonitor())
-        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID.object().toUInt64()), reason);
+        monitor->removeDeferralForReason(nodeID, reason);
 }
 
 WheelEventHandlingResult RemoteScrollingCoordinator::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)

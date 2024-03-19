@@ -579,12 +579,12 @@ FloatPoint ScrollingEffectsController::scrollOffset(ScrollAnimation&)
 
 void ScrollingEffectsController::startDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason reason)
 {
-    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), reason);
+    m_client.deferWheelEventTestCompletionForReason(m_client.scrollingNodeIDForTesting(), reason);
 }
 
 void ScrollingEffectsController::stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason reason)
 {
-    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), reason);
+    m_client.removeWheelEventTestCompletionDeferralForReason(m_client.scrollingNodeIDForTesting(), reason);
 }
 
 // Currently, only Mac supports momentum srolling-based scrollsnapping and rubber banding

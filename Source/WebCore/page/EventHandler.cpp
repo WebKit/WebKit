@@ -3132,8 +3132,6 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     auto monitor = frame->page()->wheelEventTestMonitor();
     if (monitor)
         monitor->receivedWheelEventWithPhases(event.phase(), event.momentumPhase());
-
-    auto deferrer = WheelEventTestMonitorCompletionDeferrer { monitor.get(), this, WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread };
 #endif
 
     m_isHandlingWheelEvent = true;
@@ -3160,6 +3158,11 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     // FIXME: Despite doing this up-front search for the correct scrollable area, we dispatch events via elements which
     // itself finds and tries to scroll overflow scrollers.
     determineWheelEventTarget(event, element, scrollableArea, isOverWidget);
+
+#if PLATFORM(COCOA) || PLATFORM(WIN)
+    if (scrollableArea)
+        auto deferrer = WheelEventTestMonitorCompletionDeferrer { monitor.get(), scrollableArea->scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread };
+#endif
 
     if (element) {
         if (isOverWidget) {

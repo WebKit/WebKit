@@ -399,7 +399,7 @@ void ScrollingCoordinator::deferWheelEventTestCompletionForReason(ScrollingNodeI
         return;
 
     if (auto monitor = m_page->wheelEventTestMonitor())
-        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID.object().toUInt64()), reason);
+        monitor->deferForReason(nodeID, reason);
 }
 
 void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
@@ -409,7 +409,7 @@ void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(Scrol
         return;
 
     if (auto monitor = m_page->wheelEventTestMonitor())
-        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID.object().toUInt64()), reason);
+        monitor->removeDeferralForReason(nodeID, reason);
 }
 
 String ScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const

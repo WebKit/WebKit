@@ -61,15 +61,14 @@ public:
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
     using DeferReason = WheelEventTestMonitorDeferReason;
-    typedef const void* ScrollableAreaIdentifier;
 
     WEBCORE_EXPORT void receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase);
-    WEBCORE_EXPORT void deferForReason(ScrollableAreaIdentifier, OptionSet<DeferReason>);
-    WEBCORE_EXPORT void removeDeferralForReason(ScrollableAreaIdentifier, OptionSet<DeferReason>);
+    WEBCORE_EXPORT void deferForReason(ScrollingNodeID, OptionSet<DeferReason>);
+    WEBCORE_EXPORT void removeDeferralForReason(ScrollingNodeID, OptionSet<DeferReason>);
     
     void checkShouldFireCallbacks();
 
-    using ScrollableAreaReasonMap = HashMap<ScrollableAreaIdentifier, OptionSet<DeferReason>>;
+    using ScrollableAreaReasonMap = HashMap<ScrollingNodeID, OptionSet<DeferReason>>;
 
 private:
     void scheduleCallbackCheck();
@@ -88,7 +87,7 @@ private:
 
 class WheelEventTestMonitorCompletionDeferrer {
 public:
-    WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitor* monitor, WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
+    WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitor* monitor, ScrollingNodeID identifier, WheelEventTestMonitor::DeferReason reason)
         : m_monitor(monitor)
         , m_identifier(identifier)
         , m_reason(reason)
@@ -112,7 +111,7 @@ public:
 
 private:
     RefPtr<WheelEventTestMonitor> m_monitor;
-    WheelEventTestMonitor::ScrollableAreaIdentifier m_identifier;
+    ScrollingNodeID m_identifier;
     WheelEventTestMonitor::DeferReason m_reason;
 };
 
