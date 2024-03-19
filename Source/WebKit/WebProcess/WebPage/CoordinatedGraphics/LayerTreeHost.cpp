@@ -129,6 +129,9 @@ void LayerTreeHost::scheduleLayerFlush()
     if (!m_layerFlushSchedulingEnabled)
         return;
 
+    if (m_webPage.size().isEmpty())
+        return;
+
     if (m_isWaitingForRenderer) {
         m_scheduledWhileWaitingForRenderer = true;
         return;
