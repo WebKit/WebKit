@@ -4032,7 +4032,7 @@ void Document::setURL(const URL& url)
     if (newURL == m_url)
         return;
 
-    m_fragmentDirective = newURL.consumefragmentDirective();
+    m_fragmentDirective = newURL.consumeFragmentDirective();
 
     if (SecurityOrigin::shouldIgnoreHost(newURL))
         newURL.setHostAndPort({ });

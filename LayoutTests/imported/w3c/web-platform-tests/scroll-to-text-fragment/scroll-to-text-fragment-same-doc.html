@@ -38,6 +38,7 @@ function runTest() {
   }).then(position => {
     assert_equals(position, 'text');
     assert_equals(window.location.href.indexOf(':~:'), -1, 'Expected fragment directive to be stripped from the URL.');
+    assert_equals(window.location.href.indexOf('#'), -1, 'Expected hash mark to be stripped from the URL.');
   }), 'Activated for same-document window.location setter');
 
   promise_test(t => new Promise(resolve => {
@@ -49,6 +50,7 @@ function runTest() {
   }).then(position => {
     assert_equals(position, 'text');
     assert_equals(window.location.href.indexOf(':~:'), -1, 'Expected fragment directive to be stripped from the URL.');
+    assert_equals(window.location.href.indexOf('#'), -1, 'Expected hash mark to be stripped from the URL.');
   }), 'Activated for same-document window.location.replace');
 }
 </script>
