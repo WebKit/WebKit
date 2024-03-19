@@ -3706,6 +3706,14 @@
    },
    {
       "emails" : [
+         "jahoward@nvidia.com",
+         "jameshoward@mac.com"
+      ],
+      "github" : "james-howard",
+      "name" : "James Howard"
+   },
+   {
+      "emails" : [
          "james_e_kim@apple.com"
       ],
       "github" : "james-e-kim",
