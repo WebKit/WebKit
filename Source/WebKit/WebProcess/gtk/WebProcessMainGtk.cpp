@@ -40,6 +40,10 @@
 #include <pal/crypto/gcrypt/Initialization.h>
 #endif
 
+#if USE(SKIA)
+#include <skia/core/SkGraphics.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -49,6 +53,10 @@ public:
     {
 #if USE(GCRYPT)
         PAL::GCrypt::initialize();
+#endif
+
+#if USE(SKIA)
+        SkGraphics::Init();
 #endif
 
 #if ENABLE(DEVELOPER_MODE)

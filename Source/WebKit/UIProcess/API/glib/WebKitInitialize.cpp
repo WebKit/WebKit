@@ -35,6 +35,10 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if USE(SKIA)
+#include <skia/core/SkGraphics.h>
+#endif
+
 namespace WebKit {
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -101,6 +105,9 @@ void webkitInitialize()
 
     std::call_once(onceFlag, [] {
         InitializeWebKit2();
+#if USE(SKIA)
+        SkGraphics::Init();
+#endif
 #if ENABLE(REMOTE_INSPECTOR)
         initializeRemoteInspectorServer();
 #endif
