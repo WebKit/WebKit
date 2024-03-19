@@ -525,6 +525,7 @@ bool canUseHandlerIC();
     v(Bool, useWasmLLIntLoopOSR, true, Normal, "allows loop OSR from Wasm LLInt if true") \
     v(Bool, useWasmLLIntEpilogueOSR, true, Normal, "allows epilogue OSR from Wasm LLInt if true") \
     v(OptionRange, wasmFunctionIndexRangeToCompile, nullptr, Normal, "wasm function index range to allow compilation on, e.g. 1:100") \
+    v(Bool, wasmLLIntTiersUpToBBQ, true, Normal, nullptr) \
     v(Bool, useEagerWebAssemblyModuleHashing, false, Normal, "Unnamed WebAssembly modules are identified in backtraces through their hash, if available.") \
     v(Bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided.") \
     v(Bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure.") \
@@ -574,6 +575,8 @@ bool canUseHandlerIC();
     v(Bool, useWasmIPIntPrologueOSR, true, Normal, "Allow IPInt to tier up during function prologues") \
     v(Bool, useWasmIPIntLoopOSR, true, Normal, "Allow IPInt to tier up during loop iterations") \
     v(Bool, useWasmIPIntEpilogueOSR, true, Normal, "Allow IPInt to tier up during function epilogues") \
+    v(Bool, wasmIPIntTiersUpToBBQ, true, Normal, "Allow IPInt to tier up to BBQ") \
+    v(Bool, wasmIPIntTiersUpToOMG, true, Normal, "Allow IPInt to tier up to OMG") \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing.") \
     \
     /* Feature Flags */\

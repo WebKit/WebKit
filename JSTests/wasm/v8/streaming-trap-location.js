@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
+//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
 //@ skip
 // Failure:
 // Failure (trap reason):

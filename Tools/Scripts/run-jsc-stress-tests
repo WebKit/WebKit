@@ -1992,7 +1992,7 @@ end
 def runWebAssemblySIMDSpecTest(mode)
     return if !$isSIMDPlatform
     runWebAssemblySpecTestBase(mode, "spec-harness", nil, "--useWebAssemblySIMD=true")
-    runWebAssemblySpecTestBase(mode, "spec-harness", "-eager", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
+    runWebAssemblySpecTestBase(mode, "spec-harness", "-eager", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
 end
 
 def runWebAssemblyTailCallSpecTest(mode)

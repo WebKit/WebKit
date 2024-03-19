@@ -44,6 +44,8 @@
 #include "WasmLLIntBuiltin.h"
 #include "WasmLLIntGenerator.h"
 #include "WasmModuleInformation.h"
+#include "WasmOMGPlan.h"
+#include "WasmOSREntryPlan.h"
 #include "WasmOperationsInlines.h"
 #include "WasmTypeDefinitionInlines.h"
 #include "WasmWorklist.h"
@@ -85,6 +87,7 @@ namespace JSC { namespace LLInt {
         : callFrame->r(virtualRegister))
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
+enum class RequiredWasmJIT { Any, OMG };
 
 extern "C" void wasm_log_crash(CallFrame*, Wasm::Instance* instance)
 {
@@ -93,14 +96,26 @@ extern "C" void wasm_log_crash(CallFrame*, Wasm::Instance* instance)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline bool shouldJIT(Wasm::LLIntCallee* callee)
+static inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
 {
-    if (!Options::useBBQJIT() || !Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(callee->functionIndex()))
-        return false;
-
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+    if (requiredJIT == RequiredWasmJIT::OMG) {
+        if (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex()))
+            return false;
+    }
+#endif
+    if (requiredJIT == RequiredWasmJIT::Any) {
+        if (Options::wasmLLIntTiersUpToBBQ()
+            && (!Options::useBBQJIT() || !Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(callee->functionIndex())))
+            return false;
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+        if (!Options::wasmLLIntTiersUpToBBQ()
+            && (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex())))
+            return false;
+#endif
+    }
     if (!Options::wasmFunctionIndexRangeToCompile().isInRange(callee->functionIndex()))
         return false;
-
     return true;
 }
 
@@ -138,9 +153,16 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::I
 
     if (compile) {
         uint32_t functionIndex = callee->functionIndex();
-        if (Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex)) {
-            Ref<Wasm::Plan> plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
-            Wasm::ensureWorklist().enqueue(plan.get());
+        RefPtr<Wasm::Plan> plan;
+        if (Options::wasmLLIntTiersUpToBBQ() && Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex))
+            plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+        else // No need to check OMG allow list: if we didn't want to compile this function, shouldJIT should have returned false.
+            plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), instance->memory()->mode(), Wasm::Plan::dontFinalize()));
+#endif
+
+        if (plan) {
+            Wasm::ensureWorklist().enqueue(*plan);
             if (UNLIKELY(!Options::useConcurrentJIT()))
                 plan->waitForCompletion();
             else
@@ -179,9 +201,15 @@ static inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Insta
 
     uint32_t functionIndex = callee->functionIndex();
     ASSERT(instance->module().moduleInformation().usesSIMD(functionIndex));
-    Ref<Wasm::Plan> plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
+    RefPtr<Wasm::Plan> plan;
+    if (Options::wasmLLIntTiersUpToBBQ())
+        plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+    else
+        plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), instance->memory()->mode(), Wasm::Plan::dontFinalize()));
+#endif
 
-    Wasm::ensureWorklist().enqueue(plan.get());
+    Wasm::ensureWorklist().enqueue(*plan);
     plan->waitForCompletion();
 
     Locker locker { tierUpCounter.m_lock };
@@ -218,7 +246,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     Wasm::LLIntCallee* callee = CALLEE();
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
-    if (!Options::useWebAssemblyOSR() || !Options::useWasmLLIntLoopOSR() || !shouldJIT(callee)) {
+    if (!Options::useWebAssemblyOSR() || !Options::useWasmLLIntLoopOSR() || !shouldJIT(callee, RequiredWasmJIT::OMG)) {
         slow_path_wasm_prologue_osr(callFrame, pc, instance);
         WASM_RETURN_TWO(nullptr, nullptr);
     }
@@ -233,7 +261,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     unsigned loopOSREntryBytecodeOffset = callee->bytecodeOffset(pc);
     const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
 
-    if (Options::useBBQJIT()) {
+    if (Options::wasmLLIntTiersUpToBBQ() && Options::useBBQJIT()) {
         if (!jitCompileAndSetHeuristics(callee, instance))
             WASM_RETURN_TWO(nullptr, nullptr);
 
@@ -259,9 +287,60 @@ WASM_SLOW_PATH_DECL(loop_osr)
         RELEASE_ASSERT(sharedLoopEntrypoint);
 
         WASM_RETURN_TWO(buffer, sharedLoopEntrypoint->taggedPtr());
-    }
+    } else {
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+        const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
+            if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
+                WASM_RETURN_TWO(nullptr, nullptr);
 
-    WASM_RETURN_TWO(nullptr, nullptr);
+            size_t osrEntryScratchBufferSize = osrEntryCallee->osrEntryScratchBufferSize();
+            RELEASE_ASSERT(osrEntryScratchBufferSize == osrEntryData.values.size());
+            uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
+            if (!buffer)
+                WASM_RETURN_TWO(nullptr, nullptr);
+
+            uint32_t index = 0;
+            for (VirtualRegister reg : osrEntryData.values)
+                buffer[index++] = READ(reg).encodedJSValue();
+
+            WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().taggedPtr());
+        };
+
+        if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
+            return doOSREntry(osrEntryCallee);
+
+        bool compile = false;
+        {
+            Locker locker { tierUpCounter.m_lock };
+            switch (tierUpCounter.m_loopCompilationStatus) {
+            case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
+                compile = true;
+                tierUpCounter.m_loopCompilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
+                break;
+            case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
+                tierUpCounter.optimizeAfterWarmUp();
+                break;
+            case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
+                break;
+            }
+        }
+
+        if (compile) {
+            Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), callee->functionIndex(), callee->hasExceptionHandlers(), osrEntryData.loopIndex, instance->memory()->mode(), Wasm::Plan::dontFinalize())));
+            Wasm::ensureWorklist().enqueue(plan.copyRef());
+            if (UNLIKELY(!Options::useConcurrentJIT()))
+                plan->waitForCompletion();
+            else
+                tierUpCounter.optimizeAfterWarmUp();
+        }
+
+        if (auto* osrEntryCallee = callee->osrEntryCallee(instance->memory()->mode()))
+            return doOSREntry(osrEntryCallee);
+
+#endif
+
+        WASM_RETURN_TWO(nullptr, nullptr);
+    }
 }
 
 WASM_SLOW_PATH_DECL(epilogue_osr)
