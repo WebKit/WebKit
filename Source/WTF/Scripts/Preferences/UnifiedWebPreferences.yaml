@@ -875,20 +875,6 @@ CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
     WebCore:
       default: false
 
-CSSCascadeLayersEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Cascade Layers"
-  humanReadableDescription: "Enable CSS Cascade Layers"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSColorContrastEnabled:
   type: bool
   status: testable
@@ -902,34 +888,6 @@ CSSColorContrastEnabled:
       default: false
     WebCore:
       default: false
-
-CSSColorMixEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS color-mix()"
-  humanReadableDescription: "Enable support for CSS color-mix() defined in CSS Color 5"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-CSSContainIntrinsicSizeEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Contain Intrinsic Size"
-  humanReadableDescription: "Enable contain-intrinsic-size CSS property"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 CSSContentVisibilityEnabled:
   type: bool

@@ -75,7 +75,6 @@ struct CSSParserContext {
 
     // Settings, excluding those affecting properties.
     bool colorContrastEnabled : 1 { false };
-    bool colorMixEnabled : 1 { false };
     bool constantPropertiesEnabled : 1 { false };
     bool counterStyleAtRuleImageSymbolsEnabled : 1 { false };
     bool relativeColorSyntaxEnabled : 1 { false };
@@ -84,7 +83,6 @@ struct CSSParserContext {
     bool transformStyleOptimized3DEnabled : 1 { false };
 #endif
     bool focusVisibleEnabled : 1 { false };
-    bool cascadeLayersEnabled : 1 { false };
     bool gradientPremultipliedAlphaInterpolationEnabled : 1 { false };
     bool gradientInterpolationColorSpacesEnabled : 1 { false };
     bool masonryEnabled : 1 { false };

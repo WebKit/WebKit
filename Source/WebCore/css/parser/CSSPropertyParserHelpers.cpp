@@ -3020,9 +3020,6 @@ static Color parseColorMixFunctionParametersRaw(CSSParserTokenRange& range, cons
 
     ASSERT(range.peek().functionId() == CSSValueColorMix);
 
-    if (!context.colorMixEnabled)
-        return { };
-
     auto args = consumeFunction(range);
 
     if (args.peek().id() != CSSValueIn)
@@ -3066,9 +3063,6 @@ static std::optional<ColorOrUnresolvedColor> parseColorMixFunctionParameters(CSS
     // color-mix() = color-mix( <color-interpolation-method> , [ <color> && <percentage [0,100]>? ]#{2})
 
     ASSERT(range.peek().functionId() == CSSValueColorMix);
-
-    if (!context.colorMixEnabled)
-        return std::nullopt;
 
     auto args = consumeFunction(range);
 
