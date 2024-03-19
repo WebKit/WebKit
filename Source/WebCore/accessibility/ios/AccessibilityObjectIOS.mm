@@ -94,16 +94,14 @@ void AccessibilityObject::overrideAttachmentParent(AccessibilityObject*)
 }
     
 // In iPhone only code for now. It's debateable whether this is desired on all platforms.
-int AccessibilityObject::accessibilitySecureFieldLength()
+unsigned AccessibilityObject::accessibilitySecureFieldLength()
 {
-    if (!isSecureField())
+    CheckedPtr renderer = this->renderer();
+    // Only consider secure fields that are rendered (i.e. have a non-null renderer).
+    if (!renderer || !isSecureField())
         return 0;
 
-    auto* renderObject = downcast<AccessibilityRenderObject>(*this).renderer();
-    if (!renderObject)
-        return 0;
-
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(renderObject->node());
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(renderer->node());
     return inputElement ? inputElement->value().length() : 0;
 }
 

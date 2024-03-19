@@ -1398,7 +1398,7 @@ public:
     void detachWrapper(AccessibilityDetachmentType);
 
 #if PLATFORM(IOS_FAMILY)
-    virtual int accessibilitySecureFieldLength() = 0;
+    virtual unsigned accessibilitySecureFieldLength() = 0;
     virtual bool hasTouchEventListener() const = 0;
 #endif
 

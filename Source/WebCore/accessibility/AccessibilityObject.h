@@ -720,7 +720,7 @@ public:
     AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const;
 
 #if PLATFORM(IOS_FAMILY)
-    int accessibilitySecureFieldLength() override;
+    unsigned accessibilitySecureFieldLength() final;
     bool hasTouchEventListener() const override;
 #endif
 

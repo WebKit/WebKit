@@ -1546,9 +1546,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     // rdar://8131388 WebKit should expose the same info as UIKit for its password fields.
     if (backingObject->isSecureField() && ![self _accessibilityIsStrongPasswordField]) {
-        int secureTextLength = backingObject->accessibilitySecureFieldLength();
+        unsigned secureTextLength = backingObject->accessibilitySecureFieldLength();
         NSMutableString* string = [NSMutableString string];
-        for (int k = 0; k < secureTextLength; ++k)
+        for (unsigned k = 0; k < secureTextLength; ++k)
             [string appendString:@"•"];
         return string;
     }
