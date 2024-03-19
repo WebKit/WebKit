@@ -67,13 +67,26 @@ static void replaceContentsInRange(WebCore::LocalFrame& frame, const WebCore::Si
     frame.editor().replaceSelectionWithFragment(fragment, WebCore::Editor::SelectReplacement::Yes, WebCore::Editor::SmartReplace::No, WebCore::Editor::MatchStyle::No, WebCore::EditAction::InsertReplacement);
 }
 
-static std::optional<WebCore::BoundaryPoint> extendedBoundaryPoint(const WebCore::BoundaryPoint& point, uint64_t characterCount, WebCore::SelectionDirection direction)
+static std::optional<WebCore::SimpleRange> extendSelection(const WebCore::SimpleRange& range, uint64_t charactersToExtendBackwards, uint64_t charactersToExtendForwards)
 {
-    auto visiblePosition = WebCore::VisiblePosition { WebCore::makeContainerOffsetPosition(point) };
-    for (uint64_t i = 0; i < characterCount; ++i)
-        visiblePosition = WebCore::positionOfNextBoundaryOfGranularity(visiblePosition, WebCore::TextGranularity::CharacterGranularity, direction);
+    auto extendedPosition = [](const WebCore::BoundaryPoint& point, uint64_t characterCount, WebCore::SelectionDirection direction) {
+        auto visiblePosition = WebCore::VisiblePosition { WebCore::makeContainerOffsetPosition(point) };
 
-    return WebCore::makeBoundaryPoint(visiblePosition);
+        for (uint64_t i = 0; i < characterCount; ++i) {
+            auto nextVisiblePosition = WebCore::positionOfNextBoundaryOfGranularity(visiblePosition, WebCore::TextGranularity::CharacterGranularity, direction);
+            if (nextVisiblePosition.isNull())
+                break;
+
+            visiblePosition = nextVisiblePosition;
+        }
+
+        return visiblePosition;
+    };
+
+    auto start = extendedPosition(range.start, charactersToExtendBackwards, WebCore::SelectionDirection::Backward);
+    auto end = extendedPosition(range.end, charactersToExtendForwards, WebCore::SelectionDirection::Forward);
+
+    return WebCore::makeSimpleRange(start, end);
 }
 
 static std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findReplacementMarkerByUUID(WebCore::Document& document, const WTF::UUID& replacementUUID)
@@ -133,13 +146,29 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
     m_contextRanges.set(uuid, liveRange);
 
     RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
-    if (!frame)
-        return completionHandler({ });
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        completionHandler({ });
+        return;
+    }
 
     auto selectedTextRange = frame->selection().selection().firstRange();
 
-    auto attributedStringFromRange = attributedString(*contextRange);
+    auto attributedStringFromRange = WebCore::editingAttributedString(*contextRange);
     auto selectedTextCharacterRange = WebCore::characterRange(*contextRange, *selectedTextRange);
+
+    auto attributedStringCharacterCount = attributedStringFromRange.string.length();
+    auto contextRangeCharacterCount = WebCore::characterCount(*contextRange);
+
+    // Postcondition: the selected text character range must be a valid range within the
+    // attributed string formed by the context range; the length of the entire context range
+    // being equal to the length of the attributed string implies the range is valid.
+    if (UNLIKELY(attributedStringCharacterCount != contextRangeCharacterCount)) {
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => attributed string length (%u) != context range length (%llu)", uuid.toString().utf8().data(), attributedStringCharacterCount, contextRangeCharacterCount);
+        ASSERT_NOT_REACHED();
+        completionHandler({ });
+        return;
+    }
 
     completionHandler({ { WTF::UUID { 0 }, attributedStringFromRange, selectedTextCharacterRange } });
 }
@@ -312,6 +341,16 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
 {
     RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) [range: %llu, %llu]", uuid.toString().utf8().data(), range.location, range.length);
 
+    auto contextTextCharacterCount = context.attributedText.string.length();
+
+    // Precondition: the range is always relative to the context's attributed text, so by definition it must
+    // be strictly less than the length of the attributed string.
+    if (UNLIKELY(contextTextCharacterCount < range.location + range.length)) {
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range length: %u, range.location %llu, range.length %llu)", uuid.toString().utf8().data(), contextTextCharacterCount, range.location, range.length);
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     if (!m_webPage) {
         ASSERT_NOT_REACHED();
         return;
@@ -342,16 +381,26 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    auto sessionRangeCharacterCount = WebCore::characterCount(*sessionRange);
-
     frame->selection().clear();
 
-    auto resolvedRange = resolveCharacterRange(*sessionRange, range);
+    auto sessionRangeCharacterCount = WebCore::characterCount(*sessionRange);
+
+    if (UNLIKELY(range.length + sessionRangeCharacterCount < contextTextCharacterCount)) {
+        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", uuid.toString().utf8().data(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // The character count delta is `sessionRangeCharacterCount - contextTextCharacterCount`;
+    // the above check ensures that the full range length expression will never underflow.
+
+    auto resolvedRange = resolveCharacterRange(*sessionRange, { range.location, range.length + sessionRangeCharacterCount - contextTextCharacterCount });
 
     if (!m_originalDocumentNodes.contains(uuid)) {
         auto contents = liveRange->cloneContents();
         if (contents.hasException()) {
             RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => exception when cloning contents", uuid.toString().utf8().data());
+            ASSERT_NOT_REACHED();
             return;
         }
 
@@ -372,21 +421,13 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithR
         return;
     }
 
-    if (UNLIKELY(sessionRangeCharacterCount < range.location + range.length)) {
-        RELEASE_LOG_ERROR(UnifiedTextReplacement, "UnifiedTextReplacementController::textReplacementSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range count: %llu, range.location %llu, range.length %llu)", uuid.toString().utf8().data(), sessionRangeCharacterCount, range.location, range.length);
+    auto expandedSelection = extendSelection(*selectedTextRange, range.location, contextTextCharacterCount - range.length - range.location);
+    if (!expandedSelection) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto extendedSelectedTextRangeStartPoint = extendedBoundaryPoint(selectedTextRange->start, range.location, WebCore::SelectionDirection::Backward);
-    auto extendedSelectionTextRangeEndPoint = extendedBoundaryPoint(selectedTextRange->end, sessionRangeCharacterCount - range.length - range.location, WebCore::SelectionDirection::Forward);
-
-    if (!extendedSelectedTextRangeStartPoint || !extendedSelectionTextRangeEndPoint) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto updatedLiveRange = WebCore::createLiveRange({ *extendedSelectedTextRangeStartPoint, *extendedSelectionTextRangeEndPoint });
+    auto updatedLiveRange = WebCore::createLiveRange(*expandedSelection);
 
     m_contextRanges.set(uuid, updatedLiveRange);
 }
