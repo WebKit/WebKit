@@ -4706,7 +4706,9 @@ void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& pri
         return;
     }
 
-    for (size_t pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+    for (size_t pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
+        if (pageIndex >= m_printContext->pageCount())
+            break;
         graphicsContext->save();
         graphicsContext->translate(0, pageHeight * static_cast<int>(pageIndex));
         m_printContext->spoolPage(*graphicsContext, pageIndex, pageWidth);

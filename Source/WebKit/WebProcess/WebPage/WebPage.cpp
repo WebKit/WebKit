@@ -6470,9 +6470,8 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
             if (!m_printContext)
                 return;
 
-            size_t pageCount = m_printContext->pageCount();
             for (uint32_t page = first; page < first + count; ++page) {
-                if (page >= pageCount)
+                if (page >= m_printContext->pageCount())
                     break;
 
                 RetainPtr<CFDictionaryRef> pageInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
