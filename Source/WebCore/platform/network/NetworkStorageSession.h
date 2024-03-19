@@ -121,7 +121,7 @@ public:
     CredentialStorage& credentialStorage() { return m_credentialStorage; }
 
 #ifdef __OBJC__
-    WEBCORE_EXPORT NSHTTPCookieStorage *nsCookieStorage() const;
+    WEBCORE_EXPORT RetainPtr<NSHTTPCookieStorage> nsCookieStorage() const;
 #endif
 
 #if PLATFORM(COCOA)

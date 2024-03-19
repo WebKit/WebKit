@@ -110,7 +110,7 @@ static Vector<Cookie> nsCookiesToCookieVector(NSArray<NSHTTPCookie *> *nsCookies
 Vector<Cookie> NetworkStorageSession::getAllCookies()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    return nsCookiesToCookieVector(nsCookieStorage().cookies);
+    return nsCookiesToCookieVector([nsCookieStorage() cookies]);
 }
 
 Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
@@ -123,7 +123,7 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     
-    for (NSHTTPCookie *nsCookie in nsCookieStorage().cookies) {
+    for (NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
         if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain) {
             completionHandler(true);
             return;
@@ -140,7 +140,7 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
     RetainPtr<NSMutableArray<NSHTTPCookie *>> oldCookiesToDelete = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<NSMutableArray<NSHTTPCookie *>> newCookiesToAdd = adoptNS([[NSMutableArray alloc] init]);
 
-    for (NSHTTPCookie *nsCookie in nsCookieStorage().cookies) {
+    for (NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
         if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain && nsCookie.sameSitePolicy != NSHTTPCookieSameSiteStrict) {
             [oldCookiesToDelete addObject:nsCookie];
             RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> mutableProperties = adoptNS([[nsCookie properties] mutableCopy]);
@@ -164,7 +164,7 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const
+RetainPtr<NSHTTPCookieStorage> NetworkStorageSession::nsCookieStorage() const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
     auto cfCookieStorage = cookieStorage();
@@ -172,13 +172,13 @@ NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const
     if (!m_isInMemoryCookieStore && (!cfCookieStorage || [NSHTTPCookieStorage sharedHTTPCookieStorage]._cookieStorage == cfCookieStorage))
         return [NSHTTPCookieStorage sharedHTTPCookieStorage];
 
-    return adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cfCookieStorage.get()]).autorelease();
+    return adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cfCookieStorage.get()]);
 }
 
 CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const
 {
     if (!m_cookieStorageObserver)
-        m_cookieStorageObserver = makeUnique<CookieStorageObserver>(nsCookieStorage());
+        m_cookieStorageObserver = makeUnique<CookieStorageObserver>(nsCookieStorage().get());
 
     return *m_cookieStorageObserver;
 }

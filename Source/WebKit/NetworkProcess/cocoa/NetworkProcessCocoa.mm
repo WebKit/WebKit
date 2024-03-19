@@ -206,10 +206,12 @@ void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&&
 void NetworkProcess::platformFlushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    if (auto* networkStorageSession = storageSession(sessionID))
-        saveCookies(networkStorageSession->nsCookieStorage(), WTFMove(completionHandler));
-    else
-        completionHandler();
+    auto* networkStorageSession = storageSession(sessionID);
+    if (!networkStorageSession)
+        return completionHandler();
+
+    RetainPtr cookieStorage = networkStorageSession->nsCookieStorage();
+    saveCookies(cookieStorage.get(), WTFMove(completionHandler));
 }
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
