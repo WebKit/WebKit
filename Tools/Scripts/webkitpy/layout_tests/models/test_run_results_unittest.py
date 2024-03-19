@@ -193,5 +193,5 @@ class SummarizedResultsTest(unittest.TestCase):
             )
             self.assertEqual(
                 summary['baseline_search_path'],
-                ['platform/test-mac-leopard', 'platform/test-mac-snowleopard'],
+                ['platform/test-mac-leopard', 'platform/test-mac-snowleopard', 'platform/test'],
             )

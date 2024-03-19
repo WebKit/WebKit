@@ -85,8 +85,8 @@ class WinPortTest(port_testcase.PortTestCase):
         self.assertEqual('win', self.make_port().operating_system())
 
     def test_expectations_files(self):
-        self.assertEqual(len(self.make_port().expectations_files()), 3)
-        self.assertEqual(len(self.make_port(options=MockOptions(webkit_test_runner=True, configuration='Release')).expectations_files()), 5)
+        self.assertEqual(len(self.make_port().expectations_files()), 9)
+        self.assertEqual(len(self.make_port(options=MockOptions(webkit_test_runner=True, configuration='Release')).expectations_files()), 11)
 
     def test_get_crash_log(self):
         # Win crash logs are tested elsewhere, so here we just make sure we don't crash.

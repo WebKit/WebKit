@@ -1095,23 +1095,11 @@ class Port(object):
                 _log.warning("additional_expectations path '%s' does not exist" % path)
         return expectations
 
-    def _port_specific_expectations_files(self, **kwargs):
-        # Unlike baseline_search_path, we only want to search [WK2-PORT, PORT-VERSION, PORT] and any directories
-        # included via --additional-platform-directory, not the full casade.
-        search_paths = [self.port_name]
-
-        non_wk2_name = self.name().replace('-wk2', '')
-        if non_wk2_name != self.port_name:
-            search_paths.append(non_wk2_name)
-
-        if self.get_option('webkit_test_runner'):
-            # Because nearly all of the skipped tests for WebKit 2 are due to cross-platform
-            # issues, all wk2 ports share a skipped list under platform/wk2.
-            search_paths.extend(["wk2", self._wk2_port_name()])
-
-        search_paths.extend(self.get_option("additional_platform_directory", []))
-
-        return [self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in search_paths]
+    def _port_specific_expectations_files(self, device_type=None):
+        return [
+            self._filesystem.join(self._webkit_baseline_path(p), "TestExpectations")
+            for p in reversed(self.baseline_search_path(device_type=device_type))
+        ]
 
     def expectations_files(self, device_type=None):
         return [self.path_to_generic_test_expectations_file()] + self._port_specific_expectations_files(device_type=device_type)

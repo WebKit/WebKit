@@ -118,8 +118,8 @@ class  Testprinter(unittest.TestCase):
         printer, err = self.get_printer()
         printer.print_baseline_search_path()
 
-        self.assertIn('Verbose baseline search path: platform/test-mac-leopard -> platform/test-mac-snowleopard -> generic', err.getvalue())
-        self.assertIn('Baseline search path: platform/test-mac-leopard -> generic', err.getvalue())
+        self.assertIn('Verbose baseline search path: platform/test-mac-leopard -> platform/test-mac-snowleopard -> platform/test -> generic', err.getvalue())
+        self.assertIn('Baseline search path: platform/test-mac-leopard -> platform/test -> generic', err.getvalue())
 
         self.reset(err)
         printer._options.quiet = True
