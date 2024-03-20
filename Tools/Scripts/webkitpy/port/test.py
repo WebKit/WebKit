@@ -425,7 +425,7 @@ class TestPort(Port):
         # the mock_drt Driver. We return something, but make sure it's useless.
         return 'MOCK _path_to_driver'
 
-    def baseline_search_path(self, device_type=None):
+    def default_baseline_search_path(self, device_type=None):
         search_paths = {
             'test-mac-snowleopard': ['test-mac-snowleopard'],
             'test-mac-leopard': ['test-mac-leopard', 'test-mac-snowleopard'],
@@ -434,7 +434,10 @@ class TestPort(Port):
             'test-win-xp': ['test-win-xp', 'test-win-vista', 'test-win-7sp0'],
             'test-linux-x86_64': ['test-linux'],
         }
-        return [self._webkit_baseline_path(d) for d in search_paths[self.name()]]
+        applicable_search_paths = search_paths[self.name()]
+        if self.port_name not in applicable_search_paths:
+            applicable_search_paths = applicable_search_paths + [self.port_name]
+        return [self._webkit_baseline_path(d) for d in applicable_search_paths]
 
     def default_child_processes(self, **kwargs):
         return 1
