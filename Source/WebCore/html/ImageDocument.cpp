@@ -230,7 +230,8 @@ void ImageDocument::createDocumentStructure()
     rootElement->insertedByParser();
     rootElement->setInlineStyleProperty(CSSPropertyHeight, 100, CSSUnitType::CSS_PERCENTAGE);
 
-    frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);
+    if (RefPtr localFrame = frame())
+        localFrame->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 
     // We need a <head> so that the call to setTitle() later on actually has an <head> to append to <title> to.
     auto head = HTMLHeadElement::create(*this);
