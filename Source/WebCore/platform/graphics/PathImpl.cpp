@@ -80,6 +80,33 @@ void PathImpl::addBeziersForRoundedRect(const FloatRoundedRect& roundedRect)
     add(PathCloseSubpath { });
 }
 
+void PathImpl::applySegments(const PathSegmentApplier& applier) const
+{
+    applyElements([&](const PathElement& pathElement) {
+        switch (pathElement.type) {
+        case PathElement::Type::MoveToPoint:
+            applier({ PathMoveTo { pathElement.points[0] } });
+            break;
+
+        case PathElement::Type::AddLineToPoint:
+            applier({ PathLineTo { pathElement.points[0] } });
+            break;
+
+        case PathElement::Type::AddQuadCurveToPoint:
+            applier({ PathQuadCurveTo { pathElement.points[0], pathElement.points[1] } });
+            break;
+
+        case PathElement::Type::AddCurveToPoint:
+            applier({ PathBezierCurveTo { pathElement.points[0], pathElement.points[1], pathElement.points[2] } });
+            break;
+
+        case PathElement::Type::CloseSubpath:
+            applier({ PathCloseSubpath { } });
+            break;
+        }
+    });
+}
+
 bool PathImpl::isClosed() const
 {
     bool lastElementIsClosed = false;

@@ -331,33 +331,6 @@ void PathCairo::addPath(const PathCairo& path, const AffineTransform& transform)
     m_elementsStream = nullptr;
 }
 
-void PathCairo::applySegments(const PathSegmentApplier& applier) const
-{
-    applyElements([&](const PathElement& pathElement) {
-        switch (pathElement.type) {
-        case PathElement::Type::MoveToPoint:
-            applier({ PathMoveTo { pathElement.points[0] } });
-            break;
-
-        case PathElement::Type::AddLineToPoint:
-            applier({ PathLineTo { pathElement.points[0] } });
-            break;
-
-        case PathElement::Type::AddQuadCurveToPoint:
-            applier({ PathQuadCurveTo { pathElement.points[0], pathElement.points[1] } });
-            break;
-
-        case PathElement::Type::AddCurveToPoint:
-            applier({ PathBezierCurveTo { pathElement.points[0], pathElement.points[1], pathElement.points[2] } });
-            break;
-
-        case PathElement::Type::CloseSubpath:
-            applier({ PathCloseSubpath { } });
-            break;
-        }
-    });
-}
-
 bool PathCairo::applyElements(const PathElementApplier& applier) const
 {
     if (m_elementsStream && m_elementsStream->applyElements(applier))

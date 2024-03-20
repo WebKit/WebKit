@@ -80,8 +80,6 @@ private:
 
     PlatformPathPtr ensureMutablePlatformPath();
 
-    void applySegments(const PathSegmentApplier&) const final;
-
     bool isEmpty() const final;
 
     FloatPoint currentPoint() const final;

@@ -76,8 +76,6 @@ private:
     PathSkia() = default;
     explicit PathSkia(const SkPath&);
 
-    void applySegments(const PathSegmentApplier&) const final;
-
     bool isEmpty() const final;
 
     FloatPoint currentPoint() const final;

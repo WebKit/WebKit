@@ -75,8 +75,6 @@ public:
     FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
 private:
-    void applySegments(const PathSegmentApplier&) const final;
-
     bool isEmpty() const final;
 
     FloatPoint currentPoint() const final;

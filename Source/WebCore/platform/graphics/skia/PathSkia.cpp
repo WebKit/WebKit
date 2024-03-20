@@ -185,11 +185,6 @@ void PathSkia::addPath(const PathSkia& path, const AffineTransform& transform)
     m_platformPath.addPath(*path.platformPath(), transform);
 }
 
-void PathSkia::applySegments(const PathSegmentApplier&) const
-{
-    notImplemented();
-}
-
 bool PathSkia::applyElements(const PathElementApplier& applier) const
 {
     auto convertPoints = [](FloatPoint dst[], const SkPoint src[], int count) {
