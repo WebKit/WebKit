@@ -1106,6 +1106,13 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('    virtual ~VirtualTableAndRefCountOverhead() { }')
     result.append('};')
     result.append('template<> struct VirtualTableAndRefCountOverhead<false, false> { };')
+    result.append('// We assume RefCounted<T> and ThreadSafeRefCounted<T> are the same size')
+    result.append('struct SameSizeAsVirtualTableAndRefCountOverhead : public ThreadSafeRefCounted<SameSizeAsVirtualTableAndRefCountOverhead> {')
+    result.append('    virtual ~SameSizeAsVirtualTableAndRefCountOverhead() { }')
+    result.append('};')
+    result.append('struct SameSizeAsRefCountOverhead : public ThreadSafeRefCounted<SameSizeAsRefCountOverhead> { };')
+    result.append('static_assert(sizeof(VirtualTableAndRefCountOverhead<true, true>) == sizeof(SameSizeAsVirtualTableAndRefCountOverhead));')
+    result.append('static_assert(sizeof(VirtualTableAndRefCountOverhead<false, true>) == sizeof(SameSizeAsRefCountOverhead));')
     result.append('')
     # GCC and Clang>=18 are less generous with their interpretation of "Use of the offsetof macro
     # with a type other than a standard-layout class is conditionally-supported".
