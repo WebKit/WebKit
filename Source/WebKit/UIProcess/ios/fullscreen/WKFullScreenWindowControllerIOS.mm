@@ -63,7 +63,6 @@
 #import "MRUIKitSPI.h"
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 #import "WKSPreviewWindowController.h"
-#import <pal/ios/QuickLookSoftLink.h>
 #import "WebKitSwiftSoftLink.h"
 #endif // QUICKLOOK_FULLSCREEN
 #endif
@@ -1875,8 +1874,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         if (enter) {
             inWindowAlpha = 0;
             manager->prepareQuickLookImageURL([strongSelf = retainPtr(self), self] (URL&& url) mutable {
-                auto item = adoptNS([PAL::allocQLItemInstance() initWithURL:url]);
-                _previewWindowController = adoptNS([WebKit::allocWKSPreviewWindowControllerInstance() initWithItem:item.get()]);
+                _previewWindowController = adoptNS([WebKit::allocWKSPreviewWindowControllerInstance() initWithURL:url]);
                 [_previewWindowController setDelegate:self];
                 [_previewWindowController presentWindow];
             });
