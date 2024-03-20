@@ -68,8 +68,11 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
     auto paintBuffer = [&](Nicosia::Buffer& buffer) {
         buffer.beginPainting();
 
-        GraphicsContextSkia context(sk_ref_sp(buffer.surface()), buffer.isBackedByOpenGL() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
-        paintIntoGraphicsContext(context);
+        RELEASE_ASSERT(buffer.surface());
+        if (auto* canvas = buffer.surface()->getCanvas()) {
+            GraphicsContextSkia context(*canvas, buffer.isBackedByOpenGL() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
+            paintIntoGraphicsContext(context);
+        }
 
         buffer.completePainting();
     };
@@ -96,8 +99,10 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
 
         workerPool->postTask([buffer = Ref { buffer }, recordingContext = WTFMove(recordingContext)] {
             RELEASE_ASSERT(buffer->surface());
-            GraphicsContextSkia context(sk_ref_sp(buffer->surface()), RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
-            recordingContext->replayDisplayList(context);
+            if (auto* canvas = buffer->surface()->getCanvas()) {
+                GraphicsContextSkia context(*canvas, RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
+                recordingContext->replayDisplayList(context);
+            }
             buffer->completePainting();
         });
 
@@ -115,9 +120,12 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintImage(Image& image)
     // Always render unaccelerated here for now.
     auto buffer = Nicosia::UnacceleratedBuffer::create(IntSize(image.size()), !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
     buffer->beginPainting();
-    GraphicsContextSkia context(sk_ref_sp(buffer->surface()), RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
-    IntRect rect { IntPoint::zero(), IntSize { image.size() } };
-    context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
+    RELEASE_ASSERT(buffer->surface());
+    if (auto* canvas = buffer->surface()->getCanvas()) {
+        GraphicsContextSkia context(*canvas, RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
+        IntRect rect { IntPoint::zero(), IntSize { image.size() } };
+        context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
+    }
     buffer->completePainting();
     return buffer;
 }

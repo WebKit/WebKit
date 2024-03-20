@@ -43,7 +43,10 @@
 #if USE(SKIA)
 #include <WebCore/GraphicsContextSkia.h>
 #include <skia/core/SkCanvas.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkSurface.h>
+IGNORE_CLANG_WARNINGS_END
 #endif
 
 namespace WebKit {
@@ -124,7 +127,11 @@ void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
     cairo_surface_flush(m_surface.get());
     auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(m_surface.get()), cairo_image_surface_get_height(m_surface.get()));
     auto surface = SkSurfaces::WrapPixels(imageInfo, cairo_image_surface_get_data(m_surface.get()), cairo_image_surface_get_stride(m_surface.get()), nullptr);
-    GraphicsContextSkia graphicsContext(WTFMove(surface), RenderingMode::Unaccelerated, RenderingPurpose::ShareableLocalSnapshot);
+    SkCanvas* canvas = surface ? surface->getCanvas() : nullptr;
+    if (!canvas)
+        return;
+
+    GraphicsContextSkia graphicsContext(*canvas, RenderingMode::Unaccelerated, RenderingPurpose::ShareableLocalSnapshot);
     graphicsContext.setCompositeOperation(WebCore::CompositeOperator::Copy);
     for (const auto& updateRect : updateInfo.updateRects) {
         IntRect srcRect(updateRect);

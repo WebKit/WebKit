@@ -61,7 +61,7 @@ size_t ImageBufferSkiaSurfaceBackend::calculateMemoryCost(const Parameters& para
 ImageBufferSkiaSurfaceBackend::ImageBufferSkiaSurfaceBackend(const Parameters& parameters, sk_sp<SkSurface>&& surface, RenderingMode renderingMode)
     : ImageBufferSkiaBackend(parameters)
     , m_surface(WTFMove(surface))
-    , m_context(sk_ref_sp(m_surface.get()), renderingMode, parameters.purpose)
+    , m_context(*m_surface->getCanvas(), renderingMode, parameters.purpose)
 {
 }
 
