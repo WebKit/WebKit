@@ -39,6 +39,14 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(SKIA)
+#include <skia/core/SkData.h>
+
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/encode/SkPngEncoder.h>
+IGNORE_CLANG_WARNINGS_END
+#endif
+
 namespace WTR {
 
 void TestController::notifyDone()
@@ -160,16 +168,18 @@ TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCo
 
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 {
-    Vector<unsigned char> output;
 #if USE(CAIRO)
+    Vector<unsigned char> output;
     cairo_surface_write_to_png_stream(mainWebView()->windowSnapshotImage(), [](void* output, const unsigned char* data, unsigned length) -> cairo_status_t {
         reinterpret_cast<Vector<unsigned char>*>(output)->append(std::span { data, length });
         return CAIRO_STATUS_SUCCESS;
     }, &output);
-#elif USE(SKIA)
-    // FIXME: implement.
-#endif
     auto uri = makeString("data:image/png;base64,", base64Encoded(output.data(), output.size()));
+#elif USE(SKIA)
+    sk_sp<SkImage> image(mainWebView()->windowSnapshotImage());
+    auto data = SkPngEncoder::Encode(nullptr, image.get(), { });
+    auto uri = makeString("data:image/png;base64,", base64Encoded(data->data(), data->size()));
+#endif
     return adoptWK(WKStringCreateWithUTF8CString(uri.utf8().data()));
 }
 
