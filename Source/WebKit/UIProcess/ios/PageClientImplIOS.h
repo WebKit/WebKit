@@ -338,6 +338,10 @@ private:
     void didExitFullscreen() final;
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    UIViewController *presentingViewController() const final;
+#endif
+
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }
 
     WeakObjCPtr<WKContentView> m_contentView;

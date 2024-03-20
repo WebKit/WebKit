@@ -1141,6 +1141,10 @@ void WebPageProxy::dispatchDidUpdateEditorState()
 void WebPageProxy::showValidationMessage(const IntRect& anchorClientRect, const String& message)
 {
     m_validationBubble = protectedPageClient()->createValidationBubble(message, { m_preferences->minimumFontSize() });
+
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     m_validationBubble->setAnchorRect(anchorClientRect, uiClient().presentingViewController());
 
     // If we are currently doing a scrolling / zoom animation, then we'll delay showing the validation
@@ -1302,6 +1306,9 @@ std::unique_ptr<PaymentAuthorizationPresenter> WebPageProxy::Internals::paymentC
 
 UIViewController *WebPageProxy::Internals::paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&)
 {
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     return page.uiClient().presentingViewController();
 }
 

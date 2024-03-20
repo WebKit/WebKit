@@ -792,6 +792,9 @@ void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUI
         return;
     }
 
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     PlatformViewController *presentingViewController = uiClient().presentingViewController();
     if (!presentingViewController) {
         completionHandler(std::nullopt);
