@@ -58,7 +58,7 @@ public:
     StringHasher() = default;
 
     template<typename T, typename Converter = DefaultConverter>
-    static unsigned computeHashAndMaskTop8Bits(const T* data, unsigned characterCount);
+    static unsigned computeHashAndMaskTop8Bits(std::span<const T> data);
 
     template<typename T, unsigned characterCount>
     static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount]);

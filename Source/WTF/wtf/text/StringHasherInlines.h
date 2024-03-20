@@ -28,14 +28,14 @@
 namespace WTF {
 
 template<typename T, typename Converter>
-unsigned StringHasher::computeHashAndMaskTop8Bits(const T* data, unsigned characterCount)
+unsigned StringHasher::computeHashAndMaskTop8Bits(std::span<const T> data)
 {
 #if ENABLE(WYHASH_STRING_HASHER)
-    if (LIKELY(characterCount <= smallStringThreshold))
-        return SuperFastHash::computeHashAndMaskTop8Bits<T, Converter>(data, characterCount);
-    return WYHash::computeHashAndMaskTop8Bits<T, Converter>(data, characterCount);
+    if (LIKELY(data.size() <= smallStringThreshold))
+        return SuperFastHash::computeHashAndMaskTop8Bits<T, Converter>(data);
+    return WYHash::computeHashAndMaskTop8Bits<T, Converter>(data);
 #else
-    return SuperFastHash::computeHashAndMaskTop8Bits<T, Converter>(data, characterCount);
+    return SuperFastHash::computeHashAndMaskTop8Bits<T, Converter>(data);
 #endif
 }
 
@@ -45,10 +45,10 @@ constexpr unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(const T (&cha
     constexpr unsigned characterCountWithoutNull = characterCount - 1;
 #if ENABLE(WYHASH_STRING_HASHER)
     if constexpr (LIKELY(characterCountWithoutNull <= smallStringThreshold))
-        return SuperFastHash::computeHashAndMaskTop8Bits<T>(characters, characterCountWithoutNull);
-    return WYHash::computeHashAndMaskTop8Bits<T>(characters, characterCountWithoutNull);
+        return SuperFastHash::computeHashAndMaskTop8Bits<T>(std::span { characters, characterCountWithoutNull });
+    return WYHash::computeHashAndMaskTop8Bits<T>(std::span { characters, characterCountWithoutNull });
 #else
-    return SuperFastHash::computeHashAndMaskTop8Bits<T>(characters, characterCountWithoutNull);
+    return SuperFastHash::computeHashAndMaskTop8Bits<T>(std::span { characters, characterCountWithoutNull });
 #endif
 }
 
@@ -86,7 +86,7 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
     unsigned hashValue;
     if (!m_pendingHashValue) {
         ASSERT(m_bufferSize <= smallStringThreshold);
-        hashValue = SuperFastHash::computeHashAndMaskTop8Bits<UChar>(m_buffer.data(), m_bufferSize);
+        hashValue = SuperFastHash::computeHashAndMaskTop8Bits<UChar>(std::span { m_buffer }.first(m_bufferSize));
     } else {
         // This algorithm must stay in sync with WYHash::hash function.
         auto wyr8 = WYHash::Reader16Bit<UChar>::wyr8;

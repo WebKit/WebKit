@@ -69,10 +69,10 @@ TEST(WTF, WYHasher)
 
     unsigned max8Bit = std::numeric_limits<uint8_t>::max();
     for (size_t size = 0; size <= max8Bit; size++) {
-        std::unique_ptr<LChar[]> arr1 = generateLCharArray(size);
-        std::unique_ptr<UChar[]> arr2 = generateUCharArray(size);
-        unsigned left = WYHash::computeHashAndMaskTop8Bits(arr1.get(), size);
-        unsigned right = WYHash::computeHashAndMaskTop8Bits(arr2.get(), size);
+        std::unique_ptr<const LChar[]> arr1 = generateLCharArray(size);
+        std::unique_ptr<const UChar[]> arr2 = generateUCharArray(size);
+        unsigned left = WYHash::computeHashAndMaskTop8Bits(std::span { arr1.get(), size });
+        unsigned right = WYHash::computeHashAndMaskTop8Bits(std::span { arr2.get(), size });
         ASSERT_EQ(left, right);
         ASSERT_EQ(left, expected[size]);
     }

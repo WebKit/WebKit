@@ -583,7 +583,7 @@ struct HashTranslatorCharBuffer {
     HashTranslatorCharBuffer(const CharacterType* characters, unsigned length)
         : characters(characters)
         , length(length)
-        , hash(StringHasher::computeHashAndMaskTop8Bits(characters, length))
+        , hash(StringHasher::computeHashAndMaskTop8Bits(std::span { characters, length }))
     {
     }
 
@@ -1122,7 +1122,7 @@ inline void StringImpl::setHash(unsigned hash) const
     ASSERT(!hasHash());
     ASSERT(!isStatic());
     // Multiple clients assume that StringHasher is the canonical string hash function.
-    ASSERT(hash == (is8Bit() ? StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length) : StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length)));
+    ASSERT(hash == (is8Bit() ? StringHasher::computeHashAndMaskTop8Bits(span8()) : StringHasher::computeHashAndMaskTop8Bits(span16())));
     ASSERT(!(hash & (s_flagMask << (8 * sizeof(hash) - s_flagCount)))); // Verify that enough high bits are empty.
 
     hash <<= s_flagCount;
@@ -1244,7 +1244,7 @@ inline StringImpl*& StringImpl::substringBuffer()
 
 inline void StringImpl::assertHashIsCorrect() const
 {
-    ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));
+    ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(span8()));
 }
 
 template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind)

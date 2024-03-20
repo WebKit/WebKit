@@ -1640,9 +1640,9 @@ CString StringImpl::utf8(ConversionMode mode) const
 NEVER_INLINE unsigned StringImpl::hashSlowCase() const
 {
     if (is8Bit())
-        setHash(StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length));
+        setHash(StringHasher::computeHashAndMaskTop8Bits(span8()));
     else
-        setHash(StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length));
+        setHash(StringHasher::computeHashAndMaskTop8Bits(span16()));
     return existingHash();
 }
 
@@ -1650,9 +1650,9 @@ unsigned StringImpl::concurrentHash() const
 {
     unsigned hash;
     if (is8Bit())
-        hash = StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length);
+        hash = StringHasher::computeHashAndMaskTop8Bits(span8());
     else
-        hash = StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length);
+        hash = StringHasher::computeHashAndMaskTop8Bits(span16());
     ASSERT(((hash << s_flagCount) >> s_flagCount) == hash);
     return hash;
 }

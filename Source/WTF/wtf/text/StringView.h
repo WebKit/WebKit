@@ -494,8 +494,8 @@ inline const UChar* StringView::characters16() const
 inline unsigned StringView::hash() const
 {
     if (is8Bit())
-        return StringHasher::computeHashAndMaskTop8Bits(characters8(), length());
-    return StringHasher::computeHashAndMaskTop8Bits(characters16(), length());
+        return StringHasher::computeHashAndMaskTop8Bits(span8());
+    return StringHasher::computeHashAndMaskTop8Bits(span16());
 }
 
 template<> ALWAYS_INLINE const LChar* StringView::characters<LChar>() const

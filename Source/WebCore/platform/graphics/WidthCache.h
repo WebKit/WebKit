@@ -62,7 +62,7 @@ private:
                 copySmallCharacters(m_characters.data(), string.characters8(), length);
             else
                 copySmallCharacters(m_characters.data(), string.characters16(), length);
-            m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(m_characters.data(), s_capacity) | (length << 24);
+            m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(std::span<const UChar> { m_characters }.first(s_capacity)) | (length << 24);
         }
 
         const UChar* characters() const { return m_characters.data(); }
