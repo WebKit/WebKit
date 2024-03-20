@@ -79,9 +79,18 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
         if (is<RenderInline>(renderer))
             continue;
         if (renderer.isInFlow() && renderer.style().isHorizontalWritingMode() && renderer.style().logicalWidth().isFixed()) {
-            // FIXME: Implement this image special in line builder.
-            auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
-            if (!allowImagesToBreak)
+            auto isNonSupportedFixedWidthContent = [&] {
+                // FIXME: Implement this image special in line builder.
+                auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
+                if (!allowImagesToBreak)
+                    return true;
+                // FIXME: See RenderReplaced::computePreferredLogicalWidths where m_minPreferredLogicalWidth is set to 0.
+                auto isReplacedWithSpecialIntrinsicWidth = is<RenderReplaced>(renderer) && renderer.style().logicalMaxWidth().isPercentOrCalculated();
+                if (isReplacedWithSpecialIntrinsicWidth)
+                    return true;
+                return false;
+            };
+            if (isNonSupportedFixedWidthContent())
                 return false;
             continue;
         }
