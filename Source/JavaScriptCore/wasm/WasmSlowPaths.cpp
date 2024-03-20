@@ -274,6 +274,16 @@ WASM_SLOW_PATH_DECL(loop_osr)
 
         size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
         RELEASE_ASSERT(osrEntryScratchBufferSize >= osrEntryData.values.size());
+
+        uintptr_t stackPointer = reinterpret_cast<uintptr_t>(currentStackPointer());
+        ASSERT(bbqCallee->stackCheckSize());
+        uintptr_t stackExtent = stackPointer - bbqCallee->stackCheckSize();
+        uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
+        if (UNLIKELY(stackExtent >= stackPointer || stackExtent <= stackLimit)) {
+            dataLogLnIf(Options::verboseOSR(), "Skipping BBQ loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
+            WASM_RETURN_TWO(nullptr, nullptr);
+        }
+
         uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
         if (!buffer)
             WASM_RETURN_TWO(nullptr, nullptr);

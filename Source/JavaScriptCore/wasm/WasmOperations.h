@@ -102,6 +102,8 @@ JSC_DECLARE_JIT_OPERATION(operationWasmThrow, void*, (Instance*, unsigned except
 JSC_DECLARE_JIT_OPERATION(operationWasmRethrow, void*, (Instance*, EncodedJSValue thrownValue));
 
 JSC_DECLARE_JIT_OPERATION(operationWasmToJSException, void*, (Instance*, Wasm::ExceptionType));
+JSC_DECLARE_JIT_OPERATION(operationCrashDueToBBQStackOverflow, void, ());
+JSC_DECLARE_JIT_OPERATION(operationCrashDueToOMGStackOverflow, void, ());
 
 struct ThrownExceptionInfo {
     EncodedJSValue thrownValue;

@@ -348,6 +348,8 @@ public:
     OMGIRGenerator(const ModuleInformation&, OptimizingJITCallee&, Procedure&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount*);
     OMGIRGenerator(OMGIRGenerator& inlineCaller, OMGIRGenerator& inlineRoot, unsigned functionIndex, BasicBlock* returnContinuation, Vector<Value*> args);
 
+    void computeStackCheckSize(bool& needsOverflowCheck, int32_t& checkSize);
+
     // SIMD
     void notifyFunctionUsesSIMD() { ASSERT(m_info.usesSIMD(m_functionIndex)); }
     PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
@@ -1006,6 +1008,42 @@ void OMGIRGenerator::restoreWasmContextInstance(BasicBlock* block, Value* arg)
     });
 }
 
+void OMGIRGenerator::computeStackCheckSize(bool& needsOverflowCheck, int32_t& checkSize)
+{
+    const Checked<int32_t> wasmFrameSize = m_proc.frameSize();
+    const Checked<int32_t> wasmTailCallFrameSize = -m_tailCallStackOffsetFromFP;
+    const unsigned minimumParentCheckSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), 1024);
+    const unsigned extraFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max<uint32_t>(
+        // This allows us to elide stack checks for functions that are terminal nodes in the call
+        // tree, (e.g they don't make any calls) and have a small enough frame size. This works by
+        // having any such terminal node have its parent caller include some extra size in its
+        // own check for it. The goal here is twofold:
+        // 1. Emit less code.
+        // 2. Try to speed things up by skipping stack checks.
+        minimumParentCheckSize,
+        // This allows us to elide stack checks in the Wasm -> JS call IC stub. Since these will
+        // spill all arguments to the stack, we ensure that a stack check here covers the
+        // stack that such a stub would use.
+        Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + JSCallingConvention::headerSizeInBytes
+    ));
+
+    checkSize = wasmFrameSize.value();
+    bool frameSizeNeedsOverflowCheck = checkSize >= static_cast<int32_t>(minimumParentCheckSize);
+    needsOverflowCheck = frameSizeNeedsOverflowCheck;
+
+    if (m_makesCalls) {
+        needsOverflowCheck = true;
+        checkSize = checkedSum<int32_t>(checkSize, extraFrameSize).value();
+    } else if (m_makesTailCalls) {
+        Checked<int32_t> tailCallCheckSize = std::max<Checked<int32_t>>(wasmTailCallFrameSize + extraFrameSize, 0);
+        checkSize = frameSizeNeedsOverflowCheck ? std::max<Checked<int32_t>>(tailCallCheckSize, wasmFrameSize).value() : tailCallCheckSize.value();
+        needsOverflowCheck = needsOverflowCheck || checkSize >= static_cast<int32_t>(minimumParentCheckSize);
+    }
+
+    bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
+    needsOverflowCheck = needsOverflowCheck || needUnderflowCheck;
+}
+
 OMGIRGenerator::OMGIRGenerator(OMGIRGenerator& parentCaller, OMGIRGenerator& rootCaller, unsigned functionIndex, BasicBlock* returnContinuation, Vector<Value*> args)
     : m_info(rootCaller.m_info)
     , m_callee(parentCaller.m_callee)
@@ -1127,38 +1165,11 @@ OMGIRGenerator::OMGIRGenerator(const ModuleInformation& info, OptimizingJITCalle
         stackOverflowCheck->clobber(RegisterSetBuilder::macroClobberedGPRs());
         stackOverflowCheck->numGPScratchRegisters = 0;
         stackOverflowCheck->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            const Checked<int32_t> wasmFrameSize = params.proc().frameSize();
-            const Checked<int32_t> wasmTailCallFrameSize = -m_tailCallStackOffsetFromFP;
-            const unsigned minimumParentCheckSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), 1024);
-            const unsigned extraFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), std::max<uint32_t>(
-                // This allows us to elide stack checks for functions that are terminal nodes in the call
-                // tree, (e.g they don't make any calls) and have a small enough frame size. This works by
-                // having any such terminal node have its parent caller include some extra size in its
-                // own check for it. The goal here is twofold:
-                // 1. Emit less code.
-                // 2. Try to speed things up by skipping stack checks.
-                minimumParentCheckSize,
-                // This allows us to elide stack checks in the Wasm -> JS call IC stub. Since these will
-                // spill all arguments to the stack, we ensure that a stack check here covers the
-                // stack that such a stub would use.
-                Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + JSCallingConvention::headerSizeInBytes
-            ));
-
-            int32_t checkSize = wasmFrameSize.value();
-            bool frameSizeNeedsOverflowCheck = checkSize >= static_cast<int32_t>(minimumParentCheckSize);
-            bool needsOverflowCheck = frameSizeNeedsOverflowCheck;
-
-            if (m_makesCalls) {
-                needsOverflowCheck = true;
-                checkSize = checkedSum<int32_t>(checkSize, extraFrameSize).value();
-            } else if (m_makesTailCalls) {
-                Checked<int32_t> tailCallCheckSize = std::max<Checked<int32_t>>(wasmTailCallFrameSize + extraFrameSize, 0);
-                checkSize = frameSizeNeedsOverflowCheck ? std::max<Checked<int32_t>>(tailCallCheckSize, wasmFrameSize).value() : tailCallCheckSize.value();
-                needsOverflowCheck = needsOverflowCheck || checkSize >= static_cast<int32_t>(minimumParentCheckSize);
-            }
-
-            bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
-            needsOverflowCheck = needsOverflowCheck || needUnderflowCheck;
+            ASSERT(m_proc.frameSize() == params.proc().frameSize());
+            int32_t checkSize = 0;
+            bool needsOverflowCheck = false;
+            computeStackCheckSize(needsOverflowCheck, checkSize);
+            ASSERT(checkSize || !needsOverflowCheck);
 
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
@@ -1166,7 +1177,10 @@ OMGIRGenerator::OMGIRGenerator(const ModuleInformation& info, OptimizingJITCalle
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 GPRReg contextInstance = params[0].gpr();
                 GPRReg fp = params[1].gpr();
-                jit.checkWasmStackOverflow(contextInstance, CCallHelpers::TrustedImm32(checkSize), fp).linkThunk(CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()), &jit);
+                if (isOSREntry(m_compilationMode))
+                    jit.checkWasmStackOverflow(contextInstance, CCallHelpers::TrustedImm32(checkSize), fp).linkThunk(CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(crashDueToOMGStackOverflowGenerator).code()), &jit);
+                else
+                    jit.checkWasmStackOverflow(contextInstance, CCallHelpers::TrustedImm32(checkSize), fp).linkThunk(CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()), &jit);
             }
         });
     }
@@ -5282,7 +5296,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(Compilati
     dataLogIf(WasmOMGIRGeneratorInternal::verbose, "Pre SSA: ", procedure);
     fixSSA(procedure);
     dataLogIf(WasmOMGIRGeneratorInternal::verbose, "Post SSA: ", procedure);
-    
+
     {
         if (shouldDumpDisassemblyFor(compilationMode))
             procedure.code().setDisassembler(makeUnique<B3::Air::Disassembler>());
@@ -5294,6 +5308,14 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(Compilati
 
     result->stackmaps = irGenerator.takeStackmaps();
     result->exceptionHandlers = irGenerator.takeExceptionHandlers();
+
+    if (isOSREntry(compilationMode)) {
+        int32_t checkSize = 0;
+        bool needsOverflowCheck = false;
+        irGenerator.computeStackCheckSize(needsOverflowCheck, checkSize);
+        ASSERT(checkSize || !needsOverflowCheck);
+        static_cast<OSREntryCallee*>(&callee)->setStackCheckSize(checkSize);
+    }
 
     return result;
 }
