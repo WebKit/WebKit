@@ -1506,13 +1506,11 @@ template<typename T>
 void EditingStyle::removeEquivalentProperties(T& style)
 {
     Vector<CSSPropertyID> propertiesToRemove;
-    for (auto& property : m_mutableStyle->m_propertyVector) {
-        if (style.propertyMatches(property.id(), property.protectedValue().get()))
+    for (auto property : *m_mutableStyle) {
+        if (style.propertyMatches(property.id(), property.value()))
             propertiesToRemove.append(property.id());
     }
-    // FIXME: This should use mass removal.
-    for (auto& property : propertiesToRemove)
-        m_mutableStyle->removeProperty(property);
+    m_mutableStyle->removeProperties(propertiesToRemove.span());
 }
 
 void EditingStyle::forceInline()

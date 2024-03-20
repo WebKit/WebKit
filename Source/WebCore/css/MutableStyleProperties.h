@@ -85,8 +85,6 @@ public:
     int findPropertyIndex(CSSPropertyID) const;
     int findCustomPropertyIndex(StringView propertyName) const;
 
-    Vector<CSSProperty, 4> m_propertyVector;
-
     // Methods for querying and altering CSS custom properties.
     bool setCustomProperty(const String& propertyName, const String& value, bool important, CSSParserContext);
     bool removeCustomProperty(const String& propertyName, String* returnText = nullptr);
@@ -105,6 +103,8 @@ private:
     bool canUpdateInPlace(const CSSProperty&, CSSProperty* toReplace) const;
 
     friend class StyleProperties;
+
+    Vector<CSSProperty, 4> m_propertyVector;
 };
 
 inline void MutableStyleProperties::deref() const
