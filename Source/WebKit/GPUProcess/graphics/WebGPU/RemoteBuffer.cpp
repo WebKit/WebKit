@@ -40,6 +40,7 @@ RemoteBuffer::RemoteBuffer(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& 
     , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
     , m_isMapped(mappedAtCreation)
+    , m_mapModeFlags(mappedAtCreation ? WebCore::WebGPU::MapModeFlags(WebCore::WebGPU::MapMode::Write) : WebCore::WebGPU::MapModeFlags())
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -72,7 +73,6 @@ void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<
 {
     auto mappedRange = m_backing->getMappedRange(offset, size);
     m_mappedRange = mappedRange;
-    m_mapModeFlags = { WebCore::WebGPU::MapMode::Write };
     m_isMapped = true;
 
     callback(Vector(std::span { static_cast<const uint8_t*>(mappedRange.source), mappedRange.byteLength }));

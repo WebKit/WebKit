@@ -33,10 +33,11 @@
 
 namespace WebKit::WebGPU {
 
-RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteBufferProxy::RemoteBufferProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
+    , m_mapModeFlags(mappedAtCreation ? WebCore::WebGPU::MapModeFlags(WebCore::WebGPU::MapMode::Write) : WebCore::WebGPU::MapModeFlags())
 {
 }
 
@@ -80,7 +81,6 @@ auto RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::opti
         return { };
 
     m_data = WTFMove(data);
-    m_mapModeFlags = { WebCore::WebGPU::MapMode::Write };
     return { m_data->data() + offset, static_cast<size_t>(size.value_or(m_data->size() - offset)) };
 }
 

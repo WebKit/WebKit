@@ -39,9 +39,9 @@ class ConvertToBackingContext;
 class RemoteBufferProxy final : public WebCore::WebGPU::Buffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool mappedAtCreation)
     {
-        return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteBufferProxy(parent, convertToBackingContext, identifier, mappedAtCreation));
     }
 
     virtual ~RemoteBufferProxy();
@@ -52,7 +52,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteBufferProxy(RemoteDeviceProxy&, ConvertToBackingContext&, WebGPUIdentifier, bool mappedAtCreation);
 
     RemoteBufferProxy(const RemoteBufferProxy&) = delete;
     RemoteBufferProxy(RemoteBufferProxy&&) = delete;
