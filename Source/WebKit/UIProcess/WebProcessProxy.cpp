@@ -1455,15 +1455,6 @@ void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, uint64_t
 
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
-#if PLATFORM(IOS_FAMILY)
-    // Don't add the Web process to the cache if there are still assertions being held, preventing it from suspending.
-    // This is a fix for a regression in page load speed we see on http://www.youtube.com when adding it to the cache.
-    if (throttler().shouldBeRunnable()) {
-        WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is runnable");
-        return false;
-    }
-#endif
-
     if (isRunningServiceWorkers()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is running workers");
         return false;
