@@ -505,14 +505,20 @@ LayoutUnit RenderInline::innerPaddingBoxHeight() const
 
 IntRect RenderInline::linesBoundingBox() const
 {
+    IntRect result;
+
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
         if (!layout->contains(*this))
-            return { };
+            return result;
+
+        if (!layoutBox()) {
+            // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
+            ASSERT(needsLayout());
+            return result;
+        }
         return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
     }
 
-    IntRect result;
-    
     // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
     // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
     // builds and help us someday figure out why.  We also put in a redundant check of lastLineBox() to avoid the crash for now.
