@@ -20,19 +20,23 @@ async function waitForCriteria(test, criteria)
         await waitFor(50);
 }
 
+let context;
+let oscillator;
+let gainNode;
+
 promise_test(async test => {
     if (!window.internals)
         return;
 
     navigator.audioSession.type = "playback";
 
-    let context = new AudioContext();
+    context = new AudioContext();
 
     await waitFor(100);
     assert_false(!!internals.nowPlayingState.uniqueIdentifier);
 
-    let oscillator = null;
-    let gainNode = context.createGain();
+    oscillator = null;
+    gainNode = context.createGain();
     oscillator = context.createOscillator();
     oscillator.type = 'square';
     oscillator.frequency.setValueAtTime(440, context.currentTime);
