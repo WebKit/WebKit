@@ -208,6 +208,11 @@ function mac_process_webcontent_shared_entitlements()
             plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" > 140000 ))
+        then
+            plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
+        fi
+
         if [[ "${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}" == YES ]]
         then
             plistbuddy Add :com.apple.private.xpc.domain-extension bool YES
@@ -350,6 +355,7 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
     plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
     plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
+    plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.pac.shared_region_id string WebContent
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES

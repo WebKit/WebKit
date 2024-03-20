@@ -104,6 +104,22 @@ static void initializeLogd(bool disableLogging)
     RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
 }
 
+#if ENABLE(NOTIFY_BLOCKING)
+static bool shouldRestrictNotifyd()
+{
+    static dispatch_once_t once;
+    static bool hasEntitlement = false;
+    dispatch_once(&once, ^{
+        xpc_object_t entitlement = xpc_copy_entitlement_for_token("com.apple.developer.web-browser-engine.restrict.notifyd", nullptr);
+        if (entitlement == XPC_BOOL_TRUE)
+            hasEntitlement = true;
+        if (entitlement)
+            xpc_release(entitlement);
+    });
+    return hasEntitlement;
+}
+#endif
+
 static void setNotifyOptions()
 {
     static bool hasSetOptions = false;
@@ -116,7 +132,8 @@ static void setNotifyOptions()
     opts |= NOTIFY_OPT_DISPATCH | NOTIFY_OPT_REGEN | NOTIFY_OPT_FILTERED;
 #endif
 #if ENABLE(NOTIFY_BLOCKING)
-    opts |= NOTIFY_OPT_LOOPBACK;
+    if (shouldRestrictNotifyd())
+        opts |= NOTIFY_OPT_LOOPBACK;
 #endif
     if (!opts)
         return;
