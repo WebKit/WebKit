@@ -31,6 +31,7 @@
 #include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "DocumentInlines.h"
+#include "DocumentTimeline.h"
 #include "HTMLBodyElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"
@@ -652,18 +653,20 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         oldStyle = startingStyle.get();
     }
 
+    WeakStyleOriginatedAnimations newStyleOriginatedAnimations;
+
     auto updateAnimations = [&] {
         if (document.backForwardCacheState() != Document::NotInBackForwardCache || document.printing())
             return;
 
         if (oldStyle && (oldStyle->hasTransitions() || resolvedStyle.style->hasTransitions()))
-            styleable.updateCSSTransitions(*oldStyle, *resolvedStyle.style);
+            styleable.updateCSSTransitions(*oldStyle, *resolvedStyle.style, newStyleOriginatedAnimations);
 
         // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
         // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
         // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
         if ((oldStyle && oldStyle->hasAnimations()) || resolvedStyle.style->hasAnimations())
-            styleable.updateCSSAnimations(oldStyle, *resolvedStyle.style, resolutionContext);
+            styleable.updateCSSAnimations(oldStyle, *resolvedStyle.style, resolutionContext, newStyleOriginatedAnimations);
     };
 
     auto applyAnimations = [&]() -> std::pair<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>> {
@@ -725,6 +728,15 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         change = Change::Renderer;
 
     bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element.styleResolutionShouldRecompositeLayer();
+
+    if (!newStyleOriginatedAnimations.isEmpty()) {
+        // Make sure that the creation of new style-originated animations during this update
+        // is known to the document's timeline as animation scheduling was paused for any
+        // animation created during this update.
+        if (auto* timeline = m_document.existingTimeline())
+            timeline->styleOriginatedAnimationsWereCreated();
+    }
+
     return { WTFMove(newStyle), change, shouldRecompositeLayer };
 }
 

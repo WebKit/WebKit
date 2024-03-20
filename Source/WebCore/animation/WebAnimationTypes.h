@@ -27,11 +27,13 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
+#include "EventTarget.h"
 #include <wtf/BitSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -41,6 +43,7 @@ class AnimationEventBase;
 class AnimationList;
 class CSSAnimation;
 class CSSTransition;
+class StyleOriginatedAnimation;
 class WebAnimation;
 
 struct WebAnimationsMarkableDoubleTraits {
@@ -66,6 +69,7 @@ enum class WebAnimationType : uint8_t { CSSAnimation, CSSTransition, WebAnimatio
 
 using MarkableDouble = Markable<double, WebAnimationsMarkableDoubleTraits>;
 
+using WeakStyleOriginatedAnimations = Vector<WeakPtr<StyleOriginatedAnimation, WeakPtrImplWithEventTargetData>>;
 using AnimationCollection = ListHashSet<Ref<WebAnimation>>;
 using AnimationEvents = Vector<Ref<AnimationEventBase>>;
 using CSSAnimationCollection = ListHashSet<Ref<CSSAnimation>>;

@@ -73,6 +73,7 @@ public:
     void removeReplacedAnimations();
     AnimationEvents prepareForPendingAnimationEventsDispatch();
     void documentDidUpdateAnimationsAndSendEvents();
+    void styleOriginatedAnimationsWereCreated();
 
     WEBCORE_EXPORT Seconds animationInterval() const;
     void suspendAnimations();

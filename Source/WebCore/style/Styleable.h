@@ -184,8 +184,8 @@ struct Styleable {
 
     void removeStyleOriginatedAnimationFromListsForOwningElement(WebAnimation&) const;
 
-    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&) const;
-    void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle) const;
+    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const Style::ResolutionContext&, WeakStyleOriginatedAnimations&) const;
+    void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle, WeakStyleOriginatedAnimations&) const;
 };
 
 } // namespace WebCore
