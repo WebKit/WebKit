@@ -38,6 +38,12 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(SKIA)
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
+#endif
+
 namespace WTR {
 
 PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const TestOptions& options)
@@ -222,15 +228,14 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
 {
 }
 
-#if USE(CAIRO)
-cairo_surface_t* PlatformWebView::windowSnapshotImage()
+static cairo_surface_t* viewSnapshot(GtkWidget* view)
 {
 #if USE(GTK4)
-    int width = gtk_widget_get_width(GTK_WIDGET(m_view));
-    int height = gtk_widget_get_height(GTK_WIDGET(m_view));
+    int width = gtk_widget_get_width(view);
+    int height = gtk_widget_get_height(view);
 #else
-    int width = gtk_widget_get_allocated_width(GTK_WIDGET(m_view));
-    int height = gtk_widget_get_allocated_height(GTK_WIDGET(m_view));
+    int width = gtk_widget_get_allocated_width(view);
+    int height = gtk_widget_get_allocated_height(view);
 #endif
 
     while (g_main_context_pending(nullptr))
@@ -240,7 +245,7 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
     cairo_t* context = cairo_create(imageSurface);
 
 #if USE(GTK4)
-    GRefPtr<GdkPaintable> paintable = adoptGRef(gtk_widget_paintable_new(GTK_WIDGET(m_view)));
+    GRefPtr<GdkPaintable> paintable = adoptGRef(gtk_widget_paintable_new(view));
     auto* snapshot = gtk_snapshot_new();
     gdk_paintable_snapshot(paintable.get(), snapshot, width, height);
     if (auto* node = gtk_snapshot_free_to_node(snapshot)) {
@@ -248,17 +253,32 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
         gsk_render_node_unref(node);
     }
 #else
-    gtk_widget_draw(GTK_WIDGET(m_view), context);
+    gtk_widget_draw(view, context);
 #endif
 
     cairo_destroy(context);
 
     return imageSurface;
 }
+
+#if USE(CAIRO)
+cairo_surface_t* PlatformWebView::windowSnapshotImage()
+{
+    return viewSnapshot(GTK_WIDGET(m_view));
+}
 #elif USE(SKIA)
 SkImage* PlatformWebView::windowSnapshotImage()
 {
-    return nullptr;
+    auto* surface = viewSnapshot(GTK_WIDGET(m_view));
+    if (!surface)
+        return nullptr;
+
+    cairo_surface_flush(surface);
+    auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
+    SkPixmap pixmap(imageInfo, cairo_image_surface_get_data(surface), cairo_image_surface_get_stride(surface));
+    return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
+        cairo_surface_destroy(static_cast<cairo_surface_t*>(context));
+    }, surface).release();
 }
 #endif
 
