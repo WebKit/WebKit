@@ -105,9 +105,8 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
         return false;
     }
 
-    // FIXME: Re-enable auto-header-extension. Currently triggers caps negotiation error.
     // Align MTU with libwebrtc implementation, also helping to reduce packet fragmentation.
-    g_object_set(m_payloader.get(), "auto-header-extension", FALSE, "mtu", 1200, nullptr);
+    g_object_set(m_payloader.get(), "auto-header-extension", TRUE, "mtu", 1200, nullptr);
 
     if (const char* minPTime = gst_structure_get_string(structure, "minptime")) {
         auto time = String::fromLatin1(minPTime);
