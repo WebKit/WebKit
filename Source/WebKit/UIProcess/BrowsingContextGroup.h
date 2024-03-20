@@ -30,6 +30,10 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakListHashSet.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class FrameProcess;
@@ -44,6 +48,7 @@ public:
     ~BrowsingContextGroup();
 
     Ref<FrameProcess> ensureProcessForDomain(const WebCore::RegistrableDomain&, WebProcessProxy&, const WebPreferences&);
+    Ref<FrameProcess> ensureProcessForConnection(IPC::Connection&, WebPageProxy&, const WebPreferences&);
     FrameProcess* processForDomain(const WebCore::RegistrableDomain&);
     void addFrameProcess(FrameProcess&);
     void removeFrameProcess(FrameProcess&);

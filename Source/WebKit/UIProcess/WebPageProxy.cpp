@@ -5725,7 +5725,7 @@ void WebPageProxy::preferencesDidChange()
         send(Messages::WebPage::PreferencesDidChange(preferencesStore()));
 }
 
-void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
+void WebPageProxy::didCreateMainFrame(IPC::Connection& connection, FrameIdentifier frameID)
 {
     // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateMainFrame one.
     // When this happens, decidePolicyForNavigationActionSync() calls didCreateMainFrame() and we need to ignore the DidCreateMainFrame
@@ -5738,7 +5738,7 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     MESSAGE_CHECK(m_process, !m_mainFrame);
     MESSAGE_CHECK(m_process, WebFrameProxy::canCreateFrame(frameID));
 
-    Ref mainFrame = WebFrameProxy::create(*this, m_browsingContextGroup->ensureProcessForDomain(mainFrameOrOpenerDomain(), protectedProcess(), preferences()), frameID);
+    Ref mainFrame = WebFrameProxy::create(*this, m_browsingContextGroup->ensureProcessForConnection(connection, *this, preferences()), frameID);
     m_mainFrame = mainFrame.copyRef();
     if (m_preferences->siteIsolationEnabled() || m_preferences->processSwapOnCrossSiteWindowOpenEnabled())
         m_browsingContextGroup->addPage(*this);
@@ -7096,14 +7096,14 @@ void WebPageProxy::logFrameNavigation(const WebFrameProxy& frame, const URL& pag
     websiteDataStore().protectedNetworkProcess()->send(Messages::NetworkProcess::LogFrameNavigation(m_websiteDataStore->sessionID(), RegistrableDomain { targetURL }, RegistrableDomain { pageURL }, RegistrableDomain { sourceURL }, isRedirect, frame.isMainFrame(), MonotonicTime::now() - internals().didFinishDocumentLoadForMainFrameTimestamp, wasPotentiallyInitiatedByUser), 0);
 }
 
-void WebPageProxy::decidePolicyForNavigationActionSync(NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& reply)
+void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connection, NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& reply)
 {
     auto& frameInfo = data.frameInfo;
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame) {
         // This synchronous IPC message was processed before the asynchronous DidCreateMainFrame / DidCreateSubframe one so we do not know about this frameID yet.
         if (frameInfo.isMainFrame)
-            didCreateMainFrame(frameInfo.frameID);
+            didCreateMainFrame(connection, frameInfo.frameID);
         else {
             MESSAGE_CHECK(m_process, frameInfo.parentFrameID);
             RefPtr parentFrame = WebFrameProxy::webFrame(*frameInfo.parentFrameID);
@@ -9923,6 +9923,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     parameters.processDisplayName = configuration().processDisplayName();
 
+    // FIXME: This should be std::optional<SubframeProcessPageParameters>&& instead of SubframeProcessPageParameters*
     if (subframeProcessPageParameters)
         parameters.subframeProcessPageParameters = *subframeProcessPageParameters;
     parameters.openerFrameIdentifier = m_openerFrame ? std::optional(m_openerFrame->frameID()) : std::nullopt;
@@ -13391,17 +13392,6 @@ WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::Regist
 {
     auto* process = m_browsingContextGroup->processForDomain(domain);
     return process ? &process->process() : nullptr;
-}
-
-RegistrableDomain WebPageProxy::mainFrameOrOpenerDomain() const
-{
-    URL currentURL { this->currentURL() };
-    // After window.open but before a load is started in another process,
-    // currentURL is about:blank but we can use the opener to tell what
-    // domain's process the frame was in.
-    if (currentURL.isEmpty() && m_openerFrame)
-        currentURL = m_openerFrame->url();
-    return RegistrableDomain { currentURL };
 }
 
 WebPageProxy* WebPageProxy::openerPage() const

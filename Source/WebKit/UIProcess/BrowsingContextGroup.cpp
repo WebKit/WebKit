@@ -50,6 +50,19 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForDomain(const WebCore::Re
     return FrameProcess::create(process, *this, domain, preferences);
 }
 
+Ref<FrameProcess> BrowsingContextGroup::ensureProcessForConnection(IPC::Connection& connection, WebPageProxy& page, const WebPreferences& preferences)
+{
+    if (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled()) {
+        for (auto& process : m_processMap.values()) {
+            if (!process)
+                continue;
+            if (process->process().connection() == &connection)
+                return *process;
+        }
+    }
+    return FrameProcess::create(page.process(), *this, WebCore::RegistrableDomain(URL(page.currentURL())), preferences);
+}
+
 FrameProcess* BrowsingContextGroup::processForDomain(const WebCore::RegistrableDomain& domain)
 {
     auto process = m_processMap.get(domain);
@@ -112,7 +125,7 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
             return true;
         }
 
-        if (domain == page.mainFrameOrOpenerDomain())
+        if (process->process().coreProcessIdentifier() == page.process().coreProcessIdentifier())
             return false;
         auto newRemotePage = makeUnique<RemotePageProxy>(page, process->process(), domain);
         newRemotePage->injectPageIntoNewProcess();
