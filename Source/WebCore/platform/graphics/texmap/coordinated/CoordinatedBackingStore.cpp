@@ -56,8 +56,6 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
         } else if (update.buffer->supportsAlpha() == m_texture->isOpaque())
             m_texture->reset(update.tileRect.size(), flags);
 
-        update.buffer->waitUntilPaintingComplete();
-
 #if USE(SKIA)
         if (update.buffer->isBackedByOpenGL()) {
             auto& buffer = static_cast<Nicosia::AcceleratedBuffer&>(*update.buffer);
