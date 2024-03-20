@@ -418,24 +418,32 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-    ${ATK_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
 list(APPEND WebKit_LIBRARIES
-    ATK::Bridge
     Cairo::Cairo
     Freetype::Freetype
     HarfBuzz::HarfBuzz
     HarfBuzz::ICU
     WPE::libwpe
-    ${ATK_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
 )
+
+if (USE_ATK)
+    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+        ${ATK_INCLUDE_DIRS}
+    )
+
+    list(APPEND WebKit_LIBRARIES
+        ATK::Bridge
+        ${ATK_LIBRARIES}
+    )
+endif ()
 
 if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebKit_LIBRARIES Libseccomp::Libseccomp)

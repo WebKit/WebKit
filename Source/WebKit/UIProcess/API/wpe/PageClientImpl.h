@@ -62,7 +62,9 @@ public:
     WPEView* wpeView() const;
 #endif
 
+#if USE(ATK)
     AtkObject* accessible();
+#endif
 
     void sendMessageToWebView(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
     void setInputMethodState(std::optional<InputMethodState>&&);

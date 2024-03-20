@@ -25,6 +25,8 @@
 
 #include "ViewBackend.h"
 
+#if defined(USE_ATK) && USE_ATK
+
 #include "WebKitAccessibleApplication.h"
 #include <atk-bridge.h>
 #include <atk/atk.h>
@@ -182,3 +184,5 @@ void ViewBackend::setAccessibleChild(AtkObject* child)
 }
 
 } // namespace WPEToolingBackends
+
+#endif

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if !USE(GTK4)
+#if USE(ATK)
 
 #include <atk/atk.h>
 
@@ -53,4 +53,4 @@ void webkitWebViewAccessibleSetWebView(WebKitWebViewAccessible*, gpointer);
 
 G_END_DECLS
 
-#endif // !USE(GTK4)
+#endif // USE(ATK)

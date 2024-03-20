@@ -129,7 +129,9 @@ public:
     bool setFullScreen(bool);
 #endif
 
+#if USE(ATK)
     WebKitWebViewAccessible* accessible() const;
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
     WebKit::TouchGestureController& touchGestureController() const { return *m_touchGestureController; }
@@ -194,7 +196,9 @@ private:
 #endif
 #endif
 
+#if USE(ATK)
     mutable GRefPtr<WebKitWebViewAccessible> m_accessible;
+#endif
 
     bool m_horizontalScrollActive { false };
     bool m_verticalScrollActive { false };
