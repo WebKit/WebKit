@@ -114,9 +114,12 @@ Vector<WKBaseScrollView*> RemoteScrollingCoordinatorProxyIOS::overlayRegionScrol
 {
     Vector<WKBaseScrollView*> candidates;
     for (auto scrollingNodeID : m_scrollingNodesByLayerID.values()) {
-        auto* scrollView = scrollViewForScrollingNodeID(scrollingNodeID);
-        if (scrollView)
-            candidates.append((WKBaseScrollView *)scrollView);
+        auto* treeNode = scrollingTree()->nodeForID(scrollingNodeID);
+        if (auto* scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(treeNode)) {
+            auto* scrollView = scrollViewForScrollingNodeID(scrollingNodeID);
+            if (scrollView && scrollingNode->snapOffsetsInfo().isEmpty())
+                candidates.append((WKBaseScrollView *)scrollView);
+        }
     }
     return candidates;
 }
