@@ -1249,9 +1249,9 @@ void WebPage::commitPotentialTap(OptionSet<WebEventModifier> modifiers, Transact
     if (!invalidTargetForSingleClick) {
         bool targetRenders = m_potentialTapNode->renderer();
         if (RefPtr element = dynamicDowncast<Element>(m_potentialTapNode); element && !targetRenders)
-            targetRenders = element->renderOrDisplayContentsStyle();
+            targetRenders = element->renderOrDisplayContentsOrNoneStyle();
         if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(m_potentialTapNode); shadowRoot && !targetRenders)
-            targetRenders = shadowRoot->host()->renderOrDisplayContentsStyle();
+            targetRenders = shadowRoot->host()->renderOrDisplayContentsOrNoneStyle();
         invalidTargetForSingleClick = !targetRenders && !is<HTMLAreaElement>(m_potentialTapNode);
     }
     if (invalidTargetForSingleClick) {

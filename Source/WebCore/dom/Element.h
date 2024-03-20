@@ -671,8 +671,10 @@ public:
     LayoutRect absoluteEventHandlerBounds(bool& includesFixedPositionElements) override;
 
     const RenderStyle* existingComputedStyle() const;
-    WEBCORE_EXPORT const RenderStyle* renderOrDisplayContentsStyle() const;
-    WEBCORE_EXPORT const RenderStyle* renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>&) const;
+    const RenderStyle* renderOrDisplayContentsStyle() const;
+    const RenderStyle* renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>&) const;
+    WEBCORE_EXPORT const RenderStyle* renderOrDisplayContentsOrNoneStyle() const;
+    WEBCORE_EXPORT const RenderStyle* renderOrDisplayContentsOrNoneStyle(const std::optional<Style::PseudoElementIdentifier>&) const;
 
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();

@@ -190,7 +190,7 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
 {
     if (newStyle.display() != DisplayType::None)
         return true;
-    if (element.renderOrDisplayContentsStyle())
+    if (element.renderOrDisplayContentsOrNoneStyle())
         return true;
     if (element.rendererIsNeeded(newStyle))
         return true;
@@ -244,7 +244,7 @@ static bool styleChangeAffectsRelativeUnits(const RenderStyle& style, const Rend
 
 auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingStyle, ResolutionType resolutionType) -> std::pair<ElementUpdate, DescendantsToResolve>
 {
-    if (m_didSeePendingStylesheet && !element.renderOrDisplayContentsStyle() && !m_document.isIgnoringPendingStylesheets()) {
+    if (m_didSeePendingStylesheet && !element.renderOrDisplayContentsOrNoneStyle() && !m_document.isIgnoringPendingStylesheets()) {
         m_document.setHasNodesWithMissingStyle();
         return { };
     }
@@ -436,7 +436,7 @@ std::optional<ElementUpdate> TreeResolver::resolveAncestorPseudoElement(Element&
     if (!pseudoElementStyle)
         return { };
 
-    auto* oldStyle = element.renderOrDisplayContentsStyle(pseudoElementIdentifier);
+    auto* oldStyle = element.renderOrDisplayContentsOrNoneStyle(pseudoElementIdentifier);
     auto change = oldStyle ? determineChange(*oldStyle, *pseudoElementStyle->style) : Change::Renderer;
     auto resolutionContext = makeResolutionContextForPseudoElement(elementUpdate, pseudoElementIdentifier);
 
@@ -1072,7 +1072,7 @@ void TreeResolver::resolveComposedTree()
 
 const RenderStyle* TreeResolver::existingStyle(const Element& element)
 {
-    auto* style = element.renderOrDisplayContentsStyle();
+    auto* style = element.renderOrDisplayContentsOrNoneStyle();
 
     if (style && &element == m_document.documentElement()) {
         // Document element style may have got adjusted based on body style but we don't want to inherit those adjustments.
@@ -1102,7 +1102,7 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderSt
         return QueryContainerAction::Continue;
     }
 
-    auto* existingStyle = element.renderOrDisplayContentsStyle();
+    auto* existingStyle = element.renderOrDisplayContentsOrNoneStyle();
     if (style->containerType() != ContainerType::Normal || (existingStyle && existingStyle->containerType() != ContainerType::Normal)) {
         // If any of the queries use font-size relative units then a font size change may affect their evaluation.
         if (styleChangeAffectsRelativeUnits(*style, existingStyle))

@@ -2500,7 +2500,7 @@ void Element::storeDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle> style
     // This is used by RenderTreeBuilder to store the style for Elements with display:{contents|none}.
     // Normally style is held in renderers but display:contents doesn't generate one.
     // This is kept distinct from ElementRareData::computedStyle() which can update outside style resolution.
-    // This way renderOrDisplayContentsStyle() always returns consistent styles matching the rendering state.
+    // This way renderOrDisplayContentsOrNoneStyle() always returns consistent styles matching the rendering state.
     ASSERT(style && (style->display() == DisplayType::Contents || style->display() == DisplayType::None));
     ASSERT(!renderer() || isPseudoElement());
     ensureElementRareData().setDisplayContentsOrNoneStyle(WTFMove(style));
@@ -4001,10 +4001,32 @@ const RenderStyle* Element::existingComputedStyle() const
             return style;
     }
 
-    if (hasDisplayNone())
+    return renderOrDisplayContentsOrNoneStyle();
+}
+
+const RenderStyle* Element::renderOrDisplayContentsOrNoneStyle() const
+{
+    return renderOrDisplayContentsOrNoneStyle({ });
+}
+
+const RenderStyle* Element::renderOrDisplayContentsOrNoneStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+{
+    if (pseudoElementIdentifier) {
+        if (auto* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementIdentifier->pseudoId))
+            return pseudoElement->renderOrDisplayContentsOrNoneStyle();
+
+        if (auto* style = renderOrDisplayContentsOrNoneStyle()) {
+            if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(*pseudoElementIdentifier))
+                return cachedPseudoStyle;
+        }
+
+        return nullptr;
+    }
+
+    if (hasDisplayNone() || hasDisplayContents())
         return elementRareData()->displayContentsOrNoneStyle();
 
-    return renderOrDisplayContentsStyle();
+    return renderStyle();
 }
 
 const RenderStyle* Element::renderOrDisplayContentsStyle() const

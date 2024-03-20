@@ -143,7 +143,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (!updateStyle)
         return;
 
-    auto* existingStyle = pseudoElement ? pseudoElement->renderOrDisplayContentsStyle() : nullptr;
+    auto* existingStyle = pseudoElement ? pseudoElement->renderOrDisplayContentsOrNoneStyle() : nullptr;
 
     auto styleChange = existingStyle ? Style::determineChange(*updateStyle, *existingStyle) : Style::Change::Renderer;
     if (styleChange == Style::Change::None)
