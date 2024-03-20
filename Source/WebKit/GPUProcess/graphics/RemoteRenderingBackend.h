@@ -163,8 +163,8 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    void prepareImageBufferSetsForDisplay(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, RenderingUpdateID);
-    void prepareImageBufferSetsForDisplaySync(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, RenderingUpdateID, CompletionHandler<void(Vector<SwapBuffersDisplayRequirement>&&)>&&);
+    void prepareImageBufferSetsForDisplay(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput);
+    void prepareImageBufferSetsForDisplaySync(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, CompletionHandler<void(Vector<SwapBuffersDisplayRequirement>&&)>&&);
 
 #endif
 

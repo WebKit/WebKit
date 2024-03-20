@@ -391,7 +391,7 @@ Vector<SwapBuffersDisplayRequirement> RemoteRenderingBackendProxy::prepareImageB
 
     Vector<SwapBuffersDisplayRequirement> result;
     if (needsSync) {
-        auto sendResult = streamConnection().sendSync(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplaySync(inputData, m_renderingUpdateID), renderingBackendIdentifier(), defaultTimeout);
+        auto sendResult = streamConnection().sendSync(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplaySync(inputData), renderingBackendIdentifier(), defaultTimeout);
         if (!sendResult.succeeded()) {
             result.grow(inputData.size());
             for (auto& displayRequirement : result)
@@ -399,7 +399,7 @@ Vector<SwapBuffersDisplayRequirement> RemoteRenderingBackendProxy::prepareImageB
         } else
             std::tie(result) = sendResult.takeReply();
     } else {
-        streamConnection().send(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData, m_renderingUpdateID), renderingBackendIdentifier(), defaultTimeout);
+        streamConnection().send(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData), renderingBackendIdentifier(), defaultTimeout);
         result.grow(inputData.size());
         for (auto& displayRequirement : result)
             displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;

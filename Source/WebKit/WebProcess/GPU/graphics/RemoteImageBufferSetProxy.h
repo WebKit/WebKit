@@ -116,8 +116,6 @@ private:
     template<typename T> void send(T&& message);
     template<typename T> auto sendSync(T&& message);
 
-    void createFlushFence() WTF_REQUIRES_LOCK(m_lock);
-
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 
     WebCore::RenderingResourceIdentifier m_displayListIdentifier;
