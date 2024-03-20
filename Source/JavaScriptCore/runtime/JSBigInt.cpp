@@ -454,7 +454,7 @@ public:
         ASSERT(length());
         ASSERT_UNUSED(i, i == 0);
         if (sign())
-            return static_cast<JSBigInt::Digit>(-static_cast<int64_t>(m_value));
+            return static_cast<JSBigInt::Digit>(WTF::negate(static_cast<int64_t>(m_value)));
         return m_value;
     }
 
@@ -471,6 +471,45 @@ public:
 private:
     friend struct JSBigInt::ImplResult;
     int32_t m_value;
+};
+
+class Int64BigIntImpl {
+public:
+    static constexpr unsigned numDigits = isRegister64Bit() ? 1 : 2;
+
+    explicit Int64BigIntImpl(int64_t value)
+        : m_value(value)
+        , m_sign(value < 0)
+    {
+    }
+
+    explicit Int64BigIntImpl(uint64_t value)
+        : m_value(value)
+        , m_sign(false)
+    { }
+
+    ALWAYS_INLINE bool isZero() { return !m_value; }
+    ALWAYS_INLINE bool sign() { return m_sign; }
+    ALWAYS_INLINE unsigned length() { return isZero() ? 0 : numDigits; }
+    ALWAYS_INLINE JSBigInt::Digit digit(unsigned i)
+    {
+        ASSERT_UNUSED(i, i < length());
+#if CPU(REGISTER64)
+        if (sign())
+            return static_cast<JSBigInt::Digit>(WTF::negate(m_value));
+        return m_value;
+#else
+        static_assert(sizeof(JSBigInt::Digit) == 4);
+        if (sign())
+            return static_cast<JSBigInt::Digit>(WTF::negate(m_value) >> (32 * i));
+        return static_cast<JSBigInt::Digit>(m_value >> (32 * i));
+#endif
+    }
+
+private:
+    friend struct JSBigInt::ImplResult;
+    uint64_t m_value;
+    bool m_sign;
 };
 
 ALWAYS_INLINE JSBigInt::ImplResult::ImplResult(HeapBigIntImpl& heapImpl)
@@ -1439,13 +1478,66 @@ JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, JSBigInt* y)
 {
     return compareImpl(HeapBigIntImpl { x }, HeapBigIntImpl { y });
 }
+
 JSBigInt::ComparisonResult JSBigInt::compare(int32_t x, JSBigInt* y)
 {
     return compareImpl(Int32BigIntImpl { x }, HeapBigIntImpl { y });
 }
+
 JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, int32_t y)
 {
     return compareImpl(HeapBigIntImpl { x }, Int32BigIntImpl { y });
+}
+
+JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, int64_t y)
+{
+    return compareImpl(HeapBigIntImpl { x }, Int64BigIntImpl { y });
+}
+
+JSBigInt::ComparisonResult JSBigInt::compare(JSValue x, int64_t y)
+{
+    ASSERT(x.isBigInt());
+#if USE(BIGINT32)
+    if (x.isBigInt32())
+        return compareImpl(Int32BigIntImpl { x.bigInt32AsInt32() }, Int64BigIntImpl { y });
+#endif
+    return compare(x.asHeapBigInt(), y);
+}
+
+JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, uint64_t y)
+{
+    return compareImpl(HeapBigIntImpl { x }, Int64BigIntImpl { y });
+}
+
+JSBigInt::ComparisonResult JSBigInt::compare(JSValue x, uint64_t y)
+{
+    ASSERT(x.isBigInt());
+#if USE(BIGINT32)
+    if (x.isBigInt32())
+        return compareImpl(Int32BigIntImpl { x.bigInt32AsInt32() }, Int64BigIntImpl { y });
+#endif
+    return compare(x.asHeapBigInt(), y);
+}
+
+JSBigInt::ComparisonResult JSBigInt::compare(JSValue x, JSValue y)
+{
+    ASSERT(x.isBigInt() && y.isBigInt());
+#if USE(BIGINT32)
+    if (x.isBigInt32() && y.isBigInt32()) {
+        int32_t x1 = x.asBigInt32();
+        int32_t y1 = y.asBigInt32();
+        if (x1 == y1)
+            return JSBigInt::ComparisonResult::Equal;
+        if (x1 < y1)
+            return JSBigInt::ComparisonResult::LessThan;
+        return JSBigInt::ComparisonResult::GreaterThan;
+    }
+    if (x.isBigInt32())
+        return compare(x.bigInt32AsInt32(), y.asHeapBigInt());
+    if (y.isBigInt32())
+        return compare(x.asHeapBigInt(), y.bigInt32AsInt32());
+#endif
+    return compare(x.asHeapBigInt(), y.asHeapBigInt());
 }
 
 template <typename BigIntImpl1, typename BigIntImpl2>
@@ -2603,11 +2695,23 @@ bool JSBigInt::equalsToInt32(int32_t value)
 
 JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
 {
+    return compareToDouble(HeapBigIntImpl { x }, y);
+}
+
+JSBigInt::ComparisonResult JSBigInt::compareToDouble(double x, JSBigInt* y)
+{
+    return compareToDouble(x, HeapBigIntImpl { y });
+}
+
+template <typename BigIntImpl>
+JSBigInt::ComparisonResult JSBigInt::compareToDouble(BigIntImpl x, double y)
+{
     // This algorithm expect that the double format is IEEE 754
 
     uint64_t doubleBits = bitwise_cast<uint64_t>(y);
     int rawExponent = static_cast<int>(doubleBits >> 52) & 0x7FF;
 
+    // Handle finite doubles for {y}.
     if (rawExponent == 0x7FF) {
         if (std::isnan(y))
             return ComparisonResult::Undefined;
@@ -2615,7 +2719,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
         return (y == std::numeric_limits<double>::infinity()) ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
     }
 
-    bool xSign = x->sign();
+    bool xSign = x.sign();
     
     // Note that this is different from the double's sign bit for -0. That's
     // intentional because -0 must be treated like 0.
@@ -2624,14 +2728,20 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
         return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
 
     if (!y) {
+        // If {y} is zero, then ySign is false and xSign must be false.
         ASSERT(!xSign);
-        return x->isZero() ? ComparisonResult::Equal : ComparisonResult::GreaterThan;
+        return x.isZero() ? ComparisonResult::Equal : ComparisonResult::GreaterThan;
     }
 
-    if (x->isZero())
+    if (x.isZero()) {
+        // If {x} is zero, then xSign is false and ySign must be false which indicates that {y} is greater than zero.
+        ASSERT(!ySign && y > 0);
         return ComparisonResult::LessThan;
+    }
 
-    uint64_t mantissa = doubleBits & 0x000FFFFFFFFFFFFF;
+    // Right now, only two cases left:
+    //     {x} >= 1 and {y} > 0
+    //     {x} <= -1 and {y} < 0
 
     // Non-finite doubles are handled above.
     ASSERT(rawExponent != 0x7FF);
@@ -2639,11 +2749,12 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
     if (exponent < 0) {
         // The absolute value of the double is less than 1. Only 0n has an
         // absolute value smaller than that, but we've already covered that case.
+        // Note that this also handles denormal doubles for {y}.
         return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
     }
 
-    int xLength = x->length();
-    Digit xMSD = x->digit(xLength - 1);
+    int xLength = x.length();
+    Digit xMSD = x.digit(xLength - 1);
     int msdLeadingZeros = clz(xMSD);
 
     int xBitLength = xLength * digitBits - msdLeadingZeros;
@@ -2667,6 +2778,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
     //                    <-->          <------>
     //              msdTopBit         digitBits
     //
+    uint64_t mantissa = doubleBits & 0x000FFFFFFFFFFFFF;
     mantissa |= 0x0010000000000000;
     const int mantissaTopBit = 52; // 0-indexed.
 
@@ -2713,7 +2825,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
         } else
             compareMantissa = 0;
 
-        Digit digit = x->digit(digitIndex);
+        Digit digit = x.digit(digitIndex);
         if (digit > compareMantissa)
             return xSign ? ComparisonResult::LessThan : ComparisonResult::GreaterThan;
         if (digit < compareMantissa)
@@ -2727,6 +2839,31 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
     }
 
     return ComparisonResult::Equal;
+}
+
+JSBigInt::ComparisonResult JSBigInt::compareToDouble(int32_t x, double y)
+{
+    return compareToDouble(Int32BigIntImpl { x }, y);
+}
+
+JSBigInt::ComparisonResult JSBigInt::compareToDouble(int64_t x, double y)
+{
+    return compareToDouble(Int64BigIntImpl { x }, y);
+}
+
+JSBigInt::ComparisonResult JSBigInt::compareToDouble(uint64_t x, double y)
+{
+    return compareToDouble(Int64BigIntImpl { x }, y);
+}
+
+JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSValue x, double y)
+{
+    ASSERT(x.isBigInt());
+#if USE(BIGINT32)
+    if (x.isBigInt32())
+        return compareToDouble(x.bigInt32AsInt32(), y);
+#endif
+    return compareToDouble(x.asHeapBigInt(), y);
 }
 
 template <typename BigIntImpl>

@@ -781,6 +781,13 @@ template<typename T> constexpr T fabsConstExpr(T value)
     return value;
 }
 
+// For use in places where we could negate std::numeric_limits<T>::min and would like to avoid UB.
+template<std::integral T>
+constexpr T negate(T v)
+{
+    return ~static_cast<std::make_unsigned_t<T>>(v) + 1;
+}
+
 } // namespace WTF
 
 using WTF::shuffleVector;
