@@ -35,7 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicy-CSP-no-name.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicy-CSP-wildcard.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicy-createXXX.html
-/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-blocking.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-blocking.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-constants.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-createXYZTests.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-cspTests-noNamesGiven.html
@@ -47,6 +47,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-createPolicy-unenforced.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-defaultPolicy.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getAttributeType-namespace.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getAttributeType-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-getPropertyType.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-isXXX.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/TrustedTypePolicyFactory-metadata.html
@@ -57,13 +58,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-Node-multiple-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-DOMParser-parseFromString.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-DOMWindowTimers-setTimeout-setInterval.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Document-parseHTMLUnsafe.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Document-write.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Element-insertAdjacentHTML.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Element-outerHTML.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Element-setAttribute.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Element-setAttributeNS.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Element-setHTMLUnsafe.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-HTMLElement-generic.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-Range-createContextualFragment.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-ShadowRoot-setHTMLUnsafe.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-string-assignment-to-attribute-via-attribute-node.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/block-text-node-insertion-into-script-element.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/csp-block-eval.html
@@ -83,7 +87,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-no-csp-no-tt-default-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-no-csp-no-tt.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/eval-with-permissive-csp.html
-/LayoutTests/imported/w3c/web-platform-tests/trusted-types/idlharness.tentative.window.js.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/no-require-trusted-types-for-report-only.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/no-require-trusted-types-for-report-only.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/no-require-trusted-types-for.html
@@ -103,7 +107,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-event-handlers.html
-/LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-from-literal.html
+/LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-from-literal.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-report-only.html
 /LayoutTests/imported/w3c/web-platform-tests/trusted-types/trusted-types-report-only.html.headers

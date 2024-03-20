@@ -24,6 +24,12 @@ PASS embed.src accepts string and null after default policy was created.
 PASS object.data accepts string and null after default policy was created.
 PASS object.codeBase accepts string and null after default policy was created.
 PASS script.src accepts string and null after default policy was created.
+FAIL embed.src's mutationobservers receive the default policy's value. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+FAIL object.data's mutationobservers receive the default policy's value. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+FAIL object.codeBase's mutationobservers receive the default policy's value. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+FAIL script.src's mutationobservers receive the default policy's value. assert_equals: expected "http://this.is.a.successful.test/" but got "http://this.is.a.scripturl.test/"
+FAIL iframe.srcdoc's mutationobservers receive the default policy's value. assert_equals: expected "Quack, I want to be a duck!" but got "Hi, I want to be transformed!"
+FAIL div.onclick's mutationobservers receive the default policy's value. assert_equals: expected "Meow, I want to be a cat!" but got "Hi, I want to be transformed!"
 PASS iframe.srcdoc accepts string and null after default policy was created.
 FAIL div.onclick accepts string and null after default policy was created. assert_equals: expected "Meow, I want to be a cat!" but got "Hi, I want to be transformed!"
 PASS a.rel accepts strings

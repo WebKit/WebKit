@@ -6,6 +6,13 @@ PASS Element.setAttributeNS accepts untrusted string for non-specced accessor
 PASS Element.setAttributeNS accepts null for non-specced accessor
 PASS Assigning TrustedScriptURL to <svg:script xlink:href=...> works
 FAIL Blocking non-TrustedScriptURL assignment to <svg:script xlink:href=...> works assert_throws_js: function "_ => {
-          elem.setAttributeNS(xlink, "href", v);
+          elem.setAttributeNS(xlinkNamespace, "href", v);
         }" did not throw
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "SRCDOC" (ns=null) for "iframe" element (ns=http://www.w3.org/1999/xhtml).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "SRC" (ns=null) for "embed" element (ns=http://www.w3.org/1999/xhtml).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "SRC" (ns=null) for "script" element (ns=http://www.w3.org/1999/xhtml).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "DATA" (ns=null) for "object" element (ns=http://www.w3.org/1999/xhtml).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "CODEBASE" (ns=null) for "object" element (ns=http://www.w3.org/1999/xhtml).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "HREF" (ns=null) for "script" element (ns=http://www.w3.org/2000/svg).
+PASS Check `setAttributeNS` allows setting non-trusted string for non-lowercase attribute "HREF" (ns=http://www.w3.org/1999/xlink) for "script" element (ns=http://www.w3.org/2000/svg).
 
