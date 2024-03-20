@@ -37,7 +37,9 @@
             expectOnlyErrorEvent("Remove targetDiv1's parent from iframe & immediately lock target2. (main document handler)");
             expectOnlyChangeEvent("Remove targetDiv1's parent from iframe & immediately lock target2. (iframe handler)", targetIframe1.contentDocument);
             targetDiv1.parentElement.parentElement.removeChild(targetDiv1.parentElement);
-            targetDiv2.requestPointerLock();
+            const promise = targetDiv2.requestPointerLock();
+            // handle promise error if PointerLockOptionsEnabled
+            if (promise) promise.catch(e => {});
             shouldBe("document.pointerLockElement", "null");
             shouldBe("targetDiv1.parentElement.parentElement", "null");
             // doNextStep called by event handler.

@@ -223,7 +223,7 @@ http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html
 
-# Pointer-lock not supported on iOS
+# Pointer-lock not supported on iOS: https://bugs.webkit.org/show_bug.cgi?id=216621
 pointer-lock
 http/tests/pointer-lock
 fast/shadow-dom/pointerlockelement-in-shadow-tree.html

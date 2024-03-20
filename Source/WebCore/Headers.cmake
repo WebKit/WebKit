@@ -1014,6 +1014,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ParserContentPolicy.h
     dom/PointerEvent.h
     dom/PointerEventTypeNames.h
+    dom/PointerLockOptions.h
     dom/PopoverData.h
     dom/PortIdentifier.h
     dom/Position.h

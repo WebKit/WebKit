@@ -104,6 +104,7 @@
 #include "PointerCaptureController.h"
 #include "PointerEvent.h"
 #include "PointerLockController.h"
+#include "PointerLockOptions.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
@@ -4496,6 +4497,20 @@ bool Element::hasPointerCapture(int32_t pointerId)
 }
 
 #if ENABLE(POINTER_LOCK)
+
+JSC::JSValue Element::requestPointerLock(JSC::JSGlobalObject& lexicalGlobalObject, PointerLockOptions&& options)
+{
+    RefPtr<DeferredPromise> promise;
+    if (RefPtr page = document().page()) {
+        bool optionsEnabled = document().settings().pointerLockOptionsEnabled();
+
+        if (optionsEnabled)
+            promise = DeferredPromise::create(*JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject), DeferredPromise::Mode::RetainPromiseOnResolve);
+
+        page->pointerLockController().requestPointerLock(this, optionsEnabled ? std::optional(WTFMove(options)) : std::nullopt, promise);
+    }
+    return promise ? promise->promise() : JSC::jsUndefined();
+}
 
 void Element::requestPointerLock()
 {

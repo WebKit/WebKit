@@ -114,6 +114,7 @@ public:
 
         m_position = webEvent.position();
         m_movementDelta = WebCore::IntPoint(webEvent.deltaX(), webEvent.deltaY());
+        m_unadjustedMovementDelta = webEvent.unadjustedMovementDelta();
         m_globalPosition = webEvent.globalPosition();
         m_clickCount = webEvent.clickCount();
 #if PLATFORM(MAC)

@@ -183,6 +183,7 @@ class WebKit::WebMouseEvent : WebKit::WebEvent {
     String pointerType();
 #endif
     WebKit::GestureWasCancelled gestureWasCancelled();
+    WebCore::IntPoint unadjustedMovementDelta();
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)

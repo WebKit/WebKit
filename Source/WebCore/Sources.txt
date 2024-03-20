@@ -4052,6 +4052,7 @@ JSPlaneLayout.cpp
 JSPlaybackDirection.cpp
 JSPoint2D.cpp
 JSPointerEvent.cpp
+JSPointerLockOptions.cpp
 JSPopStateEvent.cpp
 JSPositionCallback.cpp
 JSPositionErrorCallback.cpp

@@ -5069,6 +5069,21 @@ PitchCorrectionAlgorithm:
     WebCore:
       default: MediaPlayerEnums::PitchCorrectionAlgorithm::BestAllAround
 
+PointerLockOptionsEnabled:
+  type: bool
+  status: testable
+  category: dom
+  condition: ENABLE(POINTER_LOCK)
+  humanReadableName: "Pointer Lock Options"
+  humanReadableDescription: "Element.requestPointerLock(options) and promise support."
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PopoverAttributeEnabled:
   type: bool
   status: stable

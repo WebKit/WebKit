@@ -11999,7 +11999,10 @@ void WebPageProxy::requestPointerLock()
 
 void WebPageProxy::didAllowPointerLock()
 {
-    ASSERT(m_isPointerLockPending && !m_isPointerLocked);
+    if (!m_isPointerLockPending)
+        return;
+
+    ASSERT(!m_isPointerLocked);
     m_isPointerLocked = true;
     m_isPointerLockPending = false;
 #if PLATFORM(MAC)
@@ -12011,7 +12014,10 @@ void WebPageProxy::didAllowPointerLock()
 
 void WebPageProxy::didDenyPointerLock()
 {
-    ASSERT(m_isPointerLockPending && !m_isPointerLocked);
+    if (!m_isPointerLockPending)
+        return;
+
+    ASSERT(!m_isPointerLocked);
     m_isPointerLockPending = false;
     send(Messages::WebPage::DidNotAcquirePointerLock());
 }
