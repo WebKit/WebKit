@@ -1,4 +1,28 @@
 =================
+WPE WebKit 2.44.0
+=================
+
+What's new in WPE WebKit 2.43.1?
+
+  - Add BubblewrapLauncher sandbox directory for the GStreamer user
+    registry cache directory.
+  - Fix bug causing the preferred language to not be passed to
+    NetworkProcess if set in the WebKitWebContext before creating
+    a WebKitWebView.
+  - Do not use real time priority for the display link thread.
+  - Do not special case the "sans" font family name.
+  - Use a shorter web process cache lifetime.
+  - Write bwrapinfo.json to disk for xdg-desktop-portal.
+  - Fallback to timer based vblank monitor if drmWaitVBlank fails.
+  - Show vertical blank monitor information in webkit://gpu.
+  - Fix webkit_web_context_allow_tls_certificate_for_host() for IPv6
+    URIs produced by SoupURI.
+  - Fix mixed versions of WPE and backend in webkit://gpu.
+  - Fix several memory leaks in the multimedia backend.
+  - Fix rendering after history navigation.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.43.1
 =================
 
