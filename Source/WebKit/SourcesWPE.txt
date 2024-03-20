@@ -124,6 +124,8 @@ UIProcess/API/C/glib/WKTextCheckerGLib.cpp
 UIProcess/API/C/wpe/WKView.cpp
 UIProcess/API/C/wpe/WKPagePrivateWPE.cpp
 
+Shared/API/c/skia/WKImageSkia.cpp
+
 Shared/API/c/wpe/WKEventWPE.cpp
 
 UIProcess/API/glib/APIContentRuleListStoreGLib.cpp @no-unify

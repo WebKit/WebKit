@@ -30,6 +30,7 @@
 #include "PixelDumpSupport.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
+#include <WebKit/WKImageSkia.h>
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkStream.h>
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
@@ -67,12 +68,12 @@ static void dumpPixmap(const SkPixmap& pixmap, const std::string& checksum)
     printPNG(data->bytes(), data->size(), checksum.c_str());
 }
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapshotType, WKArrayRef repaintRects, WKImageRef)
+void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapshotType, WKArrayRef repaintRects, WKImageRef webImage)
 {
     sk_sp<SkImage> image;
     switch (snapshotType) {
     case SnapshotResultType::WebContents:
-        // FIXME: implement.
+        image.reset(WKImageCreateSkImage(webImage));
         break;
     case SnapshotResultType::WebView:
         image.reset(TestController::singleton().mainWebView()->windowSnapshotImage());

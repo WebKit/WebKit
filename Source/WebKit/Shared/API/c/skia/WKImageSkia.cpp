@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +24,24 @@
  */
 
 #include "config.h"
-#include "WKImageCairo.h"
+#include "WKImageSkia.h"
 
-#if USE(CAIRO)
+#if USE(SKIA)
 #include "WKSharedAPICast.h"
 #include "WebImage.h"
-#include <WebCore/GraphicsContextCairo.h>
-#include <WebCore/ShareableBitmap.h>
-#include <cairo.h>
 
-cairo_surface_t* WKImageCreateCairoSurface(WKImageRef imageRef)
+SkImage* WKImageCreateSkImage(WKImageRef imageRef)
 {
-    // We cannot pass a RefPtr through the API here, so we just leak the reference.
-    return WebKit::toImpl(imageRef)->createCairoSurface().leakRef();
-}
-
-WKImageRef WKImageCreateFromCairoSurface(cairo_surface_t* surface, WKImageOptions options)
-{
-    WebCore::IntSize imageSize(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
-    auto webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options), WebCore::DestinationColorSpace::SRGB());
-    if (!webImage->context())
+    WebKit::WebImage* webImage = WebKit::toImpl(imageRef);
+    if (!webImage)
         return nullptr;
-    auto& graphicsContext = *webImage->context();
 
-    cairo_t* cr = graphicsContext.platformContext()->cr();
-    cairo_set_source_surface(cr, surface, 0, 0);
-    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
-    cairo_rectangle(cr, 0, 0, imageSize.width(), imageSize.height());
-    cairo_fill(cr);
+    auto nativeImage = webImage->copyNativeImage();
+    if (!nativeImage)
+        return nullptr;
 
-    return toAPI(webImage.leakRef());
+    auto platformImage = nativeImage->platformImage();
+    return platformImage.release();
 }
 
-#endif // USE(CAIRO)
+#endif // USE(SKIA)
