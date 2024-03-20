@@ -675,6 +675,8 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
     RETURN_IF_FINISHED();
     m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
 
+    [m_renderCommandEncoder setViewport: { m_viewportX, m_viewportY, m_viewportWidth, m_viewportHeight, m_minDepth, m_maxDepth } ];
+
     for (auto& bundle : bundles) {
         auto& renderBundle = bundle.get();
         if (!isValidToUseWith(renderBundle, *this)) {

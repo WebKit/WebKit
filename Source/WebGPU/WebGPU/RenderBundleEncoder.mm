@@ -551,16 +551,15 @@ void RenderBundleEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint
             indirectBuffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
             if (!indirectBuffer.isDestroyed() && indexBuffer.length)
                 [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
-            return;
+        } else {
+            auto contents = (MTLDrawIndexedPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
+            if (!contents || !contents->indexCount || !contents->instanceCount)
+                return;
+
+            ASSERT(m_indexBufferOffset == contents->indexStart);
+            addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
+            [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:contents->indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:contents->instanceCount baseVertex:contents->baseVertex baseInstance:contents->baseInstance];
         }
-
-        auto contents = (MTLDrawIndexedPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
-        if (!contents || !contents->indexCount || !contents->instanceCount)
-            return;
-
-        ASSERT(m_indexBufferOffset == contents->indexStart);
-        addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
-        [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:contents->indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:contents->instanceCount baseVertex:contents->baseVertex baseInstance:contents->baseInstance];
     } else {
         if (!isValidToUseWith(indirectBuffer, *this)) {
             makeInvalid(@"drawIndexedIndirect: buffer was invalid");
@@ -600,15 +599,14 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
             indirectBuffer.setCommandEncoder(m_renderPassEncoder->parentEncoder());
             if (!indirectBuffer.isDestroyed())
                 [m_renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
-            return;
+        } else {
+            auto contents = (MTLDrawPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
+            if (!contents || !contents->instanceCount || !contents->vertexCount)
+                return;
+
+            addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
+            [icbCommand drawPrimitives:m_primitiveType vertexStart:contents->vertexStart vertexCount:contents->vertexCount instanceCount:contents->instanceCount baseInstance:contents->baseInstance];
         }
-
-        auto contents = (MTLDrawPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
-        if (!contents || !contents->instanceCount || !contents->vertexCount)
-            return;
-
-        addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer);
-        [icbCommand drawPrimitives:m_primitiveType vertexStart:contents->vertexStart vertexCount:contents->vertexCount instanceCount:contents->instanceCount baseInstance:contents->baseInstance];
     } else {
         m_icbDescriptor.commandTypes |= MTLIndirectCommandTypeDraw;
 
