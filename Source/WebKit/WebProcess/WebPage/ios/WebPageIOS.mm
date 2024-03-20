@@ -2774,7 +2774,11 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         // forward such that it matches the original selection as much as possible.
         if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks) {
             // Search for the original text near the selection caret.
-            if (auto searchRange = rangeExpandedAroundPositionByCharacters(position, numGraphemeClusters(originalText))) {
+            auto characterCount = numGraphemeClusters(originalText);
+            if (!characterCount) {
+                textForRange = emptyString();
+                range = makeSimpleRange(position);
+            } else if (auto searchRange = rangeExpandedAroundPositionByCharacters(position, characterCount)) {
                 if (auto foundRange = findPlainText(*searchRange, originalTextWithFoldedQuoteMarks, { DoNotSetSelection, DoNotRevealSelection }); !foundRange.collapsed()) {
                     textForRange = plainTextForContext(foundRange);
                     range = foundRange;
