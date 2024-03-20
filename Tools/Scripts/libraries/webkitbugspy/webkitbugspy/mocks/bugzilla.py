@@ -192,6 +192,7 @@ class Bugzilla(Base, mocks.Requests):
                     radar_id = RadarMock.top.add(dict(
                         title='{} ({})'.format(issue['description'], issue['id']),
                         timestamp=time.time(),
+                        modified=time.time(),
                         opened=True,
                         creator=candidate,
                         assignee=user,
@@ -210,6 +211,7 @@ class Bugzilla(Base, mocks.Requests):
                 id=id,
                 summary=issue['title'],
                 creation_time=self.time_string(issue['timestamp']),
+                last_change_time=self.time_string(issue['modified' if issue.get('modified') else 'timestamp']),
                 status='REOPENED' if issue['opened'] else 'RESOLVED',
                 resolution='' if issue['opened'] else 'FIXED',
                 dupe_of=issue['original']['id'] if issue.get('original', None) else None,
@@ -369,6 +371,7 @@ class Bugzilla(Base, mocks.Requests):
             id=id,
             title=data['summary'],
             timestamp=int(time.time()),
+            modified=int(time.time()),
             opened=True,
             creator=user,
             assignee=assignee,

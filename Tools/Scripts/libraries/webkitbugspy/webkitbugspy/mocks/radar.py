@@ -150,6 +150,7 @@ class RadarModel(object):
         self.id = issue['id']
         self.classification = issue.get('classification', 'Other Bug')
         self.createdAt = datetime.utcfromtimestamp(issue['timestamp'] - timedelta(hours=7).seconds)
+        self.lastModifiedAt = datetime.utcfromtimestamp(issue['modified' if issue.get('modified') else 'timestamp'] - timedelta(hours=7).seconds)
         self.assignee = self.Person(Radar.transform_user(issue['assignee']))
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))
         self.state = 'Analyze' if issue['opened'] else 'Verify'
@@ -367,6 +368,7 @@ class RadarClient(object):
             id=id,
             title=request_data['title'],
             timestamp=int(time.time()),
+            modified=int(time.time()),
             opened=True,
             creator=user,
             assignee=user,

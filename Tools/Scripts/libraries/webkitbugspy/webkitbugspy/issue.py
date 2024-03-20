@@ -61,6 +61,7 @@ class Issue(object):
         self._link = None
         self._title = None
         self._timestamp = None
+        self._modified = None
         self._creator = None
         self._description = None
         self._opened = None
@@ -99,6 +100,12 @@ class Issue(object):
         if self._timestamp is None:
             self.tracker.populate(self, 'timestamp')
         return self._timestamp
+
+    @property
+    def modified(self):
+        if self._modified is None:
+            self.tracker.populate(self, 'modified')
+        return self._modified
 
     @property
     def creator(self):
