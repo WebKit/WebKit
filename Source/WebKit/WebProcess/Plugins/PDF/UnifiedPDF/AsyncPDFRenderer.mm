@@ -136,7 +136,7 @@ void AsyncPDFRenderer::paintPagePreviewOnWorkQueue(RetainPtr<PDFDocument>&& pdfD
             return;
 
         protectedThis->m_pagePreviews.set(pagePreviewRequest.pageIndex, WTFMove(imageBuffer));
-        // There's no need to trigger any repaints when we've created the preview.
+        plugin->didGeneratePreviewForPage(pagePreviewRequest.pageIndex);
     });
 }
 
@@ -191,7 +191,9 @@ void AsyncPDFRenderer::coverageRectDidChange(const FloatRect& coverageRect)
         return;
 
     auto pageCoverage = plugin->pageCoverageForRect(coverageRect);
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage);
+    auto pagePreviewScale = plugin->scaleForPagePreviews();
+
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage << " - preview scale " << pagePreviewScale);
 
     PDFPageIndexSet unwantedPageIndices;
     for (auto pageIndex : m_pagePreviews.keys())
@@ -204,11 +206,7 @@ void AsyncPDFRenderer::coverageRectDidChange(const FloatRect& coverageRect)
             continue;
         }
 
-        // The scale for page previews is a half of the normal tile resolution at 1x page scale.
-        // pageCoverage.pdfDocumentScale is here because page previews draw into a buffer sized using layoutBoundsForPageAtIndex().
-        static constexpr float pagePreviewScale = 0.5;
-        float previewScale = pageCoverage.deviceScaleFactor * pageCoverage.pdfDocumentScale * pagePreviewScale;
-        generatePreviewImageForPage(pageInfo.pageIndex, previewScale);
+        generatePreviewImageForPage(pageInfo.pageIndex, pagePreviewScale);
     }
 
     for (auto pageIndex : unwantedPageIndices)
@@ -315,6 +313,8 @@ void AsyncPDFRenderer::paintPDFIntoBuffer(RetainPtr<PDFDocument>&& pdfDocument, 
 
     auto bufferRect = renderInfo.clipRect.value_or(renderInfo.tileRect);
     context.translate(FloatPoint { -bufferRect.location() });
+
+    context.fillRect(bufferRect, Color::white);
 
     if (m_showDebugBorders.load())
         context.fillRect(bufferRect, Color::green.colorWithAlphaByte(32));
@@ -506,13 +506,17 @@ bool AsyncPDFRenderer::paintTilesForPage(GraphicsContext& context, float documen
         }
     }
 
-    if (paintedATile)
-        return true;
+    return paintedATile;
+}
 
-    if (RefPtr imageBuffer = previewImageForPage(pageIndex))
+void AsyncPDFRenderer::paintPagePreview(GraphicsContext& context, const FloatRect& clipRect, const FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex pageIndex)
+{
+    RefPtr imageBuffer = previewImageForPage(pageIndex);
+
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintPagePreview for page " << pageIndex  << " - buffer " << imageBuffer);
+
+    if (imageBuffer)
         context.drawImageBuffer(*imageBuffer, pageBoundsInPaintingCoordinates);
-
-    return false;
 }
 
 void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, const FloatRect& paintingRect)
@@ -531,7 +535,7 @@ void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, con
     });
 }
 
-void AsyncPDFRenderer::updateTilesForPaintingRect(float pageScaleFactor, const WebCore::FloatRect& paintingRect)
+void AsyncPDFRenderer::updateTilesForPaintingRect(float pageScaleFactor, const FloatRect& paintingRect)
 {
     // FIXME: If our platform does not support partial updates (supportsPartialRepaint() is false) then this should behave
     // identically to invalidateTilesForPaintingRect().

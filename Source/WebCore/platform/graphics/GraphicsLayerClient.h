@@ -108,6 +108,8 @@ public:
     virtual float pageScaleFactor() const { return 1; }
     virtual float zoomedOutPageScaleFactor() const { return 0; }
 
+    virtual std::optional<float> customContentsScale(const GraphicsLayer*) const { return { }; }
+
     virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const { return 1; }
     virtual bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const { return false; }
 

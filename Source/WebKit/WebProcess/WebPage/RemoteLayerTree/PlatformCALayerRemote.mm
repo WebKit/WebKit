@@ -56,7 +56,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformCALayer::LayerT
 {
     RefPtr<PlatformCALayerRemote> layer;
 
-    if (layerType == WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingLayer ||  layerType == WebCore::PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer)
+    if (layerType == WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingLayer || layerType == WebCore::PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer)
         layer = adoptRef(new PlatformCALayerRemoteTiledBacking(layerType, owner, context));
     else
         layer = adoptRef(new PlatformCALayerRemote(layerType, owner, context));

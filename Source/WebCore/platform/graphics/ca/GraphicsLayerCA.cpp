@@ -4117,6 +4117,9 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
         tiledBacking()->setZoomedOutContentsScale(zoomedOutScale);
     }
 
+    if (auto customScale = client().customContentsScale(this))
+        contentsScale = *customScale;
+
     if (contentsScale == m_layer->contentsScale())
         return;
 

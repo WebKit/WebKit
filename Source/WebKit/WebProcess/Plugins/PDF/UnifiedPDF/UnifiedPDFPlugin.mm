@@ -441,8 +441,12 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
 
     Vector<Ref<GraphicsLayer>> pageContainerLayers = m_pageBackgroundsContainerLayer->children();
 
+    // pageContentsLayers are always the size of `layoutBoundsForPageAtIndex`; we generate a page preview
+    // buffer of the same size. On zooming, this layer just gets scaled, to avoid repainting.
+
     for (PDFDocumentLayout::PageIndex i = 0; i < m_documentLayout.pageCount(); ++i) {
-        auto destinationRect = m_documentLayout.layoutBoundsForPageAtIndex(i);
+        auto pageBoundsRect = m_documentLayout.layoutBoundsForPageAtIndex(i);
+        auto destinationRect = pageBoundsRect;
         destinationRect.scale(m_documentLayout.scale());
 
         auto addLayerShadow = [](GraphicsLayer& layer, IntPoint shadowOffset, const Color& shadowColor, int shadowStdDeviation) {
@@ -479,6 +483,13 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
 
             pageBackgroundLayer->setAnchorPoint({ });
             pageBackgroundLayer->setBackgroundColor(Color::white);
+            pageBackgroundLayer->setDrawsContent(true);
+            pageBackgroundLayer->setShouldUpdateRootRelativeScaleFactor(false);
+            pageBackgroundLayer->setNeedsDisplay(); // We only need to paint this layer once.
+
+            // Sure would be nice if we could just stuff data onto a GraphicsLayer.
+            m_pageBackgroundLayers.add(pageBackgroundLayer, pageIndex);
+
             // FIXME: Need to add a 1px black border with alpha 0.0586.
 
             addLayerShadow(*pageBackgroundLayer, shadowOffset, shadowColor, shadowStdDeviation);
@@ -493,11 +504,63 @@ void UnifiedPDFPlugin::updatePageBackgroundLayers()
         pageContainerLayer->setSize(destinationRect.size());
         pageContainerLayer->setOpacity(shouldDisplayPage(i) ? 1 : 0);
 
-        auto pageContentsLayer = pageContainerLayer->children()[0];
-        pageContentsLayer->setSize(destinationRect.size());
+        auto pageBackgroundLayer = pageContainerLayer->children()[0];
+        pageBackgroundLayer->setSize(pageBoundsRect.size());
+
+        TransformationMatrix documentScaleTransform;
+        documentScaleTransform.scale(m_documentLayout.scale());
+        pageBackgroundLayer->setTransform(documentScaleTransform);
     }
 
     m_pageBackgroundsContainerLayer->setChildren(WTFMove(pageContainerLayers));
+}
+
+void UnifiedPDFPlugin::paintBackgroundLayerForPage(const GraphicsLayer*, GraphicsContext& context, const FloatRect& clipRect, PDFDocumentLayout::PageIndex pageIndex)
+{
+    auto destinationRect = m_documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+    destinationRect.setLocation({ });
+
+    if (RefPtr asyncRenderer = asyncRendererIfExists())
+        asyncRenderer->paintPagePreview(context, clipRect, destinationRect, pageIndex);
+}
+
+float UnifiedPDFPlugin::scaleForPagePreviews() const
+{
+    // The scale for page previews is a half of the normal tile resolution at 1x page scale.
+    // pageCoverage.pdfDocumentScale is here because page previews draw into a buffer sized using layoutBoundsForPageAtIndex().
+    static constexpr float pagePreviewScale = 0.5;
+    return deviceScaleFactor() * m_documentLayout.scale() * pagePreviewScale;
+}
+
+void UnifiedPDFPlugin::didGeneratePreviewForPage(PDFDocumentLayout::PageIndex pageIndex)
+{
+    if (RefPtr layer = backgroundLayerForPage(pageIndex))
+        layer->setNeedsDisplay();
+}
+
+GraphicsLayer* UnifiedPDFPlugin::backgroundLayerForPage(PDFDocumentLayout::PageIndex pageIndex) const
+{
+    if (!m_pageBackgroundsContainerLayer)
+        return nullptr;
+
+    auto pageContainerLayers = m_pageBackgroundsContainerLayer->children();
+    if (pageContainerLayers.size() <= pageIndex)
+        return nullptr;
+
+    Ref pageContainerLayer = pageContainerLayers[pageIndex];
+    if (!pageContainerLayer->children().size())
+        return nullptr;
+
+    return pageContainerLayer->children()[0].ptr();
+}
+
+std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexForPageBackgroundLayer(const GraphicsLayer* layer) const
+{
+    auto it = m_pageBackgroundLayers.find(layer);
+    if (it == m_pageBackgroundLayers.end())
+        return { };
+
+    return it->value;
 }
 
 void UnifiedPDFPlugin::willAttachScrollingNode()
@@ -652,13 +715,39 @@ void UnifiedPDFPlugin::notifyFlushRequired(const GraphicsLayer*)
     scheduleRenderingUpdate();
 }
 
+std::optional<float> UnifiedPDFPlugin::customContentsScale(const GraphicsLayer* layer) const
+{
+    if (pageIndexForPageBackgroundLayer(layer))
+        return scaleForPagePreviews();
+
+    return { };
+}
+
+void UnifiedPDFPlugin::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
+{
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    if (usingTiledBacking)
+        layer->tiledBacking()->setIsInWindow(page->isInWindow());
+}
+
 void UnifiedPDFPlugin::didChangeIsInWindow()
 {
     RefPtr page = this->page();
     if (!page || !m_contentsLayer)
         return;
 
-    m_contentsLayer->setIsInWindow(page->isInWindow());
+    bool isInWindow = page->isInWindow();
+    m_contentsLayer->setIsInWindow(isInWindow);
+
+    for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
+        if (pageLayer->children().size()) {
+            Ref pageContensLayer = pageLayer->children()[0];
+            pageContensLayer->setIsInWindow(isInWindow);
+        }
+    }
 }
 
 void UnifiedPDFPlugin::windowActivityDidChange()
@@ -666,7 +755,7 @@ void UnifiedPDFPlugin::windowActivityDidChange()
     repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::WindowActivityChanged);
 }
 
-void UnifiedPDFPlugin::paint(WebCore::GraphicsContext& context, const WebCore::IntRect&)
+void UnifiedPDFPlugin::paint(GraphicsContext& context, const IntRect&)
 {
     // Only called for snapshotting.
     if (size().isEmpty())
@@ -712,10 +801,16 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
         return;
     }
 
-    if (layer != m_contentsLayer.get())
+    if (layer == m_contentsLayer.get()) {
+        paintPDFContent(context, clipRect, PaintingBehavior::All, AllowsAsyncRendering::Yes);
         return;
+    }
 
-    paintPDFContent(context, clipRect, PaintingBehavior::All, AllowsAsyncRendering::Yes);
+    if (auto backgroundLayerPageIndex = pageIndexForPageBackgroundLayer(layer)) {
+        paintBackgroundLayerForPage(layer, context, clipRect, *backgroundLayerPageIndex);
+        return;
+    }
+
 }
 
 PDFPageCoverage UnifiedPDFPlugin::pageCoverageForRect(const FloatRect& clipRect) const
@@ -791,12 +886,6 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
             continue;
 
         auto pageDestinationRect = pageInfo.pageBounds;
-
-        {
-            auto whiteBackgroundStateSaver = GraphicsContextStateSaver(context);
-            context.scale(documentScale);
-            context.fillRect(pageDestinationRect, Color::white);
-        }
 
         RefPtr<AsyncPDFRenderer> asyncRenderer;
         if (allowsAsyncRendering == AllowsAsyncRendering::Yes)
