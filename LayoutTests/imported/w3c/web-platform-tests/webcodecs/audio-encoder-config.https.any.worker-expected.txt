@@ -1,8 +1,8 @@
 
 PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Missing codec
 PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Empty codec
-FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config: Missing sampleRate assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config: Missing numberOfChannels assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Missing sampleRate
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Missing numberOfChannels
 FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config: Zero sampleRate assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config: Zero channels assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config: Bit rate too big assert_unreached: Should have rejected: undefined Reached unreachable code
@@ -13,8 +13,8 @@ PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Opus fra
 PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Invalid Opus frameDuration
 PASS Test that AudioEncoder.configure() rejects invalid config: Missing codec
 PASS Test that AudioEncoder.configure() rejects invalid config: Empty codec
-FAIL Test that AudioEncoder.configure() rejects invalid config: Missing sampleRate assert_unreached: unexpected error Reached unreachable code
-FAIL Test that AudioEncoder.configure() rejects invalid config: Missing numberOfChannels assert_unreached: unexpected error Reached unreachable code
+PASS Test that AudioEncoder.configure() rejects invalid config: Missing sampleRate
+PASS Test that AudioEncoder.configure() rejects invalid config: Missing numberOfChannels
 FAIL Test that AudioEncoder.configure() rejects invalid config: Zero sampleRate assert_unreached: unexpected error Reached unreachable code
 FAIL Test that AudioEncoder.configure() rejects invalid config: Zero channels assert_unreached: unexpected error Reached unreachable code
 FAIL Test that AudioEncoder.configure() rejects invalid config: Bit rate too big assert_unreached: unexpected error Reached unreachable code

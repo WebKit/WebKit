@@ -119,9 +119,7 @@ static ExceptionOr<AudioEncoder::Config> createAudioEncoderConfig(const WebCodec
     if (config.flac)
         flacConfig = { config.flac->blockSize, config.flac->compressLevel };
 
-    std::optional<size_t> sampleRate = config.sampleRate;
-    std::optional<size_t> numberOfChannels = config.numberOfChannels;
-    return AudioEncoder::Config { WTFMove(sampleRate), WTFMove(numberOfChannels), config.bitrate.value_or(0), WTFMove(opusConfig), WTFMove(isAacADTS), WTFMove(flacConfig) };
+    return AudioEncoder::Config { config.sampleRate, config.numberOfChannels, config.bitrate.value_or(0), WTFMove(opusConfig), WTFMove(isAacADTS), WTFMove(flacConfig) };
 }
 
 ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebCodecsAudioEncoderConfig&& config)
@@ -217,8 +215,8 @@ WebCodecsEncodedAudioChunkMetadata WebCodecsAudioEncoder::createEncodedChunkMeta
     if (m_hasNewActiveConfiguration) {
         m_hasNewActiveConfiguration = false;
         // FIXME: Provide more accurate decoder configuration...
-        auto baseConfigurationSampleRate = m_baseConfiguration.sampleRate.value_or(0);
-        auto baseConfigurationNumberOfChannels = m_baseConfiguration.numberOfChannels.value_or(0);
+        auto baseConfigurationSampleRate = m_baseConfiguration.sampleRate;
+        auto baseConfigurationNumberOfChannels = m_baseConfiguration.numberOfChannels;
         metadata.decoderConfig = WebCodecsAudioDecoderConfig {
             !m_activeConfiguration.codec.isEmpty() ? WTFMove(m_activeConfiguration.codec) : String { m_baseConfiguration.codec },
             { },
