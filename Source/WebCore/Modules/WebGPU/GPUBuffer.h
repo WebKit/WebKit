@@ -78,8 +78,11 @@ private:
     void internalUnmap(ScriptExecutionContext&);
 
     Ref<WebGPU::Buffer> m_backing;
-    WebGPU::Buffer::MappedRange m_mappedRange;
-    RefPtr<JSC::ArrayBuffer> m_arrayBuffer;
+    struct ArrayBufferWithOffset {
+        RefPtr<JSC::ArrayBuffer> buffer;
+        uint8_t* source;
+    };
+    Vector<ArrayBufferWithOffset> m_arrayBuffers;
     size_t m_bufferSize { 0 };
     size_t m_mappedRangeOffset { 0 };
     size_t m_mappedRangeSize { 0 };

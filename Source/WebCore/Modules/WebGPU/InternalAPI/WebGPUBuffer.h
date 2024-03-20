@@ -51,7 +51,7 @@ public:
 
     virtual void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64>, CompletionHandler<void(bool)>&&) = 0;
     struct MappedRange {
-        void* source { nullptr };
+        uint8_t* source { nullptr };
         size_t byteLength { 0 };
     };
     virtual MappedRange getMappedRange(Size64 offset, std::optional<Size64>) = 0;

@@ -36,7 +36,7 @@ GPUBuffer::~GPUBuffer()
 {
     m_bufferSize = 0;
     m_backing->destroy();
-    m_arrayBuffer = nullptr;
+    m_arrayBuffers.clear();
 }
 
 GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
@@ -97,11 +97,11 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
     });
 }
 
-static auto makeArrayBuffer(auto source, auto byteLength, auto& cachedArrayBuffer, auto& device, auto& buffer)
+static auto makeArrayBuffer(auto source, auto byteLength, auto& cachedArrayBuffers, auto& device, auto& buffer)
 {
     auto arrayBuffer = ArrayBuffer::create(source, byteLength);
-    cachedArrayBuffer = arrayBuffer.ptr();
-    cachedArrayBuffer->pin();
+    cachedArrayBuffers.append({ arrayBuffer.ptr(), reinterpret_cast<uint8_t*>(source) });
+    cachedArrayBuffers.last().buffer->pin();
     if (device)
         device->addBufferToUnmap(buffer);
     return arrayBuffer;
@@ -171,16 +171,16 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSi
         m_mappedRanges.compact();
     }
 
-    m_mappedRange = m_backing->getMappedRange(offset, size);
-    if (!m_mappedRange.source) {
-        m_arrayBuffer = nullptr;
+    auto mappedRange = m_backing->getMappedRange(offset, size);
+    if (!mappedRange.source) {
+        m_arrayBuffers.clear();
         if (m_mappedAtCreation || !size)
-            return makeArrayBuffer(static_cast<size_t>(0U), 1, m_arrayBuffer, m_device, *this);
+            return makeArrayBuffer(static_cast<size_t>(0U), 1, m_arrayBuffers, m_device, *this);
 
         return Exception { ExceptionCode::OperationError, "getMappedRange failed"_s };
     }
 
-    return makeArrayBuffer(m_mappedRange.source, m_mappedRange.byteLength, m_arrayBuffer, m_device, *this);
+    return makeArrayBuffer(mappedRange.source, size, m_arrayBuffers, m_device, *this);
 }
 
 void GPUBuffer::unmap(ScriptExecutionContext& scriptExecutionContext)
@@ -204,16 +204,18 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
 
     m_mapState = GPUBufferMapState::Unmapped;
 
-    if (m_arrayBuffer && m_arrayBuffer->data() && m_mappedRange.byteLength) {
-        memcpy(m_mappedRange.source, m_arrayBuffer->data(), m_mappedRange.byteLength);
-        JSC::ArrayBufferContents emptyBuffer;
-        m_arrayBuffer->unpin();
-        m_arrayBuffer->transferTo(scriptExecutionContext.vm(), emptyBuffer);
+    for (auto& arrayBufferAndOffset : m_arrayBuffers) {
+        auto& arrayBuffer = arrayBufferAndOffset.buffer;
+        if (arrayBuffer && arrayBuffer->data() && arrayBuffer->byteLength()) {
+            memcpy(arrayBufferAndOffset.source, arrayBuffer->data(), arrayBuffer->byteLength());
+            JSC::ArrayBufferContents emptyBuffer;
+            arrayBuffer->unpin();
+            arrayBuffer->transferTo(scriptExecutionContext.vm(), emptyBuffer);
+        }
     }
 
-    m_arrayBuffer = nullptr;
+    m_arrayBuffers.clear();
     m_backing->unmap();
-    m_mappedRange = { nullptr, 0 };
 }
 
 void GPUBuffer::destroy(ScriptExecutionContext& scriptExecutionContext)
