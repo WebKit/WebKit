@@ -29,7 +29,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class QLItem;
 @class WKSPreviewWindowController;
 
 @protocol WKSPreviewWindowControllerDelegate <NSObject>
@@ -39,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WKSPreviewWindowController : NSObject
 @property (nonatomic, weak, nullable) id <WKSPreviewWindowControllerDelegate> delegate;
 
-- (instancetype)initWithItem:(QLItem *)item NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
 - (void)presentWindow;
 - (void)dismissWindow;
 @end
