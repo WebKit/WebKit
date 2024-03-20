@@ -870,6 +870,7 @@ void VM::deleteAllCode(DeleteAllCodeEffort effort)
 {
     whenIdle([=, this] () {
         m_codeCache->clear();
+        m_builtinExecutables->clear();
         m_regExpCache->deleteAllCode();
         heap.deleteAllCodeBlocks(effort);
         heap.deleteAllUnlinkedCodeBlocks(effort);
@@ -1620,6 +1621,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
 {
     m_microtaskQueue.visitAggregate(visitor);
     numericStrings.visitAggregate(visitor);
+    m_builtinExecutables->visitAggregate(visitor);
 
     visitor.append(structureStructure);
     visitor.append(structureRareDataStructure);

@@ -715,10 +715,7 @@ void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet, CollectionSco
 
 void Heap::finalizeUnconditionalFinalizers()
 {
-    VM& vm = this->vm();
     CollectionScope collectionScope = this->collectionScope().value_or(CollectionScope::Full);
-
-    vm.builtinExecutables()->finalizeUnconditionally(collectionScope);
 
     {
         // We run this before CodeBlock's unconditional finalizer since CodeBlock looks at the owner executable's installed CodeBlock in its finalizeUnconditionally.
