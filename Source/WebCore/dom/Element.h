@@ -773,6 +773,9 @@ public:
     bool hasCustomState(const AtomString& state) const;
     CustomStateSet& ensureCustomStateSet();
 
+    bool capturedInViewTransition() const { return hasEventTargetFlag(EventTargetFlag::CapturedInViewTransition); }
+    void setCapturedInViewTransition(bool captured) { setEventTargetFlag(EventTargetFlag::CapturedInViewTransition, captured); }
+
 protected:
     Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);
 

@@ -2068,7 +2068,7 @@ bool RenderElement::capturedInViewTransition() const
     if (!hasViewTransitionName())
         return false;
 
-    return !!document().activeViewTransition();
+    return element() && element()->capturedInViewTransition();
 }
 
 bool RenderElement::hasViewTransitionName() const
