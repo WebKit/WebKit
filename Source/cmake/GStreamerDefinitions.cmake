@@ -9,5 +9,6 @@ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_FULL "Whether to enable support for static GS
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_NATIVE_VIDEO "Toggle native video support in GStreamer media player" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_NATIVE_AUDIO "Toggle native audio support in GStreamer media player" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_TEXT_SINK "Toggle text sink support in GStreamer media player" PRIVATE ON)
+WEBKIT_OPTION_DEFINE(USE_WHISPER "Toggle whisper.cpp support for Speech Recognition." PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_TRANSCODER "Whether to enable support for GStreamer MediaRecorder backend" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_WEBRTC "Whether to enable support for WebRTC" PUBLIC ON)

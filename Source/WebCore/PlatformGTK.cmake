@@ -4,6 +4,7 @@ include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
+include(platform/Whisper.cmake)
 
 if (USE_CAIRO)
     include(platform/Cairo.cmake)
