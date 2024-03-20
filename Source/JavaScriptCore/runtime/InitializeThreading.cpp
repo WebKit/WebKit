@@ -137,15 +137,7 @@ void initialize()
 
         if (Wasm::isSupported() || !Options::usePollingTraps()) {
             // JSLock::lock() can call registerThreadForMachExceptionHandling() which crashes if this has not been called first.
-            int mask = 0;
-#if CPU(ARM64E) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-            JSC::Wasm::MachExceptionSigningKey keygen;
-            uint32_t signingKey = keygen.randomSigningKey;
-            mask |= toMachMask(Signal::AccessFault);
-#else
-            uint32_t signingKey = 0;
-#endif // CPU(ARM64E) && defined(EXCEPTION_STATE_IDENTITY_PROTECTED) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-            initializeSignalHandling(signingKey, mask);
+            initializeSignalHandling();
 
             if (!Options::usePollingTraps())
                 VMTraps::initializeSignals();
