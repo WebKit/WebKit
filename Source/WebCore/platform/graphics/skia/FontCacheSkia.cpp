@@ -39,7 +39,7 @@ namespace WebCore {
 
 void FontCache::platformInit()
 {
-    m_fontManager = SkFontMgr_New_FontConfig(nullptr);
+    m_fontManager = SkFontMgr_New_FontConfig(FcConfigReference(nullptr));
 }
 
 RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription& description, const Font&, IsForPlatformFont, PreferColoredFont, StringView stringView)
