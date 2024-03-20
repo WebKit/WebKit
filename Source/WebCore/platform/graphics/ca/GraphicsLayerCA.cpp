@@ -1974,6 +1974,11 @@ bool GraphicsLayerCA::platformCALayerUseGiantTiles() const
     return client().useGiantTiles();
 }
 
+bool GraphicsLayerCA::platformCALayerCSSUnprefixedBackdropFilterEnabled() const
+{
+    return client().cssUnprefixedBackdropFilterEnabled();
+}
+
 void GraphicsLayerCA::platformCALayerLogFilledVisibleFreshTile(unsigned blankPixelCount)
 {
     client().logFilledVisibleFreshTile(blankPixelCount);

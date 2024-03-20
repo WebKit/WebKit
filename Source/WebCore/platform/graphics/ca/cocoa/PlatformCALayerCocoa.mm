@@ -867,7 +867,7 @@ void PlatformCALayerCocoa::setOpacity(float value)
 
 void PlatformCALayerCocoa::setFilters(const FilterOperations& filters)
 {
-    PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters);
+    PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters, m_owner->platformCALayerCSSUnprefixedBackdropFilterEnabled());
 }
 
 void PlatformCALayerCocoa::copyFiltersFrom(const PlatformCALayer& sourceLayer)

@@ -3958,6 +3958,11 @@ bool RenderLayerBacking::useGiantTiles() const
     return renderer().settings().useGiantTiles();
 }
 
+bool RenderLayerBacking::cssUnprefixedBackdropFilterEnabled() const
+{
+    return renderer().settings().cssUnprefixedBackdropFilterEnabled();
+}
+
 void RenderLayerBacking::logFilledVisibleFreshTile(unsigned blankPixelCount)
 {
     if (auto* loggingClient = renderer().page().performanceLoggingClient())

@@ -52,7 +52,7 @@ public:
     void applyEffectsFromScrollingThread(MonotonicTime now) const;
 #endif
 
-    void applyEffectsFromMainThread(PlatformLayer*, MonotonicTime now) const;
+    void applyEffectsFromMainThread(PlatformLayer*, MonotonicTime now, bool cssUnprefixedBackdropFilterEnabled) const;
 
     void clear(PlatformLayer*);
 

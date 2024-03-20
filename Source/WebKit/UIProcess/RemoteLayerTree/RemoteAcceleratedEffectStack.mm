@@ -178,12 +178,12 @@ void RemoteAcceleratedEffectStack::applyEffectsFromScrollingThread(MonotonicTime
 }
 #endif
 
-void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now) const
+void RemoteAcceleratedEffectStack::applyEffectsFromMainThread(PlatformLayer *layer, MonotonicTime now, bool cssUnprefixedBackdropFilterEnabled) const
 {
     auto computedValues = computeValues(now);
 
     if (m_affectedLayerProperties.contains(LayerProperty::Filter))
-        WebCore::PlatformCAFilters::setFiltersOnLayer(layer, computedValues.filter);
+        WebCore::PlatformCAFilters::setFiltersOnLayer(layer, computedValues.filter, cssUnprefixedBackdropFilterEnabled);
 
     if (m_affectedLayerProperties.contains(LayerProperty::Opacity))
         [layer setOpacity:computedValues.opacity];

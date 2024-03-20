@@ -107,6 +107,11 @@ bool RemoteLayerTreeHost::threadedAnimationResolutionEnabled() const
     return m_drawingArea->page().preferences().threadedAnimationResolutionEnabled();
 }
 
+bool RemoteLayerTreeHost::cssUnprefixedBackdropFilterEnabled() const
+{
+    return m_drawingArea->page().preferences().cssUnprefixedBackdropFilterEnabled();
+}
+
 #if PLATFORM(MAC)
 bool RemoteLayerTreeHost::updateBannerLayers(const RemoteLayerTreeTransaction& transaction)
 {

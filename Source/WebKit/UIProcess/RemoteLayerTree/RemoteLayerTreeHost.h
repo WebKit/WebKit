@@ -88,6 +88,8 @@ public:
     bool replayDynamicContentScalingDisplayListsIntoBackingStore() const;
     bool threadedAnimationResolutionEnabled() const;
 
+    bool cssUnprefixedBackdropFilterEnabled() const;
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Seconds acceleratedTimelineTimeOrigin() const;
     MonotonicTime animationCurrentTime() const;

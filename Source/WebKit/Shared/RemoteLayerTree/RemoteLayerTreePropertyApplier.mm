@@ -267,7 +267,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     }
 
     if (properties.changedProperties & LayerChange::FiltersChanged)
-        PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations());
+        PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations(), layerTreeHost->cssUnprefixedBackdropFilterEnabled());
 
     if (properties.changedProperties & LayerChange::AnimationsChanged) {
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)

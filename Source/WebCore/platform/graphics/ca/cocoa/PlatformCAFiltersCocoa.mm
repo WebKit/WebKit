@@ -221,7 +221,7 @@ void PlatformCAFilters::updatePresentationModifiers(const FilterOperations& filt
 }
 #endif // PLATFORM(MAC)
 
-void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters)
+void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters, bool cssUnprefixedBackdropFilterEnabled)
 {
     if (!filters.size()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -324,14 +324,17 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             CAFilter *filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
             [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
             if ([layer isKindOfClass:[CABackdropLayer class]]) {
-#if PLATFORM(VISION)
                 // If the backdrop is displayed inside a transparent web view over
                 // a material background, we need `normalizeEdgesTransparent`
                 // in order to render correctly.
+#if PLATFORM(VISION)
                 [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
 #else
+                if (cssUnprefixedBackdropFilterEnabled)
+                    [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
                 [filter setValue:@YES forKey:@"inputNormalizeEdges"];
 #endif
+
 
             }
             [filter setName:filterName];

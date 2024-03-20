@@ -47,7 +47,7 @@ using TypedFilterPresentationModifier = std::pair<FilterOperation::Type, RetainP
 
 class PlatformCAFilters {
 public:
-    WEBCORE_EXPORT static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&);
+    WEBCORE_EXPORT static void setFiltersOnLayer(PlatformLayer*, const FilterOperations&, bool cssUnprefixedBackdropFilterEnabled);
     WEBCORE_EXPORT static void setBlendingFiltersOnLayer(PlatformLayer*, const BlendMode);
     static bool isAnimatedFilterProperty(FilterOperation::Type);
     static String animatedFilterPropertyName(FilterOperation::Type);
