@@ -721,6 +721,12 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
         WTFLogAlways("%s", stream.release().utf8().data()); \
     } while (0)
 
+#define WTF_ALWAYS_LOG(commands) do { \
+        WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
+        stream << commands; \
+        WTFLogAlways("%s", stream.release().utf8().data()); \
+    } while (0)
+
 /* RELEASE_ASSERT */
 
 #if !ASSERT_ENABLED
