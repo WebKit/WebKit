@@ -319,6 +319,8 @@ void WebFullScreenManager::willEnterFullScreen(WebCore::HTMLMediaElementEnums::V
 
     ALWAYS_LOG(LOGIDENTIFIER, "<", m_element->tagName(), " id=\"", m_element->getIdAttribute(), "\">");
 
+    m_page->isInFullscreenChanged(WebPage::IsInFullscreenMode::Yes);
+
     if (!m_element->document().fullscreenManager().willEnterFullscreen(*m_element, mode)) {
         close();
         return;
@@ -328,8 +330,6 @@ void WebFullScreenManager::willEnterFullScreen(WebCore::HTMLMediaElementEnums::V
         close();
         return;
     }
-
-    m_page->isInFullscreenChanged(WebPage::IsInFullscreenMode::Yes);
 
 #if !PLATFORM(IOS_FAMILY)
     m_page->hidePageBanners();
