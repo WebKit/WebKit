@@ -255,6 +255,21 @@ public:
     bool undoManagerAPIEnabled() const { return m_data.undoManagerAPIEnabled; }
     void setUndoManagerAPIEnabled(bool enabled) { m_data.undoManagerAPIEnabled = enabled; }
 
+    bool mainContentUserGestureOverrideEnabled() const { return m_data.mainContentUserGestureOverrideEnabled; }
+    void setMainContentUserGestureOverrideEnabled(bool enabled) { m_data.mainContentUserGestureOverrideEnabled = enabled; }
+
+    bool invisibleAutoplayForbidden() const { return m_data.invisibleAutoplayForbidden; }
+    void setInvisibleAutoplayForbidden(bool forbidden) { m_data.invisibleAutoplayForbidden = forbidden; }
+
+    bool attachmentElementEnabled() const { return m_data.attachmentElementEnabled; }
+    void setAttachmentElementEnabled(bool enabled) { m_data.attachmentElementEnabled = enabled; }
+
+    bool attachmentWideLayoutEnabled() const { return m_data.attachmentWideLayoutEnabled; }
+    void setAttachmentWideLayoutEnabled(bool enabled) { m_data.attachmentWideLayoutEnabled = enabled; }
+
+    bool allowsInlinePredictions() const { return m_data.allowsInlinePredictions; }
+    void setAllowsInlinePredictions(bool allows) { m_data.allowsInlinePredictions = allows; }
+
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_data.shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_data.shouldRelaxThirdPartyCookieBlocking; }
 
@@ -372,6 +387,11 @@ private:
         bool incompleteImageBorderEnabled { false };
         bool shouldDeferAsynchronousScriptsUntilAfterDocumentLoad { true };
         bool undoManagerAPIEnabled { false };
+        bool mainContentUserGestureOverrideEnabled { false };
+        bool invisibleAutoplayForbidden { false };
+        bool attachmentElementEnabled { false };
+        bool attachmentWideLayoutEnabled { false };
+        bool allowsInlinePredictions { false };
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
         WTF::String attributedBundleIdentifier { };

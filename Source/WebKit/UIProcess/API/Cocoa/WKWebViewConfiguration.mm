@@ -146,14 +146,9 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _shouldDecidePolicyBeforeLoadingQuickLookPreview;
 #endif
 
-    BOOL _invisibleAutoplayNotPermitted;
     BOOL _mediaDataLoadsAutomatically;
-    BOOL _attachmentElementEnabled;
-    BOOL _attachmentWideLayoutEnabled;
     Class _attachmentFileWrapperClass;
-    BOOL _mainContentUserGestureOverrideEnabled;
 
-    BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
 
 #if ENABLE(APPLE_PAY)
@@ -164,7 +159,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
     double _sampledPageTopColorMaxDifference;
     double _sampledPageTopColorMinHeight;
-    BOOL _allowsInlinePredictions;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -200,12 +194,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _mediaDataLoadsAutomatically = YES;
     _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
 #endif
-    _mainContentUserGestureOverrideEnabled = NO;
-    _invisibleAutoplayNotPermitted = NO;
-    _attachmentElementEnabled = NO;
-    _attachmentWideLayoutEnabled = NO;
-
-    _waitsForPaintAfterViewDidMoveToWindow = YES;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     _allowsAirPlayForMediaPlayback = YES;
@@ -238,19 +226,17 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _sampledPageTopColorMaxDifference = DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference;
     _sampledPageTopColorMinHeight = DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight;
 
-    _allowsInlinePredictions = NO;
-
     return self;
 }
 
 - (void)setAllowsInlinePredictions:(BOOL)enabled
 {
-    _allowsInlinePredictions = enabled;
+    _pageConfiguration->setAllowsInlinePredictions(enabled);
 }
 
 - (BOOL)allowsInlinePredictions
 {
-    return _allowsInlinePredictions;
+    return _pageConfiguration->allowsInlinePredictions();
 }
 
 - (NSString *)description
@@ -365,14 +351,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
     configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
 
-    configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
-    configuration->_attachmentElementEnabled = self->_attachmentElementEnabled;
-    configuration->_attachmentWideLayoutEnabled = self->_attachmentWideLayoutEnabled;
     configuration->_attachmentFileWrapperClass = self->_attachmentFileWrapperClass;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
-    configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
-    configuration->_waitsForPaintAfterViewDidMoveToWindow = self->_waitsForPaintAfterViewDidMoveToWindow;
     configuration->_controlledByAutomation = self->_controlledByAutomation;
 
 #if PLATFORM(IOS_FAMILY)
@@ -409,8 +390,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     configuration->_sampledPageTopColorMaxDifference = self->_sampledPageTopColorMaxDifference;
     configuration->_sampledPageTopColorMinHeight = self->_sampledPageTopColorMinHeight;
-
-    configuration->_allowsInlinePredictions = self->_allowsInlinePredictions;
 
     return configuration;
 }
@@ -911,12 +890,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_invisibleAutoplayNotPermitted
 {
-    return _invisibleAutoplayNotPermitted;
+    return _pageConfiguration->invisibleAutoplayForbidden();
 }
 
 - (void)_setInvisibleAutoplayNotPermitted:(BOOL)notPermitted
 {
-    _invisibleAutoplayNotPermitted = notPermitted;
+    _pageConfiguration->setInvisibleAutoplayForbidden(notPermitted);
 }
 
 - (BOOL)_mediaDataLoadsAutomatically
@@ -931,22 +910,22 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_attachmentElementEnabled
 {
-    return _attachmentElementEnabled;
+    return _pageConfiguration->attachmentElementEnabled();
 }
 
 - (void)_setAttachmentElementEnabled:(BOOL)attachmentElementEnabled
 {
-    _attachmentElementEnabled = attachmentElementEnabled;
+    _pageConfiguration->setAttachmentElementEnabled(attachmentElementEnabled);
 }
 
 - (BOOL)_attachmentWideLayoutEnabled
 {
-    return _attachmentWideLayoutEnabled;
+    return _pageConfiguration->attachmentWideLayoutEnabled();
 }
 
 - (void)_setAttachmentWideLayoutEnabled:(BOOL)attachmentWideLayoutEnabled
 {
-    _attachmentWideLayoutEnabled = attachmentWideLayoutEnabled;
+    _pageConfiguration->setAttachmentWideLayoutEnabled(attachmentWideLayoutEnabled);
 }
 
 - (Class)_attachmentFileWrapperClass
@@ -1123,12 +1102,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_mainContentUserGestureOverrideEnabled
 {
-    return _mainContentUserGestureOverrideEnabled;
+    return _pageConfiguration->mainContentUserGestureOverrideEnabled();
 }
 
 - (void)_setMainContentUserGestureOverrideEnabled:(BOOL)mainContentUserGestureOverrideEnabled
 {
-    _mainContentUserGestureOverrideEnabled = mainContentUserGestureOverrideEnabled;
+    _pageConfiguration->setMainContentUserGestureOverrideEnabled(mainContentUserGestureOverrideEnabled);
 }
 
 - (BOOL)_initialCapitalizationEnabled
@@ -1143,12 +1122,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_waitsForPaintAfterViewDidMoveToWindow
 {
-    return _waitsForPaintAfterViewDidMoveToWindow;
+    return _pageConfiguration->waitsForPaintAfterViewDidMoveToWindow();
 }
 
 - (void)_setWaitsForPaintAfterViewDidMoveToWindow:(BOOL)shouldSynchronize
 {
-    _waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize;
+    _pageConfiguration->setWaitsForPaintAfterViewDidMoveToWindow(shouldSynchronize);
 }
 
 - (BOOL)_isControlledByAutomation
@@ -1454,12 +1433,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 // FIXME: Remove this SPI once rdar://110277838 is resolved and all clients adopt the API.
 - (void)_setMarkedTextInputEnabled:(BOOL)enabled
 {
-    _allowsInlinePredictions = enabled;
+    _pageConfiguration->setAllowsInlinePredictions(enabled);
 }
 
 - (BOOL)_markedTextInputEnabled
 {
-    return _allowsInlinePredictions;
+    return _pageConfiguration->allowsInlinePredictions();
 }
 
 @end
