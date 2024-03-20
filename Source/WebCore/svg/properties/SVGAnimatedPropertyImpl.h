@@ -29,6 +29,7 @@
 #include "SVGAnimatedDecoratedProperty.h"
 #include "SVGAnimatedPrimitiveProperty.h"
 #include "SVGAnimatedPropertyList.h"
+#include "SVGAnimatedString.h"
 #include "SVGAnimatedValueProperty.h"
 #include "SVGDecoratedEnumeration.h"
 #include "SVGLength.h"
@@ -46,7 +47,6 @@ namespace WebCore {
 using SVGAnimatedBoolean = SVGAnimatedPrimitiveProperty<bool>;
 using SVGAnimatedInteger = SVGAnimatedPrimitiveProperty<int>;
 using SVGAnimatedNumber = SVGAnimatedPrimitiveProperty<float>;
-using SVGAnimatedString = SVGAnimatedPrimitiveProperty<String>;
 
 using SVGAnimatedEnumeration = SVGAnimatedDecoratedProperty<SVGDecoratedEnumeration, unsigned>;
 

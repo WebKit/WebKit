@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS Assign string to SVGScriptElement.href.baseVal.
+PASS Assign TrustedScriptURL to SVGScriptElement.href.baseVal.
+FAIL Assign string to non-attached SVGScriptElement.href via setAttribute. assert_throws_js: function "_ => {
+        elem.setAttribute("href", "about:blank");
+      }" did not throw
+PASS Assign TrustedScriptURL to non-attached SVGScriptElement.href via setAttribute.
+FAIL Assign string to attached SVGScriptElement.href via setAttribute. assert_throws_js: function "_ => {
+        elem.setAttribute("href", "about:blank");
+      }" did not throw
+PASS Assign TrustedScriptURL to attached SVGScriptElement.href via setAttribute.
+PASS Setup default policy
+PASS Assign String to SVGScriptElement.innerHTML w/ default policy.
+PASS Assign string to SVGScriptElement.href.baseVal  w/ default policy.
+PASS Assign string to non-attached SVGScriptElement.href via setAttribute w/ default policy.
+PASS Assign string to attached SVGScriptElement.href via setAttribute w/ default policy.
+
