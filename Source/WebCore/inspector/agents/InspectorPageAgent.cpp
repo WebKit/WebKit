@@ -88,13 +88,13 @@ namespace WebCore {
 
 using namespace Inspector;
 
-static bool decodeBuffer(const uint8_t* buffer, unsigned size, const String& textEncodingName, String* result)
+static bool decodeBuffer(std::span<const uint8_t> buffer, const String& textEncodingName, String* result)
 {
-    if (buffer) {
+    if (buffer.data()) {
         PAL::TextEncoding encoding(textEncodingName);
         if (!encoding.isValid())
             encoding = PAL::WindowsLatin1Encoding();
-        *result = encoding.decode(buffer, size);
+        *result = encoding.decode(buffer);
         return true;
     }
     return false;
@@ -105,22 +105,22 @@ bool InspectorPageAgent::mainResourceContent(LocalFrame* frame, bool withBase64E
     RefPtr<FragmentedSharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
     if (!buffer)
         return false;
-    return InspectorPageAgent::dataContent(buffer->makeContiguous()->data(), buffer->size(), frame->document()->encoding(), withBase64Encode, result);
+    return InspectorPageAgent::dataContent(buffer->makeContiguous()->bytes(), frame->document()->encoding(), withBase64Encode, result);
 }
 
 bool InspectorPageAgent::sharedBufferContent(RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName, bool withBase64Encode, String* result)
 {
-    return dataContent(buffer ? buffer->makeContiguous()->data() : nullptr, buffer ? buffer->size() : 0, textEncodingName, withBase64Encode, result);
+    return dataContent(buffer ? buffer->makeContiguous()->bytes() : std::span<const uint8_t> { }, textEncodingName, withBase64Encode, result);
 }
 
-bool InspectorPageAgent::dataContent(const uint8_t* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result)
+bool InspectorPageAgent::dataContent(std::span<const uint8_t> data, const String& textEncodingName, bool withBase64Encode, String* result)
 {
     if (withBase64Encode) {
-        *result = base64EncodeToString(data, size);
+        *result = base64EncodeToString(data);
         return true;
     }
 
-    return decodeBuffer(data, size, textEncodingName, result);
+    return decodeBuffer(data, textEncodingName, result);
 }
 
 Vector<CachedResource*> InspectorPageAgent::cachedResourcesForFrame(LocalFrame* frame)

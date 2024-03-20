@@ -178,10 +178,10 @@ static const JIS0208EncodeIndex& jis0208EncodeIndex()
     return *table;
 }
 
-String TextCodecCJK::decodeCommon(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError, const Function<SawError(uint8_t, StringBuilder&)>& byteParser)
+String TextCodecCJK::decodeCommon(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError, const Function<SawError(uint8_t, StringBuilder&)>& byteParser)
 {
     StringBuilder result;
-    result.reserveCapacity(length);
+    result.reserveCapacity(bytes.size());
 
     if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, std::nullopt), result) == SawError::Yes) {
         sawError = true;
@@ -191,8 +191,8 @@ String TextCodecCJK::decodeCommon(const uint8_t* bytes, size_t length, bool flus
             return result.toString();
         }
     }
-    for (size_t i = 0; i < length; i++) {
-        if (byteParser(bytes[i], result) == SawError::Yes) {
+    for (auto byte : bytes) {
+        if (byteParser(byte, result) == SawError::Yes) {
             sawError = true;
             result.append(replacementCharacter);
             if (stopOnError) {
@@ -230,9 +230,9 @@ static std::optional<UChar> codePointJIS0212(uint16_t pointer)
 }
 
 // https://encoding.spec.whatwg.org/#euc-jp-decoder
-String TextCodecCJK::eucJPDecode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecCJK::eucJPDecode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
-    return decodeCommon(bytes, length, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
+    return decodeCommon(bytes, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
         if (uint8_t lead = std::exchange(m_lead, 0x00)) {
             if (lead == 0x8E && byte >= 0xA1 && byte <= 0xDF) {
                 result.append(static_cast<char32_t>(0xFF61 - 0xA1 + byte));
@@ -307,7 +307,7 @@ static Vector<uint8_t> eucJPEncode(StringView string, Function<void(char32_t, Ve
 }
 
 // https://encoding.spec.whatwg.org/#iso-2022-jp-decoder
-String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
     auto byteParser = [&] (uint8_t byte, StringBuilder& result) {
         switch (m_iso2022JPDecoderState) {
@@ -425,7 +425,7 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
     };
 
     StringBuilder result;
-    result.reserveCapacity(length);
+    result.reserveCapacity(bytes.size());
 
     if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, std::nullopt), result) == SawError::Yes) {
         sawError = true;
@@ -443,8 +443,8 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
             return result.toString();
         }
     }
-    for (size_t i = 0; i < length; i++) {
-        if (byteParser(bytes[i], result) == SawError::Yes) {
+    for (auto byte : bytes) {
+        if (byteParser(byte, result) == SawError::Yes) {
             sawError = true;
             result.append(replacementCharacter);
             if (stopOnError) {
@@ -600,9 +600,9 @@ static Vector<uint8_t> iso2022JPEncode(StringView string, Function<void(char32_t
 }
 
 // https://encoding.spec.whatwg.org/#shift_jis-decoder
-String TextCodecCJK::shiftJISDecode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecCJK::shiftJISDecode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
-    return decodeCommon(bytes, length, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
+    return decodeCommon(bytes, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
         if (uint8_t lead = std::exchange(m_lead, 0x00)) {
             uint8_t offset = byte < 0x7F ? 0x40 : 0x41;
             uint8_t leadOffset = lead < 0xA0 ? 0x81 : 0xC1;
@@ -731,9 +731,9 @@ static Vector<uint8_t> eucKREncode(StringView string, Function<void(char32_t, Ve
 }
 
 // https://encoding.spec.whatwg.org/#euc-kr-decoder
-String TextCodecCJK::eucKRDecode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecCJK::eucKRDecode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
-    return decodeCommon(bytes, length, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
+    return decodeCommon(bytes, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
         if (uint8_t lead = std::exchange(m_lead, 0x00)) {
             if (byte >= 0x41 && byte <= 0xFE) {
                 if (auto codePoint = findFirstInSortedPairs(eucKR(), (lead - 0x81) * 190 + byte - 0x41)) {
@@ -945,7 +945,7 @@ static std::optional<char32_t> gb180302022Decode(uint8_t first, uint8_t second, 
 }
 
 // https://encoding.spec.whatwg.org/#gb18030-decoder
-String TextCodecCJK::gb18030Decode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecCJK::gb18030Decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
     Function<SawError(uint8_t, StringBuilder&)> parseByte;
     parseByte = [&] (uint8_t byte, StringBuilder& result) {
@@ -1026,7 +1026,7 @@ String TextCodecCJK::gb18030Decode(const uint8_t* bytes, size_t length, bool flu
         return SawError::Yes;
     };
 
-    auto result = decodeCommon(bytes, length, flush, stopOnError, sawError, parseByte);
+    auto result = decodeCommon(bytes, flush, stopOnError, sawError, parseByte);
     if (flush && (m_gb18030First || m_gb18030Second || m_gb18030Third)) {
         m_gb18030First = 0x00;
         m_gb18030Second = 0x00;
@@ -1102,9 +1102,9 @@ static Vector<uint8_t> gb18030Encode(StringView string, Function<void(char32_t, 
 }
 
 // https://encoding.spec.whatwg.org/#gbk-decoder
-String TextCodecCJK::gbkDecode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecCJK::gbkDecode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
-    return gb18030Decode(bytes, length, flush, stopOnError, sawError);
+    return gb18030Decode(bytes, flush, stopOnError, sawError);
 }
 
 static Vector<uint8_t> gbkEncode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
@@ -1149,9 +1149,9 @@ Function<void(char32_t, Vector<uint8_t>&)> unencodableHandler(UnencodableHandlin
     return entityUnencodableHandler;
 }
 
-String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecCJK::big5Decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
-    return decodeCommon(bytes, length, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
+    return decodeCommon(bytes, flush, stopOnError, sawError, [this] (uint8_t byte, StringBuilder& result) {
         if (uint8_t lead = std::exchange(m_lead, 0x00)) {
             uint8_t offset = byte < 0x7F ? 0x40 : 0x62;
             if ((byte >= 0x40 && byte <= 0x7E) || (byte >= 0xA1 && byte <= 0xFE)) {
@@ -1188,24 +1188,23 @@ String TextCodecCJK::big5Decode(const uint8_t* bytes, size_t length, bool flush,
     });
 }
 
-String TextCodecCJK::decode(const char* charBytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecCJK::decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
-    auto bytes = reinterpret_cast<const uint8_t*>(charBytes);
     switch (m_encoding) {
     case Encoding::EUC_JP:
-        return eucJPDecode(bytes, length, flush, stopOnError, sawError);
+        return eucJPDecode(bytes, flush, stopOnError, sawError);
     case Encoding::Shift_JIS:
-        return shiftJISDecode(bytes, length, flush, stopOnError, sawError);
+        return shiftJISDecode(bytes, flush, stopOnError, sawError);
     case Encoding::ISO2022JP:
-        return iso2022JPDecode(bytes, length, flush, stopOnError, sawError);
+        return iso2022JPDecode(bytes, flush, stopOnError, sawError);
     case Encoding::EUC_KR:
-        return eucKRDecode(bytes, length, flush, stopOnError, sawError);
+        return eucKRDecode(bytes, flush, stopOnError, sawError);
     case Encoding::Big5:
-        return big5Decode(bytes, length, flush, stopOnError, sawError);
+        return big5Decode(bytes, flush, stopOnError, sawError);
     case Encoding::GBK:
-        return gbkDecode(bytes, length, flush, stopOnError, sawError);
+        return gbkDecode(bytes, flush, stopOnError, sawError);
     case Encoding::GB18030:
-        return gb18030Decode(bytes, length, flush, stopOnError, sawError);
+        return gb18030Decode(bytes, flush, stopOnError, sawError);
     }
     ASSERT_NOT_REACHED();
     return { };

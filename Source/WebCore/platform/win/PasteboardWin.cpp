@@ -858,8 +858,8 @@ RefPtr<DocumentFragment> Pasteboard::documentFragment(LocalFrame& frame, const S
         // get data off of clipboard
         HANDLE cbData = ::GetClipboardData(HTMLClipboardFormat);
         if (cbData) {
-            SIZE_T dataSize = ::GlobalSize(cbData);
-            String cfhtml(PAL::UTF8Encoding().decode(static_cast<char*>(GlobalLock(cbData)), dataSize));
+            std::span data { static_cast<uint8_t*>(GlobalLock(cbData)), ::GlobalSize(cbData) };
+            String cfhtml(PAL::UTF8Encoding().decode(data));
             GlobalUnlock(cbData);
             ::CloseClipboard();
 

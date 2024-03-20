@@ -64,14 +64,14 @@ void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
 }
 
 // https://encoding.spec.whatwg.org/#shared-utf-16-decoder
-String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool, bool& sawError)
+String TextCodecUTF16::decode(std::span<const uint8_t> bytes, bool flush, bool, bool& sawError)
 {
-    const auto* p = reinterpret_cast<const uint8_t*>(bytes);
-    const auto* const end = p + length;
+    const auto* p = bytes.data();
+    const auto* const end = p + bytes.size();
     const auto* const endMinusOneOrNull = end ? end - 1 : nullptr;
 
     StringBuilder result;
-    result.reserveCapacity(length / 2);
+    result.reserveCapacity(bytes.size() / 2);
 
     auto processCodeUnit = [&] (UChar codeUnit) {
         if (std::exchange(m_shouldStripByteOrderMark, false) && codeUnit == byteOrderMark)

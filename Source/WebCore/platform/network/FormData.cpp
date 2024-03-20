@@ -298,8 +298,7 @@ Vector<uint8_t> FormData::flatten() const
 
 String FormData::flattenToString() const
 {
-    auto bytes = flatten();
-    return PAL::Latin1Encoding().decode(bytes.data(), bytes.size());
+    return PAL::Latin1Encoding().decode(flatten().span());
 }
 
 static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formData, const URL& url)

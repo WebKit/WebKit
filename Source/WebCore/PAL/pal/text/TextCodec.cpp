@@ -35,11 +35,6 @@
 
 namespace PAL {
 
-String TextCodec::decode(std::span<const uint8_t> data, bool flush, bool stopOnError, bool& sawError)
-{
-    return decode(reinterpret_cast<const char*>(data.data()), data.size(), flush, stopOnError, sawError);
-}
-
 int TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
 {
     ASSERT(!(codePoint > UCHAR_MAX_VALUE));

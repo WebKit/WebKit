@@ -60,12 +60,12 @@ TextEncoding::TextEncoding(const String& name)
 {
 }
 
-String TextEncoding::decode(const char* data, size_t length, bool stopOnError, bool& sawError) const
+String TextEncoding::decode(std::span<const uint8_t> data, bool stopOnError, bool& sawError) const
 {
     if (m_name.isNull())
         return String();
 
-    return newTextCodec(*this)->decode(data, length, true, stopOnError, sawError);
+    return newTextCodec(*this)->decode(data, true, stopOnError, sawError);
 }
 
 Vector<uint8_t> TextEncoding::encode(StringView string, PAL::UnencodableHandling handling, NFCNormalize normalize) const

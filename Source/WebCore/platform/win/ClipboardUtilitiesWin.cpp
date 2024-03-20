@@ -202,9 +202,8 @@ static String getFullCFHTML(IDataObject* data)
     STGMEDIUM store;
     if (SUCCEEDED(data->GetData(htmlFormat(), &store))) {
         // MS HTML Format parsing
-        char* data = static_cast<char*>(GlobalLock(store.hGlobal));
-        SIZE_T dataSize = ::GlobalSize(store.hGlobal);
-        String cfhtml(PAL::UTF8Encoding().decode(data, dataSize));
+        std::span bytes { static_cast<uint8_t*>(GlobalLock(store.hGlobal)), ::GlobalSize(store.hGlobal) };
+        String cfhtml(PAL::UTF8Encoding().decode(bytes));
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
         return cfhtml;
@@ -700,7 +699,8 @@ void getUTF8Data(IDataObject* data, FORMATETC* format, Vector<String>& dataStrin
     STGMEDIUM store;
     if (FAILED(data->GetData(format, &store)))
         return;
-    dataStrings.append(String(PAL::UTF8Encoding().decode(static_cast<char*>(GlobalLock(store.hGlobal)), GlobalSize(store.hGlobal))));
+    std::span bytes { static_cast<uint8_t*>(GlobalLock(store.hGlobal)), GlobalSize(store.hGlobal) };
+    dataStrings.append(String(PAL::UTF8Encoding().decode(bytes)));
     GlobalUnlock(store.hGlobal);
     ReleaseStgMedium(&store);
 }

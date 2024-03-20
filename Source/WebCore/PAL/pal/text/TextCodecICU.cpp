@@ -211,7 +211,7 @@ private:
     UConverterToUCallback m_savedAction { nullptr };
 };
 
-String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecICU::decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
     // Get a converter for the passed-in encoding.
     if (!m_converter) {
@@ -229,8 +229,8 @@ String TextCodecICU::decode(const char* bytes, size_t length, bool flush, bool s
 
     UChar buffer[ConversionBufferSize];
     UChar* bufferLimit = buffer + ConversionBufferSize;
-    const char* source = reinterpret_cast<const char*>(bytes);
-    const char* sourceLimit = source + length;
+    const char* source = reinterpret_cast<const char*>(bytes.data());
+    const char* sourceLimit = source + bytes.size();
     int32_t* offsets = nullptr;
     UErrorCode err = U_ZERO_ERROR;
 

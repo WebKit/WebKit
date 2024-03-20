@@ -45,14 +45,12 @@ void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-String TextCodecUserDefined::decode(const char* bytes, size_t length, bool, bool, bool&)
+String TextCodecUserDefined::decode(std::span<const uint8_t> bytes, bool, bool, bool&)
 {
     StringBuilder result;
-    result.reserveCapacity(length);
-    for (size_t i = 0; i < length; ++i) {
-        signed char c = bytes[i];
-        result.append(static_cast<UChar>(c & 0xF7FF));
-    }
+    result.reserveCapacity(bytes.size());
+    for (char byte : bytes)
+        result.append(static_cast<UChar>(byte & 0xF7FF));
     return result.toString();
 }
 
