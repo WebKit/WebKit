@@ -436,14 +436,15 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     document->editor().respondToChangedSelection(oldSelection, options);
 
     if (shouldScheduleSelectionChangeEvent) {
-        if (textControl) {
-            document->eventLoop().queueTask(TaskSource::UserInteraction, [textControl = GCReachableRef { *textControl }] {
-                textControl->dispatchEvent(Event::create(eventNames().selectionchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
-            });
-        } else {
+        if (textControl)
+            textControl->scheduleSelectionChangeEvent();
+        else if (!m_hasScheduledSelectionChangeEventOnDocument) {
+            m_hasScheduledSelectionChangeEventOnDocument = true;
             document->eventLoop().queueTask(TaskSource::UserInteraction, [weakDocument = WeakPtr { document.get() }] {
-                if (RefPtr document = weakDocument.get())
+                if (RefPtr document = weakDocument.get()) {
+                    document->selection().m_hasScheduledSelectionChangeEventOnDocument = false;
                     document->dispatchEvent(Event::create(eventNames().selectionchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+                }
             });
         }
     }

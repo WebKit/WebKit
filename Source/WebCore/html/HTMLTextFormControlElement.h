@@ -83,6 +83,8 @@ public:
     void setSelectionRange(unsigned start, unsigned end, const String& direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent(), ForBindings = ForBindings::No);
     WEBCORE_EXPORT bool setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection = SelectionHasNoDirection, SelectionRevealMode = SelectionRevealMode::DoNotReveal, const AXTextStateChangeIntent& = AXTextStateChangeIntent(), ForBindings = ForBindings::No);
 
+    void scheduleSelectionChangeEvent();
+
     TextFieldSelectionDirection computeSelectionDirection() const;
 
     std::optional<SimpleRange> selection() const;
@@ -170,21 +172,22 @@ private:
     bool placeholderShouldBeVisible() const;
 
     unsigned m_cachedSelectionDirection : 2;
-    unsigned m_lastChangeWasUserEdit : 1;
-    unsigned m_isPlaceholderVisible : 1;
-    unsigned m_canShowPlaceholder : 1;
-    
-    String m_pointerType { mousePointerEventType() };
-
-    String m_textAsOfLastFormControlChangeEvent;
-
-    unsigned m_cachedSelectionStart;
-    unsigned m_cachedSelectionEnd;
+    unsigned m_lastChangeWasUserEdit : 1 { false };
+    unsigned m_isPlaceholderVisible : 1 { false };
+    unsigned m_canShowPlaceholder : 1 { true };
 
     int m_maxLength { -1 };
     int m_minLength { -1 };
 
+    unsigned m_cachedSelectionStart { 0 };
+    unsigned m_cachedSelectionEnd { 0 };
+
     bool m_hasCachedSelection { false };
+    bool m_hasScheduledSelectionChangeEvent { false };
+
+    String m_pointerType { mousePointerEventType() };
+
+    String m_textAsOfLastFormControlChangeEvent;
 };
 
 WEBCORE_EXPORT HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
