@@ -478,6 +478,7 @@ def _set_up_derived_options(port, options):
         options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup'))
 
     if port.port_name == "mac" and options.site_isolation:
+        options.additional_header = 'runInCrossOriginFrame=true'
         options.self_compare_with_header = 'SiteIsolationEnabled=true runInCrossOriginFrame=true'
         host = Host()
         host.initialize_scm()
