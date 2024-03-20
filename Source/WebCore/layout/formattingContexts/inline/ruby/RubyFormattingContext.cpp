@@ -416,7 +416,8 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
     auto over = InlineLayoutUnit { };
     auto under = InlineLayoutUnit { };
     auto annotationBoxLogicalHeight = InlineLayoutUnit { inlineFormattingContext.geometryForBox(*annotationBox).marginBoxHeight() };
-    if (rubyPosition(rubyBaseLayoutBox) == RubyPosition::Before)
+    auto isAnnotationBefore = rubyPosition(rubyBaseLayoutBox) == RubyPosition::Before;
+    if (isAnnotationBefore)
         over = annotationBoxLogicalHeight;
     else
         under = annotationBoxLogicalHeight;
@@ -453,8 +454,13 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
             layoutBounds.descent = std::max(descentWithAnnotation, layoutBounds.descent);
         } else if (layoutBounds.height() < ascentWithAnnotation + descentWithAnnotation) {
             // In case line-height does not produce enough space for annotation.
-            layoutBounds.ascent = std::max(ascentWithAnnotation, layoutBounds.ascent);
-            layoutBounds.descent = std::max(descentWithAnnotation, layoutBounds.descent);
+            auto extraSpaceNeededForAnnotation = (ascentWithAnnotation + descentWithAnnotation) - layoutBounds.height();
+            // Note that this makes annotation leak into previous/next line's (bottom/top) half leading. It ensures though that we don't
+            // overly stretch lines and break (logical) vertical rhythm too much.
+            if (isAnnotationBefore)
+                layoutBounds.ascent += extraSpaceNeededForAnnotation;
+            else
+                layoutBounds.descent += extraSpaceNeededForAnnotation;
         }
     }
 
