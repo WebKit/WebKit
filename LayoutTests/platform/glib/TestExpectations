@@ -1935,8 +1935,6 @@ fast/mediastream/microphone-interruption-and-audio-session.html [ Skip ]
 webkit.org/b/261329 webrtc/video-clone-track.html [ Failure ]
 webrtc/clone-audio-track.html [ Pass Failure ]
 
-webkit.org/b/271243 webrtc/connection-state.html [ Failure ]
-
 webkit.org/b/256758 fast/mediastream/captureStream/canvas3d.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]

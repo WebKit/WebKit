@@ -312,6 +312,15 @@ static std::optional<std::pair<RTCSdpType, String>> fetchDescription(GstElement*
     if (!description)
         return { };
 
+    unsigned totalAttributesNumber = gst_sdp_message_attributes_len(description->sdp);
+    for (unsigned i = 0; i < totalAttributesNumber; i++) {
+        const auto attribute = gst_sdp_message_get_attribute(description->sdp, i);
+        if (!g_strcmp0(attribute->key, "end-of-candidates")) {
+            gst_sdp_message_remove_attribute(description->sdp, i);
+            break;
+        }
+    }
+
     GUniquePtr<char> sdpString(gst_sdp_message_as_text(description->sdp));
     GST_TRACE_OBJECT(webrtcBin, "%s-description SDP: %s", name, sdpString.get());
     return { { fromSessionDescriptionType(*description.get()), String::fromLatin1(sdpString.get()) } };
@@ -455,18 +464,9 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
             }
         }
 
-        // Notify the backend in case all m-lines of the current local description have signalled
-        // all their ICE candidates.
-        std::optional<bool> isIceGatheringComplete;
-        if (descriptions && !descriptions->currentLocalDescriptionSdp.isEmpty())
-            isIceGatheringComplete = this->isIceGatheringComplete(descriptions->currentLocalDescriptionSdp);
-
         GRefPtr<GstWebRTCSCTPTransport> transport;
         g_object_get(m_webrtcBin.get(), "sctp-transport", &transport.outPtr(), nullptr);
         m_peerConnectionBackend.setLocalDescriptionSucceeded(WTFMove(descriptions), { }, transport ? makeUnique<GStreamerSctpTransportBackend>(WTFMove(transport)) : nullptr);
-
-        if (isIceGatheringComplete && *isIceGatheringComplete)
-            m_peerConnectionBackend.doneGatheringCandidates();
     }, [protectedThis = Ref(*this), this](const GError* error) {
         if (protectedThis->isStopped())
             return;
@@ -538,18 +538,9 @@ void GStreamerMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
             }
         }
 
-        // Notify the backend in case all m-lines of the current local description have signalled
-        // all their ICE candidates.
-        std::optional<bool> isIceGatheringComplete;
-        if (descriptions && !descriptions->currentLocalDescriptionSdp.isEmpty())
-            isIceGatheringComplete = this->isIceGatheringComplete(descriptions->currentLocalDescriptionSdp);
-
         GRefPtr<GstWebRTCSCTPTransport> transport;
         g_object_get(m_webrtcBin.get(), "sctp-transport", &transport.outPtr(), nullptr);
         m_peerConnectionBackend.setRemoteDescriptionSucceeded(WTFMove(descriptions), { }, transport ? makeUnique<GStreamerSctpTransportBackend>(WTFMove(transport)) : nullptr);
-
-        if (isIceGatheringComplete && *isIceGatheringComplete)
-            m_peerConnectionBackend.doneGatheringCandidates();
     }, [protectedThis = Ref(*this), this](const GError* error) {
         if (protectedThis->isStopped())
             return;
@@ -1504,16 +1495,10 @@ void GStreamerMediaEndpoint::onIceCandidate(guint sdpMLineIndex, gchararray cand
         return;
 
     auto candidateString = makeString(candidate);
-    if (candidateString.isEmpty()) {
-        callOnMainThread([protectedThis = Ref(*this), this] {
-            if (isStopped())
-                return;
-            // webrtcbin notifies an empty ICE candidate when gathering is complete.
-            GST_DEBUG_OBJECT(m_pipeline.get(), "Signaling end-of-candidates");
-            m_peerConnectionBackend.doneGatheringCandidates();
-        });
+
+    // webrtcbin notifies an empty ICE candidate when gathering is complete.
+    if (candidateString.isEmpty())
         return;
-    }
 
     callOnMainThread([protectedThis = Ref(*this), this, sdp = WTFMove(candidateString), sdpMLineIndex]() mutable {
         if (isStopped())
