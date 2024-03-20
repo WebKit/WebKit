@@ -28,9 +28,12 @@
 #include "BuildRevision.h"
 #include <WPEToolingBackends/HeadlessViewBackend.h>
 #include <WPEToolingBackends/WindowViewBackend.h>
-#include <atk/atk.h>
 #include <memory>
 #include <wpe/webkit.h>
+
+#if USE_ATK
+#include <atk/atk.h>
+#endif
 
 #if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
 #include <gst/gst.h>
@@ -414,9 +417,11 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
 
     if (backend) {
         backend->setInputClient(std::make_unique<InputClient>(application, webView));
+#if USE_ATK
         auto* accessible = wpe_view_backend_dispatch_get_accessible(backend->backend());
         if (ATK_IS_OBJECT(accessible))
             backend->setAccessibleChild(ATK_OBJECT(accessible));
+#endif
     }
 
 #if ENABLE_WPE_PLATFORM

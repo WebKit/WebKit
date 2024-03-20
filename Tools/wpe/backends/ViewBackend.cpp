@@ -85,4 +85,18 @@ void ViewBackend::dispatchInputTouchEvent(struct wpe_input_touch_event* event)
     wpe_view_backend_dispatch_touch_event(backend(), event);
 }
 
+#if ((defined(USE_GLIB) && USE_GLIB) && !(defined(USE_ATK) && USE_ATK))
+void ViewBackend::initializeAccessibility()
+{
+}
+
+void ViewBackend::updateAccessibilityState(uint32_t)
+{
+}
+
+void ViewBackend::notifyAccessibilityKeyEventListeners(struct wpe_input_keyboard_event*)
+{
+}
+#endif
+
 } // namespace WPEToolingBackends

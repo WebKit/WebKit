@@ -40,7 +40,10 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
+
+#if USE(ATK)
 #include <atk/atk.h>
+#endif
 
 namespace WebKit {
 
@@ -435,10 +438,12 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, cons
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 
+#if USE(ATK)
 AtkObject* PageClientImpl::accessible()
 {
     return ATK_OBJECT(m_view.accessible());
 }
+#endif
 
 void PageClientImpl::didChangeWebPageID() const
 {

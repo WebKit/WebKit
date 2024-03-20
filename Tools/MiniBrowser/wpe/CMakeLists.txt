@@ -11,17 +11,25 @@ set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 set(MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
-    ${ATK_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
 set(MiniBrowser_PRIVATE_LIBRARIES
-    ${ATK_LIBRARIES}
     ${JavaScriptCore_LIBRARY_NAME}
     WebKit::WPEToolingBackends
     WebKit::WebKit
 )
+
+if (USE_ATK)
+    list(APPEND MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
+        ${ATK_INCLUDE_DIRS}
+    )
+
+    list(APPEND MiniBrowser_PRIVATE_LIBRARIES
+        ${ATK_LIBRARIES}
+    )
+endif ()
 
 if (ENABLE_WPE_PLATFORM)
     list(APPEND MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES

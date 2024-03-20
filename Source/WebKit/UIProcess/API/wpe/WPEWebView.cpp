@@ -297,8 +297,13 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         // get_accessible
         [](void* data) -> void*
         {
+#if USE(ATK)
             auto& view = *reinterpret_cast<View*>(data);
             return view.accessible();
+#else
+            UNUSED_PARAM(data);
+            return nullptr;
+#endif
         },
         // set_device_scale_factor
         [](void* data, float scale)
@@ -510,8 +515,10 @@ View::~View()
     m_backingStore = nullptr;
 #endif
 
+#if USE(ATK)
     if (m_accessible)
         webkitWebViewAccessibleSetWebView(m_accessible.get(), nullptr);
+#endif
 }
 
 void View::setClient(std::unique_ptr<API::ViewClient>&& client)
@@ -742,12 +749,14 @@ bool View::setFullScreen(bool fullScreenState)
 };
 #endif
 
+#if USE(ATK)
 WebKitWebViewAccessible* View::accessible() const
 {
     if (!m_accessible)
         m_accessible = webkitWebViewAccessibleNew(const_cast<View*>(this));
     return m_accessible.get();
 }
+#endif
 
 #if ENABLE(GAMEPAD)
 WebKit::WebPageProxy* View::platformWebPageProxyForGamepadInput()

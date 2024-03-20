@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if defined(USE_ATK) && USE_ATK
+
 #include <atk/atk.h>
 
 G_BEGIN_DECLS
@@ -56,3 +58,5 @@ WebKitAccessibleApplication* webkitAccessibleApplicationNew(void);
 void webkitAccessibleApplicationSetChild(WebKitAccessibleApplication*, AtkObject*);
 
 G_END_DECLS
+
+#endif

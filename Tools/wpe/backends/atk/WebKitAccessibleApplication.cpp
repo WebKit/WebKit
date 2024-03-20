@@ -25,6 +25,8 @@
 
 #include "WebKitAccessibleApplication.h"
 
+#if defined(USE_ATK) && USE_ATK
+
 struct _WebKitAccessibleApplicationPrivate {
     AtkObject* child;
 };
@@ -116,3 +118,5 @@ void webkitAccessibleApplicationSetChild(WebKitAccessibleApplication* accessible
         g_signal_emit_by_name(accessible, "children-changed::add", 0, child);
     }
 }
+
+#endif

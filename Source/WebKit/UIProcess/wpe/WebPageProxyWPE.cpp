@@ -30,7 +30,10 @@
 #include "InputMethodState.h"
 #include "PageClientImpl.h"
 #include <WebCore/PlatformEvent.h>
+
+#if USE(ATK)
 #include <atk/atk.h>
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
@@ -65,9 +68,13 @@ WPEView* WebPageProxy::wpeView() const
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
+#if USE(ATK)
     auto* accessible = static_cast<PageClientImpl&>(pageClient()).accessible();
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
+#else
+    UNUSED_PARAM(plugID);
+#endif
 }
 
 void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState& newEditorState)
