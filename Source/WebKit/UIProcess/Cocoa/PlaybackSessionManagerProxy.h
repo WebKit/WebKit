@@ -102,6 +102,7 @@ private:
     void toggleFullscreen() final;
     void togglePictureInPicture() final;
     void toggleInWindowFullscreen() final;
+    void enterFullscreen() final;
     void toggleMuted() final;
     void setMuted(bool) final;
     void setVolume(double) final;
@@ -257,6 +258,7 @@ private:
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void toggleFullscreen(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
+    void enterFullscreen(PlaybackSessionContextIdentifier);
     void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool);

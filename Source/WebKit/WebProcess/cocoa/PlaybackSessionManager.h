@@ -167,6 +167,7 @@ private:
     void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);
     void toggleFullscreen(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
+    void enterFullscreen(PlaybackSessionContextIdentifier);
     void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool muted);
