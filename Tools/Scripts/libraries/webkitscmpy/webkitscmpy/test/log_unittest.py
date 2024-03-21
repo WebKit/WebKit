@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import pytz
 import time
 import sys
 
@@ -78,7 +79,7 @@ Date:   {}
 
     1st commit
 '''.format(*reversed([
-                datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000')
+                datetime.fromtimestamp(commit.timestamp + time.timezone, pytz.UTC).strftime('%a %b %d %H:%M:%S %Y +0000')
                 for commit in mocks.local.Git(self.path).commits['main']
             ])),
         )
@@ -127,7 +128,7 @@ Date:   {}
     1st commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@1 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(*reversed([
-                    datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000')
+                    datetime.fromtimestamp(commit.timestamp + time.timezone, pytz.UTC).strftime('%a %b %d %H:%M:%S %Y +0000')
                     for commit in mocks.local.Git(self.path).commits['main']
                 ])),
             )
@@ -176,7 +177,7 @@ Date:   {}
     1st commit
     git-svn-id: https://svn.example.org/repository/repository/trunk@1 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(*reversed([
-                    datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000')
+                    datetime.fromtimestamp(commit.timestamp + time.timezone, pytz.UTC).strftime('%a %b %d %H:%M:%S %Y +0000')
                     for commit in mocks.local.Git(self.path).commits['main']
                 ])),
             )

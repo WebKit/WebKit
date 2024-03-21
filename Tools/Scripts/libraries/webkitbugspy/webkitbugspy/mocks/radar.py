@@ -22,8 +22,11 @@
 
 import calendar
 import os
+import pytz
 import re
 import time
+
+from datetime import datetime, timedelta
 
 from .base import Base
 
@@ -93,8 +96,6 @@ class RadarModel(object):
                 yield property
 
         def add(self, item):
-            from datetime import datetime, timedelta
-
             username = self.model.client.authentication_strategy.username()
             if username:
                 by = RadarModel.CommentAuthor(self.model.client.parent.users['{}@APPLECONNECT.APPLE.COM'.format(username)])
@@ -103,7 +104,7 @@ class RadarModel(object):
 
             self._properties.append(Radar.DiagnosisEntry(
                 text=item.text,
-                addedAt=datetime.utcfromtimestamp(int(time.time())),
+                addedAt=datetime.fromtimestamp(int(time.time()), pytz.UTC).replace(tzinfo=None),
                 addedBy=by,
             ))
 
@@ -142,15 +143,13 @@ class RadarModel(object):
             self.name = name
 
     def __init__(self, client, issue):
-        from datetime import datetime, timedelta
-
         self.client = client
         self._issue = issue
         self.title = issue['title']
         self.id = issue['id']
         self.classification = issue.get('classification', 'Other Bug')
-        self.createdAt = datetime.utcfromtimestamp(issue['timestamp'] - timedelta(hours=7).seconds)
-        self.lastModifiedAt = datetime.utcfromtimestamp(issue['modified' if issue.get('modified') else 'timestamp'] - timedelta(hours=7).seconds)
+        self.createdAt = datetime.fromtimestamp(issue['timestamp'] - timedelta(hours=7).seconds, pytz.UTC).replace(tzinfo=None)
+        self.lastModifiedAt = datetime.fromtimestamp(issue['modified' if issue.get('modified') else 'timestamp'] - timedelta(hours=7).seconds).replace(tzinfo=None)
         self.assignee = self.Person(Radar.transform_user(issue['assignee']))
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))
         self.state = 'Analyze' if issue['opened'] else 'Verify'
@@ -163,7 +162,7 @@ class RadarModel(object):
         self.diagnosis = self.CollectionProperty(self, *[
             Radar.DiagnosisEntry(
                 text=comment.content,
-                addedAt=datetime.utcfromtimestamp(comment.timestamp - timedelta(hours=7).seconds),
+                addedAt=datetime.fromtimestamp(comment.timestamp - timedelta(hours=7).seconds, pytz.UTC).replace(tzinfo=None),
                 addedBy=self.CommentAuthor(Radar.transform_user(comment.user)),
             ) for comment in issue.get('comments', [])
         ])

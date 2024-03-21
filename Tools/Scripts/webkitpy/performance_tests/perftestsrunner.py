@@ -32,6 +32,7 @@ import os
 import json
 import logging
 import optparse
+import pytz
 import sys
 import time
 import datetime
@@ -79,7 +80,7 @@ class PerfTestsRunner(object):
         self._webkit_base_dir_len = len(self._port.webkit_base())
         self._base_path = self._port.perf_tests_dir()
         self._timestamp = time.time()
-        self._utc_timestamp = datetime.datetime.utcnow()
+        self._utc_timestamp = datetime.datetime.now(pytz.UTC)
 
     @staticmethod
     def _parse_args(args=None):

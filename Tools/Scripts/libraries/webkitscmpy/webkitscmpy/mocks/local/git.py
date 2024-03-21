@@ -23,6 +23,7 @@
 import hashlib
 import json
 import os
+import pytz
 import re
 import time
 
@@ -374,7 +375,7 @@ nothing to commit, working tree clean
                             hash=commit.hash,
                             author=commit.author.name,
                             email=commit.author.email,
-                            date=commit.timestamp if '--date=unix' in args else datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            date=commit.timestamp if '--date=unix' in args else datetime.fromtimestamp(commit.timestamp + time.timezone, pytz.UTC).strftime('%a %b %d %H:%M:%S %Y +0000'),
                             log='\n'.join(
                                 [
                                     ('    ' + line) if line else '' for line in commit.message.splitlines()
@@ -658,7 +659,7 @@ nothing to commit, working tree clean
                             hash=self.find(args[2]).hash,
                             author=self.find(args[2]).author.name,
                             email=self.find(args[2]).author.email,
-                            date=self.find(args[2]).timestamp if '--date=unix' in args else datetime.utcfromtimestamp(self.find(args[2]).timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            date=self.find(args[2]).timestamp if '--date=unix' in args else datetime.fromtimestamp(self.find(args[2]).timestamp + time.timezone, pytz.UTC).strftime('%a %b %d %H:%M:%S %Y +0000'),
                             log='\n'.join(
                                 [
                                     ('    ' + line) if line else '' for line in self.find(args[2]).message.splitlines()

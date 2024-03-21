@@ -23,6 +23,7 @@
 import json
 import logging
 import os
+import pytz
 import unittest
 
 from mock import patch
@@ -125,7 +126,7 @@ class TestCommit(unittest.TestCase):
     SVN revision: r123 on trunk
     identifier: 123 on trunk
     by Jonathan Bedard <jbedard@apple.com> @ {}
-'''.format(datetime.utcfromtimestamp(1000)),
+'''.format(datetime.fromtimestamp(1000, pytz.UTC).replace(tzinfo=None)),
         )
 
         self.assertEqual(
@@ -140,7 +141,7 @@ class TestCommit(unittest.TestCase):
     SVN revision: r124 on branch-a
     identifier: 1 on branch-a branched from 123
     by Jonathan Bedard <jbedard@apple.com> @ {}
-'''.format(datetime.utcfromtimestamp(1000)),
+'''.format(datetime.fromtimestamp(1000, pytz.UTC).replace(tzinfo=None)),
         )
 
         self.assertEqual(
@@ -157,7 +158,7 @@ class TestCommit(unittest.TestCase):
     by Jonathan Bedard <jbedard@apple.com> @ {}
 
 PRINTED
-'''.format(datetime.utcfromtimestamp(1000)),
+'''.format(datetime.fromtimestamp(1000, pytz.UTC).replace(tzinfo=None)),
         )
 
     def test_repr(self):

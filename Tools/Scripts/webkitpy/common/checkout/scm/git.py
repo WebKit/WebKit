@@ -314,8 +314,9 @@ class Git(SCM, SVNRepository):
         return time_without_timezone.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def timestamp_of_native_revision(self, path, sha):
+        import pytz
         unix_timestamp = self._run_git(['-C', self.find_checkout_root(path), 'log', '-1', sha, '--pretty=format:%ct']).rstrip()
-        commit_timestamp = datetime.datetime.utcfromtimestamp(float(unix_timestamp))
+        commit_timestamp = datetime.datetime.fromtimestamp(float(unix_timestamp), pytz.UTC)
         return commit_timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def create_patch(self, git_commit=None, changed_files=None, git_index=False, commit_message=True, find_branch=False):

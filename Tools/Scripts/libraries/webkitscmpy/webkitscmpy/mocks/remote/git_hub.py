@@ -21,8 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import pytz
 import re
 import time
+
+from datetime import datetime, timedelta
 
 import json as jsonlib
 from webkitbugspy import mocks as bmocks, Issue
@@ -152,8 +155,6 @@ class GitHub(bmocks.GitHub):
         ], url=url)
 
     def _commits_response(self, url, ref):
-        from datetime import datetime, timedelta
-
         base = self.commit(ref)
         if not base:
             return mocks.Response.fromJson(
@@ -178,11 +179,11 @@ class GitHub(bmocks.GitHub):
                         'author': {
                             'name': commit.author.name,
                             'email': commit.author.email,
-                            'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                            'date': datetime.fromtimestamp(commit.timestamp - timedelta(hours=7).seconds, pytz.UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
                         }, 'committer': {
                             'name': commit.author.name,
                             'email': commit.author.email,
-                            'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                            'date': datetime.fromtimestamp(commit.timestamp - timedelta(hours=7).seconds, pytz.UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
                         }, 'message': commit.message + ('\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
                             'trunk' if commit.branch == self.default_branch else commit.branch, commit.revision,
                         ) if commit.revision else ''),
@@ -198,8 +199,6 @@ class GitHub(bmocks.GitHub):
         return mocks.Response.fromJson(response, url=url)
 
     def _commit_response(self, url, ref):
-        from datetime import datetime, timedelta
-
         path = None
         split = ref.split('/', 1)
         if len(split) > 1:
@@ -229,11 +228,11 @@ class GitHub(bmocks.GitHub):
                 'author': {
                     'name': commit.author.name,
                     'email': commit.author.email,
-                    'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    'date': datetime.fromtimestamp(commit.timestamp - timedelta(hours=7).seconds, pytz.UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
                 }, 'committer': {
                     'name': commit.author.name,
                     'email': commit.author.email,
-                    'date': datetime.utcfromtimestamp(commit.timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    'date': datetime.fromtimestamp(commit.timestamp - timedelta(hours=7).seconds, pytz.UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
                 }, 'message': commit.message + ('\ngit-svn-id: https://svn.example.org/repository/webkit/{}@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'.format(
                     'trunk' if commit.branch == self.default_branch else commit.branch, commit.revision,
                 ) if commit.revision else ''),

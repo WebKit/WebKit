@@ -54,8 +54,9 @@ class GitHub(Base, mocks.Requests):
 
     @classmethod
     def time_string(cls, timestamp):
+        import pytz
         from datetime import datetime, timedelta
-        return datetime.utcfromtimestamp(timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ')
+        return datetime.fromtimestamp(timestamp - timedelta(hours=7).seconds, pytz.UTC).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None, environment=None, projects=None, labels=None):
         hostname, repo = hostname.split('/', 1)

@@ -21,6 +21,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import pytz
 import re
 import sys
 import time
@@ -48,7 +49,7 @@ class ScmBase(object):
             return int(time.localtime().tm_gmtoff * 100 / (60 * 60))
 
         ts = time.time()
-        return int((datetime.fromtimestamp(ts) - datetime.utcfromtimestamp(ts)).total_seconds() * 100 / (60 * 60))
+        return int((datetime.fromtimestamp(0) - datetime.fromtimestamp(0, pytz.UTC).replace(tzinfo=None)).total_seconds() * 100 / (60 * 60))
 
     def __init__(self, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES

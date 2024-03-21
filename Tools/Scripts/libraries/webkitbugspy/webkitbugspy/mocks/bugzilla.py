@@ -39,8 +39,9 @@ class Bugzilla(Base, mocks.Requests):
 
     @classmethod
     def time_string(cls, timestamp):
+        import pytz
         from datetime import datetime, timedelta
-        return datetime.utcfromtimestamp(timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ')
+        return datetime.fromtimestamp(timestamp - timedelta(hours=7).seconds, pytz.UTC).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     @classmethod
     def transform_user(cls, user):

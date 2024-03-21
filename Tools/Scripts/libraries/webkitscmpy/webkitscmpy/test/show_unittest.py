@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import pytz
 import time
 import sys
 
@@ -66,7 +67,7 @@ index 2deba859a126..7b85f5cecd66 100644
 +        return;
     auto offset = layer.convertToLayerCoords(&clippingRoot, {{ }}, RenderLayer::AdjustForColumns);
     clipRect.moveBy(-offset);
-'''.format(datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000')),
+'''.format(datetime.fromtimestamp(commit.timestamp + time.timezone, pytz.UTC).strftime('%a %b %d %H:%M:%S %Y +0000')),
         )
 
     def test_git_svn(self):
@@ -99,7 +100,7 @@ index 2deba859a126..7b85f5cecd66 100644
 +        return;
     auto offset = layer.convertToLayerCoords(&clippingRoot, {{ }}, RenderLayer::AdjustForColumns);
     clipRect.moveBy(-offset);
-'''.format(datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000')),
+'''.format(datetime.fromtimestamp(commit.timestamp + time.timezone, pytz.UTC).strftime('%a %b %d %H:%M:%S %Y +0000')),
         )
 
     def test_svn(self):

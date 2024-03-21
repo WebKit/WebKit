@@ -21,6 +21,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import pytz
 import re
 
 from datetime import datetime
@@ -265,7 +266,7 @@ class Commit(object):
         if self.author:
             result += '    by {}'.format(self.author)
             if self.timestamp:
-                result += ' @ {}'.format(datetime.utcfromtimestamp(self.timestamp))
+                result += ' @ {}'.format(datetime.fromtimestamp(self.timestamp, pytz.UTC).replace(tzinfo=None))
             result += '\n'
 
         if self.message and message:

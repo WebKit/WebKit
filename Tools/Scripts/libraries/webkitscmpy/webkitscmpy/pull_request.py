@@ -21,6 +21,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import pytz
 import re
 
 from .commit import Commit
@@ -57,7 +58,7 @@ class PullRequest(object):
         def __repr__(self):
             return '({} @ {}) {}'.format(
                 self.author,
-                datetime.utcfromtimestamp(self.timestamp) if self.timestamp else '-',
+                datetime.fromtimestamp(self.timestamp, pytz.UTC).replace(tzinfo=None) if self.timestamp else '-',
                 self.content,
             )
 

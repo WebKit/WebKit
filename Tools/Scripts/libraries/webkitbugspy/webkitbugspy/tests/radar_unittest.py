@@ -96,7 +96,7 @@ class TestRadar(unittest.TestCase):
 
     def test_modified(self):
         with mocks.Radar(issues=mocks.ISSUES):
-            self.assertEqual(radar.Tracker().issue(1).modified, 1710859207)
+            self.assertEqual(radar.Tracker().issue(1).modified, 1710844807)
 
     def test_creator(self):
         with mocks.Radar(issues=mocks.ISSUES):

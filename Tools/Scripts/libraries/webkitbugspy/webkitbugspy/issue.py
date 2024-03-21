@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import pytz
+
 from .tracker import Tracker
 from .user import User
 from datetime import datetime
@@ -47,7 +49,7 @@ class Issue(object):
         def __repr__(self):
             return '({} @ {}) {}'.format(
                 self.user,
-                datetime.utcfromtimestamp(self.timestamp) if self.timestamp else '-',
+                datetime.fromtimestamp(self.timestamp, pytz.UTC).replace(tzinfo=None) if self.timestamp else '-',
                 self.content,
             )
 
