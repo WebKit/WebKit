@@ -5286,20 +5286,6 @@ RequestStorageAccessThrowsExceptionUntilReload:
     WebCore:
       default: false
 
-RequestSubmitEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Form requestSubmit"
-  humanReadableDescription: "Form requestSubmit method"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 RequestVideoFrameCallbackEnabled:
   type: bool
   status: stable

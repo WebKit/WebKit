@@ -42,7 +42,7 @@
     getter (RadioNodeList or Element)? ([RequiresExistingAtomString] DOMString name);
 
     [ImplementedAs=submitFromJavaScript] undefined submit();
-    [EnabledBySetting=RequestSubmitEnabled] undefined requestSubmit(optional HTMLElement? submitter);
+    undefined requestSubmit(optional HTMLElement? submitter);
     [CEReactions=Needed] undefined reset();
     boolean checkValidity();
     [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
