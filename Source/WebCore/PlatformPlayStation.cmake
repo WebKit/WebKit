@@ -39,7 +39,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/egl/GLContext.cpp
     platform/graphics/egl/GLContextLibWPE.cpp
     platform/graphics/egl/GLContextWrapper.cpp
-    platform/graphics/egl/GLFence.cpp
 
     platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
