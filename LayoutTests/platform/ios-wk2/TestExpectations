@@ -2342,8 +2342,6 @@ webkit.org/b/260640 [ Release arm64 ] editing/execCommand/apply-inline-style-to-
 # This test relies on mouse input.
 imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-while-render-blocked.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ ImageOnlyFailure ]
-
 # WindowProxy property access delegate callbacks are only implemented on Mac and iOS WK2.
 http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
@@ -2429,3 +2427,5 @@ webkit.org/b/271063 http/tests/navigation/page-cache-getUserMedia-pending-promis
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
 webkit.org/b/271384 imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Failure ]
+
+webkit.org/b/271388 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
