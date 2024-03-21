@@ -63,7 +63,7 @@ private:
     using Builtins = HashSet<Builtin, WTF::IntHash<Builtin>, WTF::StrongEnumHashTraits<Builtin>>;
     using Locations = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     void validateBuiltinIO(const SourceSpan&, const Type*, ShaderStage, Builtin, Direction, Builtins&);
-    void validateLocationIO(const SourceSpan&, const Type*, ShaderStage, Direction, Locations&);
+    void validateLocationIO(const SourceSpan&, const Type*, ShaderStage, unsigned, Locations&);
     void validateStructIO(ShaderStage, const Types::Struct&, Direction, Builtins&, Locations&);
 
     template<typename T>
@@ -491,8 +491,8 @@ std::optional<FailedCheck> AttributeValidator::validateIO()
                 continue;
             }
 
-            if (parameter.location()) {
-                validateLocationIO(span, type, entryPoint.stage, Direction::Input, locations);
+            if (auto location = parameter.location()) {
+                validateLocationIO(span, type, entryPoint.stage, *location, locations);
                 continue;
             }
 
@@ -517,8 +517,8 @@ std::optional<FailedCheck> AttributeValidator::validateIO()
 
         if (auto builtin = function.returnTypeBuiltin())
             validateBuiltinIO(span, type, entryPoint.stage, *builtin, Direction::Output, builtins);
-        else if (function.returnTypeLocation())
-            validateLocationIO(span, type, entryPoint.stage, Direction::Output, locations);
+        else if (auto location = function.returnTypeLocation())
+            validateLocationIO(span, type, entryPoint.stage, *location, locations);
         else if (auto* structType = std::get_if<Types::Struct>(type))
             validateStructIO(entryPoint.stage, *structType, Direction::Output, builtins, locations);
         else {
@@ -588,14 +588,24 @@ case Builtin::__case: \
         error(span, "@builtin(", toString(builtin), ") appears multiple times as pipeline input");
 }
 
-void AttributeValidator::validateLocationIO(const SourceSpan& span, const Type* type, ShaderStage stage, Direction direction, Locations& locations)
+void AttributeValidator::validateLocationIO(const SourceSpan& span, const Type* type, ShaderStage stage, unsigned location, Locations& locations)
 {
-    // FIXME: implement this
-    UNUSED_PARAM(span);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(stage);
-    UNUSED_PARAM(direction);
-    UNUSED_PARAM(locations);
+    if (stage == ShaderStage::Compute) {
+        error(span, "@location cannot be used by compute shaders");
+        return;
+    }
+
+    if (!satisfies(type, Constraints::Number)) {
+        auto* vector = std::get_if<Types::Vector>(type);
+        if (!vector || !satisfies(vector->element, Constraints::Number)) {
+            error(span, "cannot apply @location to declaration of type '", *type, "'");
+            return;
+        }
+    }
+
+    auto result = locations.add(location);
+    if (!result.isNewEntry)
+        error(span, "@location(", String::number(location), ") appears multiple times");
 }
 
 void AttributeValidator::validateStructIO(ShaderStage stage, const Types::Struct& structType, Direction direction, Builtins& builtins, Locations& locations)
@@ -609,8 +619,8 @@ void AttributeValidator::validateStructIO(ShaderStage stage, const Types::Struct
             continue;
         }
 
-        if (member.location()) {
-            validateLocationIO(span, type, stage, direction, locations);
+        if (auto location = member.location()) {
+            validateLocationIO(span, type, stage, *location, locations);
             continue;
         }
 
