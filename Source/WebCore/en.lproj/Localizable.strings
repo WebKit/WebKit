@@ -208,8 +208,17 @@
 /* Message for user microphone access prompt */
 "Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
 
-/* Informative text for requesting cross-site cookie and website data access. */
-"Allowing access to website data is necessary for the website to work correctly." = "Allowing access to website data is necessary for the website to work correctly.";
+/* Informative text for requesting cross-site cookie and website data access for two sites. */
+"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.";
+
+/* Informative text for requesting cross-site cookie and website data access for three sites. */
+"Using the same cookies and website data is required for %s, %s, and one more website to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and one more website to work correctly, but could make it easier to track your browsing across these websites.";
+
+/* Informative text for requesting cross-site cookie and website data access for four or more sites. */
+"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.";
+
+/* Label describing the list of related websites controlled by the same organization. */
+"Related %@ websites" = "Related %@ websites";
 
 /* WKWebExtensionErrorUnknown description */
 "An unknown error has occurred." = "An unknown error has occurred.";
@@ -230,7 +239,7 @@
 "Apple Pay" = "Apple Pay";
 
 /* Message for requesting cross-site cookie and website data access. */
-"Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?" = "Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?";
+"Allow related %@ websites to share cookies and website data?" = "Allow related %@ websites to share cookies and website data?";
 
 /* Malware confirmation dialog title */
 "Are you sure you wish to go to this site?" = "Are you sure you wish to go to this site?";
@@ -441,12 +450,6 @@
 
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
-
-/* Message for requesting cross-site cookie and website data access. */
-"Do you want to allow %@ websites to access one another's cookies and website data?" = "Do you want to allow %@ websites to access one another's cookies and website data?";
-
-/* Informative text for requesting cross-site cookie and website data access. */
-"Logging into this website requires %s and %s to access one another's cookies and website data. Allowing access is necessary for the website to work correctly." = "Logging into this website requires %s and %s to access one another's cookies and website data. Allowing access is necessary for the website to work correctly.";
 
 /* Codec Strings */
 "Dolby Vision Codec String" = "Dolby Vision";
