@@ -437,12 +437,14 @@ set(WPE_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}.pc)
 set(WPE_Uninstalled_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}-uninstalled.pc)
 
 if (ENABLE_2022_GLIB_API)
-    set(WPEWebProcessExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/wpe-web-process-extension-${WPE_API_VERSION}.pc)
-    set(WPEWebProcessExtension_Uninstalled_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/wpe-web-process-extension-${WPE_API_VERSION}-uninstalled.pc)
+    set(WPE_WEB_PROCESS_EXTENSION_PC_MODULE "wpe-web-process-extension-${WPE_API_VERSION}")
 else ()
-    set(WPEWebProcessExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/wpe-web-extension-${WPE_API_VERSION}.pc)
-    set(WPEWebProcessExtension_Uninstalled_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/wpe-web-extension-${WPE_API_VERSION}-uninstalled.pc)
+    set(WPE_WEB_PROCESS_EXTENSION_PC_MODULE "wpe-web-extension-${WPE_API_VERSION}")
 endif ()
+EXPOSE_STRING_VARIABLE_TO_BUILD(WPE_WEB_PROCESS_EXTENSION_PC_MODULE)
+
+set(WPEWebProcessExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/${WPE_WEB_PROCESS_EXTENSION_PC_MODULE}.pc)
+set(WPEWebProcessExtension_Uninstalled_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/${WPE_WEB_PROCESS_EXTENSION_PC_MODULE}-uninstalled.pc)
 
 include(BubblewrapSandboxChecks)
 include(GStreamerChecks)
