@@ -442,7 +442,7 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
 SkPaint GraphicsContextSkia::createFillPaint() const
 {
     SkPaint paint;
-    paint.setAntiAlias(true);
+    paint.setAntiAlias(shouldAntialias());
     paint.setStyle(SkPaint::kFill_Style);
     paint.setBlendMode(toSkiaBlendMode(compositeMode().operation, blendMode()));
 
@@ -462,7 +462,7 @@ void GraphicsContextSkia::setupFillSource(SkPaint& paint) const
 SkPaint GraphicsContextSkia::createStrokePaint() const
 {
     SkPaint paint;
-    paint.setAntiAlias(true);
+    paint.setAntiAlias(shouldAntialias());
     paint.setStyle(SkPaint::kStroke_Style);
     paint.setStrokeCap(m_skiaState.m_stroke.cap);
     paint.setStrokeJoin(m_skiaState.m_stroke.join);
