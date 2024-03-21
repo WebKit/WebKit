@@ -578,20 +578,11 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     if (auto* styleRule = dynamicDowncast<CSSStyleRule>(rule))
         return &styleRule->cssRules();
 
-    if (is<CSSMediaRule>(*rule))
-        return &downcast<CSSMediaRule>(*rule).cssRules();
+    if (auto* keyframesRule = dynamicDowncast<CSSKeyframesRule>(*rule))
+        return &keyframesRule->cssRules();
 
-    if (is<CSSKeyframesRule>(*rule))
-        return &downcast<CSSKeyframesRule>(*rule).cssRules();
-
-    if (is<CSSSupportsRule>(*rule))
-        return &downcast<CSSSupportsRule>(*rule).cssRules();
-
-    if (is<CSSLayerBlockRule>(*rule))
-        return &downcast<CSSLayerBlockRule>(*rule).cssRules();
-
-    if (auto* containerRule = dynamicDowncast<CSSContainerRule>(rule))
-        return &containerRule->cssRules();
+    if (auto* groupingRule = dynamicDowncast<CSSGroupingRule>(*rule))
+        return &groupingRule->cssRules();
 
     return nullptr;
 }

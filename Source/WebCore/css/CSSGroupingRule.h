@@ -51,6 +51,7 @@ protected:
     RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&) override;
 
 private:
+    bool isGroupingRule() const final { return true; }
     void appendCSSTextForItemsInternal(StringBuilder&, StringBuilder&) const;
     void cssTextForRules(StringBuilder&) const;
     void cssTextForRulesWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
@@ -61,3 +62,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSGroupingRule)
+    static bool isType(const WebCore::CSSRule& rule) { return rule.isGroupingRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
