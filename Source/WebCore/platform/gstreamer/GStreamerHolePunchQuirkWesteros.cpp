@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "GStreamerHolePunchQuirkWesteros.h"
+#include "MediaPlayerPrivateGStreamer.h"
 
 #if USE(GSTREAMER)
 
@@ -37,8 +38,15 @@ GstElement* GStreamerHolePunchQuirkWesteros::createHolePunchVideoSink(bool isLeg
     // Westeros using holepunch.
     GstElement* videoSink = makeGStreamerElement("westerossink", "WesterosVideoSink");
     g_object_set(videoSink, "zorder", 0.0f, nullptr);
-    if (isPIPRequested)
+    if (isPIPRequested) {
         g_object_set(videoSink, "res-usage", 0u, nullptr);
+        // Set context for pipelines that use ERM in decoder elements.
+        auto context = adoptGRef(gst_context_new("erm", FALSE));
+        auto contextStructure = gst_context_writable_structure(context.get());
+        gst_structure_set(contextStructure, "res-usage", G_TYPE_UINT, 0x0u, nullptr);
+        auto playerPrivate = reinterpret_cast<const MediaPlayerPrivateGStreamer*>(player->playerPrivate());
+        gst_element_set_context(playerPrivate->pipeline(), context.get());
+    }
     return videoSink;
 }
 

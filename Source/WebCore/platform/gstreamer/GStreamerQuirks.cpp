@@ -230,6 +230,18 @@ void GStreamerQuirksManager::setHolePunchEnabledForTesting(bool enabled)
         m_holePunchQuirk = nullptr;
 }
 
+unsigned GStreamerQuirksManager::getAdditionalPlaybinFlags() const
+{
+    for (const auto& quirk : m_quirks) {
+        if (auto flags = quirk->getAdditionalPlaybinFlags()) {
+            GST_DEBUG("Quirk %s requests these playbin flags: %u", quirk->identifier(), flags);
+            return flags;
+        }
+    }
+    GST_DEBUG("Quirks didn't request any specific playbin flags.");
+    return getGstPlayFlag("text") | getGstPlayFlag("soft-colorbalance");
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore

@@ -2964,19 +2964,11 @@ void MediaPlayerPrivateGStreamer::setPlaybackFlags(bool isMediaStream)
     if (isMediaStream)
         flags = flags & ~getGstPlayFlag("buffering");
 
-#if !USE(GSTREAMER_TEXT_SINK)
-    hasText = 0x0;
-#endif
-
-#if USE(GSTREAMER_NATIVE_VIDEO)
-    hasSoftwareColorBalance = 0x0;
-#else
-    hasNativeVideo = 0x0;
-#endif
-
-#if !USE(GSTREAMER_NATIVE_AUDIO)
-    hasNativeAudio = 0x0;
-#endif
+    unsigned additionalFlags = GStreamerQuirksManager::singleton().getAdditionalPlaybinFlags();
+    hasText &= additionalFlags;
+    hasSoftwareColorBalance &= additionalFlags;
+    hasNativeVideo &= additionalFlags;
+    hasNativeAudio &= additionalFlags;
 
     GST_INFO_OBJECT(pipeline(), "text %s, audio %s (native %s), video %s (native %s, software color balance %s)", boolForPrinting(hasText),
         boolForPrinting(hasAudio), boolForPrinting(hasNativeAudio), boolForPrinting(hasVideo), boolForPrinting(hasNativeVideo),
@@ -4234,10 +4226,9 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 
     if (isHolePunchRenderingEnabled()) {
         m_videoSink = createHolePunchVideoSink();
-        if (m_videoSink) {
-            pushNextHolePunchBuffer();
-            return m_videoSink.get();
-        }
+        // Do not check the m_videoSink value. The nullptr case will trigger auto-plugging in playbin.
+        pushNextHolePunchBuffer();
+        return m_videoSink.get();
     }
 
 #if USE(TEXTURE_MAPPER_DMABUF)

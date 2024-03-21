@@ -22,7 +22,7 @@
 
 #if USE(GSTREAMER)
 
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "MediaPlayer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -59,6 +59,7 @@ public:
     virtual std::optional<bool> isHardwareAccelerated(GstElementFactory*) { return std::nullopt; }
     virtual std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const { return std::nullopt; }
     virtual Vector<String> disallowedWebAudioDecoders() const { return { }; }
+    virtual unsigned getAdditionalPlaybinFlags() const { return getGstPlayFlag("text") | getGstPlayFlag("soft-colorbalance"); }
 };
 
 class GStreamerHolePunchQuirk : public GStreamerQuirkBase {
@@ -98,6 +99,8 @@ public:
     bool sinksRequireClockSynchronization() const;
 
     void setHolePunchEnabledForTesting(bool);
+
+    unsigned getAdditionalPlaybinFlags() const;
 
 private:
     GStreamerQuirksManager(bool, bool);
