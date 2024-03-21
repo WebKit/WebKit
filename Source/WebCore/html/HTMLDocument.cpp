@@ -103,20 +103,6 @@ HTMLDocument::HTMLDocument(LocalFrame* frame, const Settings& settings, const UR
 
 HTMLDocument::~HTMLDocument() = default;
 
-int HTMLDocument::width()
-{
-    updateLayoutIgnorePendingStylesheets();
-    RefPtr frameView = view();
-    return frameView ? frameView->contentsWidth() : 0;
-}
-
-int HTMLDocument::height()
-{
-    updateLayoutIgnorePendingStylesheets();
-    RefPtr frameView = view();
-    return frameView ? frameView->contentsHeight() : 0;
-}
-
 Ref<DocumentParser> HTMLDocument::createParser()
 {
     return HTMLDocumentParser::create(*this, parserContentPolicy());
