@@ -1118,7 +1118,7 @@ void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const I
     callback(error, result);
 }
 
-void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback, SpaceCheckResult spaceCheckResult)
+void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transaction, uint64_t handledRequestResultsCount, ErrorCallback callback, SpaceCheckResult spaceCheckResult)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::commitTransaction - %s", transaction.info().identifier().loggingString().utf8().data());
@@ -1127,17 +1127,27 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
         if (!m_manager)
             return callback(IDBError { ExceptionCode::InvalidStateError });
 
-        m_manager->requestSpace(m_identifier.origin(), 0, [this, weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, callback = WTFMove(callback)](bool granted) mutable {
+        m_manager->requestSpace(m_identifier.origin(), 0, [this, handledRequestResultsCount, weakThis = WeakPtr { *this }, weakTransaction = WeakPtr { transaction }, callback = WTFMove(callback)](bool granted) mutable {
             if (!weakThis || !weakTransaction)
                 return callback(IDBError { ExceptionCode::InvalidStateError, "Database or transaction is closed"_s });
 
-            commitTransaction(*weakTransaction, WTFMove(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
+            commitTransaction(*weakTransaction, handledRequestResultsCount, WTFMove(callback), granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
         });
         return;
     }
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
     ASSERT(transaction.database() == this);
+
+    if (transaction.shouldAbortDueToUnhandledRequestError(handledRequestResultsCount)) {
+        abortTransaction(transaction, [callback = WTFMove(callback)](auto error) {
+            if (!error.isNull())
+                return callback(error);
+
+            callback(IDBError { ExceptionCode::UnknownError, "Transaction is aborted due to unhandled failed request"_s });
+        }, spaceCheckResult);
+        return;
+    }
 
     if (!m_backingStore)
         return callback(IDBError { ExceptionCode::InvalidStateError, "Backing store is closed"_s });

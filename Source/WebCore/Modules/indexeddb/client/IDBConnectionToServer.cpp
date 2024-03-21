@@ -357,13 +357,13 @@ void IDBConnectionToServer::establishTransaction(IDBDatabaseConnectionIdentifier
         m_delegate->establishTransaction(databaseConnectionIdentifier, info);
 }
 
-void IDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
+void IDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t handledRequestResultsCount)
 {
     LOG(IndexedDB, "IDBConnectionToServer::commitTransaction");
     ASSERT(isMainThread());
 
     if (m_serverConnectionIsValid)
-        m_delegate->commitTransaction(transactionIdentifier, pendingRequestCount);
+        m_delegate->commitTransaction(transactionIdentifier, handledRequestResultsCount);
     else {
         callOnMainThread([this, protectedThis = Ref { *this }, transactionIdentifier] {
             didCommitTransaction(transactionIdentifier, IDBError::serverConnectionLostError());

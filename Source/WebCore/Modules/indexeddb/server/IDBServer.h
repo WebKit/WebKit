@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT void openDatabase(const IDBOpenRequestData&);
     WEBCORE_EXPORT void deleteDatabase(const IDBOpenRequestData&);
     WEBCORE_EXPORT void abortTransaction(const IDBResourceIdentifier&);
-    WEBCORE_EXPORT void commitTransaction(const IDBResourceIdentifier&, uint64_t pendingRequestCount);
+    WEBCORE_EXPORT void commitTransaction(const IDBResourceIdentifier&, uint64_t handledRequestResultsCount);
     WEBCORE_EXPORT void didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&);
     WEBCORE_EXPORT void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     WEBCORE_EXPORT void renameObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName);

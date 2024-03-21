@@ -458,6 +458,7 @@ void IDBTransaction::finishedDispatchEventForRequest(IDBRequest& request)
 
     ASSERT_UNUSED(request, !m_currentlyCompletingRequest || m_currentlyCompletingRequest == &request);
 
+    ++m_handledRequestResultsCount;
     m_currentlyCompletingRequest = nullptr;
     handleOperationsCompletedOnServer();
 }
@@ -489,21 +490,17 @@ void IDBTransaction::commitInternal()
 
     LOG(IndexedDBOperations, "IDB commit operation: Transaction %s", info().identifier().loggingString().utf8().data());
 
-    auto pendingRequestCount = std::count_if(m_openRequests.begin(), m_openRequests.end(), [](auto& request) {
-        return !request->isDone();
-    });
-
-    scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, nullptr, [protectedThis = Ref { *this }, pendingRequestCount] (auto& operation) {
-        protectedThis->commitOnServer(operation, pendingRequestCount);
+    scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, nullptr, [protectedThis = Ref { *this }] (auto& operation) {
+        protectedThis->commitOnServer(operation, protectedThis->m_handledRequestResultsCount);
     }));
 }
 
-void IDBTransaction::commitOnServer(IDBClient::TransactionOperation& operation, uint64_t pendingRequestCount)
+void IDBTransaction::commitOnServer(IDBClient::TransactionOperation& operation, uint64_t handledRequestResultsCount)
 {
     LOG(IndexedDB, "IDBTransaction::commitOnServer");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    m_database->connectionProxy().commitTransaction(*this, pendingRequestCount);
+    m_database->connectionProxy().commitTransaction(*this, handledRequestResultsCount);
 
     ASSERT(!m_transactionOperationsInProgressQueue.isEmpty());
     ASSERT(m_transactionOperationsInProgressQueue.last() == &operation);

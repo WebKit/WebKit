@@ -346,7 +346,7 @@ void IDBConnectionProxy::didStartTransaction(const IDBResourceIdentifier& transa
     transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didStart, error);
 }
 
-void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction, uint64_t pendingRequestCount)
+void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction, uint64_t handledRequestResultsCount)
 {
     {
         Locker locker { m_transactionMapLock };
@@ -354,7 +354,7 @@ void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction, uint64_t
         m_committingTransactions.set(transaction.info().identifier(), &transaction);
     }
 
-    callConnectionOnMainThread(&IDBConnectionToServer::commitTransaction, transaction.info().identifier(), pendingRequestCount);
+    callConnectionOnMainThread(&IDBConnectionToServer::commitTransaction, transaction.info().identifier(), handledRequestResultsCount);
 }
 
 void IDBConnectionProxy::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)

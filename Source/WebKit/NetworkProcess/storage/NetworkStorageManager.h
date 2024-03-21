@@ -191,7 +191,7 @@ private:
     void abortOpenAndUpgradeNeeded(WebCore::IDBDatabaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier);
     void didFireVersionChangeEvent(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer);
     void abortTransaction(const WebCore::IDBResourceIdentifier&);
-    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t pendingRequestCount);
+    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t handledRequestResultsCount);
     void didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&);
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&);
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName);

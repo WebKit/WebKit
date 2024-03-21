@@ -396,7 +396,7 @@ void IDBServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseCon
         m_uniqueIDBDatabaseMap.remove(database->identifier());
 }
 
-void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
+void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t handledRequestResultsCount)
 {
     LOG(IndexedDB, "IDBServer::commitTransaction");
     ASSERT(!isMainThread());
@@ -409,7 +409,7 @@ void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdenti
         return;
     }
 
-    transaction->commit(pendingRequestCount);
+    transaction->commit(handledRequestResultsCount);
 }
 
 void IDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)

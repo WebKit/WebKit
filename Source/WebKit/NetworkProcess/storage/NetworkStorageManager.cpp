@@ -1485,10 +1485,10 @@ void NetworkStorageManager::abortTransaction(const WebCore::IDBResourceIdentifie
         transaction->abort();
 }
 
-void NetworkStorageManager::commitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
+void NetworkStorageManager::commitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, uint64_t handledRequestResultsCount)
 {
     if (auto transaction = m_idbStorageRegistry->transaction(transactionIdentifier))
-        transaction->commit(pendingRequestCount);
+        transaction->commit(handledRequestResultsCount);
 }
 
 void NetworkStorageManager::didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)

@@ -55,7 +55,7 @@ private:
     void deleteDatabase(const WebCore::IDBOpenRequestData&) final;
     void openDatabase(const WebCore::IDBOpenRequestData&) final;
     void abortTransaction(const WebCore::IDBResourceIdentifier&) final;
-    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t pendingRequestCount) final;
+    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t handledRequestResultsCount) final;
     void didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&) final;
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&) final;
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName) final;

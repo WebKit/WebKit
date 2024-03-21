@@ -98,7 +98,7 @@ public:
     void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
     void openCursor(const IDBRequestData&, const IDBCursorInfo&, GetResultCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
     void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&, GetResultCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void commitTransaction(UniqueIDBDatabaseTransaction&, uint64_t handledRequestResultsCount, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
     void abortTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
 
     void didFinishHandlingVersionChange(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& transactionIdentifier);
