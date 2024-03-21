@@ -102,6 +102,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebTransportSession.h"
 #include "WebURLSchemeHandlerIdentifier.h"
+#include <WebCore/AttributedString.h>
 #include <WebCore/BackgroundFetchRecordIdentifier.h>
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/DictationContext.h>
@@ -111,6 +112,7 @@
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <WebCore/IDBDatabaseConnectionIdentifier.h>
 #include <WebCore/ImageDecoderIdentifier.h>
+#include <WebCore/InbandGenericCueIdentifier.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <WebCore/MediaKeySystemRequestIdentifier.h>
@@ -452,6 +454,8 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
 Vector<ASCIILiteral> serializedIdentifiers()
 {
     static_assert(sizeof(uint64_t) == sizeof(IPC::AsyncReplyID));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::AttributedStringTextTableBlockID));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::AttributedStringTextTableID));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BackgroundFetchRecordIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BroadcastChannelIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DictationContext));
@@ -460,6 +464,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemHandleIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemSyncAccessHandleIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ImageDecoderIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::InbandGenericCueIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LayerHostingContextIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LibWebRTCSocketIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaKeySystemRequestIdentifier));
@@ -570,6 +575,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
         "IPC::AsyncReplyID"_s,
+        "WebCore::AttributedStringTextTableBlockID"_s,
+        "WebCore::AttributedStringTextTableID"_s,
         "WebCore::BackgroundFetchRecordIdentifier"_s,
         "WebCore::BroadcastChannelIdentifier"_s,
         "WebCore::DictationContext"_s,
@@ -578,6 +585,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::FileSystemHandleIdentifier"_s,
         "WebCore::FileSystemSyncAccessHandleIdentifier"_s,
         "WebCore::ImageDecoderIdentifier"_s,
+        "WebCore::InbandGenericCueIdentifier"_s,
         "WebCore::LayerHostingContextIdentifier"_s,
         "WebCore::LibWebRTCSocketIdentifier"_s,
         "WebCore::MediaKeySystemRequestIdentifier"_s,

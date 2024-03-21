@@ -92,6 +92,7 @@ header: <WebCore/ResourceRequest.h>
     Vector<std::optional<WebCore::AttributedString::TableBlockAndTableIDPair>> tableBlockAndTableIDs
     Vector<WebCore::AttributedString::TextListID> listIDs
 }
+using WebCore::AttributedString::TableBlockAndTableIDPair = std::pair<WebCore::AttributedStringTextTableBlockID, WebCore::AttributedStringTextTableID>
 
 [Nested] struct WebCore::AttributedString::AttributeValue {
 #if ENABLE(MULTI_REPRESENTATION_HEIC)

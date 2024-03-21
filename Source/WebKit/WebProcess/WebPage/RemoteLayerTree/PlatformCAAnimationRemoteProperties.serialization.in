@@ -30,8 +30,8 @@ struct WebKit::PlatformCAAnimationRemoteProperties {
     float repeatCount;
     float speed;
 
-    WebCore::PlatformCAAnimation::FillModeType fillMode;
-    WebCore::PlatformCAAnimation::ValueFunctionType valueFunction;
+    WebCore::PlatformCAAnimationFillModeType fillMode;
+    WebCore::PlatformCAAnimationValueFunctionType valueFunction;
     RefPtr<WebCore::TimingFunction> timingFunction;
 
     bool autoReverses;

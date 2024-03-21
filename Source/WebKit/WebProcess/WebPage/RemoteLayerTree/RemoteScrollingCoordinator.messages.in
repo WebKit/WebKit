@@ -29,8 +29,8 @@ messages -> RemoteScrollingCoordinator {
     ScrollingStateInUIProcessChanged(WebKit::RemoteScrollingUIState uiState);
 
     ReceivedWheelEventWithPhases(enum:uint8_t WebCore::PlatformWheelEventPhase phase, enum:uint8_t WebCore::PlatformWheelEventPhase momentumPhase);
-    StartDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason> reason);
-    StopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitor::DeferReason> reason);
+    StartDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitorDeferReason> reason);
+    StopDeferringScrollingTestCompletionForNode(WebCore::ScrollingNodeID nodeID, OptionSet<WebCore::WheelEventTestMonitorDeferReason> reason);
     ScrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID nodeID, enum:uint8_t WebCore::ScrollbarOrientation orientation, bool isVisible);
     ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID nodeID, enum:uint8_t WebCore::ScrollbarOrientation orientation, int minimumThumbLength);
 }

@@ -188,7 +188,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 
 [Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties {
     WebCore::PlatformLayerIdentifier layerID;
-    WebCore::PlatformCALayer::LayerType type;
+    WebCore::PlatformCALayerLayerType type;
     std::optional<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData> videoElementData;
 #if ENABLE(MODEL_ELEMENT)
     std::variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, Ref<WebCore::Model>, WebCore::LayerHostingContextIdentifier> additionalData;
@@ -243,8 +243,8 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     [OptionalTupleBit=WebKit::LayerChange::BackgroundColorChanged] WebCore::Color backgroundColor;
     [OptionalTupleBit=WebKit::LayerChange::BorderColorChanged] WebCore::Color borderColor;
     [OptionalTupleBit=WebKit::LayerChange::CustomAppearanceChanged] WebCore::GraphicsLayer::CustomAppearance customAppearance;
-    [OptionalTupleBit=WebKit::LayerChange::MinificationFilterChanged] WebCore::PlatformCALayer::FilterType minificationFilter;
-    [OptionalTupleBit=WebKit::LayerChange::MagnificationFilterChanged] WebCore::PlatformCALayer::FilterType magnificationFilter;
+    [OptionalTupleBit=WebKit::LayerChange::MinificationFilterChanged] WebCore::PlatformCALayerFilterType minificationFilter;
+    [OptionalTupleBit=WebKit::LayerChange::MagnificationFilterChanged] WebCore::PlatformCALayerFilterType magnificationFilter;
     [OptionalTupleBit=WebKit::LayerChange::BlendModeChanged] WebCore::BlendMode blendMode;
     [OptionalTupleBit=WebKit::LayerChange::WindRuleChanged] WebCore::WindRule windRule;
     [OptionalTupleBit=WebKit::LayerChange::VideoGravityChanged] WebCore::MediaPlayerVideoGravity videoGravity;
