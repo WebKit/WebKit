@@ -145,12 +145,12 @@ static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 1
     decisionHandler(WKNavigationActionPolicyCancel);
 }
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation
 {
     if (!_webExtensionContext)
         return;
 
-    _webExtensionContext->didFinishNavigation(webView, navigation);
+    _webExtensionContext->didFinishDocumentLoad(webView, navigation);
 }
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
@@ -3326,38 +3326,33 @@ void WebExtensionContext::saveBackgroundPageListenersToStorage()
 
 void WebExtensionContext::performTasksAfterBackgroundContentLoads()
 {
-    RELEASE_LOG_DEBUG(Extensions, "Performing tasks soon after background content loads");
+    if (!isLoaded())
+        return;
 
-    constexpr auto performDelay = 100_ms;
+    RELEASE_LOG_DEBUG(Extensions, "Background content loaded");
 
-    // Delay to give time for addListener messages to register the events, this is needed because modules execute after page load fires.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, performDelay.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }] {
-        if (!isLoaded())
-            return;
+    if (m_shouldFireStartupEvent) {
+        fireRuntimeStartupEventIfNeeded();
+        m_shouldFireStartupEvent = false;
+    }
 
-        if (m_shouldFireStartupEvent) {
-            fireRuntimeStartupEventIfNeeded();
-            m_shouldFireStartupEvent = false;
-        }
+    if (m_installReason != InstallReason::None) {
+        fireRuntimeInstalledEventIfNeeded();
 
-        if (m_installReason != InstallReason::None) {
-            fireRuntimeInstalledEventIfNeeded();
+        m_installReason = InstallReason::None;
+        m_previousVersion = nullString();
+    }
 
-            m_installReason = InstallReason::None;
-            m_previousVersion = nullString();
-        }
+    RELEASE_LOG_DEBUG(Extensions, "Performing %{public}zu task(s) after background content loaded", m_actionsToPerformAfterBackgroundContentLoads.size());
 
-        RELEASE_LOG_DEBUG(Extensions, "Performing %{public}zu task(s) after background content loaded", m_actionsToPerformAfterBackgroundContentLoads.size());
+    for (auto& action : m_actionsToPerformAfterBackgroundContentLoads)
+        action();
 
-        for (auto& action : m_actionsToPerformAfterBackgroundContentLoads)
-            action();
+    m_backgroundContentIsLoaded = true;
+    m_actionsToPerformAfterBackgroundContentLoads.clear();
 
-        m_backgroundContentIsLoaded = true;
-        m_actionsToPerformAfterBackgroundContentLoads.clear();
-
-        saveBackgroundPageListenersToStorage();
-        scheduleBackgroundContentToUnload();
-    }).get());
+    saveBackgroundPageListenersToStorage();
+    scheduleBackgroundContentToUnload();
 }
 
 void WebExtensionContext::wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&& completionHandler)
@@ -3422,12 +3417,11 @@ bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WK
     return false;
 }
 
-void WebExtensionContext::didFinishNavigation(WKWebView *webView, WKNavigation *)
+void WebExtensionContext::didFinishDocumentLoad(WKWebView *webView, WKNavigation *)
 {
     if (webView != m_backgroundWebView)
         return;
 
-    // When didFinishNavigation fires for a service worker, the service worker has not executed yet.
     // The service worker will notify the load via a completion handler instead.
     if (extension().backgroundContentIsServiceWorker())
         return;

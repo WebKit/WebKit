@@ -456,7 +456,7 @@ public:
     bool safeToLoadBackgroundContent() const { return m_safeToLoadBackgroundContent; }
 
     bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
-    void didFinishNavigation(WKWebView *, WKNavigation *);
+    void didFinishDocumentLoad(WKWebView *, WKNavigation *);
     void didFailNavigation(WKWebView *, WKNavigation *, NSError *);
     void webViewWebContentProcessDidTerminate(WKWebView *);
 
