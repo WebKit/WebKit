@@ -11273,11 +11273,6 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Completion
     completionHandler(std::optional<Vector<uint8_t>>());
 }
 
-void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
-{
-    send(Messages::WebPage::AddMIMETypeWithCustomContentProvider(mimeType));
-}
-
 void WebPageProxy::changeFontAttributes(WebCore::FontAttributeChanges&& changes)
 {
     if (!hasRunningProcess())

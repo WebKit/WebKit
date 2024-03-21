@@ -32,9 +32,6 @@
 
 @interface WKWebViewConfiguration ()
 
-#if PLATFORM(IOS_FAMILY)
-@property (nonatomic, setter=_setContentProviderRegistry:) WKWebViewContentProviderRegistry *_contentProviderRegistry;
-#endif
 @property (nonatomic, readonly) NSString *_applicationNameForDesktopUserAgent;
 
 - (Ref<API::PageConfiguration>)copyPageConfiguration;

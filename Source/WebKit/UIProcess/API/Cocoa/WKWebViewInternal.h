@@ -240,7 +240,7 @@ struct PerWebProcessState {
     RetainPtr<WKContentView> _contentView;
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
     Vector<BlockPtr<void ()>> _visibleContentRectUpdateCallbacks;
-
+    RetainPtr<WKWebViewContentProviderRegistry> _contentProviderRegistry;
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
 #endif

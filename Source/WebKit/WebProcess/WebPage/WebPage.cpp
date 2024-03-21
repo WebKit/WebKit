@@ -5878,11 +5878,6 @@ bool WebPage::mainFrameHasCustomContentProvider() const
     return false;
 }
 
-void WebPage::addMIMETypeWithCustomContentProvider(const String& mimeType)
-{
-    m_mimeTypesWithCustomContentProviders.add(mimeType);
-}
-
 void WebPage::updateMainFrameScrollOffsetPinning()
 {
     RefPtr frameView = localMainFrameView();

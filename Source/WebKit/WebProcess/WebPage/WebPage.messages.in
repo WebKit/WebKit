@@ -353,8 +353,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     RequestRectForFoundTextRange(struct WebKit::WebFoundTextRange range) -> (WebCore::FloatRect rect)
     AddLayerForFindOverlay() -> (WebCore::PlatformLayerIdentifier findLayerID)
     RemoveLayerForFindOverlay() -> ()
-    
-    AddMIMETypeWithCustomContentProvider(String mimeType)
 
     # Drag and drop.
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)

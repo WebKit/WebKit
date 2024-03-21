@@ -1200,7 +1200,6 @@ public:
     void updateMainFrameScrollOffsetPinning();
 
     bool mainFrameHasCustomContentProvider() const;
-    void addMIMETypeWithCustomContentProvider(const String&);
 
     void mainFrameDidLayout();
 

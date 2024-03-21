@@ -894,8 +894,6 @@ public:
 
     WindowKind windowKind() const;
 
-    void addMIMETypeWithCustomContentProvider(const String& mimeType);
-
     void selectAll();
     void executeEditCommand(const String& commandName, const String& argument = String());
     void executeEditCommand(const String& commandName, const String& argument, CompletionHandler<void()>&&);

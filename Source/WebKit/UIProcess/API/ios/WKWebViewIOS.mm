@@ -479,7 +479,9 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry
 {
-    return [_configuration _contentProviderRegistry];
+    if (!self->_contentProviderRegistry)
+        self->_contentProviderRegistry = adoptNS([[WKWebViewContentProviderRegistry alloc] initWithConfiguration:self.configuration]);
+    return self->_contentProviderRegistry.get();
 }
 
 - (WKSelectionGranularity)_selectionGranularity
@@ -491,7 +493,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 {
     Class representationClass = nil;
     if (pageHasCustomContentView)
-        representationClass = [[_configuration _contentProviderRegistry] providerForMIMEType:mimeType];
+        representationClass = [[self _contentProviderRegistry] providerForMIMEType:mimeType];
 
     if (pageHasCustomContentView && representationClass) {
         [_customContentView removeFromSuperview];
@@ -3922,7 +3924,7 @@ static bool isLockdownModeWarningNeeded()
 - (BOOL)_isDisplayingPDF
 {
     for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes()) {
-        Class providerClass = [[_configuration _contentProviderRegistry] providerForMIMEType:@(type.characters())];
+        Class providerClass = [[self _contentProviderRegistry] providerForMIMEType:@(type.characters())];
         if ([_customContentView isKindOfClass:providerClass])
             return YES;
     }

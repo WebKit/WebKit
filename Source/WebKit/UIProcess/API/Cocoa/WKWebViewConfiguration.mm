@@ -63,43 +63,6 @@
 #import "_WKWebExtensionControllerInternal.h"
 #endif
 
-template<typename T> class LazyInitialized {
-public:
-    typedef typename WTF::GetPtrHelper<T>::PtrType PtrType;
-
-    template<typename F>
-    PtrType get(F&& f)
-    {
-        if (!m_isInitialized) {
-            m_value = f();
-            m_isInitialized = true;
-        }
-
-        return m_value.get();
-    }
-
-    void set(PtrType t)
-    {
-        m_value = t;
-        m_isInitialized = true;
-    }
-
-    void set(T&& t)
-    {
-        m_value = WTFMove(t);
-        m_isInitialized = true;
-    }
-
-    PtrType peek()
-    {
-        return m_value.get();
-    }
-
-private:
-    bool m_isInitialized = false;
-    T m_value;
-};
-
 #if PLATFORM(IOS_FAMILY)
 
 static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
@@ -132,7 +95,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     std::optional<RetainPtr<NSString>> _applicationNameForUserAgent;
 
 #if PLATFORM(IOS_FAMILY)
-    LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
     BOOL _allowsInlineMediaPlayback;
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
@@ -341,9 +303,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration._relatedWebView = _relatedWebView.get().get();
     configuration._webViewToCloneSessionStorageFrom = _webViewToCloneSessionStorageFrom.get().get();
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
-#if PLATFORM(IOS_FAMILY)
-    configuration._contentProviderRegistry = self._contentProviderRegistry;
-#endif
 
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
     configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
@@ -579,16 +538,6 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)setLimitsNavigationsToAppBoundDomains:(BOOL)limitsToAppBoundDomains
 {
     _pageConfiguration->setLimitsNavigationsToAppBoundDomains(limitsToAppBoundDomains);
-}
-
-- (WKWebViewContentProviderRegistry *)_contentProviderRegistry
-{
-    return _contentProviderRegistry.get([self] { return adoptNS([[WKWebViewContentProviderRegistry alloc] initWithConfiguration:self]); });
-}
-
-- (void)_setContentProviderRegistry:(WKWebViewContentProviderRegistry *)registry
-{
-    _contentProviderRegistry.set(registry);
 }
 #endif
 
