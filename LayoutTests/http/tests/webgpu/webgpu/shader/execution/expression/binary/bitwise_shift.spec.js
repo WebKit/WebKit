@@ -4,7 +4,7 @@
 Execution Tests for the bitwise shift binary expression operations
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../gpu_test.js';
-import { i32, scalarType, TypeU32, u32 } from '../../../../util/conversion.js';
+import { i32, scalarType, Type, u32 } from '../../../../util/conversion.js';
 
 import { allInputSources, run } from '../expression.js';
 
@@ -194,7 +194,7 @@ combine('vectorize', [undefined, 2, 3, 4])
 fn(async (t) => {
   const type = scalarType(t.params.type);
   const cases = makeShiftLeftConcreteCases(t.params.type, t.params.inputSource, type);
-  await run(t, binary('<<'), [type, TypeU32], type, t.params, cases);
+  await run(t, binary('<<'), [type, Type.u32], type, t.params, cases);
 });
 
 g.test('shift_left_concrete_compound').
@@ -215,7 +215,7 @@ combine('vectorize', [undefined, 2, 3, 4])
 fn(async (t) => {
   const type = scalarType(t.params.type);
   const cases = makeShiftLeftConcreteCases(t.params.type, t.params.inputSource, type);
-  await run(t, compoundBinary('<<='), [type, TypeU32], type, t.params, cases);
+  await run(t, compoundBinary('<<='), [type, Type.u32], type, t.params, cases);
 });
 
 function makeShiftRightConcreteCases(inputType, inputSource, type) {
@@ -319,7 +319,7 @@ combine('vectorize', [undefined, 2, 3, 4])
 fn(async (t) => {
   const type = scalarType(t.params.type);
   const cases = makeShiftRightConcreteCases(t.params.type, t.params.inputSource, type);
-  await run(t, binary('>>'), [type, TypeU32], type, t.params, cases);
+  await run(t, binary('>>'), [type, Type.u32], type, t.params, cases);
 });
 
 g.test('shift_right_concrete_compound').
@@ -340,5 +340,5 @@ combine('vectorize', [undefined, 2, 3, 4])
 fn(async (t) => {
   const type = scalarType(t.params.type);
   const cases = makeShiftRightConcreteCases(t.params.type, t.params.inputSource, type);
-  await run(t, compoundBinary('>>='), [type, TypeU32], type, t.params, cases);
+  await run(t, compoundBinary('>>='), [type, Type.u32], type, t.params, cases);
 });

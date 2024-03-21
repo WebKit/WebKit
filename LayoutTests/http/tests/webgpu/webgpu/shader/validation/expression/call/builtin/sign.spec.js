@@ -6,11 +6,11 @@ Validation tests for the ${builtin}() builtin.
 import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { keysOf, objectsToRecord } from '../../../../../../common/util/data_tables.js';
 import {
-  TypeF16,
-  TypeF32,
-  elementType,
-  kAllFloatAndSignedIntegerScalarsAndVectors,
-  kAllUnsignedIntegerScalarsAndVectors } from
+  Type,
+  kFloatScalarsAndVectors,
+  kConcreteSignedIntegerScalarsAndVectors,
+  kConcreteUnsignedIntegerScalarsAndVectors,
+  scalarTypeOf } from
 '../../../../../util/conversion.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
 
@@ -23,7 +23,10 @@ import {
 
 export const g = makeTestGroup(ShaderValidationTest);
 
-const kValuesTypes = objectsToRecord(kAllFloatAndSignedIntegerScalarsAndVectors);
+const kValuesTypes = objectsToRecord([
+...kFloatScalarsAndVectors,
+...kConcreteSignedIntegerScalarsAndVectors]
+);
 
 g.test('values').
 desc(
@@ -40,7 +43,7 @@ beginSubcases().
 expand('value', (u) => fullRangeForType(kValuesTypes[u.type]))
 ).
 beforeAllSubcases((t) => {
-  if (elementType(kValuesTypes[t.params.type]) === TypeF16) {
+  if (scalarTypeOf(kValuesTypes[t.params.type]) === Type.f16) {
     t.selectDeviceOrSkipTestCase('shader-f16');
   }
 }).
@@ -56,8 +59,8 @@ fn((t) => {
 });
 
 const kUnsignedIntegerArgumentTypes = objectsToRecord([
-TypeF32,
-...kAllUnsignedIntegerScalarsAndVectors]
+Type.f32,
+...kConcreteUnsignedIntegerScalarsAndVectors]
 );
 
 g.test('unsigned_integer_argument').
@@ -72,7 +75,7 @@ fn((t) => {
   validateConstOrOverrideBuiltinEval(
     t,
     builtin,
-    /* expectedResult */type === TypeF32,
+    /* expectedResult */type === Type.f32,
     [type.create(1)],
     'constant'
   );

@@ -10,7 +10,7 @@ import {
 '../../capability_info.js';
 import {
   kTextureFormatInfo,
-  kTextureFormats,
+  kAllTextureFormats,
   kFeaturesForFormats,
   filterFormatsByFeature,
   viewCompatible } from
@@ -39,10 +39,10 @@ combine('textureFormatFeature', kFeaturesForFormats).
 combine('viewFormatFeature', kFeaturesForFormats).
 beginSubcases().
 expand('textureFormat', ({ textureFormatFeature }) =>
-filterFormatsByFeature(textureFormatFeature, kTextureFormats)
+filterFormatsByFeature(textureFormatFeature, kAllTextureFormats)
 ).
 expand('viewFormat', ({ viewFormatFeature }) =>
-filterFormatsByFeature(viewFormatFeature, [undefined, ...kTextureFormats])
+filterFormatsByFeature(viewFormatFeature, [undefined, ...kAllTextureFormats])
 ).
 combine('useViewFormatList', [false, true])
 ).
@@ -124,7 +124,7 @@ desc(
 ).
 params((u) =>
 u //
-.combine('format', kTextureFormats).
+.combine('format', kAllTextureFormats).
 combine('aspect', kTextureAspects)
 ).
 beforeAllSubcases((t) => {

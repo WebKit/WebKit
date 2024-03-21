@@ -350,7 +350,7 @@ class TestBuilder {
         const testcaseStringUnique = stringifyPublicParamsUniquely(params);
         assert(
           !seen.has(testcaseStringUnique),
-          `Duplicate public test case+subcase params for test ${testPathString}: ${testcaseString}`
+          `Duplicate public test case+subcase params for test ${testPathString}: ${testcaseString} (${caseQuery})`
         );
         seen.add(testcaseStringUnique);
       }

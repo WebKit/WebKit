@@ -81,37 +81,6 @@ fn((t) => {
   });
 });
 
-g.test('create_shader_module_with_bgra8unorm_storage').
-desc(
-  `
-Test that it is valid to declare the format of a storage texture as bgra8unorm in a shader module if
-the feature bgra8unorm-storage is enabled.
-`
-).
-beforeAllSubcases((t) => {
-  t.selectDeviceOrSkipTestCase('bgra8unorm-storage');
-}).
-params((u) => u.combine('shaderType', ['fragment', 'compute'])).
-fn((t) => {
-  const { shaderType } = t.params;
-
-  t.testCreateShaderModuleWithBGRA8UnormStorage(shaderType, true);
-});
-
-g.test('create_shader_module_without_bgra8unorm_storage').
-desc(
-  `
-Test that it is invalid to declare the format of a storage texture as bgra8unorm in a shader module
-if the feature bgra8unorm-storage is not enabled.
-`
-).
-params((u) => u.combine('shaderType', ['fragment', 'compute'])).
-fn((t) => {
-  const { shaderType } = t.params;
-
-  t.testCreateShaderModuleWithBGRA8UnormStorage(shaderType, false);
-});
-
 g.test('configure_storage_usage_on_canvas_context_without_bgra8unorm_storage').
 desc(
   `

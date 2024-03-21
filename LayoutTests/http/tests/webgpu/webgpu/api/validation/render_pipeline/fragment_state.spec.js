@@ -10,15 +10,17 @@ import {
   kMaxColorAttachmentsToTest } from
 '../../../capability_info.js';
 import {
-  kTextureFormats,
+  kAllTextureFormats,
   kRenderableColorTextureFormats,
   kTextureFormatInfo,
-  computeBytesPerSampleFromFormats } from
+  computeBytesPerSampleFromFormats,
+  kColorTextureFormats } from
 '../../../format_info.js';
 import {
   getFragmentShaderCodeWithOutput,
   getPlainTypeInfo,
-  kDefaultFragmentShaderCode } from
+  kDefaultFragmentShaderCode,
+  kDefaultVertexShaderCode } from
 '../../../util/shader.js';
 import { kTexelRepresentationInfo } from '../../../util/texture/texel_data.js';
 
@@ -49,9 +51,60 @@ fn((t) => {
   t.doCreateRenderPipelineTest(isAsync, false, badDescriptor);
 });
 
+g.test('targets_format_is_color_format').
+desc(
+  `Tests that color target state format must be a color format, regardless of how the
+    fragment shader writes to it.`
+).
+params((u) =>
+u
+// Test all non-color texture formats, plus 'rgba8unorm' as a control case.
+.combine('format', kAllTextureFormats).
+filter(({ format }) => {
+  return format === 'rgba8unorm' || !kTextureFormatInfo[format].color;
+}).
+combine('isAsync', [false, true]).
+beginSubcases().
+combine('fragOutType', ['f32', 'u32', 'i32'])
+).
+beforeAllSubcases((t) => {
+  const { format } = t.params;
+  const info = kTextureFormatInfo[format];
+  t.skipIfTextureFormatNotSupported(t.params.format);
+  t.selectDeviceOrSkipTestCase(info.feature);
+}).
+fn((t) => {
+  const { isAsync, format, fragOutType } = t.params;
+
+  const fragmentShaderCode = getFragmentShaderCodeWithOutput([
+  { values, plainType: fragOutType, componentCount: 4 }]
+  );
+
+  const success = format === 'rgba8unorm' && fragOutType === 'f32';
+  t.doCreateRenderPipelineTest(isAsync, success, {
+    vertex: {
+      module: t.device.createShaderModule({ code: kDefaultVertexShaderCode }),
+      entryPoint: 'main'
+    },
+    fragment: {
+      module: t.device.createShaderModule({ code: fragmentShaderCode }),
+      entryPoint: 'main',
+      targets: [{ format }]
+    },
+    layout: 'auto'
+  });
+});
+
 g.test('targets_format_renderable').
-desc(`Tests that color target state format must have RENDER_ATTACHMENT capability.`).
-params((u) => u.combine('isAsync', [false, true]).combine('format', kTextureFormats)).
+desc(
+  `Tests that color target state format must have RENDER_ATTACHMENT capability
+    (tests only color formats).`
+).
+params((u) =>
+u //
+.combine('isAsync', [false, true]).
+combine('format', kColorTextureFormats)
+).
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
@@ -158,22 +211,10 @@ combineWithParams([
 // become 4 and 4+4+8+16+1 > 32. Re-ordering this so the R8Unorm's are at the end, however
 // is allowed: 4+8+16+1+1 < 32.
 {
-  formats: [
-  'r8unorm',
-  'r32float',
-  'rgba8unorm',
-  'rgba32float',
-  'r8unorm']
-
+  formats: ['r8unorm', 'r32float', 'rgba8unorm', 'rgba32float', 'r8unorm']
 },
 {
-  formats: [
-  'r32float',
-  'rgba8unorm',
-  'rgba32float',
-  'r8unorm',
-  'r8unorm']
-
+  formats: ['r32float', 'rgba8unorm', 'rgba32float', 'r8unorm', 'r8unorm']
 }]
 ).
 beginSubcases().

@@ -1595,7 +1595,7 @@ fn((t) => {
   };
   let textureHeight = 4 * info.blockHeight;
   let rowsPerImage = rowsPerImageEqualsCopyHeight ? copyHeight : copyHeight + 1;
-  const bytesPerRow = align(copyWidth * info.bytesPerBlock, 256);
+  const bytesPerRow = align(copyWidth * info.color.bytes, 256);
 
   if (dimension === '1d') {
     copySize.height = 1;

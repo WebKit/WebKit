@@ -6,7 +6,7 @@ import { assert, makeValueTestVariant } from '../../../common/util/util.js';
 import { kTextureDimensions, kTextureUsages } from '../../capability_info.js';
 import { GPUConst } from '../../constants.js';
 import {
-  kTextureFormats,
+  kAllTextureFormats,
   kTextureFormatInfo,
   kCompressedTextureFormats,
   kUncompressedTextureFormats,
@@ -104,7 +104,9 @@ desc(
   `Test every dimension type on every format. Note that compressed formats and depth/stencil formats are not valid for 1D/3D dimension types.`
 ).
 params((u) =>
-u.combine('dimension', [undefined, ...kTextureDimensions]).combine('format', kTextureFormats)
+u //
+.combine('dimension', [undefined, ...kTextureDimensions]).
+combine('format', kAllTextureFormats)
 ).
 beforeAllSubcases((t) => {
   const { format } = t.params;
@@ -136,7 +138,7 @@ desc(
 params((u) =>
 u.
 combine('dimension', [undefined, ...kTextureDimensions]).
-combine('format', kTextureFormats).
+combine('format', kAllTextureFormats).
 beginSubcases().
 combine('mipLevelCount', [1, 2, 3, 6, 7])
 // Filter out incompatible dimension type and format combinations.
@@ -271,7 +273,7 @@ desc(
 params((u) =>
 u.
 combine('dimension', [undefined, '2d']).
-combine('format', kTextureFormats).
+combine('format', kAllTextureFormats).
 beginSubcases().
 combine('sampleCount', [0, 1, 2, 4, 8, 16, 32, 256])
 ).
@@ -297,7 +299,7 @@ fn((t) => {
     usage
   };
 
-  const success = sampleCount === 1 || sampleCount === 4 && info.multisample && info.renderable;
+  const success = sampleCount === 1 || sampleCount === 4 && info.multisample;
 
   t.expectValidationError(() => {
     t.device.createTexture(descriptor);
@@ -318,7 +320,7 @@ desc(
 params((u) =>
 u.
 combine('dimension', [undefined, ...kTextureDimensions]).
-combine('format', kTextureFormats).
+combine('format', kAllTextureFormats).
 beginSubcases().
 combine('sampleCount', [1, 4]).
 combine('arrayLayerCount', [1, 2]).
@@ -1032,7 +1034,7 @@ desc(
 params((u) =>
 u.
 combine('dimension', [undefined, ...kTextureDimensions]).
-combine('format', kTextureFormats).
+combine('format', kAllTextureFormats).
 beginSubcases()
 // If usage0 and usage1 are the same, then the usage being test is a single usage. Otherwise, it is a combined usage.
 .combine('usage0', kTextureUsages).
@@ -1064,16 +1066,13 @@ fn((t) => {
   // Note that we unconditionally test copy usages for all formats. We don't check copySrc/copyDst in kTextureFormatInfo in capability_info.js
   // if (!info.copySrc && (usage & GPUTextureUsage.COPY_SRC) !== 0) success = false;
   // if (!info.copyDst && (usage & GPUTextureUsage.COPY_DST) !== 0) success = false;
-  if (
-  (usage & GPUTextureUsage.STORAGE_BINDING) !== 0 &&
-  !isTextureFormatUsableAsStorageFormat(format, t.isCompatibility))
-
-  success = false;
-  if (
-  (!info.renderable || appliedDimension !== '2d' && appliedDimension !== '3d') &&
-  (usage & GPUTextureUsage.RENDER_ATTACHMENT) !== 0)
-
-  success = false;
+  if (usage & GPUTextureUsage.STORAGE_BINDING) {
+    if (!isTextureFormatUsableAsStorageFormat(format, t.isCompatibility)) success = false;
+  }
+  if (usage & GPUTextureUsage.RENDER_ATTACHMENT) {
+    if (appliedDimension === '1d') success = false;
+    if (info.color && !info.colorRender) success = false;
+  }
 
   t.expectValidationError(() => {
     t.device.createTexture(descriptor);
@@ -1090,10 +1089,10 @@ combine('formatFeature', kFeaturesForFormats).
 combine('viewFormatFeature', kFeaturesForFormats).
 beginSubcases().
 expand('format', ({ formatFeature }) =>
-filterFormatsByFeature(formatFeature, kTextureFormats)
+filterFormatsByFeature(formatFeature, kAllTextureFormats)
 ).
 expand('viewFormat', ({ viewFormatFeature }) =>
-filterFormatsByFeature(viewFormatFeature, kTextureFormats)
+filterFormatsByFeature(viewFormatFeature, kAllTextureFormats)
 )
 ).
 beforeAllSubcases((t) => {

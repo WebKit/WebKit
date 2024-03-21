@@ -6,17 +6,20 @@ import { ShaderValidationTest } from '../../../shader_validation_test.js';
 
 const kFeature = 'packed_4x8_integer_dot_product';
 const kFn = 'unpack4xU8';
-const kGoodArgs = '(1u)';
-const kBadArgs = {
-  '0args': '()',
-  '2args': '(1u,2u)',
-  '0i32': '(1i)',
-  '0f32': '(1f)',
-  '0bool': '(false)',
-  '0vec2u': '(vec2u())',
-  '0vec3u': '(vec3u())',
-  '0vec4u': '(vec4u())'
+const kArgCases = {
+  good: '(1u)',
+  bad_0args: '()',
+  bad_2args: '(1u,2u)',
+  bad_0i32: '(1i)',
+  bad_0f32: '(1f)',
+  bad_0bool: '(false)',
+  bad_0vec2u: '(vec2u())',
+  bad_0vec3u: '(vec3u())',
+  bad_0vec4u: '(vec4u())',
+  bad_0array: '(array(1))',
+  bad_0struct: '(modf(1.1))'
 };
+const kGoodArgs = kArgCases['good'];
 
 export const g = makeTestGroup(ShaderValidationTest);
 
@@ -40,17 +43,19 @@ fn((t) => {
   t.expectCompileResult(true, code);
 });
 
-g.test('bad_args').
-desc(`Test compilation failure of ${kFn} with bad arguments`).
-params((u) => u.combine('arg', keysOf(kBadArgs))).
+g.test('args').
+desc(`Test compilation failure of ${kFn} with various numbers of and types of arguments`).
+params((u) => u.combine('arg', keysOf(kArgCases))).
 fn((t) => {
   t.skipIfLanguageFeatureNotSupported(kFeature);
-  t.expectCompileResult(false, `const c = ${kFn}${kBadArgs[t.params.arg]};`);
+  t.expectCompileResult(t.params.arg === 'good', `const c = ${kFn}${kArgCases[t.params.arg]};`);
 });
 
 g.test('must_use').
 desc(`Result of ${kFn} must be used`).
+params((u) => u.combine('use', [true, false])).
 fn((t) => {
   t.skipIfLanguageFeatureNotSupported(kFeature);
-  t.expectCompileResult(false, `fn f() { ${kFn}${kGoodArgs}; }`);
+  const use_it = t.params.use ? '_ = ' : '';
+  t.expectCompileResult(t.params.use, `fn f() { ${use_it}${kFn}${kGoodArgs}; }`);
 });

@@ -19,16 +19,17 @@ beforeAllSubcases((t) => {
 fn((t) => {
   const { format } = t.params;
 
-  const { blockWidth, blockHeight, bytesPerBlock } = kTextureFormatInfo[format];
+  const info = kTextureFormatInfo[format];
 
+  const textureSize = [info.blockWidth, info.blockHeight, 1];
   const texture = t.device.createTexture({
-    size: [blockWidth, blockHeight, 1],
+    size: textureSize,
     format,
     usage: GPUTextureUsage.COPY_SRC
   });
   t.trackForCleanup(texture);
 
-  const bytesPerRow = align(bytesPerBlock, 256);
+  const bytesPerRow = align(info.color.bytes, 256);
 
   const buffer = t.device.createBuffer({
     size: bytesPerRow,
@@ -37,7 +38,7 @@ fn((t) => {
   t.trackForCleanup(buffer);
 
   const encoder = t.device.createCommandEncoder();
-  encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, [blockWidth, blockHeight, 1]);
+  encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, textureSize);
   t.expectGPUError('validation', () => {
     encoder.finish();
   });

@@ -4,14 +4,7 @@
 Execution Tests for the f32 conversion operations
 `;import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../gpu_test.js';
-import {
-  TypeBool,
-  TypeF16,
-  TypeF32,
-  TypeI32,
-  TypeMat,
-  TypeU32 } from
-'../../../../util/conversion.js';
+import { Type } from '../../../../util/conversion.js';
 import { allInputSources, run } from '../expression.js';
 
 import { d } from './f32_conversion.cache.js';
@@ -43,7 +36,7 @@ u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3,
 ).
 fn(async (t) => {
   const cases = await d.get('bool');
-  await run(t, vectorizeToExpression(t.params.vectorize), [TypeBool], TypeF32, t.params, cases);
+  await run(t, vectorizeToExpression(t.params.vectorize), [Type.bool], Type.f32, t.params, cases);
 });
 
 g.test('u32').
@@ -60,7 +53,7 @@ u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3,
 ).
 fn(async (t) => {
   const cases = await d.get('u32');
-  await run(t, vectorizeToExpression(t.params.vectorize), [TypeU32], TypeF32, t.params, cases);
+  await run(t, vectorizeToExpression(t.params.vectorize), [Type.u32], Type.f32, t.params, cases);
 });
 
 g.test('i32').
@@ -77,7 +70,7 @@ u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3,
 ).
 fn(async (t) => {
   const cases = await d.get('i32');
-  await run(t, vectorizeToExpression(t.params.vectorize), [TypeI32], TypeF32, t.params, cases);
+  await run(t, vectorizeToExpression(t.params.vectorize), [Type.i32], Type.f32, t.params, cases);
 });
 
 g.test('f32').
@@ -94,7 +87,7 @@ u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3,
 ).
 fn(async (t) => {
   const cases = await d.get('f32');
-  await run(t, vectorizeToExpression(t.params.vectorize), [TypeF32], TypeF32, t.params, cases);
+  await run(t, vectorizeToExpression(t.params.vectorize), [Type.f32], Type.f32, t.params, cases);
 });
 
 g.test('f32_mat').
@@ -117,8 +110,8 @@ fn(async (t) => {
   await run(
     t,
     matrixExperession(cols, rows),
-    [TypeMat(cols, rows, TypeF32)],
-    TypeMat(cols, rows, TypeF32),
+    [Type.mat(cols, rows, Type.f32)],
+    Type.mat(cols, rows, Type.f32),
     t.params,
     cases
   );
@@ -141,7 +134,7 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16');
-  await run(t, vectorizeToExpression(t.params.vectorize), [TypeF16], TypeF32, t.params, cases);
+  await run(t, vectorizeToExpression(t.params.vectorize), [Type.f16], Type.f32, t.params, cases);
 });
 
 g.test('f16_mat').
@@ -167,8 +160,8 @@ fn(async (t) => {
   await run(
     t,
     matrixExperession(cols, rows),
-    [TypeMat(cols, rows, TypeF16)],
-    TypeMat(cols, rows, TypeF32),
+    [Type.mat(cols, rows, Type.f16)],
+    Type.mat(cols, rows, Type.f32),
     t.params,
     cases
   );

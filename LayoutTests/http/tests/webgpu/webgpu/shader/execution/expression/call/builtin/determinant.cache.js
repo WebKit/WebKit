@@ -78,7 +78,22 @@ flatMap((dim) =>
 ).
 reduce((a, b) => ({ ...a, ...b }), {});
 
+// Cases: abstract_matDxD
+const abstract_cases = [2, 3, 4].
+map((dim) => ({
+  [`abstract_mat${dim}x${dim}`]: () => {
+    return FP.abstract.generateMatrixToScalarCases(
+      kDeterminantMatrixValues[dim],
+      'finite',
+      // determinant has an inherited accuracy, so abstract is only expected to be as accurate as f32
+      FP.f32.determinantInterval
+    );
+  }
+})).
+reduce((a, b) => ({ ...a, ...b }), {});
+
 export const d = makeCaseCache('determinant', {
   ...f32_cases,
-  ...f16_cases
+  ...f16_cases,
+  ...abstract_cases
 });

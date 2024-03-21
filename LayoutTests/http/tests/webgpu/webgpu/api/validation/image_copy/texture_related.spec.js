@@ -440,7 +440,7 @@ fn((t) => {
   const texture = t.createAlignedTexture(format, size, origin, dimension);
 
   const bytesPerRow = align(
-    Math.max(1, Math.ceil(size.width / info.blockWidth)) * info.bytesPerBlock,
+    Math.max(1, Math.ceil(size.width / info.blockWidth)) * info.color.bytes,
     256
   );
   const rowsPerImage = Math.ceil(size.height / info.blockHeight);

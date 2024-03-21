@@ -13,7 +13,6 @@ import { GPUConst } from '../../constants.js';
 import {
   kAllTextureFormats,
   kFeaturesForFormats,
-  kTextureFormats,
   filterFormatsByFeature,
   viewCompatible } from
 '../../format_info.js';
@@ -387,7 +386,7 @@ combine('format', kCanvasTextureFormats).
 combine('viewFormatFeature', kFeaturesForFormats).
 beginSubcases().
 expand('viewFormat', ({ viewFormatFeature }) =>
-filterFormatsByFeature(viewFormatFeature, kTextureFormats)
+filterFormatsByFeature(viewFormatFeature, kAllTextureFormats)
 )
 ).
 beforeAllSubcases((t) => {

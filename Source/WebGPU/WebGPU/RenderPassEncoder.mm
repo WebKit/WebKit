@@ -144,10 +144,9 @@ double RenderPassEncoder::quantizedDepthValue(double depthClearValue, WGPUTextur
 {
     if (depthClearValue < 0 || depthClearValue > 1)
         return depthClearValue;
-
     switch (pixelFormat) {
     case WGPUTextureFormat_Depth16Unorm:
-        return depthClearValue + 1.0 / USHRT_MAX;
+        return std::nextafterf(depthClearValue + 0.5 / USHRT_MAX, 1.f);
     default:
         return depthClearValue;
     }

@@ -11,7 +11,7 @@ TODO:
 import { assert, unreachable } from '../../../../common/util/util.js';
 import { kBlendFactors, kBlendOperations } from '../../../capability_info.js';
 import { GPUConst } from '../../../constants.js';
-import { kEncodableTextureFormats, kTextureFormatInfo } from '../../../format_info.js';
+import { kRegularTextureFormats, kTextureFormatInfo } from '../../../format_info.js';
 import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { clamp } from '../../../util/math.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
@@ -318,9 +318,9 @@ struct Uniform {
   );
 });
 
-const kBlendableFormats = kEncodableTextureFormats.filter((f) => {
+const kBlendableFormats = kRegularTextureFormats.filter((f) => {
   const info = kTextureFormatInfo[f];
-  return info.renderable && info.sampleType === 'float';
+  return info.colorRender && info.color.type === 'float';
 });
 
 g.test('blending,formats').

@@ -255,9 +255,9 @@ export function formatCopyableWithMethod({ format, method }) {
     return supportedAspects.length > 0;
   }
   if (method === 'CopyT2B') {
-    return info.copySrc;
+    return info.color.copySrc;
   } else {
-    return info.copyDst;
+    return info.color.copyDst;
   }
 }
 

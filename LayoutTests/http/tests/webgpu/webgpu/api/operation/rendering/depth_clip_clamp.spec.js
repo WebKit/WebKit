@@ -4,6 +4,7 @@
 Tests for depth clipping, depth clamping (at various points in the pipeline), and maybe extended
 depth ranges as well.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
+import { assert } from '../../../../common/util/util.js';
 import { kDepthStencilFormats, kTextureFormatInfo } from '../../../format_info.js';
 import { GPUTest } from '../../../gpu_test.js';
 import {
@@ -52,6 +53,7 @@ beforeAllSubcases((t) => {
 fn(async (t) => {
   const { format, unclippedDepth, writeDepth, multisampled } = t.params;
   const info = kTextureFormatInfo[format];
+  assert(!!info.depth);
 
   /** Number of depth values to test for both vertex output and frag_depth output. */
   const kNumDepthValues = 8;
@@ -222,16 +224,16 @@ fn(async (t) => {
   undefined;
 
   const dsActual =
-  !multisampled && info.bytesPerBlock ?
+  !multisampled && info.depth.bytes ?
   t.device.createBuffer({
-    size: kNumTestPoints * info.bytesPerBlock,
+    size: kNumTestPoints * info.depth.bytes,
     usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
   }) :
   undefined;
   const dsExpected =
-  !multisampled && info.bytesPerBlock ?
+  !multisampled && info.depth.bytes ?
   t.device.createBuffer({
-    size: kNumTestPoints * info.bytesPerBlock,
+    size: kNumTestPoints * info.depth.bytes,
     usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
   }) :
   undefined;
@@ -270,7 +272,9 @@ fn(async (t) => {
     pass.end();
   }
   if (dsActual) {
-    enc.copyTextureToBuffer({ texture: dsTexture }, { buffer: dsActual }, [kNumTestPoints]);
+    enc.copyTextureToBuffer({ texture: dsTexture, aspect: 'depth-only' }, { buffer: dsActual }, [
+    kNumTestPoints]
+    );
   }
   {
     const clearValue = [0, 0, 0, 0]; // Will see this color if the check passed.
@@ -302,7 +306,11 @@ fn(async (t) => {
   }
   enc.copyTextureToBuffer({ texture: checkTexture }, { buffer: checkBuffer }, [kNumTestPoints]);
   if (dsExpected) {
-    enc.copyTextureToBuffer({ texture: dsTexture }, { buffer: dsExpected }, [kNumTestPoints]);
+    enc.copyTextureToBuffer(
+      { texture: dsTexture, aspect: 'depth-only' },
+      { buffer: dsExpected },
+      [kNumTestPoints]
+    );
   }
   t.device.queue.submit([enc.finish()]);
 

@@ -208,16 +208,17 @@ class F extends GPUTest {
 
           });
 
-          const dummyColorTexture = device.createTexture({
+          const placeholderColorTexture = device.createTexture({
             size: [rwTexture.width, rwTexture.height, 1],
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             format: 'rgba8unorm'
           });
+          this.trackForCleanup(placeholderColorTexture);
 
           const renderPassEncoder = commandEncoder.beginRenderPass({
             colorAttachments: [
             {
-              view: dummyColorTexture.createView(),
+              view: placeholderColorTexture.createView(),
               loadOp: 'clear',
               clearValue: { r: 0, g: 0, b: 0, a: 0 },
               storeOp: 'store'
@@ -315,6 +316,9 @@ combine('textureDimension', kTextureDimensions).
 combine('depthOrArrayLayers', [1, 2]).
 unless((p) => p.textureDimension === '1d' && p.depthOrArrayLayers > 1)
 ).
+beforeAllSubcases((t) => {
+  t.skipIfTextureFormatNotUsableAsStorageTexture(t.params.format);
+}).
 fn((t) => {
   const { format, shaderStage, textureDimension, depthOrArrayLayers } = t.params;
 
@@ -329,6 +333,7 @@ fn((t) => {
     size: textureSize,
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING
   });
+  t.trackForCleanup(storageTexture);
 
   const bytesPerBlock = kTextureFormatInfo[format].bytesPerBlock;
   const initialData = t.GetInitialData(storageTexture);
@@ -351,6 +356,7 @@ fn((t) => {
     size: expectedData.byteLength,
     usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST
   });
+  t.trackForCleanup(readbackBuffer);
   const bytesPerRow = align(bytesPerBlock * kWidth, 256);
   commandEncoder.copyTextureToBuffer(
     {

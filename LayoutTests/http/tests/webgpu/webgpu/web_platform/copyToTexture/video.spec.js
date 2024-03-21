@@ -64,8 +64,8 @@ fn(async (t) => {
     let source, width, height;
     if (sourceType === 'VideoFrame') {
       source = await getVideoFrameFromVideoElement(t, videoElement);
-      width = source.codedWidth;
-      height = source.codedHeight;
+      width = source.displayWidth;
+      height = source.displayHeight;
     } else {
       source = videoElement;
       width = source.videoWidth;
@@ -88,7 +88,7 @@ fn(async (t) => {
       {
         texture: dstTexture,
         origin: { x: 0, y: 0 },
-        colorSpace: 'srgb',
+        colorSpace: dstColorSpace,
         premultipliedAlpha: true
       },
       { width, height, depthOrArrayLayers: 1 }

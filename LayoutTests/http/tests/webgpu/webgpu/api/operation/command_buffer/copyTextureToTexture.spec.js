@@ -17,9 +17,9 @@ import {
 
 
   isCompressedTextureFormat,
-  isEncodableTextureformat,
-  viewCompatible } from
+  viewCompatible,
 
+  isRegularTextureFormat } from
 '../../../format_info.js';
 import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { makeBufferWithContents } from '../../../util/buffer.js';
@@ -346,21 +346,21 @@ class F extends TextureTestMixin(GPUTest) {
       return;
     }
 
-    assert(isEncodableTextureformat(dstFormat));
-    const encodableDstFormat = dstFormat;
+    assert(isRegularTextureFormat(dstFormat));
+    const regularDstFormat = dstFormat;
 
     // Verify the content of the whole subresource of dstTexture at dstCopyLevel (in dstBuffer) is expected.
     const checkByTextureFormat = (actual) => {
       const zero = { x: 0, y: 0, z: 0 };
 
-      const actTexelView = TexelView.fromTextureDataByReference(encodableDstFormat, actual, {
+      const actTexelView = TexelView.fromTextureDataByReference(regularDstFormat, actual, {
         bytesPerRow: bytesInRow,
         rowsPerImage: dstBlockRowsPerImage,
         subrectOrigin: zero,
         subrectSize: dstTextureSizeAtLevel
       });
       const expTexelView = TexelView.fromTextureDataByReference(
-        encodableDstFormat,
+        regularDstFormat,
         expectedUint8DataWithPadding,
         {
           bytesPerRow: bytesInRow,
@@ -371,7 +371,7 @@ class F extends TextureTestMixin(GPUTest) {
       );
 
       const failedPixelsMessage = findFailedPixels(
-        encodableDstFormat,
+        regularDstFormat,
         zero,
         dstTextureSizeAtLevel,
         { actTexelView, expTexelView },

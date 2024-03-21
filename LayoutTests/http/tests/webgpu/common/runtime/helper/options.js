@@ -32,10 +32,12 @@ searchParams = getWindowURL().searchParams)
 
 
 
+
 export const kDefaultCTSOptions = {
-  worker: false,
+  worker: '',
   debug: true,
   compatibility: false,
+  forceFallbackAdapter: false,
   unrollConstEvalLoops: false,
   powerPreference: ''
 };
@@ -59,9 +61,19 @@ export const kDefaultCTSOptions = {
  * Options to the CTS.
  */
 export const kCTSOptionsInfo = {
-  worker: { description: 'run in a worker' },
+  worker: {
+    description: 'run in a worker',
+    parser: optionString,
+    selectValueDescriptions: [
+    { value: '', description: 'no worker' },
+    { value: 'dedicated', description: 'dedicated worker' },
+    { value: 'shared', description: 'shared worker' },
+    { value: 'service', description: 'service worker' }]
+
+  },
   debug: { description: 'show more info' },
   compatibility: { description: 'run in compatibility mode' },
+  forceFallbackAdapter: { description: 'pass forceFallbackAdapter: true to requestAdapter' },
   unrollConstEvalLoops: { description: 'unroll const eval loops in WGSL' },
   powerPreference: {
     description: 'set default powerPreference for some tests',

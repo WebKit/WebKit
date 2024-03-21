@@ -15,7 +15,7 @@ Returns the result_struct for the appropriate overload.
 The magnitude of the significand is in the range of [0.5, 1.0) or 0.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../../gpu_test.js';
-import { TypeF16, TypeF32, TypeI32, TypeVec } from '../../../../../util/conversion.js';
+import { Type } from '../../../../../util/conversion.js';
 import { allInputSources, basicExpressionBuilder, run } from '../../expression.js';
 
 import { d } from './frexp.cache.js';
@@ -46,7 +46,7 @@ struct __frexp_result_f32 {
 params((u) => u.combine('inputSource', allInputSources)).
 fn(async (t) => {
   const cases = await d.get('f32_fract');
-  await run(t, fractBuilder(), [TypeF32], TypeF32, t.params, cases);
+  await run(t, fractBuilder(), [Type.f32], Type.f32, t.params, cases);
 });
 
 g.test('f32_exp').
@@ -64,7 +64,7 @@ struct __frexp_result_f32 {
 params((u) => u.combine('inputSource', allInputSources)).
 fn(async (t) => {
   const cases = await d.get('f32_exp');
-  await run(t, expBuilder(), [TypeF32], TypeI32, t.params, cases);
+  await run(t, expBuilder(), [Type.f32], Type.i32, t.params, cases);
 });
 
 g.test('f32_vec2_fract').
@@ -82,7 +82,7 @@ struct __frexp_result_vec2_f32 {
 params((u) => u.combine('inputSource', allInputSources)).
 fn(async (t) => {
   const cases = await d.get('f32_vec2_fract');
-  await run(t, fractBuilder(), [TypeVec(2, TypeF32)], TypeVec(2, TypeF32), t.params, cases);
+  await run(t, fractBuilder(), [Type.vec2f], Type.vec2f, t.params, cases);
 });
 
 g.test('f32_vec2_exp').
@@ -100,7 +100,7 @@ struct __frexp_result_vec2_f32 {
 params((u) => u.combine('inputSource', allInputSources)).
 fn(async (t) => {
   const cases = await d.get('f32_vec2_exp');
-  await run(t, expBuilder(), [TypeVec(2, TypeF32)], TypeVec(2, TypeI32), t.params, cases);
+  await run(t, expBuilder(), [Type.vec2f], Type.vec2i, t.params, cases);
 });
 
 g.test('f32_vec3_fract').
@@ -118,7 +118,7 @@ struct __frexp_result_vec3_f32 {
 params((u) => u.combine('inputSource', allInputSources)).
 fn(async (t) => {
   const cases = await d.get('f32_vec3_fract');
-  await run(t, fractBuilder(), [TypeVec(3, TypeF32)], TypeVec(3, TypeF32), t.params, cases);
+  await run(t, fractBuilder(), [Type.vec3f], Type.vec3f, t.params, cases);
 });
 
 g.test('f32_vec3_exp').
@@ -136,7 +136,7 @@ struct __frexp_result_vec3_f32 {
 params((u) => u.combine('inputSource', allInputSources)).
 fn(async (t) => {
   const cases = await d.get('f32_vec3_exp');
-  await run(t, expBuilder(), [TypeVec(3, TypeF32)], TypeVec(3, TypeI32), t.params, cases);
+  await run(t, expBuilder(), [Type.vec3f], Type.vec3i, t.params, cases);
 });
 
 g.test('f32_vec4_fract').
@@ -154,7 +154,7 @@ struct __frexp_result_vec4_f32 {
 params((u) => u.combine('inputSource', allInputSources)).
 fn(async (t) => {
   const cases = await d.get('f32_vec4_fract');
-  await run(t, fractBuilder(), [TypeVec(4, TypeF32)], TypeVec(4, TypeF32), t.params, cases);
+  await run(t, fractBuilder(), [Type.vec4f], Type.vec4f, t.params, cases);
 });
 
 g.test('f32_vec4_exp').
@@ -172,7 +172,7 @@ struct __frexp_result_vec4_f32 {
 params((u) => u.combine('inputSource', allInputSources)).
 fn(async (t) => {
   const cases = await d.get('f32_vec4_exp');
-  await run(t, expBuilder(), [TypeVec(4, TypeF32)], TypeVec(4, TypeI32), t.params, cases);
+  await run(t, expBuilder(), [Type.vec4f], Type.vec4i, t.params, cases);
 });
 
 g.test('f16_fract').
@@ -193,7 +193,7 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16_fract');
-  await run(t, fractBuilder(), [TypeF16], TypeF16, t.params, cases);
+  await run(t, fractBuilder(), [Type.f16], Type.f16, t.params, cases);
 });
 
 g.test('f16_exp').
@@ -214,7 +214,7 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16_exp');
-  await run(t, expBuilder(), [TypeF16], TypeI32, t.params, cases);
+  await run(t, expBuilder(), [Type.f16], Type.i32, t.params, cases);
 });
 
 g.test('f16_vec2_fract').
@@ -235,7 +235,7 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16_vec2_fract');
-  await run(t, fractBuilder(), [TypeVec(2, TypeF16)], TypeVec(2, TypeF16), t.params, cases);
+  await run(t, fractBuilder(), [Type.vec2h], Type.vec2h, t.params, cases);
 });
 
 g.test('f16_vec2_exp').
@@ -256,7 +256,7 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16_vec2_exp');
-  await run(t, expBuilder(), [TypeVec(2, TypeF16)], TypeVec(2, TypeI32), t.params, cases);
+  await run(t, expBuilder(), [Type.vec2h], Type.vec2i, t.params, cases);
 });
 
 g.test('f16_vec3_fract').
@@ -277,7 +277,7 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16_vec3_fract');
-  await run(t, fractBuilder(), [TypeVec(3, TypeF16)], TypeVec(3, TypeF16), t.params, cases);
+  await run(t, fractBuilder(), [Type.vec3h], Type.vec3h, t.params, cases);
 });
 
 g.test('f16_vec3_exp').
@@ -298,7 +298,7 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16_vec3_exp');
-  await run(t, expBuilder(), [TypeVec(3, TypeF16)], TypeVec(3, TypeI32), t.params, cases);
+  await run(t, expBuilder(), [Type.vec3h], Type.vec3i, t.params, cases);
 });
 
 g.test('f16_vec4_fract').
@@ -319,7 +319,7 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16_vec4_fract');
-  await run(t, fractBuilder(), [TypeVec(4, TypeF16)], TypeVec(4, TypeF16), t.params, cases);
+  await run(t, fractBuilder(), [Type.vec4h], Type.vec4h, t.params, cases);
 });
 
 g.test('f16_vec4_exp').
@@ -340,5 +340,5 @@ beforeAllSubcases((t) => {
 }).
 fn(async (t) => {
   const cases = await d.get('f16_vec4_exp');
-  await run(t, expBuilder(), [TypeVec(4, TypeF16)], TypeVec(4, TypeI32), t.params, cases);
+  await run(t, expBuilder(), [Type.vec4h], Type.vec4i, t.params, cases);
 });

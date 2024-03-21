@@ -3,7 +3,7 @@
 **/import { assert } from '../../../../../../common/util/util.js';import { alwaysPass, anyOf } from '../../../../../util/compare.js';import { kBit, kValue } from '../../../../../util/constants.js';
 import {
 
-  Vector,
+  VectorValue,
   f16,
   f32,
   i32,
@@ -63,7 +63,7 @@ const f32ZerosInterval = new FPInterval('f32', -0.0, 0.0);
 const f32FiniteRange = [...scalarF32Range(), kValue.f32.negative.zero];
 const f32RangeWithInfAndNaN = [...f32FiniteRange, ...f32InfAndNaNInF32];
 
-// F16 values, finite, Inf/NaN, and zeros. Represented in float and u16.
+// Type.f16 values, finite, Inf/NaN, and zeros. Represented in float and u16.
 const f16FiniteInF16 = [...scalarF16Range(), kValue.f16.negative.zero];
 const f16FiniteInU16 = f16FiniteInF16.map((u) => reinterpretF16AsU16(u));
 
@@ -499,11 +499,11 @@ type)
   }
   const possibleU16Bits = f16x2InU16x2.map(possibleBitsInU16FromFiniteF16InU16);
   const possibleExpectations = cartesianProduct(...possibleU16Bits).flatMap(
+
     (possibleBitsU16x2) => {
       assert(possibleBitsU16x2.length === 2);
       return expectationsForValue(reinterpretFromU32(u16x2ToU32(possibleBitsU16x2)));
-    }
-  );
+    });
   return { possibleExpectations, isUnbounded: false };
 }
 
@@ -566,7 +566,7 @@ function bitcastVec4F16ToVec2U32Comparator(vec4F16InU16x4) {
   }
   return anyOf(
     ...cartesianProduct(...expectationsPerElement.map((e) => e.possibleExpectations)).map(
-      (e) => new Vector(e)
+      (e) => new VectorValue(e)
     )
   );
 }
@@ -588,7 +588,7 @@ function bitcastVec4F16ToVec2I32Comparator(vec4F16InU16x4) {
   }
   return anyOf(
     ...cartesianProduct(...expectationsPerElement.map((e) => e.possibleExpectations)).map(
-      (e) => new Vector(e)
+      (e) => new VectorValue(e)
     )
   );
 }

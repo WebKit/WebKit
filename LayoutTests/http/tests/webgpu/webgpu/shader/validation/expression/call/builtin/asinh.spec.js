@@ -6,19 +6,19 @@ Validation tests for the ${builtin}() builtin.
 import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import { keysOf, objectsToRecord } from '../../../../../../common/util/data_tables.js';
 import {
-  TypeF16,
-  TypeF32,
-  elementType,
-  kAllFloatScalarsAndVectors,
-  kAllIntegerScalarsAndVectors } from
+  kConcreteIntegerScalarsAndVectors,
+  kConvertableToFloatScalarsAndVectors,
+  scalarTypeOf,
+  Type } from
 '../../../../../util/conversion.js';
 import { isRepresentable } from '../../../../../util/floating_point.js';
-import { linearRange } from '../../../../../util/math.js';
+import { linearRange, linearRangeBigInt } from '../../../../../util/math.js';
 import { ShaderValidationTest } from '../../../shader_validation_test.js';
 
 import {
   fullRangeForType,
   kConstantAndOverrideStages,
+  rangeForType,
   stageSupportsType,
   unique,
   validateConstOrOverrideBuiltinEval } from
@@ -26,7 +26,12 @@ import {
 
 export const g = makeTestGroup(ShaderValidationTest);
 
-const kValuesTypes = objectsToRecord(kAllFloatScalarsAndVectors);
+const kValuesTypes = objectsToRecord(kConvertableToFloatScalarsAndVectors);
+
+const additionalRangeForType = rangeForType(
+  linearRange(-2000, 2000, 10),
+  linearRangeBigInt(-2000n, 2000n, 10)
+);
 
 g.test('values').
 desc(
@@ -41,17 +46,21 @@ combine('type', keysOf(kValuesTypes)).
 filter((u) => stageSupportsType(u.stage, kValuesTypes[u.type])).
 beginSubcases().
 expand('value', (u) =>
-unique(fullRangeForType(kValuesTypes[u.type]), linearRange(-2000, 2000, 10))
+unique(fullRangeForType(kValuesTypes[u.type]), additionalRangeForType(kValuesTypes[u.type]))
 )
 ).
 beforeAllSubcases((t) => {
-  if (elementType(kValuesTypes[t.params.type]) === TypeF16) {
+  if (scalarTypeOf(kValuesTypes[t.params.type]) === Type.f16) {
     t.selectDeviceOrSkipTestCase('shader-f16');
   }
 }).
 fn((t) => {
   const type = kValuesTypes[t.params.type];
-  const expectedResult = isRepresentable(Math.asinh(t.params.value), elementType(type));
+  const expectedResult = isRepresentable(
+    Math.asinh(Number(t.params.value)),
+    // AbstractInt is converted to AbstractFloat before calling into the builtin
+    scalarTypeOf(type).kind === 'abstract-int' ? Type.abstractFloat : scalarTypeOf(type)
+  );
   validateConstOrOverrideBuiltinEval(
     t,
     builtin,
@@ -61,7 +70,7 @@ fn((t) => {
   );
 });
 
-const kIntegerArgumentTypes = objectsToRecord([TypeF32, ...kAllIntegerScalarsAndVectors]);
+const kIntegerArgumentTypes = objectsToRecord([Type.f32, ...kConcreteIntegerScalarsAndVectors]);
 
 g.test('integer_argument').
 desc(
@@ -75,7 +84,7 @@ fn((t) => {
   validateConstOrOverrideBuiltinEval(
     t,
     builtin,
-    /* expectedResult */type === TypeF32,
+    /* expectedResult */type === Type.f32,
     [type.create(1)],
     'constant'
   );

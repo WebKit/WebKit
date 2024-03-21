@@ -1,4 +1,4 @@
-// AUTO-GENERATED - DO NOT EDIT. See src/common/tools/gen_listings.ts.
+// AUTO-GENERATED - DO NOT EDIT. See src/common/tools/gen_listings_and_webworkers.ts.
 
 export const listing = [
   {
@@ -509,6 +509,14 @@ export const listing = [
       "api",
       "operation",
       "storage_texture",
+      "read_only"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "operation",
+      "storage_texture",
       "read_write"
     ]
   },
@@ -656,6 +664,15 @@ export const listing = [
       "capability_checks",
       "limits",
       "maxBindGroups"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
+      "capability_checks",
+      "limits",
+      "maxBindGroupsPlusVertexBuffers"
     ]
   },
   {
@@ -1463,6 +1480,14 @@ export const listing = [
       "api",
       "validation",
       "render_pipeline",
+      "resource_compatibility"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
+      "render_pipeline",
       "shader_module"
     ]
   },
@@ -1736,6 +1761,36 @@ export const listing = [
       "shader",
       "execution",
       "expression",
+      "access",
+      "array",
+      "index"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "access",
+      "vector",
+      "components"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "access",
+      "vector",
+      "index"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
       "binary",
       "af_addition"
     ]
@@ -1773,7 +1828,34 @@ export const listing = [
       "execution",
       "expression",
       "binary",
+      "af_matrix_matrix_multiplication"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "binary",
+      "af_matrix_scalar_multiplication"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "binary",
       "af_matrix_subtraction"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "binary",
+      "af_matrix_vector_multiplication"
     ]
   },
   {
@@ -1801,6 +1883,24 @@ export const listing = [
       "expression",
       "binary",
       "af_subtraction"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "binary",
+      "ai_arithmetic"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "binary",
+      "ai_comparison"
     ]
   },
   {
@@ -3022,7 +3122,7 @@ export const listing = [
       "expression",
       "call",
       "builtin",
-      "textureDimension"
+      "textureDimensions"
     ]
   },
   {
@@ -3261,8 +3361,27 @@ export const listing = [
       "execution",
       "expression",
       "call",
+      "builtin",
+      "workgroupUniformLoad"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "call",
       "user",
       "ptr_params"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "unary",
+      "address_of_and_indirection"
     ]
   },
   {
@@ -3289,7 +3408,25 @@ export const listing = [
       "execution",
       "expression",
       "unary",
+      "ai_arithmetic"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "unary",
       "ai_assignment"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "unary",
+      "ai_complement"
     ]
   },
   {
@@ -3371,15 +3508,6 @@ export const listing = [
       "expression",
       "unary",
       "i32_conversion"
-    ]
-  },
-  {
-    "file": [
-      "shader",
-      "execution",
-      "expression",
-      "unary",
-      "indirection"
     ]
   },
   {
@@ -3531,6 +3659,14 @@ export const listing = [
       "shader",
       "execution",
       "memory_model",
+      "texture_intra_invocation_coherence"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "memory_model",
       "weak"
     ]
   },
@@ -3584,6 +3720,14 @@ export const listing = [
       "shader",
       "execution",
       "shader_io",
+      "user_io"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "shader_io",
       "workgroup_size"
     ]
   },
@@ -3607,6 +3751,14 @@ export const listing = [
       "execution",
       "statement",
       "compound"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "statement",
+      "discard"
     ]
   },
   {
@@ -3709,7 +3861,34 @@ export const listing = [
       "validation",
       "expression",
       "binary",
+      "add_sub_mul"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "binary",
+      "and_or_xor"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "binary",
       "bitwise_shift"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "binary",
+      "comparison"
     ]
   },
   {
@@ -3889,6 +4068,16 @@ export const listing = [
       "expression",
       "call",
       "builtin",
+      "derivatives"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
       "dot4I8Packed"
     ]
   },
@@ -3979,7 +4168,37 @@ export const listing = [
       "expression",
       "call",
       "builtin",
+      "max"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "min"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
       "modf"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "normalize"
     ]
   },
   {
@@ -4109,6 +4328,96 @@ export const listing = [
       "expression",
       "call",
       "builtin",
+      "textureLoad"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "textureSample"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "textureSampleBaseClampToEdge"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "textureSampleBias"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "textureSampleCompare"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "textureSampleCompareLevel"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "textureSampleGrad"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "textureSampleLevel"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
+      "textureStore"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "call",
+      "builtin",
       "unpack4xI8"
     ]
   },
@@ -4126,8 +4435,62 @@ export const listing = [
     "file": [
       "shader",
       "validation",
+      "expression",
+      "call",
+      "builtin",
+      "workgroupUniformLoad"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "unary",
+      "address_of_and_indirection"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "unary",
+      "arithmetic_negation"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "unary",
+      "bitwise_complement"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "expression",
+      "unary",
+      "logical_negation"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
       "extension",
       "pointer_composite_access"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "extension",
+      "readonly_and_readwrite_storage_textures"
     ]
   },
   {
@@ -4327,6 +4690,14 @@ export const listing = [
       "shader",
       "validation",
       "parse",
+      "statement_behavior"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "parse",
       "unary_ops"
     ]
   },
@@ -4407,6 +4778,14 @@ export const listing = [
       "shader",
       "validation",
       "shader_io",
+      "layout_constraints"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "shader_io",
       "locations"
     ]
   },
@@ -4439,7 +4818,39 @@ export const listing = [
       "shader",
       "validation",
       "types",
+      "array"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "types",
+      "atomics"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "types",
+      "matrix"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "types",
       "struct"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
+      "types",
+      "textures"
     ]
   },
   {

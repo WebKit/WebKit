@@ -14,7 +14,7 @@ import { raceWithRejectOnTimeout, unreachable, assert } from '../../../../../com
 import { kTextureUsages } from '../../../../capability_info.js';
 import {
   kTextureFormatInfo,
-  kTextureFormats,
+  kAllTextureFormats,
   kValidTextureFormatsForCopyE2T } from
 '../../../../format_info.js';
 import { kResourceStates } from '../../../../gpu_test.js';
@@ -669,7 +669,7 @@ desc(
 ).
 params((u) =>
 u.
-combine('format', kTextureFormats).
+combine('format', kAllTextureFormats).
 beginSubcases().
 combine('copySize', [
 { width: 0, height: 0, depthOrArrayLayers: 0 },
