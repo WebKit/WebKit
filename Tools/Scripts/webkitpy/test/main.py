@@ -379,13 +379,22 @@ class Tester(object):
         upload_group.add_options(upload_options())
         parser.add_option_group(upload_group)
 
+        if (
+            sys.platform.startswith('win')
+            or sys.platform == 'darwin'
+            and sys.version_info < (3,)
+        ):
+            default_child_processes = 1
+        else:
+            default_child_processes = multiprocessing.cpu_count()
+
         parser.add_option('-a', '--all', action='store_true', default=False,
                           help='run all the tests')
         parser.add_option('-c', '--coverage', action='store_true', default=False,
                           help='generate code coverage info (requires http://pypi.python.org/pypi/coverage)')
         parser.add_option('-i', '--integration-tests', action='store_true', default=False,
                           help='run integration tests as well as unit tests'),
-        parser.add_option('-j', '--child-processes', action='store', type='int', default=(1 if sys.platform.startswith('win') else multiprocessing.cpu_count()),
+        parser.add_option('-j', '--child-processes', action='store', type='int', default=default_child_processes,
                           help='number of tests to run in parallel (default=%default)')
         parser.add_option('-p', '--pass-through', action='store_true', default=False,
                           help='be debugger friendly by passing captured output through to the system')
