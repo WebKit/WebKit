@@ -1219,18 +1219,6 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 {
     if (!pageConfiguration->pageGroup())
         pageConfiguration->setPageGroup(m_defaultPageGroup.copyRef());
-    if (!pageConfiguration->preferences())
-        pageConfiguration->setPreferences(pageConfiguration->pageGroup()->protectedPreferences());
-    if (!pageConfiguration->userContentController())
-        pageConfiguration->setUserContentController(pageConfiguration->pageGroup()->protectedUserContentController());
-    if (!pageConfiguration->visitedLinkStore())
-        pageConfiguration->setVisitedLinkStore(m_visitedLinkStore.copyRef());
-
-    if (!pageConfiguration->websiteDataStore()) {
-        // We try to avoid creating the default data store as long as possible.
-        // But if there is an attempt to create a web page without any specified data store, then we have to create it.
-        pageConfiguration->setWebsiteDataStore(WebKit::WebsiteDataStore::defaultDataStore());
-    }
 
     RefPtr<WebProcessProxy> process;
     auto lockdownMode = pageConfiguration->lockdownModeEnabled() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
@@ -1240,23 +1228,23 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // Sharing processes, e.g. when creating the page via window.open().
         process = &relatedPage->ensureRunningProcess();
         // We do not support several WebsiteDataStores sharing a single process.
-        ASSERT(process->isDummyProcessProxy() || pageConfiguration->websiteDataStore() == process->websiteDataStore());
-        ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == pageConfiguration->websiteDataStore());
+        ASSERT(process->isDummyProcessProxy() || &pageConfiguration->websiteDataStore() == process->websiteDataStore());
+        ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore());
     } else if (pageConfiguration->delaysWebProcessLaunchUntilFirstLoad()) {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: delaying WebProcess launch until first load");
         // In the common case, we delay process launch until something is actually loaded in the page.
-        process = dummyProcessProxy(pageConfiguration->websiteDataStore()->sessionID());
+        process = dummyProcessProxy(pageConfiguration->websiteDataStore().sessionID());
         if (!process) {
-            process = WebProcessProxy::create(*this, pageConfiguration->protectedWebsiteDataStore().get(), lockdownMode, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Shared, WebProcessProxy::ShouldLaunchProcess::No);
-            m_dummyProcessProxies.add(pageConfiguration->websiteDataStore()->sessionID(), *process);
+            process = WebProcessProxy::create(*this, pageConfiguration->protectedWebsiteDataStore().ptr(), lockdownMode, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Shared, WebProcessProxy::ShouldLaunchProcess::No);
+            m_dummyProcessProxies.add(pageConfiguration->websiteDataStore().sessionID(), *process);
             m_processes.append(*process);
         }
     } else {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: Not delaying WebProcess launch");
-        process = processForRegistrableDomain(*pageConfiguration->protectedWebsiteDataStore(), { }, lockdownMode, pageConfiguration);
+        process = processForRegistrableDomain(pageConfiguration->protectedWebsiteDataStore(), { }, lockdownMode, pageConfiguration);
     }
 
-    RefPtr userContentController = pageConfiguration->userContentController();
+    Ref userContentController = pageConfiguration->userContentController();
     
     ASSERT(process);
     
@@ -1269,8 +1257,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         for (Ref workerProcess : remoteWorkerProcesses())
             workerProcess->updateRemoteWorkerPreferencesStore(*m_remoteWorkerPreferences);
     }
-    if (userContentController)
-        m_userContentControllerForRemoteWorkers = userContentController;
+    m_userContentControllerForRemoteWorkers = userContentController.ptr();
 
     bool enableProcessSwapOnCrossSiteNavigation = page->preferences().processSwapOnCrossSiteNavigationEnabled();
 #if PLATFORM(IOS_FAMILY)

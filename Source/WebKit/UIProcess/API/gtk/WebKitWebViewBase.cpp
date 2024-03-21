@@ -2573,14 +2573,8 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
-    WebProcessPool* processPool = configuration->processPool();
-    if (!processPool) {
-        auto processPoolConfiguration = API::ProcessPoolConfiguration::create();
-        processPool = &WebProcessPool::create(processPoolConfiguration).leakRef();
-        configuration->setProcessPool(processPool);
-    }
-
-    priv->pageProxy = processPool->createWebPage(*priv->pageClient, WTFMove(configuration));
+    WebProcessPool& processPool = configuration->processPool();
+    priv->pageProxy = processPool.createWebPage(*priv->pageClient, WTFMove(configuration));
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
     priv->pageProxy->initializeWebPage();

@@ -659,14 +659,14 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_navigationState(makeUnique<WebNavigationState>())
     , m_process(process)
     , m_pageGroup(*m_configuration->pageGroup())
-    , m_preferences(*m_configuration->preferences())
-    , m_userContentController(*m_configuration->userContentController())
+    , m_preferences(m_configuration->preferences())
+    , m_userContentController(m_configuration->userContentController())
 #if ENABLE(WK_WEB_EXTENSIONS)
     , m_webExtensionController(m_configuration->webExtensionController())
     , m_weakWebExtensionController(m_configuration->weakWebExtensionController())
 #endif
-    , m_visitedLinkStore(*m_configuration->visitedLinkStore())
-    , m_websiteDataStore(*m_configuration->websiteDataStore())
+    , m_visitedLinkStore(m_configuration->visitedLinkStore())
+    , m_websiteDataStore(m_configuration->websiteDataStore())
     , m_userAgent(standardUserAgent())
     , m_overrideContentSecurityPolicy { m_configuration->overrideContentSecurityPolicy() }
 #if ENABLE(FULLSCREEN_API)
@@ -734,7 +734,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #if PLATFORM(IOS_FAMILY)
     DeprecatedGlobalSettings::setDisableScreenSizeOverride(m_preferences->disableScreenSizeOverride());
     
-    if (m_configuration->preferences()->serviceWorkerEntitlementDisabledForTesting())
+    if (m_configuration->preferences().serviceWorkerEntitlementDisabledForTesting())
         disableServiceWorkerEntitlementInNetworkProcess();
 #endif
 
@@ -6952,10 +6952,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
             message = WTFMove(message)
         ] (PolicyAction policyAction) mutable {
             if (frame->isMainFrame()) {
-                if (!navigation->websitePolicies()) {
-                    if (RefPtr defaultPolicies = m_configuration->defaultWebsitePolicies())
-                        navigation->setWebsitePolicies(defaultPolicies->copy());
-                }
+                if (!navigation->websitePolicies())
+                    navigation->setWebsitePolicies(m_configuration->defaultWebsitePolicies().copy());
                 if (RefPtr policies = navigation->websitePolicies())
                     navigation->setEffectiveContentMode(effectiveContentModeAfterAdjustingPolicies(*policies, navigation->currentRequest()));
             }

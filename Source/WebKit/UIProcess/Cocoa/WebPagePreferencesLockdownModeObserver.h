@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "APIWebsitePolicies.h"
-#import "WKObject.h"
-#import <WebKit/WKWebpagePreferencesPrivate.h>
+#pragma once
+
+#include "LockdownModeObserver.h"
+#include <wtf/WeakPtr.h>
+
+OBJC_CLASS WKWebpagePreferences;
+
+namespace API {
+class WebsitePolicies;
+}
 
 namespace WebKit {
 
-template<> struct WrapperTraits<API::WebsitePolicies> {
-    using WrapperClass = WKWebpagePreferences;
+class WebPagePreferencesLockdownModeObserver final : public LockdownModeObserver {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit WebPagePreferencesLockdownModeObserver(API::WebsitePolicies&);
+    ~WebPagePreferencesLockdownModeObserver();
+
+private:
+    void willChangeLockdownMode() final;
+    void didChangeLockdownMode() final;
+
+    WeakPtr<API::WebsitePolicies> m_policies;
 };
 
-#if PLATFORM(IOS_FAMILY)
-WKContentMode contentMode(WebContentMode);
-WebContentMode webContentMode(WKContentMode);
-#endif
-
 }
-
-@interface WKWebpagePreferences () <WKObject> {
-@package
-    API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
-}
-
-@property (class, nonatomic, readonly) WKWebpagePreferences *defaultPreferences;
-
-@end

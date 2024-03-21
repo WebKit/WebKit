@@ -29,14 +29,17 @@
 #import "APIPageConfiguration.h"
 #import "CSPExtensionUtilities.h"
 #import "WKPreferencesInternal.h"
-#import "WKWebpagePreferencesInternal.h"
+#import "WKProcessPoolInternal.h"
+#import "WKUserContentControllerInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
+#import "WKWebpagePreferencesInternal.h"
+#import "WKWebsiteDataStoreInternal.h"
 #import "WebKit2Initialize.h"
 #import "WebPreferencesDefaultValues.h"
 #import "WebPreferencesDefinitions.h"
 #import "WebURLSchemeHandlerCocoa.h"
 #import "_WKApplicationManifestInternal.h"
-#import "_WKVisitedLinkStore.h"
+#import "_WKVisitedLinkStoreInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebKit/WKProcessPool.h>
@@ -122,12 +125,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
 @implementation WKWebViewConfiguration {
     RefPtr<API::PageConfiguration> _pageConfiguration;
-    LazyInitialized<RetainPtr<WKProcessPool>> _processPool;
-    LazyInitialized<RetainPtr<WKPreferences>> _preferences;
-    LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
-    LazyInitialized<RetainPtr<_WKVisitedLinkStore>> _visitedLinkStore;
-    LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
-    LazyInitialized<RetainPtr<WKWebpagePreferences>> _defaultWebpagePreferences;
     WeakObjCPtr<WKWebView> _relatedWebView;
     WeakObjCPtr<WKWebView> _webViewToCloneSessionStorageFrom;
     WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
@@ -396,32 +393,32 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKProcessPool *)processPool
 {
-    return _processPool.get([] { return adoptNS([[WKProcessPool alloc] init]); });
+    return wrapper(_pageConfiguration->processPool());
 }
 
 - (void)setProcessPool:(WKProcessPool *)processPool
 {
-    _processPool.set(processPool);
+    _pageConfiguration->setProcessPool(processPool ? processPool->_processPool.get() : nullptr);
 }
 
 - (WKPreferences *)preferences
 {
-    return _preferences.get([] { return adoptNS([[WKPreferences alloc] init]); });
+    return wrapper(_pageConfiguration->preferences());
 }
 
 - (void)setPreferences:(WKPreferences *)preferences
 {
-    _preferences.set(preferences);
+    _pageConfiguration->setPreferences(preferences ? preferences->_preferences.get() : nullptr);
 }
 
 - (WKUserContentController *)userContentController
 {
-    return _userContentController.get([] { return adoptNS([[WKUserContentController alloc] init]); });
+    return wrapper(_pageConfiguration->userContentController());
 }
 
 - (void)setUserContentController:(WKUserContentController *)userContentController
 {
-    _userContentController.set(userContentController);
+    _pageConfiguration->setUserContentController(userContentController ? userContentController->_userContentControllerProxy.get() : nullptr);
 }
 
 - (NSURL *)_requiredWebExtensionBaseURL
@@ -493,24 +490,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKWebsiteDataStore *)websiteDataStore
 {
-    return _websiteDataStore.get([] { return [WKWebsiteDataStore defaultDataStore]; });
+    return wrapper(_pageConfiguration->websiteDataStore());
 }
 
 - (void)setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore
 {
-    _websiteDataStore.set(websiteDataStore);
+    _pageConfiguration->setWebsiteDataStore(websiteDataStore ? websiteDataStore->_websiteDataStore.get() : nullptr);
 }
 
 - (WKWebpagePreferences *)defaultWebpagePreferences
 {
-    return _defaultWebpagePreferences.get([] {
-        return WKWebpagePreferences.defaultPreferences;
-    });
+    return wrapper(_pageConfiguration->defaultWebsitePolicies());
 }
 
 - (void)setDefaultWebpagePreferences:(WKWebpagePreferences *)defaultWebpagePreferences
 {
-    _defaultWebpagePreferences.set(defaultWebpagePreferences ?: WKWebpagePreferences.defaultPreferences);
+    _pageConfiguration->setDefaultWebsitePolicies(defaultWebpagePreferences ? defaultWebpagePreferences->_websitePolicies.get() : nullptr);
 }
 
 static NSString *defaultApplicationNameForUserAgent()
@@ -539,12 +534,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (_WKVisitedLinkStore *)_visitedLinkStore
 {
-    return _visitedLinkStore.get([] { return adoptNS([[_WKVisitedLinkStore alloc] init]); });
+    return wrapper(_pageConfiguration->visitedLinkStore());
 }
 
 - (void)_setVisitedLinkStore:(_WKVisitedLinkStore *)visitedLinkStore
 {
-    _visitedLinkStore.set(visitedLinkStore);
+    _pageConfiguration->setVisitedLinkStore(visitedLinkStore ? visitedLinkStore->_visitedLinkStore.get() : nullptr);
 }
 
 - (void)setURLSchemeHandler:(id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme
@@ -973,7 +968,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (WKWebsiteDataStore *)_websiteDataStoreIfExists
 {
-    return _websiteDataStore.peek();
+    return wrapper(_pageConfiguration->websiteDataStoreIfExists());
 }
 
 - (NSArray<NSString *> *)_corsDisablingPatterns

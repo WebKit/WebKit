@@ -27,8 +27,10 @@
 
 #include "APIObject.h"
 #include "WebsitePoliciesData.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class LockdownModeObserver;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 struct WebsitePoliciesData;
@@ -36,7 +38,7 @@ struct WebsitePoliciesData;
 
 namespace API {
 
-class WebsitePolicies final : public API::ObjectImpl<API::Object::Type::WebsitePolicies> {
+class WebsitePolicies final : public API::ObjectImpl<API::Object::Type::WebsitePolicies>, public CanMakeWeakPtr<WebsitePolicies> {
 public:
     static Ref<WebsitePolicies> create() { return adoptRef(*new WebsitePolicies); }
     WebsitePolicies();
@@ -138,6 +140,9 @@ private:
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
     std::optional<bool> m_lockdownModeEnabled;
+#if PLATFORM(COCOA)
+    std::unique_ptr<WebKit::LockdownModeObserver> m_lockdownModeObserver;
+#endif
 };
 
 } // namespace API

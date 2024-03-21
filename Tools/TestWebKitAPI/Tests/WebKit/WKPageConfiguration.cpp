@@ -38,9 +38,9 @@ TEST(WebKit, WKPageConfigurationEmpty)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
 
-    ASSERT_NULL(WKPageConfigurationGetContext(configuration.get()));
-    ASSERT_NULL(WKPageConfigurationGetUserContentController(configuration.get()));
-    ASSERT_NULL(WKPageConfigurationGetPreferences(configuration.get()));
+    ASSERT_NOT_NULL(WKPageConfigurationGetContext(configuration.get()));
+    ASSERT_NOT_NULL(WKPageConfigurationGetUserContentController(configuration.get()));
+    ASSERT_NOT_NULL(WKPageConfigurationGetPreferences(configuration.get()));
     ASSERT_NULL(WKPageConfigurationGetRelatedPage(configuration.get()));
 }
 

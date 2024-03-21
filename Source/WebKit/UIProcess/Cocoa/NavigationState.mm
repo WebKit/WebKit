@@ -532,9 +532,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 {
     bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
 
-    RefPtr<API::WebsitePolicies> defaultWebsitePolicies;
-    if (auto* policies = webPageProxy.configuration().defaultWebsitePolicies())
-        defaultWebsitePolicies = policies->copy();
+    RefPtr<API::WebsitePolicies> defaultWebsitePolicies = webPageProxy.configuration().defaultWebsitePolicies().copy();
 
     if (!m_navigationState || (!m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler
         && !m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesUserInfoDecisionHandler

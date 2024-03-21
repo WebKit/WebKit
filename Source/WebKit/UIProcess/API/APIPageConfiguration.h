@@ -81,15 +81,12 @@ public:
 
     Ref<PageConfiguration> copy() const;
 
-    // FIXME: The configuration properties should return their default values
-    // rather than nullptr.
+    WebKit::BrowsingContextGroup& browsingContextGroup() const;
 
-    WebKit::BrowsingContextGroup& browsingContextGroup();
-
-    WebKit::WebProcessPool* processPool();
+    WebKit::WebProcessPool& processPool() const;
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
 
-    WebKit::WebUserContentControllerProxy* userContentController();
+    WebKit::WebUserContentControllerProxy& userContentController() const;
     void setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&&);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -106,7 +103,7 @@ public:
     WebKit::WebPageGroup* pageGroup();
     void setPageGroup(RefPtr<WebKit::WebPageGroup>&&);
 
-    WebKit::WebPreferences* preferences() const;
+    WebKit::WebPreferences& preferences() const;
     void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
     WebKit::WebPageProxy* relatedPage() const;
@@ -115,14 +112,15 @@ public:
     WebKit::WebPageProxy* pageToCloneSessionStorageFrom() const;
     void setPageToCloneSessionStorageFrom(WebKit::WebPageProxy*);
 
-    WebKit::VisitedLinkStore* visitedLinkStore();
+    WebKit::VisitedLinkStore& visitedLinkStore() const;
     void setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&&);
 
-    WebKit::WebsiteDataStore* websiteDataStore();
-    RefPtr<WebKit::WebsiteDataStore> protectedWebsiteDataStore();
+    WebKit::WebsiteDataStore& websiteDataStore() const;
+    WebKit::WebsiteDataStore* websiteDataStoreIfExists() const;
+    Ref<WebKit::WebsiteDataStore> protectedWebsiteDataStore() const;
     void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
 
-    WebsitePolicies* defaultWebsitePolicies() const;
+    WebsitePolicies& defaultWebsitePolicies() const;
     void setDefaultWebsitePolicies(RefPtr<WebsitePolicies>&&);
 
 #if PLATFORM(IOS_FAMILY)
@@ -308,22 +306,44 @@ public:
 
 private:
     struct Data {
-        Ref<WebKit::BrowsingContextGroup> browsingContextGroup;
-        RefPtr<WebKit::WebProcessPool> processPool { };
-        RefPtr<WebKit::WebUserContentControllerProxy> userContentController { };
+        template<typename T, Ref<T>(*initializer)()> class LazyInitializedRef {
+        public:
+            LazyInitializedRef() = default;
+            void operator=(const LazyInitializedRef& other) { m_value = &other.get(); }
+            void operator=(RefPtr<T>&& t) { m_value = WTFMove(t); }
+            T& get() const
+            {
+                if (!m_value)
+                    m_value = initializer();
+                return *m_value;
+            }
+            T* getIfExists() const { return m_value.get(); }
+        private:
+            mutable RefPtr<T> m_value;
+        };
+        static Ref<WebKit::BrowsingContextGroup> createBrowsingContextGroup();
+        static Ref<WebKit::WebProcessPool> createWebProcessPool();
+        static Ref<WebKit::WebUserContentControllerProxy> createWebUserContentControllerProxy();
+        static Ref<WebKit::WebPreferences> createWebPreferences();
+        static Ref<WebKit::VisitedLinkStore> createVisitedLinkStore();
+        static Ref<WebsitePolicies> createWebsitePolicies();
+
+        LazyInitializedRef<WebKit::BrowsingContextGroup, createBrowsingContextGroup> browsingContextGroup;
+        LazyInitializedRef<WebKit::WebProcessPool, createWebProcessPool> processPool;
+        LazyInitializedRef<WebKit::WebUserContentControllerProxy, createWebUserContentControllerProxy> userContentController;
+        LazyInitializedRef<WebKit::WebPreferences, createWebPreferences> preferences;
+        LazyInitializedRef<WebKit::VisitedLinkStore, createVisitedLinkStore> visitedLinkStore;
+        LazyInitializedRef<WebsitePolicies, createWebsitePolicies> defaultWebsitePolicies;
+        mutable RefPtr<WebKit::WebsiteDataStore> websiteDataStore { };
+
 #if ENABLE(WK_WEB_EXTENSIONS)
         WTF::URL requiredWebExtensionBaseURL { };
         RefPtr<WebKit::WebExtensionController> webExtensionController { };
         WeakPtr<WebKit::WebExtensionController> weakWebExtensionController { };
 #endif
         RefPtr<WebKit::WebPageGroup> pageGroup { };
-        RefPtr<WebKit::WebPreferences> preferences { };
         RefPtr<WebKit::WebPageProxy> relatedPage { };
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom { };
-        RefPtr<WebKit::VisitedLinkStore> visitedLinkStore { };
-
-        RefPtr<WebKit::WebsiteDataStore> websiteDataStore { };
-        RefPtr<WebsitePolicies> defaultWebsitePolicies { };
 
 #if PLATFORM(IOS_FAMILY)
         bool canShowWhileLocked { false };

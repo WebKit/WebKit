@@ -1413,10 +1413,8 @@ String WebPageProxy::predictedUserAgentForRequest(const WebCore::ResourceRequest
 {
     if (!customUserAgent().isEmpty())
         return customUserAgent();
-    if (!m_configuration->defaultWebsitePolicies())
-        return userAgent();
 
-    const API::WebsitePolicies& policies = *m_configuration->defaultWebsitePolicies();
+    const API::WebsitePolicies& policies = m_configuration->defaultWebsitePolicies();
     if (!policies.customUserAgent().isEmpty())
         return policies.customUserAgent();
 

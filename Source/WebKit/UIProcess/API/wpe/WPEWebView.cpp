@@ -95,24 +95,13 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 #endif
 
     auto configuration = baseConfiguration.copy();
-    auto* preferences = configuration->preferences();
-    if (!preferences && configuration->pageGroup()) {
-        preferences = &configuration->pageGroup()->preferences();
-        configuration->setPreferences(preferences);
-    }
-    if (preferences) {
-        preferences->setAcceleratedCompositingEnabled(true);
-        preferences->setForceCompositingMode(true);
-        preferences->setThreadedScrollingEnabled(true);
-    }
+    auto& preferences = configuration->preferences();
+    preferences.setAcceleratedCompositingEnabled(true);
+    preferences.setForceCompositingMode(true);
+    preferences.setThreadedScrollingEnabled(true);
 
-    auto* pool = configuration->processPool();
-    if (!pool) {
-        auto processPoolConfiguration = API::ProcessPoolConfiguration::create();
-        pool = &WebProcessPool::create(processPoolConfiguration).leakRef();
-        configuration->setProcessPool(pool);
-    }
-    m_pageProxy = pool->createWebPage(*m_pageClient, WTFMove(configuration));
+    auto& pool = configuration->processPool();
+    m_pageProxy = pool.createWebPage(*m_pageClient, WTFMove(configuration));
 
 #if ENABLE(WPE_PLATFORM)
     if (display) {
@@ -262,7 +251,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 
 #if ENABLE(MEMORY_SAMPLER)
     if (getenv("WEBKIT_SAMPLE_MEMORY"))
-        pool->startMemorySampler(0);
+        pool.startMemorySampler(0);
 #endif
 
     static struct wpe_view_backend_client s_backendClient = {

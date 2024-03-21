@@ -31,9 +31,18 @@
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 
+#if PLATFORM(COCOA)
+#include "WebPagePreferencesLockdownModeObserver.h"
+#endif
+
 namespace API {
 
-WebsitePolicies::WebsitePolicies() = default;
+WebsitePolicies::WebsitePolicies()
+#if PLATFORM(COCOA)
+    : m_lockdownModeObserver(makeUnique<WebKit::WebPagePreferencesLockdownModeObserver>(*this))
+#endif
+{
+}
 
 Ref<WebsitePolicies> WebsitePolicies::copy() const
 {
@@ -42,6 +51,9 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
     policies->setLockdownModeEnabled(m_lockdownModeEnabled);
+#if PLATFORM(COCOA)
+    policies->m_lockdownModeObserver = makeUnique<WebKit::WebPagePreferencesLockdownModeObserver>(policies);
+#endif
     return policies;
 }
 

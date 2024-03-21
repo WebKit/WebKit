@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "APIWebsitePolicies.h"
-#import "WKObject.h"
-#import <WebKit/WKWebpagePreferencesPrivate.h>
+#pragma once
+
+#include "config.h"
+#include "WebPagePreferencesLockdownModeObserver.h"
+
+#include "APIWebsitePolicies.h"
+#include "WKWebpagePreferencesInternal.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
-template<> struct WrapperTraits<API::WebsitePolicies> {
-    using WrapperClass = WKWebpagePreferences;
-};
-
-#if PLATFORM(IOS_FAMILY)
-WKContentMode contentMode(WebContentMode);
-WebContentMode webContentMode(WKContentMode);
-#endif
-
+WebPagePreferencesLockdownModeObserver::WebPagePreferencesLockdownModeObserver(API::WebsitePolicies& policies)
+    : m_policies(policies)
+{
+    addLockdownModeObserver(*this);
 }
 
-@interface WKWebpagePreferences () <WKObject> {
-@package
-    API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
+WebPagePreferencesLockdownModeObserver::~WebPagePreferencesLockdownModeObserver()
+{
+    removeLockdownModeObserver(*this);
 }
 
-@property (class, nonatomic, readonly) WKWebpagePreferences *defaultPreferences;
+void WebPagePreferencesLockdownModeObserver::willChangeLockdownMode()
+{
+    if (auto preferences = wrapper(m_policies.get())) {
+        [preferences willChangeValueForKey:@"_captivePortalModeEnabled"];
+        [preferences willChangeValueForKey:@"lockdownModeEnabled"];
+    }
+}
 
-@end
+void WebPagePreferencesLockdownModeObserver::didChangeLockdownMode()
+{
+    if (auto preferences = wrapper(m_policies.get())) {
+        [preferences didChangeValueForKey:@"_captivePortalModeEnabled"];
+        [preferences didChangeValueForKey:@"lockdownModeEnabled"];
+    }
+}
+
+}

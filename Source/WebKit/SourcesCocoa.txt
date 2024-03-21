@@ -421,6 +421,7 @@ UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm
 UIProcess/Cocoa/VideoPresentationManagerProxy.mm
 UIProcess/Cocoa/WebGeolocationManagerProxyCocoa.cpp
 UIProcess/Cocoa/WebKitSwiftSoftLink.mm @no-unify
+UIProcess/Cocoa/WebPagePreferencesLockdownModeObserver.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
 UIProcess/Cocoa/WebPreferencesCocoa.mm

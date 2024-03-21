@@ -8211,6 +8211,8 @@
 		FA651BAF2AA3E5FB00747576 /* WebTransportSendStreamSink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebTransportSendStreamSink.cpp; path = Network/WebTransportSendStreamSink.cpp; sourceTree = "<group>"; };
 		FA6757052B815C8300C1566A /* FrameProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameProcess.cpp; sourceTree = "<group>"; };
 		FA6757062B815C8300C1566A /* FrameProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameProcess.h; sourceTree = "<group>"; };
+		FA6DCE712BAAB3AB0043109B /* WebPagePreferencesLockdownModeObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPagePreferencesLockdownModeObserver.mm; sourceTree = "<group>"; };
+		FA6DCE722BAAB3AB0043109B /* WebPagePreferencesLockdownModeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPagePreferencesLockdownModeObserver.h; sourceTree = "<group>"; };
 		FA8262722B2193EA00BB8236 /* APINumber.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APINumber.serialization.in; sourceTree = "<group>"; };
 		FA96E4AC2AA90A1E0090C5A3 /* WebHistoryItemClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebHistoryItemClient.cpp; sourceTree = "<group>"; };
 		FA96E4AD2AA90A1E0090C5A3 /* WebHistoryItemClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemClient.h; sourceTree = "<group>"; };
@@ -9465,6 +9467,8 @@
 				C18F3A142563334300797E66 /* WebInspectorPreferenceObserver.mm */,
 				CDF1B919267021D60007EC10 /* WebKitSwiftSoftLink.h */,
 				CDF1B91A267021D60007EC10 /* WebKitSwiftSoftLink.mm */,
+				FA6DCE722BAAB3AB0043109B /* WebPagePreferencesLockdownModeObserver.h */,
+				FA6DCE712BAAB3AB0043109B /* WebPagePreferencesLockdownModeObserver.mm */,
 				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 				7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */,
 				A3937B6123CD1B9B005B2A2E /* WebPreferencesCocoa.mm */,
