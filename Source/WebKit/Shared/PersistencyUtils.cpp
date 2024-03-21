@@ -43,7 +43,7 @@ std::unique_ptr<KeyedDecoder> createForFile(const String& path)
     if (!buffer)
         return nullptr;
 
-    return KeyedDecoder::decoder(buffer->data(), buffer->size());
+    return KeyedDecoder::decoder(buffer->span());
 }
 
 void writeToDisk(std::unique_ptr<KeyedEncoder>&& encoder, String&& path)

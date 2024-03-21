@@ -31,7 +31,7 @@ namespace WebCore {
 
 class KeyedDecoderGeneric final : public KeyedDecoder {
 public:
-    KeyedDecoderGeneric(const uint8_t* data, size_t);
+    KeyedDecoderGeneric(std::span<const uint8_t> data);
 
     class Dictionary;
     using Array = Vector<std::unique_ptr<Dictionary>>;

@@ -36,7 +36,7 @@ class SharedBuffer;
 class KeyedDecoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static std::unique_ptr<KeyedDecoder> decoder(const uint8_t* data, size_t);
+    WEBCORE_EXPORT static std::unique_ptr<KeyedDecoder> decoder(std::span<const uint8_t> data);
 
     virtual ~KeyedDecoder() = default;
 

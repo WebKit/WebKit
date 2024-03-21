@@ -77,17 +77,17 @@ static const uint64_t maxGeneratorValue = 0x20000000000000;
 #define BLOB_RECORDS_TABLE_SCHEMA_SUFFIX " (objectStoreRow INTEGER NOT NULL ON CONFLICT FAIL, blobURL TEXT NOT NULL ON CONFLICT FAIL)"_s;
 #define BLOB_FILES_TABLE_SCHEMA_SUFFIX " (blobURL TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, fileName TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL)"_s;
 
-static int idbKeyCollate(int aLength, const void* aBuffer, int bLength, const void* bBuffer)
+static int idbKeyCollate(std::span<const uint8_t> aBuffer, std::span<const uint8_t> bBuffer)
 {
     IDBKeyData a, b;
-    if (!deserializeIDBKeyData(static_cast<const uint8_t*>(aBuffer), aLength, a)) {
+    if (!deserializeIDBKeyData(aBuffer, a)) {
         LOG_ERROR("Unable to deserialize key A in collation function.");
 
         // There's no way to indicate an error to SQLite - we have to return a sorting decision.
         // We arbitrarily choose "A > B"
         return 1;
     }
-    if (!deserializeIDBKeyData(static_cast<const uint8_t*>(bBuffer), bLength, b)) {
+    if (!deserializeIDBKeyData(bBuffer, b)) {
         LOG_ERROR("Unable to deserialize key B in collation function.");
 
         // There's no way to indicate an error to SQLite - we have to return a sorting decision.
@@ -717,7 +717,7 @@ bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo
         while (result == SQLITE_ROW) {
             auto keyBufferSpan = sql->columnBlobAsSpan(0);
             IDBKeyData keyData;
-            if (!deserializeIDBKeyData(keyBufferSpan.data(), keyBufferSpan.size(), keyData)) {
+            if (!deserializeIDBKeyData(keyBufferSpan, keyData)) {
                 LOG_ERROR("Unable to deserialize key data from database while getting all records");
                 return false;
             }
@@ -819,7 +819,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
             auto keyPathBufferSpan = sql->columnBlobAsSpan(2);
 
             std::optional<IDBKeyPath> objectStoreKeyPath;
-            if (!deserializeIDBKeyPath(keyPathBufferSpan.data(), keyPathBufferSpan.size(), objectStoreKeyPath)) {
+            if (!deserializeIDBKeyPath(keyPathBufferSpan, objectStoreKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
             }
@@ -855,7 +855,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
             auto keyPathBufferSpan = sql->columnBlobAsSpan(3);
 
             std::optional<IDBKeyPath> indexKeyPath;
-            if (!deserializeIDBKeyPath(keyPathBufferSpan.data(), keyPathBufferSpan.size(), indexKeyPath)) {
+            if (!deserializeIDBKeyPath(keyPathBufferSpan, indexKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
             }
@@ -991,7 +991,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     m_sqliteDB->enableAutomaticWALTruncation();
 
     m_sqliteDB->setCollationFunction("IDBKEY"_s, [](int aLength, const void* a, int bLength, const void* b) {
-        return idbKeyCollate(aLength, a, bLength, b);
+        return idbKeyCollate(std::span { static_cast<const uint8_t*>(a), static_cast<size_t>(aLength) }, std::span { static_cast<const uint8_t*>(b), static_cast<size_t>(bLength) });
     });
 
     IDBError error = ensureValidRecordsTable();
@@ -2193,7 +2193,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     }
     
     IDBKeyData keyData;
-    if (!deserializeIDBKeyData(keyVector->data(), keyVector->size(), keyData)) {
+    if (!deserializeIDBKeyData(keyVector->span(), keyData)) {
         LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore");
         return IDBError { ExceptionCode::UnknownError, "Error extracting key data from database executing IDBObjectStore get"_s };
     }
@@ -2301,7 +2301,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     while (sqlResult == SQLITE_ROW && returnedResults < targetResults) {
         auto keyBufferSpan = sql->columnBlobAsSpan(0);
         IDBKeyData keyData;
-        if (!deserializeIDBKeyData(keyBufferSpan.data(), keyBufferSpan.size(), keyData)) {
+        if (!deserializeIDBKeyData(keyBufferSpan, keyData)) {
             LOG_ERROR("Unable to deserialize key data from database while getting all records");
             return IDBError { ExceptionCode::UnknownError, "Unable to deserialize key data while getting all records"_s };
         }
@@ -2460,7 +2460,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
     IDBKeyData objectStoreKey;
     auto keySpan = sql->columnBlobAsSpan(0);
 
-    if (!deserializeIDBKeyData(keySpan.data(), keySpan.size(), objectStoreKey)) {
+    if (!deserializeIDBKeyData(keySpan, objectStoreKey)) {
         LOG_ERROR("Unable to deserialize key looking up index record in database");
         return IDBError { ExceptionCode::UnknownError, "Unable to deserialize key looking up index record in database"_s };
     }

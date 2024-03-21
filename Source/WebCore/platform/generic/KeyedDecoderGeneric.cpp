@@ -83,14 +83,14 @@ static bool readSimpleValue(WTF::Persistence::Decoder& decoder, KeyedDecoderGene
     return true;
 }
 
-std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t size)
+std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(std::span<const uint8_t> data)
 {
-    return makeUnique<KeyedDecoderGeneric>(data, size);
+    return makeUnique<KeyedDecoderGeneric>(data);
 }
 
-KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
+KeyedDecoderGeneric::KeyedDecoderGeneric(std::span<const uint8_t> data)
 {
-    WTF::Persistence::Decoder decoder({ data, size });
+    WTF::Persistence::Decoder decoder(data);
 
     m_rootDictionary = makeUnique<Dictionary>();
     m_dictionaryStack.append(m_rootDictionary.get());

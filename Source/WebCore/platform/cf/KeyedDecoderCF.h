@@ -34,7 +34,7 @@ namespace WebCore {
 
 class KeyedDecoderCF final : public KeyedDecoder {
 public:
-    explicit KeyedDecoderCF(const uint8_t* data, size_t);
+    explicit KeyedDecoderCF(std::span<const uint8_t> data);
     ~KeyedDecoderCF() override;
 
 private:

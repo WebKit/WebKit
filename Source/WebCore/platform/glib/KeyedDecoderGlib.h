@@ -37,7 +37,7 @@ namespace WebCore {
 
 class KeyedDecoderGlib final : public KeyedDecoder {
 public:
-    KeyedDecoderGlib(const uint8_t* data, size_t);
+    KeyedDecoderGlib(std::span<const uint8_t> data);
     ~KeyedDecoderGlib() override;
 
 private:

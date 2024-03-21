@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t size)
+std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(std::span<const uint8_t> data)
 {
-    return makeUnique<KeyedDecoderCF>(data, size);
+    return makeUnique<KeyedDecoderCF>(data);
 }
 
-KeyedDecoderCF::KeyedDecoderCF(const uint8_t* data, size_t size)
+KeyedDecoderCF::KeyedDecoderCF(std::span<const uint8_t> data)
 {
-    auto cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, data, size, kCFAllocatorNull));
+    auto cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, data.data(), data.size(), kCFAllocatorNull));
     auto cfPropertyList = adoptCF(CFPropertyListCreateWithData(kCFAllocatorDefault, cfData.get(), kCFPropertyListImmutable, nullptr, nullptr));
 
     if (dynamic_cf_cast<CFDictionaryRef>(cfPropertyList.get()))
