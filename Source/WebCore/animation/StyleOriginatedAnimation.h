@@ -50,7 +50,7 @@ public:
     const std::optional<const Styleable> owningElement() const;
     const Animation& backingAnimation() const { return m_backingAnimation; }
     void setBackingAnimation(const Animation&);
-    void cancelFromStyle();
+    void cancelFromStyle(WebAnimation::Silently = WebAnimation::Silently::No);
 
     std::optional<double> bindingsStartTime() const final;
     std::optional<double> bindingsCurrentTime() const final;
@@ -63,7 +63,7 @@ public:
     ExceptionOr<void> bindingsPause() override;
 
     void setTimeline(RefPtr<AnimationTimeline>&&) final;
-    void cancel() final;
+    void cancel(WebAnimation::Silently = WebAnimation::Silently::No) final;
 
     void tick() override;
 

@@ -102,7 +102,8 @@ public:
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     FinishedPromise& finished() { return m_finishedPromise.get(); }
 
-    virtual void cancel();
+    enum class Silently : bool { No, Yes };
+    virtual void cancel(Silently = Silently::No);
     ExceptionOr<void> finish();
     ExceptionOr<void> play();
     void updatePlaybackRate(double);
@@ -175,7 +176,6 @@ protected:
 private:
     enum class DidSeek : bool { No, Yes };
     enum class SynchronouslyNotify : bool { No, Yes };
-    enum class Silently : bool { No, Yes };
     enum class RespectHoldTime : bool { No, Yes };
     enum class AutoRewind : bool { No, Yes };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
