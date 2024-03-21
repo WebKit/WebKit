@@ -60,6 +60,8 @@ private:
     void updateFromStyle() final;
 
     ASCIILiteral renderName() const final { return "RenderSVGResourceClipper"_s; }
+
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 };
 
 }

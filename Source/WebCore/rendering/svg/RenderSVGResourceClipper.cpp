@@ -250,6 +250,15 @@ bool RenderSVGResourceClipper::needsHasSVGTransformFlags() const
     return protectedClipPathElement()->hasTransformRelatedAttributes();
 }
 
+void RenderSVGResourceClipper::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
+
+    // Ensure that descendants with layers are rooted within our layer.
+    if (hasLayer())
+        layer()->setIsOpportunisticStackingContext(true);
+}
+
 }
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

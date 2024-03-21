@@ -37,8 +37,6 @@ public:
 protected:
     void layout() override;
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-
 private:
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
 
