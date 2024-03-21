@@ -42,6 +42,7 @@
 #include <WebCore/JSDOMPromiseDeferred.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/RenderLayerBacking.h>
@@ -243,20 +244,23 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
             return sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
         };
 
-        auto getImageMIMEType = [&]() -> String {
-            if (auto* cachedImage = renderImage->cachedImage()) {
-                if (auto* image = cachedImage->image())
-                    return image->mimeType();
-            }
-            return emptyString();
-        };
+        auto mimeType = emptyString();
+        if (auto* cachedImage = renderImage->cachedImage()) {
+            if (auto* image = cachedImage->image())
+                mimeType = image->mimeType();
 
-        mediaDetails = {
-            FullScreenMediaDetails::Type::Image,
-            { },
-            getImageMIMEType(),
-            getImageResourceHandle()
-        };
+            if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+                mimeType = MIMETypeRegistry::mimeTypeForPath(cachedImage->url().string());
+        }
+
+        if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType)) {
+            mediaDetails = {
+                FullScreenMediaDetails::Type::Image,
+                { },
+                mimeType,
+                getImageResourceHandle()
+            };
+        }
     }
 #endif
 
