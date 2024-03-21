@@ -199,7 +199,7 @@ public:
 
 #if USE(SKIA)
     static Vector<hb_feature_t> computeFeatures(const FontDescription&, const FontCreationContext&);
-    SkFontMgr* fontManager() const { return m_fontManager.get(); }
+    SkFontMgr& fontManager() const;
     SkiaHarfBuzzFontCache& harfBuzzFontCache() { return m_harfBuzzFontCache; }
 #endif
 
@@ -268,7 +268,7 @@ private:
 #endif
 
 #if USE(SKIA)
-    sk_sp<SkFontMgr> m_fontManager;
+    mutable sk_sp<SkFontMgr> m_fontManager;
     SkiaHarfBuzzFontCache m_harfBuzzFontCache;
 #endif
 
