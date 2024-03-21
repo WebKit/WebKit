@@ -56,7 +56,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -80,7 +80,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamNoUVNoRK)
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -104,7 +104,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamUVRequiredButNotSup
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -128,7 +128,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamWithPin)
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -156,7 +156,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferred)
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -184,7 +184,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferredNotSupported)
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -208,7 +208,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKDiscouraged)
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -232,7 +232,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestWithLargeBlob)
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -261,7 +261,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestWithUnsupportedLargeBlob
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.name = "johnpsmith@example.com"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
@@ -295,7 +295,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequest)
         0x34, 0x85, 0x8a, 0xc7, 0x5b, 0xed, 0x3f, 0xd5, 0x80, 0xbf, 0x98,
         0x08, 0xd9, 0x4f, 0xcb, 0xee, 0x82, 0xb9, 0xb2, 0xef, 0x66, 0x77,
         0xaf, 0x0a, 0xdc, 0xc3, 0x58, 0x52, 0xea, 0x6b, 0x9e };
-    descriptor1.id = WebCore::toBufferSource(id1, sizeof(id1));
+    descriptor1.id = WebCore::toBufferSource(id1);
     options.allowCredentials.append(descriptor1);
 
     PublicKeyCredentialDescriptor descriptor2;
@@ -306,7 +306,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequest)
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
-    descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
+    descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
 
     options.userVerification = UserVerificationRequirement::Required;
@@ -333,7 +333,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestNoUV)
         0x34, 0x85, 0x8a, 0xc7, 0x5b, 0xed, 0x3f, 0xd5, 0x80, 0xbf, 0x98,
         0x08, 0xd9, 0x4f, 0xcb, 0xee, 0x82, 0xb9, 0xb2, 0xef, 0x66, 0x77,
         0xaf, 0x0a, 0xdc, 0xc3, 0x58, 0x52, 0xea, 0x6b, 0x9e };
-    descriptor1.id = WebCore::toBufferSource(id1, sizeof(id1));
+    descriptor1.id = WebCore::toBufferSource(id1);
     options.allowCredentials.append(descriptor1);
 
     PublicKeyCredentialDescriptor descriptor2;
@@ -344,7 +344,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestNoUV)
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
-    descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
+    descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
 
     options.userVerification = UserVerificationRequirement::Discouraged;
@@ -371,7 +371,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUVRequiredButNotSupported)
         0x34, 0x85, 0x8a, 0xc7, 0x5b, 0xed, 0x3f, 0xd5, 0x80, 0xbf, 0x98,
         0x08, 0xd9, 0x4f, 0xcb, 0xee, 0x82, 0xb9, 0xb2, 0xef, 0x66, 0x77,
         0xaf, 0x0a, 0xdc, 0xc3, 0x58, 0x52, 0xea, 0x6b, 0x9e };
-    descriptor1.id = WebCore::toBufferSource(id1, sizeof(id1));
+    descriptor1.id = WebCore::toBufferSource(id1);
     options.allowCredentials.append(descriptor1);
 
     PublicKeyCredentialDescriptor descriptor2;
@@ -382,7 +382,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUVRequiredButNotSupported)
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
-    descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
+    descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
 
     options.userVerification = UserVerificationRequirement::Required;
@@ -409,7 +409,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestWithPin)
         0x34, 0x85, 0x8a, 0xc7, 0x5b, 0xed, 0x3f, 0xd5, 0x80, 0xbf, 0x98,
         0x08, 0xd9, 0x4f, 0xcb, 0xee, 0x82, 0xb9, 0xb2, 0xef, 0x66, 0x77,
         0xaf, 0x0a, 0xdc, 0xc3, 0x58, 0x52, 0xea, 0x6b, 0x9e };
-    descriptor1.id = WebCore::toBufferSource(id1, sizeof(id1));
+    descriptor1.id = WebCore::toBufferSource(id1);
     options.allowCredentials.append(descriptor1);
 
     PublicKeyCredentialDescriptor descriptor2;
@@ -420,7 +420,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestWithPin)
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
-    descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
+    descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
 
     options.userVerification = UserVerificationRequirement::Required;
@@ -470,7 +470,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobRead)
         0x34, 0x85, 0x8a, 0xc7, 0x5b, 0xed, 0x3f, 0xd5, 0x80, 0xbf, 0x98,
         0x08, 0xd9, 0x4f, 0xcb, 0xee, 0x82, 0xb9, 0xb2, 0xef, 0x66, 0x77,
         0xaf, 0x0a, 0xdc, 0xc3, 0x58, 0x52, 0xea, 0x6b, 0x9e };
-    descriptor1.id = WebCore::toBufferSource(id1, sizeof(id1));
+    descriptor1.id = WebCore::toBufferSource(id1);
     options.allowCredentials.append(descriptor1);
 
     PublicKeyCredentialDescriptor descriptor2;
@@ -481,7 +481,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobRead)
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
-    descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
+    descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
     options.extensions = AuthenticationExtensionsClientInputs {
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
@@ -513,7 +513,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUnsupportedLargeBlobRead)
         0x34, 0x85, 0x8a, 0xc7, 0x5b, 0xed, 0x3f, 0xd5, 0x80, 0xbf, 0x98,
         0x08, 0xd9, 0x4f, 0xcb, 0xee, 0x82, 0xb9, 0xb2, 0xef, 0x66, 0x77,
         0xaf, 0x0a, 0xdc, 0xc3, 0x58, 0x52, 0xea, 0x6b, 0x9e };
-    descriptor1.id = WebCore::toBufferSource(id1, sizeof(id1));
+    descriptor1.id = WebCore::toBufferSource(id1);
     options.allowCredentials.append(descriptor1);
 
     PublicKeyCredentialDescriptor descriptor2;
@@ -524,7 +524,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUnsupportedLargeBlobRead)
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
-    descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
+    descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
     options.extensions = AuthenticationExtensionsClientInputs {
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
@@ -556,7 +556,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobWrite)
         0x34, 0x85, 0x8a, 0xc7, 0x5b, 0xed, 0x3f, 0xd5, 0x80, 0xbf, 0x98,
         0x08, 0xd9, 0x4f, 0xcb, 0xee, 0x82, 0xb9, 0xb2, 0xef, 0x66, 0x77,
         0xaf, 0x0a, 0xdc, 0xc3, 0x58, 0x52, 0xea, 0x6b, 0x9e };
-    descriptor1.id = WebCore::toBufferSource(id1, sizeof(id1));
+    descriptor1.id = WebCore::toBufferSource(id1);
     options.allowCredentials.append(descriptor1);
 
     PublicKeyCredentialDescriptor descriptor2;
@@ -567,7 +567,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobWrite)
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
         0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
-    descriptor2.id = WebCore::toBufferSource(id2, sizeof(id2));
+    descriptor2.id = WebCore::toBufferSource(id2);
     options.allowCredentials.append(descriptor2);
 
     const uint8_t blob[] = {
@@ -575,7 +575,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestLargeBlobWrite)
     };
     options.extensions = AuthenticationExtensionsClientInputs {
         .largeBlob = AuthenticationExtensionsClientInputs::LargeBlobInputs {
-            .write = WebCore::toBufferSource(blob, sizeof(blob)),
+            .write = WebCore::toBufferSource(blob),
         }
     };
 

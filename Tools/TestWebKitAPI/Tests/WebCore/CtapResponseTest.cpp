@@ -337,7 +337,7 @@ Vector<uint8_t> getTestCorruptedSignResponse(size_t length)
 // Return a key handle used for GetAssertion request.
 BufferSource getTestCredentialRawIdBytes()
 {
-    return WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    return WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
 }
 
 // Return a malformed U2fRegisterResponse.
