@@ -98,4 +98,21 @@ void CSSImageSetOptionValue::setType(String type)
     m_mimeType = WTFMove(type);
 }
 
+bool CSSImageSetOptionValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+{
+    return m_resolution->traverseSubresources(handler) || m_image->traverseSubresources(handler);
+}
+
+void CSSImageSetOptionValue::customSetReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+{
+    m_image->setReplacementURLForSubresources(replacementURLStrings);
+    m_resolution->setReplacementURLForSubresources(replacementURLStrings);
+}
+
+void CSSImageSetOptionValue::customClearReplacementURLForSubresources()
+{
+    m_image->clearReplacementURLForSubresources();
+    m_resolution->clearReplacementURLForSubresources();
+}
+
 } // namespace WebCore

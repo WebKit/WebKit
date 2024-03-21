@@ -606,30 +606,36 @@ TEST(WebArchive, SaveResourcesBlobURL)
 }
 
 static const char* htmlDataBytesForResponsiveImages = R"TESTRESOURCE(
+<head>
+<script>
+const dpr = window.devicePixelRatio;
+// Use image-set for div.
+style = document.createElement('style');
+style.innerHTML = "div { background-image:image-set('div1.png' " + dpr + "x, 'div2.png' " + (dpr + 1) + "x)}";
+document.getElementsByTagName("head")[0].appendChild(style);
+</script>
+</head>
 <body>
+<div id="div">Hello</div>
 <script>
 count = 0;
-function replaceImg() {
-    img = document.getElementById("img_id");
-    const ratio = window.devicePixelRatio;
-    img.removeAttribute("src");
-    img.srcset = 'image2.png ' + ratio + 'x,' + ' image1.png ' + (ratio + 1) + 'x';
-    img2 = document.getElementById("img_id2");
-    document.body.removeChild(img2);
+function addSrcsetToImage() {
+    image = document.getElementById("image");
+    image.removeAttribute("src");
+    image.srcset = "image2.png " + dpr + "x, image1.png " + (dpr + 1) + "x";
 }
 function onImageLoad() {
     ++count;
-    if (count == 3)
-        replaceImg();
-    if (count == 4)
+    if (count == 2) // image1.png and picture2.png are loaded.
+        addSrcsetToImage();
+    if (count == 3) // image2.png is loaded.
         window.webkit.messageHandlers.testHandler.postMessage("done");
 }
 </script>
-<img id="img_id" src="image1.png" onload="onImageLoad()">
-<img id="img_id2" src="image3.png" onload="onImageLoad()">
-<picture>
-    <source srcset="image3.png" media="(min-width: 3000px)">
-    <img src="image4.png" onload="onImageLoad()">
+<img id="image" src="image1.png" onload="onImageLoad()">
+<picture id="picture">
+    <source srcset="picture1.png" media="(min-width: 3000px)">
+    <img src="picture2.png" onload="onImageLoad()">
 </picture>
 </body>
 )TESTRESOURCE";
@@ -651,7 +657,7 @@ TEST(WebArchive, SaveResourcesResponsiveImages)
         if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host/main.html"]) {
             mimeType = @"text/html";
             data = htmlData;
-        } else if ([task.request.URL.absoluteString containsString:@"image"]) {
+        } else if ([task.request.URL.absoluteString containsString:@"png"]) {
             mimeType = @"image/png";
             data = imageData;
         } else
@@ -679,7 +685,7 @@ TEST(WebArchive, SaveResourcesResponsiveImages)
         NSString *resourceDirectoryName = @"host_files";
         NSString *resourceDirectoryPath = [directoryURL URLByAppendingPathComponent:resourceDirectoryName].path;
         NSArray *resourceFileNames = [fileManager contentsOfDirectoryAtPath:resourceDirectoryPath error:0];
-        NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:@"image1.png", @"image2.png", @"image3.png", @"image4.png", nil]];
+        NSSet *expectedFileNames = [NSSet setWithArray:[NSArray arrayWithObjects:@"image1.png", @"image2.png", @"picture2.png", @"div1.png", nil]];
         NSSet *savedFileNames = [NSSet setWithArray:resourceFileNames];
         EXPECT_TRUE([savedFileNames isEqualToSet:expectedFileNames]);
 
