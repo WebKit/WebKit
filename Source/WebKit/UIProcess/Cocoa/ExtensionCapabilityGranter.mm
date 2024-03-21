@@ -38,7 +38,6 @@
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/UniqueRef.h>
 
 #define GRANTER_RELEASE_LOG(envID, fmt, ...) RELEASE_LOG(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8().data(), ##__VA_ARGS__)
 #define GRANTER_RELEASE_LOG_ERROR(envID, fmt, ...) RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8().data(), ##__VA_ARGS__)
