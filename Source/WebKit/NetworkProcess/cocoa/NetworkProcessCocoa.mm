@@ -37,7 +37,7 @@
 #import "SandboxExtension.h"
 #import "WebCookieManager.h"
 #import <WebCore/NetworkStorageSession.h>
-#import <WebCore/PublicSuffix.h>
+#import <WebCore/PublicSuffixStore.h>
 #import <WebCore/ResourceRequestCFNet.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SecurityOrigin.h>

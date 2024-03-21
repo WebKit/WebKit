@@ -2127,6 +2127,7 @@ platform/PreviewConverter.cpp
 platform/ProcessCapabilities.cpp
 platform/ProcessIdentifier.cpp
 platform/ProcessIdentity.cpp
+platform/PublicSuffixStore.cpp
 platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
 platform/RunLoopObserver.cpp

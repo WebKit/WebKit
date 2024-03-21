@@ -29,7 +29,7 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPStatusCodes.h"
 #include "Logging.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "RegistrableDomain.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -829,7 +829,7 @@ String ResourceRequestBase::partitionName(const String& domain)
 {
     if (domain.isNull())
         return emptyString();
-    String highLevel = topPrivatelyControlledDomain(domain);
+    auto highLevel = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain);
     if (highLevel.isNull())
         return emptyString();
     return highLevel;

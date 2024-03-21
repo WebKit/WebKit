@@ -91,7 +91,7 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ProcessCapabilities.h>
-#import <WebCore/PublicSuffix.h>
+#import <WebCore/PublicSuffixStore.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SWContextManager.h>
 #import <WebCore/SystemBattery.h>
@@ -781,7 +781,7 @@ static void prewarmLogs()
     // This call will create container manager log objects.
     // FIXME: this can be removed if we move all calls to topPrivatelyControlledDomain out of the WebContent process.
     // This would be desirable, since the WebContent process is blocking access to the container manager daemon.
-    topPrivatelyControlledDomain("apple.com"_s);
+    PublicSuffixStore::singleton().topPrivatelyControlledDomain("apple.com"_s);
 
     static std::array<std::pair<const char*, const char*>, 5> logs { {
         { "com.apple.CFBundle", "strings" },
@@ -870,6 +870,8 @@ static void registerLogHook()
 
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
+    WebCore::PublicSuffixStore::singleton().enablePublicSuffixCache();
+
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     prewarmLogs();
     registerLogHook();

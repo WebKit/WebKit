@@ -30,7 +30,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentSecurityPolicyDirectiveNames.h"
 #include "ParsingUtilities.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/NeverDestroyed.h>
@@ -212,7 +212,7 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
         if (!isRestrictedDirectiveForMode(m_directiveName, ContentSecurityPolicyModeForExtension::ManifestV2))
             return true;
 
-        if (parsedSource.host.hasWildcard && isPublicSuffix(parsedSource.host.value))
+        if (parsedSource.host.hasWildcard && PublicSuffixStore::singleton().isPublicSuffix(parsedSource.host.value))
             return false;
 
         if (equalLettersIgnoringASCIICase(parsedSource.scheme, "blob"_s))

@@ -31,7 +31,7 @@
 #include "CookieJar.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "NotImplemented.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "ResourceRequest.h"
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>

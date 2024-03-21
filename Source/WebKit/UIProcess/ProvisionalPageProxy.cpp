@@ -286,15 +286,14 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
     if (websitePolicies)
         websitePoliciesData = websitePolicies->data();
 
-    auto topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(URL(item.url()).host().toString());
-
     send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)));
 
     SandboxExtension::Handle sandboxExtensionHandle;
     URL itemURL { item.url() };
     m_page->maybeInitializeSandboxExtensionHandle(process(), itemURL, item.resourceDirectoryURL(), sandboxExtensionHandle);
 
-    GoToBackForwardItemParameters parameters { navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), shouldTreatAsContinuingLoad, WTFMove(websitePoliciesData), m_page->lastNavigationWasAppInitiated(), existingNetworkResourceLoadIdentifierToResume, topPrivatelyControlledDomain, WTFMove(sandboxExtensionHandle) };
+    auto publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(URL(item.url()).host().toString());
+    GoToBackForwardItemParameters parameters { navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), shouldTreatAsContinuingLoad, WTFMove(websitePoliciesData), m_page->lastNavigationWasAppInitiated(), existingNetworkResourceLoadIdentifierToResume, WTFMove(publicSuffix), WTFMove(sandboxExtensionHandle) };
     if (!process().isLaunching() || !itemURL.protocolIsFile())
         send(Messages::WebPage::GoToBackForwardItem(WTFMove(parameters)));
     else

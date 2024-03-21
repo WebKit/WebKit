@@ -26,7 +26,7 @@
 #include "config.h"
 #include "UserAgentQuirks.h"
 
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include <wtf/URL.h>
 #include <wtf/glib/ChassisType.h>
 
@@ -168,7 +168,7 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 
     String domain = url.host().toString();
     UserAgentQuirks quirks;
-    String baseDomain = topPrivatelyControlledDomain(domain);
+    String baseDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain);
 
     if (urlRequiresChromeBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);

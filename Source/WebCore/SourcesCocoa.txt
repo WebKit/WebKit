@@ -307,7 +307,7 @@ platform/cocoa/PlatformPasteboardCocoa.mm
 platform/cocoa/PlatformSpeechSynthesizerCocoa.mm @no-unify
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
-platform/cocoa/PublicSuffixCocoa.mm
+platform/cocoa/PublicSuffixStoreCocoa.mm
 platform/cocoa/RemoteCommandListenerCocoa.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/SearchPopupMenuCocoa.mm

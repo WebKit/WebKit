@@ -85,7 +85,7 @@
 #include <WebCore/PermissionName.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PrewarmInformation.h>
-#include <WebCore/PublicSuffix.h>
+#include <WebCore/PublicSuffixStore.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityOriginData.h>
@@ -1199,7 +1199,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     // FIXME: Perhaps this should consider ProcessTerminationReasons ExceededMemoryLimit, ExceededCPULimit, Unresponsive as well.
     if (pages.size() == 1 && reason == ProcessTerminationReason::Crash) {
         auto& page = pages[0];
-        String domain = topPrivatelyControlledDomain(URL({ }, page->currentURL()).host().toString());
+        auto domain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(URL({ }, page->currentURL()).host().toString());
         if (!domain.isEmpty())
             page->logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingCrashKey(), domain, WebCore::ShouldSample::No);
     }
@@ -2008,7 +2008,7 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
     bool hasAllowedToRunInTheBackgroundActivity = false;
 
     for (auto& page : this->pages()) {
-        String pageDomain = topPrivatelyControlledDomain(URL({ }, page->currentURL()).host().toString());
+        auto pageDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(URL({ }, page->currentURL()).host().toString());
         if (domain.isEmpty())
             domain = WTFMove(pageDomain);
         else if (domain != pageDomain)

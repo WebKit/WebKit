@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NetworkStorageSession.h"
 
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "ResourceRequest.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

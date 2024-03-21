@@ -32,6 +32,7 @@
 #include "PathStream.h"
 #include <skia/core/SkPathUtils.h>
 #include <skia/core/SkRRect.h>
+#include <skia/core/SkSurface.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

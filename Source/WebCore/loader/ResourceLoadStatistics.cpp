@@ -27,7 +27,7 @@
 #include "ResourceLoadStatistics.h"
 
 #include "KeyedCoding.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/StringBuilder.h>

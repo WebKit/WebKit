@@ -199,7 +199,7 @@
 #include "Position.h"
 #include "ProcessingInstruction.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "Quirks.h"
 #include "RTCNetworkManager.h"
 #include "Range.h"
@@ -4065,8 +4065,9 @@ const URL& Document::urlForBindings() const
             return false;
 
         auto areSameSiteIgnoringPublicSuffix = [](StringView domain, StringView otherDomain) {
-            auto domainString = topPrivatelyControlledDomain(domain.toStringWithoutCopying());
-            auto otherDomainString = topPrivatelyControlledDomain(otherDomain.toStringWithoutCopying());
+            auto& publicSuffixStore = PublicSuffixStore::singleton();
+            auto domainString = publicSuffixStore.topPrivatelyControlledDomain(domain.toStringWithoutCopying());
+            auto otherDomainString = publicSuffixStore.topPrivatelyControlledDomain(otherDomain.toStringWithoutCopying());
             auto substringToSeparator = [](const String& string) -> String {
                 auto indexOfFirstSeparator = string.find('.');
                 if (indexOfFirstSeparator == notFound)

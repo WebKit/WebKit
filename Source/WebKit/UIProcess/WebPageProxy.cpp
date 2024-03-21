@@ -214,7 +214,7 @@
 #include <WebCore/PermissionDescriptor.h>
 #include <WebCore/PermissionState.h>
 #include <WebCore/PlatformEvent.h>
-#include <WebCore/PublicSuffix.h>
+#include <WebCore/PublicSuffixStore.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/RemoteUserInputEventData.h>
@@ -1427,7 +1427,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
         internals().pageLoadState.setPendingAPIRequest(transaction, { navigation->navigationID(), url });
     }
 
-    auto topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(URL(m_backForwardList->currentItem()->url()).host().toString());
+    auto topPrivatelyControlledDomain = WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(URL(m_backForwardList->currentItem()->url()).host().toString());
 
     // We allow stale content when reloading a WebProcess that's been killed or crashed.
     send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), m_backForwardList->currentItem()->itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, std::nullopt, topPrivatelyControlledDomain, { } }));
@@ -1786,9 +1786,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
         internals().pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), url.string() });
 
     LoadParameters loadParameters;
-    auto host = url.host().toString();
-    loadParameters.topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(host);
-    loadParameters.host = host;
+    loadParameters.publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(url.host().toString());
     loadParameters.navigationID = navigation.navigationID();
     loadParameters.request = WTFMove(request);
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
@@ -1874,7 +1872,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     loadParameters.request = WTFMove(request);
     loadParameters.shouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
-    loadParameters.topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(loadParameters.request.url().host().toString());
+    loadParameters.publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(loadParameters.request.url().host().toString());
     loadParameters.isRequestFromClientOrUserInput = isAppInitiated;
     const bool checkAssumedReadAccessToResourceURL = false;
     Ref process = m_process;
@@ -2233,9 +2231,8 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     Ref process = m_process;
     process->markProcessAsRecentlyUsed();
 
-    auto topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(URL(item.url()).host().toString());
-    
-    send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), item.itemID(), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, std::nullopt, topPrivatelyControlledDomain, { } }));
+    auto publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(URL(item.url()).host().toString());
+    send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), item.itemID(), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, std::nullopt, WTFMove(publicSuffix), { } }));
     process->startResponsivenessTimer();
 
     return RefPtr<API::Navigation> { WTFMove(navigation) };
@@ -9499,7 +9496,7 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
 
 #if PLATFORM(IOS_FAMILY)
     if (m_process->isUnderMemoryPressure()) {
-        String domain = WebCore::topPrivatelyControlledDomain(URL({ }, currentURL()).host().toString());
+        auto domain = WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(URL({ }, currentURL()).host().toString());
         if (!domain.isEmpty())
             logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingJetsamKey(), domain, WebCore::ShouldSample::No);
     }

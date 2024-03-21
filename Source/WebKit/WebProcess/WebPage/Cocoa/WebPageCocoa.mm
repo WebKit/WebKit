@@ -149,6 +149,7 @@ void WebPage::setHasLaunchedWebContentProcess()
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
+    WebCore::PublicSuffixStore::singleton().addPublicSuffix(parameters.publicSuffix);
     m_dataDetectionReferenceDate = parameters.dataDetectionReferenceDate;
 }
 

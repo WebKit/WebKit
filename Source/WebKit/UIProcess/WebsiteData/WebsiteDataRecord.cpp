@@ -27,7 +27,7 @@
 #include "WebsiteDataRecord.h"
 
 #include <WebCore/LocalizedStrings.h>
-#include <WebCore/PublicSuffix.h>
+#include <WebCore/PublicSuffixStore.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/CrossThreadCopier.h>
 
@@ -56,7 +56,7 @@ String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
 
 String WebsiteDataRecord::displayNameForHostName(const String& hostName)
 {
-    return WebCore::topPrivatelyControlledDomain(hostName);
+    return WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(hostName);
 }
 
 String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData& securityOrigin)
@@ -67,7 +67,7 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData
         return displayNameForLocalFiles();
 
     if (protocol == "http"_s || protocol == "https"_s)
-        return WebCore::topPrivatelyControlledDomain(securityOrigin.host());
+        return WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(securityOrigin.host());
 
     return String();
 }
@@ -138,11 +138,12 @@ bool WebsiteDataRecord::matches(const WebCore::RegistrableDomain& domain) const
 
 String WebsiteDataRecord::topPrivatelyControlledDomain()
 {
+    auto& publicSuffixStore = WebCore::PublicSuffixStore::singleton();
     if (!cookieHostNames.isEmpty())
-        return WebCore::topPrivatelyControlledDomain(cookieHostNames.takeAny());
+        return publicSuffixStore.topPrivatelyControlledDomain(cookieHostNames.takeAny());
     
     if (!origins.isEmpty())
-        return WebCore::topPrivatelyControlledDomain(origins.takeAny().securityOrigin().get().host());
+        return publicSuffixStore.topPrivatelyControlledDomain(origins.takeAny().securityOrigin().get().host());
     
     return emptyString();
 }

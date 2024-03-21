@@ -35,7 +35,7 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
-#import <WebCore/PublicSuffix.h>
+#import <WebCore/PublicSuffixStore.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
@@ -324,7 +324,7 @@ bool WebExtensionMatchPattern::hostIsPublicSuffix() const
     if (host.startsWith("*."_s))
         host = host.substring(2);
 
-    return isPublicSuffix(host);
+    return WebCore::PublicSuffixStore::singleton().isPublicSuffix(host);
 }
 
 String WebExtensionMatchPattern::stringWithScheme(const String& differentScheme) const

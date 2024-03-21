@@ -27,7 +27,7 @@
 #include "ResourceRequestCFNet.h"
 
 #include "HTTPHeaderNames.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceRequest.h"

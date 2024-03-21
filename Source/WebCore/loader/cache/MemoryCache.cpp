@@ -35,7 +35,7 @@
 #include "Image.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "SharedBuffer.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"

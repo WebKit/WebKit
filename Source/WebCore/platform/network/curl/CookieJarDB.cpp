@@ -28,7 +28,7 @@
 
 #include "CookieUtil.h"
 #include "Logging.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "RegistrableDomain.h"
 #include "SQLiteFileSystem.h"
 #include <wtf/DateMath.h>
@@ -349,7 +349,7 @@ bool CookieJarDB::hasCookies(const URL& url)
     if (host.isEmpty())
         return false;
 
-    if (isPublicSuffix(host))
+    if (PublicSuffixStore::singleton().isPublicSuffix(host))
         return false;
 
     RegistrableDomain registrableDomain { url };
@@ -500,7 +500,7 @@ static bool checkSecureCookie(const Cookie& cookie)
 
 bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, const URL& url, CookieJarDB::Source source)
 {
-    if (isPublicSuffix(cookie.domain))
+    if (PublicSuffixStore::singleton().isPublicSuffix(cookie.domain))
         return false;
 
     bool fromJavaScript = source == CookieJarDB::Source::Script;

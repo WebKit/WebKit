@@ -2235,8 +2235,9 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
 
     LOG(Loading, "In WebProcess pid %i, WebPage %" PRIu64 " is navigating to back/forward URL %s", getCurrentProcessID(), m_identifier.toUInt64(), item->url().string().utf8().data());
 
-    if (parameters.topPrivatelyControlledDomain)
-        WebCore::setTopPrivatelyControlledDomain(URL(item->url().string()).host().toString(), *parameters.topPrivatelyControlledDomain);
+#if PLATFORM(COCOA)
+    WebCore::PublicSuffixStore::singleton().addPublicSuffix(parameters.publicSuffix);
+#endif
 
     ASSERT(!m_pendingNavigationID);
     m_pendingNavigationID = parameters.navigationID;
