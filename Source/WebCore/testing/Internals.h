@@ -243,6 +243,7 @@ public:
     unsigned imagePendingDecodePromisesCountForTesting(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool enabled);
     unsigned imageDecodeCount(HTMLImageElement&);
+    AtomString imageLastDecodingOptions(HTMLImageElement&);
     unsigned imageCachedSubimageCreateCount(HTMLImageElement&);
     unsigned remoteImagesCountForTesting() const;
     void setAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);

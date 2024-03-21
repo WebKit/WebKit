@@ -107,6 +107,7 @@ public:
     DestinationColorSpace colorSpace() final;
 
     WEBCORE_EXPORT unsigned decodeCountForTesting() const;
+    WEBCORE_EXPORT DecodingOptions lastDecodingOptionsForTesting() const;
 
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) override;
     RefPtr<NativeImage> nativeImageForCurrentFrame() override;
@@ -195,6 +196,7 @@ private:
 #endif
 
     unsigned m_decodeCountForTesting { 0 };
+    DecodingOptions m_lastDecodingOptionsForTesting;
 
     RefPtr<NativeImage> m_cachedImage;
 };

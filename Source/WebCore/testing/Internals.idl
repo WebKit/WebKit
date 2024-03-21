@@ -667,6 +667,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     unsigned long imagePendingDecodePromisesCountForTesting(HTMLImageElement element);
     undefined setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement element, boolean enabled);
     unsigned long imageDecodeCount(HTMLImageElement element);
+    DOMString imageLastDecodingOptions(HTMLImageElement element);
     unsigned long imageCachedSubimageCreateCount(HTMLImageElement element);
     unsigned long remoteImagesCountForTesting();
     undefined setAsyncDecodingEnabledForTesting(HTMLImageElement element, boolean enabled);

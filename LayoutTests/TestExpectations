@@ -2280,6 +2280,8 @@ fast/images/jpegxl-as-image.html [ Skip ]
 fast/images/jpegxl-with-color-profile.html [ Skip ]
 fast/images/animated-jpegxl-loop-count.html [ Skip ]
 
+webkit.org/b/270330 fast/images/async-image-intersect-different-size-for-drawing.html [ Failure ]
+
 # Experimental H265 support.
 webrtc/h265.html [ Pass Failure ]
 

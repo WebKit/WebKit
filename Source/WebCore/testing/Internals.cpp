@@ -1175,6 +1175,27 @@ unsigned Internals::imageDecodeCount(HTMLImageElement& element)
     return bitmapImage ? bitmapImage->decodeCountForTesting() : 0;
 }
 
+AtomString Internals::imageLastDecodingOptions(HTMLImageElement& element)
+{
+    auto* bitmapImage = bitmapImageFromImageElement(element);
+    if (!bitmapImage)
+        return { };
+
+    auto options = bitmapImage->lastDecodingOptionsForTesting();
+    StringBuilder builder;
+    builder.append("{ decodingMode : ");
+    builder.append(options.decodingMode() == DecodingMode::Asynchronous ? "Asynchronous" : "Synchronous");
+    if (auto sizeForDrawing = options.sizeForDrawing()) {
+        builder.append(", sizeForDrawing : { ");
+        builder.append(sizeForDrawing->width());
+        builder.append(", ");
+        builder.append(sizeForDrawing->height());
+        builder.append(" }");
+    }
+    builder.append(" }");
+    return builder.toAtomString();
+}
+
 unsigned Internals::imageCachedSubimageCreateCount(HTMLImageElement& element)
 {
 #if USE(CG)

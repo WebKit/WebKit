@@ -223,6 +223,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         // it is currently being decoded. New data may have been received since the previous request was made.
         if ((!frameIsCompatible && !frameIsBeingDecoded) || m_currentFrameDecodingStatus == DecodingStatus::Invalid) {
             LOG(Images, "BitmapImage::%s - %p - url: %s [requesting large async decoding]", __FUNCTION__, this, sourceURL().string().utf8().data());
+            m_lastDecodingOptionsForTesting = { options.decodingMode(), sizeForDrawing };
             m_source->requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, sizeForDrawing);
             m_currentFrameDecodingStatus = DecodingStatus::Decoding;
         }
@@ -266,6 +267,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
             }
             return ImageDrawResult::DidRequestDecoding;
         } else {
+            m_lastDecodingOptionsForTesting = { options.decodingMode(), sizeForDrawing };
             image = nativeImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel, options.decodingMode());
             LOG(Images, "BitmapImage::%s - %p - url: %s [an image frame will be decoded synchronously]", __FUNCTION__, this, sourceURL().string().utf8().data());
         }
@@ -630,6 +632,11 @@ DestinationColorSpace BitmapImage::colorSpace()
 unsigned BitmapImage::decodeCountForTesting() const
 {
     return m_decodeCountForTesting;
+}
+
+DecodingOptions BitmapImage::lastDecodingOptionsForTesting() const
+{
+    return m_lastDecodingOptionsForTesting;
 }
 
 void BitmapImage::dump(TextStream& ts) const
