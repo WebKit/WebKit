@@ -35,6 +35,7 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "XPCEndpoint.h"
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/EnumTraits.h>
 
 #if PLATFORM(IOS_FAMILY)
