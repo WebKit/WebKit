@@ -77,6 +77,7 @@
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <pal/spi/mac/QuarantineSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/SpanCocoa.h>
@@ -165,6 +166,21 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
 void WebPageProxy::layerTreeCommitComplete()
 {
     protectedPageClient()->layerTreeCommitComplete();
+}
+
+void WebPageProxy::callAfterNextPresentationUpdateAndLayerCommit(CompletionHandler<void()>&& callback)
+{
+    callAfterNextPresentationUpdate([callback = WTFMove(callback)]() mutable {
+        // Create an implicit transaction to ensure a commit will happen next.
+        [CATransaction activate];
+
+        auto completionBlock = makeBlockPtr([callback = WTFMove(callback)]() mutable {
+            callback();
+        });
+
+        // Wait for the next flush to ensure the latest IOSurfaces are pushed to backboardd before taking the snapshot.
+        [CATransaction addCommitHandler:completionBlock.get() forPhase:kCATransactionPhasePostCommit];
+    });
 }
 
 #if ENABLE(DATA_DETECTION)
