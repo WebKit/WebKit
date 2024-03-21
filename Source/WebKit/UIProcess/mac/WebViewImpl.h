@@ -718,7 +718,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    void willBeginTextReplacementSession(const WTF::UUID&, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);
+    void willBeginTextReplacementSession(const WTF::UUID&, WebUnifiedTextReplacementType, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);
 
     void didBeginTextReplacementSession(const WTF::UUID&, const Vector<WebUnifiedTextReplacementContextData>&);
 

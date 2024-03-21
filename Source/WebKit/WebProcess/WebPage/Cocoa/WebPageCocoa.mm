@@ -901,9 +901,9 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void WebPage::willBeginTextReplacementSession(const WTF::UUID& uuid, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
+void WebPage::willBeginTextReplacementSession(const WTF::UUID& uuid, WebUnifiedTextReplacementType type, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
-    m_unifiedTextReplacementController->willBeginTextReplacementSession(uuid, WTFMove(completionHandler));
+    m_unifiedTextReplacementController->willBeginTextReplacementSession(uuid, type, WTFMove(completionHandler));
 }
 
 void WebPage::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)

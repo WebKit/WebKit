@@ -39,6 +39,8 @@
 
 namespace WebKit {
 
+enum class WebUnifiedTextReplacementType : uint8_t;
+
 class WebPage;
 
 struct WebUnifiedTextReplacementContextData;
@@ -50,7 +52,7 @@ class UnifiedTextReplacementController final {
 public:
     explicit UnifiedTextReplacementController(WebPage&);
 
-    void willBeginTextReplacementSession(const WTF::UUID&, CompletionHandler<void(const Vector<WebKit::WebUnifiedTextReplacementContextData>&)>&&);
+    void willBeginTextReplacementSession(const WTF::UUID&, WebUnifiedTextReplacementType, CompletionHandler<void(const Vector<WebKit::WebUnifiedTextReplacementContextData>&)>&&);
 
     void didBeginTextReplacementSession(const WTF::UUID&, const Vector<WebKit::WebUnifiedTextReplacementContextData>&);
 
@@ -65,9 +67,14 @@ public:
     void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);
 
 private:
+    void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);
+
+    void textReplacementSessionPerformEditActionForRichText(WebCore::Document&, const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);
+
     WeakPtr<WebPage> m_webPage;
 
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_contextRanges;
+    HashMap<WTF::UUID, WebUnifiedTextReplacementType> m_replacementTypes;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_originalDocumentNodes;
     HashMap<WTF::UUID, Ref<WebCore::DocumentFragment>> m_replacedDocumentNodes;
 };

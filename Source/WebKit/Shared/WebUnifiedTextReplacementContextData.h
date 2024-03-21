@@ -38,6 +38,11 @@ struct CharacterRange;
 
 namespace WebKit {
 
+enum class WebUnifiedTextReplacementType : uint8_t {
+    PlainText,
+    RichText,
+};
+
 struct WebUnifiedTextReplacementContextData {
     WTF::UUID uuid;
     WebCore::AttributedString attributedText;

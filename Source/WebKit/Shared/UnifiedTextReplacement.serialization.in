@@ -48,6 +48,12 @@ header: "WebTextReplacementData.h"
     WebCore::AttributedString originalString;
 };
 
+header: "WebUnifiedTextReplacementContextData.h"
+[CustomHeader] enum class WebKit::WebUnifiedTextReplacementType : uint8_t {
+    PlainText,
+    RichText,
+}
+
 struct WebKit::WebUnifiedTextReplacementContextData {
     WTF::UUID uuid;
     WebCore::AttributedString attributedText;

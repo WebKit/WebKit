@@ -1038,6 +1038,7 @@ def headers_for_type(type):
         'WebKit::WebExtensionTabImageFormat': ['"WebExtensionTab.h"'],
         'WebKit::WebExtensionWindowTypeFilter': ['"WebExtensionWindow.h"'],
         'WebKit::WebTextReplacementDataState': ['"WebTextReplacementData.h"'],
+        'WebKit::WebUnifiedTextReplacementType': ['"WebUnifiedTextReplacementContextData.h"'],
         'WebKit::WebGPU::BindGroupDescriptor': ['"WebGPUBindGroupDescriptor.h"'],
         'WebKit::WebGPU::BindGroupEntry': ['"WebGPUBindGroupEntry.h"'],
         'WebKit::WebGPU::BindGroupLayoutDescriptor': ['"WebGPUBindGroupLayoutDescriptor.h"'],

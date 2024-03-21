@@ -117,7 +117,7 @@ public:
     using pointer = value_type*;
     using reference = value_type&;
 
-    IntersectingNodeIterator(const SimpleRange&);
+    WEBCORE_EXPORT IntersectingNodeIterator(const SimpleRange&);
 
     enum QuirkFlag { DeprecatedZeroOffsetStartQuirk };
     IntersectingNodeIterator(const SimpleRange&, QuirkFlag);
@@ -130,7 +130,7 @@ public:
     bool operator==(const std::nullptr_t) const { return !m_node; }
 
     IntersectingNodeIterator& operator++() { advance(); return *this; }
-    void advance();
+    WEBCORE_EXPORT void advance();
     void advanceSkippingChildren();
 
 private:

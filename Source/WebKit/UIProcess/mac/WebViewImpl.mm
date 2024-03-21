@@ -6528,9 +6528,9 @@ void WebViewImpl::uninstallImageAnalysisOverlayView()
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-void WebViewImpl::willBeginTextReplacementSession(const WTF::UUID& uuid, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
+void WebViewImpl::willBeginTextReplacementSession(const WTF::UUID& uuid, WebUnifiedTextReplacementType type, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
 {
-    protectedPage()->willBeginTextReplacementSession(uuid, WTFMove(completionHandler));
+    protectedPage()->willBeginTextReplacementSession(uuid, type, WTFMove(completionHandler));
 }
 
 void WebViewImpl::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)
