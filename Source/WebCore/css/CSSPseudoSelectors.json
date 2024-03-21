@@ -116,9 +116,7 @@
         "first-child": {},
         "first-of-type": {},
         "focus": {},
-        "focus-visible": {
-            "settings-flag": "focusVisibleEnabled"
-        },
+        "focus-visible": {},
         "focus-within": {},
         "fullscreen": {
             "aliases": [

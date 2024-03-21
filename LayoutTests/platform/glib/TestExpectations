@@ -747,7 +747,6 @@ webkit.org/b/260973 imported/w3c/web-platform-tests/css/css-fonts/font-variant-e
 
 # fast/gradients are Skip in the top level Expectation. When fixing, change this to
 # Pass instead of removing this line.
-webkit.org/b/234606 fast/gradients/conic-gradient-alpha-unpremultiplied.html [ ImageOnlyFailure ]
 webkit.org/b/234606 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 webkit.org/b/234606 fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
 webkit.org/b/234606 fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]

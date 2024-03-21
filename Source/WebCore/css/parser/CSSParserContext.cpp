@@ -55,7 +55,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
 {
     // FIXME: We should turn all of the features on from their WebCore Settings defaults.
     if (isUASheetBehavior(mode)) {
-        focusVisibleEnabled = true;
         lightDarkEnabled = true;
         popoverAttributeEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
@@ -83,16 +82,11 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , hasDocumentSecurityOrigin { sheetBaseURL.isNull() || document.securityOrigin().canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton()) }
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
     , colorContrastEnabled { document.settings().cssColorContrastEnabled() }
-    , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
-    , relativeColorSyntaxEnabled { document.settings().cssRelativeColorSyntaxEnabled() }
     , springTimingFunctionEnabled { document.settings().springTimingFunctionEnabled() }
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
     , transformStyleOptimized3DEnabled { document.settings().cssTransformStyleOptimized3DEnabled() }
 #endif
-    , focusVisibleEnabled { document.settings().focusVisibleEnabled() }
-    , gradientPremultipliedAlphaInterpolationEnabled { document.settings().cssGradientPremultipliedAlphaInterpolationEnabled() }
-    , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
     , masonryEnabled { document.settings().masonryEnabled() }
     , cssNestingEnabled { document.settings().cssNestingEnabled() }
 #if ENABLE(CSS_PAINTING_API)
@@ -125,33 +119,28 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.isContentOpaque                           << 2
         | context.useSystemAppearance                       << 3
         | context.colorContrastEnabled                      << 4
-        | context.constantPropertiesEnabled                 << 5
-        | context.relativeColorSyntaxEnabled                << 6
-        | context.springTimingFunctionEnabled               << 7
+        | context.springTimingFunctionEnabled               << 5
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-        | context.transformStyleOptimized3DEnabled          << 8
+        | context.transformStyleOptimized3DEnabled          << 6
 #endif
-        | context.focusVisibleEnabled                       << 9
-        | context.gradientPremultipliedAlphaInterpolationEnabled << 10
-        | context.gradientInterpolationColorSpacesEnabled   << 11
-        | context.masonryEnabled                            << 12
-        | context.cssNestingEnabled                         << 13
-        | context.cssPaintingAPIEnabled                     << 14
-        | context.cssScopeAtRuleEnabled                     << 15
-        | context.cssTextUnderlinePositionLeftRightEnabled  << 16
-        | context.cssWordBreakAutoPhraseEnabled             << 17
-        | context.popoverAttributeEnabled                   << 18
-        | context.sidewaysWritingModesEnabled               << 19
-        | context.cssTextWrapPrettyEnabled                  << 20
-        | context.highlightAPIEnabled                       << 21
-        | context.grammarAndSpellingPseudoElementsEnabled   << 22
-        | context.customStateSetEnabled                     << 23
-        | context.thumbAndTrackPseudoElementsEnabled        << 24
+        | context.masonryEnabled                            << 7
+        | context.cssNestingEnabled                         << 8
+        | context.cssPaintingAPIEnabled                     << 9
+        | context.cssScopeAtRuleEnabled                     << 10
+        | context.cssTextUnderlinePositionLeftRightEnabled  << 11
+        | context.cssWordBreakAutoPhraseEnabled             << 12
+        | context.popoverAttributeEnabled                   << 13
+        | context.sidewaysWritingModesEnabled               << 14
+        | context.cssTextWrapPrettyEnabled                  << 15
+        | context.highlightAPIEnabled                       << 16
+        | context.grammarAndSpellingPseudoElementsEnabled   << 17
+        | context.customStateSetEnabled                     << 18
+        | context.thumbAndTrackPseudoElementsEnabled        << 19
 #if ENABLE(SERVICE_CONTROLS)
-        | context.imageControlsEnabled                      << 25
+        | context.imageControlsEnabled                      << 20
 #endif
-        | context.lightDarkEnabled                          << 26
-        | (uint32_t)context.mode                            << 27; // This is multiple bits, so keep it last.
+        | context.lightDarkEnabled                          << 21
+        | (uint32_t)context.mode                            << 22; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

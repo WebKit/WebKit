@@ -2089,7 +2089,6 @@ fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 
 fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
 fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
-fast/gradients/conic-gradient-alpha-unpremultiplied.html [ ImageOnlyFailure ]
 
 fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
 

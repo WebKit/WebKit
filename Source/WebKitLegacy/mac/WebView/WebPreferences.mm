@@ -2644,16 +2644,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitPictureInPictureAPIEnabledKey];
 }
 
-- (BOOL)constantPropertiesEnabled
-{
-    return [self _boolValueForKey:WebKitConstantPropertiesEnabledPreferenceKey];
-}
-
-- (void)setConstantPropertiesEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitConstantPropertiesEnabledPreferenceKey];
-}
-
 - (BOOL)colorFilterEnabled
 {
     return [self _boolValueForKey:WebKitColorFilterEnabledPreferenceKey];
@@ -3001,6 +2991,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (BOOL)constantPropertiesEnabled
+{
+    return YES;
+}
+
+- (void)setConstantPropertiesEnabled:(BOOL)flag
+{
+}
 
 - (BOOL)maskWebGLStringsEnabled
 {

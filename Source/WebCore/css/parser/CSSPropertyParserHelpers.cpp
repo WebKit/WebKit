@@ -2045,7 +2045,7 @@ template<RGBFunctionMode Mode> static Color parseRGBParametersRaw(CSSParserToken
     auto args = consumeFunction(range);
 
     if constexpr (Mode == RGBFunctionMode::RGB) {
-        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        if (args.peek().id() == CSSValueFrom)
             return parseRelativeRGBParametersRaw(args, context);
     }
     return parseNonRelativeRGBParametersRaw(args);
@@ -2166,7 +2166,7 @@ template<HSLFunctionMode Mode> static Color parseHSLParametersRaw(CSSParserToken
     auto args = consumeFunction(range);
 
     if constexpr (Mode == HSLFunctionMode::HSL) {
-        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        if (args.peek().id() == CSSValueFrom)
             return parseRelativeHSLParametersRaw(args, context);
     }
 
@@ -2271,7 +2271,7 @@ static Color parseHWBParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 
     auto args = consumeFunction(range);
 
-    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+    if (args.peek().id() == CSSValueFrom)
         return parseRelativeHWBParametersRaw(args, context);
     return parseNonRelativeHWBParametersRaw(args, context);
 }
@@ -2481,7 +2481,7 @@ static Color parseLabParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 
     auto args = consumeFunction(range);
 
-    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+    if (args.peek().id() == CSSValueFrom)
         return parseRelativeLabParametersRaw<ColorType>(args, context);
     return parseNonRelativeLabParametersRaw<ColorType>(args);
 }
@@ -2572,7 +2572,7 @@ static Color parseLCHParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 
     auto args = consumeFunction(range);
 
-    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+    if (args.peek().id() == CSSValueFrom)
         return parseRelativeLCHParametersRaw<ColorType>(args, context);
     return parseNonRelativeLCHParametersRaw<ColorType>(args, context);
 }
@@ -2764,7 +2764,7 @@ static Color parseColorFunctionParametersRaw(CSSParserTokenRange& range, const C
     auto args = consumeFunction(range);
 
     auto color = [&] {
-        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        if (args.peek().id() == CSSValueFrom)
             return parseRelativeColorFunctionParameters(args, context);
         return parseNonRelativeColorFunctionParameters(args);
     }();
@@ -3650,11 +3650,6 @@ static std::optional<CSSGradientColorStopList> consumeDeprecatedGradientColorSto
     return { WTFMove(stops) };
 }
 
-static AlphaPremultiplication gradientAlphaPremultiplication(const CSSParserContext& context)
-{
-    return context.gradientPremultipliedAlphaInterpolationEnabled ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied;
-}
-
 static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (!consumeCommaIncludingWhitespace(range))
@@ -3684,7 +3679,7 @@ static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& ran
             WTFMove(secondX),
             WTFMove(secondY)
         },
-        CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context)),
+        CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied),
         WTFMove(*stops)
     );
 }
@@ -3734,7 +3729,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
             firstRadius.releaseNonNull(),
             secondRadius.releaseNonNull()
         },
-        CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context)),
+        CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied),
         WTFMove(*stops)
     );
 }
@@ -3876,16 +3871,13 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
     if (!stops)
         return nullptr;
 
-    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied);
     return CSSPrefixedRadialGradientValue::create({ WTFMove(gradientBox), WTFMove(position) },
         repeating, colorInterpolationMethod, WTFMove(*stops));
 }
 
-static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(const CSSParserContext& context, std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)
+static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)
 {
-    if (!context.gradientInterpolationColorSpacesEnabled)
-        return CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
-
     // We detect whether stops use legacy vs. non-legacy CSS color syntax using the following rules:
     //  - A CSSValueID is always considered legacy since all keyword based colors are considered legacy by the spec.
     //  - An actual Color value is considered legacy if it is stored as 8-bit sRGB.
@@ -3911,14 +3903,14 @@ static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMeth
 
     switch (defaultColorInterpolationMethod) {
     case CSSGradientColorInterpolationMethod::Default::SRGB:
-        return { { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }, defaultColorInterpolationMethod };
+        return { { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
 
     case CSSGradientColorInterpolationMethod::Default::OKLab:
         return { { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
     }
 
     ASSERT_NOT_REACHED();
-    return { { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }, defaultColorInterpolationMethod };
+    return { { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
 }
 
 static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientRepeat repeating)
@@ -3944,12 +3936,10 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if (range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if (range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     std::optional<CSSRadialGradientValue::ShapeKeyword> shape;
@@ -4008,12 +3998,10 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
         position = CSSGradientPosition { WTFMove(positionCoordinates->x), WTFMove(positionCoordinates->y) };
     }
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if ((shape || size || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if ((shape || size || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     if ((shape || size || position || colorInterpolationMethod) && !consumeCommaIncludingWhitespace(range))
@@ -4023,7 +4011,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     if (!stops)
         return nullptr;
 
-    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, *stops);
 
     CSSRadialGradientValue::Data data;
     if (shape) {
@@ -4166,7 +4154,7 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
     if (!stops)
         return nullptr;
 
-    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied);
 
     return CSSPrefixedLinearGradientValue::create(
         CSSPrefixedLinearGradientValue::Data { gradientLine.value_or(std::monostate { }) },
@@ -4232,12 +4220,10 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if (range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if (range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     std::optional<CSSLinearGradientValue::GradientLine> gradientLine;
@@ -4251,12 +4237,10 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
         gradientLine = WTFMove(*keywordGradientLine);
     }
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if (gradientLine && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if (gradientLine && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     if (gradientLine || colorInterpolationMethod) {
@@ -4268,7 +4252,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
     if (!stops)
         return nullptr;
 
-    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, *stops);
 
     return CSSLinearGradientValue::create(
         CSSLinearGradientValue::Data { gradientLine.value_or(std::monostate { }) },
@@ -4287,12 +4271,10 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if (range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if (range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     RefPtr<CSSPrimitiveValue> angle;
@@ -4311,12 +4293,10 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
         position = CSSGradientPosition { WTFMove(positionCoordinate->x), WTFMove(positionCoordinate->y) };
     }
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if ((angle || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if ((angle || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     if (angle || position || colorInterpolationMethod) {
@@ -4328,7 +4308,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
     if (!stops)
         return nullptr;
 
-    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, *stops);
 
     return CSSConicGradientValue::create({
             CSSConicGradientValue::Angle { WTFMove(angle) },

@@ -905,8 +905,6 @@ void Element::setFocus(bool value, FocusVisibility visibility)
 void Element::setHasFocusVisible(bool value)
 {
     Ref document = this->document();
-    if (!document->settings().focusVisibleEnabled())
-        return;
 
 #if ASSERT_ENABLED
     ASSERT(!value || focused());

@@ -973,34 +973,6 @@ CSSFontVariantEmojiEnabled:
     WebCore:
       default: false
 
-CSSGradientInterpolationColorSpacesEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Gradient Interpolation Color Spaces"
-  humanReadableDescription: "Enable custom interpolation in CSS gradients"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-CSSGradientPremultipliedAlphaInterpolationEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Gradient Premultiplied Alpha Interpolation"
-  humanReadableDescription: "Enable premultiplied alpha interpolated CSS gradients"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSInputSecurityEnabled:
   type: bool
   status: testable
@@ -1115,20 +1087,6 @@ CSSPaintingAPIEnabled:
       default: false
     WebCore:
       default: false
-
-CSSRelativeColorSyntaxEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Relative Color Syntax"
-  humanReadableDescription: "Enable support for CSS Relative Color Syntax defined in CSS Color 5"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 CSSRhythmicSizingEnabled:
   type: bool
@@ -1621,18 +1579,6 @@ CompressionStreamEnabled:
   defaultValue:
     WebKitLegacy:
       default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
-# FIXME: This needs a more clear name to explain that it is a CSS related preference. (Maybe we need namespacing? CSS.ConstantPropertiesEnabled?)
-ConstantPropertiesEnabled:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: true
     WebKit:
       default: true
     WebCore:
@@ -2612,20 +2558,6 @@ FlexFormattingContextIntegrationEnabled:
       default: false
     WebCore:
       default: false
-
-FocusVisibleEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: ":focus-visible pseudo-class"
-  humanReadableDescription: "Enable the focus-indicated pseudo-class :focus-visible"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 ForceAlwaysUserScalable:
   type: bool

@@ -536,9 +536,6 @@ ALWAYS_INLINE bool matchesFocusPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesFocusVisiblePseudoClass(const Element& element)
 {
-    if (!element.document().settings().focusVisibleEnabled())
-        return matchesLegacyDirectFocusPseudoClass(element);
-
     if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClass::FocusVisible))
         return true;
 
