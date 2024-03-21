@@ -2141,6 +2141,18 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
     }
 }
 
+NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth)
+{
+    NSUInteger blockSize = Texture::texelBlockSize(format);
+    NSUInteger blockWidth = Texture::texelBlockWidth(format);
+    if (blockWidth > 1 && (blockSize * textureWidth) % blockWidth) {
+        ASSERT_NOT_REACHED("Compressed texture has unexpected texture width");
+        return 0;
+    }
+
+    return (blockSize * textureWidth) / blockWidth;
+}
+
 uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
 {
     // For depth-stencil textures, the input value to this function

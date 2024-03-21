@@ -1118,9 +1118,16 @@ void CommandEncoder::clearTexture(const WGPUImageCopyTexture& destination, NSUIn
     auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
 
     auto depth = texture.dimension() == WGPUTextureDimension_3D ? logicalSize.depthOrArrayLayers : 1;
-    NSUInteger sourceBytesPerRow = 16 * logicalSize.width;
+    id<MTLTexture> mtlTexture = texture.texture();
+    NSUInteger sourceBytesPerRow = 0;
+    if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || mtlTexture.pixelFormat == MTLPixelFormatX32_Stencil8)
+        sourceBytesPerRow = Texture::bytesPerRow(WGPUTextureFormat_Depth32Float, logicalSize.width);
+    else
+        sourceBytesPerRow = Texture::bytesPerRow(texture.format(), logicalSize.width);
     NSUInteger sourceBytesPerImage = sourceBytesPerRow * logicalSize.height;
     NSUInteger bufferLength = sourceBytesPerImage * depth;
+    if (!bufferLength)
+        return;
     id<MTLBuffer> temporaryBuffer = [device newBufferWithLength:bufferLength options:MTLResourceStorageModeShared];
     if (!temporaryBuffer)
         return;
@@ -1141,7 +1148,6 @@ void CommandEncoder::clearTexture(const WGPUImageCopyTexture& destination, NSUIn
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    id<MTLTexture> mtlTexture = texture.texture();
     MTLBlitOption options = MTLBlitOptionNone;
     if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8)
         options = MTLBlitOptionDepthFromDepthStencil;
@@ -1163,6 +1169,8 @@ void CommandEncoder::clearTexture(const WGPUImageCopyTexture& destination, NSUIn
         options:options];
 
     if (options != MTLBlitOptionNone) {
+        sourceBytesPerRow /= sizeof(float);
+        sourceBytesPerImage = sourceBytesPerRow * logicalSize.height;
         [blitCommandEncoder
             copyFromBuffer:temporaryBuffer
             sourceOffset:0

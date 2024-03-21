@@ -65,6 +65,7 @@ public:
 
     static uint32_t texelBlockWidth(WGPUTextureFormat); // Texels
     static uint32_t texelBlockHeight(WGPUTextureFormat); // Texels
+    static NSUInteger bytesPerRow(WGPUTextureFormat, uint32_t textureWidth);
     // For depth-stencil textures, the input value to texelBlockSize()
     // needs to be the output of aspectSpecificFormat().
     static uint32_t texelBlockSize(WGPUTextureFormat); // Bytes
