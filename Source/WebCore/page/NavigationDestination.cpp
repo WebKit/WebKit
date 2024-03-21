@@ -32,4 +32,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationDestination);
 
+NavigationDestination::NavigationDestination(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument)
+    : m_entry(WTFMove(entry))
+    , m_url(url)
+    , m_isSameDocument(isSameDocument)
+{
 }
+
+} // namespace WebCore

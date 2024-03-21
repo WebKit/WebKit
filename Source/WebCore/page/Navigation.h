@@ -27,6 +27,7 @@
 
 #include "EventTarget.h"
 #include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindowProperty.h"
 #include "NavigationHistoryEntry.h"
 #include "NavigationTransition.h"
