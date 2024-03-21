@@ -1,7 +1,4 @@
-hello
-hello
-hello
-hello
+hello hello
 
 FAIL display:none animating to display:inline should be inline for the whole animation. assert_equals: The display should be inline during the animation. expected "inline" but got "block"
 FAIL A CSS variable of display:none animating to display:inline should be inline for the whole animation. assert_equals: The display should be inline during the animation. expected "inline" but got "block"

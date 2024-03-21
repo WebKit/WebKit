@@ -377,6 +377,22 @@ static inline Visibility blendFunc(Visibility from, Visibility to, const CSSProp
     return result > 0. ? Visibility::Visible : (to != Visibility::Visible ? to : from);
 }
 
+static inline DisplayType blendFunc(DisplayType from, DisplayType to, const CSSPropertyBlendingContext& context)
+{
+    // https://drafts.csswg.org/css-display-4/#display-animation
+    // In general, the display property's animation type is discrete. However, similar to interpolation of
+    // visibility, during interpolation between none and any other display value, p values between 0 and 1
+    // map to the non-none value. Additionally, the element is inert as long as its display value would
+    // compute to none when ignoring the Transitions and Animations cascade origins.
+    if (from != DisplayType::None && to != DisplayType::None)
+        return context.progress < 0.5 ? from : to;
+    if (context.progress <= 0)
+        return from;
+    if (context.progress >= 1)
+        return to;
+    return from == DisplayType::None ? to : from;
+}
+
 static inline TextUnderlineOffset blendFunc(const TextUnderlineOffset& from, const TextUnderlineOffset& to, const CSSPropertyBlendingContext& context)
 {
     if (from.isLength() && to.isLength())
@@ -3701,6 +3717,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderBottomLeftRadius, &RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius),
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius),
         new VisibilityWrapper,
+        new NonNormalizedDiscretePropertyWrapper<DisplayType>(CSSPropertyDisplay, &RenderStyle::display, &RenderStyle::setDisplay),
 
         new ClipWrapper,
 
@@ -4016,7 +4033,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         // or provide a wrapper for it above. If you are adding to this list but the
         // property should be animatable, make sure to file a bug.
         case CSSPropertyDirection:
-        case CSSPropertyDisplay:
 #if ENABLE(VARIATION_FONTS)
         case CSSPropertyFontOpticalSizing:
 #endif
