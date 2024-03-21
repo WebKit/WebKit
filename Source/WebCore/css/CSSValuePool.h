@@ -27,6 +27,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "ColorHash.h"
+#include <wtf/FixedSizeCache.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomStringHash.h>
@@ -77,7 +78,10 @@ public:
     Ref<CSSPrimitiveValue> createFontFamilyValue(const AtomString&);
 
 private:
-    HashMap<Color, Ref<CSSPrimitiveValue>> m_colorValueCache;
+    static constexpr unsigned maximumColorCacheSize = 512;
+    using ColorCache = FixedSizeCache<Color, RefPtr<CSSPrimitiveValue>, maximumColorCacheSize>;
+
+    ColorCache m_colorValueCache;
     HashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
     HashMap<AtomString, Ref<CSSPrimitiveValue>> m_fontFamilyValueCache;
 };

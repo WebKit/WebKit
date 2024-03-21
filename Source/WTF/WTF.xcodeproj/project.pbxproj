@@ -838,6 +838,7 @@
 		E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38C41261EB4E0680042957D /* CPUTime.cpp */; };
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
 		E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */; };
+		E3A1438D2BABEE0300A4737E /* FixedSizeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A1438C2BABEE0300A4737E /* FixedSizeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3B8E6032961EA7600A8AEE3 /* AccessibleAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E6012961EA7600A8AEE3 /* AccessibleAddress.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */; };
 		E3DA37E7287AD1A10066808F /* StringCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DA37E6287AD1A10066808F /* StringCommon.cpp */; };
@@ -1780,6 +1781,7 @@
 		E38C41271EB4E0680042957D /* CPUTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUTime.h; sourceTree = "<group>"; };
 		E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilderJSON.cpp; sourceTree = "<group>"; };
 		E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageCocoa.cpp; sourceTree = "<group>"; };
+		E3A1438C2BABEE0300A4737E /* FixedSizeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedSizeCache.h; sourceTree = "<group>"; };
 		E3A32BC31FC830E2007D7E76 /* JSValueMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueMalloc.h; sourceTree = "<group>"; };
 		E3B8E6012961EA7600A8AEE3 /* AccessibleAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibleAddress.h; sourceTree = "<group>"; };
 		E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ICUHelpers.cpp; sourceTree = "<group>"; };
@@ -2138,6 +2140,7 @@
 				A331D95A21F24992009F02AA /* FileSystem.cpp */,
 				A331D95921F24992009F02AA /* FileSystem.h */,
 				FF910E972979FE6F00D1A24D /* FixedBitVector.h */,
+				E3A1438C2BABEE0300A4737E /* FixedSizeCache.h */,
 				E3E0F04F26197157004640FC /* FixedVector.h */,
 				33479C1C27236F2000B2E1B7 /* FixedWidthDouble.h */,
 				0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */,
@@ -3164,6 +3167,7 @@
 				DD3DC8F827A4BF8E007E5B61 /* FileSystem.h in Headers */,
 				DDF306FB27C086CC006A526F /* fixed-dtoa.h in Headers */,
 				FF910E982979FE6F00D1A24D /* FixedBitVector.h in Headers */,
+				E3A1438D2BABEE0300A4737E /* FixedSizeCache.h in Headers */,
 				DD3DC96527A4BF8E007E5B61 /* FixedVector.h in Headers */,
 				339B7B1127C45EF50072BF9A /* FixedWidthDouble.h in Headers */,
 				DD3DC8D327A4BF8E007E5B61 /* FlipBytes.h in Headers */,
