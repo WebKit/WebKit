@@ -321,7 +321,7 @@ std::pair<String, MarkupAccumulator::IsCreatedByURLReplacement> MarkupAccumulato
     }
 
     if (!m_replacementURLStrings.isEmpty()) {
-        if (auto frame = frameForAttributeReplacement(element)) {
+        if (RefPtr frame = frameForAttributeReplacement(element)) {
             auto replacementURLString = m_replacementURLStrings.get(frame->frameID().toString());
             if (!replacementURLString.isEmpty())
                 return { replacementURLString, IsCreatedByURLReplacement::Yes };
@@ -348,7 +348,7 @@ RefPtr<Element> MarkupAccumulator::replacementElement(const Node& node)
     if (shadowRoot->mode() == ShadowRootMode::UserAgent)
         return nullptr;
 
-    auto element = HTMLTemplateElement::create(HTMLNames::templateTag, node.document());
+    auto element = HTMLTemplateElement::create(HTMLNames::templateTag, node.protectedDocument());
     if (shadowRoot->mode() == ShadowRootMode::Open)
         element->setShadowRootMode(AtomString { "open"_s });
     else if (shadowRoot->mode() == ShadowRootMode::Closed)
@@ -664,7 +664,7 @@ LocalFrame* MarkupAccumulator::frameForAttributeReplacement(const Element& eleme
 Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element, const Attribute& attribute)
 {
     if (element.isHTMLContentAttribute(attribute)) {
-        auto frame = frameForAttributeReplacement(element);
+        RefPtr frame = frameForAttributeReplacement(element);
         if (!frame || !frame->loader().documentLoader()->response().url().isAboutSrcDoc())
             return attribute;
 
@@ -680,7 +680,7 @@ Attribute MarkupAccumulator::replaceAttributeIfNecessary(const Element& element,
 
 bool MarkupAccumulator::appendURLAttributeForReplacementIfNecessary(StringBuilder& result, const Element& element, Namespaces* namespaces)
 {
-    auto frame = frameForAttributeReplacement(element);
+    RefPtr frame = frameForAttributeReplacement(element);
     if (!frame)
         return false;
 
