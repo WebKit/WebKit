@@ -338,7 +338,8 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
     RefPtr<StringImpl> b = StringImpl::create("ABCDEFG"_s);
     RefPtr<StringImpl> c = StringImpl::create("abcdefg"_s);
     constexpr auto d = "aBcDeFG"_s;
-    RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
+    constexpr size_t zeroLength = 0; // LLVM bug workaround.
+    RefPtr<StringImpl> empty = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
     RefPtr<StringImpl> shorter = StringImpl::create("abcdef"_s);
     RefPtr<StringImpl> different = StringImpl::create("abcrefg"_s);
 
@@ -383,8 +384,9 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
 {
-    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
-    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
+    constexpr size_t zeroLength = 0; // LLVM bug workaround.
+    RefPtr<StringImpl> a = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    RefPtr<StringImpl> b = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewB));
@@ -393,10 +395,10 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
 {
-    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>("aBcéeFG"), 7);
-    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>("ABCÉEFG"), 7);
-    RefPtr<StringImpl> c = StringImpl::create(reinterpret_cast<const LChar*>("ABCéEFG"), 7);
-    RefPtr<StringImpl> d = StringImpl::create(reinterpret_cast<const LChar*>("abcéefg"), 7);
+    RefPtr<StringImpl> a = StringImpl::create(std::span { reinterpret_cast<const LChar*>("aBcéeFG"), 7 });
+    RefPtr<StringImpl> b = StringImpl::create(std::span { reinterpret_cast<const LChar*>("ABCÉEFG"), 7 });
+    RefPtr<StringImpl> c = StringImpl::create(std::span { reinterpret_cast<const LChar*>("ABCéEFG"), 7 });
+    RefPtr<StringImpl> d = StringImpl::create(std::span { reinterpret_cast<const LChar*>("abcéefg"), 7 });
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     StringView stringViewC(*c.get());

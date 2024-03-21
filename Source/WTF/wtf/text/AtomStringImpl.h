@@ -28,8 +28,8 @@ class AtomStringTable;
 
 class AtomStringImpl final : public UniquedStringImpl {
 public:
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(const LChar*, unsigned length);
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(std::span<const LChar>);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUp(std::span<const UChar>);
     static RefPtr<AtomStringImpl> lookUp(StringImpl* string)
     {
         if (!string || string->isAtom())
@@ -39,9 +39,9 @@ public:
 
     static void remove(AtomStringImpl*);
 
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const LChar*, unsigned length);
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const UChar*, unsigned length);
-    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); }
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const LChar>);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const UChar>);
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(std::span<const char> characters) { return add({ reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
 
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(HashTranslatorCharBuffer<LChar>&);
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(HashTranslatorCharBuffer<UChar>&);
@@ -63,7 +63,7 @@ public:
     ALWAYS_INLINE static Ref<AtomStringImpl> add(ASCIILiteral literal) { return addLiteral(literal.characters(), literal.length()); }
 
     // Not using the add() naming to encourage developers to call add(ASCIILiteral) when they have a string literal.
-    ALWAYS_INLINE static RefPtr<AtomStringImpl> addCString(const char* s) { return s ? add(s, strlen(s)) : nullptr; }
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> addCString(const char* s) { return s ? add(std::span { s, strlen(s) }) : nullptr; }
 
     // Returns null if the input data contains an invalid UTF-8 sequence.
     static RefPtr<AtomStringImpl> addUTF8(const char* start, const char* end);

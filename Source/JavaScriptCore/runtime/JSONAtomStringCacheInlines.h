@@ -43,12 +43,12 @@ ALWAYS_INLINE Ref<AtomStringImpl> JSONAtomStringCache::make(const CharacterType*
         if (firstCharacter <= maxSingleCharacterString)
             return vm().smallStrings.singleCharacterStringRep(firstCharacter);
     } else if (UNLIKELY(length > maxStringLengthForCache))
-        return AtomStringImpl::add(characters, length).releaseNonNull();
+        return AtomStringImpl::add(std::span { characters, length }).releaseNonNull();
 
     auto lastCharacter = characters[length - 1];
     auto& slot = cacheSlot(firstCharacter, lastCharacter, length);
     if (UNLIKELY(slot.m_length != length || !equal(slot.m_buffer, characters, length))) {
-        auto result = AtomStringImpl::add(characters, length);
+        auto result = AtomStringImpl::add(std::span { characters, length });
         slot.m_impl = result;
         slot.m_length = length;
         WTF::copyElements(slot.m_buffer, characters, length);

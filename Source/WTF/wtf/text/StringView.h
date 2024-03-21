@@ -668,8 +668,8 @@ inline AtomString StringView::toAtomString() const
 inline AtomString StringView::toExistingAtomString() const
 {
     if (is8Bit())
-        return AtomStringImpl::lookUp(characters8(), m_length);
-    return AtomStringImpl::lookUp(characters16(), m_length);
+        return AtomStringImpl::lookUp(span8());
+    return AtomStringImpl::lookUp(span16());
 }
 
 inline float StringView::toFloat(bool& isValid) const

@@ -245,22 +245,26 @@ private:
 public:
     WTF_EXPORT_PRIVATE static void destroy(StringImpl*);
 
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const UChar*, unsigned length);
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const LChar*, unsigned length);
-    ALWAYS_INLINE static Ref<StringImpl> create(const char* characters, unsigned length) { return create(reinterpret_cast<const LChar*>(characters), length); }
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(std::span<const UChar>);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(std::span<const LChar>);
+    ALWAYS_INLINE static Ref<StringImpl> create(std::span<const char> characters) { return create(std::span { reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*, unsigned length);
+    static Ref<StringImpl> create8BitIfPossible(std::span<const UChar> characters) { return create8BitIfPossible(characters.data(), characters.size()); }
     template<size_t inlineCapacity> static Ref<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity>&);
 
     // Not using create() naming to encourage developers to call create(ASCIILiteral) when they have a string literal.
-    ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(characters, strlen(characters)); }
+    ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(std::span { characters, strlen(characters) }); }
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
 
-    ALWAYS_INLINE static Ref<StringImpl> create(ASCIILiteral literal) { return createWithoutCopying(literal.characters8(), literal.length()); }
+    ALWAYS_INLINE static Ref<StringImpl> create(ASCIILiteral literal) { return createWithoutCopying(literal.span8()); }
 
     static Ref<StringImpl> createWithoutCopying(const UChar* characters, unsigned length) { return length ? createWithoutCopyingNonEmpty(characters, length) : Ref { *empty() }; }
     static Ref<StringImpl> createWithoutCopying(const LChar* characters, unsigned length) { return length ? createWithoutCopyingNonEmpty(characters, length) : Ref { *empty() }; }
     ALWAYS_INLINE static Ref<StringImpl> createWithoutCopying(const char* characters, unsigned length) { return createWithoutCopying(reinterpret_cast<const LChar*>(characters), length); }
+    static Ref<StringImpl> createWithoutCopying(std::span<const UChar> characters) { return characters.size() ? createWithoutCopyingNonEmpty(characters.data(), characters.size()) : Ref { *empty() }; }
+    static Ref<StringImpl> createWithoutCopying(std::span<const LChar> characters) { return characters.size() ? createWithoutCopyingNonEmpty(characters.data(), characters.size()) : Ref { *empty() }; }
+    ALWAYS_INLINE static Ref<StringImpl> createWithoutCopying(std::span<const char> characters) { return createWithoutCopying(std::span { reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(unsigned length, LChar*&);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(unsigned length, UChar*&);
@@ -555,7 +559,7 @@ private:
     template<typename CharacterType> static Ref<StringImpl> createUninitializedInternal(unsigned, CharacterType*&);
     template<typename CharacterType> static Ref<StringImpl> createUninitializedInternalNonEmpty(unsigned, CharacterType*&);
     template<typename CharacterType> static Expected<Ref<StringImpl>, UTF8ConversionError> reallocateInternal(Ref<StringImpl>&&, unsigned, CharacterType*&);
-    template<typename CharacterType> static Ref<StringImpl> createInternal(const CharacterType*, unsigned);
+    template<typename CharacterType> static Ref<StringImpl> createInternal(std::span<const CharacterType>);
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
 
     // The bottom bit in the ref count indicates a static (immortal) string.
@@ -576,20 +580,17 @@ static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl));
 
 template<typename CharacterType>
 struct HashTranslatorCharBuffer {
-    const CharacterType* characters;
-    unsigned length;
+    std::span<const CharacterType> characters;
     unsigned hash;
 
-    HashTranslatorCharBuffer(const CharacterType* characters, unsigned length)
+    HashTranslatorCharBuffer(std::span<const CharacterType> characters)
         : characters(characters)
-        , length(length)
-        , hash(StringHasher::computeHashAndMaskTop8Bits(std::span { characters, length }))
+        , hash(StringHasher::computeHashAndMaskTop8Bits(characters))
     {
     }
 
-    HashTranslatorCharBuffer(const CharacterType* characters, unsigned length, unsigned hash)
+    HashTranslatorCharBuffer(std::span<const CharacterType> characters, unsigned hash)
         : characters(characters)
-        , length(length)
         , hash(hash)
     {
     }
@@ -611,6 +612,7 @@ WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);
 inline bool equal(const StringImpl* a, const char* b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*, unsigned);
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const UChar*, unsigned);
+template<typename CharacterType> bool equal(const StringImpl* impl, std::span<const CharacterType> characters) { return equal(impl, characters.data(), characters.size()); }
 ALWAYS_INLINE bool equal(const StringImpl* a, ASCIILiteral b) { return equal(a, b.characters8(), b.length()); }
 inline bool equal(const StringImpl* a, const char* b, unsigned length) { return equal(a, reinterpret_cast<const LChar*>(b), length); }
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
@@ -860,13 +862,13 @@ inline Ref<StringImpl> StringImpl::isolatedCopy() const
 {
     if (!requiresCopy()) {
         if (is8Bit())
-            return StringImpl::createWithoutCopying(m_data8, m_length);
-        return StringImpl::createWithoutCopying(m_data16, m_length);
+            return StringImpl::createWithoutCopying(span8());
+        return StringImpl::createWithoutCopying(span16());
     }
 
     if (is8Bit())
-        return create(m_data8, m_length);
-    return create(m_data16, m_length);
+        return create(span8());
+    return create(span16());
 }
 
 inline bool StringImpl::containsOnlyASCII() const
@@ -1017,10 +1019,10 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
     size_t substringSize = allocationSize<StringImpl*>(1);
     if (rep.is8Bit()) {
         if (substringSize >= allocationSize<LChar>(length))
-            return create(rep.m_data8 + offset, length);
+            return create(std::span { rep.m_data8 + offset, length });
     } else {
         if (substringSize >= allocationSize<UChar>(length))
-            return create(rep.m_data16 + offset, length);
+            return create(std::span { rep.m_data16 + offset, length });
     }
 
     auto* ownerRep = ((rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep);
@@ -1066,7 +1068,7 @@ inline Ref<StringImpl> StringImpl::adopt(Vector<CharacterType, inlineCapacity, O
             CRASH();
         return adoptRef(*new StringImpl(vector.releaseBuffer(), length));
     } else
-        return create(vector.data(), vector.size());
+        return create(vector.span());
 }
 
 inline size_t StringImpl::cost() const

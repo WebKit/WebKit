@@ -253,31 +253,31 @@ Expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::tryReallocate(Ref<Str
     return reallocateInternal(WTFMove(originalString), length, data);
 }
 
-template<typename CharacterType> inline Ref<StringImpl> StringImpl::createInternal(const CharacterType* characters, unsigned length)
+template<typename CharacterType> inline Ref<StringImpl> StringImpl::createInternal(std::span<const CharacterType> characters)
 {
-    if (!characters || !length)
+    if (characters.empty())
         return *empty();
     CharacterType* data;
-    auto string = createUninitializedInternalNonEmpty(length, data);
-    copyCharacters(data, characters, length);
+    auto string = createUninitializedInternalNonEmpty(characters.size(), data);
+    copyCharacters(data, characters.data(), characters.size());
     return string;
 }
 
-Ref<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
+Ref<StringImpl> StringImpl::create(std::span<const UChar> characters)
 {
-    return createInternal(characters, length);
+    return createInternal(characters);
 }
 
-Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
+Ref<StringImpl> StringImpl::create(std::span<const LChar> characters)
 {
-    return createInternal(characters, length);
+    return createInternal(characters);
 }
 
 Ref<StringImpl> StringImpl::createStaticStringImpl(const LChar* characters, unsigned length)
 {
     if (!length)
         return *empty();
-    Ref<StringImpl> result = createInternal(characters, length);
+    Ref<StringImpl> result = createInternal(std::span { characters, length });
     result->hash();
     result->m_refCount |= s_refCountFlagIsStaticString;
     return result;
@@ -303,7 +303,7 @@ Ref<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsign
 
     for (size_t i = 0; i < length; ++i) {
         if (!isLatin1(characters[i]))
-            return create(characters, length);
+            return create(std::span { characters, length });
         data[i] = static_cast<LChar>(characters[i]);
     }
 
@@ -321,9 +321,9 @@ Ref<StringImpl> StringImpl::substring(unsigned start, unsigned length)
         length = maxLength;
     }
     if (is8Bit())
-        return create(m_data8 + start, length);
+        return create(std::span { m_data8 + start, length });
 
-    return create(m_data16 + start, length);
+    return create(std::span { m_data16 + start, length });
 }
 
 char32_t StringImpl::characterStartingAt(unsigned i)
@@ -756,8 +756,8 @@ template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::trimMatc
     if (!start && end == m_length - 1)
         return *this;
     if (is8Bit())
-        return create(m_data8 + start, end + 1 - start);
-    return create(m_data16 + start, end + 1 - start);
+        return create(std::span { m_data8 + start, end + 1 - start });
+    return create(std::span { m_data16 + start, end + 1 - start });
 }
 
 Ref<StringImpl> StringImpl::trim(CodeUnitMatchFunction predicate)

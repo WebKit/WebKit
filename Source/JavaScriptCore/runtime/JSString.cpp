@@ -207,11 +207,11 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
         if (is8Bit()) {
             LChar buffer[maxLengthForOnStackResolve];
             resolveRopeInternalNoSubstring(buffer, stackLimit);
-            existingAtomString = AtomStringImpl::lookUp(buffer, length());
+            existingAtomString = AtomStringImpl::lookUp(std::span { buffer, length() });
         } else {
             UChar buffer[maxLengthForOnStackResolve];
             resolveRopeInternalNoSubstring(buffer, stackLimit);
-            existingAtomString = AtomStringImpl::lookUp(buffer, length());
+            existingAtomString = AtomStringImpl::lookUp(std::span { buffer, length() });
         }
     } else
         existingAtomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toExistingAtomString().releaseImpl();

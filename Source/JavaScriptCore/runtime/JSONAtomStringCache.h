@@ -45,6 +45,7 @@ public:
 
     using Cache = std::array<Slot, capacity>;
 
+    // FIXME: This should take in a std::span<const CharacterType>.
     template<typename CharacterType>
     ALWAYS_INLINE Ref<AtomStringImpl> makeIdentifier(const CharacterType* characters, unsigned length)
     {
@@ -59,6 +60,7 @@ public:
     VM& vm() const;
 
 private:
+    // FIXME: This should take in a std::span<const CharacterType>.
     template<typename CharacterType>
     Ref<AtomStringImpl> make(const CharacterType*, unsigned length);
 

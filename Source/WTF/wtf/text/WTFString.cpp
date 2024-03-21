@@ -41,18 +41,18 @@ using namespace Unicode;
 
 // Construct a string with UTF-16 data.
 String::String(const UChar* characters, unsigned length)
-    : m_impl(characters ? RefPtr { StringImpl::create(characters, length) } : nullptr)
+    : m_impl(characters ? RefPtr { StringImpl::create(std::span { characters, length }) } : nullptr)
 {
 }
 
 // Construct a string with latin1 data.
 String::String(const LChar* characters, unsigned length)
-    : m_impl(characters ? RefPtr { StringImpl::create(characters, length) } : nullptr)
+    : m_impl(characters ? RefPtr { StringImpl::create(std::span { characters, length }) } : nullptr)
 {
 }
 
 String::String(const char* characters, unsigned length)
-    : m_impl(characters ? RefPtr { StringImpl::create(reinterpret_cast<const LChar*>(characters), length) } : nullptr)
+    : m_impl(characters ? RefPtr { StringImpl::create(std::span { reinterpret_cast<const LChar*>(characters), length }) } : nullptr)
 {
 }
 
@@ -488,7 +488,7 @@ String fromUTF8Impl(const LChar* stringStart, size_t length)
         return emptyString();
 
     if (charactersAreAllASCII(stringStart, length))
-        return StringImpl::create(stringStart, length);
+        return StringImpl::create(std::span { stringStart, length });
 
     Vector<UChar, 1024> buffer(length);
     UChar* bufferStart = buffer.data();
@@ -501,7 +501,7 @@ String fromUTF8Impl(const LChar* stringStart, size_t length)
 
     unsigned utf16Length = bufferCurrent - bufferStart;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(utf16Length <= length);
-    return StringImpl::create(bufferStart, utf16Length);
+    return StringImpl::create(std::span { bufferStart, utf16Length });
 }
 
 String String::fromUTF8(const LChar* stringStart, size_t length)

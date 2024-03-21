@@ -155,8 +155,11 @@ private:
 
     ALWAYS_INLINE void setCodeStart(StringView);
 
-    ALWAYS_INLINE const Identifier* makeIdentifier(const LChar* characters, size_t length);
-    ALWAYS_INLINE const Identifier* makeIdentifier(const UChar* characters, size_t length);
+    template<typename CharacterType>
+    ALWAYS_INLINE const Identifier* makeIdentifier(const CharacterType* characters, size_t length);
+    template<typename CharacterType>
+    ALWAYS_INLINE const Identifier* makeIdentifier(std::span<const CharacterType> characters);
+
     ALWAYS_INLINE const Identifier* makeLCharIdentifier(const LChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeLCharIdentifier(const UChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeRightSizedIdentifier(const UChar* characters, size_t length, UChar orAllChars);
@@ -273,16 +276,19 @@ inline UChar Lexer<T>::convertUnicode(int c1, int c2, int c3, int c4)
     return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
 }
 
-template <typename T>
-ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const LChar* characters, size_t length)
+// FIXME: Port call sites to the overload taking a span and drop this one.
+template<typename T>
+template<typename CharacterType>
+ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const CharacterType* characters, size_t length)
 {
     return &m_arena->makeIdentifier(m_vm, characters, length);
 }
 
-template <typename T>
-ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const UChar* characters, size_t length)
+template<typename T>
+template<typename CharacterType>
+ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(std::span<const CharacterType> characters)
 {
-    return &m_arena->makeIdentifier(m_vm, characters, length);
+    return &m_arena->makeIdentifier(m_vm, characters.data(), characters.size());
 }
 
 template <>

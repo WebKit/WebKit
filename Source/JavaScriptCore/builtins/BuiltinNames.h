@@ -239,13 +239,13 @@ public:
 
     PrivateSymbolImpl* lookUpPrivateName(const Identifier&) const;
     PrivateSymbolImpl* lookUpPrivateName(const String&) const;
-    PrivateSymbolImpl* lookUpPrivateName(const LChar*, unsigned length) const;
-    PrivateSymbolImpl* lookUpPrivateName(const UChar*, unsigned length) const;
+    PrivateSymbolImpl* lookUpPrivateName(std::span<const LChar>) const;
+    PrivateSymbolImpl* lookUpPrivateName(std::span<const UChar>) const;
 
     SymbolImpl* lookUpWellKnownSymbol(const Identifier&) const;
     SymbolImpl* lookUpWellKnownSymbol(const String&) const;
-    SymbolImpl* lookUpWellKnownSymbol(const LChar*, unsigned length) const;
-    SymbolImpl* lookUpWellKnownSymbol(const UChar*, unsigned length) const;
+    SymbolImpl* lookUpWellKnownSymbol(std::span<const LChar>) const;
+    SymbolImpl* lookUpWellKnownSymbol(std::span<const UChar>) const;
     
     void appendExternalName(const Identifier& publicName, const Identifier& privateName);
 

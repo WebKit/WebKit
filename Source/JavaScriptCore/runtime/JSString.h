@@ -776,7 +776,7 @@ ALWAYS_INLINE JSString* jsSingleCharacterString(VM& vm, UChar c)
         vm.verifyCanGC();
     if (c <= maxSingleCharacterString)
         return vm.smallStrings.singleCharacterString(c);
-    return JSString::create(vm, StringImpl::create(&c, 1));
+    return JSString::create(vm, StringImpl::create(std::span { &c, 1 }));
 }
 
 ALWAYS_INLINE JSString* jsSingleCharacterString(VM& vm, LChar c)
@@ -942,7 +942,7 @@ inline JSString* jsString(VM& vm, StringView s)
         if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
-    auto impl = s.is8Bit() ? StringImpl::create(s.characters8(), s.length()) : StringImpl::create(s.characters16(), s.length());
+    auto impl = s.is8Bit() ? StringImpl::create(s.span8()) : StringImpl::create(s.span16());
     return JSString::create(vm, WTFMove(impl));
 }
 

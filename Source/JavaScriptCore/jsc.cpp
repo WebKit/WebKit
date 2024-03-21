@@ -3047,9 +3047,9 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateNonRopeNonAtomString, (JSGlobalObject* gl
 
     if (source.impl()->isAtom()) {
         if (source.is8Bit())
-            source = StringImpl::create(source.characters8(), source.length());
+            source = StringImpl::create(source.span8());
         else
-            source = StringImpl::create(source.characters16(), source.length());
+            source = StringImpl::create(source.span16());
     }
 
     RELEASE_ASSERT(!source.impl()->isAtom());

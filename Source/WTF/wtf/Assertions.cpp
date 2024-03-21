@@ -113,7 +113,7 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
 
 ALLOW_NONLITERAL_FORMAT_END
 
-    return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), length);
+    return StringImpl::create(std::span { reinterpret_cast<const LChar*>(buffer.data()), length });
 }
 
 #if PLATFORM(COCOA)
