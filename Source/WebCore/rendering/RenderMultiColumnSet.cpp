@@ -787,6 +787,7 @@ LayoutUnit RenderMultiColumnSet::initialBlockOffsetForPainting() const
 
 void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
 {
+    static constexpr size_t maximumNumberOfFragments = 2500000;
     // Let's start by introducing the different coordinate systems involved here. They are different
     // in how they deal with writing modes and columns. RenderLayer rectangles tend to be more
     // physical than the rectangles used in RenderObject & co.
@@ -902,7 +903,10 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         // Flip it into more a physical (RenderLayer-style) rectangle.
         fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowOverflowPortion);
         fragment.paginationClip = flippedFragmentedFlowOverflowPortion;
-        fragments.append(fragment);
+        if (fragments.size() < maximumNumberOfFragments)
+            fragments.append(fragment);
+        else
+            break;
     }
 }
 
