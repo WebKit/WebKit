@@ -1,4 +1,4 @@
-PASS extractedText is "zero one two three four five"
+PASS extractedText is "zero one two three four 五"
 PASS successfullyParsed is true
 
 TEST COMPLETE

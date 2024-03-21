@@ -513,7 +513,11 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
             Vector<String> strings;
             for (auto token : textRenderer->text().simplifyWhiteSpace(isASCIIWhitespace).split(' ')) {
                 auto candidate = token.removeCharacters([](UChar character) {
+#if PLATFORM(COCOA)
                     return !u_isalpha(character) && !u_isdigit(character);
+#else
+                    return !isASCIIAlphanumeric(character);
+#endif
                 });
                 if (!candidate.isEmpty())
                     strings.append(WTFMove(candidate));

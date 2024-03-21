@@ -10,7 +10,7 @@
 <div class="container">
     <h1>zero</h1>
     <iframe frameborder="0" width="350" height="200" src="resources/subframe.html"></iframe>
-    <h3>five</h3>
+    <h3>五</h3>
 </div>
 <script>
 jsTestIsAsync = true;
@@ -23,7 +23,7 @@ async function runTestIfPossible() {
     if (--remainingLoadCount)
         return;
     extractedText = await UIHelper.requestRenderedTextForSelector("div.container");
-    shouldBeEqualToString("extractedText", "zero one two three four five");
+    shouldBeEqualToString("extractedText", "zero one two three four 五");
     document.querySelector("div.container").remove();
     finishJSTest();
 }
