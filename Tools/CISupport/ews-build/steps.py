@@ -5024,11 +5024,11 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
 
     def getResultSummary(self):
         if self.results == FAILURE:
-            return {'step': 'Failed to upload archive to S3. Please inform an admin.'}
+            return {'step': f'Failed to upload {self.file} to S3. Please inform an admin.'}
         if self.results == SKIPPED:
             return {'step': 'Skipped upload to S3'}
         if self.results in [SUCCESS, WARNINGS]:
-            return {'step': 'Uploaded archive to S3'}
+            return {'step': f'Uploaded {self.file} to S3'}
         return super().getResultSummary()
 
 

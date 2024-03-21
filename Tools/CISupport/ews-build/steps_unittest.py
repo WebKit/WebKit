@@ -4777,7 +4777,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Uploaded archive to S3')
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded WebKitBuild/release.zip to S3')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
@@ -4794,7 +4794,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Uploaded archive to S3')
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded build-log.txt to S3')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
@@ -4812,7 +4812,7 @@ response: <Response [403]>, 403, Forbidden
 exit 1''')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='Failed to upload archive to S3. Please inform an admin.')
+        self.expectOutcome(result=FAILURE, state_string='Failed to upload WebKitBuild/release.zip to S3. Please inform an admin.')
         with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
