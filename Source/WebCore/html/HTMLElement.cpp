@@ -423,7 +423,7 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
         }
         return;
     case AttributeNames::popoverAttr:
-        if (document().settings().popoverAttributeEnabled() && !document().quirks().shouldDisablePopoverAttributeQuirk())
+        if (document().settings().popoverAttributeEnabled())
             popoverAttributeChanged(newValue);
         return;
     case AttributeNames::spellcheckAttr: {

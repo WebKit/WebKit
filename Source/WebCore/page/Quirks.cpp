@@ -1618,16 +1618,6 @@ bool Quirks::shouldDisablePushStateFilePathRestrictions() const
 #endif
 }
 
-// apple-console.lrn.com (rdar://106779034)
-bool Quirks::shouldDisablePopoverAttributeQuirk() const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-    return host == "apple-console.lrn.com"_s;
-}
-
 // ungap/@custom-elements polyfill (rdar://problem/111008826).
 bool Quirks::needsConfigurableIndexedPropertiesQuirk() const
 {
