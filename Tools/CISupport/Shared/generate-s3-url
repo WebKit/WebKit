@@ -15,6 +15,7 @@ if 'uat' in hostname:
 
 S3_DEFAULT_BUCKET = f'archives.webkit{custom_suffix}.org'
 S3_EWS_BUCKET = f'ews-archives.webkit{custom_suffix}.org'
+S3_MINIFIED_BUCKET = f'minified-archives.webkit{custom_suffix}.org'
 
 def generateS3URL(bucket, identifier, revision, extension=None, content_type=None):
     key = f"{identifier}/{revision}.{extension or 'zip'}"
@@ -37,11 +38,15 @@ def main():
     parser.add_argument('--identifier', action="store", required=True, help='S3 destination identifier, in the form of fullPlatform-architecture-configuration. [mac-mojave-x86_64-release]')
     parser.add_argument('--extension', action='store', required=False, default=None, help='File extension of uploaded file')
     parser.add_argument('--content-type', action='store', required=False, default=None, help='Content type of file to be uploaded')
+    parser.add_argument('--minified', action='store_true', required=False, default=False, help='If the content being uploaded is minified')
+
     args = parser.parse_args()
 
     s3_bucket = S3_DEFAULT_BUCKET
     if args.change_id:
         s3_bucket = S3_EWS_BUCKET
+    if args.minified:
+        s3_bucket = S3_MINIFIED_BUCKET
 
     url = generateS3URL(
         s3_bucket, args.identifier, args.revision or args.change_id,

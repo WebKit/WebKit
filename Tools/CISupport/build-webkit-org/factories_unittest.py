@@ -39,11 +39,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'prune-coresymbolicationd-cache-if-too-large',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'archive-minified-built-product',
-            'upload-minified-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'Apple-Sonoma-Release-WK1-Tests': [
@@ -165,11 +160,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'prune-coresymbolicationd-cache-if-too-large',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'archive-minified-built-product',
-            'upload-minified-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'Apple-Sonoma-Debug-WK1-Tests': [
@@ -370,11 +360,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'prune-coresymbolicationd-cache-if-too-large',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'archive-minified-built-product',
-            'upload-minified-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'Apple-Ventura-Release-WK1-Tests': [
@@ -496,11 +481,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'prune-coresymbolicationd-cache-if-too-large',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'archive-minified-built-product',
-            'upload-minified-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'Apple-Ventura-Debug-WK1-Tests': [
@@ -622,11 +602,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'prune-coresymbolicationd-cache-if-too-large',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'archive-minified-built-product',
-            'upload-minified-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'Apple-Monterey-Release-Test262-Tests': [
@@ -758,11 +733,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'prune-coresymbolicationd-cache-if-too-large',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'archive-minified-built-product',
-            'upload-minified-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'Apple-Monterey-Debug-Test262-Tests': [
@@ -932,11 +902,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'archive-minified-built-product',
-            'upload-minified-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'Apple-iOS-17-Simulator-Debug-Build': [
@@ -949,11 +914,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'archive-minified-built-product',
-            'upload-minified-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'Apple-iOS-17-Simulator-Release-WK2-Tests': [
@@ -1113,9 +1073,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'generate-jsc-bundle',
             'install-built-product',
-            'archive-built-product',
-            'upload-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'GTK-Linux-64-bit-Release-Clang-Build': [
@@ -1195,9 +1152,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'jhbuild',
             'compile-webkit',
             'install-built-product',
-            'archive-built-product',
-            'upload-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'GTK-Linux-64-bit-Debug-Tests': [
@@ -1405,9 +1359,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'WinCairo-64-bit-Release-Tests': [
@@ -1480,9 +1431,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'WinCairo-64-bit-Debug-Tests': [
@@ -1600,9 +1548,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'jhbuild',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'WPE-Linux-64-bit-Release-Tests': [
@@ -1669,9 +1614,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'jhbuild',
             'compile-webkit',
-            'archive-built-product',
-            'upload-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'WPE-Linux-64-bit-Debug-Tests': [
@@ -1819,9 +1761,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit',
             'check-if-deployed-cross-target-image-is-updated',
-            'archive-built-product',
-            'upload-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build': [
@@ -1835,9 +1774,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit',
             'check-if-deployed-cross-target-image-is-updated',
-            'archive-built-product',
-            'upload-built-product',
-            'transfer-to-s3',
             'trigger'
         ],
         'WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Tests': [
