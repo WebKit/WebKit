@@ -537,6 +537,7 @@ const GLContext::GLExtensions& GLContext::glExtensions() const
         const char* extensionsString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
         m_glExtensions.OES_texture_npot = isExtensionSupported(extensionsString, "GL_OES_texture_npot");
         m_glExtensions.EXT_unpack_subimage = isExtensionSupported(extensionsString, "GL_EXT_unpack_subimage");
+        m_glExtensions.APPLE_sync = isExtensionSupported(extensionsString, "GL_APPLE_sync");
     });
     return m_glExtensions;
 }

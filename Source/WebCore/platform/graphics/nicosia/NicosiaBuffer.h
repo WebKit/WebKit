@@ -39,9 +39,11 @@
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkSurface.h>
 IGNORE_CLANG_WARNINGS_END
-
-typedef struct __GLsync* GLsync;
 #endif
+
+namespace WebCore {
+class GLFence;
+}
 
 namespace Nicosia {
 
@@ -139,7 +141,7 @@ private:
     void waitUntilPaintingComplete() final;
 
     unsigned m_textureID { 0 };
-    GLsync m_sync { nullptr };
+    std::unique_ptr<WebCore::GLFence> m_fence;
 };
 #endif
 

@@ -76,6 +76,7 @@ public:
     struct GLExtensions {
         bool OES_texture_npot { false };
         bool EXT_unpack_subimage { false };
+        bool APPLE_sync { false };
     };
     const GLExtensions& glExtensions() const;
 

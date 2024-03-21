@@ -62,6 +62,7 @@ platform/graphics/wpe/SystemFontDatabaseWPE.cpp
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextLibWPE.cpp @no-unify
 platform/graphics/egl/GLContextWrapper.cpp @no-unify
+platform/graphics/egl/GLFence.cpp @no-unify
 platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
