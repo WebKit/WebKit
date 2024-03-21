@@ -33,11 +33,17 @@
 
 namespace WGSL {
 
+enum class Direction : uint8_t {
+    Input,
+    Output,
+};
+
 class AttributeValidator : public AST::Visitor {
 public:
     AttributeValidator(ShaderModule&);
 
     std::optional<FailedCheck> validate();
+    std::optional<FailedCheck> validateIO();
 
     void visit(AST::Function&) override;
     void visit(AST::Parameter&) override;
@@ -53,6 +59,12 @@ private:
 
     void validateInterpolation(const SourceSpan&, const std::optional<AST::Interpolation>&, const std::optional<unsigned>&);
     void validateInvariant(const SourceSpan&, const std::optional<Builtin>&, bool);
+
+    using Builtins = HashSet<Builtin, WTF::IntHash<Builtin>, WTF::StrongEnumHashTraits<Builtin>>;
+    using Locations = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    void validateBuiltinIO(const SourceSpan&, const Type*, ShaderStage, Builtin, Direction, Builtins&);
+    void validateLocationIO(const SourceSpan&, const Type*, ShaderStage, Direction, Locations&);
+    void validateStructIO(ShaderStage, const Types::Struct&, Direction, Builtins&, Locations&);
 
     template<typename T>
     void update(const SourceSpan&, std::optional<T>&, const T&);
@@ -440,6 +452,7 @@ void AttributeValidator::validateInvariant(const SourceSpan& span, const std::op
         error(span, "@invariant is only allowed on declarations that have a @builtin(position) attribute");
 }
 
+
 template<typename T>
 void AttributeValidator::update(const SourceSpan& span, std::optional<T>& destination, const T& source)
 {
@@ -463,9 +476,161 @@ void AttributeValidator::error(const SourceSpan& span, Arguments&&... arguments)
     m_errors.append({ makeString(std::forward<Arguments>(arguments)...), span });
 }
 
+std::optional<FailedCheck> AttributeValidator::validateIO()
+{
+    for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
+        auto& function = entryPoint.function;
+        Builtins builtins;
+        Locations locations;
+        for (auto& parameter : function.parameters()) {
+            const auto& span = parameter.span();
+            const auto* type = parameter.typeName().inferredType();
+
+            if (auto builtin = parameter.builtin()) {
+                validateBuiltinIO(span, type, entryPoint.stage, *builtin, Direction::Input, builtins);
+                continue;
+            }
+
+            if (parameter.location()) {
+                validateLocationIO(span, type, entryPoint.stage, Direction::Input, locations);
+                continue;
+            }
+
+            if (auto* structType = std::get_if<Types::Struct>(type)) {
+                validateStructIO(entryPoint.stage, *structType, Direction::Input, builtins, locations);
+                continue;
+            }
+
+            error(span, "missing entry point IO attribute on parameter");
+        }
+
+        if (!function.maybeReturnType()) {
+            if (entryPoint.stage == ShaderStage::Vertex)
+                error(function.span(), "a vertex shader must include the 'position' builtin in its return type");
+            continue;
+        }
+
+        builtins.clear();
+        locations.clear();
+        const auto& span = function.maybeReturnType()->span();
+        const auto* type = function.maybeReturnType()->inferredType();
+
+        if (auto builtin = function.returnTypeBuiltin())
+            validateBuiltinIO(span, type, entryPoint.stage, *builtin, Direction::Output, builtins);
+        else if (function.returnTypeLocation())
+            validateLocationIO(span, type, entryPoint.stage, Direction::Output, locations);
+        else if (auto* structType = std::get_if<Types::Struct>(type))
+            validateStructIO(entryPoint.stage, *structType, Direction::Output, builtins, locations);
+        else {
+            error(span, "missing entry point IO attribute on return type");
+            continue;
+        }
+
+        if (entryPoint.stage == ShaderStage::Vertex && !builtins.contains(Builtin::Position))
+            error(span, "a vertex shader must include the 'position' builtin in its return type");
+    }
+
+    if (m_errors.isEmpty())
+        return std::nullopt;
+    return FailedCheck { WTFMove(m_errors), { } };
+}
+
+void AttributeValidator::validateBuiltinIO(const SourceSpan& span, const Type* type, ShaderStage stage, Builtin builtin, Direction direction, Builtins& builtins)
+{
+
+
+#define TYPE_CHECK(__type) \
+    type != m_shaderModule.types().__type##Type(), *m_shaderModule.types().__type##Type()
+
+#define VEC_CHECK(__count, __elementType) \
+    auto* vector = std::get_if<Types::Vector>(type); !vector || vector->size != __count || vector->element != m_shaderModule.types().__elementType##Type(), "vec" #__count "<" #__elementType ">"
+
+#define CASE_(__case, __typeCheck, __type) \
+case Builtin::__case: \
+    if (__typeCheck)  { \
+        error(span, "store type of @builtin(", toString(Builtin::__case), ") must be '", __type, "'"); \
+        return; \
+    } \
+
+#define CASE(__case, __typeCheck, __stage, __direction) \
+    CASE_(__case, __typeCheck); \
+    if (stage != ShaderStage::__stage || direction != Direction::__direction) { \
+        error(span, "@builtin(", toString(Builtin::__case), ") cannot be used for ", toString(stage), " shader ", direction == Direction::Input ? "input" : "output"); \
+        return; \
+    } \
+    break;
+
+#define CASE2(__case, __typeCheck, __stage1, __direction1, __stage2, __direction2) \
+    CASE_(__case, __typeCheck); \
+    if ((stage != ShaderStage::__stage1 || direction != Direction::__direction1) && (stage != ShaderStage::__stage2 || direction != Direction::__direction2)) { \
+        error(span, "@builtin(", toString(Builtin::__case), ") cannot be used for ", toString(stage), " shader ", direction == Direction::Input ? "input" : "output"); \
+        return; \
+    } \
+    break;
+
+    switch (builtin) {
+        CASE(FragDepth, TYPE_CHECK(f32), Fragment, Output)
+        CASE(FrontFacing, TYPE_CHECK(bool), Fragment, Input)
+        CASE(GlobalInvocationId, VEC_CHECK(3, u32), Compute, Input)
+        CASE(InstanceIndex, TYPE_CHECK(u32), Vertex, Input)
+        CASE(LocalInvocationId, VEC_CHECK(3, u32), Compute, Input)
+        CASE(LocalInvocationIndex, TYPE_CHECK(u32), Compute, Input)
+        CASE(NumWorkgroups, VEC_CHECK(3, u32), Compute, Input)
+        CASE(SampleIndex, TYPE_CHECK(u32), Fragment, Input)
+        CASE(VertexIndex, TYPE_CHECK(u32), Vertex, Input)
+        CASE(WorkgroupId, VEC_CHECK(3, u32), Compute, Input)
+        CASE2(SampleMask, TYPE_CHECK(u32), Fragment, Input, Fragment, Output)
+        CASE2(Position, VEC_CHECK(4, f32), Vertex, Output, Fragment, Input)
+    }
+
+    auto result = builtins.add(builtin);
+    if (!result.isNewEntry)
+        error(span, "@builtin(", toString(builtin), ") appears multiple times as pipeline input");
+}
+
+void AttributeValidator::validateLocationIO(const SourceSpan& span, const Type* type, ShaderStage stage, Direction direction, Locations& locations)
+{
+    // FIXME: implement this
+    UNUSED_PARAM(span);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(stage);
+    UNUSED_PARAM(direction);
+    UNUSED_PARAM(locations);
+}
+
+void AttributeValidator::validateStructIO(ShaderStage stage, const Types::Struct& structType, Direction direction, Builtins& builtins, Locations& locations)
+{
+    for (auto& member : structType.structure.members()) {
+        const auto& span = member.span();
+        const auto* type = member.type().inferredType();
+
+        if (auto builtin = member.builtin()) {
+            validateBuiltinIO(span, type, stage, *builtin, direction, builtins);
+            continue;
+        }
+
+        if (member.location()) {
+            validateLocationIO(span, type, stage, direction, locations);
+            continue;
+        }
+
+        if (auto* structType = std::get_if<Types::Struct>(member.type().inferredType())) {
+            error(span, "nested structures cannot be used for entry point IO");
+            continue;
+        }
+
+        error(span, "missing entry point IO attribute");
+    }
+}
+
 std::optional<FailedCheck> validateAttributes(ShaderModule& shaderModule)
 {
     return AttributeValidator(shaderModule).validate();
+}
+
+std::optional<FailedCheck> validateIO(ShaderModule& shaderModule)
+{
+    return AttributeValidator(shaderModule).validateIO();
 }
 
 } // namespace WGSL

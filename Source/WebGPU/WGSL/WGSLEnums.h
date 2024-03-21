@@ -26,6 +26,7 @@
 #pragma once
 
 namespace WTF {
+class ASCIILiteral;
 class PrintStream;
 class String;
 }
@@ -114,6 +115,9 @@ namespace WGSL {
 #define ENUM_DECLARE_PRINT_INTERNAL(__name) \
     void printInternal(WTF::PrintStream& out, __name)
 
+#define ENUM_DECLARE_TO_STRING(__name) \
+    WTF::ASCIILiteral toString(__name)
+
 #define ENUM_DECLARE_PARSE(__name) \
     const __name* parse##__name(const WTF::String&)
 
@@ -122,6 +126,7 @@ namespace WGSL {
     ENUM_##__name(ENUM_DECLARE_VALUE) \
     }; \
     ENUM_DECLARE_PRINT_INTERNAL(__name); \
+    ENUM_DECLARE_TO_STRING(__name); \
     ENUM_DECLARE_PARSE(__name);
 
 ENUM_DECLARE(AddressSpace);

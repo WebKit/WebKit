@@ -76,6 +76,7 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     CHECK_PASS(typeCheck, shaderModule);
     CHECK_PASS(validateAttributes, shaderModule);
     RUN_PASS(buildCallGraph, shaderModule);
+    CHECK_PASS(validateIO, shaderModule);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));

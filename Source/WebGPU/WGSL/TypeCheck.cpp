@@ -1151,7 +1151,7 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
-    chooseOverload("operator", binary, toString(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
+    chooseOverload("operator", binary, toASCIILiteral(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
 
     const char* operationName = nullptr;
     if (binary.operation() == AST::BinaryOperation::Divide)
@@ -1600,7 +1600,7 @@ void TypeChecker::visit(AST::UnaryExpression& unary)
         inferred(m_types.referenceType(pointer->addressSpace, pointer->element, pointer->accessMode));
         return;
     }
-    chooseOverload("operator", unary, toString(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
+    chooseOverload("operator", unary, toASCIILiteral(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
 }
 
 // Literal Expressions
