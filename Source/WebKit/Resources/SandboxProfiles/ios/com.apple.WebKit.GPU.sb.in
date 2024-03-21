@@ -278,35 +278,6 @@
         "com.apple.Metal") ;; <rdar://problem/25535471>
 )
 
-(define-once (internal-debugging-support)
-        (allow file-read* file-map-executable
-               (subpath "/Developer"))
-
-        (allow ipc-posix-shm*
-               (ipc-posix-name-prefix "stack-logs")
-               (ipc-posix-name-prefix "OA-")
-               (ipc-posix-name-prefix "/FSM-"))
-
-        (allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-unlink
-               (ipc-posix-name-regex #"^gdt-[A-Za-z0-9]+-(c|s)$"))
-
-        (with-filter (system-attribute apple-internal)
-            ;; <rdar://problem/8565035>
-            ;; <rdar://problem/23857452>
-            ;; <rdar://problem/72317112>
-            (allow file-read* file-map-executable
-                   (subpath "/AppleInternal")
-                   (subpath "/usr/local/lib")
-                   (subpath "/usr/appleinternal/lib")))
-            (with-elevated-precedence
-                (allow file-read* file-map-executable file-issue-extension
-                   (front-user-home-subpath "/XcodeBuiltProducts")))
-
-        ;; <rdar://problem/8107758>
-        (allow file-read* file-map-executable
-               (subpath "/System/Library/Frameworks")
-               (subpath "/System/Library/PrivateFrameworks")))
-
 (define-once (device-access)
     (deny file-read* file-write*
           (vnode-type BLOCK-DEVICE CHARACTER-DEVICE))
@@ -435,8 +406,7 @@
 )
 
 (with-filter (system-attribute apple-internal)
-    (internal-debugging-support)
-)
+    (internal-debugging-support))
 
 (allow file-read*
     required-etc-files)
