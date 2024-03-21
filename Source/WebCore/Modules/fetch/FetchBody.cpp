@@ -290,9 +290,9 @@ FetchBody::TakenData FetchBody::take()
         return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(urlSearchParamsBody().toString()));
 
     if (isArrayBuffer())
-        return SharedBuffer::create(static_cast<const char*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
+        return SharedBuffer::create(arrayBufferBody().bytes());
     if (isArrayBufferView())
-        return SharedBuffer::create(static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
+        return SharedBuffer::create(arrayBufferViewBody().bytes());
 
     return nullptr;
 }

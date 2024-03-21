@@ -41,6 +41,7 @@
 #include <wtf/persistence/PersistentCoders.h>
 
 #if PLATFORM(COCOA)
+#include <wtf/cf/VectorCF.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 #endif
 
@@ -343,11 +344,9 @@ namespace WTF::Persistence {
 
 static void encodeCFData(Encoder& encoder, CFDataRef data)
 {
-    uint64_t length = CFDataGetLength(data);
-    const uint8_t* bytePtr = CFDataGetBytePtr(data);
-
-    encoder << length;
-    encoder.encodeFixedLengthData({ bytePtr, static_cast<size_t>(length) });
+    auto span = toSpan(data);
+    encoder << static_cast<uint64_t>(span.size());
+    encoder.encodeFixedLengthData(span);
 }
 
 static std::optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)

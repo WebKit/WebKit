@@ -162,6 +162,7 @@
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/TextBreakIterator.h>
 #import <wtf/text/TextStream.h>
@@ -264,10 +265,7 @@ RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
 
 void WebPage::relayAccessibilityNotification(const String& notificationName, const RetainPtr<NSData>& notificationData)
 {
-    std::span<const uint8_t> dataToken;
-    if ([notificationData length])
-        dataToken = { reinterpret_cast<const uint8_t*>([notificationData bytes]), [notificationData length] };
-    send(Messages::WebPageProxy::RelayAccessibilityNotification(notificationName, dataToken));
+    send(Messages::WebPageProxy::RelayAccessibilityNotification(notificationName, toSpan(notificationData.get())));
 }
 
 static void computeEditableRootHasContentAndPlainText(const VisibleSelection& selection, EditorState::PostLayoutData& data)

@@ -49,7 +49,7 @@ public:
     virtual void insert(SegmentedString&&) = 0;
 
     // appendBytes and flush are used by DocumentWriter (the loader).
-    virtual void appendBytes(DocumentWriter&, const uint8_t* bytes, size_t length) = 0;
+    virtual void appendBytes(DocumentWriter&, std::span<const uint8_t>) = 0;
     virtual void flush(DocumentWriter&) = 0;
 
     virtual void append(RefPtr<StringImpl>&&) = 0;

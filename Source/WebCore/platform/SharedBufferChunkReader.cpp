@@ -76,7 +76,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSepa
             if (currentCharacter != m_separator[m_separatorIndex]) {
                 if (m_separatorIndex > 0) {
                     ASSERT_WITH_SECURITY_IMPLICATION(m_separatorIndex <= m_separator.size());
-                    chunk.append(std::span { m_separator.data(), m_separatorIndex });
+                    chunk.append(m_separator.span().first(m_separatorIndex));
                     m_separatorIndex = 0;
                 }
                 chunk.append(currentCharacter);
@@ -130,9 +130,8 @@ size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize
     auto currentSegment = m_iteratorCurrent;
 
     while (requestedSize && ++currentSegment != m_iteratorEnd) {
-        const uint8_t* segment = currentSegment->segment->data();
         size_t lengthInSegment = std::min(currentSegment->segment->size(), requestedSize);
-        data.append(std::span { segment, lengthInSegment });
+        data.append(currentSegment->segment->bytes().first(lengthInSegment));
         readBytesCount += lengthInSegment;
         requestedSize -= lengthInSegment;
     }

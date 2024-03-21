@@ -53,7 +53,7 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
         return promise.settle(Exception { ExceptionCode::ExistingExceptionError });
 
     WTF::switchOn(arrayBufferOrView, [&](auto& arrayBufferOrView) {
-        send({ static_cast<const uint8_t*>(arrayBufferOrView->data()), arrayBufferOrView->byteLength() }, [promise = WTFMove(promise)] () mutable {
+        send(arrayBufferOrView->bytes(), [promise = WTFMove(promise)] () mutable {
             // FIXME: Reject if sending failed.
             promise.resolve();
         });

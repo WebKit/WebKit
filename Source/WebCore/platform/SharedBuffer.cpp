@@ -165,7 +165,7 @@ auto FragmentedSharedBuffer::toIPCData() const -> IPCData
 {
     if (useUnixDomainSockets || size() < minimumPageSize) {
         return WTF::map(m_segments, [](auto& segment) {
-            return std::span { segment.segment->data(), segment.segment->size() };
+            return segment.segment->bytes();
         });
     }
 

@@ -95,7 +95,7 @@ static RetainPtr<NSData> produceClientDataJson(_WKWebAuthenticationType type, NS
         clientDataType = WebCore::ClientDataType::Get;
         break;
     }
-    auto challengeBuffer = ArrayBuffer::tryCreate(reinterpret_cast<const uint8_t*>(challenge.bytes), challenge.length);
+    auto challengeBuffer = ArrayBuffer::tryCreate(toSpan(challenge));
     auto securityOrigin = WebCore::SecurityOrigin::createFromString(origin);
 
     auto clientDataJson = buildClientDataJson(clientDataType, WebCore::BufferSource(challengeBuffer), securityOrigin, scope, topOrigin);
@@ -916,13 +916,6 @@ static WebCore::MediationRequirement toWebCore(_WKWebAuthenticationMediationRequ
 }
 #endif
 
-#if ENABLE(WEB_AUTHN)
-static std::span<const uint8_t> asUInt8Span(NSData* data)
-{
-    return { reinterpret_cast<const uint8_t*>(data.bytes), data.length };
-}
-#endif
-
 + (WebCore::PublicKeyCredentialCreationOptions)convertToCoreCreationOptionsWithOptions:(_WKPublicKeyCredentialCreationOptions *)options
 {
     WebCore::PublicKeyCredentialCreationOptions result;
@@ -941,7 +934,7 @@ static std::span<const uint8_t> asUInt8Span(NSData* data)
         result.authenticatorSelection = authenticatorSelectionCriteria(options.authenticatorSelection);
     result.attestation = attestationConveyancePreference(options.attestation);
     if (options.extensionsCBOR)
-        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
+        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(toSpan(options.extensionsCBOR));
     else
         result.extensions = authenticationExtensionsClientInputs(options.extensions);
 #endif
@@ -1024,7 +1017,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
     if (options.allowCredentials)
         result.allowCredentials = publicKeyCredentialDescriptors(options.allowCredentials);
     if (options.extensionsCBOR)
-        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(asUInt8Span(options.extensionsCBOR));
+        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(toSpan(options.extensionsCBOR));
     else
         result.extensions = authenticationExtensionsClientInputs(options.extensions);
     result.userVerification = userVerification(options.userVerification);

@@ -61,7 +61,7 @@ void WebTransportSendStreamSink::write(WebCore::ScriptExecutionContext& context,
         return promise.settle(WebCore::Exception { WebCore::ExceptionCode::ExistingExceptionError });
 
     WTF::switchOn(arrayBufferOrView, [&](auto& arrayBufferOrView) {
-        sendBytes({ static_cast<const uint8_t*>(arrayBufferOrView->data()), arrayBufferOrView->byteLength() }, [promise = WTFMove(promise)] () mutable {
+        sendBytes(arrayBufferOrView->bytes(), [promise = WTFMove(promise)] () mutable {
             promise.resolve();
         });
     });

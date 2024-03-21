@@ -32,6 +32,7 @@
 #import "WebPageProxy.h"
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s][State=%s] RedirectSOAuthorizationSession::" fmt, this, initiatingActionString(), stateString(), ##__VA_ARGS__)
 
@@ -60,20 +61,6 @@ void RedirectSOAuthorizationSession::abortInternal()
     invokeCallback(true);
 }
 
-static std::span<const uint8_t> span(NSData *data)
-{
-    return { static_cast<const uint8_t*>(data.bytes), data.length };
-}
-
-#if PLATFORM(IOS) || PLATFORM(VISION)
-
-static std::span<const uint8_t> span(const CString& string)
-{
-    return { string.dataAsUInt8Ptr(), string.length() };
-}
-
-#endif
-
 void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& response, NSData *data)
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d, navigationAction=%p", response.httpStatusCode(), navigationAction());
@@ -100,7 +87,7 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
         if (!navigationAction->isProcessingUserGesture()) {
             page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
             auto html = makeString("<script>location = '", response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>").utf8();
-            page->loadData(span(html), "text/html"_s, "UTF-8"_s, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+            page->loadData(html.bytes(), "text/html"_s, "UTF-8"_s, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
             return;
         }
 #endif
@@ -110,7 +97,7 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
     if (response.httpStatusCode() == httpStatus200OK) {
         invokeCallback(true);
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
-        page->loadData(span(data), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+        page->loadData(toSpan(data), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
         return;
     }
 

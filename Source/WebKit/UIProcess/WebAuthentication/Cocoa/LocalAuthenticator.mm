@@ -137,7 +137,7 @@ static inline RetainPtr<NSData> toNSData(ArrayBuffer* buffer)
 
 static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
 {
-    return ArrayBuffer::create(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
+    return ArrayBuffer::create(toSpan(data));
 }
 
 static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)

@@ -39,6 +39,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 @implementation WKURLSessionTaskDelegate {
     WebKit::DataTaskIdentifier _identifier;
@@ -96,7 +97,7 @@
     RefPtr connection = [self connection];
     if (!connection)
         return;
-    connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(_identifier, { reinterpret_cast<const uint8_t*>(data.bytes), data.length }), 0);
+    connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(_identifier, toSpan(data)), 0);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error

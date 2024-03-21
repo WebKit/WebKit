@@ -64,6 +64,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cf/CFURLExtras.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 NSString * const WKActionIsMainFrameKey = @"WKActionIsMainFrameKey";
 NSString * const WKActionNavigationTypeKey = @"WKActionNavigationTypeKey";
@@ -176,7 +177,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
     NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
-    _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
+    _page->loadData(toSpan(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
@@ -196,7 +197,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (userData)
         wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
-    _page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
+    _page->loadData(toSpan(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
 }
 
 - (void)stopLoading

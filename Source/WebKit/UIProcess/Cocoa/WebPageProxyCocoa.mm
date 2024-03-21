@@ -79,6 +79,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 #if ENABLE(MEDIA_USAGE)
 #import "MediaUsageManagerCocoa.h"
@@ -938,14 +939,9 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-static std::span<const uint8_t> span(NSData *data)
-{
-    return { static_cast<const uint8_t*>(data.bytes), data.length };
-}
-
 void WebPageProxy::insertMultiRepresentationHEIC(NSData *data)
 {
-    send(Messages::WebPage::InsertMultiRepresentationHEIC(span(data)));
+    send(Messages::WebPage::InsertMultiRepresentationHEIC(toSpan(data)));
 
 }
 

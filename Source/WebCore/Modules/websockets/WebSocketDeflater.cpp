@@ -200,7 +200,7 @@ bool WebSocketInflater::finish()
         m_buffer.grow(bufferSize.value());
         size_t availableCapacity = m_buffer.size() - writePosition;
         size_t remainingLength = strippedFields.size() - consumedSoFar;
-        setStreamParameter(m_stream.get(), std::span { strippedFields.data() + consumedSoFar, remainingLength }, m_buffer.data() + writePosition, availableCapacity);
+        setStreamParameter(m_stream.get(), std::span { strippedFields }.subspan(consumedSoFar), m_buffer.data() + writePosition, availableCapacity);
         int result = inflate(m_stream.get(), Z_FINISH);
         consumedSoFar += remainingLength - m_stream->avail_in;
         m_buffer.shrink(writePosition + availableCapacity - m_stream->avail_out);

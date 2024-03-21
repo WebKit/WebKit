@@ -105,7 +105,7 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
         }
 
         if (auto data = loader->arrayBufferResult())
-            weakThis->consume(std::span { static_cast<const uint8_t*>(data->data()), data->byteLength() });
+            weakThis->consume(data->bytes());
     });
 
     m_blobLoader->start(blobURL, m_context.get(), FileReaderLoader::ReadAsArrayBuffer);

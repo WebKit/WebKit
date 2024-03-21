@@ -1144,7 +1144,7 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<Buffer
         return;
 
     std::visit([&](auto& data) {
-        m_context->bufferData(target, std::span(static_cast<const uint8_t*>(data->data()), data->byteLength()), usage);
+        m_context->bufferData(target, data->bytes(), usage);
     }, data.value());
 }
 
@@ -1161,7 +1161,7 @@ void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset,
     }
 
     std::visit([&](auto& data) {
-        m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), std::span(static_cast<const uint8_t*>(data->data()), data->byteLength()));
+        m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), data->bytes());
     }, data);
 }
 
@@ -1248,7 +1248,7 @@ void WebGLRenderingContextBase::compressedTexImage2D(GCGLenum target, GCGLint le
         return;
     if (!validateCompressedTexFormat("compressedTexImage2D", internalformat))
         return;
-    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, data.byteLength(), std::span(static_cast<const uint8_t*>(data.baseAddress()), data.byteLength()));
+    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, data.byteLength(), data.bytes());
 }
 
 void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& data)
@@ -1259,7 +1259,7 @@ void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint
         return;
     if (!validateCompressedTexFormat("compressedTexSubImage2D", format))
         return;
-    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), std::span(static_cast<const uint8_t*>(data.baseAddress()), data.byteLength()));
+    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), data.bytes());
 }
 
 bool WebGLRenderingContextBase::validateSettableTexInternalFormat(const char* functionName, GCGLenum internalFormat)
@@ -3899,7 +3899,7 @@ std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFu
         return std::nullopt;
     }
     ASSERT(!offset.hasOverflowed()); // Checked already as part of `total.hasOverflowed()` check.
-    return std::span(static_cast<const uint8_t*>(pixels->baseAddress()) + offset.value(), dataLength);
+    return pixels->bytes().subspan(offset.value(), dataLength);
 }
 
 bool WebGLRenderingContextBase::validateTexFuncParameters(TexImageFunctionID functionID,

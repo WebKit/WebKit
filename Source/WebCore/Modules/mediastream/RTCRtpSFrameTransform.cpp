@@ -243,9 +243,9 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
         }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
             transformFrame(*value, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         }, [&](RefPtr<ArrayBuffer>& value) {
-            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
+            transformFrame(value->bytes(), globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         }, [&](RefPtr<ArrayBufferView>& value) {
-            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
+            transformFrame(value->bytes(), globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         });
         return { };
     }));

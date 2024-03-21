@@ -27,6 +27,7 @@
 #include "KeyedEncoderGeneric.h"
 
 #include "SharedBuffer.h"
+#include <wtf/Algorithms.h>
 #include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ void KeyedEncoderGeneric::encodeString(const String& key)
 {
     auto result = key.tryGetUTF8([&](std::span<const char> span) -> bool {
         m_encoder << span.size();
-        m_encoder.encodeFixedLengthData({ bitwise_cast<const uint8_t*>(span.data()), span.size() });
+        m_encoder.encodeFixedLengthData(spanReinterpretCast<const uint8_t>(span));
         return true;
     });
     RELEASE_ASSERT(result);

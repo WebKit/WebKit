@@ -12893,7 +12893,7 @@ void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, Completi
     else
         html = makeString("<script>navigator.serviceWorker.register('", url.string(), "');</script>").utf8();
 
-    loadData({ reinterpret_cast<const uint8_t*>(html.data()), html.length() }, "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
+    loadData(html.bytes(), "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
 }
 
 #if !PLATFORM(COCOA)
