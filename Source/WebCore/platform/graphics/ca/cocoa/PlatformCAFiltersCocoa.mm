@@ -328,6 +328,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
                 // a material background, we need `normalizeEdgesTransparent`
                 // in order to render correctly.
 #if PLATFORM(VISION)
+                UNUSED_PARAM(cssUnprefixedBackdropFilterEnabled);
                 [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
 #else
                 if (cssUnprefixedBackdropFilterEnabled)
