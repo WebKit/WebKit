@@ -48,33 +48,30 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (5,142) size 107x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 107x12
           chunk 1 text run 1 at (5.00,152.00) startOffset 0 endOffset 25 width 106.76: "[circle1] -80 -80 200 200"
-      RenderSVGText {text} at (5,154) size 243x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 243x12
-          chunk 1 text run 1 at (5.00,164.00) startOffset 0 endOffset 55 width 242.69: "Results do not match expected values ( 10, 10, 400, 0 )"
-      RenderSVGText {text} at (5,166) size 61x13 contains 1 chunk(s)
+      RenderSVGText {text} at (5,154) size 61x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 61x12
-          chunk 1 text run 1 at (5.00,176.00) startOffset 0 endOffset 15 width 60.54: "[rect4] 0 0 0 0"
-      RenderSVGText {text} at (5,178) size 250x13 contains 1 chunk(s)
+          chunk 1 text run 1 at (5.00,164.00) startOffset 0 endOffset 15 width 60.54: "[rect4] 0 0 0 0"
+      RenderSVGText {text} at (5,166) size 250x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 250x12
-          chunk 1 text run 1 at (5.00,188.00) startOffset 0 endOffset 57 width 249.28: "Results do not match expected values ( -30, -20, 60, 40 )"
-      RenderSVGText {text} at (5,190) size 81x13 contains 1 chunk(s)
+          chunk 1 text run 1 at (5.00,176.00) startOffset 0 endOffset 57 width 249.28: "Results do not match expected values ( -30, -20, 60, 40 )"
+      RenderSVGText {text} at (5,178) size 81x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 81x12
-          chunk 1 text run 1 at (5.00,200.00) startOffset 0 endOffset 17 width 80.34: "[myUse] 0 0 60 40"
-      RenderSVGText {text} at (5,202) size 89x13 contains 1 chunk(s)
+          chunk 1 text run 1 at (5.00,188.00) startOffset 0 endOffset 17 width 80.34: "[myUse] 0 0 60 40"
+      RenderSVGText {text} at (5,190) size 89x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 89x12
-          chunk 1 text run 1 at (5.00,212.00) startOffset 0 endOffset 21 width 88.61: "[thickLine] 0 0 100 0"
-      RenderSVGText {text} at (5,214) size 244x13 contains 1 chunk(s)
+          chunk 1 text run 1 at (5.00,200.00) startOffset 0 endOffset 21 width 88.61: "[thickLine] 0 0 100 0"
+      RenderSVGText {text} at (5,202) size 244x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 244x12
-          chunk 1 text run 1 at (5.00,224.00) startOffset 0 endOffset 54 width 243.80: "node removed from tree, should still have bounding box"
-      RenderSVGText {text} at (5,226) size 261x13 contains 1 chunk(s)
+          chunk 1 text run 1 at (5.00,212.00) startOffset 0 endOffset 54 width 243.80: "node removed from tree, should still have bounding box"
+      RenderSVGText {text} at (5,214) size 261x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 261x12
-          chunk 1 text run 1 at (5.00,236.00) startOffset 0 endOffset 59 width 260.30: "Results do not match expected values ( -80, -80, 200, 200 )"
-      RenderSVGText {text} at (5,238) size 70x13 contains 1 chunk(s)
+          chunk 1 text run 1 at (5.00,224.00) startOffset 0 endOffset 59 width 260.30: "Results do not match expected values ( -80, -80, 200, 200 )"
+      RenderSVGText {text} at (5,226) size 70x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 70x12
-          chunk 1 text run 1 at (5.00,248.00) startOffset 0 endOffset 18 width 69.88: "[circle2]: 0 0 0 0"
-      RenderSVGText {text} at (5,250) size 193x13 contains 1 chunk(s)
+          chunk 1 text run 1 at (5.00,236.00) startOffset 0 endOffset 18 width 69.88: "[circle2]: 0 0 0 0"
+      RenderSVGText {text} at (5,238) size 193x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 193x12
-          chunk 1 text run 1 at (5.00,260.00) startOffset 0 endOffset 43 width 192.05: "Results do not match expected values (null)"
+          chunk 1 text run 1 at (5.00,248.00) startOffset 0 endOffset 43 width 192.05: "Results do not match expected values (null)"
     RenderSVGContainer {g} at (16,516) size 385x64
       RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x38

@@ -6,6 +6,312 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+
+# --- Imported from ios-simulator-wk2 ---
+
+http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
+
+webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Pass Failure ]
+
+webkit.org/b/173178 [ Release ] svg/animations/svglength-element-removed-crash.svg [ Skip ]
+
+webkit.org/b/173010 js/slow-stress/Int32Array-alloc-huge.html [ Pass Timeout ]
+
+webkit.org/b/174183 animations/resume-after-page-cache.html [ Pass Failure ]
+
+webkit.org/b/173861 http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Skip ]
+webkit.org/b/173861 http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Skip ]
+webkit.org/b/173861 http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
+
+webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/187699 [ Debug ] fast/forms/submit-change-fragment.html [ Pass Timeout ]
+
+webkit.org/b/194368 http/tests/workers/service/basic-register-exceptions.html [ Pass Failure ]
+
+webkit.org/b/196218 performance-api/performance-observer-periodic.html [ Pass Failure ]
+
+webkit.org/b/196228 http/tests/cache-storage/cache-clearing-origin.https.html [ Pass Failure ]
+webkit.org/b/196228 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
+
+webkit.org/b/196233 fast/viewport/ios/initial-scale-after-changing-view-scale.html [ Pass Timeout ]
+
+webkit.org/b/162975 http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html [ Pass Failure ]
+
+webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html [ Pass ImageOnlyFailure ]
+webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ Pass ImageOnlyFailure ]
+webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html [ Pass ImageOnlyFailure ]
+
+http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
+http/wpt/fetch/response-opaque-clone.html [ Slow ]
+http/wpt/cache-storage/a-cache-open.https.html [ Slow ]
+http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
+
+webkit.org/b/195341 fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Pass Failure ]
+
+webkit.org/b/186581 [ Debug ] fast/parser/xml-error-adopted.xml [ Pass Timeout ]
+
+webkit.org/b/197207 http/wpt/resource-timing/rt-resources-per-frame.html [ Pass Failure ]
+
+webkit.org/b/172001 scrollingcoordinator/ios/sync-layer-positions-after-scroll.html [ Pass Failure ]
+
+# NearField.framework doesn't present in the simulator, and therefore skip all WebAuthn NFC tests
+http/wpt/webauthn/ctap-nfc-failure.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-success-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Skip ]
+
+webkit.org/b/203157 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
+
+webkit.org/b/206698 editing/caret/ios/fixed-caret-position-after-scroll.html [ Pass Failure ]
+
+webkit.org/b/206749 crypto/subtle/rsa-indexeddb-private.html [ Pass Timeout ]
+
+webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
+
+webkit.org/b/207002 imported/w3c/web-platform-tests/FileAPI/historical.https.html [ Pass Failure ]
+
+webkit.org/b/206952 imported/w3c/IndexedDB-private-browsing/idbindex_getKey6.html [ Pass Timeout ]
+
+webkit.org/b/208036 http/wpt/cache-storage/cache-put-keys.https.any.worker.html [ Pass Failure ]
+
+webkit.org/b/209234 [ Release ] platform/ios/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html [ Pass Failure ]
+
+webkit.org/b/207496 http/wpt/cache-storage/cache-put-keys.https.any.html [ Pass Failure ]
+
+webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
+
+webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCCertificate-postMessage.html [ Skip ]
+webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCCertificate.html [ Skip ]
+webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-generateCertificate.html [ Skip ]
+webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Skip ]
+
+webkit.org/b/214358 fast/scrolling/ios/programmatic-scroll-while-zoomed.html [ Pass Failure ]
+
+webkit.org/b/214736 imported/w3c/web-platform-tests/css/css-flexbox/align-self-014.html [ Pass Timeout ]
+
+webkit.org/b/214739 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html [ Pass Timeout ]
+
+webkit.org/b/214751 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Pass Failure ]
+
+# See bug 232916; this test can't pass as we do not support mid-stream resolution change.
+webkit.org/b/214752 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Skip ]
+
+webkit.org/b/214755 http/tests/navigation/subframe-pagehide-handler-starts-load2.html [ Pass Timeout ]
+
+webkit.org/b/214757 imported/w3c/web-platform-tests/css/css-fonts/crash-font-face-invalid-descriptor.html [ Pass Timeout ]
+
+webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
+
+webkit.org/b/203112 scrollingcoordinator/ios/ui-scroll-fixed.html [ Pass Failure ]
+
+webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
+
+webkit.org/b/215216 imported/w3c/web-platform-tests/svg/import/interact-zoom-01-t-manual.svg [ Pass Failure ]
+
+webkit.org/b/215676 [ Release ] http/tests/security/contentSecurityPolicy/worker-redirect-allowed.html [ Pass ]
+
+webkit.org/b/217414 [ Release ] imported/w3c/web-platform-tests/user-timing/measure-l3.any.html [ Pass Failure ]
+
+webkit.org/b/217461 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
+
+webkit.org/b/217357 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Pass Failure ]
+
+webkit.org/b/217412 http/wpt/cache-storage/cache-quota.any.html [ Pass Failure ]
+
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-fetch.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-install.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-push.https.html [ Pass Timeout Failure ]
+webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-pushsubscriptionchange.https.html [ Pass Timeout Failure ]
+
+webkit.org/b/217759 media/now-playing-status-without-media.html [ Pass Failure ]
+
+# webkit.org/b/209139 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
+
+webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
+
+# webkit.org/b/224558 The following two page-cache tests are flakey crasing:
+webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
+http/tests/navigation/page-cache-mediastream.html [ Pass Crash ]
+
+webkit.org/b/224633 media/presentationmodechanged-fired-once.html [ Pass Timeout ]
+
+webkit.org/b/225169 imported/w3c/web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/structured-clone-message.html [ Pass Crash ]
+
+webkit.org/b/225668 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Slow ]
+
+webkit.org/b/225830 imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled.html  [ Pass ImageOnlyFailure ]
+
+webkit.org/b/227755 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html  [ Pass Failure ]
+
+webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navigate_within_document.html [ Pass Failure ]
+
+# These failures are happening only in iOS simulator on an arm64 host
+webkit.org/b/236928 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
+webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
+webkit.org/b/236926 webrtc/vp9-profile2.html [ Timeout Pass ]
+# This passes only on the arm64 host
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/242748 [ Release arm64 ] css3/color-filters/svg/color-filter-inline-svg.html [ ImageOnlyFailure ]
+
+webkit.org/b/254872 webrtc/video-rotation.html [ Pass Timeout ]
+
+fast/overflow/infiniteRecursion.html [ Failure Pass ]
+tables/mozilla/bugs/bug2479-2.html [ Failure Pass ]
+
+
+# --- Imported from ios-simulator ---
+
+accessibility/img-no-alt-not-ignored-with-title.html [ Pass ]
+accessibility/insert-newline.html [ Pass ]
+accessibility/url-test.html [ Pass ]
+accessibility/keyevents-posted-for-dismiss-action.html [ Pass ]
+accessibility/embedded-image-description.html [ Pass ]
+accessibility/aria-description.html [ Pass ]
+fast/multicol/flexbox-rows.html [ Skip ]
+
+fast/forms/input-text-word-wrap.html [ Skip ]
+fast/forms/search-vertical-alignment.html [ Skip ]
+fast/forms/searchfield-heights.html [ Skip ]
+fast/forms/visual-hebrew-text-field.html [ Skip ]
+
+# The MediaSource API is unsupported on iOS simulator.
+fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html [ Skip ]
+
+fast/events/document-elementFromPoint.html [ Pass Failure ]
+
+transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
+
+# Imported w3c tests require fuzzy image comparison
+imported/w3c/web-platform-tests/density-size-correction/density-corrected-various-elements.html [ ImageOnlyFailure ]
+
+# This test requires Skia, which isn't available on iOS.
+webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
+
+webkit.org/b/235765 webrtc/canvas-to-peer-connection.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-2d.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-vp8-2d.html [ Failure ]
+
+# display-p3 canvas and ImageData are not working in the simulator.
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
+fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html [ Failure ]
+webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
+webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html [ Failure ]
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.worker.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.worker.html [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Failure ]
+
+# Missing required low latency H264 support.
+webkit.org/b/263112 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.worker.html?h264 [ Failure ]
+webkit.org/b/263112 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?h264 [ Failure ]
+
+# Imported css-text test suite from WPT
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-002.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-003.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-004.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-005.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-006.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-007.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html [ ImageOnlyFailure ]
+
+
+webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-break-spaces-002.html [ ImageOnlyFailure ]
+
+# Baseline Alignment tests affected by 1px diff failures only on Mac and iOS platforms
+webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-two-dimensional.html [ Failure ]
+
+# A sub-test in this test is extremely flaky and fails most of the time, messing up partial-failure expectations
+webkit.org/b/189686 webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Skip ]
+# Crashes
+webkit.org/b/189686 webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Skip ]
+
+# This test takes a long time to execute in the simulator, since it creates a huge (empty) buffer
+# to draw lots of nothing.
+webkit.org/b/209416 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Pass Timeout ]
+
+# Test is slow.
+webkit.org/b/226813 webgl/draw-webgl-to-context2d-memory-test.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
+webkit.org/b/245593 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ ImageOnlyFailure ]
+
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Pass Failure ]
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/wasm [ Skip ]
+
+webkit.org/b/201509 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Failure ]
+
+# ANGLE Metal backend failing tests with shared texture memory on the simulator
+webkit.org/b/222685 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
+webkit.org/b/222685 webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
+
+webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
+
+# webkit.org/b/238220 These 5 tests are constant failures on gpup arm64
+[ arm64 ] webaudio/Analyser/realtimeanalyser-fftsize-reset.html [ Failure ]
+[ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data-smoothing.html [ Failure ]
+[ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
+
+webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
+
+webkit.org/b/242800 fast/css/counters/element-removal-crash.xhtml [ Pass Failure ]
+
+# FairPlay is not supported in the iOS Simulator
+http/tests/media/fairplay [ Skip ]
+
+webkit.org/b/254805 webgl/1.0.x/conformance/rendering/blending.html [ Failure ]
+webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
+webkit.org/b/254805 webgl/2.0.y/conformance/rendering/blending.html [ Failure ]
+webkit.org/b/261270 webgl/2.0.y/conformance2/extensions/webgl-stencil-texturing.html [ Failure Pass ]
+
+# Sometimes out of memory
+webgl/2.0.y/conformance2/wasm/readpixels-4gb-wasm-memory.html [ Pass Failure ]
+webgl/2.0.y/conformance2/wasm/teximage2d-4gb-wasm-memory.html [ Pass Failure ]
+webgl/2.0.y/conformance2/wasm/texsubimage2d-4gb-wasm-memory.html [ Pass Failure ]
+
+# Failure for CSS tables
+imported/w3c/web-platform-tests/css/css-tables/subpixel-collapsed-borders-003.html [ ImageOnlyFailure ]
+
+
+
+
 compositing/ios [ Pass ]
 compositing/shared-backing/overflow-scroll [ Pass ]
 compositing/scrolling/async-overflow-scrolling [ Pass ]
@@ -1207,8 +1513,6 @@ webkit.org/b/230513 fast/viewport/scroll-delegates-switch-on-page-with-no-compos
 
 webkit.org/b/199071 [ Release ] imported/blink/fast/css/user-select-none.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/190882 [ Debug ] animations/change-one-anim.html [ Pass Failure ]
-
 webkit.org/b/199213 [ Release ] imported/blink/editing/selection/deleteFromDocument-crash.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/199370 [ Release ] imported/mozilla/svg/text/selectSubString.svg [ Pass ImageOnlyFailure ]
@@ -1218,7 +1522,6 @@ webkit.org/b/199387 imported/blink/fast/multicol/span/overflow-on-viewport.html 
 webkit.org/b/232412 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Pass Timeout Crash ]
 
 # Skip tests timing out for <rdar://problem/48616298>
-fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Skip ]
 fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width.html [ Skip ]
 
 # problem with blur handling
@@ -1654,7 +1957,7 @@ quicklook/numbers-09.html [ Failure ]
 quicklook/numbers.html [ ImageOnlyFailure ]
 quicklook/pages-09.html [ Failure ]
 quicklook/pages.html [ ImageOnlyFailure ]
-quicklook/multi-sheet-numbers-09.html [ Skip ]
+webkit.org/b/175865 quicklook/multi-sheet-numbers-09.html [ Skip ]
 http/tests/quicklook/secure-document-with-subresources.html [ Skip ]
 
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
@@ -1881,9 +2184,6 @@ webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/for
 webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
 
 webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ Pass Failure ]
-
-webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
-webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
 
 webkit.org/b/226789 imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html [ Pass Failure ]
 
