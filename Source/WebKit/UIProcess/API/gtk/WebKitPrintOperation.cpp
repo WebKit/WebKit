@@ -261,12 +261,12 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
 {
     GtkPrintUnixDialog* printDialog = GTK_PRINT_UNIX_DIALOG(gtk_print_unix_dialog_new(0, parent));
     gtk_print_unix_dialog_set_manual_capabilities(printDialog, static_cast<GtkPrintCapabilities>(GTK_PRINT_CAPABILITY_NUMBER_UP
-                                                                                                 | GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT
-                                                                                                 | GTK_PRINT_CAPABILITY_PAGE_SET
-                                                                                                 | GTK_PRINT_CAPABILITY_REVERSE
-                                                                                                 | GTK_PRINT_CAPABILITY_COPIES
-                                                                                                 | GTK_PRINT_CAPABILITY_COLLATE
-                                                                                                 | GTK_PRINT_CAPABILITY_SCALE));
+        | GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT | GTK_PRINT_CAPABILITY_PAGE_SET | GTK_PRINT_CAPABILITY_REVERSE
+        | GTK_PRINT_CAPABILITY_COPIES | GTK_PRINT_CAPABILITY_COLLATE | GTK_PRINT_CAPABILITY_SCALE
+#if USE(SKIA)
+        | GTK_PRINT_CAPABILITY_GENERATE_PDF
+#endif
+        ));
 
     WebKitPrintOperationPrivate* priv = printOperation->priv;
     // Make sure the initial settings of the GtkPrintUnixDialog is a valid

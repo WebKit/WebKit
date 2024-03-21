@@ -140,12 +140,22 @@ add_library(Skia STATIC
     src/base/SkUtils.cpp
 
     src/codec/SkCodec.cpp
+    src/codec/SkCodecImageGenerator.cpp
     src/codec/SkColorPalette.cpp
     src/codec/SkEncodedInfo.cpp
+    src/codec/SkExif.cpp
+    src/codec/SkImageGenerator_FromEncoded.cpp
+    src/codec/SkJpegCodec.cpp
+    src/codec/SkJpegDecoderMgr.cpp
+    src/codec/SkJpegSegmentScan.cpp
+    src/codec/SkJpegSourceMgr.cpp
+    src/codec/SkJpegUtility.cpp
+    src/codec/SkParseEncodedOrigin.cpp
     src/codec/SkPixmapUtils.cpp
     src/codec/SkPngCodec.cpp
     src/codec/SkSampler.cpp
     src/codec/SkSwizzler.cpp
+    src/codec/SkTiffUtility.cpp
 
     src/core/SkAAClip.cpp
     src/core/SkATrace.cpp
@@ -673,6 +683,28 @@ add_library(Skia STATIC
     src/pathops/SkPathWriter.cpp
     src/pathops/SkReduceOrder.cpp
 
+    src/pdf/SkClusterator.cpp
+    src/pdf/SkDeflate.cpp
+    src/pdf/SkKeyedImage.cpp
+    src/pdf/SkPDFBitmap.cpp
+    src/pdf/SkPDFDevice.cpp
+    src/pdf/SkPDFDocument.cpp
+    src/pdf/SkPDFFont.cpp
+    src/pdf/SkPDFFormXObject.cpp
+    src/pdf/SkPDFGradientShader.cpp
+    src/pdf/SkPDFGraphicStackState.cpp
+    src/pdf/SkPDFGraphicState.cpp
+    src/pdf/SkPDFMakeCIDGlyphWidthsArray.cpp
+    src/pdf/SkPDFMakeToUnicodeCmap.cpp
+    src/pdf/SkPDFMetadata.cpp
+    src/pdf/SkPDFResourceDict.cpp
+    src/pdf/SkPDFShader.cpp
+    src/pdf/SkPDFSubsetFont.cpp
+    src/pdf/SkPDFTag.cpp
+    src/pdf/SkPDFType1Font.cpp
+    src/pdf/SkPDFTypes.cpp
+    src/pdf/SkPDFUtils.cpp
+
     src/shaders/SkBitmapProcShader.cpp
     src/shaders/SkBlendShader.cpp
     src/shaders/SkColorFilterShader.cpp
@@ -817,9 +849,11 @@ add_library(Skia STATIC
     src/sksl/transform/SkSLReplaceConstVarsWithLiterals.cpp
     src/sksl/transform/SkSLRewriteIndexedSwizzle.cpp
 
+    src/utils/SkClipStackUtils.cpp
     src/utils/SkCharToGlyphCache.cpp
     src/utils/SkCustomTypeface.cpp
     src/utils/SkDashPath.cpp
+    src/utils/SkFloatToDecimal.cpp
     src/utils/SkMatrix22.cpp
     src/utils/SkNWayCanvas.cpp
     src/utils/SkPatchUtils.cpp

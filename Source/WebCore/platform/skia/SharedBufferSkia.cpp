@@ -28,16 +28,16 @@
 
 namespace WebCore {
 
-FragmentedSharedBuffer::FragmentedSharedBuffer(SkData* data)
+FragmentedSharedBuffer::FragmentedSharedBuffer(sk_sp<SkData>&& data)
 {
     ASSERT(data);
     m_size = data->size();
-    m_segments.append({ 0, DataSegment::create(sk_ref_sp(data)) });
+    m_segments.append({ 0, DataSegment::create(WTFMove(data)) });
 }
 
-Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(SkData* data)
+Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(sk_sp<SkData>&& data)
 {
-    return adoptRef(*new FragmentedSharedBuffer(data));
+    return adoptRef(*new FragmentedSharedBuffer(WTFMove(data)));
 }
 
 sk_sp<SkData> SharedBuffer::createSkData() const

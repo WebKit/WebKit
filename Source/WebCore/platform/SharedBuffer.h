@@ -189,7 +189,7 @@ public:
 #endif
 
 #if USE(SKIA)
-    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(SkData*);
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(sk_sp<SkData>&&);
 #endif
     WEBCORE_EXPORT Vector<uint8_t> copyData() const;
     WEBCORE_EXPORT Vector<uint8_t> read(size_t offset, size_t length) const;
@@ -259,7 +259,7 @@ protected:
     WEBCORE_EXPORT explicit FragmentedSharedBuffer(GstMappedOwnedBuffer&);
 #endif
 #if USE(SKIA)
-    WEBCORE_EXPORT explicit FragmentedSharedBuffer(SkData*);
+    WEBCORE_EXPORT explicit FragmentedSharedBuffer(sk_sp<SkData>&&);
 #endif
     size_t m_size { 0 };
 
