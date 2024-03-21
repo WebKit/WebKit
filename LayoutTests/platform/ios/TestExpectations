@@ -4675,6 +4675,7 @@ webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto
 imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002a.html [ ImageOnlyFailure ] 
 imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/line-break-around-ruby-001.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Failure ]
 fast/ruby/annotation-with-line-gap.html [ ImageOnlyFailure ]
 fast/ruby/tight-line-spacing-with-line-height.html [ ImageOnlyFailure ]
 
