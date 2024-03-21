@@ -225,6 +225,7 @@ webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl.html [ Failu
 webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Failure ]
 
 # WebXR is not yet supported in GTK
+webkit.org/b/208988 http/tests/webxr [ Skip ]
 webkit.org/b/208988 http/wpt/webxr [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
 webkit.org/b/208988 webxr [ Skip ]

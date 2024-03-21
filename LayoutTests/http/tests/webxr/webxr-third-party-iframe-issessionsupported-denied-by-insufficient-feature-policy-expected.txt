@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Feature policy 'XRSpatialTracking' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
+Tests that third-party iframes will be denied webxr session support without xr-spatial-tracking feature policy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS e.data.isSessionSupported is "SecurityError"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

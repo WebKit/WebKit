@@ -5,6 +5,7 @@ compositing/images/direct-image-object-fit.html [ Skip ]
 compositing/reflections/direct-image-object-fit-reflected.html [ Skip ]
 
 # rdar://102067140 WebXR tests crash
+http/tests/webxr [ Skip ]
 http/wpt/webxr [ Skip ]
 imported/w3c/web-platform-tests/webxr [ Skip ]
 webxr [ Skip ]
