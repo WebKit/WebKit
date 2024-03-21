@@ -35,7 +35,6 @@
 #endif
 
 #include "CachedFont.h"
-#include "CharacterProperties.h"
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "FontCustomPlatformData.h"
@@ -43,6 +42,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(OPENTYPE_VERTICAL)

@@ -504,7 +504,7 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
         // The first category are characters with Emoji=Yes and Emoji_Presentation=Yes.
         // The second category are characters with Emoji=Yes and Emoji_Presentation=No.
         // The third category are characters with Emoji=No.
-        if (u_hasBinaryProperty(character, UCHAR_EMOJI_PRESENTATION))
+        if (isEmojiWithPresentationByDefault(character))
             return ResolvedEmojiPolicy::RequireEmoji;
         return ResolvedEmojiPolicy::NoPreference;
     case FontVariantEmoji::Text:

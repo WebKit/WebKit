@@ -28,8 +28,8 @@
 
 #include "Font.h"
 #include "FontSelector.h"
-#include "platform/text/CharacterProperties.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

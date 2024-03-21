@@ -27,11 +27,11 @@
 #include "FontCascade.h"
 
 #if USE(SKIA)
-#include "CharacterProperties.h"
 #include "FontCache.h"
 #include "GraphicsContextSkia.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include <skia/core/SkTextBlob.h>
+#include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
 

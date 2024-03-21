@@ -29,9 +29,9 @@
 
 #if USE(CAIRO)
 
-#include "CharacterProperties.h"
 #include "FontCache.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
 

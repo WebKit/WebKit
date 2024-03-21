@@ -26,13 +26,13 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include "CharacterProperties.h"
 #include "Font.h"
 #include "FontDescription.h"
 #include "StyleFontSizeFunctions.h"
 #include <skia/ports/SkFontMgr_fontconfig.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

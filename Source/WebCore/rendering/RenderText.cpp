@@ -29,7 +29,6 @@
 #include "AXObjectCache.h"
 #include "BreakLines.h"
 #include "BreakingContext.h"
-#include "CharacterProperties.h"
 #include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "FloatQuad.h"
@@ -61,10 +60,11 @@
 #include "TextUtil.h"
 #include "VisiblePosition.h"
 #include "WidthIterator.h"
-#include <bitset>
+#include <wtf/BitSet.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -328,15 +328,13 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
     m_hasStrongDirectionalityContent = false;
     auto mayHaveStrongDirectionalityContent = !textContent.is8Bit();
     // FIXME: Pre-warm glyph loading in FontCascade with the most common range.
-    std::bitset<256> hasSeen;
+    WTF::BitSet<256> hasSeen;
     for (char32_t character : StringView(textContent).codePoints()) {
         if (character < 256) {
-            if (hasSeen[character])
+            if (hasSeen.testAndSet(character))
                 continue;
-            hasSeen.set(character);
         }
-        auto glyphData = fontCascade.glyphDataForCharacter(character, false, fontVariant);
-        m_canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring && WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed) && glyphData.isValid() && glyphData.font == &primaryFont;
+        m_canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring && fontCascade.canUseSimplifiedTextMeasuring(character, fontVariant, whitespaceIsCollapsed, primaryFont);
         m_hasPositionDependentContentWidth = *m_hasPositionDependentContentWidth || character == tabCharacter;
         m_hasStrongDirectionalityContent = *m_hasStrongDirectionalityContent || (mayHaveStrongDirectionalityContent && Layout::TextUtil::isStrongDirectionalityCharacter(character));
     }

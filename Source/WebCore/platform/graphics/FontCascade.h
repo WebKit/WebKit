@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "CharacterProperties.h"
 #include "DashArray.h"
 #include "Font.h"
 #include "FontCascadeDescription.h"
@@ -36,6 +35,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>
 
 // "X11/X.h" defines Complex to 0 and conflicts
@@ -193,6 +193,7 @@ public:
     const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
+    bool canUseSimplifiedTextMeasuring(char32_t, FontVariant, bool whitespaceIsCollapsed, const Font&) const;
 
     const Font* fontForCombiningCharacterSequence(StringView) const;
 
@@ -346,6 +347,8 @@ private:
         bool operator==(const Spacing& other) const = default;
     };
 
+    static constexpr unsigned bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache = 2;
+
     mutable FontCascadeDescription m_fontDescription;
     Spacing m_spacing;
     mutable RefPtr<FontCascadeFonts> m_fonts;
@@ -353,6 +356,7 @@ private:
     bool m_useBackslashAsYenSymbol { false };
     bool m_enableKerning { false }; // Computed from m_fontDescription.
     bool m_requiresShaping { false }; // Computed from m_fontDescription.
+    mutable WTF::BitSet<256 * bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache> m_canUseSimplifiedTextMeasuringForAutoVariantCache;
 };
 
 inline const Font& FontCascade::primaryFont() const

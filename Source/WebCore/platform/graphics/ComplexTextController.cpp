@@ -25,7 +25,6 @@
 #include "config.h"
 #include "ComplexTextController.h"
 
-#include "CharacterProperties.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "GlyphBuffer.h"
@@ -35,6 +34,7 @@
 #include <unicode/ubrk.h>
 #include <unicode/utf16.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 

@@ -41,13 +41,13 @@
 
 namespace WTF {
 
-template<typename CharacterType> inline bool isLatin1(CharacterType character)
+template<typename CharacterType> inline constexpr bool isLatin1(CharacterType character)
 {
     using UnsignedCharacterType = typename std::make_unsigned<CharacterType>::type;
     return static_cast<UnsignedCharacterType>(character) <= static_cast<UnsignedCharacterType>(0xFF);
 }
 
-template<> ALWAYS_INLINE bool isLatin1(LChar)
+template<> ALWAYS_INLINE constexpr bool isLatin1(LChar)
 {
     return true;
 }

@@ -572,10 +572,7 @@ static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const Character
     auto* rawCharacters = characters.data();
     for (unsigned i = 0; i < characters.size(); ++i) {
         auto character = rawCharacters[i]; // Not using characters[i] to bypass the bounds check.
-        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
-            return false;
-        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
-        if (!glyphData.isValid() || glyphData.font != &primaryFont)
+        if (!fontCascade.canUseSimplifiedTextMeasuring(character, AutoVariant, whitespaceIsCollapsed, primaryFont))
             return false;
     }
     return true;

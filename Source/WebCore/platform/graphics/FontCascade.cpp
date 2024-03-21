@@ -422,6 +422,37 @@ GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVarian
     return protectedFonts()->glyphDataForCharacter(c, m_fontDescription, variant, emojiPolicy);
 }
 
+
+bool FontCascade::canUseSimplifiedTextMeasuring(char32_t character, FontVariant fontVariant, bool whitespaceIsCollapsed, const Font& primaryFont) const
+{
+    if (character == tabCharacter && !whitespaceIsCollapsed)
+        return false;
+
+    // We cache whitespaceIsCollapsed = true result. false case is handled above.
+    whitespaceIsCollapsed = true;
+    bool isCacheable = fontVariant == AutoVariant && isLatin1(character);
+    size_t baseIndex = static_cast<size_t>(character) * bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache;
+    if (isCacheable) {
+        static_assert(0 < bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache);
+        static_assert(1 < bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache);
+        if (m_canUseSimplifiedTextMeasuringForAutoVariantCache.get(baseIndex))
+            return m_canUseSimplifiedTextMeasuringForAutoVariantCache.get(baseIndex + 1);
+    }
+
+    bool result = WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed);
+    if (result) {
+        constexpr bool mirror = false;
+        auto glyphData = glyphDataForCharacter(character, mirror, fontVariant);
+        result = glyphData.isValid() && glyphData.font == &primaryFont;
+    }
+
+    if (isCacheable) {
+        m_canUseSimplifiedTextMeasuringForAutoVariantCache.set(baseIndex, true);
+        m_canUseSimplifiedTextMeasuringForAutoVariantCache.set(baseIndex + 1, result);
+    }
+    return result;
+}
+
 // For font families where any of the fonts don't have a valid entry in the OS/2 table
 // for avgCharWidth, fallback to the legacy webkit behavior of getting the avgCharWidth
 // from the width of a '0'. This only seems to apply to a fixed number of Mac fonts,

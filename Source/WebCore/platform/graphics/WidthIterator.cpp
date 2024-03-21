@@ -22,7 +22,6 @@
 #include "config.h"
 #include "WidthIterator.h"
 
-#include "CharacterProperties.h"
 #include "ComposedCharacterClusterTextIterator.h"
 #include "Font.h"
 #include "FontCascade.h"
@@ -31,6 +30,7 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
 
