@@ -752,6 +752,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     unsigned long numberOfIDBTransactions();
 
+    unsigned long scrollableAreaWidth(Node node);
+
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
     unsigned long referencingNodeCount(Document document);

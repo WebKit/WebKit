@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #include <WebCore/ScrollableArea.h>
+#include <WebCore/ScrollbarThemeMac.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <pal/spi/mac/NSScrollerImpSPI.h>
 
@@ -122,6 +123,20 @@ void RemoteScrollbarsController::updateScrollbarEnabledState(WebCore::Scrollbar&
 {
     if (auto scrollingCoordinator = m_coordinator.get())
         scrollingCoordinator->setScrollbarEnabled(scrollbar);
+}
+
+void RemoteScrollbarsController::updateScrollbarStyle()
+{
+    auto& theme = WebCore::ScrollbarTheme::theme();
+    if (theme.isMockTheme())
+        return;
+
+    // The different scrollbar styles have different thicknesses, so we must re-set the
+    // frameRect to the new thickness, and the re-layout below will ensure the position
+    // and length are properly updated.
+    updateScrollbarsThickness();
+
+    scrollableArea().scrollbarStyleChanged(theme.usesOverlayScrollbars() ? WebCore::ScrollbarStyle::Overlay : WebCore::ScrollbarStyle::AlwaysVisible, true);
 }
 
 }

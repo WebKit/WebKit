@@ -719,6 +719,8 @@ public:
     void invalidateScrollAnchoringElement() final;
     ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
 
+    WEBCORE_EXPORT void scrollbarStyleDidChange();
+
 private:
     explicit LocalFrameView(LocalFrame&);
 

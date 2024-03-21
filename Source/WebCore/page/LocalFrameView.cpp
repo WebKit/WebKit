@@ -6193,6 +6193,15 @@ void LocalFrameView::invalidateScrollAnchoringElement()
         m_scrollAnchoringController->invalidateAnchorElement();
 }
 
+void LocalFrameView::scrollbarStyleDidChange()
+{
+    if (auto scrollableAreas = this->scrollableAreas()) {
+        for (auto& scrollableArea : *scrollableAreas)
+            scrollableArea.scrollbarsController().updateScrollbarStyle();
+    }
+    scrollbarsController().updateScrollbarStyle();
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

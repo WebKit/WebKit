@@ -34,6 +34,7 @@
 #import "EventHandler.h"
 #import "HTMLMediaElement.h"
 #import "HitTestResult.h"
+#import "LocalFrameView.h"
 #import "MediaPlayerPrivate.h"
 #import "Range.h"
 #import "SharedBuffer.h"
@@ -154,6 +155,16 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
 
     NSScrollerStyle style = enabled ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
     [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
+
+    auto* document = contextDocument();
+    if (!document || !document->frame())
+        return;
+
+    auto* localFrame = dynamicDowncast<LocalFrame>(document->frame()->mainFrame());
+    if (!localFrame)
+        return;
+
+    localFrame->view()->scrollbarStyleDidChange();
 }
 
 #endif

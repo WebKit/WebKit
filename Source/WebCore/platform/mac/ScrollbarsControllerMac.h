@@ -42,7 +42,7 @@ namespace WebCore {
 
 class WheelEventTestMonitor;
 
-class ScrollbarsControllerMac : public ScrollbarsController {
+class ScrollbarsControllerMac final : public ScrollbarsController {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ScrollbarsControllerMac);
 public:
@@ -90,7 +90,7 @@ public:
 
 
     // Public to be callable from Obj-C.
-    void updateScrollerStyle();
+    void updateScrollerStyle() final;
     bool scrollbarPaintTimerIsActive() const;
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
