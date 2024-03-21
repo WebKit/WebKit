@@ -44,9 +44,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Navigation);
 
-Navigation::Navigation(ScriptExecutionContext* context, LocalDOMWindow& window)
-    : ContextDestructionObserver(context)
-    , LocalDOMWindowProperty(&window)
+Navigation::Navigation(LocalDOMWindow& window)
+    : LocalDOMWindowProperty(&window)
 {
 }
 
@@ -99,7 +98,13 @@ Navigation::~Navigation() = default;
 
 ScriptExecutionContext* Navigation::scriptExecutionContext() const
 {
-    return ContextDestructionObserver::scriptExecutionContext();
+    RefPtr window = this->window();
+    return window ? window->document() : nullptr;
+}
+
+RefPtr<ScriptExecutionContext> Navigation::protectedScriptExecutionContext() const
+{
+    return scriptExecutionContext();
 }
 
 enum EventTargetInterfaceType Navigation::eventTargetInterface() const
@@ -170,7 +175,7 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
     window()->frame()->loader().reload();
 
     // FIXME: keep track of promises to resolve later.
-    Ref entry = NavigationHistoryEntry::create(scriptExecutionContext(), { });
+    Ref entry = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), { });
     Navigation::Result result = { apiMethodTracker.committedPromise.ptr(), apiMethodTracker.finishedPromise.ptr() };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
     finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
@@ -178,9 +183,9 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-navigate
-Navigation::Result Navigation::navigate(ScriptExecutionContext& scriptExecutionContext, const String& url, NavigateOptions&& options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    auto currentURL = scriptExecutionContext.url();
+    auto currentURL = scriptExecutionContext()->url();
     auto newURL = URL { currentURL, url };
 
     if (!newURL.isValid())
@@ -217,7 +222,7 @@ Navigation::Result Navigation::navigate(ScriptExecutionContext& scriptExecutionC
     }
 
     // FIXME: keep track of promises to resolve later.
-    Ref entry = NavigationHistoryEntry::create(&scriptExecutionContext, newURL);
+    Ref entry = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), newURL);
     Navigation::Result result = { apiMethodTracker.committedPromise.ptr(), apiMethodTracker.finishedPromise.ptr() };
     committed->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
     finished->resolve<IDLInterface<NavigationHistoryEntry>>(entry.get());
@@ -288,7 +293,7 @@ Navigation::Result Navigation::forward(Options&&, Ref<DeferredPromise>&& committ
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigation-updatecurrententry
-ExceptionOr<void> Navigation::updateCurrentEntry(JSDOMGlobalObject& globalObject, UpdateCurrentEntryOptions&& options)
+ExceptionOr<void> Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&& options)
 {
     if (!window()->frame() || !window()->frame()->document())
         return Exception { ExceptionCode::InvalidStateError };
@@ -297,7 +302,7 @@ ExceptionOr<void> Navigation::updateCurrentEntry(JSDOMGlobalObject& globalObject
     if (!current)
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto serializedState = SerializedScriptValue::create(globalObject, options.state, SerializationForStorage::Yes, SerializationErrorMode::Throwing);
+    auto serializedState = SerializedScriptValue::create(*protectedScriptExecutionContext()->globalObject(), options.state, SerializationForStorage::Yes, SerializationErrorMode::Throwing);
     if (!serializedState)
         return { };
 

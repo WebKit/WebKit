@@ -68,12 +68,12 @@ private:
     uint64_t id;
 };
 
-class Navigation final : public RefCounted<Navigation>, public EventTarget, public ContextDestructionObserver, public LocalDOMWindowProperty {
+class Navigation final : public RefCounted<Navigation>, public EventTarget, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Navigation);
 public:
     ~Navigation();
 
-    static Ref<Navigation> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigation(context, window)); }
+    static Ref<Navigation> create(LocalDOMWindow& window) { return adoptRef(*new Navigation(window)); }
 
     using RefCounted<Navigation>::ref;
     using RefCounted<Navigation>::deref;
@@ -115,7 +115,7 @@ public:
 
     void initializeEntries(const Ref<HistoryItem>& currentItem, Vector<Ref<HistoryItem>> &items);
 
-    Result navigate(ScriptExecutionContext&, const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result navigate(const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
     Result reload(ReloadOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
@@ -123,14 +123,15 @@ public:
     Result back(Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
     Result forward(Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
-    ExceptionOr<void> updateCurrentEntry(JSDOMGlobalObject&, UpdateCurrentEntryOptions&&);
+    ExceptionOr<void> updateCurrentEntry(UpdateCurrentEntryOptions&&);
 
     void updateForNavigation(Ref<HistoryItem>&&, FrameLoadType);
 
 private:
-    Navigation(ScriptExecutionContext*, LocalDOMWindow&);
+    explicit Navigation(LocalDOMWindow&);
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
+    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

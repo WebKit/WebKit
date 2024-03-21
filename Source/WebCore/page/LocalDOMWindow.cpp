@@ -695,7 +695,7 @@ History& LocalDOMWindow::history()
 Navigation& LocalDOMWindow::navigation()
 {
     if (!m_navigation)
-        m_navigation = Navigation::create(protectedScriptExecutionContext().get(), *this);
+        m_navigation = Navigation::create(*this);
     return *m_navigation;
 }
 

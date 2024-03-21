@@ -5,13 +5,13 @@
 ] interface Navigation : EventTarget {
   sequence<NavigationHistoryEntry> entries();
   readonly attribute NavigationHistoryEntry? currentEntry;
-  [CallWith=CurrentGlobalObject] undefined updateCurrentEntry(NavigationUpdateCurrentEntryOptions options);
+  undefined updateCurrentEntry(NavigationUpdateCurrentEntryOptions options);
   readonly attribute NavigationTransition? transition;
 
   readonly attribute boolean canGoBack;
   readonly attribute boolean canGoForward;
 
-  [ReturnsPromisePair,CallWith=CurrentScriptExecutionContext] NavigationResult navigate(USVString url, optional NavigationNavigateOptions options = {});
+  [ReturnsPromisePair] NavigationResult navigate(USVString url, optional NavigationNavigateOptions options = {});
   [ReturnsPromisePair] NavigationResult reload(optional NavigationReloadOptions options = {});
 
   [ReturnsPromisePair] NavigationResult traverseTo(DOMString key, optional NavigationOptions options = {});
