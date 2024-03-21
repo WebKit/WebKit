@@ -72,6 +72,7 @@ public:
         SessionState,
         SerializedScriptValue,
         String,
+        TargetedElementInfo,
         URL,
         URLRequest,
         URLResponse,

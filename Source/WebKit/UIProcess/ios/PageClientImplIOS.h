@@ -342,6 +342,8 @@ private:
     UIViewController *presentingViewController() const final;
 #endif
 
+    WebCore::FloatRect rootViewToWebView(const WebCore::FloatRect&) const final;
+
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }
 
     WeakObjCPtr<WKContentView> m_contentView;

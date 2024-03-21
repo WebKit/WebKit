@@ -64,6 +64,7 @@ class PageConfiguration;
 class PolicyClient;
 class ResourceLoadClient;
 class SerializedScriptValue;
+class TargetedElementInfo;
 class UIClient;
 class URL;
 class URLRequest;
@@ -274,6 +275,7 @@ struct ShareDataWithParsedURL;
 struct SleepDisablerIdentifierType;
 struct SpeechRecognitionError;
 struct SystemPreviewInfo;
+struct TargetedElementRequest;
 struct TextAlternativeWithRange;
 struct TextCheckingResult;
 struct TextIndicatorData;
@@ -2368,6 +2370,8 @@ public:
     void updateMediaCapability();
 #endif
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
+
+    void requestTargetedElement(WebCore::TargetedElementRequest&&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
 
     void requestTextExtraction(std::optional<WebCore::FloatRect>&& collectionRectInRootView, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
     void requestRenderedTextForElementSelector(String&& selector, CompletionHandler<void(Expected<String, WebCore::ExceptionCode>&&)>&&);

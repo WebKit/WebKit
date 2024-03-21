@@ -55,6 +55,7 @@
 #include "APIResourceLoadClient.h"
 #include "APISecurityOrigin.h"
 #include "APISerializedScriptValue.h"
+#include "APITargetedElementInfo.h"
 #include "APIUIClient.h"
 #include "APIURL.h"
 #include "APIURLRequest.h"
@@ -13753,6 +13754,22 @@ void WebPageProxy::renderTreeAsText(WebCore::FrameIdentifier frameID, size_t bas
 
     auto [result] = sendResult.takeReply();
     completionHandler(WTFMove(result));
+}
+
+void WebPageProxy::requestTargetedElement(TargetedElementRequest&& request, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&& completion)
+{
+    if (!hasRunningProcess())
+        return completion({ });
+
+    sendWithAsyncReply(Messages::WebPage::RequestTargetedElement(WTFMove(request)), [completion = WTFMove(completion), weakThis = WeakPtr { *this }](Vector<WebCore::TargetedElementInfo>&& elements) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completion({ });
+
+        completion(WTF::map(WTFMove(elements), [protectedThis](auto&& element) {
+            return API::TargetedElementInfo::create(*protectedThis, WTFMove(element));
+        }));
+    });
 }
 
 void WebPageProxy::requestTextExtraction(std::optional<FloatRect>&& collectionRectInRootView, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&& completion)

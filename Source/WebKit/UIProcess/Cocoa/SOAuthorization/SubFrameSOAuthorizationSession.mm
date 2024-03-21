@@ -28,10 +28,13 @@
 
 #if HAVE(APP_SSO)
 
+#import "APIFrameHandle.h"
 #import "APINavigationAction.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/ContentSecurityPolicy.h>
+#import <WebCore/HTTPParsers.h>
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/RunLoop.h>

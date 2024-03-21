@@ -288,6 +288,8 @@ struct PromisedAttachmentInfo;
 struct RemoteUserInputEventData;
 struct RequestStorageAccessResult;
 struct RunJavaScriptParameters;
+struct TargetedElementInfo;
+struct TargetedElementRequest;
 struct TextCheckingResult;
 struct TextRecognitionOptions;
 struct TextRecognitionResult;
@@ -2222,6 +2224,8 @@ private:
     void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
     void bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier, std::span<const uint8_t>, CompletionHandler<void(std::span<const uint8_t>, int)>&&);
     void updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint);
+
+    void requestTargetedElement(WebCore::TargetedElementRequest&&, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&&);
 
     void requestTextExtraction(std::optional<WebCore::FloatRect>&& collectionRectInRootView, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
     void requestRenderedTextForElementSelector(String&& selector, CompletionHandler<void(Expected<String, WebCore::ExceptionCode>&&)>&&);

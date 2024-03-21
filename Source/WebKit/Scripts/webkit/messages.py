@@ -929,6 +929,8 @@ def headers_for_type(type):
         'WebCore::SupportedPluginIdentifier': ['<WebCore/PluginData.h>'],
         'WebCore::SWServerConnectionIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::SystemPreviewInfo': ['<WebCore/FrameLoaderTypes.h>'],
+        'WebCore::TargetedElementInfo': ['<WebCore/ElementTargetingTypes.h>'],
+        'WebCore::TargetedElementRequest': ['<WebCore/ElementTargetingTypes.h>'],
         'WebCore::TextCheckingRequestData': ['<WebCore/TextChecking.h>'],
         'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::TextCheckingType': ['<WebCore/TextChecking.h>'],

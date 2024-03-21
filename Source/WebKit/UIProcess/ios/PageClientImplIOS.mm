@@ -1222,6 +1222,11 @@ UIViewController *PageClientImpl::presentingViewController() const
     return nil;
 }
 
+FloatRect PageClientImpl::rootViewToWebView(const FloatRect& rect) const
+{
+    return [webView() convertRect:rect fromView:contentView().get()];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

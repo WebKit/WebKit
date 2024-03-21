@@ -1928,6 +1928,7 @@ page/DeviceController.cpp
 page/DiagnosticLoggingKeys.cpp
 page/DisabledAdaptations.cpp
 page/DragController.cpp
+page/ElementTargeting.cpp
 page/EventHandler.cpp
 page/EventSource.cpp
 page/FocusController.cpp

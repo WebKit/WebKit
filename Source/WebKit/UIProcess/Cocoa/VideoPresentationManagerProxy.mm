@@ -1337,4 +1337,6 @@ WTFLogChannel& VideoPresentationManagerProxy::logChannel() const
 
 } // namespace WebKit
 
+#undef MESSAGE_CHECK
+
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

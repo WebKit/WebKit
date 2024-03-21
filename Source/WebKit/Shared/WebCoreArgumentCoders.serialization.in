@@ -883,6 +883,31 @@ struct WebCore::ShareData {
 
 enum class WebCore::ShareDataOriginator : bool
 
+header: <WebCore/ElementTargetingTypes.h>
+[CustomHeader] struct WebCore::TargetedElementRequest {
+    WebCore::FloatPoint pointInRootView
+};
+
+header: <WebCore/ElementTargetingTypes.h>
+[CustomHeader] struct WebCore::TargetedElementInfo {
+    WebCore::ElementIdentifier elementIdentifier
+    WebCore::ScriptExecutionContextIdentifier documentIdentifier
+    WebCore::RectEdges<bool> offsetEdges
+    String renderedText
+    Vector<String> selectors
+    WebCore::FloatRect boundsInRootView
+    WebCore::PositionType positionType
+};
+
+header: <WebCore/RenderStyleConstants.h>
+[CustomHeader] enum class WebCore::PositionType : uint8_t {
+    Static,
+    Relative,
+    Absolute,
+    Sticky,
+    Fixed
+};
+
 [CustomHeader] struct WebCore::RawFile {
     String fileName;
     RefPtr<WebCore::SharedBuffer> fileData;

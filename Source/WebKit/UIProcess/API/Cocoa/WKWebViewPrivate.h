@@ -39,6 +39,7 @@
 #import <WebKit/_WKFindOptions.h>
 #import <WebKit/_WKLayoutMode.h>
 #import <WebKit/_WKOverlayScrollbarStyle.h>
+#import <WebKit/_WKRectEdge.h>
 #import <WebKit/_WKRenderingProgressEvents.h>
 
 typedef NS_ENUM(NSInteger, _WKPaginationMode) {
@@ -105,15 +106,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
     _WKImmediateActionTelLink
 } WK_API_AVAILABLE(macos(10.12));
 
-typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
-    _WKRectEdgeNone = 0,
-    _WKRectEdgeLeft = 1 << CGRectMinXEdge,
-    _WKRectEdgeTop = 1 << CGRectMinYEdge,
-    _WKRectEdgeRight = 1 << CGRectMaxXEdge,
-    _WKRectEdgeBottom = 1 << CGRectMaxYEdge,
-    _WKRectEdgeAll = _WKRectEdgeLeft | _WKRectEdgeTop | _WKRectEdgeRight | _WKRectEdgeBottom,
-} WK_API_AVAILABLE(macos(10.13.4));
-
 #endif
 
 @class UIEventAttribution;
@@ -134,6 +126,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class _WKRemoteObjectRegistry;
 @class _WKSafeBrowsingWarning;
 @class _WKSessionState;
+@class _WKTargetedElementInfo;
+@class _WKTargetedElementRequest;
 @class _WKTextInputContext;
 @class _WKTextManipulationConfiguration;
 @class _WKTextManipulationItem;
@@ -535,6 +529,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 - (void)_setStatisticsCrossSiteLoadWithLinkDecorationForTesting:(NSString *)fromHost withToHost:(NSString *)toHost withWasFiltered:(BOOL)wasFiltered withCompletionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_requestRenderedTextForElementSelector:(NSString *)selector completionHandler:(void(^)(NSString *, NSError *))completionHandler;
+
+- (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSURL *_requiredWebExtensionBaseURL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 

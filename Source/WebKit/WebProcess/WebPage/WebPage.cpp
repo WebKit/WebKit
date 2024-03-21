@@ -196,6 +196,7 @@
 #include <WebCore/Editing.h>
 #include <WebCore/Editor.h>
 #include <WebCore/ElementIterator.h>
+#include <WebCore/ElementTargeting.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/ExceptionCode.h>
@@ -9362,6 +9363,11 @@ void WebPage::renderTreeAsText(WebCore::FrameIdentifier frameID, size_t baseInde
     ts.setIndent(baseIndent);
     WebCore::externalRepresentationForLocalFrame(ts, *coreLocalFrame, behavior);
     completionHandler(ts.release());
+}
+
+void WebPage::requestTargetedElement(TargetedElementRequest&& request, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&& completion)
+{
+    completion(findTargetedElements(Ref { *corePage() }, WTFMove(request)));
 }
 
 void WebPage::requestTextExtraction(std::optional<FloatRect>&& collectionRectInRootView, CompletionHandler<void(TextExtraction::Item&&)>&& completion)
