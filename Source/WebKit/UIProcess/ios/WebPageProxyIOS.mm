@@ -1354,8 +1354,7 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
     // FIXME: This should be additionally gated on site-specific quirks being enabled.
     // See also: <rdar://problem/50035167>.
     // The list of domain names is currently available in Source/WebCore/page/Quirks.cpp
-    auto host = request.url().host();
-    if (Quirks::needsIpadMiniUserAgent(host))
+    if (Quirks::needsIpadMiniUserAgent(request.url()))
         return RecommendDesktopClassBrowsingForRequest::No;
 
     return RecommendDesktopClassBrowsingForRequest::Auto;
