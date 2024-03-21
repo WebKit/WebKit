@@ -471,7 +471,7 @@ struct WebCore::CacheQueryOptions {
 
 struct WebCore::CharacterRange {
     uint64_t location
-    uint64_t length
+    [Validator='!(CheckedUint64 { *location } + *length).hasOverflowed()'] uint64_t length
 }
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::AffineTransform {
