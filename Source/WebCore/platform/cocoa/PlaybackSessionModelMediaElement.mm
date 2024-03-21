@@ -386,6 +386,16 @@ void PlaybackSessionModelMediaElement::toggleInWindowFullscreen()
 #endif
 }
 
+void PlaybackSessionModelMediaElement::enterFullscreen()
+{
+    ASSERT(is<HTMLVideoElement>(*m_mediaElement));
+    if (!is<HTMLVideoElement>(*m_mediaElement))
+        return;
+
+    auto& element = downcast<HTMLVideoElement>(*m_mediaElement);
+    element.webkitEnterFullscreen();
+}
+
 void PlaybackSessionModelMediaElement::toggleMuted()
 {
     setMuted(!isMuted());

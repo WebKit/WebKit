@@ -148,6 +148,7 @@ private:
     BOOL _isShowingMenu;
 #if PLATFORM(VISION)
     RetainPtr<WKExtrinsicButton> _moreActionsButton;
+    RetainPtr<WKExtrinsicButton> _enterVideoFullscreenButton;
     BOOL _shouldHideCustomControls;
     BOOL _isInteractingWithSystemChrome;
 #endif
@@ -565,6 +566,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_moreActionsButton setMenu:self._webView.fullScreenWindowSceneDimmingAction];
         [_moreActionsButton setShowsMenuAsPrimaryAction:YES];
         [_moreActionsButton setImage:[[UIImage systemImageNamed:@"ellipsis"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+
+        _enterVideoFullscreenButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
+        [_enterVideoFullscreenButton setConfiguration:cancelButtonConfiguration];
+        [_enterVideoFullscreenButton setImage:[[UIImage systemImageNamed:@"video"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [_enterVideoFullscreenButton sizeToFit];
+        [_enterVideoFullscreenButton addTarget:self action:@selector(_enterVideoFullscreenAction:) forControlEvents:UIControlEventTouchUpInside];
 #endif
 
         _stackView = adoptNS([[UIStackView alloc] init]);
@@ -572,6 +579,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_stackView addArrangedSubview:_pipButton.get()];
 #if PLATFORM(VISION)
         [_stackView addArrangedSubview:_moreActionsButton.get()];
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        if (self._webView._page->preferences().linearMediaPlayerEnabled())
+            [_stackView addArrangedSubview:_enterVideoFullscreenButton.get()];
+#endif
 #endif
         [_stackView setSpacing:24.0];
     } else {
@@ -777,6 +788,28 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     playbackSessionModel->togglePictureInPicture();
+}
+
+- (void)_enterVideoFullscreenAction:(id)sender
+{
+    ASSERT(_valid);
+    auto page = [self._webView _page];
+    if (!page)
+        return;
+
+    WebKit::PlaybackSessionManagerProxy* playbackSessionManager = page->playbackSessionManager();
+    if (!playbackSessionManager)
+        return;
+
+    WebCore::PlatformPlaybackSessionInterface* playbackSessionInterface = playbackSessionManager->controlsManagerInterface();
+    if (!playbackSessionInterface)
+        return;
+
+    WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface->playbackSessionModel();
+    if (!playbackSessionModel)
+        return;
+
+    playbackSessionModel->enterFullscreen();
 }
 
 - (void)_touchDetected:(id)sender
