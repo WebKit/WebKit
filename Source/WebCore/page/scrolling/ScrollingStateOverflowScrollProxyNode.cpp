@@ -84,8 +84,8 @@ void ScrollingStateOverflowScrollProxyNode::dumpProperties(TextStream& ts, Optio
     ScrollingStateNode::dumpProperties(ts, behavior);
 
     if (auto relatedOverflowNode = scrollingStateTree().stateNodeForID(m_overflowScrollingNodeID)) {
-        auto scrollPosition = downcast<ScrollingStateOverflowScrollingNode>(*relatedOverflowNode).scrollPosition();
-        ts.dumpProperty("related overflow scrolling node scroll position", scrollPosition);
+        if (RefPtr overflowScrollingNode = dynamicDowncast<ScrollingStateOverflowScrollingNode>(relatedOverflowNode))
+            ts.dumpProperty("related overflow scrolling node scroll position", overflowScrollingNode->scrollPosition());
     }
 
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)
