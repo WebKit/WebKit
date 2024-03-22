@@ -26,12 +26,16 @@
 #pragma once
 
 #include "ElementTargetingTypes.h"
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Page;
+class Element;
 
 WEBCORE_EXPORT Vector<TargetedElementInfo> findTargetedElements(Page&, TargetedElementRequest&&);
+
+WEBCORE_EXPORT bool adjustVisibilityForTargetedElements(const Vector<Ref<Element>>&);
 
 } // namespace WebCore

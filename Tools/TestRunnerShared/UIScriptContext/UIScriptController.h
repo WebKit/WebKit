@@ -417,6 +417,9 @@ public:
     virtual void requestTextExtraction(JSValueRef, TextExtractionOptions*) { notImplemented(); }
     virtual void requestRenderedTextForSelector(JSStringRef, JSValueRef) { notImplemented(); }
 
+    // Element Targeting
+    virtual void adjustVisibilityForFrontmostTarget(int, int, JSValueRef) { notImplemented(); }
+
 protected:
     explicit UIScriptController(UIScriptContext&);
     

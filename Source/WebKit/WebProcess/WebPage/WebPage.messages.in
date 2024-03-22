@@ -784,6 +784,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     TextReplacementSessionDidReceiveEditAction(WTF::UUID uuid, enum:uint8_t WebKit::WebTextReplacementData::EditAction action);
 #endif
 
+    AdjustVisibilityForTargetedElements(Vector<std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier>> elements) -> (bool success)
+
     RemoteViewRectToRootView(WebCore::FrameIdentifier frameID, WebCore::FloatRect rect) -> (WebCore::FloatRect rect)
     RemoteViewPointToRootView(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point) -> (WebCore::FloatPoint point)
 }

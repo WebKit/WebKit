@@ -90,6 +90,8 @@ private:
 
     void requestTextExtraction(JSValueRef callback, TextExtractionOptions*) final;
     void requestRenderedTextForSelector(JSStringRef selector, JSValueRef callback) final;
+
+    void adjustVisibilityForFrontmostTarget(int x, int y, JSValueRef callback) final;
 };
 
 } // namespace WTR

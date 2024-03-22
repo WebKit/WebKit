@@ -41,6 +41,9 @@
 #include "LocalFrameView.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "RenderDescendantIterator.h"
+#include "RenderIFrame.h"
+#include "RenderView.h"
 #include "TextExtraction.h"
 #include "TypedElementDescendantIteratorInlines.h"
 
@@ -321,6 +324,47 @@ Vector<TargetedElementInfo> findTargetedElements(Page& page, TargetedElementRequ
         results.append(targetedElementInfo(*iterator));
 
     return results;
+}
+
+static bool setNeedsVisibilityAdjustmentRecursive(Element& element)
+{
+    if (element.isVisibilityAdjustmentRoot())
+        return false;
+
+    element.setIsVisibilityAdjustmentRoot();
+
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return true;
+
+    for (auto& frameRenderer : descendantsOfType<RenderIFrame>(*renderer)) {
+        RefPtr childView = frameRenderer.childView();
+        if (!childView)
+            continue;
+
+        CheckedPtr childRenderView = childView->checkedRenderView();
+        if (!childRenderView)
+            continue;
+
+        RefPtr childDocumentElement = childRenderView->document().documentElement();
+        if (!childDocumentElement)
+            continue;
+
+        setNeedsVisibilityAdjustmentRecursive(*childDocumentElement);
+    }
+
+    element.invalidateStyleAndRenderersForSubtree();
+    return true;
+}
+
+bool adjustVisibilityForTargetedElements(const Vector<Ref<Element>>& elements)
+{
+    bool changed = false;
+    for (auto& element : elements) {
+        if (setNeedsVisibilityAdjustmentRecursive(element))
+            changed = true;
+    }
+    return changed;
 }
 
 } // namespace WebCore

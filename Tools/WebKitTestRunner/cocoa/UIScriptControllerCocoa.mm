@@ -37,6 +37,8 @@
 #import <WebKit/WKURLCF.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKTargetedElementInfo.h>
+#import <WebKit/_WKTargetedElementRequest.h>
 #import <wtf/BlockPtr.h>
 
 @interface WKWebView (WKWebViewInternal)
@@ -350,6 +352,30 @@ void UIScriptControllerCocoa::requestRenderedTextForSelector(JSStringRef selecto
 
         JSRetainPtr result = adopt(JSStringCreateWithCFString((__bridge CFStringRef)(error.description ?: text)));
         m_context->asyncTaskComplete(callbackID, { JSValueMakeString(m_context->jsContext(), result.get()) });
+    }];
+}
+
+void UIScriptControllerCocoa::adjustVisibilityForFrontmostTarget(int x, int y, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    auto request = adoptNS([_WKTargetedElementRequest new]);
+    [request setPoint:CGPointMake(x, y)];
+    [webView() _requestTargetedElementInfo:request.get() completionHandler:[callbackID, this](NSArray<_WKTargetedElementInfo *> *elements) {
+        if (!elements.count) {
+            m_context->asyncTaskComplete(callbackID);
+            return;
+        }
+
+        RetainPtr<_WKTargetedElementInfo> frontTarget = elements.firstObject;
+        [webView() _adjustVisibilityForTargetedElements:@[ frontTarget.get() ] completionHandler:[callbackID, frontTarget, this] (BOOL success) {
+            if (!success) {
+                m_context->asyncTaskComplete(callbackID);
+                return;
+            }
+
+            JSRetainPtr firstSelector = adopt(JSStringCreateWithCFString((__bridge CFStringRef)[frontTarget selectors].firstObject));
+            m_context->asyncTaskComplete(callbackID, { JSValueMakeString(m_context->jsContext(), firstSelector.get()) });
+        }];
     }];
 }
 

@@ -2167,6 +2167,17 @@ window.UIHelper = class UIHelper {
             })()`, resolve);
         });
     }
+
+    static adjustVisibilityForFrontmostTarget(x, y) {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.adjustVisibilityForFrontmostTarget(${x}, ${y}, result => uiController.uiScriptComplete(result));
+            })()`, resolve);
+        });
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

@@ -9413,6 +9413,19 @@ void WebPage::remoteViewPointToRootView(FrameIdentifier frameID, FloatPoint poin
     remoteViewToRootView(frameID, point, WTFMove(completionHandler));
 }
 
+void WebPage::adjustVisibilityForTargetedElements(const Vector<std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier>>& identifiers, CompletionHandler<void(bool)>&& completion)
+{
+    Vector<Ref<Element>> elements;
+    elements.reserveInitialCapacity(identifiers.size());
+    for (auto [elementID, documentID] : identifiers) {
+        RefPtr foundElement = Element::fromIdentifier(elementID);
+        if (!foundElement || foundElement->document().identifier() != documentID)
+            continue;
+        elements.append(foundElement.releaseNonNull());
+    }
+    completion(WebCore::adjustVisibilityForTargetedElements(elements));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

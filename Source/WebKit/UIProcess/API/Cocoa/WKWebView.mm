@@ -4227,6 +4227,17 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     return [_configuration _requiredWebExtensionBaseURL];
 }
 
+- (void)_adjustVisibilityForTargetedElements:(NSArray<_WKTargetedElementInfo *> *)wkElements completionHandler:(void(^)(BOOL success))completion
+{
+    Vector<Ref<API::TargetedElementInfo>> elements;
+    elements.reserveInitialCapacity(wkElements.count);
+    for (_WKTargetedElementInfo *element in wkElements)
+        elements.append(*element->_info);
+    _page->adjustVisibilityForTargetedElements(elements, [completion = makeBlockPtr(completion)](bool success) {
+        completion(static_cast<BOOL>(success));
+    });
+}
+
 @end
 
 @implementation WKWebView (WKDeprecated)

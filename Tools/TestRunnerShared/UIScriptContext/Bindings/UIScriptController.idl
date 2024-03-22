@@ -418,4 +418,6 @@ interface UIScriptController {
 
     undefined requestTextExtraction(object callback, TextExtractionOptions options);
     undefined requestRenderedTextForSelector(DOMString selector, object callback);
+
+    undefined adjustVisibilityForFrontmostTarget(long x, long y, object callback);
 };

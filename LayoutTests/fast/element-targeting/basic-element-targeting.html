@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+.overlay {
+    width: 100%;
+    height: 300px;
+    display: block;
+    visibility: visible;
+    opacity: 0.5;
+}
+
+.fixed {
+    top: 0;
+    left: 2px;
+    background: tomato;
+    position: fixed;
+    pointer-events: none;
+}
+
+#absolute {
+    top: 1%;
+    right: 1em;
+    background: lightblue;
+    position: absolute;
+    z-index: 1000;
+}
+
+.content {
+    width: 320px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<div id="absolute" class="overlay"></div>
+<div class="fixed overlay"></div>
+<p class="content">This test requires WebKitTestRunner.</p>
+<script>
+testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    const content = document.querySelector(".content");
+    const point = UIHelper.midPointOfRect(content.getBoundingClientRect());
+    const firstSelector = await UIHelper.adjustVisibilityForFrontmostTarget(point.x, point.y);
+    const secondSelector = await UIHelper.adjustVisibilityForFrontmostTarget(point.x, point.y);
+
+    const absoluteContainer = document.querySelector("#absolute");
+    if (document.querySelector(firstSelector) !== absoluteContainer)
+        content.textContent = `FAIL: (1) Unexpected selector ${firstSelector}`;
+
+    const fixedContainer = document.querySelector(".fixed");
+    if (document.querySelector(secondSelector) !== fixedContainer)
+        content.textContent = `FAIL: (2) Unexpected selector ${secondSelector}`;
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>
