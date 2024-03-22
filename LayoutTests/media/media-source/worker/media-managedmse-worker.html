@@ -7,18 +7,23 @@
     window.addEventListener('load', async event => {
         findMediaElement();
 
+        testExpected('ManagedMediaSource.canConstructInDedicatedWorker', true);
         const worker = new Worker('worker.js');
         worker.onmessage = msg => {
             switch (msg.data.topic) {
-                case 'handle':
+            case 'handle':
                 logResult(true, 'received handle message: ' + msg.data.arg);
                 video.srcObject = msg.data.arg;
                 break;
-                case 'info':
+            case 'info':
                 logResult(true, 'info message from worker: ' + msg.data.arg);
                 endTest();
                 break;
-                default:
+            case 'error':
+                logResult(false, 'error message from worker: ' + msg.data.arg);
+                endTest();
+                break;
+            default:
                 logResult(false, 'error: Unrecognized topic in message from worker');
                 break;
             }

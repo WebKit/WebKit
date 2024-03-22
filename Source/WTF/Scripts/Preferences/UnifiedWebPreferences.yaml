@@ -4300,6 +4300,7 @@ MediaSourceInWorkerEnabled:
   humanReadableName: "MediaSource in a Worker"
   humanReadableDescription: "MediaSource in a Worker"
   condition: ENABLE(MEDIA_SOURCE_IN_WORKERS)
+  exposed: [ WebCore, WebKit ]
   defaultValue:
     WebKitLegacy:
       default: false

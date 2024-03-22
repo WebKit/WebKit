@@ -44,6 +44,7 @@ public:
 #endif
     virtual std::unique_ptr<NowPlayingManager> createNowPlayingManager() const;
     void resetMediaEngines();
+    virtual bool hasThreadSafeMediaSourceSupport() const;
 #if ENABLE(MEDIA_SOURCE)
     virtual void enableMockMediaSource();
     bool mockMediaSourceEnabled() const;

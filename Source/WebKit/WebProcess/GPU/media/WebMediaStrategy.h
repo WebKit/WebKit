@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/MediaStrategy.h>
+#include <atomic>
 
 namespace WebKit {
 
@@ -43,12 +44,13 @@ private:
         const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate) override;
 #endif
     std::unique_ptr<WebCore::NowPlayingManager> createNowPlayingManager() const final;
+    bool hasThreadSafeMediaSourceSupport() const final;
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource() final;
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    bool m_useGPUProcess { false };
+    std::atomic<bool> m_useGPUProcess { false };
 #endif
 };
 

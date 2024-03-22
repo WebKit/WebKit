@@ -2823,8 +2823,6 @@ webkit.org/b/270385 [ Sonoma+ ] fast/images/jpegxl-with-color-profile.html [ Ima
 
 webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues.html [ Skip ]
 
-webkit.org/b/271323 [ Debug ] media/media-source/worker/media-managedmse-worker.html [ Skip ]
-
 # webkit.org/b/270199 [ MacOS WK1 Debug ] fast/frames/lots-of-iframes.html and fast/frames/lots-of-objects.html are consistent/flaky timeouts
 [ Debug ] fast/frames/lots-of-iframes.html [ Pass Timeout ]
 [ Debug ] fast/frames/lots-of-objects.html [ Pass Timeout ]
