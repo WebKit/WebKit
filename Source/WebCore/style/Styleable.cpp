@@ -346,7 +346,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     auto& keyframeEffectStack = ensureKeyframeEffectStack();
 
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
-    if (currentStyle && currentStyle->display() != DisplayType::None && newStyle.display() == DisplayType::None) {
+    if ((!currentStyle || currentStyle->display() != DisplayType::None) && newStyle.display() == DisplayType::None) {
         for (auto& cssAnimation : animationsCreatedByMarkup())
             cssAnimation->cancelFromStyle();
         keyframeEffectStack.setCSSAnimationList(nullptr);
@@ -725,6 +725,10 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
 
 void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle, WeakStyleOriginatedAnimations& newStyleOriginatedAnimations) const
 {
+    // In case this element previous had "display: none" we can stop considering transitions altogether.
+    if (currentStyle.display() == DisplayType::None)
+        return;
+
     // In case this element is newly getting a "display: none" we need to cancel all of its transitions and disregard new ones.
     if (currentStyle.hasTransitions() && currentStyle.display() != DisplayType::None && newStyle.display() == DisplayType::None) {
         if (hasRunningTransitions()) {

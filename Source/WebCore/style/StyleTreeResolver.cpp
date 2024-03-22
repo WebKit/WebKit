@@ -191,6 +191,8 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
 {
     if (newStyle.display() != DisplayType::None)
         return true;
+    if (element.hasDisplayNone())
+        return true;
     if (element.renderOrDisplayContentsStyle())
         return true;
     if (element.rendererIsNeeded(newStyle))
@@ -261,13 +263,13 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
 
     Styleable styleable { element, { } };
     auto resolvedStyle = styleForStyleable(styleable, resolutionType, resolutionContext);
+    auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext);
 
-    if (!affectsRenderedSubtree(element, *resolvedStyle.style)) {
+    if (!affectsRenderedSubtree(element, *update.style)) {
         styleable.setLastStyleChangeEventStyle(nullptr);
         return { };
     }
 
-    auto update = createAnimatedElementUpdate(WTFMove(resolvedStyle), styleable, parent().change, resolutionContext);
     auto descendantsToResolve = computeDescendantsToResolve(update, existingStyle, element.styleValidity());
     bool isDocumentElement = &element == m_document.documentElement();
     if (isDocumentElement) {
@@ -653,6 +655,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         oldStyle = startingStyle.get();
     }
 
+    auto unanimatedDisplay = resolvedStyle.style->display();
+
     WeakStyleOriginatedAnimations newStyleOriginatedAnimations;
 
     auto updateAnimations = [&] {
@@ -729,15 +733,32 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
     bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element.styleResolutionShouldRecompositeLayer();
 
-    if (!newStyleOriginatedAnimations.isEmpty()) {
-        // Make sure that the creation of new style-originated animations during this update
-        // is known to the document's timeline as animation scheduling was paused for any
-        // animation created during this update.
+    auto animationsAffectedDisplay = [&, animatedDisplay = newStyle->display()]() {
+        auto* keyframeEffectStack = styleable.keyframeEffectStack();
+        if (!keyframeEffectStack)
+            return false;
+        if (unanimatedDisplay != animatedDisplay)
+            return true;
+        return keyframeEffectStack->containsProperty(CSSPropertyDisplay);
+    }();
+
+    if (!affectsRenderedSubtree(styleable.element, *newStyle)) {
+        // If after updating animations we end up not rendering this element or its subtree
+        // and the update did not change the "display" value then we should cancel all
+        // style-originated animations while ensuring that the new ones are canceled silently,
+        // as if they hadn't been created.
+        if (!animationsAffectedDisplay)
+            styleable.cancelStyleOriginatedAnimations(newStyleOriginatedAnimations);
+    } else if (!newStyleOriginatedAnimations.isEmpty()) {
+        // If style-originated animations were not canceled, then we should make sure that
+        // the creation of new style-originated animations during this update is known to the
+        // document's timeline as animation scheduling was paused for any animation created
+        // during this update.
         if (auto* timeline = m_document.existingTimeline())
             timeline->styleOriginatedAnimationsWereCreated();
     }
 
-    return { WTFMove(newStyle), change, shouldRecompositeLayer };
+    return { WTFMove(newStyle), change, shouldRecompositeLayer, animationsAffectedDisplay };
 }
 
 std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext) const
