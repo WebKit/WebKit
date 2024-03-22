@@ -110,6 +110,12 @@ public:
 
     WindowKind windowKind() final;
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView) final;
+
+    void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID) final;
+#endif
+
 protected:
     RetainPtr<WKWebView> webView() const { return m_webView.get(); }
 

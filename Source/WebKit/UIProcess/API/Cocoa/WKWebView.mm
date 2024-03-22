@@ -224,6 +224,10 @@ SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabl
 #define THROW_IF_SUSPENDED if (UNLIKELY(_page && _page->isSuspended())) \
     [NSException raise:NSInternalInconsistencyException format:@"The WKWebView is suspended"]
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewAdditionsBefore.mm>
+#endif
+
 RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
@@ -436,6 +440,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _timeOfRequestForVisibleContentRectUpdate = timeNow;
     _timeOfLastVisibleContentRectUpdate = timeNow;
     _timeOfFirstVisibleContentRectUpdateWithPendingCommit = timeNow;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    _unifiedTextReplacementSessions = [NSMapTable strongToWeakObjectsMapTable];
 #endif
 }
 
@@ -1977,6 +1985,10 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     _minimumViewportInset = minimumViewportInset;
     _maximumViewportInset = maximumViewportInset;
 }
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewAdditionsAfter.mm>
+#endif
 
 @end
 

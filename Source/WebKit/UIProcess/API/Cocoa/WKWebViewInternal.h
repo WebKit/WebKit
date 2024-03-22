@@ -85,6 +85,7 @@ enum class WheelScrollGestureState : uint8_t;
 
 namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
+enum class WebTextReplacementDataState : uint8_t;
 class IconLoadingDelegate;
 class NavigationState;
 class ResourceLoadDelegate;
@@ -117,6 +118,14 @@ class ViewGestureController;
 
 #if PLATFORM(MAC)
 @class WKTextFinderClient;
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+@class WKWebTextReplacementSession;
 #endif
 
 @protocol _WKTextManipulationDelegate;
@@ -226,6 +235,10 @@ struct PerWebProcessState {
 
     CocoaEdgeInsets _minimumViewportInset;
     CocoaEdgeInsets _maximumViewportInset;
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    RetainPtr<NSMapTable<NSUUID *, WKWebTextReplacementSession *>> _unifiedTextReplacementSessions;
+#endif
 
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
@@ -359,6 +372,12 @@ struct PerWebProcessState {
 
 #if ENABLE(APP_HIGHLIGHTS)
 - (void)_storeAppHighlight:(const WebCore::AppHighlight&)info;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
+
+- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebKit::WebTextReplacementDataState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

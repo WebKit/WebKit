@@ -7179,17 +7179,17 @@ String Internals::treeOrderBoundaryPoints(Node& containerA, unsigned offsetA, No
 
 bool Internals::rangeContainsNode(const AbstractRange& range, Node& node, TreeType type)
 {
-    return containsForTesting(convertType(type), makeSimpleRange(range), node);
+    return contains(convertType(type), makeSimpleRange(range), node);
 }
 
 bool Internals::rangeContainsBoundaryPoint(const AbstractRange& range, Node& container, unsigned offset, TreeType type)
 {
-    return containsForTesting(convertType(type), makeSimpleRange(range), { container, offset });
+    return contains(convertType(type), makeSimpleRange(range), { container, offset });
 }
 
 bool Internals::rangeContainsRange(const AbstractRange& outerRange, const AbstractRange& innerRange, TreeType type)
 {
-    return containsForTesting(convertType(type), makeSimpleRange(outerRange), makeSimpleRange(innerRange));
+    return contains(convertType(type), makeSimpleRange(outerRange), makeSimpleRange(innerRange));
 }
 
 bool Internals::rangeIntersectsNode(const AbstractRange& range, Node& node, TreeType type)

@@ -66,6 +66,8 @@ public:
 
     void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);
 
+    void updateStateForSelectedReplacementIfNeeded();
+
 private:
     void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);
 

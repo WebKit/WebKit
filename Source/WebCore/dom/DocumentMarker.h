@@ -111,6 +111,7 @@ public:
 
         String originalText;
         WTF::UUID uuid;
+        WTF::UUID sessionUUID;
         State state { State::Pending };
     };
 #endif

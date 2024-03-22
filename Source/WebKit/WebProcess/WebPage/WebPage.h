@@ -1725,6 +1725,12 @@ public:
     std::optional<WebCore::SimpleRange> autocorrectionContextRange();
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect);
+
+    void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID);
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

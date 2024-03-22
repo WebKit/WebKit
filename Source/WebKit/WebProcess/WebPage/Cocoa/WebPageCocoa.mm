@@ -937,6 +937,16 @@ void WebPage::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, 
     m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(uuid, action);
 }
 
+void WebPage::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect rect)
+{
+    send(Messages::WebPageProxy::TextReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(sessionUUID, replacementUUID, rect));
+}
+
+void WebPage::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementData::State state, const WTF::UUID& replacementUUID)
+{
+    send(Messages::WebPageProxy::TextReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID));
+}
+
 #endif
 
 std::optional<SimpleRange> WebPage::autocorrectionContextRange()

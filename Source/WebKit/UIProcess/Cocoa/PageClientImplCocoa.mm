@@ -272,4 +272,16 @@ WindowKind PageClientImplCocoa::windowKind()
     return WindowKind::Normal;
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+{
+    [m_webView _textReplacementSession:sessionUUID showInformationForReplacementWithUUID:replacementUUID relativeToRect:selectionBoundsInRootView];
+}
+
+void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState state, const WTF::UUID& replacementUUID)
+{
+    [m_webView _textReplacementSession:sessionUUID updateState:state forReplacementWithUUID:replacementUUID];
+}
+#endif
+
 }

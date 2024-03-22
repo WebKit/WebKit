@@ -236,6 +236,12 @@ messages -> WebPageProxy {
     HandleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    TextReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(WTF::UUID sessionUUID, WTF::UUID replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+
+    TextReplacementSessionUpdateStateForReplacementWithUUID(WTF::UUID sessionUUID, enum:uint8_t WebKit::WebTextReplacementDataState state, WTF::UUID replacementUUID)
+#endif
+
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     ShowMediaControlsContextMenu(WebCore::FloatRect targetFrame, Vector<WebCore::MediaControlsContextMenuItem> items) -> (WebCore::MediaControlsContextMenuItem::ID selectedItemID)
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

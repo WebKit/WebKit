@@ -36,6 +36,7 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/GeometryUtilities.h>
 #include <WebCore/HTMLConverter.h>
 #include <WebCore/RenderedDocumentMarker.h>
 #include <WebCore/SimpleRange.h>
@@ -90,6 +91,30 @@ static std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findR
     document.markers().forEachOfTypes({ WebCore::DocumentMarker::Type::UnifiedTextReplacement }, [&replacementUUID, &targetNode, &targetMarker] (auto& node, auto& marker) mutable {
         auto data = std::get<WebCore::DocumentMarker::UnifiedTextReplacementData>(marker.data());
         if (data.uuid != replacementUUID)
+            return false;
+
+        targetNode = &node;
+        targetMarker = &marker;
+
+        return true;
+    });
+
+    if (targetNode && targetMarker)
+        return { { *targetNode, *targetMarker } };
+
+    return std::nullopt;
+}
+
+static std::optional<std::tuple<WebCore::Node&, WebCore::DocumentMarker&>> findReplacementMarkerContainingRange(WebCore::Document& document, const WebCore::SimpleRange& range)
+{
+    RefPtr<WebCore::Node> targetNode;
+    WeakPtr<WebCore::DocumentMarker> targetMarker;
+
+    document.markers().forEachOfTypes({ WebCore::DocumentMarker::Type::UnifiedTextReplacement }, [&range, &targetNode, &targetMarker] (auto& node, auto& marker) mutable {
+        auto data = std::get<WebCore::DocumentMarker::UnifiedTextReplacementData>(marker.data());
+
+        auto markerRange = WebCore::makeSimpleRange(node, marker);
+        if (!WebCore::contains(WebCore::TreeType::ComposedTree, markerRange, range))
             return false;
 
         targetNode = &node;
@@ -225,7 +250,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidReceiveReplaceme
         auto newRangeWithOffset = WebCore::CharacterRange { locationWithOffset, replacementData.replacement.length() };
         auto newResolvedRange = resolveCharacterRange(*sessionRange, newRangeWithOffset);
 
-        auto markerData = WebCore::DocumentMarker::UnifiedTextReplacementData { replacementData.originalString.string, replacementData.uuid, WebCore::DocumentMarker::UnifiedTextReplacementData::State::Pending };
+        auto markerData = WebCore::DocumentMarker::UnifiedTextReplacementData { replacementData.originalString.string, replacementData.uuid, uuid, WebCore::DocumentMarker::UnifiedTextReplacementData::State::Pending };
         addMarker(newResolvedRange, WebCore::DocumentMarker::Type::UnifiedTextReplacement, markerData);
 
         additionalOffset += replacementData.replacement.length() - replacementData.originalRange.length;
@@ -257,7 +282,7 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
         return;
     }
 
-    if (state != WebTextReplacementData::State::Committed && state != WebTextReplacementData::State::Reverted)
+    if (state != WebTextReplacementData::State::Committed && state != WebTextReplacementData::State::Reverted && state != WebTextReplacementData::State::Active)
         return;
 
     auto nodeAndMarker = findReplacementMarkerByUUID(*document, replacement.uuid);
@@ -268,7 +293,14 @@ void UnifiedTextReplacementController::textReplacementSessionDidUpdateStateForRe
 
     auto& [node, marker] = *nodeAndMarker;
 
-    auto rangeToReplace = makeSimpleRange(node, marker);
+    auto rangeToReplace = WebCore::makeSimpleRange(node, marker);
+
+    if (state == WebTextReplacementData::State::Active) {
+        auto rect = frame->view()->contentsToRootView(WebCore::unionRect(WebCore::RenderObject::absoluteTextRects(rangeToReplace)));
+        m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(uuid, replacement.uuid, rect);
+
+        return;
+    }
 
     auto data = std::get<WebCore::DocumentMarker::UnifiedTextReplacementData>(marker.data());
 
@@ -521,7 +553,7 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
 
             replaceTextInRange(document, rangeToReplace, previousText);
 
-            auto newData = WebCore::DocumentMarker::UnifiedTextReplacementData { currentText, oldData.uuid, newState };
+            auto newData = WebCore::DocumentMarker::UnifiedTextReplacementData { currentText, oldData.uuid, uuid, newState };
             auto newOffsetRange = WebCore::OffsetRange { offsetRange.start, offsetRange.end + previousText.length() - currentText.length() };
 
             document.markers().addMarker(node, WebCore::DocumentMarker { WebCore::DocumentMarker::Type::UnifiedTextReplacement, newOffsetRange, WTFMove(newData) });
@@ -617,6 +649,54 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
     case WebKit::WebTextReplacementData::EditAction::Redo:
         break;
     }
+}
+
+void UnifiedTextReplacementController::updateStateForSelectedReplacementIfNeeded()
+{
+    // Optimization: If there are no ongoing sessions, there is no need for any of this logic to
+    // be executed, since there will be no relevant document markers anyways.
+    if (m_contextRanges.isEmpty())
+        return;
+
+    if (!m_webPage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr corePage = m_webPage->corePage();
+    if (!corePage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr document = frame->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto selectionRange = document->selection().selection().firstRange();
+    if (!selectionRange)
+        return;
+
+    auto nodeAndMarker = findReplacementMarkerContainingRange(*document, *selectionRange);
+    if (!nodeAndMarker)
+        return;
+
+    auto& [node, marker] = *nodeAndMarker;
+    auto markerRange = WebCore::makeSimpleRange(node, marker);
+
+    auto data = std::get<WebCore::DocumentMarker::UnifiedTextReplacementData>(marker.data());
+    auto rect = frame->view()->contentsToRootView(WebCore::unionRect(WebCore::RenderObject::absoluteTextRects(markerRange)));
+
+    m_webPage->textReplacementSessionUpdateStateForReplacementWithUUID(data.sessionUUID, WebTextReplacementData::State::Active, data.uuid);
+    m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(data.sessionUUID, data.uuid, rect);
 }
 
 } // namespace WebKit

@@ -1176,6 +1176,16 @@ void WebPageProxy::textReplacementSessionDidReceiveEditAction(const WTF::UUID& u
     send(Messages::WebPage::TextReplacementSessionDidReceiveEditAction(uuid, action));
 }
 
+void WebPageProxy::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+{
+    protectedPageClient()->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(sessionUUID, replacementUUID, selectionBoundsInRootView);
+}
+
+void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementData::State state, const WTF::UUID& replacementUUID)
+{
+    protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID);
+}
+
 #endif
 
 } // namespace WebKit

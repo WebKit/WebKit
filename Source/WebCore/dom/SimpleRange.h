@@ -74,9 +74,9 @@ template<TreeType = Tree> bool contains(const SimpleRange&, const Node&);
 
 template<> WEBCORE_EXPORT bool contains<ComposedTree>(const SimpleRange&, const std::optional<BoundaryPoint>&);
 
-WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
-WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const Node&);
-WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const BoundaryPoint&);
+WEBCORE_EXPORT bool contains(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
+WEBCORE_EXPORT bool contains(TreeType, const SimpleRange&, const Node&);
+WEBCORE_EXPORT bool contains(TreeType, const SimpleRange&, const BoundaryPoint&);
 
 template<TreeType = Tree> bool intersects(const SimpleRange&, const SimpleRange&);
 template<TreeType = Tree> bool intersects(const SimpleRange&, const Node&);
