@@ -102,7 +102,9 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebTransportSession.h"
 #include "WebURLSchemeHandlerIdentifier.h"
+#if PLATFORM(COCOA)
 #include <WebCore/AttributedString.h>
+#endif
 #include <WebCore/BackgroundFetchRecordIdentifier.h>
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/DictationContext.h>
@@ -454,8 +456,12 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
 Vector<ASCIILiteral> serializedIdentifiers()
 {
     static_assert(sizeof(uint64_t) == sizeof(IPC::AsyncReplyID));
+#if PLATFORM(COCOA)
     static_assert(sizeof(uint64_t) == sizeof(WebCore::AttributedStringTextTableBlockID));
+#endif
+#if PLATFORM(COCOA)
     static_assert(sizeof(uint64_t) == sizeof(WebCore::AttributedStringTextTableID));
+#endif
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BackgroundFetchRecordIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BroadcastChannelIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DictationContext));
@@ -575,8 +581,12 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
         "IPC::AsyncReplyID"_s,
+#if PLATFORM(COCOA)
         "WebCore::AttributedStringTextTableBlockID"_s,
+#endif
+#if PLATFORM(COCOA)
         "WebCore::AttributedStringTextTableID"_s,
+#endif
         "WebCore::BackgroundFetchRecordIdentifier"_s,
         "WebCore::BroadcastChannelIdentifier"_s,
         "WebCore::DictationContext"_s,
