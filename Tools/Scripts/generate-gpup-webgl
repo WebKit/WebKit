@@ -106,7 +106,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
     void DrawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    void SurfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer) -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
+    void SurfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer) -> (std::optional<WebKit::RemoteVideoFrameProxyProperties> properties) Synchronous
 #endif
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     void CopyTextureFromVideoFrame(struct WebKit::SharedVideoFrame frame, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous NotStreamEncodable
@@ -123,7 +123,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
 #if PLATFORM(COCOA)
-    void CreateAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source) -> (uint64_t handle, WebCore::IntSize size) Synchronous NotStreamEncodable NotStreamEncodableReply
+    void CreateAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer) -> (uint64_t handle) Synchronous NotStreamEncodable NotStreamEncodableReply
     void CreateEGLSync(MachSendRight syncEvent, uint64_t signalValue) -> (uint64_t sync) Synchronous NotStreamEncodable NotStreamEncodableReply
 #endif
 {}
@@ -361,9 +361,6 @@ def cpp_array_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_contain
     element_pointer_type = type.get_contained_type().get_pointer_type()
     return cpp_expr(type, f"{str(type)}(reinterpret_cast<{element_pointer_type}>({str(expr)}.data()), {str(expr)}.size())")
 
-def webkit_ipc_span_transfer_type_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_container) -> cpp_expr:
-    element_pointer_type = type.get_contained_type().get_pointer_type()
-    return cpp_expr(type, f"{str(type)}(reinterpret_cast<{element_pointer_type}>({str(expr)}.data()), {str(expr)}.size())")
 
 def cpp_move_expr(expr: cpp_expr) -> cpp_expr:
     return cpp_expr(expr.type.get_rvalue_type(), f"WTFMove({str(expr)})")
@@ -524,14 +521,6 @@ def webkit_ipc_get_span_store_type(type: cpp_type_container) -> cpp_type:
         return get_cpp_type(f"Vector<{str(element_type)}, {str(inline_capacity)}>")
     return get_cpp_type(f"std::array<{str(element_type)}, {str(type.get_arity())}>")
 
-def webkit_ipc_make_gcglspan_conversion(expr : cpp_expr, type : cpp_type_container) -> cpp_expr:
-    pointer_cast_type = type.get_contained_type().get_pointer_type()
-    element_type = type.get_contained_type()
-    if type.is_dynamic_span():
-        return cpp_expr(type, f"std::span(reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(expr)}.size())")
-
-    assert(type.is_span())
-    return cpp_expr(type, f"std::span<{element_type}, {str(type.get_arity())}> {{ reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(type.get_arity())} }}")
 
 # See messages.py function_parameter_type
 webkit_ipc_builtin_types = set(
@@ -1020,12 +1009,8 @@ def main():
         if cpp_type.is_dynamic_span() or cpp_type.is_span():
             transfer_type = webkit_ipc_get_span_transfer_type(cpp_type)
             webkit_ipc_types[cpp_type] = transfer_type.get_value_type()
-            if cpp_type.get_contained_type().is_const():
-                webkit_ipc_types_converters[(cpp_type, transfer_type)] = webkit_ipc_span_transfer_type_reinterpret_cast_conversion
-                webkit_ipc_types_converters[(transfer_type, cpp_type)] = webkit_ipc_make_gcglspan_conversion
-            else:
-                store_type = webkit_ipc_get_span_store_type(cpp_type)
-                webkit_ipc_types_converters[(store_type, transfer_type)] = cpp_array_reinterpret_cast_conversion
+            store_type = webkit_ipc_get_span_store_type(cpp_type)
+            webkit_ipc_types_converters[(store_type, transfer_type)] = cpp_array_reinterpret_cast_conversion
         elif cpp_type.is_reference() or cpp_type.is_const_reference() or cpp_type.is_container():
             value_type = cpp_type.get_value_type() if not cpp_type.is_container() else cpp_type
             if value_type.is_container():
