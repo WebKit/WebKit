@@ -2209,9 +2209,6 @@ http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broa
 
 webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
 
-#rdar://82259067 ([iOS Debug]fast/events/ios/rotation/basic-rotation.html is a constant crash)
-fast/events/ios/rotation/basic-rotation.html [ Pass Crash Failure ]
-
 webkit.org/b/231262 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure Crash ]
 
 webkit.org/b/231264 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Failure ]
