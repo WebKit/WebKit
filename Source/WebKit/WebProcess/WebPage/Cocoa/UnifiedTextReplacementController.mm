@@ -126,6 +126,13 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
         return;
     }
 
+    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        completionHandler({ });
+        return;
+    }
+
     auto contextRange = m_webPage->autocorrectionContextRange();
     if (!contextRange) {
         RELEASE_LOG(UnifiedTextReplacement, "UnifiedTextReplacementController::willBeginTextReplacementSession (%s) => no context range", uuid.toString().utf8().data());
@@ -133,18 +140,14 @@ void UnifiedTextReplacementController::willBeginTextReplacementSession(const WTF
         return;
     }
 
-    auto liveRange = createLiveRange(*contextRange);
+    // If the UUID is invalid, the session is ephemeral.
+    if (uuid.isValid()) {
+        auto liveRange = createLiveRange(*contextRange);
 
-    ASSERT(!m_contextRanges.contains(uuid));
-    m_contextRanges.set(uuid, liveRange);
+        ASSERT(!m_contextRanges.contains(uuid));
+        m_contextRanges.set(uuid, liveRange);
 
-    m_replacementTypes.set(uuid, type);
-
-    RefPtr frame = corePage->checkedFocusController()->focusedOrMainFrame();
-    if (!frame) {
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-        return;
+        m_replacementTypes.set(uuid, type);
     }
 
     auto selectedTextRange = frame->selection().selection().firstRange();
@@ -502,7 +505,7 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
 
             document.markers().removeMarkers(node, offsetRange, { WebCore::DocumentMarker::Type::UnifiedTextReplacement });
 
-            auto newState = [&]() -> WebCore::DocumentMarker::UnifiedTextReplacementData::State {
+            auto newState = [&] {
                 switch (action) {
                 case WebTextReplacementData::EditAction::Undo:
                     return WebCore::DocumentMarker::UnifiedTextReplacementData::State::Reverted;
@@ -519,7 +522,7 @@ void UnifiedTextReplacementController::textReplacementSessionPerformEditActionFo
             replaceTextInRange(document, rangeToReplace, previousText);
 
             auto newData = WebCore::DocumentMarker::UnifiedTextReplacementData { currentText, oldData.uuid, newState };
-            auto newOffsetRange = WebCore::OffsetRange { offsetRange.start, offsetRange.end - currentText.length() + previousText.length()  };
+            auto newOffsetRange = WebCore::OffsetRange { offsetRange.start, offsetRange.end + previousText.length() - currentText.length() };
 
             document.markers().addMarker(node, WebCore::DocumentMarker { WebCore::DocumentMarker::Type::UnifiedTextReplacement, newOffsetRange, WTFMove(newData) });
         }
