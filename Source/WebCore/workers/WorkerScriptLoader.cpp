@@ -289,7 +289,7 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
     if (buffer.isEmpty())
         return;
 
-    m_script.append(m_decoder->decode(buffer.data(), buffer.size()));
+    m_script.append(m_decoder->decode(buffer.span()));
 }
 
 void WorkerScriptLoader::didFinishLoading(ResourceLoaderIdentifier identifier, const NetworkLoadMetrics&)

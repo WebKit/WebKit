@@ -61,7 +61,7 @@ public:
     virtual void removeGenericCue(InbandGenericCue&) = 0;
 
     virtual void parseWebVTTFileHeader(String&&) { ASSERT_NOT_REACHED(); }
-    virtual void parseWebVTTCueData(const uint8_t* data, unsigned length) = 0;
+    virtual void parseWebVTTCueData(std::span<const uint8_t>) = 0;
     virtual void parseWebVTTCueData(ISOWebVTTCue&&) = 0;
 };
 

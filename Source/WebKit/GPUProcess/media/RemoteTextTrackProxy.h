@@ -78,7 +78,7 @@ private:
     virtual void removeGenericCue(WebCore::InbandGenericCue&);
 
     virtual void parseWebVTTFileHeader(String&&);
-    virtual void parseWebVTTCueData(const uint8_t* data, unsigned length);
+    virtual void parseWebVTTCueData(std::span<const uint8_t>);
     virtual void parseWebVTTCueData(WebCore::ISOWebVTTCue&&);
 
     // TrackPrivateBaseClient

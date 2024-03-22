@@ -184,7 +184,7 @@ void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(const WebCore::FragmentedSh
 
     buffer.forEachSegment([&](auto segment) {
         if (segment.size())
-            m_script.append(m_decoder->decode(segment.data(), segment.size()));
+            m_script.append(m_decoder->decode(segment));
     });
 }
 

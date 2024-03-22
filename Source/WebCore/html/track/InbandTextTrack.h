@@ -84,7 +84,7 @@ private:
     void removeGenericCue(InbandGenericCue&) override { ASSERT_NOT_REACHED(); }
 
     void parseWebVTTFileHeader(String&&) override { ASSERT_NOT_REACHED(); }
-    void parseWebVTTCueData(const uint8_t*, unsigned) override { ASSERT_NOT_REACHED(); }
+    void parseWebVTTCueData(std::span<const uint8_t>) override { ASSERT_NOT_REACHED(); }
     void parseWebVTTCueData(ISOWebVTTCue&&) override { ASSERT_NOT_REACHED(); }
 };
 

@@ -330,8 +330,10 @@ static inline bool shouldPrependBOM(std::span<const uint8_t> data)
 String TextResourceDecoder::textFromUTF8(std::span<const uint8_t> data)
 {
     auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8");
-    if (shouldPrependBOM(data))
-        decoder->decode("\xef\xbb\xbf", 3);
+    if (shouldPrependBOM(data)) {
+        constexpr auto bom = std::to_array<uint8_t>({ 0xEF, 0xBB, 0xBF });
+        decoder->decode(bom);
+    }
     return decoder->decodeAndFlush(data);
 }
 

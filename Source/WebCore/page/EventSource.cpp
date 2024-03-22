@@ -225,7 +225,7 @@ void EventSource::didReceiveData(const SharedBuffer& buffer)
     ASSERT(m_requestInFlight);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForBackForwardCache);
 
-    append(m_receiveBuffer, m_decoder->decode(buffer.data(), buffer.size()));
+    append(m_receiveBuffer, m_decoder->decode(buffer.span()));
     parseEventStream();
 }
 

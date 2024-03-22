@@ -57,13 +57,8 @@ public:
     bool hasEqualEncodingForCharset(const String& charset) const;
 
     WEBCORE_EXPORT String decode(std::span<const uint8_t>);
-    String decode(const char* data, size_t length) { return decode(std::span { reinterpret_cast<const uint8_t*>(data), length }); }
-    String decode(const uint8_t* data, size_t length) { return decode(std::span { data, length }); }
     WEBCORE_EXPORT String flush();
-
     WEBCORE_EXPORT String decodeAndFlush(std::span<const uint8_t>);
-    String decodeAndFlush(const char* data, size_t length) { return decodeAndFlush(std::span { reinterpret_cast<const uint8_t*>(data), length }); }
-    String decodeAndFlush(const uint8_t* data, size_t length) { return decodeAndFlush(std::span { data, length }); }
 
     void setHintEncoding(const TextResourceDecoder* parentFrameDecoder);
    

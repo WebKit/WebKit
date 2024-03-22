@@ -137,7 +137,7 @@ void TextTrackPrivateRemote::parseWebVTTCueData(std::span<const uint8_t> data)
 {
     ASSERT(hasOneClient());
     notifyMainThreadClient([&](auto& client) {
-        downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(data.data(), data.size());
+        downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(data);
     });
 }
 

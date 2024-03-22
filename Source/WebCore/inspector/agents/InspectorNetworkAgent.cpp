@@ -132,7 +132,7 @@ public:
         if (buffer.isEmpty())
             return;
 
-        m_responseText.append(m_decoder->decode(buffer.data(), buffer.size()));
+        m_responseText.append(m_decoder->decode(buffer.span()));
     }
 
     void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override
@@ -1475,12 +1475,12 @@ bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, Stri
         if (InspectorNetworkAgent::shouldTreatAsText(resource.mimeType())) {
             auto decoder = InspectorNetworkAgent::createTextDecoder(resource.mimeType(), resource.response().textEncodingName());
             *base64Encoded = false;
-            *result = decoder->decodeAndFlush(buffer->makeContiguous()->data(), buffer->size());
+            *result = decoder->decodeAndFlush(buffer->makeContiguous()->span());
             return true;
         }
 
         *base64Encoded = true;
-        *result = base64EncodeToString(buffer->makeContiguous()->data(), buffer->size());
+        *result = base64EncodeToString(buffer->makeContiguous()->span());
         return true;
     }
 }

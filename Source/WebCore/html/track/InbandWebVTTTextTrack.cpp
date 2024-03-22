@@ -62,9 +62,9 @@ WebVTTParser& InbandWebVTTTextTrack::parser()
     return *m_webVTTParser;
 }
 
-void InbandWebVTTTextTrack::parseWebVTTCueData(const uint8_t* data, unsigned length)
+void InbandWebVTTTextTrack::parseWebVTTCueData(std::span<const uint8_t> data)
 {
-    parser().parseBytes(data, length);
+    parser().parseBytes(data);
 }
 
 void InbandWebVTTTextTrack::parseWebVTTCueData(ISOWebVTTCue&& cueData)

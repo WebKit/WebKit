@@ -92,7 +92,7 @@ void TextTrackLoader::processNewCueData(CachedResource& resource)
 
     while (m_parseOffset < buffer->size()) {
         auto data = buffer->getSomeData(m_parseOffset);
-        m_cueParser->parseBytes(data.data(), data.size());
+        m_cueParser->parseBytes(data.span());
         m_parseOffset += data.size();
     }
 }

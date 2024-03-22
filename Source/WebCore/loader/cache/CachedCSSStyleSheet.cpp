@@ -89,7 +89,7 @@ const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint,
         return m_decodedSheetText;
 
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
-    return protectedDecoder()->decodeAndFlush(m_data->makeContiguous()->data(), m_data->size());
+    return protectedDecoder()->decodeAndFlush(m_data->makeContiguous()->span());
 }
 
 void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
@@ -111,7 +111,7 @@ void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
         Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
         // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
-        m_decodedSheetText = protectedDecoder()->decodeAndFlush(contiguousData->data(), data->size());
+        m_decodedSheetText = protectedDecoder()->decodeAndFlush(contiguousData->span());
         m_data = WTFMove(contiguousData);
     } else {
         m_data = nullptr;

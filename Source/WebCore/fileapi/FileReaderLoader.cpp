@@ -341,9 +341,9 @@ void FileReaderLoader::convertToText()
     if (!m_decoder)
         m_decoder = TextResourceDecoder::create("text/plain"_s, m_encoding.isValid() ? m_encoding : PAL::UTF8Encoding());
     if (isCompleted())
-        m_stringResult = m_decoder->decodeAndFlush(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
+        m_stringResult = m_decoder->decodeAndFlush(m_rawData->span().first(m_bytesLoaded));
     else
-        m_stringResult = m_decoder->decode(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
+        m_stringResult = m_decoder->decode(m_rawData->span().first(m_bytesLoaded));
 }
 
 void FileReaderLoader::convertToDataURL()

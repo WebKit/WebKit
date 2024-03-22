@@ -45,7 +45,7 @@ void CachedApplicationManifest::finishLoading(const FragmentedSharedBuffer* data
     if (data) {
         Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
-        m_text = protectedDecoder()->decodeAndFlush(contiguousData->data(), data->size());
+        m_text = protectedDecoder()->decodeAndFlush(contiguousData->span());
         m_data = WTFMove(contiguousData);
     } else {
         m_data = nullptr;

@@ -1074,7 +1074,7 @@ void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
         return;
 
     if (useDecoder)
-        m_responseBuilder.append(m_decoder->decode(buffer.data(), buffer.size()));
+        m_responseBuilder.append(m_decoder->decode(buffer.span()));
     else {
         // Buffer binary data.
         m_binaryResponseBuilder.append(buffer);

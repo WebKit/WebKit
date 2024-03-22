@@ -82,16 +82,17 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
     }
 
     if (m_decodingState == DataAndDecodedStringHaveSameBytes)
-        return { contiguousData->data(), static_cast<unsigned>(contiguousData->size()) };
+        return { contiguousData->span() };
 
     bool shouldForceRedecoding = m_wasForceDecodedAsUTF8 != (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes);
     if (!m_script || shouldForceRedecoding) {
+        ASSERT(contiguousData->span().size() == encodedSize());
         if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes) {
             Ref forceUTF8Decoder = TextResourceDecoder::create("text/javascript"_s, PAL::UTF8Encoding());
             forceUTF8Decoder->setAlwaysUseUTF8();
-            m_script = forceUTF8Decoder->decodeAndFlush(contiguousData->data(), encodedSize());
+            m_script = forceUTF8Decoder->decodeAndFlush(contiguousData->span());
         } else
-            m_script = m_decoder->decodeAndFlush(contiguousData->data(), encodedSize());
+            m_script = m_decoder->decodeAndFlush(contiguousData->span());
         if (m_decodingState == NeverDecoded || shouldForceRedecoding)
             m_scriptHash = m_script.hash();
         ASSERT(!m_scriptHash || m_scriptHash == m_script.hash());

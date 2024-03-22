@@ -177,12 +177,12 @@ void RemoteTextTrackProxy::parseWebVTTFileHeader(String&& header)
     connection->connection().send(Messages::MediaPlayerPrivateRemote::ParseWebVTTFileHeader(m_trackPrivate->id(), header), m_mediaPlayerIdentifier);
 }
 
-void RemoteTextTrackProxy::parseWebVTTCueData(const uint8_t* data, unsigned length)
+void RemoteTextTrackProxy::parseWebVTTCueData(std::span<const uint8_t> data)
 {
     auto connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    connection->connection().send(Messages::MediaPlayerPrivateRemote::ParseWebVTTCueData(m_trackPrivate->id(), std::span(data, length)), m_mediaPlayerIdentifier);
+    connection->connection().send(Messages::MediaPlayerPrivateRemote::ParseWebVTTCueData(m_trackPrivate->id(), data), m_mediaPlayerIdentifier);
 }
 
 void RemoteTextTrackProxy::parseWebVTTCueData(ISOWebVTTCue&& cueData)
