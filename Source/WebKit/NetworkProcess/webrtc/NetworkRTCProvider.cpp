@@ -305,6 +305,18 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
         });
         return;
     }
+
+    RefPtr connection = m_connection.get();
+    if (connection && connection->mdnsRegister().hasRegisteredName(address)) {
+        Vector<WebKit::RTC::Network::IPAddress> ipAddresses;
+        if (!m_rtcMonitor.ipv4().isUnspecified())
+            ipAddresses.append(m_rtcMonitor.ipv4());
+        if (!m_rtcMonitor.ipv6().isUnspecified())
+            ipAddresses.append(m_rtcMonitor.ipv6());
+        connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
+        return;
+    }
+
     WebCore::DNSCompletionHandler completionHandler = [connection = m_connection, identifier](auto&& result) {
         ASSERT(isMainRunLoop());
         if (!connection)
