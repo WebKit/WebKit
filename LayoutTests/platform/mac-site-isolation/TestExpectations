@@ -22,7 +22,6 @@ displaylists [ Skip ]
 dom [ Skip ]
 editing [ Skip ]
 fast [ Skip ]
-fetch [ Skip ]
 fonts [ Skip ]
 fullscreen [ Skip ]
 gamepad [ Skip ]
@@ -232,6 +231,10 @@ http/tests/site-isolation/selection-focus.html [ Skip ]
 #######################
 # Tests that time out #
 #######################
+fetch/body-init.html [ Skip ]
+fetch/fetch-blob-unbounded-range.html [ Skip ]
+fetch/fetch-error-messages.html [ Skip ]
+fetch/fetch-url-serialization.html [ Skip ]
 http/tests/loading/basic-auth-remove-credentials.html [ Skip ]
 http/tests/loading/main-resource-delegates-on-back-navigation.html [ Skip ]
 http/tests/loading/sizes/preload-image-sizes-2x.html [ Skip ]

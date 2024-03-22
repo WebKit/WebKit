@@ -117,7 +117,7 @@ class DriverTest(unittest.TestCase):
         driver = Driver(port, None, pixel_tests=False)
 
         self.assertEqual(driver.test_to_uri(DriverInput('foo/bar.html', 1000, None, None)), 'file://%s/foo/bar.html' % port.layout_tests_dir())
-        self.assertEqual(driver.test_to_uri(DriverInput('foo/bar.html', 1000, None, None, self_comparison_header='runInCrossOriginFrame=true')), 'http://127.0.0.1:8000/root/foo/bar.html')
+        self.assertEqual(driver.test_to_uri(DriverInput('foo/bar.html', 1000, None, None, additional_header='runInCrossOriginFrame=true')), 'http://127.0.0.1:8000/root/foo/bar.html')
         self.assertEqual(driver.test_to_uri(DriverInput('http/tests/foo.html', 1000, None, None)), 'http://127.0.0.1:8000/foo.html')
         self.assertEqual(driver.test_to_uri(DriverInput('http/tests/ssl/bar.html', 1000, None, None)), 'https://127.0.0.1:8443/ssl/bar.html')
         self.assertEqual(driver.test_to_uri(DriverInput('imported/w3c/web-platform-tests/foo/bar.html', 1000, None, None)), 'http://localhost:8800/foo/bar.html')

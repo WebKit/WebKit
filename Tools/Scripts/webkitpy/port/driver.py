@@ -351,7 +351,7 @@ class Driver(object):
     WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = "WebKit/"
 
     def is_http_test(self, driver_input):
-        if driver_input.self_comparison_header and "runInCrossOriginFrame=true" in driver_input.self_comparison_header:
+        if driver_input.additional_header and "runInCrossOriginFrame=true" in driver_input.additional_header:
             return True
         return driver_input.test_name.startswith(self.HTTP_DIR) and not driver_input.test_name.startswith(self.HTTP_LOCAL_DIR)
 
