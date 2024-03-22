@@ -163,10 +163,12 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 
 #if PLATFORM(WPE)
     if (s_useDMABufForRendering) {
+#if USE(GBM)
         if (GBMDevice::singleton().isInitialized()) {
             if (auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render))
                 return PlatformDisplayGBM::create(device);
         }
+#endif
         return PlatformDisplaySurfaceless::create();
     }
 #endif
