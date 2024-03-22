@@ -46,7 +46,6 @@ struct ElementUpdate {
     std::unique_ptr<RenderStyle> style;
     Change change { Change::None };
     bool recompositeLayer { false };
-    bool animationsAffectedDisplay { false };
 };
 
 struct TextUpdate {

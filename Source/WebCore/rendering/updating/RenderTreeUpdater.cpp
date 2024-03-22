@@ -421,7 +421,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 
         // display:none cancels animations.
         auto teardownType = [&]() {
-            if (!elementUpdate.animationsAffectedDisplay && elementUpdate.style->display() == DisplayType::None)
+            if (!elementUpdate.style->hasDisplayAffectedByAnimations() && elementUpdate.style->display() == DisplayType::None)
                 return TeardownType::RendererUpdateCancelingAnimations;
             return TeardownType::RendererUpdate;
         }();

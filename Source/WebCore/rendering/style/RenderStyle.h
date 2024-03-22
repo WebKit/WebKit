@@ -408,6 +408,9 @@ public:
     inline void setHasPseudoStyles(PseudoIdSet);
     bool hasUniquePseudoStyle() const;
 
+    inline bool hasDisplayAffectedByAnimations() const;
+    inline void setHasDisplayAffectedByAnimations();
+
     // attribute getter methods
 
     constexpr DisplayType display() const { return static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay); }

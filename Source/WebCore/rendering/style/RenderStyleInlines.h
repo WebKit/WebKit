@@ -274,6 +274,7 @@ inline bool RenderStyle::hasBorderImageOutsets() const { return borderImage().ha
 inline bool RenderStyle::hasBorderRadius() const { return border().hasBorderRadius(); }
 inline bool RenderStyle::hasClip() const { return m_nonInheritedData->rareData->hasClip; }
 inline bool RenderStyle::hasContent() const { return contentData(); }
+inline bool RenderStyle::hasDisplayAffectedByAnimations() const { return m_nonInheritedData->miscData->hasDisplayAffectedByAnimations; }
 inline bool RenderStyle::hasUsedAppearance() const { return usedAppearance() != StyleAppearance::None; }
 inline bool RenderStyle::hasUsedContentNone() const { return !contentData() && (m_nonInheritedFlags.hasContentNone || pseudoElementType() == PseudoId::Before || pseudoElementType() == PseudoId::After); }
 inline bool RenderStyle::hasExplicitlySetBorderBottomLeftRadius() const { return m_nonInheritedData->surroundData->hasExplicitlySetBorderBottomLeftRadius; }

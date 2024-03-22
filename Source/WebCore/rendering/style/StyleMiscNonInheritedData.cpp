@@ -98,6 +98,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
     , objectPosition(o.objectPosition)
     , order(o.order)
     , hasAttrContent(o.hasAttrContent)
+    , hasDisplayAffectedByAnimations(o.hasDisplayAffectedByAnimations)
 #if ENABLE(DARK_MODE_CSS)
     , hasExplicitlySetColorScheme(o.hasExplicitlySetColorScheme)
 #endif
@@ -146,6 +147,7 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
         && objectPosition == o.objectPosition
         && order == o.order
         && hasAttrContent == o.hasAttrContent
+        && hasDisplayAffectedByAnimations == o.hasDisplayAffectedByAnimations
 #if ENABLE(DARK_MODE_CSS)
         && hasExplicitlySetColorScheme == o.hasExplicitlySetColorScheme
 #endif

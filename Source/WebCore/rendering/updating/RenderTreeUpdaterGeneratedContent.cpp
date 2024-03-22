@@ -28,6 +28,7 @@
 
 #include "ContentData.h"
 #include "InspectorInstrumentation.h"
+#include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
@@ -83,16 +84,28 @@ void RenderTreeUpdater::GeneratedContent::updateCounters()
     update();
 }
 
+static KeyframeEffectStack* keyframeEffectStackForElementAndPseudoId(const Element& element, PseudoId pseudoId)
+{
+    return element.keyframeEffectStack(pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { pseudoId }));
+}
+
 static bool elementIsTargetedByKeyframeEffectRequiringPseudoElement(const Element* element, PseudoId pseudoId)
 {
     if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element))
         return elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoElement->hostElement(), pseudoId);
 
     if (element) {
-        if (auto* stack = element->keyframeEffectStack(pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { pseudoId })))
+        if (auto* stack = keyframeEffectStackForElementAndPseudoId(*element, pseudoId))
             return stack->requiresPseudoElement();
     }
 
+    return false;
+}
+
+static bool elementHasDisplayAnimationForPseudoId(const Element& element, PseudoId pseudoId)
+{
+    if (auto* stack = keyframeEffectStackForElementAndPseudoId(element, pseudoId))
+        return stack->containsProperty(CSSPropertyDisplay);
     return false;
 }
 
@@ -130,7 +143,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
 
     auto* updateStyle = elementUpdate.style ? elementUpdate.style->getCachedPseudoStyle({ pseudoId }) : nullptr;
 
-    if (!needsPseudoElement(updateStyle) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId)) {
+    if (!needsPseudoElement(updateStyle) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId) && !elementHasDisplayAnimationForPseudoId(current, pseudoId)) {
         if (pseudoElement) {
             if (pseudoId == PseudoId::Before)
                 removeBeforePseudoElement(current, m_updater.m_builder);
@@ -168,7 +181,11 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
         Style::ElementUpdate pseudoElementUpdate { makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)), styleChange, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTFMove(pseudoElementUpdate));
-        pseudoElement->clearDisplayContentsOrNoneStyle();
+        if (updateStyle->display() == DisplayType::None) {
+            auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
+            pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)));
+        } else
+            pseudoElement->clearDisplayContentsOrNoneStyle();
     }
 
     auto* pseudoElementRenderer = pseudoElement->renderer();

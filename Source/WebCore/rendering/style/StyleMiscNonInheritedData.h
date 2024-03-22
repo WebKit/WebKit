@@ -91,6 +91,7 @@ public:
     int order;
 
     unsigned hasAttrContent : 1 { false };
+    unsigned hasDisplayAffectedByAnimations : 1 { false };
 #if ENABLE(DARK_MODE_CSS)
     unsigned hasExplicitlySetColorScheme : 1 { false };
 #endif

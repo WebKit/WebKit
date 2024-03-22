@@ -765,7 +765,10 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             timeline->styleOriginatedAnimationsWereCreated();
     }
 
-    return { WTFMove(newStyle), change, shouldRecompositeLayer, animationsAffectedDisplay };
+    if (animationsAffectedDisplay)
+        newStyle->setHasDisplayAffectedByAnimations();
+
+    return { WTFMove(newStyle), change, shouldRecompositeLayer };
 }
 
 std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext) const
