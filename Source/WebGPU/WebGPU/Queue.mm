@@ -538,10 +538,16 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
                 .rowsPerImage = newSize.height
             };
 
+            uint32_t blockWidth = Texture::texelBlockWidth(textureFormat);
+            auto widthInBlocks = blockWidth ? (widthForMetal / blockWidth) : 0;
+            auto bytesInLastRow = checkedProduct<uint64_t>(blockSize, widthInBlocks);
+            if (bytesInLastRow.hasOverflowed())
+                return;
+
             for (uint32_t z = 0, endZ = std::max<uint32_t>(1, depthForMetal); z < endZ; ++z) {
                 WGPUImageCopyTexture newDestination = destination;
                 newDestination.origin.z = destination.origin.z + z;
-                for (uint32_t y = 0, endY = std::max<uint32_t>(1, heightForMetal); y < endY; y += newSize.height) {
+                for (uint32_t y = 0, endY = textureDimension == WGPUTextureDimension_1D ? std::max<uint32_t>(1, heightForMetal) : heightForMetal; y < endY; y += newSize.height) {
                     newDestination.origin.y = destination.origin.y + y;
                     if (newDestination.origin.y + newSize.height > logicalSize.height)
                         newSize.height = static_cast<uint32_t>(newDestination.origin.y + newSize.height - logicalSize.height);
@@ -549,9 +555,10 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
                     for (uint32_t x = 0; x < widthForMetal; x += maxRowBytes) {
                         newDestination.origin.x = destination.origin.x + x;
                         auto offset = x + y * bytesPerRow + z * bytesPerImage;
-                        auto size = bytesPerRow * newSize.height;
+                        auto size = (y + 1 == endY) ? bytesInLastRow.value() : (bytesPerRow * newSize.height);
                         if (offset + size > dataSize)
                             return;
+
                         writeTexture(newDestination, static_cast<uint8_t*>(data) + offset, size, newDataLayout, newSize);
                     }
                 }
