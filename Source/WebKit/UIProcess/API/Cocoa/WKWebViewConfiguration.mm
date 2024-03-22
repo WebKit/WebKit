@@ -93,20 +93,26 @@ WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-@implementation WKWebViewConfiguration {
-    RefPtr<API::PageConfiguration> _pageConfiguration;
-}
+@implementation WKWebViewConfiguration
 
 - (instancetype)init
 {
     if (!(self = [super init]))
         return nil;
 
-    WebKit::InitializeWebKit2();
-
-    _pageConfiguration = API::PageConfiguration::create();
+    API::Object::constructInWrapper<API::PageConfiguration>(self);
 
     return self;
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKWebViewConfiguration.class, self))
+        return;
+
+    _pageConfiguration->API::PageConfiguration::~PageConfiguration();
+
+    [super dealloc];
 }
 
 - (void)setAllowsInlinePredictions:(BOOL)enabled
@@ -284,11 +290,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
-
-    configuration->_pageConfiguration = _pageConfiguration->copy();
-
-    return configuration;
+    return wrapper(_pageConfiguration->copy().leakRef());
 }
 
 - (WKProcessPool *)processPool
@@ -512,9 +514,11 @@ static NSString *defaultApplicationNameForUserAgent()
 }
 #endif
 
-- (Ref<API::PageConfiguration>)copyPageConfiguration
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
 {
-    return _pageConfiguration->copy();
+    return *_pageConfiguration;
 }
 
 @end

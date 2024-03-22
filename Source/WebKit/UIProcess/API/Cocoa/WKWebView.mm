@@ -353,10 +353,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     WebKit::WebProcessPool& processPool = *[_configuration processPool]->_processPool;
 
-    auto pageConfiguration = [configuration copyPageConfiguration];
-
-    pageConfiguration->setProcessPool(&processPool);
-    
+    // FIXME: This copy is probably not necessary.
+    Ref pageConfiguration = _configuration->_pageConfiguration->copy();
     [self _setupPageConfiguration:pageConfiguration];
 
     _usePlatformFindUI = YES;

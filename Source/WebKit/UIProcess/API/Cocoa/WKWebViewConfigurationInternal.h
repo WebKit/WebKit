@@ -24,17 +24,24 @@
  */
 
 #import "APIPageConfiguration.h"
+#import "WKObject.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/Ref.h>
 
-@class WKWebView;
-@class WKWebViewContentProviderRegistry;
+namespace WebKit {
 
-@interface WKWebViewConfiguration ()
+template<> struct WrapperTraits<API::PageConfiguration> {
+    using WrapperClass = WKWebViewConfiguration;
+};
+
+}
+
+@interface WKWebViewConfiguration () <WKObject> {
+@package
+    API::ObjectStorage<API::PageConfiguration> _pageConfiguration;
+}
 
 @property (nonatomic, readonly) NSString *_applicationNameForDesktopUserAgent;
-
-- (Ref<API::PageConfiguration>)copyPageConfiguration;
 
 @end
 

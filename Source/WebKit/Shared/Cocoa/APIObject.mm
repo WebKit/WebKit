@@ -65,6 +65,7 @@
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
+#import "WKWebViewConfigurationInternal.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataRecordInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
@@ -226,6 +227,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::ProcessPoolConfiguration:
         wrapper = [_WKProcessPoolConfiguration alloc];
+        break;
+
+    case Type::PageConfiguration:
+        wrapper = [WKWebViewConfiguration alloc];
         break;
 
     case Type::Data:
