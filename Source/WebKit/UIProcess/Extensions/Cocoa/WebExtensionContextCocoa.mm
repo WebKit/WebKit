@@ -4114,6 +4114,10 @@ void WebExtensionContext::addDeclarativeNetRequestRulesToPrivateUserContentContr
         if (!ruleList)
             return;
 
+        // The extension could have been unloaded before this was called.
+        if (!isLoaded())
+            return;
+
         for (auto& controller : extensionController()->allPrivateUserContentControllers())
             controller.addContentRuleList(*ruleList, m_baseURL);
     });
@@ -4159,6 +4163,12 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
 
         dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }]() mutable {
             API::ContentRuleListStore::defaultStore().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash, hashOfWebKitRules, webKitRules](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
+                // The extension could have been unloaded before this was called.
+                if (!isLoaded()) {
+                    completionHandler(false);
+                    return;
+                }
+
                 if (foundRuleList) {
                     if ([previouslyLoadedHash isEqualToString:hashOfWebKitRules]) {
                         for (auto& userContentController : userContentControllers())
@@ -4172,6 +4182,12 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
                 API::ContentRuleListStore::defaultStore().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), String(webKitRules), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), hashOfWebKitRules](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
                     if (error) {
                         RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}s", error.message().c_str());
+                        completionHandler(false);
+                        return;
+                    }
+
+                    // The extension could have been unloaded before this was called.
+                    if (!isLoaded()) {
                         completionHandler(false);
                         return;
                     }
