@@ -24,9 +24,9 @@
 
 // FIXME: Will be renamed to RemoteImageBufferBackend.
 messages -> RemoteImageBuffer NotRefCounted Stream {
-    GetPixelBuffer(struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous
-    GetPixelBufferWithNewMemory(WebCore::SharedMemory::Handle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous NotStreamEncodable
-    PutPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer,  WebCore::IntRect srcRect, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat)
+    GetPixelBuffer(struct WebCore::PixelBufferFormat outputFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize) -> () Synchronous
+    GetPixelBufferWithNewMemory(WebCore::SharedMemory::Handle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize) -> () Synchronous NotStreamEncodable
+    PutPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat)
     GetShareableBitmap(enum:bool WebCore::PreserveResolution preserveResolution) -> (std::optional<WebCore::ShareableBitmapHandle> handle) Synchronous NotStreamEncodableReply
     FilteredNativeImage(Ref<WebCore::Filter> filter) -> (std::optional<WebCore::ShareableBitmapHandle> handle) Synchronous NotStreamEncodableReply
     ConvertToLuminanceMask()
