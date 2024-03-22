@@ -137,9 +137,8 @@ void ThreadedCompositor::createGLContext()
     m_eglSupportsDamage = false;
     if (m_context) {
         m_context->makeContextCurrent();
-        const char* extensions = eglQueryString(m_context->display().eglDisplay(), EGL_EXTENSIONS);
-        m_eglSupportsDamage = GLContext::isExtensionSupported(extensions, "EGL_KHR_swap_buffers_with_damage")
-            || GLContext::isExtensionSupported(extensions, "EGL_EXT_swap_buffers_with_damage");
+        const auto& extensions = m_context->display().eglExtensions();
+        m_eglSupportsDamage = extensions.KHR_swap_buffers_with_damage || extensions.EXT_swap_buffers_with_damage;
         m_client.didCreateGLContext();
     }
 }
@@ -283,20 +282,18 @@ void ThreadedCompositor::renderLayerTree()
     m_scene->applyStateChanges(states);
     m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
 
-    if (m_eglSupportsDamage && !m_scene->lastDamagedRects().isEmpty()) {
+    if (m_eglSupportsDamage && !m_scene->lastDamagedRects().isEmpty() && !m_context->isSurfaceless()) {
         // The damage rect originally has its coordinates origin in the top left corner, as used by CSS, Wayland, etc.
         // We need to translate to a bottom-left origin, as expected by Mesa/EGL, which already re-translates the y coordinate
         // internally back to top-left origin for Wayland before sending the damage rectangle.
 
         // Work on a copy to only pass rects bottom-left as coordinate origin to EGL
         Vector damagedRects { m_scene->lastDamagedRects() };
-        for (auto& damagedRect : damagedRects) {
+        for (auto& damagedRect : damagedRects)
             damagedRect.setY(viewportSize.height() - damagedRect.y() - damagedRect.height());
-        }
         m_context->swapBuffersWithDamage(damagedRects);
-    } else {
+    } else
         m_context->swapBuffers();
-    }
 
 
     if (m_scene->isActive())

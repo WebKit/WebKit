@@ -382,10 +382,10 @@ GLContext::GLContext(PlatformDisplay& display, EGLContext context, EGLSurface su
     RELEASE_ASSERT(m_display.eglDisplay() != EGL_NO_DISPLAY);
     RELEASE_ASSERT(context != EGL_NO_CONTEXT);
 
-    const char* extensions = eglQueryString(display.eglDisplay(), EGL_EXTENSIONS);
-    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_swap_buffers_with_damage"))
+    const auto& extensions = display.eglExtensions();
+    if (extensions.KHR_swap_buffers_with_damage)
         m_eglSwapBuffersWithDamage = eglSwapBuffersWithDamageKHR;
-    else if (GLContext::isExtensionSupported(extensions, "EGL_EXT_swap_buffers_with_damage"))
+    else if (extensions.EXT_swap_buffers_with_damage)
         m_eglSwapBuffersWithDamage = eglSwapBuffersWithDamageEXT;
 }
 
@@ -500,14 +500,14 @@ void GLContext::swapBuffersWithDamage(const Vector<IntRect>& rects)
         return;
     }
 
-    auto rectsPtr = WTF::makeUniqueArray<int>(4* rects.size());
+    auto rectsPtr = WTF::makeUniqueArray<EGLint>(4 * rects.size());
 
     for (size_t i = 0; i < rects.size(); i++) {
         auto& rect = rects[i];
-        rectsPtr[i*4] = rect.x();
-        rectsPtr[i*4 + 1] = rect.y();
-        rectsPtr[i*4 + 2] = rect.width();
-        rectsPtr[i*4 + 3] = rect.height();
+        rectsPtr[i * 4] = rect.x();
+        rectsPtr[i * 4 + 1] = rect.y();
+        rectsPtr[i * 4 + 2] = rect.width();
+        rectsPtr[i * 4 + 3] = rect.height();
     }
 
     ASSERT(m_surface);

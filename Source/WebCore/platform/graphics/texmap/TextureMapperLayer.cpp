@@ -222,13 +222,11 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
 
     if (!contentsLayer) {
         // Use the damage information we received from the CoordinatedGraphicsLayer
-        if (!m_damaged.isEmpty()) {
-            // Here we ignore the targetRect parameter as it should already have
-            // been covered by the damage tracking in setNeedsDisplay/setNeedsDisplayInRect
-            // calls from CoordinatedGraphicsLayer.
-            for (auto& region : m_damaged)
-                recordDamage(region, transform, options);
-        }
+        // Here we ignore the targetRect parameter as it should already have
+        // been covered by the damage tracking in setNeedsDisplay/setNeedsDisplayInRect
+        // calls from CoordinatedGraphicsLayer.
+        for (auto& region : m_damaged)
+            recordDamage(region, transform, options);
         return;
     }
 
@@ -843,7 +841,7 @@ void TextureMapperLayer::addChild(TextureMapperLayer* childLayer)
     m_children.append(childLayer);
 
     if (m_visitor)
-        childLayer->acceptDamageVisitor(m_visitor);
+        childLayer->acceptDamageVisitor(*m_visitor);
 }
 
 void TextureMapperLayer::removeFromParent()
@@ -1073,12 +1071,12 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
     return applicationResults.hasRunningAnimations;
 }
 
-void TextureMapperLayer::acceptDamageVisitor(TextureMapperLayerDamageVisitor* visitor)
+void TextureMapperLayer::acceptDamageVisitor(TextureMapperLayerDamageVisitor& visitor)
 {
-    if (visitor == m_visitor)
+    if (&visitor == m_visitor)
         return;
 
-    m_visitor = visitor;
+    m_visitor = &visitor;
 
     for (auto* child : m_children)
         child->acceptDamageVisitor(visitor);

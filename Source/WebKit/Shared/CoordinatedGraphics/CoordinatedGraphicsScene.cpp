@@ -334,7 +334,7 @@ void CoordinatedGraphicsScene::updateSceneState()
                         }
 
                         if (layerState.backingStore) {
-                            layer.acceptDamageVisitor(this);
+                            layer.acceptDamageVisitor(*this);
                             layersByBacking.backingStore.append(
                                 { std::ref(layer), std::ref(*layerState.backingStore), layerState.backingStore->takeUpdate() });
                         } else
@@ -437,7 +437,7 @@ void CoordinatedGraphicsScene::ensureRootLayer()
         return;
 
     m_rootLayer = makeUnique<TextureMapperLayer>();
-    m_rootLayer->acceptDamageVisitor(this);
+    m_rootLayer->acceptDamageVisitor(*this);
     m_rootLayer->setMasksToBounds(false);
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));

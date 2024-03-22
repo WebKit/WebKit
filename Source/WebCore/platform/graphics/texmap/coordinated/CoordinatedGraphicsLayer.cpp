@@ -416,8 +416,7 @@ void CoordinatedGraphicsLayer::setContentsOpaque(bool b)
         m_needsDisplay.completeLayer = true;
         m_needsDisplay.rects.clear();
 
-        FloatRect layerRect { { }, m_size };
-        addRepaintRect(layerRect);
+        addRepaintRect({ { }, m_size });
     }
 
     notifyFlushRequired();
@@ -509,8 +508,7 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 #endif
 
     notifyFlushRequired();
-    auto damagedRegion = contentsRect();
-    addRepaintRect(damagedRegion);
+    addRepaintRect(contentsRect());
 }
 
 void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
@@ -693,8 +691,7 @@ void CoordinatedGraphicsLayer::setNeedsDisplay()
     m_needsDisplay.rects.clear();
 
     notifyFlushRequired();
-    FloatRect layerRect { { }, m_size };
-    addRepaintRect(layerRect);
+    addRepaintRect({ { }, m_size });
 }
 
 void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& initialRect, ShouldClipToLayer shouldClip)
@@ -1165,13 +1162,12 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
     if (!m_needsDisplay.completeLayer) {
         for (auto& rect : m_needsDisplay.rects) {
-            auto rr = enclosingIntRect(rect);
-            m_nicosia.damagedRects.append(rr);
-            layerState.mainBackingStore->invalidate(rr);
+            auto enclosingRect = enclosingIntRect(rect);
+            m_nicosia.damagedRects.append(enclosingRect);
+            layerState.mainBackingStore->invalidate(enclosingRect);
         }
     } else {
-        auto rr = enclosingIntRect(FloatRect({}, m_size));
-        m_nicosia.damagedRects.append(rr);
+        m_nicosia.damagedRects.append(enclosingIntRect(FloatRect({ }, m_size)));
         layerState.mainBackingStore->invalidate({ { }, IntSize { m_size } });
     }
     m_nicosia.delta.damagedRectsChanged = true;

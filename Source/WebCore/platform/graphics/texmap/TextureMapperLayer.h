@@ -36,9 +36,7 @@ class TextureMapper;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
-class TextureMapperLayer;
-
-class WEBCORE_EXPORT TextureMapperLayerDamageVisitor {
+class TextureMapperLayerDamageVisitor {
 public:
     virtual void recordDamage(FloatRect) = 0;
 };
@@ -116,7 +114,7 @@ public:
 
     void addChild(TextureMapperLayer*);
 
-    void acceptDamageVisitor(TextureMapperLayerDamageVisitor *);
+    void acceptDamageVisitor(TextureMapperLayerDamageVisitor&);
     void dismissDamageVisitor();
     void markDamaged(std::optional<FloatRect> target = std::nullopt);
     void clearDamaged();
@@ -246,7 +244,7 @@ private:
 #endif
     bool m_isBackdrop { false };
     bool m_isReplica { false };
-    Vector<FloatRect> m_damaged { };
+    Vector<FloatRect> m_damaged;
 
     TextureMapperLayerDamageVisitor* m_visitor { nullptr };
 

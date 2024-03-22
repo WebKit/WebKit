@@ -21,7 +21,6 @@
 
 #if USE(EGL)
 #include "GLContextWrapper.h"
-#include "IntRect.h"
 #include "IntSize.h"
 #include "PlatformDisplay.h"
 #include <wtf/Noncopyable.h>
@@ -43,9 +42,11 @@ typedef void* EGLContext;
 typedef void* EGLDisplay;
 typedef void* EGLSurface;
 typedef int EGLint;
-typedef unsigned int EGLBoolean;
+typedef unsigned EGLBoolean;
 
 namespace WebCore {
+
+class IntRect;
 
 class GLContext final : public GLContextWrapper {
     WTF_MAKE_NONCOPYABLE(GLContext); WTF_MAKE_FAST_ALLOCATED;
@@ -70,6 +71,7 @@ public:
     PlatformDisplay& display() const { return m_display; }
     unsigned version();
     EGLConfig config() const { return m_config; }
+    bool isSurfaceless() const { return m_type == Surfaceless; }
 
     WEBCORE_EXPORT bool makeContextCurrent();
     bool unmakeContextCurrent();

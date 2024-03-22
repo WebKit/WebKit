@@ -54,8 +54,7 @@ public:
 };
 
 class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public WebCore::TextureMapperPlatformLayerProxy::Compositor
-    , public WebCore::TextureMapperLayerDamageVisitor
-{
+    , public WebCore::TextureMapperLayerDamageVisitor {
 public:
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();

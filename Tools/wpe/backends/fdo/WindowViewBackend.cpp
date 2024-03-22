@@ -974,8 +974,8 @@ bool WindowViewBackend::initialize(EGLDisplay eglDisplay)
     if (!m_eglContext)
         return false;
 
-    m_canUseDamage = m_canUseDamage && (epoxy_has_egl_extension(eglDisplay, "EGL_EXT_swap_buffers_with_damage") ||
-                                        epoxy_has_egl_extension(eglDisplay, "EGL_KHR_swap_buffers_with_damage"));
+    m_canUseDamage = m_canUseDamage && (epoxy_has_egl_extension(eglDisplay, "EGL_EXT_swap_buffers_with_damage")
+        || epoxy_has_egl_extension(eglDisplay, "EGL_KHR_swap_buffers_with_damage"));
 
     static struct wpe_view_backend_exportable_fdo_egl_client exportableClient = {
         // export_egl_image
@@ -1087,9 +1087,8 @@ void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
         }
 
         eglSwapBuffersWithDamageEXT(connection.eglDisplay, m_eglSurface, rects.data(), damageRectsCount);
-    } else {
+    } else
         eglSwapBuffers(connection.eglDisplay, m_eglSurface);
-    }
 }
 
 #if WPE_FDO_CHECK_VERSION(1, 5, 0)
