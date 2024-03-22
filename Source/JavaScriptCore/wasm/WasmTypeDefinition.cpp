@@ -1078,11 +1078,12 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
 
     if (typeIndexIsType(typeIndex)) {
         switch (static_cast<TypeKind>(typeIndex)) {
-        case TypeKind::Funcref:
         case TypeKind::Externref:
         case TypeKind::Anyref:
-            // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+            // Casts to these types cannot fail as any value can be an externref/hostref.
             return true;
+        case TypeKind::Funcref:
+            return !!jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
         case TypeKind::Eqref:
             return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicCast<JSWebAssemblyArray*>(refValue) || jsDynamicCast<JSWebAssemblyStruct*>(refValue);
         case TypeKind::Nullref:

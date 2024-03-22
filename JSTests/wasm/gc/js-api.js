@@ -252,6 +252,37 @@ function testCastFailure() {
   {
     let m = instantiate(`
       (module
+        (type (struct))
+        (global (export "g") (ref 0) (struct.new 0))
+        (func (export "f") (param (ref func)) (result))
+      )
+    `);
+    assert.throws(
+      () => m.exports.f(m.exports.g.value),
+      TypeError,
+      "Funcref must be an exported wasm function"
+    );
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (type (func))
+        (global (export "g") (ref 0) (struct.new 0))
+        (func (export "f") (param (ref 1)) (result))
+      )
+    `);
+    assert.throws(
+      () => m.exports.f(m.exports.g.value),
+      TypeError,
+      "Argument value did not match reference type"
+    );
+  }
+
+  {
+    let m = instantiate(`
+      (module
         (func (export "f") (param (ref struct)) (result))
       )
     `);
@@ -273,6 +304,15 @@ function testCastFailure() {
       TypeError,
       "Argument value did not match reference type"
     );
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (func (export "f") (param (ref any)) (result))
+      )
+    `);
+    m.exports.f(m.exports.f);
   }
 
   {
@@ -422,6 +462,19 @@ function testGlobal() {
     assert.eq(m.exports.f(m.exports.g.value), 42);
   }
 
+  {
+    let m1 = instantiate(`
+      (module
+        (func (export "f"))
+      )
+    `);
+    instantiate(`
+      (module
+        (global (import "m" "f") (ref any))
+      )
+    `, { m: { f: m1.exports.f } });
+  }
+
   // Test portable globals, with mutation.
   {
     let m = instantiate(`
@@ -486,6 +539,33 @@ function testTable() {
       )
     `);
     assert.eq(m.exports.t.get(0)(m.exports.g.value), 42);
+  }
+
+  {
+    let m1 = instantiate(`
+      (module
+        (func (export "f"))
+      )
+    `);
+    let m2 = instantiate(`
+      (module
+        (table (export "t") 10 (ref null any))
+      )
+    `);
+    m2.exports.t.set(0, m1.exports.f);
+  }
+
+  {
+    let m1 = instantiate(`
+      (module
+        (table (export "t") 10 (ref null func))
+      )
+    `);
+    assert.throws(
+      () => m1.exports.t.set(0, 5),
+      TypeError,
+      "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"
+    )
   }
 
   // Test type descriptor
