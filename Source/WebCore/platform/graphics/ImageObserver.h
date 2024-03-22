@@ -43,6 +43,7 @@ public:
 
     virtual URL sourceUrl() const = 0;
     virtual String mimeType() const = 0;
+    virtual unsigned numberOfClients() const { return 0; }
     virtual long long expectedContentLength() const = 0;
 
     virtual void encodedDataStatusChanged(const Image&, EncodedDataStatus) { };

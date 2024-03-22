@@ -1181,7 +1181,7 @@ AtomString Internals::imageLastDecodingOptions(HTMLImageElement& element)
     if (!bitmapImage)
         return { };
 
-    auto options = bitmapImage->lastDecodingOptionsForTesting();
+    auto options = bitmapImage->lastDecodingOptions();
     StringBuilder builder;
     builder.append("{ decodingMode : ");
     builder.append(options.decodingMode() == DecodingMode::Asynchronous ? "Asynchronous" : "Synchronous");
