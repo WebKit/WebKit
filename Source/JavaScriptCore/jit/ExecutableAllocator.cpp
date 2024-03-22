@@ -31,6 +31,7 @@
 #include "ExecutableAllocationFuzz.h"
 #include "JITOperationValidation.h"
 #include "LinkBuffer.h"
+#include <wtf/ByteOrder.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
@@ -42,6 +43,7 @@
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/UUID.h>
 #include <wtf/WorkQueue.h>
 
 #if ENABLE(LIBPAS_JIT_HEAP)
@@ -154,6 +156,9 @@ static constexpr size_t minimumExecutablePoolReservationSize = 256 * KB;
 static_assert(fixedExecutableMemoryPoolSize * executablePoolReservationFraction >= minimumExecutablePoolReservationSize);
 static_assert(fixedExecutableMemoryPoolSize < 4 * GB, "ExecutableMemoryHandle assumes it is less than 4GB");
 #endif
+
+// 325696c8-e7cc-11ee-9f4e-325096b39f47
+static constexpr WTF::UUID jscJITNamespace { static_cast<UInt128>(0x325696c8e7cc11eeULL) << 64 | (0x9f4e325096b39f47ULL) };
 
 static bool isJITEnabled()
 {
@@ -439,6 +444,14 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         static_assert(WebConfig::reservedSlotsForExecutableAllocator >= 2);
         WebConfig::g_config[0] = bitwise_cast<uintptr_t>(reservation.base);
         WebConfig::g_config[1] = bitwise_cast<uintptr_t>(reservationEnd);
+#endif
+
+#if HAVE(KDEBUG_H)
+        {
+            uint64_t pid = getCurrentProcessID();
+            auto uuid = WTF::UUID::createVersion5(jscJITNamespace, std::span { bitwise_cast<const uint8_t*>(&pid), sizeof(pid) });
+            kdebug_trace(KDBG_CODE(DBG_DYLD, DBG_DYLD_UUID, DBG_DYLD_UUID_MAP_A), WTF::bswap64(uuid.high()), WTF::bswap64(uuid.low()), bitwise_cast<uintptr_t>(reservation.base), 0);
+        }
 #endif
     }
 

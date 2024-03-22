@@ -37,6 +37,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SHA1.h>
 #include <wtf/WeakRandom.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -75,6 +76,35 @@ UInt128 UUID::generateWeakRandomUUIDVersion4()
         buffer = static_cast<UInt128>(weakRandom->getUint64()) << 64 | weakRandom->getUint64();
     }
     return convertRandomUInt128ToUUIDVersion4(buffer);
+}
+
+UUID UUID::createVersion5(const SHA1::Digest& digest)
+{
+    // https://datatracker.ietf.org/doc/html/rfc4122#section-4.3
+    UInt128 buffer { 0 };
+    for (unsigned i = 0; i < 16; ++i)
+        buffer |= (static_cast<UInt128>(digest[i]) << ((16 - 1 - i) * 8));
+
+    auto high = static_cast<uint64_t>((buffer >> 64) & 0xffffffffffff0fff) | 0x5000;
+    auto low = static_cast<uint64_t>(buffer & 0x3fffffffffffffff) | 0x8000000000000000;
+
+    return UUID { (static_cast<UInt128>(high) << 64) | low };
+}
+
+UUID UUID::createVersion5(UUID namespaceID, std::span<const uint8_t> name)
+{
+    std::array<uint8_t, 16> buffer { };
+    UInt128 data = namespaceID.data();
+    for (unsigned i = 0; i < buffer.size(); ++i)
+        buffer[i] = static_cast<uint8_t>(data >> ((buffer.size() - 1 - i) * 8));
+
+    SHA1 sha1;
+    sha1.addBytes(buffer);
+    sha1.addBytes(name);
+    SHA1::Digest digest { };
+    sha1.computeHash(digest);
+
+    return createVersion5(digest);
 }
 
 UUID::UUID()

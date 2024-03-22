@@ -33,6 +33,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Int128.h>
+#include <wtf/SHA1.h>
 #include <wtf/text/WTFString.h>
 
 #ifdef __OBJC__
@@ -58,7 +59,10 @@ public:
     {
         return UUID { generateWeakRandomUUIDVersion4() };
     }
-    
+
+    WTF_EXPORT_PRIVATE static UUID createVersion5(const SHA1::Digest&);
+    WTF_EXPORT_PRIVATE static UUID createVersion5(UUID, std::span<const uint8_t>);
+
 #ifdef __OBJC__
     WTF_EXPORT_PRIVATE operator NSUUID *() const;
     WTF_EXPORT_PRIVATE static std::optional<UUID> fromNSUUID(NSUUID *);
