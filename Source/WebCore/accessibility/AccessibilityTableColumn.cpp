@@ -109,15 +109,15 @@ void AccessibilityTableColumn::addChildren()
 
     int numRows = parentTable->rowCount();
     for (int i = 0; i < numRows; ++i) {
-        auto* cell = parentTable->cellForColumnAndRow(m_columnIndex, i);
+        RefPtr cell = parentTable->cellForColumnAndRow(m_columnIndex, i);
         if (!cell)
             continue;
 
         // make sure the last one isn't the same as this one (rowspan cells)
-        if (m_children.size() > 0 && m_children.last() == cell)
+        if (m_children.size() > 0 && m_children.last() == cell.get())
             continue;
-            
-        addChild(cell);
+
+        addChild(cell.get());
     }
 }
     

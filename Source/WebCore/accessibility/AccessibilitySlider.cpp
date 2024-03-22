@@ -94,15 +94,15 @@ void AccessibilitySlider::addChildren()
     if (!cache)
         return;
 
-    auto& thumb = downcast<AccessibilitySliderThumb>(*cache->create(AccessibilityRole::SliderThumb));
-    thumb.setParent(this);
+    Ref thumb = downcast<AccessibilitySliderThumb>(*cache->create(AccessibilityRole::SliderThumb));
+    thumb->setParent(this);
 
     // Before actually adding the value indicator to the hierarchy,
     // allow the platform to make a final decision about it.
-    if (thumb.accessibilityIsIgnored())
-        cache->remove(thumb.objectID());
+    if (thumb->accessibilityIsIgnored())
+        cache->remove(thumb->objectID());
     else
-        addChild(&thumb);
+        addChild(thumb.ptr());
 }
 
 const AtomString& AccessibilitySlider::getAttribute(const QualifiedName& attribute) const
@@ -146,7 +146,7 @@ float AccessibilitySlider::minValueForRange() const
 
 bool AccessibilitySlider::setValue(const String& value)
 {
-    HTMLInputElement* input = inputElement();
+    RefPtr input = inputElement();
     
     if (input->value() == value)
         return true;

@@ -135,7 +135,7 @@ AXCoreObject* AccessibilityTableRow::rowHeader()
     if (rowChildren.isEmpty())
         return nullptr;
     
-    auto* firstCell = rowChildren[0].get();
+    RefPtr firstCell = rowChildren[0].get();
     if (!firstCell || !firstCell->node() || !firstCell->node()->hasTagName(thTag))
         return nullptr;
 
@@ -144,7 +144,7 @@ AXCoreObject* AccessibilityTableRow::rowHeader()
     for (const auto& child : rowChildren) {
         // We found a non-header cell, so this is not an entire row of headers -- return the original header cell.
         if (child->node() && !child->node()->hasTagName(thTag))
-            return firstCell;
+            return firstCell.get();
     }
     return nullptr;
 }
