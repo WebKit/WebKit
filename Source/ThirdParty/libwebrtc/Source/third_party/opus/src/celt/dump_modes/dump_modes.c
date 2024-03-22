@@ -324,6 +324,11 @@ int main(int argc, char **argv)
    }
    nb = (argc-1)/2;
    m = malloc(nb*sizeof(CELTMode*));
+   if (m == NULL)
+   {
+      fprintf (stderr, "Out of memorya\n");
+      return EXIT_FAILURE;
+   }
    for (i=0;i<nb;i++)
    {
       int Fs, frame;
