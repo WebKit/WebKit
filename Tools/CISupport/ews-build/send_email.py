@@ -32,7 +32,7 @@ from .utils import load_password, get_custom_suffix
 custom_suffix = get_custom_suffix()
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
-EWS_BUILD_HOSTNAME = 'ews-build.webkit.org'
+EWS_BUILD_HOSTNAMES = ['ews-build.webkit.org', 'ews-build']
 FROM_EMAIL = f'ews@webkit{custom_suffix}.org'
 IGALIA_JSC_QUEUES_PATTERNS = ['armv7', 'i386']
 IGALIA_GTK_WPE_QUEUES_PATTERNS = ['gtk', 'wpe']
@@ -50,7 +50,7 @@ def get_email_ids(category):
 
 
 def send_email(to_emails, subject, text, reference=''):
-    if CURRENT_HOSTNAME != EWS_BUILD_HOSTNAME:
+    if CURRENT_HOSTNAME not in EWS_BUILD_HOSTNAMES:
         # Only allow EWS production instance to send emails.
         return
     if not to_emails:
