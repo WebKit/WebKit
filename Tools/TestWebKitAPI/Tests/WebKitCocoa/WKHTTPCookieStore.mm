@@ -1079,7 +1079,8 @@ TEST(WKHTTPCookieStore, SameSiteWithPatternMatch)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [configuration.get() setWebsiteDataStore:dataStore.get()];
-    [configuration.get() _setCORSDisablingPatterns:@[@"http://site1.example/*"]];
+    [configuration.get() _setCORSDisablingPatterns:@[@"http://site2.example/*"]];
+    configuration.get()._shouldRelaxThirdPartyCookieBlocking = YES;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/set-cookie"]]];
@@ -1088,6 +1089,7 @@ TEST(WKHTTPCookieStore, SameSiteWithPatternMatch)
     [webView _test_waitForDidFinishNavigation];
 
     [webView loadHTMLString:@"<body>body</body>" baseURL:[NSURL URLWithString:@"http://site3.example"]];
+    [webView _test_waitForDidFinishNavigation];
 
     __block bool doneEvaluatingJavaScript { false };
     [webView evaluateJavaScript:@"fetch(\"http://site1.example/get-cookie\").then(() => alert(\"Fetched\")).catch(() => alert(\"Failed\")); true" completionHandler:^(id value, NSError *error) {
