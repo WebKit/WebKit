@@ -1695,7 +1695,7 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self, identifier='mac-highsierra-x86_64-release', extension='zip', content_type=None):
         self.setupStep(GenerateS3URL(identifier, extension=extension, content_type=content_type))
-        self.setProperty('revision', '1234')
+        self.setProperty('archive_revision', '1234')
 
     def disabled_test_success(self):
         # TODO: Figure out how to pass logs to unit-test for MasterShellCommand steps

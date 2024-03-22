@@ -1478,7 +1478,7 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
         self.minified = minified
         kwargs['command'] = [
             'python3', '../Shared/generate-s3-url',
-            '--revision', WithProperties('%(revision)s'),
+            '--revision', WithProperties('%(archive_revision)s'),
             '--identifier', self.identifier,
         ]
         if extension:
@@ -1509,7 +1509,7 @@ class GenerateS3URL(master.MasterShellCommandNewStyle):
             self.build.s3url = match.group('url')
             print(f'build: {build_url}, url for GenerateS3URL: {self.build.s3url}')
             bucket_url = S3_BUCKET_MINIFIED if self.minified else S3_BUCKET
-            self.build.s3_archives.append(S3URL + f"{bucket_url}/{self.identifier}/{self.getProperty('revision')}.{self.extension}")
+            self.build.s3_archives.append(S3URL + f"{bucket_url}/{self.identifier}/{self.getProperty('archive_revision')}.{self.extension}")
             defer.returnValue(rc)
         else:
             print(f'build: {build_url}, logs for GenerateS3URL:\n{log_text}')
