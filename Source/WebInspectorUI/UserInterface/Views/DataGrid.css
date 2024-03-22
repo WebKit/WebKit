@@ -29,6 +29,7 @@
 
     --data-grid-header-horizontal-padding: 6px;
     --data-grid-header-height: 22px;
+    --data-grid-header-border-size: 1px;
     --data-grid-sorting-indicator-height: 8px;
 }
 
@@ -49,7 +50,7 @@
 
 .data-grid .data-container {
     position: absolute;
-    top: 23px;
+    top: calc(var(--data-grid-header-height) + var(--data-grid-header-border-size));
     bottom: 0;
     left: 0;
     right: 0;
@@ -63,11 +64,13 @@
 }
 
 .data-grid.inline {
-    border: 1px solid var(--border-color);
+    border: var(--data-grid-header-border-size) solid var(--border-color);
 }
 
 .data-grid > .header-wrapper {
-    border-bottom: 1px solid var(--border-color);
+    position: absolute;
+    z-index: var(--z-index-header);
+    border-bottom: var(--data-grid-header-border-size) solid var(--border-color);
 }
 
 .data-grid.no-header > .header-wrapper {
@@ -92,6 +95,7 @@
 .data-grid th > .header-cell-content {
     margin: 3px 0;
     padding: 0 var(--data-grid-header-horizontal-padding);
+    line-height: 1.5;
 }
 
 .data-grid th:not(:last-child) > .header-cell-content {
