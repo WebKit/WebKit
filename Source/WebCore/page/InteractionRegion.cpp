@@ -64,7 +64,7 @@ namespace WebCore {
 
 InteractionRegion::~InteractionRegion() = default;
 
-static CursorType cursorTypeForElement(Element& element)
+static bool hasInteractiveCursorType(Element& element)
 {
     auto* renderer = element.renderer();
     auto* style = renderer ? &renderer->style() : nullptr;
@@ -73,7 +73,11 @@ static CursorType cursorTypeForElement(Element& element)
     if (cursorType == CursorType::Auto && element.enclosingLinkEventParentOrSelf())
         cursorType = CursorType::Pointer;
 
-    return cursorType;
+    return cursorType == CursorType::Grab
+        || cursorType == CursorType::Move
+        || cursorType == CursorType::Pointer
+        || cursorType == CursorType::Text
+        || cursorType == CursorType::VerticalText;
 }
 
 static bool shouldAllowElement(const Element& element)
@@ -150,7 +154,7 @@ bool elementMatchesHoverRules(Element& element)
     return foundHoverRules;
 }
 
-static bool shouldAllowNonPointerCursorForElement(const Element& element)
+static bool shouldAllowNonInteractiveCursorForElement(const Element& element)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (is<HTMLAttachmentElement>(element))
@@ -322,7 +326,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
     // FIXME: Consider also allowing elements that only receive touch events.
     bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
-    bool hasPointer = cursorTypeForElement(*matchedElement) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*matchedElement);
+    bool hasPointer = hasInteractiveCursorType(*matchedElement) || shouldAllowNonInteractiveCursorForElement(*matchedElement);
     bool isTooBigForInteraction = bounds.area() > frameViewArea / 3;
     bool isTooBigForOcclusion = bounds.area() > frameViewArea * 3;
 
