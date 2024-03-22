@@ -109,9 +109,6 @@ class GLibPort(Port):
         # setting the GST_PLUGIN_FEATURE_RANK variable accordingly when calling run-webkit-tests.
         downranked_elements = ['vah264dec', 'vah264enc', 'vah265dec', 'vah265enc', 'vaav1dec', 'vaav1enc', 'vajpegdec','vavp9dec']
 
-        # https://bugs.webkit.org/show_bug.cgi?id=270700
-        downranked_elements.append('mpg123audiodec')
-
         environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max,' + ','.join(['%s:0' % element for element in downranked_elements])
         if gst_feature_rank_override:
             environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
