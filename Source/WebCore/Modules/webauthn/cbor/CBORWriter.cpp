@@ -88,7 +88,7 @@ bool CBORWriter::encodeCBOR(const CBORValue& node, int maxNestingLevel)
         auto utf8String = node.getString().utf8();
         startItem(CBORValue::Type::String, static_cast<uint64_t>(utf8String.length()));
         // Add the characters.
-        m_encodedCBOR->append(utf8String.bytes());
+        m_encodedCBOR->append(utf8String.span());
         return true;
     }
     // Represents an array.

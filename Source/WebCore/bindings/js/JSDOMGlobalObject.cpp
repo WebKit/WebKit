@@ -569,7 +569,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
     WTF::switchOn(body, [&](Ref<FormData>&) {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](Ref<SharedBuffer>& buffer) {
-        compiler->addBytes(buffer->bytes());
+        compiler->addBytes(buffer->span());
         compiler->finalize(globalObject);
     }, [&](std::nullptr_t&) {
         compiler->finalize(globalObject);

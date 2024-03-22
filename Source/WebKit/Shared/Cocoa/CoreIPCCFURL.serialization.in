@@ -26,7 +26,7 @@ webkit_platform_headers: "CoreIPCCFURL.h"
 
 [WebKitPlatform, CreateUsing=createWithBaseURLAndBytes, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCFURL {
     std::optional<WebKit::CoreIPCCFURL> baseURL();
-    Vector<uint8_t> bytes();
+    Vector<uint8_t> toVector();
 }
 
 #endif // PLATFORM(COCOA)

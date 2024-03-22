@@ -167,7 +167,7 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer&
         return ThreadableWebSocketChannel::SendSuccess;
 
     LOG(Network, "WebSocketChannel %p send() Sending ArrayBuffer %p byteOffset=%u byteLength=%u", this, &binaryData, byteOffset, byteLength);
-    enqueueRawFrame(WebSocketFrame::OpCodeBinary, binaryData.bytes().subspan(byteOffset, byteLength));
+    enqueueRawFrame(WebSocketFrame::OpCodeBinary, binaryData.span().subspan(byteOffset, byteLength));
     processOutgoingFrameQueue();
     return ThreadableWebSocketChannel::SendSuccess;
 }
@@ -513,7 +513,7 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         buf.append(highByte);
         buf.append(lowByte);
         auto reasonUTF8 = reason.utf8();
-        buf.append(reasonUTF8.bytes());
+        buf.append(reasonUTF8.span());
     }
     enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.span());
     Ref<WebSocketChannel> protectedThis(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
@@ -760,7 +760,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
         auto frame = m_outgoingFrameQueue.takeFirst();
         switch (frame->frameType) {
         case QueuedFrameTypeString: {
-            sendFrame(frame->opCode, frame->stringData.bytes(), [this, protectedThis = Ref { *this }] (bool success) {
+            sendFrame(frame->opCode, frame->stringData.span(), [this, protectedThis = Ref { *this }] (bool success) {
                 if (!success)
                     fail("Failed to send WebSocket frame."_s);
             });
@@ -795,7 +795,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
                 RefPtr<ArrayBuffer> result = m_blobLoader->arrayBufferResult();
                 m_blobLoader = nullptr;
                 m_blobLoaderStatus = BlobLoaderNotStarted;
-                sendFrame(frame->opCode, result->bytes(), [this, protectedThis = Ref { *this }] (bool success) {
+                sendFrame(frame->opCode, result->span(), [this, protectedThis = Ref { *this }] (bool success) {
                     if (!success)
                         fail("Failed to send WebSocket frame."_s);
                 });

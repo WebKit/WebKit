@@ -1146,7 +1146,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
     }
 
     *length = data->size();
-    return data->bytes().data();
+    return data->span().data();
 }
 
 - (BOOL)requiresSecureCoding

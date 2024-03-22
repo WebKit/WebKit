@@ -29,7 +29,7 @@
 
 namespace WTF {
 
-inline std::span<const uint8_t> toSpan(NSData *data)
+inline std::span<const uint8_t> span(NSData *data)
 {
     if (!data)
         return { };
@@ -38,4 +38,4 @@ inline std::span<const uint8_t> toSpan(NSData *data)
 
 } // namespace WTF
 
-using WTF::toSpan;
+using WTF::span;

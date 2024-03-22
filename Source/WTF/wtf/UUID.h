@@ -83,7 +83,7 @@ public:
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isHashTableDeletedValue());
     }
 
-    std::span<const uint8_t, 16> toSpan() const
+    std::span<const uint8_t, 16> span() const
     {
         return std::span<const uint8_t, 16> { reinterpret_cast<const uint8_t*>(&m_data), 16 };
     }

@@ -70,7 +70,7 @@ void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const 
     ASSERT(m_downloadTask);
     [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSData *resumeData) mutable {
         ensureOnMainRunLoop([resumeData = retainPtr(resumeData), completionHandler = WTFMove(completionHandler)] () mutable  {
-            completionHandler(toSpan(resumeData.get()));
+            completionHandler(span(resumeData.get()));
         });
     }).get()];
 }

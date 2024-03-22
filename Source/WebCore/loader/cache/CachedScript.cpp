@@ -78,7 +78,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
         setDecodedSize(0);
         stopDecodedDataDeletionTimer();
 
-        m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(contiguousData->bytes());
+        m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(contiguousData->span());
     }
 
     if (m_decodingState == DataAndDecodedStringHaveSameBytes)

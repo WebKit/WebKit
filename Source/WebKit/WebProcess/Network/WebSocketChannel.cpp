@@ -63,7 +63,7 @@ void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, std::span<
 NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSocketChannel& channel)
 {
     return { document, [&channel](auto& utf8String) {
-        auto data = utf8String.bytes();
+        auto data = utf8String.span();
         channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, data);
         channel.sendMessage(Messages::NetworkSocketChannel::SendString { data }, utf8String.length());
     }, [&channel](auto span) {

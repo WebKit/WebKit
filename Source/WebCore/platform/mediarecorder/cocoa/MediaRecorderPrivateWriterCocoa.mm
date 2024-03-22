@@ -76,14 +76,14 @@
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedHeaderData:(NSData *)fragmentedHeaderData
 {
     UNUSED_PARAM(assetWriter);
-    m_writer->appendData(toSpan(fragmentedHeaderData));
+    m_writer->appendData(span(fragmentedHeaderData));
 }
 
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedMediaData:(NSData *)fragmentedMediaData fragmentedMediaDataReport:(AVFragmentedMediaDataReport *)fragmentedMediaDataReport
 {
     UNUSED_PARAM(assetWriter);
     UNUSED_PARAM(fragmentedMediaDataReport);
-    m_writer->appendData(toSpan(fragmentedMediaData));
+    m_writer->appendData(span(fragmentedMediaData));
 }
 
 - (void)close

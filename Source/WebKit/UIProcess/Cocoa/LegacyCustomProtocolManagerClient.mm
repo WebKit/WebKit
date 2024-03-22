@@ -109,7 +109,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_customProtocolManagerProxy)
         return;
 
-    _customProtocolManagerProxy->didLoadData(_customProtocolID, toSpan(data));
+    _customProtocolManagerProxy->didLoadData(_customProtocolID, span(data));
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse

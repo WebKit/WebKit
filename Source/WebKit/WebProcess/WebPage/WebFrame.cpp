@@ -590,7 +590,7 @@ String WebFrame::source() const
     RefPtr<FragmentedSharedBuffer> mainResourceData = documentLoader->mainResourceData();
     if (!mainResourceData)
         return String();
-    return decoder->encoding().decode(mainResourceData->makeContiguous()->bytes());
+    return decoder->encoding().decode(mainResourceData->makeContiguous()->span());
 }
 
 String WebFrame::contentsAsString() const 

@@ -224,7 +224,7 @@ void PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* str
     if (!request)
         return;
 
-    request->addData(data.bytes());
+    request->addData(data.span());
 }
 
 void PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader* streamLoader, const ResourceError&)

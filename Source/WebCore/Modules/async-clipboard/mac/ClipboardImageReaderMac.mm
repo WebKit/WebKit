@@ -41,7 +41,7 @@ void ClipboardImageReader::readBuffer(const String&, const String&, Ref<SharedBu
         if (auto cgImage = [image CGImageForProposedRect:nil context:nil hints:nil]) {
             auto representation = adoptNS([[NSBitmapImageRep alloc] initWithCGImage:cgImage]);
             NSData* nsData = [representation representationUsingType:NSBitmapImageFileTypePNG properties:@{ }];
-            m_result = Blob::create(m_document.get(), toVector(nsData), m_mimeType);
+            m_result = Blob::create(m_document.get(), makeVector(nsData), m_mimeType);
         }
     }
 }

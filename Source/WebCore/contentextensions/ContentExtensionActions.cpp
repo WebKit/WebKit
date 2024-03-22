@@ -48,7 +48,7 @@ static void append(Vector<uint8_t>& vector, size_t length)
 
 static void append(Vector<uint8_t>& vector, const CString& string)
 {
-    vector.append(string.bytes());
+    vector.append(string.span());
 }
 
 static size_t deserializeLength(std::span<const uint8_t> span, size_t offset)

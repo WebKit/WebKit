@@ -51,7 +51,7 @@
     ASSERT(isMainRunLoop());
 
     if (_connection && publicToken.length)
-        _connection->didReceivePublicToken(toVector(publicToken));
+        _connection->didReceivePublicToken(makeVector(publicToken));
 }
 
 - (void)connection:(APSConnection *)connection didReceiveIncomingMessage:(APSIncomingMessage *)message

@@ -178,7 +178,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
     NSData *data = [HTMLString dataUsingEncoding:NSUTF8StringEncoding];
-    _page->loadData(toSpan(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
+    _page->loadData(span(data), "text/html"_s, "UTF-8"_s, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
@@ -198,7 +198,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (userData)
         wkUserData = WebKit::ObjCObjectGraph::create(userData);
 
-    _page->loadData(toSpan(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
+    _page->loadData(span(data), MIMEType, encodingName, bytesAsString(bridge_cast(baseURL)), wkUserData.get());
 }
 
 - (void)stopLoading

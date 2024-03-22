@@ -202,13 +202,13 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 
 void FetchBody::consumeArrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), arrayBufferBody().bytes());
+    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), arrayBufferBody().span());
     m_data = nullptr;
 }
 
 void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), arrayBufferViewBody().bytes());
+    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), arrayBufferViewBody().span());
     m_data = nullptr;
 }
 
@@ -254,13 +254,13 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
         return body;
     }
     if (isArrayBuffer())
-        return FormData::create(arrayBufferBody().bytes());
+        return FormData::create(arrayBufferBody().span());
     if (isArrayBufferView())
-        return FormData::create(arrayBufferViewBody().bytes());
+        return FormData::create(arrayBufferViewBody().span());
     if (isFormData())
         return &const_cast<FormData&>(formDataBody());
     if (auto* data = m_consumer.data())
-        return FormData::create(data->makeContiguous()->bytes());
+        return FormData::create(data->makeContiguous()->span());
 
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -290,9 +290,9 @@ FetchBody::TakenData FetchBody::take()
         return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(urlSearchParamsBody().toString()));
 
     if (isArrayBuffer())
-        return SharedBuffer::create(arrayBufferBody().bytes());
+        return SharedBuffer::create(arrayBufferBody().span());
     if (isArrayBufferView())
-        return SharedBuffer::create(arrayBufferViewBody().bytes());
+        return SharedBuffer::create(arrayBufferViewBody().span());
 
     return nullptr;
 }

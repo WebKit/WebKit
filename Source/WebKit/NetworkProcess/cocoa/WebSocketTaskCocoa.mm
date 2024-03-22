@@ -92,7 +92,7 @@ void WebSocketTask::readNextMessage()
         if (message.type == NSURLSessionWebSocketMessageTypeString)
             m_channel.didReceiveText(message.string);
         else
-            m_channel.didReceiveBinaryData(toSpan(message.data));
+            m_channel.didReceiveBinaryData(span(message.data));
 
         readNextMessage();
     }).get()];

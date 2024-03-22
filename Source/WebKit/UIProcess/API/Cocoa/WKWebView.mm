@@ -780,7 +780,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (_page->isServiceWorkerPage())
         [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was used to load a service worker"];
 
-    return wrapper(_page->loadData(toSpan(data), MIMEType, characterEncodingName, baseURL.absoluteString)).autorelease();
+    return wrapper(_page->loadData(span(data), MIMEType, characterEncodingName, baseURL.absoluteString)).autorelease();
 }
 
 - (void)startDownloadUsingRequest:(NSURLRequest *)request completionHandler:(void(^)(WKDownload *))completionHandler
@@ -1872,7 +1872,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request response:(NSURLResponse *)response responseData:(NSData *)data
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->loadSimulatedRequest(request, response, toSpan(data))).autorelease();
+    return wrapper(_page->loadSimulatedRequest(request, response, span(data))).autorelease();
 }
 
 // FIXME(223658): Remove this once adopters have moved to the final API.
@@ -2776,7 +2776,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 - (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->loadData(toSpan(data), MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr())).autorelease();
+    return wrapper(_page->loadData(span(data), MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr())).autorelease();
 }
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs
@@ -3069,7 +3069,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
     // FIXME: This should not use the legacy session state decoder.
     WebKit::SessionState sessionState;
-    if (!WebKit::decodeLegacySessionState(toSpan(sessionStateData), sessionState))
+    if (!WebKit::decodeLegacySessionState(span(sessionStateData), sessionState))
         return;
 
     _page->restoreFromSessionState(WTFMove(sessionState), true);

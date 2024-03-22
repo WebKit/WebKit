@@ -1144,7 +1144,7 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<Buffer
         return;
 
     std::visit([&](auto& data) {
-        m_context->bufferData(target, data->bytes(), usage);
+        m_context->bufferData(target, data->span(), usage);
     }, data.value());
 }
 
@@ -1161,7 +1161,7 @@ void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset,
     }
 
     std::visit([&](auto& data) {
-        m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), data->bytes());
+        m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), data->span());
     }, data);
 }
 
@@ -1248,7 +1248,7 @@ void WebGLRenderingContextBase::compressedTexImage2D(GCGLenum target, GCGLint le
         return;
     if (!validateCompressedTexFormat("compressedTexImage2D", internalformat))
         return;
-    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, data.byteLength(), data.bytes());
+    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, data.byteLength(), data.span());
 }
 
 void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& data)
@@ -1259,7 +1259,7 @@ void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint
         return;
     if (!validateCompressedTexFormat("compressedTexSubImage2D", format))
         return;
-    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), data.bytes());
+    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), data.span());
 }
 
 bool WebGLRenderingContextBase::validateSettableTexInternalFormat(const char* functionName, GCGLenum internalFormat)
@@ -3899,7 +3899,7 @@ std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFu
         return std::nullopt;
     }
     ASSERT(!offset.hasOverflowed()); // Checked already as part of `total.hasOverflowed()` check.
-    return pixels->bytes().subspan(offset.value(), dataLength);
+    return pixels->span().subspan(offset.value(), dataLength);
 }
 
 bool WebGLRenderingContextBase::validateTexFuncParameters(TexImageFunctionID functionID,

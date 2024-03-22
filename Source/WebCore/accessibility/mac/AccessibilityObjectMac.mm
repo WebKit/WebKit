@@ -760,7 +760,7 @@ std::span<const uint8_t> AXRemoteFrame::generateRemoteToken() const
     if (auto* parent = parentObject()) {
         // We use the parent's wrapper so that the remote frame acts as a pass through for the remote token bridge.
         NSData *data = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()];
-        return toSpan(data);
+        return span(data);
     }
 
     return std::span<const uint8_t> { };

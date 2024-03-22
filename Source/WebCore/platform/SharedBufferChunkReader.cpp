@@ -131,7 +131,7 @@ size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize
 
     while (requestedSize && ++currentSegment != m_iteratorEnd) {
         size_t lengthInSegment = std::min(currentSegment->segment->size(), requestedSize);
-        data.append(currentSegment->segment->bytes().first(lengthInSegment));
+        data.append(currentSegment->segment->span().first(lengthInSegment));
         readBytesCount += lengthInSegment;
         requestedSize -= lengthInSegment;
     }

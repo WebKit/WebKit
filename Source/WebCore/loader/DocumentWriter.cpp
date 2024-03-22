@@ -95,7 +95,7 @@ void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const Str
         }
 
         if (RefPtr parser = frame->document()->parser())
-            parser->appendBytes(*this, source.utf8().bytes());
+            parser->appendBytes(*this, source.utf8().span());
     }
 
     end();
@@ -315,7 +315,7 @@ void DocumentWriter::addData(const SharedBuffer& data)
         return;
     }
     ASSERT(m_parser);
-    protectedParser()->appendBytes(*this, data.bytes());
+    protectedParser()->appendBytes(*this, data.span());
 }
 
 void DocumentWriter::insertDataSynchronously(const String& markup)

@@ -344,9 +344,9 @@ namespace WTF::Persistence {
 
 static void encodeCFData(Encoder& encoder, CFDataRef data)
 {
-    auto span = toSpan(data);
-    encoder << static_cast<uint64_t>(span.size());
-    encoder.encodeFixedLengthData(span);
+    auto dataSpan = span(data);
+    encoder << static_cast<uint64_t>(dataSpan.size());
+    encoder.encodeFixedLengthData(dataSpan);
 }
 
 static std::optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)

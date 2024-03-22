@@ -41,13 +41,13 @@ static Vector<uint8_t> dataFromPushMessageDataInit(PushMessageDataInit& data)
     return WTF::switchOn(data, [](RefPtr<JSC::ArrayBuffer>& value) -> Vector<uint8_t> {
         if (!value)
             return { };
-        return value->bytes();
+        return value->span();
     }, [](RefPtr<JSC::ArrayBufferView>& value) -> Vector<uint8_t> {
         if (!value)
             return { };
-        return value->bytes();
+        return value->span();
     }, [](String& value) -> Vector<uint8_t> {
-        return value.utf8().bytes();
+        return value.utf8().span();
     });
 }
 

@@ -98,7 +98,7 @@ WKStringRef WKNotificationCopyDataStoreIdentifier(WKNotificationRef notification
 WKDataRef WKNotificationCopyCoreIDForTesting(WKNotificationRef notification)
 {
     auto identifier = toImpl(notification)->coreNotificationID();
-    auto span = identifier.toSpan();
+    auto span = identifier.span();
     return WKDataCreate(span.data(), span.size());
 }
 

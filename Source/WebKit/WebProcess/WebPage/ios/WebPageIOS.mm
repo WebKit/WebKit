@@ -265,7 +265,7 @@ RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
 
 void WebPage::relayAccessibilityNotification(const String& notificationName, const RetainPtr<NSData>& notificationData)
 {
-    send(Messages::WebPageProxy::RelayAccessibilityNotification(notificationName, toSpan(notificationData.get())));
+    send(Messages::WebPageProxy::RelayAccessibilityNotification(notificationName, span(notificationData.get())));
 }
 
 static void computeEditableRootHasContentAndPlainText(const VisibleSelection& selection, EditorState::PostLayoutData& data)

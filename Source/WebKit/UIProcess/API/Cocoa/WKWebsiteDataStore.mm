@@ -100,7 +100,7 @@ private:
         RetainPtr<NSData> result = [m_delegate webCryptoMasterKey];
         if (!result)
             return std::nullopt;
-        return toVector(result.get());
+        return makeVector(result.get());
     }
 
     void requestStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler) final
@@ -506,7 +506,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         uuid_t proxyIdentifier;
         nw_proxy_config_get_identifier(proxyConfig, proxyIdentifier);
 
-        configDataVector.append({ toVector(agentData.get()), WTF::UUID(proxyIdentifier) });
+        configDataVector.append({ makeVector(agentData.get()), WTF::UUID(proxyIdentifier) });
     }
     
     _websiteDataStore->setProxyConfigData(WTFMove(configDataVector));

@@ -41,7 +41,7 @@ WKDataRef WKDataCreate(const unsigned char* bytes, size_t size)
 
 const unsigned char* WKDataGetBytes(WKDataRef dataRef)
 {
-    return WebKit::toImpl(dataRef)->bytes().data();
+    return WebKit::toImpl(dataRef)->span().data();
 }
 
 size_t WKDataGetSize(WKDataRef dataRef)

@@ -105,7 +105,7 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
         }
 
         if (auto data = loader->arrayBufferResult())
-            weakThis->consume(data->bytes());
+            weakThis->consume(data->span());
     });
 
     m_blobLoader->start(blobURL, m_context.get(), FileReaderLoader::ReadAsArrayBuffer);

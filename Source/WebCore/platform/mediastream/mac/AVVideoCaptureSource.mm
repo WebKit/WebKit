@@ -1152,7 +1152,7 @@ void AVVideoCaptureSource::captureOutputDidFinishProcessingPhoto(RetainPtr<AVCap
     }
 
     NSData* data = [photo fileDataRepresentation];
-    resolvePendingPhotoRequest(toVector(data), "image/jpeg"_s);
+    resolvePendingPhotoRequest(makeVector(data), "image/jpeg"_s);
 }
 
 void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)

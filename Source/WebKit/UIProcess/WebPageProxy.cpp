@@ -8826,7 +8826,7 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
     send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTFMove(sandboxExtensionHandles)));
 #endif
 
-    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->bytes() : std::span<const uint8_t>()));
+    send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->span() : std::span<const uint8_t>()));
 
     RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr);
     openPanelResultListener->invalidate();
@@ -11239,7 +11239,7 @@ std::optional<Vector<uint8_t>> WebPageProxy::getWebCryptoMasterKey()
     if (auto keyData = m_websiteDataStore->client().webCryptoMasterKey())
         return keyData;
     if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
-        return Vector(keyData->bytes());
+        return Vector(keyData->span());
     return std::nullopt;
 }
 
@@ -12895,7 +12895,7 @@ void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, Completi
     else
         html = makeString("<script>navigator.serviceWorker.register('", url.string(), "');</script>").utf8();
 
-    loadData(html.bytes(), "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
+    loadData(html.span(), "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
 }
 
 #if !PLATFORM(COCOA)

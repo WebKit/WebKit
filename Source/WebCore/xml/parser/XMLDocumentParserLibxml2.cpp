@@ -504,7 +504,7 @@ static void* openFunc(const char* uri)
     if (!data)
         return &globalDescriptor;
 
-    return new OffsetBuffer(Vector(data->bytes()));
+    return new OffsetBuffer(Vector(data->span()));
 }
 
 static int readFunc(void* context, char* buffer, int len)

@@ -218,7 +218,7 @@ static void append(Vector<char>& vector, const char* string)
 
 static void append(Vector<char>& vector, const CString& string)
 {
-    vector.append(string.bytes());
+    vector.append(string.span());
 }
 
 // Find the markup between "<!--StartFragment -->" and "<!--EndFragment -->", accounting for browser quirks.

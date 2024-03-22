@@ -211,7 +211,7 @@ void ResourceRequest::doUpdateResourceRequest()
 void ResourceRequest::doUpdateResourceHTTPBody()
 {
     if (NSData* bodyData = [m_nsRequest HTTPBody])
-        m_httpBody = FormData::create(toSpan(bodyData));
+        m_httpBody = FormData::create(span(bodyData));
     else if (NSInputStream* bodyStream = [m_nsRequest HTTPBodyStream]) {
         FormData* formData = httpBodyFromStream(bodyStream);
         // There is no FormData object if a client provided a custom data stream.

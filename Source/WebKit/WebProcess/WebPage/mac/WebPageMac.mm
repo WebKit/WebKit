@@ -764,7 +764,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:@{ }];
 
     flushPendingEditorStateUpdate();
-    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, toVector(selectionData), phoneNumbers, selection.selection().isContentEditable()), UserData()));
+    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, makeVector(selectionData), phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 
 void WebPage::handleImageServiceClick(const IntPoint& point, Image& image, HTMLImageElement& element)

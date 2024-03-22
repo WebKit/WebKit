@@ -265,7 +265,7 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
 
         if (tableCompLength == tableOrigLength) {
             // The table is not compressed.
-            if (!sfnt.tryAppend(woff.bytes().subspan(tableOffset, tableCompLength)))
+            if (!sfnt.tryAppend(woff.span().subspan(tableOffset, tableCompLength)))
                 return false;
         } else {
             uLongf destLen = tableOrigLength;

@@ -178,7 +178,7 @@ RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, c
 
     // FIXME: Find a way to remove the need of constructing a vector here.
     auto signature = u2fData.subvector(signatureIndex);
-    Vector<uint8_t> keyHandleVector { keyHandle.bytes() };
+    Vector<uint8_t> keyHandleVector { keyHandle.span() };
     return AuthenticatorAssertionResponse::create(keyHandleVector, authData, signature, { }, attachment);
 }
 

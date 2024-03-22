@@ -815,7 +815,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     } else {
         if (resource->data().size()) {
             auto contiguousData = resource->data().makeContiguous();
-            dataStatement->bindBlob(1, contiguousData->bytes());
+            dataStatement->bindBlob(1, contiguousData->span());
         }
     }
     

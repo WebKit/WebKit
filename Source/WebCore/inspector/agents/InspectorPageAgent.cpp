@@ -105,12 +105,12 @@ bool InspectorPageAgent::mainResourceContent(LocalFrame* frame, bool withBase64E
     RefPtr<FragmentedSharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
     if (!buffer)
         return false;
-    return InspectorPageAgent::dataContent(buffer->makeContiguous()->bytes(), frame->document()->encoding(), withBase64Encode, result);
+    return InspectorPageAgent::dataContent(buffer->makeContiguous()->span(), frame->document()->encoding(), withBase64Encode, result);
 }
 
 bool InspectorPageAgent::sharedBufferContent(RefPtr<FragmentedSharedBuffer>&& buffer, const String& textEncodingName, bool withBase64Encode, String* result)
 {
-    return dataContent(buffer ? buffer->makeContiguous()->bytes() : std::span<const uint8_t> { }, textEncodingName, withBase64Encode, result);
+    return dataContent(buffer ? buffer->makeContiguous()->span() : std::span<const uint8_t> { }, textEncodingName, withBase64Encode, result);
 }
 
 bool InspectorPageAgent::dataContent(std::span<const uint8_t> data, const String& textEncodingName, bool withBase64Encode, String* result)

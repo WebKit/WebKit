@@ -87,7 +87,7 @@ public:
     }
 
     size_t size() const { return m_span.size(); }
-    std::span<const uint8_t> bytes() const { return m_span; }
+    std::span<const uint8_t> span() const { return m_span; }
 
 private:
     Data(std::span<const uint8_t> span, FreeDataFunction freeDataFunction, const void* context)

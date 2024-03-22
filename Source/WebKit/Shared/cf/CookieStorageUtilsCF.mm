@@ -49,9 +49,7 @@ RetainPtr<CFHTTPCookieStorageRef> cookieStorageFromIdentifyingData(const Vector<
 Vector<uint8_t> identifyingDataFromCookieStorage(CFHTTPCookieStorageRef cookieStorage)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-
-    auto cfData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, cookieStorage));
-    return toVector(cfData.get());
+    return makeVector(adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, cookieStorage)).get());
 }
 
 } // namespace WebKit

@@ -50,7 +50,7 @@ std::optional<CoreIPCCFURL> CoreIPCCFURL::baseURL() const
     return std::nullopt;
 }
 
-Vector<uint8_t> CoreIPCCFURL::bytes() const
+Vector<uint8_t> CoreIPCCFURL::toVector() const
 {
     auto bytesLength = CFURLGetBytes(m_cfURL.get(), nullptr, 0);
     RELEASE_ASSERT(bytesLength != -1);

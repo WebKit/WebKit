@@ -984,11 +984,6 @@ bool PDFPluginBase::hudEnabled() const
     return false;
 }
 
-static std::span<const uint8_t> span(NSData *data)
-{
-    return { static_cast<const uint8_t*>(data.bytes), data.length };
-}
-
 void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
     NSData *data = liveData();

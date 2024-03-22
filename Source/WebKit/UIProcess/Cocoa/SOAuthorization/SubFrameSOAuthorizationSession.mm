@@ -92,7 +92,7 @@ void SubFrameSOAuthorizationSession::completeInternal(const WebCore::ResourceRes
         fallBackToWebPathInternal();
         return;
     }
-    appendRequestToLoad(URL(response.url()), toVector(data));
+    appendRequestToLoad(URL(response.url()), makeVector(data));
 }
 
 void SubFrameSOAuthorizationSession::beforeStart()

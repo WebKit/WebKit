@@ -292,7 +292,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
             ASSERT(view->_printedPagesData.isEmpty());
             ASSERT(!view->_printedPagesPDFDocument);
             if (data)
-                view->_printedPagesData.append(data->bytes());
+                view->_printedPagesData.append(data->span());
             view->_expectedPrintCallback = { };
             view->_printingCallbackCondition.notifyOne();
         }

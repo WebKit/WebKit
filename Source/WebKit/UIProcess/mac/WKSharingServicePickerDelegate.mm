@@ -130,7 +130,7 @@
 
     if ([item isKindOfClass:[NSAttributedString class]]) {
         NSData *data = [item RTFDFromRange:NSMakeRange(0, [item length]) documentAttributes:@{ }];
-        dataReference = toSpan(data);
+        dataReference = span(data);
 
         types.append(NSPasteboardTypeRTFD);
         types.append(WebCore::legacyRTFDPasteboardType());
@@ -142,7 +142,7 @@
         if (!image)
             return;
 
-        dataReference = toSpan(data);
+        dataReference = span(data);
         types.append(NSPasteboardTypeTIFF);
     } else if ([item isKindOfClass:[NSItemProvider class]]) {
         NSItemProvider *itemProvider = (NSItemProvider *)item;

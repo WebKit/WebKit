@@ -39,7 +39,7 @@ RetainPtr<NSData> encodeSessionState(const SessionState& sessionState)
 
 bool decodeSessionState(NSData *data, SessionState& state)
 {
-    return decodeLegacySessionState(toSpan(data), state);
+    return decodeLegacySessionState(span(data), state);
 }
 
 }

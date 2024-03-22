@@ -87,7 +87,7 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
         if (!navigationAction->isProcessingUserGesture()) {
             page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
             auto html = makeString("<script>location = '", response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>").utf8();
-            page->loadData(html.bytes(), "text/html"_s, "UTF-8"_s, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+            page->loadData(html.span(), "text/html"_s, "UTF-8"_s, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
             return;
         }
 #endif
@@ -97,7 +97,7 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
     if (response.httpStatusCode() == httpStatus200OK) {
         invokeCallback(true);
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
-        page->loadData(toSpan(data), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
+        page->loadData(span(data), "text/html"_s, "UTF-8"_s, response.url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
         return;
     }
 

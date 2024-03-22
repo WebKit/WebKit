@@ -272,13 +272,13 @@ bool SQLiteIDBCursor::bindArguments()
     }
 
     auto buffer = serializeIDBKeyData(m_currentLowerKey);
-    if (m_statement->bindBlob(currentBindArgument++, buffer->bytes()) != SQLITE_OK) {
+    if (m_statement->bindBlob(currentBindArgument++, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (lower key)");
         return false;
     }
 
     buffer = serializeIDBKeyData(m_currentUpperKey);
-    if (m_statement->bindBlob(currentBindArgument++, buffer->bytes()) != SQLITE_OK) {
+    if (m_statement->bindBlob(currentBindArgument++, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (upper key)");
         return false;
     }
@@ -318,13 +318,13 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
     }
 
     auto buffer = serializeIDBKeyData(key);
-    if (m_preIndexStatement->bindBlob(currentBindArgument++, buffer->bytes()) != SQLITE_OK) {
+    if (m_preIndexStatement->bindBlob(currentBindArgument++, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument to pre statement (key)");
         return false;
     }
 
     buffer = serializeIDBKeyData(m_currentIndexRecordValue);
-    if (m_preIndexStatement->bindBlob(currentBindArgument++, buffer->bytes()) != SQLITE_OK) {
+    if (m_preIndexStatement->bindBlob(currentBindArgument++, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument to pre statement (value)");
         return false;
     }

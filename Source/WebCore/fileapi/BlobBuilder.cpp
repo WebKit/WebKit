@@ -50,14 +50,14 @@ void BlobBuilder::append(RefPtr<ArrayBuffer>&& arrayBuffer)
 {
     if (!arrayBuffer)
         return;
-    m_appendableData.append(arrayBuffer->bytes());
+    m_appendableData.append(arrayBuffer->span());
 }
 
 void BlobBuilder::append(RefPtr<ArrayBufferView>&& arrayBufferView)
 {
     if (!arrayBufferView)
         return;
-    m_appendableData.append(arrayBufferView->bytes());
+    m_appendableData.append(arrayBufferView->span());
 }
 
 void BlobBuilder::append(RefPtr<Blob>&& blob)

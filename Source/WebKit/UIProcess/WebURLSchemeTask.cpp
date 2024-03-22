@@ -215,7 +215,7 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     m_completed = true;
 
     if (isSync()) {
-        Vector<uint8_t> data = m_syncData.takeAsContiguous()->bytes();
+        Vector<uint8_t> data = m_syncData.takeAsContiguous()->span();
         m_syncCompletionHandler(m_syncResponse, error, WTFMove(data));
     }
 

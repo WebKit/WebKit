@@ -386,7 +386,7 @@ void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
     if (!data)
         return;
 
-    page()->replaceImageForRemoveBackground(*elementContext, { String(type.get()) }, toSpan(data.get()));
+    page()->replaceImageForRemoveBackground(*elementContext, { String(type.get()) }, span(data.get()));
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 

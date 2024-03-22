@@ -103,7 +103,7 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
     constexpr uint8_t webSocketKeyGUID[] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     SHA1 sha1;
     CString keyData = secWebSocketKey.ascii();
-    sha1.addBytes(keyData.bytes());
+    sha1.addBytes(keyData.span());
     sha1.addBytes(webSocketKeyGUID, std::size(webSocketKeyGUID) - 1);
     SHA1::Digest hash;
     sha1.computeHash(hash);

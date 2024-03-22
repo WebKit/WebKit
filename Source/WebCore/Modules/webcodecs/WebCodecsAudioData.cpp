@@ -43,7 +43,7 @@ ExceptionOr<Ref<WebCodecsAudioData>> WebCodecsAudioData::create(ScriptExecutionC
     if (!isValidAudioDataInit(init))
         return Exception { ExceptionCode::TypeError, "Invalid init data"_s };
 
-    auto rawData = init.data.bytes();
+    auto rawData = init.data.span();
     auto data = PlatformRawAudioData::create(WTFMove(rawData), init.format, init.sampleRate, init.timestamp, init.numberOfFrames, init.numberOfChannels);
 
     if (!data)

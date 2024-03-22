@@ -113,13 +113,12 @@ template<typename MapFunctionType> Vector<typename std::invoke_result_t<MapFunct
     return vector;
 }
 
-inline Vector<uint8_t> toVector(NSData *data)
+inline Vector<uint8_t> makeVector(NSData *data)
 {
-    return toSpan(data);
+    return span(data);
 }
 
 } // namespace WTF
 
 using WTF::createNSArray;
 using WTF::makeVector;
-using WTF::toVector;

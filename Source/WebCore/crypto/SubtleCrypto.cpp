@@ -545,7 +545,7 @@ static std::optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCr
                 return std::nullopt;
             },
             [] (auto& bufferSource) -> std::optional<KeyData> {
-                return KeyData { Vector(bufferSource->bytes()) };
+                return KeyData { Vector(bufferSource->span()) };
             }
         );
     case SubtleCrypto::KeyFormat::Jwk:
@@ -566,7 +566,7 @@ static std::optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCr
 
 static Vector<uint8_t> copyToVector(BufferSource&& data)
 {
-    return data.bytes();
+    return data.span();
 }
 
 static bool isSupportedExportKey(JSGlobalObject& state, CryptoAlgorithmIdentifier identifier)
@@ -1129,7 +1129,7 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
             // FIXME: Converting to JS just to JSON-Stringify seems inefficient. We should find a way to go directly from the struct to JSON.
             auto jwk = toJS<IDLDictionary<JsonWebKey>>(*(promise->globalObject()), *(promise->globalObject()), WTFMove(std::get<JsonWebKey>(key)));
             String jwkString = JSONStringify(promise->globalObject(), jwk, 0);
-            bytes.append(jwkString.utf8(StrictConversion).bytes());
+            bytes.append(jwkString.utf8(StrictConversion).span());
         }
         }
 

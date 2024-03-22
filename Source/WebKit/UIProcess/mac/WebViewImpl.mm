@@ -3535,7 +3535,7 @@ void WebViewImpl::accessibilityRegisterUIProcessTokens()
     // Initialize remote accessibility when the window connection has been established.
     NSData *remoteElementToken = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:m_view.getAutoreleased()];
     NSData *remoteWindowToken = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:[m_view window]];
-    m_page->registerUIProcessAccessibilityTokens(toSpan(remoteElementToken), toSpan(remoteWindowToken));
+    m_page->registerUIProcessAccessibilityTokens(span(remoteElementToken), span(remoteWindowToken));
 }
 
 id WebViewImpl::accessibilityFocusedUIElement()

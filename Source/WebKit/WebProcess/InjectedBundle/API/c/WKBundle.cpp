@@ -208,7 +208,7 @@ WKDataRef WKBundleCopyWebNotificationID(WKBundleRef bundleRef, JSContextRef cont
     if (!identifier)
         return nullptr;
 
-    auto span = identifier->toSpan();
+    auto span = identifier->span();
     return WKDataCreate(span.data(), span.size());
 }
 

@@ -320,7 +320,7 @@ FontPlatformData::PlatformDataVariant FontPlatformData::platformSerializationDat
 
     const auto& data = creationData();
     if (data)
-        return FontPlatformSerializedCreationData { { data->fontFaceData->bytes() }, attributes, data->itemInCollection };
+        return FontPlatformSerializedCreationData { { data->fontFaceData->span() }, attributes, data->itemInCollection };
 
     auto options = CTFontDescriptorGetOptions(fontDescriptor.get());
     auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(ctFont, kCTFontReferenceURLAttribute)));

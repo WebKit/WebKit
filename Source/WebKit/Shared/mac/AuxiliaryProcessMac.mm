@@ -425,7 +425,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
     Vector<char> cacheFile;
     cacheFile.reserveInitialCapacity(expectedFileSize);
     cacheFile.append(std::span { bitwise_cast<uint8_t*>(&cachedHeader), sizeof(CachedSandboxHeader) });
-    cacheFile.append(info.header.bytes());
+    cacheFile.append(info.header.span());
     if (haveBuiltin)
         cacheFile.append(std::span { sandboxProfile->builtin, cachedHeader.builtinSize });
     cacheFile.append(std::span { sandboxProfile->data, cachedHeader.dataSize });

@@ -256,7 +256,7 @@ public:
     explicit operator bool() const { return !!m_fileData; }
     const void* data() const { return m_fileData; }
     unsigned size() const { return m_fileSize; }
-    std::span<const uint8_t> toSpan() { return { static_cast<const uint8_t *>(data()), size() }; }
+    std::span<const uint8_t> span() { return { static_cast<const uint8_t *>(data()), size() }; }
 
 #if PLATFORM(COCOA)
     void* leakHandle() { return std::exchange(m_fileData, nullptr); }

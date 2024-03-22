@@ -423,7 +423,7 @@ void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
 
 void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken, FrameIdentifier frameID)
 {
-    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(toSpan(remoteToken.get()), frameID));
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(span(remoteToken.get()), frameID));
 }
 
 void WebPage::accessibilityManageRemoteElementStatus(bool registerStatus, int processIdentifier)
@@ -462,7 +462,7 @@ void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::Fram
     registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken);
 
     // Get our remote token data and send back to the RemoteFrame.
-    completionHandler(toSpan(accessibilityRemoteTokenData().get()), getpid());
+    completionHandler(span(accessibilityRemoteTokenData().get()), getpid());
 }
 
 #if ENABLE(APPLE_PAY)

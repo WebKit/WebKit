@@ -79,7 +79,7 @@ class DataSegment : public ThreadSafeRefCounted<DataSegment> {
 public:
     WEBCORE_EXPORT const uint8_t* data() const;
     WEBCORE_EXPORT size_t size() const;
-    std::span<const uint8_t> bytes() const { return std::span { data(), size() }; }
+    std::span<const uint8_t> span() const { return std::span { data(), size() }; }
 
     WEBCORE_EXPORT static Ref<DataSegment> create(Vector<uint8_t>&&);
 
@@ -313,7 +313,7 @@ public:
     WEBCORE_EXPORT const uint8_t* data() const;
     WEBCORE_EXPORT const uint8_t& operator[](size_t) const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
-    std::span<const uint8_t> bytes() const { return std::span(data(), size()); }
+    std::span<const uint8_t> span() const { return std::span(data(), size()); }
     WTF::Persistence::Decoder decoder() const;
 
     enum class MayUseFileMapping : bool { No, Yes };

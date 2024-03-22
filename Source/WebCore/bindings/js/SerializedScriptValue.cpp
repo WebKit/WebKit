@@ -1611,7 +1611,7 @@ private:
             return;
         }
         write(byteLength);
-        write(arrayBuffer->bytes());
+        write(arrayBuffer->span());
     }
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -1854,7 +1854,7 @@ private:
                     return true;
                 }
                 write(dataLength);
-                write(data->data().bytes());
+                write(data->data().span());
                 write(data->colorSpace());
                 return true;
             }
@@ -1975,7 +1975,7 @@ private:
                     write(byteLength);
                     uint64_t maxByteLength = arrayBuffer->maxByteLength().value_or(0);
                     write(maxByteLength);
-                    write(arrayBuffer->bytes());
+                    write(arrayBuffer->span());
                     return true;
                 }
 
@@ -1983,7 +1983,7 @@ private:
                 write(ArrayBufferTag);
                 uint64_t byteLength = arrayBuffer->byteLength();
                 write(byteLength);
-                write(arrayBuffer->bytes());
+                write(arrayBuffer->span());
                 return true;
             }
             if (obj->inherits<JSArrayBufferView>()) {
@@ -2378,9 +2378,9 @@ private:
 #if PLATFORM(COCOA)
     void write(const RetainPtr<CFDataRef>& data)
     {
-        auto span = toSpan(data.get());
-        write(static_cast<uint32_t>(span.size()));
-        write(span);
+        auto dataSpan = span(data.get());
+        write(static_cast<uint32_t>(dataSpan.size()));
+        write(dataSpan);
     }
 #endif
 

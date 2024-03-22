@@ -90,7 +90,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
         return std::nullopt;
     }
 
-    NotificationData data { URL { String { defaultActionURL } }, title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, toVector(notificationData), nsValueToOptionalBool(dictionary[WebNotificationSilentKey]) };
+    NotificationData data { URL { String { defaultActionURL } }, title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, makeVector(notificationData), nsValueToOptionalBool(dictionary[WebNotificationSilentKey]) };
     return WTFMove(data);
 }
 

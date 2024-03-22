@@ -368,7 +368,7 @@ void CacheStorageDiskStore::readAllRecordInfos(ReadAllRecordInfosCallback&& call
 {
     readAllRecordInfosInternal([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto fileDatas) mutable {
         auto result = WTF::compactMap(fileDatas, [&](auto& fileData) -> std::optional<CacheStorageRecordInformation> {
-            if (auto storedInfo = readRecordInfoFromFileData(m_salt, fileData.toSpan()))
+            if (auto storedInfo = readRecordInfoFromFileData(m_salt, fileData.span()))
                 return WTFMove(storedInfo->info);
             RELEASE_LOG(CacheStorage, "%p - CacheStorageDiskStore::readAllRecordInfos fails to decode record from file", this);
             return std::nullopt;
@@ -407,7 +407,7 @@ void CacheStorageDiskStore::readRecords(const Vector<CacheStorageRecordInformati
 
         Vector<std::optional<CacheStorageRecord>> result;
         for (size_t index = 0; index < recordInfos.size(); ++index) {
-            auto record = readRecordFromFileData(fileDatas[index].toSpan(), WTFMove(blobDatas[index]));
+            auto record = readRecordFromFileData(fileDatas[index].span(), WTFMove(blobDatas[index]));
             if (record) {
                 auto recordInfo = recordInfos[index];
                 if (recordInfo.insertionTime != record->info.insertionTime || recordInfo.size != record->info.size || recordInfo.url != record->info.url)
@@ -467,7 +467,7 @@ static Vector<uint8_t> encodeRecordHeader(CacheStorageRecord&& record)
     encoder << record.responseBodySize;
     encoder.encodeChecksum();
 
-    return { encoder.bytes() };
+    return { encoder.span() };
 }
 
 static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
@@ -476,7 +476,7 @@ static Vector<uint8_t> encodeRecordBody(const CacheStorageRecord& record)
         // FIXME: Store form data body.
         return Vector<uint8_t> { };
     }, [&](const Ref<WebCore::SharedBuffer>& buffer) {
-        return Vector<uint8_t> { buffer->bytes() };
+        return Vector<uint8_t> { buffer->span() };
     }, [](const std::nullptr_t&) {
         return Vector<uint8_t> { };
     });
@@ -495,7 +495,7 @@ static Vector<uint8_t> encodeRecord(const NetworkCache::Key& key, const Vector<u
     encoder << isBodyInline;
     encoder.encodeChecksum();
 
-    auto metaData = encoder.bytes();
+    auto metaData = encoder.span();
     Vector<uint8_t> result;
     result.append(metaData);
     result.appendVector(headerData);

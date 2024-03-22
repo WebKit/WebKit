@@ -149,7 +149,7 @@ void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase* database, con
     if (!webkitFaviconDatabaseIsOpen(database))
         return;
 
-    database->priv->iconDatabase->setIconForPageURL(icon.url.string(), iconData.bytes(), pageURL,
+    database->priv->iconDatabase->setIconForPageURL(icon.url.string(), iconData.span(), pageURL,
         isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
         [database = GRefPtr<WebKitFaviconDatabase>(database), url = icon.url.string().isolatedCopy(), pageURL = pageURL.isolatedCopy()](bool success) {
             if (!webkitFaviconDatabaseIsOpen(database.get()) || !success)

@@ -371,7 +371,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     RefPtr coreData = _private->coreResource ? &_private->coreResource->data() : nullptr;
     if (!coreData)
         return @"";
-    return encoding.decode(coreData->makeContiguous()->bytes());
+    return encoding.decode(coreData->makeContiguous()->span());
 }
 
 @end

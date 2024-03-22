@@ -88,7 +88,7 @@ static std::optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(co
         return std::pair<Vector<uint8_t>, bool> { { }, secureCookiesAccessed };
 
     Vector<uint8_t> data = { 'C', 'o', 'o', 'k', 'i', 'e', ':', ' ' };
-    data.append(cookieDataString.utf8().bytes());
+    data.append(cookieDataString.utf8().span());
     data.append("\r\n\r\n"_span);
 
     return std::pair<Vector<uint8_t>, bool> { data, secureCookiesAccessed };

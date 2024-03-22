@@ -792,7 +792,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         [self _updateRemoteAccessibilityRegistration:YES];
         storeAccessibilityRemoteConnectionInformation(self, _page->process().processID(), uuid);
 
-        auto elementToken = toSpan(remoteElementToken);
+        auto elementToken = span(remoteElementToken);
         _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);
     }
 }

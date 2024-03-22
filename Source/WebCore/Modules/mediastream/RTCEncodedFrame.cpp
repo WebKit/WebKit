@@ -55,7 +55,7 @@ void RTCEncodedFrame::setData(JSC::ArrayBuffer& buffer)
 Ref<RTCRtpTransformableFrame> RTCEncodedFrame::rtcFrame()
 {
     if (m_data) {
-        m_frame->setData(m_data->bytes());
+        m_frame->setData(m_data->span());
         m_data = nullptr;
     }
     return m_frame;

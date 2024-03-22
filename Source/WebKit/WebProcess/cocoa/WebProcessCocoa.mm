@@ -858,7 +858,7 @@ static void registerLogHook()
 
             auto connectionID = WebProcess::singleton().networkProcessConnectionID();
             if (connectionID)
-                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.bytesInludingNullTerminator(), logCategory.bytesInludingNullTerminator(), logString, type, getpid()), 0, { }, qos);
+                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.spanIncludingNullTerminator(), logCategory.spanIncludingNullTerminator(), logString, type, getpid()), 0, { }, qos);
 
             free(messageString);
         }, qos);

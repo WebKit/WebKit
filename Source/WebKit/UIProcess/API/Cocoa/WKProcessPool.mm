@@ -256,7 +256,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
         [_processPool->ensureBundleParameters() removeObjectForKey:parameter];
 
     auto data = keyedArchiver.get().encodedData;
-    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, toSpan(data)));
+    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, span(data)));
 }
 
 - (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary
@@ -274,7 +274,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     [_processPool->ensureBundleParameters() setValuesForKeysWithDictionary:copy.get()];
 
     auto data = keyedArchiver.get().encodedData;
-    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameters(toSpan(data)));
+    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameters(span(data)));
 }
 
 #if !TARGET_OS_IPHONE

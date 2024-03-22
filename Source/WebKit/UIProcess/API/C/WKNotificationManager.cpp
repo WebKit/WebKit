@@ -57,7 +57,7 @@ void WKNotificationManagerProviderDidClickNotification(WKNotificationManagerRef 
 
 void WKNotificationManagerProviderDidClickNotification_b(WKNotificationManagerRef managerRef, WKDataRef identifier)
 {
-    auto span = toImpl(identifier)->bytes();
+    auto span = toImpl(identifier)->span();
     if (span.size() != 16)
         return;
 

@@ -74,7 +74,7 @@ std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dicti
 #endif
 
     if (isData)
-        message.pushData = toVector((NSData *)pushData);
+        message.pushData = makeVector((NSData *)pushData);
 
     return message;
 }

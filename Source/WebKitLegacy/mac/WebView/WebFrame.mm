@@ -1772,7 +1772,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     PAL::TextEncoding encoding(textEncodingName);
     if (!encoding.isValid())
         encoding = PAL::WindowsLatin1Encoding();
-    return encoding.decode(toSpan(data));
+    return encoding.decode(span(data));
 }
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity

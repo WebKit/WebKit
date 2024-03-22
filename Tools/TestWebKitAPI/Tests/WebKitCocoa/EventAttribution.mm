@@ -260,7 +260,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
         (__bridge id)kSecAttrKeyType: (__bridge id)kSecAttrKeyTypeRSA,
         (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPublic
     }, nil));
-    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(toVector(publicKey.get()));
+    auto wrappedKeyBytes = wrapPublicKeyWithRSAPSSOID(makeVector(publicKey.get()));
 
     auto keyData = base64URLEncodeToString(wrappedKeyBytes.data(), wrappedKeyBytes.size());
     // The server.

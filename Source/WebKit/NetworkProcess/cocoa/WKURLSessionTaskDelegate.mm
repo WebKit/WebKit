@@ -97,7 +97,7 @@
     RefPtr connection = [self connection];
     if (!connection)
         return;
-    connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(_identifier, toSpan(data)), 0);
+    connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(_identifier, span(data)), 0);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error

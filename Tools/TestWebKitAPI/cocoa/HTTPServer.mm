@@ -356,7 +356,7 @@ static Vector<uint8_t> vectorFromData(dispatch_data_t content)
 
 static void appendUTF8ToVector(Vector<uint8_t>& vector, const String& string)
 {
-    vector.append(string.utf8().bytes());
+    vector.append(string.utf8().span());
 }
 
 String HTTPServer::parsePath(const Vector<char>& request)

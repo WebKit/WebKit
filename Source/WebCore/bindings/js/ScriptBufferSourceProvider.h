@@ -64,7 +64,7 @@ public:
         if (!m_containsOnlyASCII) {
             m_containsOnlyASCII = charactersAreAllASCII(m_contiguousBuffer->data(), m_contiguousBuffer->size());
             if (*m_containsOnlyASCII)
-                m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_contiguousBuffer->bytes());
+                m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_contiguousBuffer->span());
         }
         if (*m_containsOnlyASCII)
             return { m_contiguousBuffer->data(), static_cast<unsigned>(m_contiguousBuffer->size()) };

@@ -75,7 +75,7 @@ FontParsingPolicy CachedFont::policyForCustomFont(const Ref<SharedBuffer>& data)
     if (!m_loader || !m_loader->frame())
         return FontParsingPolicy::Deny;
 
-    return fontBinaryParsingPolicy(data->bytes(), m_loader->frame()->settings().downloadableBinaryFontTrustedTypes());
+    return fontBinaryParsingPolicy(data->span(), m_loader->frame()->settings().downloadableBinaryFontTrustedTypes());
 }
 
 void CachedFont::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

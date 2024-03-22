@@ -85,9 +85,8 @@ ContentFilterUnblockHandler::ContentFilterUnblockHandler(
 // FIXME: Remove the conversion to and from Vector<uint8_t> and serialize individual members when rdar://107281862 is resolved.
 Vector<uint8_t> ContentFilterUnblockHandler::webFilterEvaluatorData() const
 {
-    NSError *error { nil };
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:m_webFilterEvaluator.get() requiringSecureCoding:YES error:&error];
-    return toVector(data);
+    NSError *error = nil;
+    return makeVector([NSKeyedArchiver archivedDataWithRootObject:m_webFilterEvaluator.get() requiringSecureCoding:YES error:&error]);
 }
 
 RetainPtr<WebFilterEvaluator> ContentFilterUnblockHandler::unpackWebFilterEvaluatorData(Vector<uint8_t>&& vector)

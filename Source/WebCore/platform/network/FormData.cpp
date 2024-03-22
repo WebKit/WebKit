@@ -64,7 +64,7 @@ Ref<FormData> FormData::create(std::span<const uint8_t> data)
 
 Ref<FormData> FormData::create(const CString& string)
 {
-    return create(string.bytes());
+    return create(string.span());
 }
 
 Ref<FormData> FormData::create(Vector<uint8_t>&& vector)
@@ -317,7 +317,7 @@ static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formDat
     for (const auto& blobItem : blobData->items()) {
         if (blobItem.type() == BlobDataItem::Type::Data) {
             ASSERT(blobItem.data());
-            formData.appendData(blobItem.data()->bytes().subspan(blobItem.offset(), blobItem.length()));
+            formData.appendData(blobItem.data()->span().subspan(blobItem.offset(), blobItem.length()));
         } else if (blobItem.type() == BlobDataItem::Type::File)
             formData.appendFileRange(blobItem.file()->path(), blobItem.offset(), blobItem.length(), blobItem.file()->expectedModificationTime());
         else

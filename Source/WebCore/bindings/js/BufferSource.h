@@ -73,7 +73,7 @@ public:
         }, m_variant);
     }
 
-    std::span<const uint8_t> bytes() const { return { data(), length() }; }
+    std::span<const uint8_t> span() const { return { data(), length() }; }
 
 private:
     VariantType m_variant;
@@ -87,7 +87,7 @@ inline BufferSource toBufferSource(std::span<const uint8_t> data)
 #if PLATFORM(COCOA) && defined(__OBJC__)
 inline BufferSource toBufferSource(NSData *data)
 {
-    return BufferSource(JSC::ArrayBuffer::tryCreate(toSpan(data)));
+    return BufferSource(JSC::ArrayBuffer::tryCreate(span(data)));
 }
 
 inline RetainPtr<NSData> toNSData(const BufferSource& data)

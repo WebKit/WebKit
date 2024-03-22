@@ -80,7 +80,7 @@ void MediaResourceSniffer::dataReceived(PlatformMediaResource&, const SharedBuff
     m_received += buffer.size();
     m_content.append(buffer);
     auto contiguousBuffer = m_content.get()->makeContiguous();
-    auto mimeType = MIMESniffer::getMIMETypeFromContent(contiguousBuffer->bytes());
+    auto mimeType = MIMESniffer::getMIMETypeFromContent(contiguousBuffer->span());
     if (mimeType.isEmpty() && m_received < m_maxSize)
         return;
     if (!m_producer.isSettled())
@@ -100,7 +100,7 @@ void MediaResourceSniffer::loadFinished(PlatformMediaResource&, const NetworkLoa
     if (m_producer.isSettled())
         return;
     Ref contiguousBuffer = m_content.takeAsContiguous();
-    auto mimeType = MIMESniffer::getMIMETypeFromContent(contiguousBuffer->bytes());
+    auto mimeType = MIMESniffer::getMIMETypeFromContent(contiguousBuffer->span());
     m_producer.resolve(ContentType { WTFMove(mimeType) });
     cancel();
 }

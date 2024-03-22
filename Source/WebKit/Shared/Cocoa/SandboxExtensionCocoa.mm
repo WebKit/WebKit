@@ -243,7 +243,7 @@ auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type
     ASSERT(path.last() == '/');
 
     // Append the file name.
-    path.append(prefix.utf8().bytes());
+    path.append(prefix.utf8().span());
     path.append('\0');
 
     auto pathString = String::fromUTF8(path.data());

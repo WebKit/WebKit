@@ -54,7 +54,7 @@ TEST(KeyedCoding, SetAndGetBytes)
     encoder->encodeBytes("data-size1"_s, data, dataLengthOne);
     auto encodedBuffer = encoder->finishEncoding();
 
-    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->bytes());
+    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
 
     bool success;
     const uint8_t* buffer;
@@ -82,7 +82,7 @@ bool testSimpleValue(EncodeFunctionType encode, bool (WebCore::KeyedDecoder::* d
     (encoder.get()->*encode)("key"_s, value);
 
     auto encodedBuffer = encoder->finishEncoding();
-    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->bytes());
+    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
 
     DecodeValueType decodedValue;
     bool success = (decoder.get()->*decode)("key"_s, decodedValue);
@@ -159,7 +159,7 @@ TEST(KeyedCoding, GetNonExistingRecord)
     encoder->encodeBool("bool-true"_s, true);
 
     auto encodedBuffer = encoder->finishEncoding();
-    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->bytes());
+    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
 
     bool success, boolValue;
     success = decoder->decodeBool("bool-true"_s, boolValue);
@@ -246,7 +246,7 @@ TEST(KeyedCoding, SetAndGetObject)
     encoder->encodeObject("user1"_s, user1, KeyedCodingTestObject::encode);
     auto encodedBuffer = encoder->finishEncoding();
 
-    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->bytes());
+    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
     bool success;
     KeyedCodingTestObject decodedUser0, decodedUser1;
 
@@ -269,7 +269,7 @@ TEST(KeyedCoding, SetAndGetObjects)
     encoder->encodeObjects("users"_s, users.begin(), users.end(), KeyedCodingTestObject::encode);
     auto encodedBuffer = encoder->finishEncoding();
 
-    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->bytes());
+    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
     Vector<KeyedCodingTestObject> decodedUsers;
 
     bool success = decoder->decodeObjects("users"_s, decodedUsers, KeyedCodingTestObject::decode);
@@ -283,7 +283,7 @@ TEST(KeyedCoding, SetAndGetWithEmptyKey)
     encoder->encodeBool(emptyString(), false);
 
     auto encodedBuffer = encoder->finishEncoding();
-    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->bytes());
+    auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
 
     bool success, boolValue;
     success = decoder->decodeBool(emptyString(), boolValue);

@@ -165,7 +165,7 @@ std::unique_ptr<DeflateResultHolder> WebSocketDeflateFramer::deflate(WebSocketFr
         return result;
     }
     frame.compress = true;
-    frame.payload = m_deflater->bytes();
+    frame.payload = m_deflater->span();
     return result;
 }
 
@@ -193,7 +193,7 @@ std::unique_ptr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFr
         return result;
     }
     frame.compress = false;
-    frame.payload = m_inflater->bytes();
+    frame.payload = m_inflater->span();
     return result;
 }
 

@@ -361,7 +361,7 @@ static void resourceDataCallback(API::Data* wkData, GTask* task)
 
     ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_task_get_task_data(task));
     data->webData = wkData;
-    if (!wkData->bytes().data())
+    if (!wkData->span().data())
         data->webData = API::Data::create(reinterpret_cast<const unsigned char*>(""), 1);
     g_task_return_boolean(task, TRUE);
 }
@@ -422,7 +422,7 @@ guchar* webkit_web_resource_get_data_finish(WebKitWebResource* resource, GAsyncR
     if (length)
         *length = data->webData->size();
 
-    auto bytes = data->webData->bytes();
+    auto bytes = data->webData->span();
     if (bytes.empty())
         return nullptr;
 

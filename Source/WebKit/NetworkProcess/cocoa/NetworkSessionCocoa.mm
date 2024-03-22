@@ -924,7 +924,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             }
         }
 
-        auto resumeDataReference = toSpan(resumeData);
+        auto resumeDataReference = span(resumeData);
         download->didFail(error, resumeDataReference);
     }
 }
@@ -2183,7 +2183,7 @@ void NetworkSessionCocoa::setProxyConfigData(const Vector<std::pair<Vector<uint8
     bool recreateSessions = false;
     for (auto& config : proxyConfigurations) {
         uuid_t identifier;
-        memcpy(identifier, config.second.toSpan().data(), sizeof(uuid_t));
+        memcpy(identifier, config.second.span().data(), sizeof(uuid_t));
 
         auto nwProxyConfig = adoptNS(createProxyConfig(config.first.data(), config.first.size(), identifier));
 

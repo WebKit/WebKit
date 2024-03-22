@@ -137,7 +137,7 @@ static inline RetainPtr<NSData> toNSData(ArrayBuffer* buffer)
 
 static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
 {
-    return ArrayBuffer::create(toSpan(data));
+    return ArrayBuffer::create(span(data));
 }
 
 static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
@@ -171,7 +171,7 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
     Vector<Ref<AuthenticatorAssertionResponse>> result;
     result.reserveInitialCapacity(sortedAttributesArray.count);
     for (NSDictionary *attributes in sortedAttributesArray) {
-        auto decodedResponse = cbor::CBORReader::read(toVector(attributes[(id)kSecAttrApplicationTag]));
+        auto decodedResponse = cbor::CBORReader::read(makeVector(attributes[(id)kSecAttrApplicationTag]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
             return std::nullopt;
@@ -395,7 +395,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
         auto retainAttributesArray = adoptCF(attributesArrayRef);
         NSDictionary *dict = (NSDictionary *)attributesArrayRef;
 
-        auto decodedResponse = cbor::CBORReader::read(toVector(dict[(id)kSecAttrApplicationTag]));
+        auto decodedResponse = cbor::CBORReader::read(makeVector(dict[(id)kSecAttrApplicationTag]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
             return WebCore::ExceptionData { ExceptionCode::UnknownError, "Could not read credential."_s };
@@ -582,7 +582,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     {
         Vector<cbor::CBORValue> cborArray;
         for (size_t i = 0; i < [certificates count]; i++)
-            cborArray.append(cbor::CBORValue(toVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
+            cborArray.append(cbor::CBORValue(makeVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
     }
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);

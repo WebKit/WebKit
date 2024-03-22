@@ -42,7 +42,7 @@ void serializeString(Vector<uint8_t>& actions, const String& string)
     uint32_t serializedLength = sizeof(uint32_t) + utf8.length();
     actions.reserveCapacity(actions.size() + serializedLength);
     actions.append(std::span { reinterpret_cast<const uint8_t*>(&serializedLength), sizeof(serializedLength) });
-    actions.append(utf8.bytes());
+    actions.append(utf8.span());
 }
 
 size_t stringSerializedLength(std::span<const uint8_t> span)

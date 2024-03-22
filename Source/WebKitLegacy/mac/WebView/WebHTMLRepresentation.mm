@@ -240,7 +240,7 @@ using JSC::Yarr::RegularExpression;
     NSData *data = [_private->dataSource data];
     if (!data)
         return nil;
-    return decoder->encoding().decode(toSpan(data));
+    return decoder->encoding().decode(span(data));
 }
 
 - (NSString *)title
