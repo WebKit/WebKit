@@ -1193,25 +1193,28 @@ void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
 
 void PDFPlugin::setActiveAnnotation(RetainPtr<PDFAnnotation>&& annotation)
 {
-    if (!supportsForms())
-        return;
-
-    if (m_activeAnnotation)
-        m_activeAnnotation->commit();
-
-    if (annotation) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
-            m_activeAnnotation = nullptr;
+    // This may be called off the main thread if VoiceOver is running, thus dispatch to the main runloop since it involves main thread only objects.
+    callOnMainRunLoopAndWait([annotation = WTFMove(annotation), this] {
+        if (!supportsForms())
             return;
-        }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
-        auto activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
-        m_activeAnnotation = activeAnnotation.get();
-        activeAnnotation->attach(m_annotationContainer.get());
-    } else
-        m_activeAnnotation = nullptr;
+        if (m_activeAnnotation)
+            m_activeAnnotation->commit();
+
+        if (annotation) {
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
+                m_activeAnnotation = nullptr;
+                return;
+            }
+            ALLOW_DEPRECATED_DECLARATIONS_END
+
+            auto activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
+            m_activeAnnotation = activeAnnotation.get();
+            activeAnnotation->attach(m_annotationContainer.get());
+        } else
+            m_activeAnnotation = nullptr;
+    });
 }
 
 void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
