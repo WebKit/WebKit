@@ -63,7 +63,7 @@ function touchBytes(len)
 
 @implementation MemoryFootprintDelegate
 
-- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore domain:(NSString *)registrableDomain didExceedMemoryFootprintThreshold:(size_t)footprint withPageCount:(NSUInteger)pageCount processLifetime:(NSTimeInterval)processLifetime inForeground:(BOOL)inForeground wasPrivateRelayed:(BOOL)wasPrivateRelayed
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore domain:(NSString *)registrableDomain didExceedMemoryFootprintThreshold:(size_t)footprint withPageCount:(NSUInteger)pageCount processLifetime:(NSTimeInterval)processLifetime inForeground:(BOOL)inForeground wasPrivateRelayed:(BOOL)wasPrivateRelayed canSuspend:(BOOL)canSuspend
 {
     _footprints.append(footprint);
 
@@ -95,9 +95,9 @@ TEST(MemoryFootprintThreshold, TestDelegateMethod)
     TestWebKitAPI::Util::run(&delegate->_done);
 
     EXPECT_EQ(delegate->_footprints.size(), 3u);
-    EXPECT_GT(delegate->_footprints[0], 25u << 20);
-    EXPECT_GT(delegate->_footprints[1], 50u << 20);
-    EXPECT_GT(delegate->_footprints[2], 100u << 20);
+    EXPECT_EQ(delegate->_footprints[0], 25u << 20);
+    EXPECT_EQ(delegate->_footprints[1], 50u << 20);
+    EXPECT_EQ(delegate->_footprints[2], 100u << 20);
 }
 
 #endif // ENABLE(PERIODIC_MEMORY_MONITOR)

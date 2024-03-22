@@ -1967,7 +1967,7 @@ void WebProcessProxy::didExceedMemoryFootprintThreshold(size_t footprint)
         domain = "unknown"_s;
 
     auto activeTime = totalForegroundTime() + totalBackgroundTime() + totalSuspendedTime();
-    dataStore->client().didExceedMemoryFootprintThreshold(footprint, domain, pageCount(), activeTime, throttler().currentState() == ProcessThrottleState::Foreground, wasPrivateRelayed ? WebCore::WasPrivateRelayed::Yes : WebCore::WasPrivateRelayed::No);
+    dataStore->client().didExceedMemoryFootprintThreshold(footprint, domain, pageCount(), activeTime, throttler().currentState() == ProcessThrottleState::Foreground, wasPrivateRelayed ? WebCore::WasPrivateRelayed::Yes : WebCore::WasPrivateRelayed::No, throttler().canSuspendForLogging() ? WebsiteDataStoreClient::CanSuspend::Yes : WebsiteDataStoreClient::CanSuspend::No);
 }
 
 void WebProcessProxy::didExceedCPULimit()

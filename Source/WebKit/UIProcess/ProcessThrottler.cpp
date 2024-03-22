@@ -508,6 +508,11 @@ bool ProcessThrottler::isSuspended() const
     return m_processProxy && !m_assertion;
 }
 
+bool ProcessThrottler::canSuspendForLogging() const
+{
+    return (!m_shouldTakeNearSuspendedAssertion || m_shouldDropNearSuspendedAssertionAfterDelay) && !m_pageAllowedToRunInTheBackgroundCounter.value();
+}
+
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
     : m_timer(RunLoop::main(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
     , m_timeout(timeout)
