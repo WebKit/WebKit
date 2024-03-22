@@ -3290,3 +3290,12 @@ webkit.org/b/271223 fast/events/wheel/wheel-event-listeners-on-window-made-passi
 webkit.org/b/271223 fast/events/wheel/wheel-events-become-non-cancelable.html [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/trusted-types/HTMLElement-generic.html [ Failure ]
+
+storage/indexeddb/connection-leak.html [ Failure Pass ]
+
+fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
+
+imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-same-document.html [ Failure Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-from-initial-about-blank-gc.html [ Failure Pass ]
+
+webkit.org/b/271408 [ Debug ] fast/images/decode-render-animated-image.html [ Skip ] # Crash
