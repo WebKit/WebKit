@@ -36,6 +36,7 @@
 #include "WebGLRenderingContextBase.h"
 #include "WebGLUtilities.h"
 #include <wtf/Scope.h>
+#include <wtf/SystemTracing.h>
 
 #if PLATFORM(COCOA)
 #include "GraphicsContextGLCocoa.h"
@@ -134,6 +135,11 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     if (!gl)
         return;
 
+    tracePoint(WebXRLayerStartFrameStart);
+    auto scopeExit = makeScopeExit([&]() {
+        tracePoint(WebXRLayerStartFrameEnd);
+    });
+
     auto [textureTarget, textureTargetBinding] = gl->externalImageTextureBindingPoint();
 
     ScopedWebGLRestoreFramebuffer restoreFramebuffer { m_context };
@@ -205,6 +211,11 @@ void WebXROpaqueFramebuffer::endFrame()
     RefPtr gl = m_context.graphicsContextGL();
     if (!gl)
         return;
+
+    tracePoint(WebXRLayerEndFrameStart);
+    auto scopeExit = makeScopeExit([&]() {
+        tracePoint(WebXRLayerEndFrameEnd);
+    });
 
     if (m_multisampleColorBuffer) {
         ScopedWebGLRestoreFramebuffer restoreFramebuffer { m_context };
