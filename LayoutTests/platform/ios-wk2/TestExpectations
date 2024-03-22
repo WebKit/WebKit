@@ -2209,8 +2209,6 @@ http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broa
 
 webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
 
-webkit.org/b/231262 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure Crash ]
-
 webkit.org/b/231264 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Failure ]
 
 webkit.org/b/231269 fast/events/ios/rotation/safari-like-rotation.html [ Failure ]
@@ -2771,3 +2769,5 @@ http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy.html [ Pass Failure ]
 
 webkit.org/b/271442 fast/events/ios/rotation/basic-rotation.html [ Failure ]
+
+webkit.org/b/271445 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure ]
