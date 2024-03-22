@@ -75,6 +75,7 @@ public:
     virtual void toggleFullscreen() = 0;
     virtual void togglePictureInPicture() = 0;
     virtual void toggleInWindowFullscreen() = 0;
+    virtual void enterFullscreen() = 0;
     virtual void toggleMuted() = 0;
     virtual void setMuted(bool) = 0;
     virtual void setVolume(double) = 0;

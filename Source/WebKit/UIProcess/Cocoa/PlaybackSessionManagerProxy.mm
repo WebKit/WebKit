@@ -199,6 +199,13 @@ void PlaybackSessionModelContext::togglePictureInPicture()
         m_manager->togglePictureInPicture(m_contextId);
 }
 
+void PlaybackSessionModelContext::enterFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (RefPtr manager = m_manager.get())
+        manager->enterFullscreen(m_contextId);
+}
+
 void PlaybackSessionModelContext::toggleInWindowFullscreen()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
@@ -708,6 +715,11 @@ void PlaybackSessionManagerProxy::toggleFullscreen(PlaybackSessionContextIdentif
 void PlaybackSessionManagerProxy::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId));
+}
+
+void PlaybackSessionManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)
+{
+    m_page->send(Messages::PlaybackSessionManager::EnterFullscreen(contextId));
 }
 
 void PlaybackSessionManagerProxy::toggleInWindow(PlaybackSessionContextIdentifier contextId)

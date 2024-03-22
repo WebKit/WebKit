@@ -75,6 +75,7 @@ public:
     WEBCORE_EXPORT void toggleFullscreen() final;
     WEBCORE_EXPORT void togglePictureInPicture() final;
     WEBCORE_EXPORT void toggleInWindowFullscreen() final;
+    WEBCORE_EXPORT void enterFullscreen() final;
     WEBCORE_EXPORT void toggleMuted() final;
     WEBCORE_EXPORT void setMuted(bool) final;
     WEBCORE_EXPORT void setVolume(double) final;

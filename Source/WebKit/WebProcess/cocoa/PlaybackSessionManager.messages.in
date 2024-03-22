@@ -40,6 +40,7 @@ messages -> PlaybackSessionManager {
     HandleControlledElementIDRequest(WebKit::PlaybackSessionContextIdentifier contextId)
     ToggleFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     TogglePictureInPicture(WebKit::PlaybackSessionContextIdentifier contextId)
+    EnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     ToggleInWindow(WebKit::PlaybackSessionContextIdentifier contextId)
     ToggleMuted(WebKit::PlaybackSessionContextIdentifier contextId)
     SetMuted(WebKit::PlaybackSessionContextIdentifier contextId, bool muted)

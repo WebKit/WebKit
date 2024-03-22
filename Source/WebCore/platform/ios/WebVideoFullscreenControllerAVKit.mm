@@ -164,6 +164,7 @@ private:
     void toggleFullscreen() override { }
     void togglePictureInPicture() override { }
     void toggleInWindowFullscreen() override { }
+    void enterFullscreen() override { }
     void toggleMuted() override;
     void setMuted(bool) final;
     void setVolume(double) final;
