@@ -937,7 +937,7 @@ class Git(Scm):
                 branch_point = previous[-1].branch_point
                 identifier = previous[-1].identifier
                 hash = line.split(' ')[-1].rstrip()
-                if hash != previous[-1].hash:
+                if identifier and hash != previous[-1].hash:
                     identifier -= 1
 
                 if not identifier:
@@ -953,7 +953,7 @@ class Git(Scm):
                 commit = Commit(
                     repository_id=self.id,
                     hash=hash,
-                    branch=end.branch if identifier and branch_point else self.default_branch,
+                    branch=end.branch if not include_identifier or (identifier and branch_point) else self.default_branch,
                     identifier=identifier if include_identifier else None,
                     branch_point=branch_point if include_identifier else None,
                     order=0,
