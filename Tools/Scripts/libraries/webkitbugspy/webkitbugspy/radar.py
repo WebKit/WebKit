@@ -71,7 +71,7 @@ class Tracker(GenericTracker):
         TASK
     ]
 
-    RELATIONSHIP_TYPES = ['related-to', 'blocked-by', 'blocking', 'parent-of', 'subtask-of', 'cause-of', 'caused-by', 'duplicate-of', 'original-of']
+    RELATIONSHIP_TYPES = ['related-to', 'blocked-by', 'blocking', 'parent-of', 'subtask-of', 'cause-of', 'caused-by', 'duplicate-of', 'original-of', 'clone-of', 'cloned-to']
 
     ALWAYS = 'Always'
     SOMETIMES = 'Sometimes'
