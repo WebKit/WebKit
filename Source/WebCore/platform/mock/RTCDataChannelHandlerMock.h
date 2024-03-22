@@ -41,7 +41,7 @@ private:
     void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
 
     bool sendStringData(const CString&) final;
-    bool sendRawData(const uint8_t*, size_t) final;
+    bool sendRawData(std::span<const uint8_t>) final;
     void close() final;
 
     RTCDataChannelHandlerClient* m_client { nullptr };

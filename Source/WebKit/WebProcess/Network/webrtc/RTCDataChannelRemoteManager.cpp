@@ -120,9 +120,9 @@ void RTCDataChannelRemoteManager::sendData(WebCore::RTCDataChannelIdentifier sou
 {
     if (auto* source = sourceFromIdentifier(sourceIdentifier)) {
         if (isRaw)
-            source->sendRawData(data.data(), data.size());
+            source->sendRawData(data);
         else
-            source->sendStringData(CString(data.data(), data.size()));
+            source->sendStringData(CString(data));
     }
 }
 
@@ -150,7 +150,7 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
 
     postTaskToHandler(handlerIdentifier, [isRaw, text = WTFMove(text).isolatedCopy(), buffer = WTFMove(buffer)](auto& handler) mutable {
         if (isRaw)
-            handler.didReceiveRawData(buffer.data(), buffer.size());
+            handler.didReceiveRawData(buffer.span());
         else
             handler.didReceiveStringData(WTFMove(text));
     });
@@ -197,9 +197,9 @@ void RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource(WebCo
     }, 0);
 }
 
-void RTCDataChannelRemoteManager::RemoteHandlerConnection::sendData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, const unsigned char* data, size_t size)
+void RTCDataChannelRemoteManager::RemoteHandlerConnection::sendData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, std::span<const uint8_t> data)
 {
-    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::SendData { identifier, isRaw, std::span { data, size } }, 0);
+    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::SendData { identifier, isRaw, data }, 0);
 }
 
 void RTCDataChannelRemoteManager::RemoteHandlerConnection::close(WebCore::RTCDataChannelIdentifier identifier)
@@ -229,9 +229,9 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveStringData(W
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, false, text.span() }, 0);
 }
 
-void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData(WebCore::RTCDataChannelIdentifier identifier, const uint8_t* data, size_t size)
+void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData(WebCore::RTCDataChannelIdentifier identifier, std::span<const uint8_t> data)
 {
-    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, true, std::span { data, size  } }, 0);
+    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, true, data }, 0);
 }
 
 void RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError(WebCore::RTCDataChannelIdentifier identifier, WebCore::RTCErrorDetailType type, const String& message)

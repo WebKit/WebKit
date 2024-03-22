@@ -55,9 +55,9 @@ bool RTCDataChannelHandlerMock::sendStringData(const CString& string)
     return true;
 }
 
-bool RTCDataChannelHandlerMock::sendRawData(const uint8_t* data, size_t size)
+bool RTCDataChannelHandlerMock::sendRawData(std::span<const uint8_t> data)
 {
-    m_client->didReceiveRawData(data, size);
+    m_client->didReceiveRawData(data);
     return true;
 }
 
