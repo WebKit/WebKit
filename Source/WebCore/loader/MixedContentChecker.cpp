@@ -35,6 +35,7 @@
 #include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "SecurityOrigin.h"
@@ -171,27 +172,29 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
     return true;
 }
 
-static bool shouldBlockInsecureContent(LocalFrame& frame, const URL& url)
+static bool shouldBlockInsecureContent(LocalFrame& frame, const URL& url, MixedContentChecker::IsUpgradable isUpgradable)
 {
     RefPtr document = frame.document();
     if (!document || !document->settings().upgradeMixedContentEnabled())
         return false;
     if (!foundMixedContentInFrameTree(frame, url))
         return false;
+    if (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) && isUpgradable == MixedContentChecker::IsUpgradable::Yes)
+        return false;
     logConsoleWarningForUpgrade(frame, /* blocked */ true, url);
     return true;
 }
 
-bool MixedContentChecker::shouldBlockRequestForDisplayableContent(LocalFrame& frame, const URL& url, MixedContentChecker::ContentType type)
+bool MixedContentChecker::shouldBlockRequestForDisplayableContent(LocalFrame& frame, const URL& url, ContentType type, IsUpgradable isUpgradable)
 {
-    if (shouldBlockInsecureContent(frame, url))
+    if (shouldBlockInsecureContent(frame, url, isUpgradable))
         return true;
     return !frameAndAncestorsCanDisplayInsecureContent(frame, type, url);
 }
 
-bool MixedContentChecker::shouldBlockRequestForRunnableContent(LocalFrame& frame, SecurityOrigin& securityOrigin, const URL& url, MixedContentChecker::ShouldLogWarning shouldLogWarning)
+bool MixedContentChecker::shouldBlockRequestForRunnableContent(LocalFrame& frame, SecurityOrigin& securityOrigin, const URL& url, ShouldLogWarning shouldLogWarning)
 {
-    if (shouldBlockInsecureContent(frame, url))
+    if (shouldBlockInsecureContent(frame, url, IsUpgradable::No))
         return true;
     return !frameAndAncestorsCanRunInsecureContent(frame, securityOrigin, url, shouldLogWarning);
 }

@@ -31,6 +31,7 @@
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "KeepaliveRequestTracker.h"
+#include "MixedContentChecker.h"
 #include "ResourceTimingInformation.h"
 #include "Timer.h"
 #include <wtf/CheckedPtr.h>
@@ -188,7 +189,7 @@ private:
     void prepareFetch(CachedResource::Type, CachedResourceRequest&);
     void updateHTTPRequestHeaders(FrameLoader&, CachedResource::Type, CachedResourceRequest&);
 
-    bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ForPreload);
+    bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ForPreload, MixedContentChecker::IsUpgradable);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, CachedResourceRequest&, CachedResource* existingResource, ForPreload, ImageLoading) const;
@@ -197,7 +198,7 @@ private:
     CachedResourceHandle<CachedResource> updateCachedResourceWithCurrentRequest(const CachedResource&, CachedResourceRequest&&, PAL::SessionID, const CookieJar&, const Settings&);
 
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource&, ResourceError&);
-    bool checkInsecureContent(CachedResource::Type, const URL&) const;
+    bool checkInsecureContent(CachedResource::Type, const URL&, MixedContentChecker::IsUpgradable) const;
 
     void performPostLoadActions();
 
