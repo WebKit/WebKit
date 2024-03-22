@@ -282,7 +282,7 @@ class Clone(Command):
             print("Cloning into '{}'".format(milestone.name))
             print("    Reason: {}".format(args.reason))
             if parent:
-                print("    as child of {}".format(parent.link()))
+                print("    as child of {}".format(parent.link))
             if prefix:
                 print("    with tile '{} {}'".format(prefix, issue.title))
             if category:
