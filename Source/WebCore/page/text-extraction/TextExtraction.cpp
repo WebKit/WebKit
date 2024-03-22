@@ -255,7 +255,7 @@ static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemD
     if (!renderer || renderer->style().opacity() < minOpacityToConsiderVisible)
         return { SkipExtraction::SelfAndSubtree };
 
-    if (renderer->style().visibility() == Visibility::Hidden)
+    if (renderer->style().usedVisibility() == Visibility::Hidden)
         return { SkipExtraction::Self };
 
     if (RefPtr textNode = dynamicDowncast<Text>(node)) {
@@ -514,7 +514,7 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
     }
 
     for (auto& descendant : descendantsOfType<RenderObject>(*renderer)) {
-        if (descendant.style().visibility() == Visibility::Hidden)
+        if (descendant.style().usedVisibility() == Visibility::Hidden)
             continue;
 
         if (descendant.style().opacity() < minOpacityToConsiderVisible)

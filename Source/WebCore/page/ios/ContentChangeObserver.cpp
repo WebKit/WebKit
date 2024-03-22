@@ -86,7 +86,7 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
     if (style.display() == DisplayType::None)
         return true;
 
-    if (style.visibility() == Visibility::Hidden)
+    if (style.usedVisibility() == Visibility::Hidden)
         return true;
 
     if (!style.opacity())

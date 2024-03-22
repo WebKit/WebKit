@@ -164,6 +164,8 @@ public:
 
     unsigned isInSubtreeWithBlendMode : 1;
 
+    unsigned isInVisibilityAdjustmentSubtree : 1;
+
     unsigned usedContentVisibility : 2; // ContentVisibility
 
     OptionSet<TouchAction> usedTouchActions;

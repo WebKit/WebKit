@@ -515,6 +515,8 @@ public:
     inline OverscrollBehavior overscrollBehaviorY() const;
     
     Visibility visibility() const { return static_cast<Visibility>(m_inheritedFlags.visibility); }
+    inline Visibility usedVisibility() const;
+
     VerticalAlign verticalAlign() const;
     const Length& verticalAlignLength() const;
 
@@ -1076,6 +1078,9 @@ public:
 
     inline void setBlendMode(BlendMode);
     inline bool isInSubtreeWithBlendMode() const;
+
+    inline void setIsInVisibilityAdjustmentSubtree();
+    inline bool isInVisibilityAdjustmentSubtree() const;
 
     inline void setIsolation(Isolation);
 

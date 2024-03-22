@@ -388,7 +388,7 @@ void RenderListBox::paintItem(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
 void RenderListBox::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().visibility() != Visibility::Visible)
+    if (style().usedVisibility() != Visibility::Visible)
         return;
     
     if (paintInfo.phase == PaintPhase::Foreground) {
@@ -496,7 +496,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     if (!itemStyle)
         return;
 
-    if (itemStyle->visibility() == Visibility::Hidden)
+    if (itemStyle->usedVisibility() == Visibility::Hidden)
         return;
 
     String itemText;
@@ -566,7 +566,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         backColor = itemStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 
     // Draw the background for this list box item
-    if (itemStyle->visibility() == Visibility::Hidden)
+    if (itemStyle->usedVisibility() == Visibility::Hidden)
         return;
 
     LayoutRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);

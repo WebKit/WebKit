@@ -601,6 +601,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             if (isVertical && style.height().isAuto())
                 style.setHeight(Length(200, LengthType::Fixed));
         }
+
+        if (UNLIKELY(m_element->isVisibilityAdjustmentRoot() || m_parentStyle.isInVisibilityAdjustmentSubtree()))
+            style.setIsInVisibilityAdjustmentSubtree();
     }
 
     if (shouldInheritTextDecorationsInEffect(style, m_element))

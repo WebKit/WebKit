@@ -69,7 +69,7 @@ void RenderMedia::layout()
 void RenderMedia::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
 {
     RenderImage::styleDidChange(difference, oldStyle);
-    if (!oldStyle || style().visibility() != oldStyle->visibility())
+    if (!oldStyle || style().usedVisibility() != oldStyle->usedVisibility())
         mediaElement().visibilityDidChange();
 }
 

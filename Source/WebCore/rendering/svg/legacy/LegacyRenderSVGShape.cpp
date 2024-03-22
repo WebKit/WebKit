@@ -266,7 +266,7 @@ void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 
 void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (style().visibility() == Visibility::Hidden || isEmpty())
+    if (style().usedVisibility() == Visibility::Hidden || isEmpty())
         return;
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
@@ -353,7 +353,7 @@ bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTe
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGPath, request, style().usedPointerEvents());
-    bool isVisible = (style().visibility() == Visibility::Visible);
+    bool isVisible = (style().usedVisibility() == Visibility::Visible);
     if (isVisible || !hitRules.requireVisible) {
         const SVGRenderStyle& svgStyle = style().svgStyle();
         WindRule fillRule = svgStyle.fillRule();

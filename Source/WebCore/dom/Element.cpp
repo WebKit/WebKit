@@ -5628,4 +5628,14 @@ CustomStateSet& Element::ensureCustomStateSet()
     return *rareData.customStateSet();
 }
 
+bool Element::isVisibilityAdjustmentRoot() const
+{
+    return hasRareData() && elementRareData()->isVisibilityAdjustmentRoot();
+}
+
+void Element::setIsVisibilityAdjustmentRoot()
+{
+    ensureElementRareData().setIsVisibilityAdjustmentRoot();
+}
+
 } // namespace WebCore

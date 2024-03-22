@@ -631,6 +631,9 @@ public:
     WEBCORE_EXPORT void requestPointerLock();
 #endif
 
+    bool isVisibilityAdjustmentRoot() const;
+    void setIsVisibilityAdjustmentRoot();
+
     bool isSpellCheckingEnabled() const;
     WEBCORE_EXPORT bool isWritingSuggestionsEnabled() const;
 

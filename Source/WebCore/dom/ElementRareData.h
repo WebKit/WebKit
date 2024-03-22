@@ -153,6 +153,9 @@ public:
     CustomStateSet* customStateSet() { return m_customStateSet.get(); }
     void setCustomStateSet(Ref<CustomStateSet>&& customStateSet) { m_customStateSet = WTFMove(customStateSet); }
 
+    bool isVisibilityAdjustmentRoot() const { return m_isVisibilityAdjustmentRoot; }
+    void setIsVisibilityAdjustmentRoot() { m_isVisibilityAdjustmentRoot = true; }
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
@@ -255,6 +258,8 @@ private:
     std::unique_ptr<PopoverData> m_popoverData;
 
     RefPtr<CustomStateSet> m_customStateSet;
+
+    bool m_isVisibilityAdjustmentRoot { false };
 };
 
 inline ElementRareData::ElementRareData()

@@ -358,7 +358,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     if (isRenderViewLayer())
         m_boxScrollingScope = m_contentsScrollingScope = nextScrollingScope();
 
-    auto needsvisibleContentStatusUpdate = [&]() {
+    auto needsVisibleContentStatusUpdate = [&]() {
         if (renderer.firstChild())
             return false;
 
@@ -376,9 +376,9 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
         return true;
     }();
 
-    if (needsvisibleContentStatusUpdate) {
+    if (needsVisibleContentStatusUpdate) {
         m_visibleContentStatusDirty = false;
-        m_hasVisibleContent = renderer.style().visibility() == Visibility::Visible;
+        m_hasVisibleContent = renderer.style().usedVisibility() == Visibility::Visible;
     }
 }
 
@@ -478,7 +478,7 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
 
     if (oldChild.hasBlendMode() || (oldChild.hasNotIsolatedBlendingDescendants() && !oldChild.isolatesBlending()))
         dirtyAncestorChainHasBlendingDescendants();
-    if (renderer().style().visibility() != Visibility::Visible)
+    if (renderer().style().usedVisibility() != Visibility::Visible)
         dirtyVisibleContentStatus();
 }
 
@@ -1619,13 +1619,13 @@ bool RenderLayer::computeHasVisibleContent() const
     if (renderer().isSkippedContent())
         return false;
 
-    if (renderer().style().visibility() == Visibility::Visible)
+    if (renderer().style().usedVisibility() == Visibility::Visible)
         return true;
 
     // Layer's renderer has visibility:hidden, but some non-layer child may have visibility:visible.
     RenderObject* r = renderer().firstChild();
     while (r) {
-        if (r->style().visibility() == Visibility::Visible && !r->hasLayer())
+        if (r->style().usedVisibility() == Visibility::Visible && !r->hasLayer())
             return true;
 
         RenderObject* child = nullptr;
@@ -5186,7 +5186,7 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
 
     // We can't use hasVisibleContent(), because that will be true if our renderer is hidden, but some child
     // is visible and that child doesn't cover the entire rect.
-    if (renderer().style().visibility() != Visibility::Visible)
+    if (renderer().style().usedVisibility() != Visibility::Visible)
         return false;
 
     if (paintsWithFilters() && renderer().style().filter().hasFilterThatAffectsOpacity())
@@ -5474,7 +5474,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     // FIXME: RenderLayer already handles visibility changes through our visibility dirty bits. This logic could
     // likely be folded along with the rest.
     if (oldStyle) {
-        bool visibilityChanged = oldStyle->visibility() != renderer().style().visibility();
+        bool visibilityChanged = oldStyle->usedVisibility() != renderer().style().usedVisibility();
         if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || oldStyle->usedContentVisibility() != renderer().style().usedContentVisibility() || visibilityChanged) {
             dirtyStackingContextZOrderLists();
             if (isStackingContext())
