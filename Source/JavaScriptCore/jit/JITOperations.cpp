@@ -48,6 +48,7 @@
 #include "JITThunks.h"
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JITWorklist.h"
+#include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
@@ -3016,6 +3017,41 @@ JSC_DEFINE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject* glo
         return 1;
     return 0;
 }
+
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+
+JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject* globalObject, JSArrayIterator* arrayIterator, JSArray* array, void* metadataPointer))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto& metadata = *bitwise_cast<OpIteratorNext::Metadata*>(metadataPointer);
+    metadata.m_iterableProfile.observeStructureID(array->structureID());
+    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
+
+    auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
+    int64_t index = indexSlot.get().asAnyInt();
+    ASSERT(0 <= index && index <= maxSafeInteger());
+
+    JSValue value;
+    bool done = index == JSArrayIterator::doneIndex || index >= array->length();
+    if (!done) {
+        // No need for a barrier here because we know this is a primitive.
+        indexSlot.setWithoutWriteBarrier(jsNumber(index + 1));
+        ASSERT(index == static_cast<unsigned>(index));
+        value = array->getIndex(globalObject, static_cast<unsigned>(index));
+        RETURN_IF_EXCEPTION(scope, { });
+    } else {
+        // No need for a barrier here because we know this is a primitive.
+        indexSlot.setWithoutWriteBarrier(jsNumber(-1));
+    }
+
+    return makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value));
+}
+
+#endif
 
 ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* callFrame, ArrayProfile* arrayProfile, JSValue baseValue, JSValue subscript)
 {
