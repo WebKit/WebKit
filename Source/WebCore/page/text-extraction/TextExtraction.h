@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class Element;
 class LocalFrame;
 class Page;
 enum class ExceptionCode : uint8_t;
@@ -39,6 +40,7 @@ namespace TextExtraction {
 WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
 
 WEBCORE_EXPORT Expected<String, ExceptionCode> extractRenderedText(LocalFrame&, String&& selector);
+String extractRenderedText(Element&);
 
 } // namespace TextExtraction
 } // namespace WebCore
