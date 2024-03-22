@@ -42,7 +42,7 @@ void UIClient::decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy&, 
     request.doDefaultAction();
 }
 
-void UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowFeatures&&, Ref<NavigationAction>&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler)
+void UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&&, WebCore::WindowFeatures&&, Ref<NavigationAction>&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler)
 {
     completionHandler(nullptr);
 }

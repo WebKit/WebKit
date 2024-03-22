@@ -61,8 +61,9 @@ public:
     }
 
 private:
-    void createNewPage(WebPageProxy& page, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& apiNavigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
+    void createNewPage(WebPageProxy& page, Ref<API::PageConfiguration>&&, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& apiNavigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
     {
+        // FIXME: The configuration parameter should probably somehow find its way to webkitWebContextCreatePageForWebView instead of creating one there.
         WebKitNavigationAction navigationAction(WTFMove(apiNavigationAction));
         completionHandler(webkitWebViewCreateNewPage(m_webView, windowFeatures, &navigationAction));
     }

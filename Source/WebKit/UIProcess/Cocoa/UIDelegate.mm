@@ -310,7 +310,7 @@ void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy& page, const Web
 }
 #endif
 
-void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
+void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&& configuration, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
 {
     if (!m_uiDelegate)
         return completionHandler(nullptr);
@@ -318,17 +318,12 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowF
     auto delegate = m_uiDelegate->m_delegate.get();
     ASSERT(delegate);
 
-    auto configuration = adoptNS([m_uiDelegate->m_webView.get()->_configuration copy]);
-    // FIXME: after calling triggerBrowsingContextGroupSwitchForNavigation this configuration's BrowsingContextGroup is incorrect. <rdar://116203642>
-    // The fix should go into platform-independent code, though. Needs some refactoring. And also needs switching browsing context group.
-    [configuration _setRelatedWebView:m_uiDelegate->m_webView.get().get()];
-
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
 
     if (m_uiDelegate->m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:));
 
-        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker), relatedWebView = m_uiDelegate->m_webView.get()] (WKWebView *webView) mutable {
+        [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:wrapper(configuration) forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker), relatedWebView = m_uiDelegate->m_webView.get()] (WKWebView *webView) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -348,7 +343,7 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowF
     if (!m_uiDelegate->m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
         return completionHandler(nullptr);
 
-    RetainPtr<WKWebView> webView = [delegate webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures)];
+    RetainPtr<WKWebView> webView = [delegate webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:wrapper(configuration) forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures)];
     if (!webView)
         return completionHandler(nullptr);
 

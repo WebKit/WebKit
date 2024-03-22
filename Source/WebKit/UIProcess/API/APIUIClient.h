@@ -89,6 +89,7 @@ class Dictionary;
 class NavigationAction;
 class Object;
 class OpenPanelParameters;
+class PageConfiguration;
 class SecurityOrigin;
 class WebAuthenticationPanel;
 
@@ -97,7 +98,7 @@ class UIClient {
 public:
     virtual ~UIClient() { }
 
-    virtual void createNewPage(WebKit::WebPageProxy&, WebCore::WindowFeatures&&, Ref<NavigationAction>&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&&);
+    virtual void createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&&, WebCore::WindowFeatures&&, Ref<NavigationAction>&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&&);
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
