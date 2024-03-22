@@ -65,6 +65,7 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 NSString * const WKActionIsMainFrameKey = @"WKActionIsMainFrameKey";
 NSString * const WKActionNavigationTypeKey = @"WKActionNavigationTypeKey";

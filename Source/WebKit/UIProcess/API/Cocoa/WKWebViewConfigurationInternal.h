@@ -37,3 +37,9 @@
 - (Ref<API::PageConfiguration>)copyPageConfiguration;
 
 @end
+
+#if PLATFORM(IOS_FAMILY)
+_WKDragLiftDelay toDragLiftDelay(NSUInteger);
+_WKDragLiftDelay toWKDragLiftDelay(WebKit::DragLiftDelay);
+WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay);
+#endif

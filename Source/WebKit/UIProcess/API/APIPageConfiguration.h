@@ -37,6 +37,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_PROTOCOL(_UIClickInteractionDriving);
+#include <pal/system/ios/UserInterfaceIdiom.h>
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -62,6 +63,11 @@ enum class AttributionOverrideTesting : uint8_t {
     NoOverride,
     UserInitiated,
     AppInitiated
+};
+enum class DragLiftDelay : uint8_t {
+    Short,
+    Medium,
+    Long
 };
 #endif
 
@@ -129,7 +135,38 @@ public:
 
     const RetainPtr<_UIClickInteractionDriving>& clickInteractionDriverForTesting() const { return m_data.clickInteractionDriverForTesting; }
     void setClickInteractionDriverForTesting(RetainPtr<_UIClickInteractionDriving>&& driver) { m_data.clickInteractionDriverForTesting = WTFMove(driver); }
+
+    bool inlineMediaPlaybackRequiresPlaysInlineAttribute() const { return m_data.inlineMediaPlaybackRequiresPlaysInlineAttribute; }
+    void setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool requiresAttribute) { m_data.inlineMediaPlaybackRequiresPlaysInlineAttribute = requiresAttribute; }
+
+    bool allowsInlineMediaPlayback() const { return m_data.allowsInlineMediaPlayback; }
+    void setAllowsInlineMediaPlayback(bool allows) { m_data.allowsInlineMediaPlayback = allows; }
+
+    bool allowsInlineMediaPlaybackAfterFullscreen() const { return m_data.allowsInlineMediaPlaybackAfterFullscreen; }
+    void setAllowsInlineMediaPlaybackAfterFullscreen(bool allows) { m_data.allowsInlineMediaPlaybackAfterFullscreen = allows; }
+
+    WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting() const { return m_data.appInitiatedOverrideValueForTesting; }
+    void setAppInitiatedOverrideValueForTesting(WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting) { m_data.appInitiatedOverrideValueForTesting = appInitiatedOverrideValueForTesting; }
+
+    WebKit::DragLiftDelay dragLiftDelay() const { return m_data.dragLiftDelay; }
+    void setDragLiftDelay(WebKit::DragLiftDelay delay) { m_data.dragLiftDelay = delay; }
+
+    bool textInteractionGesturesEnabled() const { return m_data.textInteractionGesturesEnabled; }
+    void setTextInteractionGesturesEnabled(bool enabled) { m_data.textInteractionGesturesEnabled = enabled; }
+
+    bool longPressActionsEnabled() const { return m_data.longPressActionsEnabled; }
+    void setLongPressActionsEnabled(bool enabled) { m_data.longPressActionsEnabled = enabled; }
+
+    bool systemPreviewEnabled() const { return m_data.systemPreviewEnabled; }
+    void setSystemPreviewEnabled(bool enabled) { m_data.systemPreviewEnabled = enabled; }
+
+    bool shouldDecidePolicyBeforeLoadingQuickLookPreview() const { return m_data.shouldDecidePolicyBeforeLoadingQuickLookPreview; }
+    void setShouldDecidePolicyBeforeLoadingQuickLookPreview(bool shouldDecide) { m_data.shouldDecidePolicyBeforeLoadingQuickLookPreview = shouldDecide; }
 #endif
+
+    bool mediaDataLoadsAutomatically() const { return m_data.mediaDataLoadsAutomatically; }
+    void setMediaDataLoadsAutomatically(bool loads) { m_data.mediaDataLoadsAutomatically = loads; }
+
     bool initialCapitalizationEnabled() { return m_data.initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_data.initialCapitalizationEnabled = initialCapitalizationEnabled; }
 
@@ -274,11 +311,6 @@ public:
     void setAttributedBundleIdentifier(WTF::String&& identifier) { m_data.attributedBundleIdentifier = WTFMove(identifier); }
     const WTF::String& attributedBundleIdentifier() const { return m_data.attributedBundleIdentifier; }
 
-#if PLATFORM(IOS_FAMILY)
-    WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting() const { return m_data.appInitiatedOverrideValueForTesting; }
-    void setAppInitiatedOverrideValueForTesting(WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting) { m_data.appInitiatedOverrideValueForTesting = appInitiatedOverrideValueForTesting; }
-#endif
-
 #if HAVE(TOUCH_BAR)
     bool requiresUserActionForEditingControlsManager() const { return m_data.requiresUserActionForEditingControlsManager; }
     void setRequiresUserActionForEditingControlsManager(bool value) { m_data.requiresUserActionForEditingControlsManager = value; }
@@ -327,6 +359,10 @@ private:
         static Ref<WebKit::WebPreferences> createWebPreferences();
         static Ref<WebKit::VisitedLinkStore> createVisitedLinkStore();
         static Ref<WebsitePolicies> createWebsitePolicies();
+#if PLATFORM(IOS_FAMILY)
+        static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview();
+        static WebKit::DragLiftDelay defaultDragLiftDelay();
+#endif
 
         LazyInitializedRef<WebKit::BrowsingContextGroup, createBrowsingContextGroup> browsingContextGroup;
         LazyInitializedRef<WebKit::WebProcessPool, createWebProcessPool> processPool;
@@ -349,7 +385,23 @@ private:
         bool canShowWhileLocked { false };
         WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting { WebKit::AttributionOverrideTesting::NoOverride };
         RetainPtr<_UIClickInteractionDriving> clickInteractionDriverForTesting { };
-#endif
+        bool allowsInlineMediaPlayback { !PAL::currentUserInterfaceIdiomIsSmallScreen() };
+        bool inlineMediaPlaybackRequiresPlaysInlineAttribute { !allowsInlineMediaPlayback };
+        bool allowsInlineMediaPlaybackAfterFullscreen { !allowsInlineMediaPlayback };
+        bool mediaDataLoadsAutomatically { allowsInlineMediaPlayback };
+        WebKit::DragLiftDelay dragLiftDelay { defaultDragLiftDelay() };
+#if PLATFORM(WATCHOS)
+        bool textInteractionGesturesEnabled { false };
+        bool longPressActionsEnabled { false };
+#else // PLATFORM(WATCHOS)
+        bool textInteractionGesturesEnabled { true };
+        bool longPressActionsEnabled { true };
+#endif // PLATFORM(WATCHOS)
+        bool systemPreviewEnabled { false };
+        bool shouldDecidePolicyBeforeLoadingQuickLookPreview { defaultShouldDecidePolicyBeforeLoadingQuickLookPreview() };
+#else // PLATFORM(IOS_FAMILY)
+        bool mediaDataLoadsAutomatically { true };
+#endif // PLATFORM(IOS_FAMILY)
         bool initialCapitalizationEnabled { true };
         bool waitsForPaintAfterViewDidMoveToWindow { true };
         bool drawsBackground { true };

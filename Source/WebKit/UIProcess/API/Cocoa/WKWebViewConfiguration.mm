@@ -47,7 +47,6 @@
 #import <WebKit/WKUserContentController.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebsiteDataStore.h>
-#import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RobinHoodHashSet.h>
 #import <wtf/URLParser.h>
@@ -65,7 +64,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
+_WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 {
     if (value == _WKDragLiftDelayMedium)
         return _WKDragLiftDelayMedium;
@@ -74,17 +73,25 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     return _WKDragLiftDelayShort;
 }
 
-static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
+_WKDragLiftDelay toWKDragLiftDelay(WebKit::DragLiftDelay delay)
 {
-#if USE(QUICK_LOOK)
-    static bool shouldDecide = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DecidesPolicyBeforeLoadingQuickLookPreview);
-    return shouldDecide;
-#else
-    return false;
-#endif
+    if (delay == WebKit::DragLiftDelay::Medium)
+        return _WKDragLiftDelayMedium;
+    if (delay == WebKit::DragLiftDelay::Long)
+        return _WKDragLiftDelayLong;
+    return _WKDragLiftDelayShort;
 }
 
-#endif
+WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
+{
+    if (delay == _WKDragLiftDelayMedium)
+        return WebKit::DragLiftDelay::Medium;
+    if (delay == _WKDragLiftDelayLong)
+        return WebKit::DragLiftDelay::Long;
+    return WebKit::DragLiftDelay::Short;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 @implementation WKWebViewConfiguration {
     RefPtr<API::PageConfiguration> _pageConfiguration;
@@ -94,18 +101,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     RetainPtr<NSString> _groupIdentifier;
     std::optional<RetainPtr<NSString>> _applicationNameForUserAgent;
 
-#if PLATFORM(IOS_FAMILY)
-    BOOL _allowsInlineMediaPlayback;
-    BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
-    BOOL _allowsInlineMediaPlaybackAfterFullscreen;
-    _WKDragLiftDelay _dragLiftDelay;
-    BOOL _textInteractionGesturesEnabled;
-    BOOL _longPressActionsEnabled;
-    BOOL _systemPreviewEnabled;
-    BOOL _shouldDecidePolicyBeforeLoadingQuickLookPreview;
-#endif
-
-    BOOL _mediaDataLoadsAutomatically;
     Class _attachmentFileWrapperClass;
 
     BOOL _controlledByAutomation;
@@ -137,10 +132,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _allowsPictureInPictureMediaPlayback = YES;
 #endif
 
-    _allowsInlineMediaPlayback = !PAL::currentUserInterfaceIdiomIsSmallScreen();
-    _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
-    _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
-    _mediaDataLoadsAutomatically = _allowsInlineMediaPlayback;
 #if !PLATFORM(WATCHOS)
     if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
@@ -150,7 +141,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _ignoresViewportScaleLimits = NO;
 #else
     _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
-    _mediaDataLoadsAutomatically = YES;
     _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
 #endif
 
@@ -160,16 +150,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
 #if PLATFORM(IOS_FAMILY)
     _selectionGranularity = WKSelectionGranularityDynamic;
-    _dragLiftDelay = toDragLiftDelay([[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDebugDragLiftDelay"]);
-#if PLATFORM(WATCHOS)
-    _textInteractionGesturesEnabled = NO;
-    _longPressActionsEnabled = NO;
-#else
-    _textInteractionGesturesEnabled = YES;
-    _longPressActionsEnabled = YES;
-#endif
-    _systemPreviewEnabled = NO;
-    _shouldDecidePolicyBeforeLoadingQuickLookPreview = defaultShouldDecidePolicyBeforeLoadingQuickLookPreview();
 #endif // PLATFORM(IOS_FAMILY)
 
     _mediaContentTypesRequiringHardwareSupport = @"";
@@ -197,6 +177,18 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 {
     return _pageConfiguration->allowsInlinePredictions();
 }
+
+#if PLATFORM(IOS_FAMILY)
+- (void)setAllowsInlineMediaPlayback:(BOOL)allows
+{
+    _pageConfiguration->setAllowsInlineMediaPlayback(allows);
+}
+
+- (BOOL)allowsInlineMediaPlayback
+{
+    return _pageConfiguration->allowsInlineMediaPlayback();
+}
+#endif
 
 - (NSString *)description
 {
@@ -307,23 +299,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
     configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
 
-    configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
     configuration->_attachmentFileWrapperClass = self->_attachmentFileWrapperClass;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
     configuration->_controlledByAutomation = self->_controlledByAutomation;
 
 #if PLATFORM(IOS_FAMILY)
-    configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
-    configuration->_allowsInlineMediaPlaybackAfterFullscreen = self->_allowsInlineMediaPlaybackAfterFullscreen;
-    configuration->_inlineMediaPlaybackRequiresPlaysInlineAttribute = self->_inlineMediaPlaybackRequiresPlaysInlineAttribute;
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
     configuration->_selectionGranularity = self->_selectionGranularity;
     configuration->_ignoresViewportScaleLimits = self->_ignoresViewportScaleLimits;
-    configuration->_dragLiftDelay = self->_dragLiftDelay;
-    configuration->_textInteractionGesturesEnabled = self->_textInteractionGesturesEnabled;
-    configuration->_longPressActionsEnabled = self->_longPressActionsEnabled;
-    configuration->_systemPreviewEnabled = self->_systemPreviewEnabled;
-    configuration->_shouldDecidePolicyBeforeLoadingQuickLookPreview = self->_shouldDecidePolicyBeforeLoadingQuickLookPreview;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     configuration->_dataDetectorTypes = self->_dataDetectorTypes;
@@ -708,62 +691,62 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_inlineMediaPlaybackRequiresPlaysInlineAttribute
 {
-    return _inlineMediaPlaybackRequiresPlaysInlineAttribute;
+    return _pageConfiguration->inlineMediaPlaybackRequiresPlaysInlineAttribute();
 }
 
 - (void)_setInlineMediaPlaybackRequiresPlaysInlineAttribute:(BOOL)requiresPlaysInlineAttribute
 {
-    _inlineMediaPlaybackRequiresPlaysInlineAttribute = requiresPlaysInlineAttribute;
+    _pageConfiguration->setInlineMediaPlaybackRequiresPlaysInlineAttribute(requiresPlaysInlineAttribute);
 }
 
 - (BOOL)_allowsInlineMediaPlaybackAfterFullscreen
 {
-    return _allowsInlineMediaPlaybackAfterFullscreen;
+    return _pageConfiguration->allowsInlineMediaPlaybackAfterFullscreen();
 }
 
 - (void)_setAllowsInlineMediaPlaybackAfterFullscreen:(BOOL)allows
 {
-    _allowsInlineMediaPlaybackAfterFullscreen = allows;
+    _pageConfiguration->setAllowsInlineMediaPlaybackAfterFullscreen(allows);
 }
 
 - (_WKDragLiftDelay)_dragLiftDelay
 {
-    return _dragLiftDelay;
+    return toWKDragLiftDelay(_pageConfiguration->dragLiftDelay());
 }
 
 - (void)_setDragLiftDelay:(_WKDragLiftDelay)dragLiftDelay
 {
-    _dragLiftDelay = dragLiftDelay;
+    _pageConfiguration->setDragLiftDelay(fromWKDragLiftDelay(dragLiftDelay));
 }
 
 - (BOOL)_longPressActionsEnabled
 {
-    return _longPressActionsEnabled;
+    return _pageConfiguration->longPressActionsEnabled();
 }
 
 - (void)_setLongPressActionsEnabled:(BOOL)enabled
 {
-    _longPressActionsEnabled = enabled;
+    _pageConfiguration->setLongPressActionsEnabled(enabled);
 }
 
 - (BOOL)_systemPreviewEnabled
 {
-    return _systemPreviewEnabled;
+    return _pageConfiguration->systemPreviewEnabled();
 }
 
 - (void)_setSystemPreviewEnabled:(BOOL)enabled
 {
-    _systemPreviewEnabled = enabled;
+    _pageConfiguration->setSystemPreviewEnabled(enabled);
 }
 
 - (BOOL)_shouldDecidePolicyBeforeLoadingQuickLookPreview
 {
-    return _shouldDecidePolicyBeforeLoadingQuickLookPreview;
+    return _pageConfiguration->shouldDecidePolicyBeforeLoadingQuickLookPreview();
 }
 
 - (void)_setShouldDecidePolicyBeforeLoadingQuickLookPreview:(BOOL)shouldDecide
 {
-    _shouldDecidePolicyBeforeLoadingQuickLookPreview = shouldDecide;
+    _pageConfiguration->setShouldDecidePolicyBeforeLoadingQuickLookPreview(shouldDecide);
 }
 
 - (void)_setCanShowWhileLocked:(BOOL)value
@@ -844,12 +827,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_mediaDataLoadsAutomatically
 {
-    return _mediaDataLoadsAutomatically;
+    return _pageConfiguration->mediaDataLoadsAutomatically();
 }
 
 - (void)_setMediaDataLoadsAutomatically:(BOOL)mediaDataLoadsAutomatically
 {
-    _mediaDataLoadsAutomatically = mediaDataLoadsAutomatically;
+    _pageConfiguration->setMediaDataLoadsAutomatically(mediaDataLoadsAutomatically);
 }
 
 - (BOOL)_attachmentElementEnabled
@@ -1428,12 +1411,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)_textInteractionGesturesEnabled
 {
-    return _textInteractionGesturesEnabled;
+    return _pageConfiguration->textInteractionGesturesEnabled();
 }
 
 - (void)_setTextInteractionGesturesEnabled:(BOOL)enabled
 {
-    _textInteractionGesturesEnabled = enabled;
+    _pageConfiguration->setTextInteractionGesturesEnabled(enabled);
 }
 #endif // PLATFORM(IOS_FAMILY)
 

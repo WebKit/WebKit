@@ -27,6 +27,7 @@
 #import "_WKTargetedElementInfo.h"
 
 #import "_WKTargetedElementInfoInternal.h"
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKTargetedElementInfo
