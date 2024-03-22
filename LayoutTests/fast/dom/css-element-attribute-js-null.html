@@ -9,6 +9,7 @@
         @media screen {
             .bar { color: blue; }
         }
+        @page { }
         </style>
     <script>
         function printOut(msg) {
@@ -50,7 +51,8 @@
             var rules = document.styleSheets[1].cssRules;
 
             var rule = rules[0];
-            var mediaRule = rules[1];            
+            var mediaRule = rules[1];
+            var pageRule = rules[2];           
             var style = rule.style;
             var mediaList = mediaRule.media;
 
@@ -72,6 +74,13 @@
                     ]
                 },
                 {
+                    type: 'CSSPageRule',
+                    elementToUse: pageRule,
+                    attributes: [
+                         {name: 'selectorText', expectedNull: '@page null'}
+                    ]
+                },
+                {
                     type: 'CSSStyleDeclaration',
                     elementToUse: style,
                     attributes: [
@@ -86,13 +95,6 @@
                         {name: 'mediaText', expectedNull: ''}
                     ]
                 }
-                // ,{
-                //     type: 'PageRule',
-                //     elementToUse: mediaList,
-                //     attributes: [
-                //         {name: 'cssText', expectedNull: ''}
-                //     ]
-                // }
             ];
             
             for (element in listing) {

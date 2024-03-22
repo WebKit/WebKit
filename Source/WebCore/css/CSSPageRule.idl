@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -18,12 +18,17 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Introduced in DOM Level 2:
+// https://drafts.csswg.org/cssom/#the-csspagerule-interface
+// FIXME: CSSPageRule should derive from 'CSSGroupingRule' below:
+// https://bugs.webkit.org/show_bug.cgi?id=216940.
+
 [
     Exposed=Window
 ] interface CSSPageRule : CSSRule {
-    attribute DOMString? selectorText;
+    attribute DOMString selectorText;
 
+    // FIXME: Add [SameObject] for `style`.
+    // https://bugs.webkit.org/show_bug.cgi?id=163414
     [PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };
 

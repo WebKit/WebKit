@@ -4,6 +4,8 @@ TEST SUCCEEDED: The value was the string '.foo { color: black; }'. [tested CSSRu
 
 TEST SUCCEEDED: The value was the string 'null'. [tested CSSStyleRule.selectorText]
 
+TEST SUCCEEDED: The value was the string '@page null'. [tested CSSPageRule.selectorText]
+
 TEST SUCCEEDED: The value was the empty string. [tested CSSStyleDeclaration.cssText]
 
 TEST SUCCEEDED: The value was the empty string. [tested MediaList.mediaText]
