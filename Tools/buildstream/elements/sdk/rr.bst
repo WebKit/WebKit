@@ -13,8 +13,8 @@ variables:
     -DBUILD_TESTS=OFF
 sources:
 - kind: git_repo
-  url: github_com:rr-debugger/rr
-  track: 5.*
-  ref: 5.7.0-0-g7cf5a12dba5aaeea9efc5ad97176b07b5614e350
+  url: github_com:rr-debugger/rr.git
+  track: master
+  ref: 27d2cb542c8eeb6d9206d46bf93d661690681f46
 - kind: patch
   path: patches/rr/0001-cmake-Look-for-resources-in-cmake-s-install-lib-dir.patch
