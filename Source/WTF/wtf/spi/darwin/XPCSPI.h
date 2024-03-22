@@ -234,6 +234,7 @@ const void * xpc_data_get_bytes_ptr(xpc_object_t xdata);
 size_t xpc_data_get_length(xpc_object_t xdata);
 xpc_object_t xpc_dictionary_get_array(xpc_object_t xdict, const char* key);
 
+xpc_object_t xpc_copy_entitlement_for_token(const char* name, audit_token_t*);
 
 #if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
 #if !defined(xpc_retain)
