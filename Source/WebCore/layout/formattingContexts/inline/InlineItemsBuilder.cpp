@@ -338,6 +338,12 @@ enum class EnterExitType : uint8_t {
 };
 static inline void handleEnterExitBidiContext(StringBuilder& paragraphContentBuilder, UnicodeBidi unicodeBidi, bool isLTR, EnterExitType enterExitType, BidiContextStack& bidiContextStack)
 {
+    if (enterExitType == EnterExitType::ExitingInlineBox && bidiContextStack.size() == 1) {
+        // Refuse to pop the initial block entry off of the stack. It indicates unbalanced InlineBoxStart/End pairs.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     auto isEnteringBidi = enterExitType == EnterExitType::EnteringBlock || enterExitType == EnterExitType::EnteringInlineBox;
     switch (unicodeBidi) {
     case UnicodeBidi::Normal:
@@ -410,6 +416,11 @@ static inline void unwindBidiContextStack(StringBuilder& paragraphContentBuilder
 
 static inline void rewindBidiContextStack(StringBuilder& paragraphContentBuilder, BidiContextStack& bidiContextStack, const BidiContextStack& copyOfBidiStack, size_t blockLevelBidiContextIndex)
 {
+    if (copyOfBidiStack.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     for (size_t blockLevelIndex = 0; blockLevelIndex <= blockLevelBidiContextIndex; ++blockLevelIndex) {
         handleEnterExitBidiContext(paragraphContentBuilder
             , copyOfBidiStack[blockLevelIndex].unicodeBidi

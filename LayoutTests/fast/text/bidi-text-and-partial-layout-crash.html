@@ -1,0 +1,36 @@
+<style>
+#container {
+  text-indent: 200px each-line;
+  white-space: pre;
+  widows: 1;
+}
+
+.writing-mode { 
+  height: 102px;
+  writing-mode: tb-rl;
+}
+
+*:nth-last-child(1) { 
+  -webkit-column-span: all;
+}
+
+*:read-only {
+  -webkit-user-modify: read-write;
+  padding: 10px;
+  column-width: 100px;
+}
+</style>
+<span id=container><b class=writing-mode dir="auto">
+<span style="unicode-bidi: isolate">
+PASS if no crash.
+</span>
+</b>
+<span></span>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.dir = "rtl";
+window.getSelection().selectAllChildren(container);
+document.execCommand("justifyLeft", false, null);
+</script>
