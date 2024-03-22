@@ -30,6 +30,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindowProperty.h"
 #include "NavigationHistoryEntry.h"
+#include "NavigationNavigationType.h"
 #include "NavigationTransition.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/text/StringHash.h>
@@ -38,6 +39,8 @@ namespace WebCore {
 
 class HistoryItem;
 class SerializedScriptValue;
+class NavigateEvent;
+class NavigationDestination;
 
 enum class FrameLoadType : uint8_t;
 
@@ -109,7 +112,7 @@ public:
 
     const Vector<Ref<NavigationHistoryEntry>>& entries() const;
     NavigationHistoryEntry* currentEntry() const;
-    RefPtr<NavigationTransition> transition() { return m_transition; };
+    NavigationTransition* transition() { return m_transition.get(); };
 
     bool canGoBack() const;
     bool canGoForward() const;
@@ -126,7 +129,11 @@ public:
 
     ExceptionOr<void> updateCurrentEntry(UpdateCurrentEntryOptions&&);
 
-    void updateForNavigation(Ref<HistoryItem>&&, FrameLoadType);
+    bool dispatchTraversalNavigateEvent(Ref<HistoryItem>);
+    bool dispatchPushReplaceReloadNavigateEvent(const URL&, NavigationNavigationType, bool isSameDocument);
+    bool dispatchDownloadNavigateEvent(const URL&, const String& downloadFilename);
+
+    void updateForNavigation(Ref<HistoryItem>&&, NavigationNavigationType);
 
 private:
     explicit Navigation(LocalDOMWindow&);
@@ -142,12 +149,17 @@ private:
     std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
     ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue state);
     NavigationAPIMethodTracker maybeSetUpcomingNonTraversalTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue info, RefPtr<SerializedScriptValue>&&);
+    bool innerDispatchNavigateEvent(NavigationNavigationType, Ref<NavigationDestination>&&, const String& downloadRequestFilename);
 
 
     std::optional<size_t> m_currentEntryIndex;
     RefPtr<NavigationTransition> m_transition;
     Vector<Ref<NavigationHistoryEntry>> m_entries;
 
+    RefPtr<NavigateEvent> m_ongoingNavigateEvent;
+    bool m_focusChangedDuringOnoingNavigation { false };
+    bool m_suppressNormalScrollRestorationDuringOngoingNavigation { false };
+    std::optional<NavigationAPIMethodTracker> m_ongoingAPIMethodTracker;
     std::optional<NavigationAPIMethodTracker> m_upcomingNonTraverseMethodTracker;
     HashMap<String, NavigationAPIMethodTracker> m_upcomingTraverseMethodTrackers;
 };

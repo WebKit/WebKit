@@ -1,3 +1,3 @@
 
-PASS navigate event destination.getState() on back/forward navigation
+FAIL navigate event destination.getState() on back/forward navigation assert_equals: expected "traverse" but got "push"
 

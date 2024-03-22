@@ -26,14 +26,16 @@
 #include "config.h"
 #include "NavigateEvent.h"
 
+#include "AbortController.h"
+#include "ExceptionCode.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigateEvent);
 
-NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init)
-    : Event(EventInterfaceType::NavigateEvent, type, CanBubble::No, IsCancelable::No)
+NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init, RefPtr<AbortController> abortController)
+    : Event(EventInterfaceType::NavigateEvent, type, init, Event::IsTrusted::Yes)
     , m_navigationType(init.navigationType)
     , m_destination(init.destination)
     , m_signal(init.signal)
@@ -44,20 +46,91 @@ NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& 
     , m_userInitiated(init.userInitiated)
     , m_hashChange(init.hashChange)
     , m_hasUAVisualTransition(init.hasUAVisualTransition)
+    , m_abortController(abortController)
 {
+}
+
+Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init, RefPtr<AbortController> abortController)
+{
+    return adoptRef(*new NavigateEvent(type, init, abortController));
 }
 
 Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init)
 {
-    return adoptRef(*new NavigateEvent(type, init));
+    // FIXME: AbortController is required but JS bindings need to create it with one.
+    return adoptRef(*new NavigateEvent(type, init, nullptr));
 }
 
-void NavigateEvent::intercept(NavigationInterceptOptions&&)
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigateevent-perform-shared-checks
+ExceptionOr<void> NavigateEvent::sharedChecks()
 {
+    if (!isTrusted())
+        return Exception { ExceptionCode::SecurityError, "Event is not trusted"_s };
+
+    if (defaultPrevented())
+        return Exception { ExceptionCode::InvalidStateError, "Event was already canceled"_s };
+
+    return { };
 }
 
-void NavigateEvent::scroll()
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-intercept
+ExceptionOr<void> NavigateEvent::intercept(NavigationInterceptOptions&& options)
 {
+    if (auto checkResult = sharedChecks(); checkResult.hasException())
+        return checkResult;
+
+    if (!canIntercept())
+        return Exception { ExceptionCode::SecurityError, "Event is not interceptable"_s };
+
+    if (!isBeingDispatched())
+        return Exception { ExceptionCode::InvalidStateError, "Event is not being dispatched"_s };
+
+    ASSERT(!m_interceptionState || m_interceptionState == InterceptionState::Intercepted);
+
+    if (options.handler)
+        m_handlers.append(WTFMove(options.handler));
+
+    if (options.focusReset) {
+        // FIXME: Print warning to console if it was already set.
+        m_focusReset = options.focusReset;
+    }
+
+    if (options.scroll) {
+        // FIXME: Print warning to console if it was already set.
+        m_scrollBehavior = options.scroll;
+    }
+
+    m_interceptionState = InterceptionState::Intercepted;
+
+    return { };
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-scroll
+ExceptionOr<void> NavigateEvent::scroll()
+{
+    auto checkResult = sharedChecks();
+    if (checkResult.hasException())
+        return checkResult;
+
+    if (m_interceptionState != InterceptionState::Committed)
+        return Exception { ExceptionCode::InvalidStateError, "Interception has not been committed"_s };
+
+    // FIXME: Scroll document: https://html.spec.whatwg.org/multipage/nav-history-apis.html#process-scroll-behavior
+
+    return { };
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigateevent-finish
+void NavigateEvent::finish()
+{
+    ASSERT(m_interceptionState != InterceptionState::Intercepted && m_interceptionState != InterceptionState::Finished);
+    if (!m_interceptionState)
+        return;
+
+    // FIXME: 3. Potentially reset the focus
+    // FIXME: 4. If didFulfill is true, then potentially process scroll behavior given event.
+
+    m_interceptionState = InterceptionState::Finished;
 }
 
 } // namespace WebCore

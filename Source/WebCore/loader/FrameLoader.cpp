@@ -94,6 +94,7 @@
 #include "MemoryRelease.h"
 #include "Navigation.h"
 #include "NavigationDisabler.h"
+#include "NavigationNavigationType.h"
 #include "NavigationScheduler.h"
 #include "Node.h"
 #include "OriginAccessPatterns.h"
@@ -1232,6 +1233,31 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
     }
 }
 
+static NavigationNavigationType determineNavigationType(FrameLoadType frameLoadType, bool isNewNavigation)
+{
+    if (isNewNavigation)
+        return NavigationNavigationType::Push;
+
+    switch (frameLoadType) {
+    case FrameLoadType::Standard:
+        return NavigationNavigationType::Push;
+    case FrameLoadType::Back:
+    case FrameLoadType::Forward:
+    case FrameLoadType::IndexedBackForward:
+        return NavigationNavigationType::Traverse;
+    case FrameLoadType::Reload:
+    case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::ReloadExpiredOnly:
+    case FrameLoadType::Same:
+        return NavigationNavigationType::Reload;
+    case FrameLoadType::RedirectWithLockedBackForwardList:
+    case FrameLoadType::Replace:
+        return NavigationNavigationType::Replace;
+    };
+    RELEASE_ASSERT_NOT_REACHED();
+    return NavigationNavigationType::Push;
+}
+
 // This does the same kind of work that didOpenURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stateObject, const SecurityOrigin* requesterOrigin, bool isNewNavigation)
@@ -1275,8 +1301,19 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
 
     if (document->settings().navigationAPIEnabled() && !url.isAboutBlank()) {
         if (RefPtr domWindow = document->domWindow()) {
-            if (RefPtr currentItem = checkedHistory()->currentItem())
-                domWindow->protectedNavigation()->updateForNavigation(currentItem.releaseNonNull(), policyChecker().loadType());
+            auto navigationType = determineNavigationType(policyChecker().loadType(), isNewNavigation);
+
+            // FIXME: This is likely not the ideal location for the navigate event and should happen earlier.
+            if (navigationType != NavigationNavigationType::Traverse)
+                domWindow->protectedNavigation()->dispatchPushReplaceReloadNavigateEvent(url, navigationType, equalIgnoringFragmentIdentifier(url, oldURL));
+
+            if (RefPtr currentItem = checkedHistory()->currentItem()) {
+                // FIXME: Properly handle result of navigate event.
+                if (navigationType == NavigationNavigationType::Traverse)
+                    domWindow->protectedNavigation()->dispatchTraversalNavigateEvent(*currentItem);
+
+                domWindow->protectedNavigation()->updateForNavigation(*currentItem, navigationType);
+            }
         }
     }
 

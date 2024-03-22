@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "JSDOMPromise.h"
 #include "NavigationHistoryEntry.h"
 #include "NavigationNavigationType.h"
 #include "ScriptWrappable.h"
