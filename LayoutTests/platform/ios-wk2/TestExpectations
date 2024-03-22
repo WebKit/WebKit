@@ -2729,3 +2729,46 @@ webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 webkit.org/b/271384 imported/w3c/web-platform-tests/css/css-ruby/line-spacing.html [ Failure ]
 
 webkit.org/b/271388 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
+
+# rdar://124417777 (REGRESSION (iOS 17.4): 5 editing / paste-related layout tests are constantly failing.)
+editing/async-clipboard/clipboard-write-basic.html [ Pass Failure ]
+editing/async-clipboard/sanitize-when-reading-markup.html [ Pass Failure ]
+editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html [ Pass Failure ]
+editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Pass Failure ]
+editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying.html [ Pass Failure ]
+# rdar://124971386 (REGRESSION (iOS 17.4): 2 imported WPT css-box/margin-trim/computed-margin-values layout tests are consistently failing.)
+imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-child-with-border.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-self-collapsing-nested.html [ Pass Failure ]
+# rdar://124987637 (REGRESSION (iOS 17.4): 7 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-*.html layout tests are flaky/consistent ImageOnlyFailures.)
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-048.html
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-049.html
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-050.html
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-053.html
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-057.html
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-067.html
+imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-068.html
+# rdar://125193148 (REGRESSION (iOS 17.4): 40+ layout tests consistently failing.)
+imported/w3c/web-platform-tests/css/css-position/multicol/vlr-ltr-ltr-in-multicols.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-position/multicol/vrl-ltr-ltr-in-multicols.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-004.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-position/static-position/vrl-ltr-ltr.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-with-absolute-pos-child.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-newline-011.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-newline-012.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-newline-013.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-newline-014.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-newline-016.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-012.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-leading-spaces-013.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transitions/render-blocking/no-transition-from-ua-to-blocking-stylesheet.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/outline-028.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-010.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-011.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-014.html [ Pass ImageOnlyFailure ]
+fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Failure ]
+fast/events/ios/key-events-comprehensive/key-events-control.html [ Pass Failure ]
+fast/forms/textfield-outline.html [ Pass Failure ]
+http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Pass Failure ]
+http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Pass Failure ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy.html [ Pass Failure ]
