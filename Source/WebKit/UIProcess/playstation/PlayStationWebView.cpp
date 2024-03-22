@@ -49,8 +49,8 @@ PlayStationWebView::PlayStationWebView(struct wpe_view_backend* backend, const A
     , m_backend(backend)
 {
     auto configuration = conf.copy();
-    auto* pool = configuration->processPool();
-    m_page = pool->createWebPage(*m_pageClient, WTFMove(configuration));
+    auto& pool = configuration->processPool();
+    m_page = pool.createWebPage(*m_pageClient, WTFMove(configuration));
 
     wpe_view_backend_initialize(m_backend);
     m_page->initializeWebPage();
@@ -68,8 +68,8 @@ PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
 {
     auto configuration = conf.copy();
-    auto* pool = configuration->processPool();
-    m_page = pool->createWebPage(*m_pageClient, WTFMove(configuration));
+    auto& pool = configuration->processPool();
+    m_page = pool.createWebPage(*m_pageClient, WTFMove(configuration));
 
     m_page->initializeWebPage();
 }
