@@ -28,6 +28,7 @@
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 
+#import "MessageSenderInlines.h"
 #import "TextCheckingControllerProxyMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
