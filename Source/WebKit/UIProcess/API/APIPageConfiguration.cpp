@@ -177,7 +177,7 @@ WebPageProxy* PageConfiguration::relatedPage() const
     return m_data.relatedPage.get();
 }
 
-void PageConfiguration::setRelatedPage(RefPtr<WebPageProxy>&& relatedPage)
+void PageConfiguration::setRelatedPage(WeakPtr<WebPageProxy>&& relatedPage)
 {
     m_data.relatedPage = WTFMove(relatedPage);
 }
@@ -187,9 +187,19 @@ WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
     return m_data.pageToCloneSessionStorageFrom.get();
 }
 
-void PageConfiguration::setPageToCloneSessionStorageFrom(WebPageProxy* pageToCloneSessionStorageFrom)
+void PageConfiguration::setPageToCloneSessionStorageFrom(WeakPtr<WebPageProxy>&& pageToCloneSessionStorageFrom)
 {
-    m_data.pageToCloneSessionStorageFrom = pageToCloneSessionStorageFrom;
+    m_data.pageToCloneSessionStorageFrom = WTFMove(pageToCloneSessionStorageFrom);
+}
+
+WebPageProxy* PageConfiguration::alternateWebViewForNavigationGestures() const
+{
+    return m_data.alternateWebViewForNavigationGestures.get();
+}
+
+void PageConfiguration::setAlternateWebViewForNavigationGestures(WeakPtr<WebPageProxy>&& alternateWebViewForNavigationGestures)
+{
+    m_data.alternateWebViewForNavigationGestures = WTFMove(alternateWebViewForNavigationGestures);
 }
 
 WebKit::VisitedLinkStore& PageConfiguration::visitedLinkStore() const

@@ -48,4 +48,17 @@ WebKit::DragLiftDelay PageConfiguration::Data::defaultDragLiftDelay()
 }
 #endif
 
+NSUInteger PageConfiguration::Data::defaultMediaTypesRequiringUserActionForPlayback()
+{
+#if PLATFORM(IOS_FAMILY)
+#if !PLATFORM(WATCHOS)
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MediaTypesRequiringUserActionForPlayback))
+        return WKAudiovisualMediaTypeAudio;
+#endif // !PLATFORM(WATCHOS)
+    return WKAudiovisualMediaTypeAll;
+#else // PLATFORM(IOS_FAMILY)
+    return WKAudiovisualMediaTypeNone;
+#endif // PLATFORM(IOS_FAMILY)
+}
+
 } // namespace API

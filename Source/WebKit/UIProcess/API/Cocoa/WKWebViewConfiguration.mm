@@ -28,6 +28,7 @@
 
 #import "APIPageConfiguration.h"
 #import "CSPExtensionUtilities.h"
+#import "WKDataDetectorTypesInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUserContentControllerInternal.h"
@@ -94,9 +95,6 @@ WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
 
 @implementation WKWebViewConfiguration {
     RefPtr<API::PageConfiguration> _pageConfiguration;
-    WeakObjCPtr<WKWebView> _relatedWebView;
-    WeakObjCPtr<WKWebView> _webViewToCloneSessionStorageFrom;
-    WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
 }
 
 - (instancetype)init
@@ -107,31 +105,6 @@ WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
     WebKit::InitializeWebKit2();
 
     _pageConfiguration = API::PageConfiguration::create();
-
-#if PLATFORM(IOS_FAMILY)
-#if !PLATFORM(WATCHOS)
-    _allowsPictureInPictureMediaPlayback = YES;
-#endif
-
-#if !PLATFORM(WATCHOS)
-    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MediaTypesRequiringUserActionForPlayback))
-        _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
-    else
-#endif
-        _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
-    _ignoresViewportScaleLimits = NO;
-#else
-    _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
-    _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    _allowsAirPlayForMediaPlayback = YES;
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    _selectionGranularity = WKSelectionGranularityDynamic;
-#endif // PLATFORM(IOS_FAMILY)
 
     return self;
 }
@@ -156,7 +129,66 @@ WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
 {
     return _pageConfiguration->allowsInlineMediaPlayback();
 }
+
+- (WKSelectionGranularity)selectionGranularity
+{
+    return _pageConfiguration->selectionGranularity() == WebKit::SelectionGranularity::Character ? WKSelectionGranularityCharacter : WKSelectionGranularityDynamic;
+}
+
+- (void)setSelectionGranularity:(WKSelectionGranularity)granularity
+{
+    _pageConfiguration->setSelectionGranularity(granularity == WKSelectionGranularityCharacter ? WebKit::SelectionGranularity::Character : WebKit::SelectionGranularity::Dynamic);
+}
+
+- (void)setAllowsPictureInPictureMediaPlayback:(BOOL)allows
+{
+    _pageConfiguration->setAllowsPictureInPictureMediaPlayback(allows);
+}
+
+- (BOOL)allowsPictureInPictureMediaPlayback
+{
+    return _pageConfiguration->allowsPictureInPictureMediaPlayback();
+}
+
+- (void)setIgnoresViewportScaleLimits:(BOOL)ignores
+{
+    _pageConfiguration->setIgnoresViewportScaleLimits(ignores);
+}
+
+- (BOOL)ignoresViewportScaleLimits
+{
+    return _pageConfiguration->ignoresViewportScaleLimits();
+}
+
+- (void)setDataDetectorTypes:(WKDataDetectorTypes)types
+{
+#if ENABLE(DATA_DETECTION)
+    _pageConfiguration->setDataDetectorTypes(fromWKDataDetectorTypes(types));
 #endif
+}
+
+- (WKDataDetectorTypes)dataDetectorTypes
+{
+#if ENABLE(DATA_DETECTION)
+    return toWKDataDetectorTypes(_pageConfiguration->dataDetectorTypes());
+#else
+    return WKDataDetectorTypeNone;
+#endif
+}
+
+#else // PLATFORM(IOS_FAMILY)
+
+- (WKUserInterfaceDirectionPolicy)userInterfaceDirectionPolicy
+{
+    return _pageConfiguration->userInterfaceDirectionPolicy() == WebCore::UserInterfaceDirectionPolicy::System ? WKUserInterfaceDirectionPolicySystem : WKUserInterfaceDirectionPolicyContent;
+}
+
+- (void)setUserInterfaceDirectionPolicy:(WKUserInterfaceDirectionPolicy)policy
+{
+    return _pageConfiguration->setUserInterfaceDirectionPolicy(policy == WKUserInterfaceDirectionPolicySystem ? WebCore::UserInterfaceDirectionPolicy::System : WebCore::UserInterfaceDirectionPolicy::Content);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 - (NSString *)description
 {
@@ -229,7 +261,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self.allowsInlineMediaPlayback = [coder decodeBoolForKey:@"allowsInlineMediaPlayback"];
     self._allowsInlineMediaPlaybackAfterFullscreen = [coder decodeBoolForKey:@"allowsInlineMediaPlaybackAfterFullscreen"];
     self.mediaTypesRequiringUserActionForPlayback = [coder decodeBoolForKey:@"mediaTypesRequiringUserActionForPlayback"];
-    self.selectionGranularity = static_cast<WKSelectionGranularity>([coder decodeIntegerForKey:@"selectionGranularity"]);
+    auto selectionGranularityCandidate = static_cast<WKSelectionGranularity>([coder decodeIntegerForKey:@"selectionGranularity"]);
+    if (selectionGranularityCandidate == WKSelectionGranularityDynamic || selectionGranularityCandidate == WKSelectionGranularityCharacter)
+        self.selectionGranularity = selectionGranularityCandidate;
     self.allowsPictureInPictureMediaPlayback = [coder decodeBoolForKey:@"allowsPictureInPictureMediaPlayback"];
     self.ignoresViewportScaleLimits = [coder decodeBoolForKey:@"ignoresViewportScaleLimits"];
     self._dragLiftDelay = toDragLiftDelay([coder decodeIntegerForKey:@"dragLiftDelay"]);
@@ -253,32 +287,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
 
     configuration->_pageConfiguration = _pageConfiguration->copy();
-    configuration.processPool = self.processPool;
-    configuration.preferences = self.preferences;
-    configuration.userContentController = self.userContentController;
-    if (self._websiteDataStoreIfExists)
-        [configuration setWebsiteDataStore:self._websiteDataStoreIfExists];
-    configuration.defaultWebpagePreferences = self.defaultWebpagePreferences;
-    configuration._visitedLinkStore = self._visitedLinkStore;
-    configuration._relatedWebView = _relatedWebView.get().get();
-    configuration._webViewToCloneSessionStorageFrom = _webViewToCloneSessionStorageFrom.get().get();
-    configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
-
-    configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
-
-    configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
-
-#if PLATFORM(IOS_FAMILY)
-    configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
-    configuration->_selectionGranularity = self->_selectionGranularity;
-    configuration->_ignoresViewportScaleLimits = self->_ignoresViewportScaleLimits;
-#endif
-#if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
-    configuration->_dataDetectorTypes = self->_dataDetectorTypes;
-#endif
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    configuration->_allowsAirPlayForMediaPlayback = self->_allowsAirPlayForMediaPlayback;
-#endif
 
     return configuration;
 }
@@ -385,6 +393,36 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return wrapper(_pageConfiguration->websiteDataStore());
 }
 
+- (WKAudiovisualMediaTypes)mediaTypesRequiringUserActionForPlayback
+{
+    return _pageConfiguration->mediaTypesRequiringUserActionForPlayback();
+}
+
+- (void)setMediaTypesRequiringUserActionForPlayback:(WKAudiovisualMediaTypes)types
+{
+    _pageConfiguration->setMediaTypesRequiringUserActionForPlayback(types);
+}
+
+- (BOOL)suppressesIncrementalRendering
+{
+    return _pageConfiguration->suppressesIncrementalRendering();
+}
+
+- (void)setSuppressesIncrementalRendering:(BOOL)suppresses
+{
+    _pageConfiguration->setSuppressesIncrementalRendering(suppresses);
+}
+
+- (void)setAllowsAirPlayForMediaPlayback:(BOOL)allows
+{
+    _pageConfiguration->setAllowsAirPlayForMediaPlayback(allows);
+}
+
+- (BOOL)allowsAirPlayForMediaPlayback
+{
+    return _pageConfiguration->allowsAirPlayForMediaPlayback();
+}
+
 - (void)setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore
 {
     _pageConfiguration->setWebsiteDataStore(websiteDataStore ? websiteDataStore->_websiteDataStore.get() : nullptr);
@@ -485,32 +523,47 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (WKWebView *)_relatedWebView
 {
-    return _relatedWebView.getAutoreleased();
+    if (RefPtr page = _pageConfiguration->relatedPage())
+        return page->cocoaView().autorelease();
+    return nil;
 }
 
 - (void)_setRelatedWebView:(WKWebView *)relatedWebView
 {
-    _relatedWebView = relatedWebView;
+    if (relatedWebView)
+        _pageConfiguration->setRelatedPage(relatedWebView->_page.get());
+    else
+        _pageConfiguration->setRelatedPage(nullptr);
 }
 
 - (WKWebView *)_webViewToCloneSessionStorageFrom
 {
-    return _webViewToCloneSessionStorageFrom.getAutoreleased();
+    if (RefPtr page = _pageConfiguration->pageToCloneSessionStorageFrom())
+        return page->cocoaView().autorelease();
+    return nil;
 }
 
 - (void)_setWebViewToCloneSessionStorageFrom:(WKWebView *)webViewToCloneSessionStorageFrom
 {
-    _webViewToCloneSessionStorageFrom = webViewToCloneSessionStorageFrom;
+    if (webViewToCloneSessionStorageFrom)
+        _pageConfiguration->setPageToCloneSessionStorageFrom(webViewToCloneSessionStorageFrom->_page.get());
+    else
+        _pageConfiguration->setPageToCloneSessionStorageFrom(nullptr);
 }
 
 - (WKWebView *)_alternateWebViewForNavigationGestures
 {
-    return _alternateWebViewForNavigationGestures.getAutoreleased();
+    if (RefPtr page = _pageConfiguration->alternateWebViewForNavigationGestures())
+        return page->cocoaView().autorelease();
+    return nil;
 }
 
 - (void)_setAlternateWebViewForNavigationGestures:(WKWebView *)alternateView
 {
-    _alternateWebViewForNavigationGestures = alternateView;
+    if (alternateView)
+        _pageConfiguration->setAlternateWebViewForNavigationGestures(alternateView->_page.get());
+    else
+        _pageConfiguration->setAlternateWebViewForNavigationGestures(nullptr);
 }
 
 - (NSString *)_groupIdentifier

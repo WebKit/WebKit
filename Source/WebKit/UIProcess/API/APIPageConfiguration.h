@@ -40,6 +40,8 @@
 OBJC_PROTOCOL(_UIClickInteractionDriving);
 #include <pal/system/ios/UserInterfaceIdiom.h>
 #include <wtf/RetainPtr.h>
+#else
+#include <WebCore/UserInterfaceDirectionPolicy.h>
 #endif
 
 namespace WebKit {
@@ -69,6 +71,10 @@ enum class DragLiftDelay : uint8_t {
     Short,
     Medium,
     Long
+};
+enum class SelectionGranularity : bool {
+    Dynamic,
+    Character
 };
 #endif
 
@@ -114,10 +120,13 @@ public:
     void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
     WebKit::WebPageProxy* relatedPage() const;
-    void setRelatedPage(RefPtr<WebKit::WebPageProxy>&&);
+    void setRelatedPage(WeakPtr<WebKit::WebPageProxy>&&);
 
     WebKit::WebPageProxy* pageToCloneSessionStorageFrom() const;
-    void setPageToCloneSessionStorageFrom(WebKit::WebPageProxy*);
+    void setPageToCloneSessionStorageFrom(WeakPtr<WebKit::WebPageProxy>&&);
+
+    WebKit::WebPageProxy* alternateWebViewForNavigationGestures() const;
+    void setAlternateWebViewForNavigationGestures(WeakPtr<WebKit::WebPageProxy>&&);
 
     WebKit::VisitedLinkStore& visitedLinkStore() const;
     void setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&&);
@@ -152,8 +161,19 @@ public:
     WebKit::DragLiftDelay dragLiftDelay() const { return m_data.dragLiftDelay; }
     void setDragLiftDelay(WebKit::DragLiftDelay delay) { m_data.dragLiftDelay = delay; }
 
+#if ENABLE(DATA_DETECTION)
+    OptionSet<WebCore::DataDetectorType> dataDetectorTypes() const { return m_data.dataDetectorTypes; }
+    void setDataDetectorTypes(OptionSet<WebCore::DataDetectorType> types) { m_data.dataDetectorTypes = types; }
+#endif
+
+    WebKit::SelectionGranularity selectionGranularity() const { return m_data.selectionGranularity; }
+    void setSelectionGranularity(WebKit::SelectionGranularity granularity) { m_data.selectionGranularity = granularity; }
+
     bool textInteractionGesturesEnabled() const { return m_data.textInteractionGesturesEnabled; }
     void setTextInteractionGesturesEnabled(bool enabled) { m_data.textInteractionGesturesEnabled = enabled; }
+
+    bool allowsPictureInPictureMediaPlayback() const { return m_data.allowsPictureInPictureMediaPlayback; }
+    void setAllowsPictureInPictureMediaPlayback(bool allows) { m_data.allowsPictureInPictureMediaPlayback = allows; }
 
     bool longPressActionsEnabled() const { return m_data.longPressActionsEnabled; }
     void setLongPressActionsEnabled(bool enabled) { m_data.longPressActionsEnabled = enabled; }
@@ -195,6 +215,9 @@ public:
 
     bool clientNavigationsRunAtForegroundPriority() const { return m_data.clientNavigationsRunAtForegroundPriority; }
     void setClientNavigationsRunAtForegroundPriority(bool value) { m_data.clientNavigationsRunAtForegroundPriority = value; }
+
+    uintptr_t mediaTypesRequiringUserActionForPlayback() const { return m_data.mediaTypesRequiringUserActionForPlayback; }
+    void setMediaTypesRequiringUserActionForPlayback(uintptr_t types) { m_data.mediaTypesRequiringUserActionForPlayback = types; }
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -241,6 +264,15 @@ public:
     void setHTTPSUpgradeEnabled(bool enabled) { m_data.httpsUpgradeEnabled = enabled; }
     bool httpsUpgradeEnabled() const { return m_data.httpsUpgradeEnabled; }
 
+    bool suppressesIncrementalRendering() const { return m_data.suppressesIncrementalRendering; }
+    void setSuppressesIncrementalRendering(bool suppresses) { m_data.suppressesIncrementalRendering = suppresses; }
+
+    bool allowsAirPlayForMediaPlayback() const { return m_data.allowsAirPlayForMediaPlayback; }
+    void setAllowsAirPlayForMediaPlayback(bool allows) { m_data.allowsAirPlayForMediaPlayback = allows; }
+
+    bool ignoresViewportScaleLimits() const { return m_data.ignoresViewportScaleLimits; }
+    void setIgnoresViewportScaleLimits(bool ignores) { m_data.ignoresViewportScaleLimits = ignores; }
+
 #if PLATFORM(MAC)
     bool showsURLsInToolTips() const { return m_data.showsURLsInToolTips; }
     void setShowsURLsInToolTips(bool shows) { m_data.showsURLsInToolTips = shows; }
@@ -253,6 +285,9 @@ public:
 
     bool contextMenuQRCodeDetectionEnabled() const { return m_data.contextMenuQRCodeDetectionEnabled; }
     void setContextMenuQRCodeDetectionEnabled(bool enabled) { m_data.contextMenuQRCodeDetectionEnabled = enabled; }
+
+    WebCore::UserInterfaceDirectionPolicy userInterfaceDirectionPolicy() const { return m_data.userInterfaceDirectionPolicy; }
+    void setUserInterfaceDirectionPolicy(WebCore::UserInterfaceDirectionPolicy policy) { m_data.userInterfaceDirectionPolicy = policy; }
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -392,6 +427,9 @@ private:
         static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview();
         static WebKit::DragLiftDelay defaultDragLiftDelay();
 #endif
+#if PLATFORM(COCOA)
+        uintptr_t defaultMediaTypesRequiringUserActionForPlayback();
+#endif
 
         LazyInitializedRef<WebKit::BrowsingContextGroup, createBrowsingContextGroup> browsingContextGroup;
         LazyInitializedRef<WebKit::WebProcessPool, createWebProcessPool> processPool;
@@ -407,8 +445,9 @@ private:
         WeakPtr<WebKit::WebExtensionController> weakWebExtensionController;
 #endif
         RefPtr<WebKit::WebPageGroup> pageGroup;
-        RefPtr<WebKit::WebPageProxy> relatedPage;
+        WeakPtr<WebKit::WebPageProxy> relatedPage;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
+        WeakPtr<WebKit::WebPageProxy> alternateWebViewForNavigationGestures;
 
 #if PLATFORM(IOS_FAMILY)
         bool canShowWhileLocked { false };
@@ -419,10 +458,16 @@ private:
         bool allowsInlineMediaPlaybackAfterFullscreen { !allowsInlineMediaPlayback };
         bool mediaDataLoadsAutomatically { allowsInlineMediaPlayback };
         WebKit::DragLiftDelay dragLiftDelay { defaultDragLiftDelay() };
+#if ENABLE(DATA_DETECTION)
+        OptionSet<WebCore::DataDetectorType> dataDetectorTypes;
+#endif
+        WebKit::SelectionGranularity selectionGranularity { WebKit::SelectionGranularity::Dynamic };
 #if PLATFORM(WATCHOS)
+        bool allowsPictureInPictureMediaPlayback { false };
         bool textInteractionGesturesEnabled { false };
         bool longPressActionsEnabled { false };
 #else // PLATFORM(WATCHOS)
+        bool allowsPictureInPictureMediaPlayback { true };
         bool textInteractionGesturesEnabled { true };
         bool longPressActionsEnabled { true };
 #endif // PLATFORM(WATCHOS)
@@ -446,6 +491,7 @@ private:
         RetainPtr<ClassStructPtr> attachmentFileWrapperClass;
         std::optional<WTF::Vector<WTF::String>> additionalSupportedImageTypes;
         bool clientNavigationsRunAtForegroundPriority { true };
+        uintptr_t mediaTypesRequiringUserActionForPlayback { defaultMediaTypesRequiringUserActionForPlayback() };
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -468,12 +514,16 @@ private:
 
         bool mediaCaptureEnabled { false };
         bool httpsUpgradeEnabled { true };
+        bool suppressesIncrementalRendering { false };
+        bool ignoresViewportScaleLimits { false };
+        bool allowsAirPlayForMediaPlayback { true };
 
 #if PLATFORM(MAC)
         bool showsURLsInToolTips { false };
         bool serviceControlsEnabled { false };
         bool imageControlsEnabled { false };
         bool contextMenuQRCodeDetectionEnabled { false };
+        WebCore::UserInterfaceDirectionPolicy userInterfaceDirectionPolicy { WebCore::UserInterfaceDirectionPolicy::Content };
 #endif
 #if ENABLE(APPLE_PAY)
         bool applePayEnabled { DEFAULT_VALUE_FOR_ApplePayEnabled };
