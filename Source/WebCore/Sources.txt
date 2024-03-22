@@ -1758,6 +1758,7 @@ layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp
 layout/formattingContexts/inline/InlineTextItem.cpp
 layout/formattingContexts/inline/InlineQuirks.cpp
 layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
+layout/formattingContexts/inline/RangeBasedLineBuilder.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContent.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp

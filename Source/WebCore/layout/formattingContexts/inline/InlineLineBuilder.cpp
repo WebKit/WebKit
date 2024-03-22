@@ -230,7 +230,7 @@ inline void LineCandidate::reset()
 
 
 LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
-    : AbstractLineBuilder(inlineFormattingContext, rootHorizontalConstraints, inlineItemList)
+    : AbstractLineBuilder(inlineFormattingContext, inlineFormattingContext.root(), rootHorizontalConstraints, inlineItemList)
     , m_floatingContext(inlineFormattingContext.floatingContext())
 {
 }

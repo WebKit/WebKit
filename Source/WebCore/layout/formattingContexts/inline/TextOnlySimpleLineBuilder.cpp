@@ -92,8 +92,8 @@ static inline bool consumeTrailingLineBreakIfApplicable(const TextOnlyLineBreakR
     return true;
 }
 
-TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
-    : AbstractLineBuilder(inlineFormattingContext, rootHorizontalConstraints, inlineItemList)
+TextOnlySimpleLineBuilder::TextOnlySimpleLineBuilder(InlineFormattingContext& inlineFormattingContext, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
+    : AbstractLineBuilder(inlineFormattingContext, rootBox, rootHorizontalConstraints, inlineItemList)
     , m_isWrappingAllowed(TextUtil::isWrappingAllowed(rootStyle()))
 {
 }
@@ -452,28 +452,27 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByCon
     return true;
 }
 
-bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(const ElementBox& rootBox)
+bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(const RenderStyle& style)
 {
-    auto& rootStyle = rootBox.style();
-    if (rootStyle.fontCascade().wordSpacing())
+    if (style.fontCascade().wordSpacing())
         return false;
-    if (!rootStyle.isLeftToRightDirection())
+    if (!style.isLeftToRightDirection())
         return false;
-    if (rootStyle.wordBreak() == WordBreak::AutoPhrase)
+    if (style.wordBreak() == WordBreak::AutoPhrase)
         return false;
-    if (rootStyle.textIndent() != RenderStyle::initialTextIndent())
+    if (style.textIndent() != RenderStyle::initialTextIndent())
         return false;
-    if (rootStyle.textAlignLast() == TextAlignLast::Justify || rootStyle.textAlign() == TextAlignMode::Justify || rootBox.isRubyAnnotationBox())
+    if (style.textAlignLast() == TextAlignLast::Justify || style.textAlign() == TextAlignMode::Justify || style.display() == DisplayType::RubyAnnotation)
         return false;
-    if (rootStyle.boxDecorationBreak() == BoxDecorationBreak::Clone)
+    if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
         return false;
-    if (!rootStyle.hangingPunctuation().isEmpty())
+    if (!style.hangingPunctuation().isEmpty())
         return false;
-    if (rootStyle.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
+    if (style.hyphenationLimitLines() != RenderStyle::initialHyphenationLimitLines())
         return false;
-    if (rootStyle.textWrapMode() == TextWrapMode::Wrap && rootStyle.textWrapStyle() == TextWrapStyle::Balance)
+    if (style.textWrapMode() == TextWrapMode::Wrap && style.textWrapStyle() == TextWrapStyle::Balance)
         return false;
-    if (rootStyle.lineAlign() != LineAlign::None || rootStyle.lineSnap() != LineSnap::None)
+    if (style.lineAlign() != LineAlign::None || style.lineSnap() != LineSnap::None)
         return false;
 
     return true;

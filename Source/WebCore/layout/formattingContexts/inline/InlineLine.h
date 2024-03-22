@@ -140,6 +140,10 @@ public:
 
         UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 
+        // FIXME: Maybe add create functions intead?
+        Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
+        Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+
     private:
         friend class Line;
         friend class InlineContentAligner;
@@ -148,8 +152,6 @@ public:
         Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         Run(const InlineSoftLineBreakItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
         Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-        Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
-        Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
 
         const RenderStyle& style() const { return m_style; }
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);

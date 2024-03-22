@@ -37,11 +37,11 @@ struct TextOnlyLineBreakResult;
 
 class TextOnlySimpleLineBuilder : public AbstractLineBuilder {
 public:
-    TextOnlySimpleLineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
+    TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
     static bool isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems&, const PlacedFloats&);
-    static bool isEligibleForSimplifiedInlineLayoutByStyle(const ElementBox& root);
+    static bool isEligibleForSimplifiedInlineLayoutByStyle(const RenderStyle&);
 
 private:
     InlineItemPosition placeInlineTextContent(const InlineItemRange&);

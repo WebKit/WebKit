@@ -90,7 +90,7 @@ IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineForm
 {
     auto initializeRangeAndTextOnlyBuilderEligibility = [&] {
         m_inlineItemRange = { 0, inlineItems.content().size() };
-        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root());
+        m_mayUseSimplifiedTextOnlyInlineLayoutInRange = TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(root().style());
         if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
             return;
 
@@ -130,7 +130,7 @@ InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
     if (isContentEligibleForNonLineBuilderMinimumWidth(root(), m_mayUseSimplifiedTextOnlyInlineLayoutInRange))
         minimumContentSize = simplifiedMinimumWidth(root());
     else if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
-        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, inlineItemList() };
+        auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), formattingContext().root(), { }, inlineItemList() };
         minimumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, simplifiedLineBuilder, MayCacheLayoutResult::No);
     } else {
         auto lineBuilder = LineBuilder { formattingContext(), { }, inlineItemList() };
@@ -151,11 +151,11 @@ InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
         if (m_maximumContentWidthBetweenLineBreaks && mayUseContentWidthBetweenLineBreaksAsMaximumSize(root(), inlineItemList())) {
             maximumContentSize = *m_maximumContentWidthBetweenLineBreaks;
 #ifndef NDEBUG
-            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, inlineItemList() };
+            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), formattingContext().root(), { }, inlineItemList() };
             ASSERT(std::abs(maximumContentSize - computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::No)) < 1);
 #endif
         } else {
-            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, inlineItemList() };
+            auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), formattingContext().root(), { }, inlineItemList() };
             maximumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, mayCacheLayoutResult);
         }
     } else {
