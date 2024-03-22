@@ -35,7 +35,6 @@
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebKit2Initialize.h"
-#import "WebPreferencesDefaultValues.h"
 #import "WebPreferencesDefinitions.h"
 #import "WebURLSchemeHandlerCocoa.h"
 #import "_WKApplicationManifestInternal.h"
@@ -98,24 +97,6 @@ WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
     WeakObjCPtr<WKWebView> _relatedWebView;
     WeakObjCPtr<WKWebView> _webViewToCloneSessionStorageFrom;
     WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
-    RetainPtr<NSString> _groupIdentifier;
-    std::optional<RetainPtr<NSString>> _applicationNameForUserAgent;
-
-    Class _attachmentFileWrapperClass;
-
-    BOOL _controlledByAutomation;
-
-#if ENABLE(APPLE_PAY)
-    BOOL _applePayEnabled;
-#endif
-#if ENABLE(APP_HIGHLIGHTS)
-    BOOL _appHighlightsEnabled;
-#endif
-    double _sampledPageTopColorMaxDifference;
-    double _sampledPageTopColorMinHeight;
-
-    RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
-    RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
 }
 
 - (instancetype)init
@@ -151,19 +132,6 @@ WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
 #if PLATFORM(IOS_FAMILY)
     _selectionGranularity = WKSelectionGranularityDynamic;
 #endif // PLATFORM(IOS_FAMILY)
-
-    _mediaContentTypesRequiringHardwareSupport = @"";
-
-#if ENABLE(APPLE_PAY)
-    _applePayEnabled = DEFAULT_VALUE_FOR_ApplePayEnabled;
-#endif
-
-#if ENABLE(APP_HIGHLIGHTS)
-    _appHighlightsEnabled = DEFAULT_VALUE_FOR_AppHighlightsEnabled;
-#endif
-
-    _sampledPageTopColorMaxDifference = DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference;
-    _sampledPageTopColorMinHeight = DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight;
 
     return self;
 }
@@ -209,8 +177,8 @@ WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay delay)
 
     [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
 
-    if (_applicationNameForUserAgent)
-        [coder encodeObject:self.applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
+    if (auto& applicationNameForUserAgent = _pageConfiguration->applicationNameForUserAgent())
+        [coder encodeObject:*applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
 
     [coder encodeBool:self.allowsAirPlayForMediaPlayback forKey:@"allowsAirPlayForMediaPlayback"];
 
@@ -297,11 +265,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
 
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
-    configuration->_applicationNameForUserAgent = self->_applicationNameForUserAgent;
 
-    configuration->_attachmentFileWrapperClass = self->_attachmentFileWrapperClass;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
-    configuration->_controlledByAutomation = self->_controlledByAutomation;
 
 #if PLATFORM(IOS_FAMILY)
     configuration->_allowsPictureInPictureMediaPlayback = self->_allowsPictureInPictureMediaPlayback;
@@ -314,21 +279,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     configuration->_allowsAirPlayForMediaPlayback = self->_allowsAirPlayForMediaPlayback;
 #endif
-#if ENABLE(APPLE_PAY)
-    configuration->_applePayEnabled = self->_applePayEnabled;
-#endif
-
-    configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
-    configuration->_additionalSupportedImageTypes = adoptNS([self->_additionalSupportedImageTypes copyWithZone:zone]);
-
-    configuration->_groupIdentifier = adoptNS([self->_groupIdentifier copyWithZone:zone]);
-
-#if ENABLE(APP_HIGHLIGHTS)
-    configuration->_appHighlightsEnabled = self->_appHighlightsEnabled;
-#endif
-
-    configuration->_sampledPageTopColorMaxDifference = self->_sampledPageTopColorMaxDifference;
-    configuration->_sampledPageTopColorMinHeight = self->_sampledPageTopColorMinHeight;
 
     return configuration;
 }
@@ -461,17 +411,17 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (NSString *)_applicationNameForDesktopUserAgent
 {
-    return _applicationNameForUserAgent.value_or(nil).get();
+    return nsStringNilIfNull(_pageConfiguration->applicationNameForUserAgent().value_or(String()));
 }
 
 - (NSString *)applicationNameForUserAgent
 {
-    return _applicationNameForUserAgent.value_or(defaultApplicationNameForUserAgent()).get();
+    return nsStringNilIfNull(_pageConfiguration->applicationNameForUserAgent().value_or(defaultApplicationNameForUserAgent()));
 }
 
 - (void)setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
 {
-    _applicationNameForUserAgent.emplace(adoptNS(applicationNameForUserAgent.copy));
+    _pageConfiguration->setApplicationNameForUserAgent(applicationNameForUserAgent);
 }
 
 - (_WKVisitedLinkStore *)_visitedLinkStore
@@ -565,12 +515,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (NSString *)_groupIdentifier
 {
-    return _groupIdentifier.get();
+    return nsStringNilIfNull(_pageConfiguration->groupIdentifier());
 }
 
 - (void)_setGroupIdentifier:(NSString *)groupIdentifier
 {
-    _groupIdentifier = groupIdentifier;
+    _pageConfiguration->setGroupIdentifier(groupIdentifier);
 }
 
 - (BOOL)_respectsImageOrientation
@@ -857,7 +807,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (Class)_attachmentFileWrapperClass
 {
-    return _attachmentFileWrapperClass;
+    return _pageConfiguration->attachmentFileWrapperClass();
 }
 
 - (void)_setAttachmentFileWrapperClass:(Class)attachmentFileWrapperClass
@@ -865,7 +815,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     if (attachmentFileWrapperClass && ![attachmentFileWrapperClass isSubclassOfClass:[NSFileWrapper class]])
         [NSException raise:NSInvalidArgumentException format:@"Class %@ does not inherit from NSFileWrapper", attachmentFileWrapperClass];
 
-    _attachmentFileWrapperClass = attachmentFileWrapperClass;
+    _pageConfiguration->setAttachmentFileWrapperClass(attachmentFileWrapperClass);
 }
 
 - (BOOL)_colorFilterEnabled
@@ -1059,12 +1009,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_isControlledByAutomation
 {
-    return _controlledByAutomation;
+    return _pageConfiguration->isControlledByAutomation();
 }
 
 - (void)_setControlledByAutomation:(BOOL)controlledByAutomation
 {
-    _controlledByAutomation = controlledByAutomation;
+    _pageConfiguration->setControlledByAutomation(controlledByAutomation);
 }
 
 - (_WKApplicationManifest *)_applicationManifest
@@ -1152,7 +1102,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (BOOL)_applePayEnabled
 {
 #if ENABLE(APPLE_PAY)
-    return _applePayEnabled;
+    return _pageConfiguration->applePayEnabled();
 #else
     return NO;
 #endif
@@ -1161,7 +1111,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setApplePayEnabled:(BOOL)applePayEnabled
 {
 #if ENABLE(APPLE_PAY)
-    _applePayEnabled = applePayEnabled;
+    _pageConfiguration->setApplePayEnabled(applePayEnabled);
 #endif
 }
 
@@ -1187,22 +1137,28 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (NSString *)_mediaContentTypesRequiringHardwareSupport
 {
-    return _mediaContentTypesRequiringHardwareSupport.get();
+    return _pageConfiguration->mediaContentTypesRequiringHardwareSupport();
 }
 
 - (void)_setMediaContentTypesRequiringHardwareSupport:(NSString *)mediaContentTypesRequiringHardwareSupport
 {
-    _mediaContentTypesRequiringHardwareSupport = adoptNS([mediaContentTypesRequiringHardwareSupport copy]);
+    _pageConfiguration->setMediaContentTypesRequiringHardwareSupport(mediaContentTypesRequiringHardwareSupport);
 }
 
 - (NSArray<NSString *> *)_additionalSupportedImageTypes
 {
-    return _additionalSupportedImageTypes.get();
+    auto& types = _pageConfiguration->additionalSupportedImageTypes();
+    if (!types)
+        return nil;
+    return createNSArray(*types).autorelease();
 }
 
 - (void)_setAdditionalSupportedImageTypes:(NSArray<NSString *> *)additionalSupportedImageTypes
 {
-    _additionalSupportedImageTypes = adoptNS([additionalSupportedImageTypes copy]);
+    if (additionalSupportedImageTypes)
+        _pageConfiguration->setAdditionalSupportedImageTypes(makeVector<String>(additionalSupportedImageTypes));
+    else
+        _pageConfiguration->setAdditionalSupportedImageTypes(std::nullopt);
 }
 
 - (void)_setLegacyEncryptedMediaAPIEnabled:(BOOL)enabled
@@ -1248,14 +1204,14 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setAppHighlightsEnabled:(BOOL)enabled
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    _appHighlightsEnabled = enabled;
+    _pageConfiguration->setAppHighlightsEnabled(enabled);
 #endif
 }
 
 - (BOOL)_appHighlightsEnabled
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    return _appHighlightsEnabled;
+    return _pageConfiguration->appHighlightsEnabled();
 #else
     return NO;
 #endif
@@ -1316,22 +1272,22 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setSampledPageTopColorMaxDifference:(double)value
 {
-    _sampledPageTopColorMaxDifference = value;
+    _pageConfiguration->setSampledPageTopColorMaxDifference(value);
 }
 
 - (double)_sampledPageTopColorMaxDifference
 {
-    return _sampledPageTopColorMaxDifference;
+    return _pageConfiguration->sampledPageTopColorMaxDifference();
 }
 
 - (void)_setSampledPageTopColorMinHeight:(double)value
 {
-    _sampledPageTopColorMinHeight = value;
+    _pageConfiguration->setSampledPageTopColorMinHeight(value);
 }
 
 - (double)_sampledPageTopColorMinHeight
 {
-    return _sampledPageTopColorMinHeight;
+    return _pageConfiguration->sampledPageTopColorMinHeight();
 }
 
 - (void)_setAttributedBundleIdentifier:(NSString *)identifier

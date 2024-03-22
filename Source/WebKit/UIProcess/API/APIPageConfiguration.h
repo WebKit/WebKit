@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "WebPreferencesDefaultValues.h"
 #include "WebURLSchemeHandler.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
@@ -186,8 +187,11 @@ public:
     void setOverrideContentSecurityPolicy(const WTF::String& overrideContentSecurityPolicy) { m_data.overrideContentSecurityPolicy = overrideContentSecurityPolicy; }
 
 #if PLATFORM(COCOA)
-    const WTF::Vector<WTF::String>& additionalSupportedImageTypes() const { return m_data.additionalSupportedImageTypes; }
-    void setAdditionalSupportedImageTypes(WTF::Vector<WTF::String>&& additionalSupportedImageTypes) { m_data.additionalSupportedImageTypes = WTFMove(additionalSupportedImageTypes); }
+    ClassStructPtr attachmentFileWrapperClass() const { return m_data.attachmentFileWrapperClass.get(); }
+    void setAttachmentFileWrapperClass(ClassStructPtr c) { m_data.attachmentFileWrapperClass = c; }
+
+    const std::optional<Vector<WTF::String>>& additionalSupportedImageTypes() const { return m_data.additionalSupportedImageTypes; }
+    void setAdditionalSupportedImageTypes(std::optional<Vector<WTF::String>>&& additionalSupportedImageTypes) { m_data.additionalSupportedImageTypes = WTFMove(additionalSupportedImageTypes); }
 
     bool clientNavigationsRunAtForegroundPriority() const { return m_data.clientNavigationsRunAtForegroundPriority; }
     void setClientNavigationsRunAtForegroundPriority(bool value) { m_data.clientNavigationsRunAtForegroundPriority = value; }
@@ -250,6 +254,31 @@ public:
     bool contextMenuQRCodeDetectionEnabled() const { return m_data.contextMenuQRCodeDetectionEnabled; }
     void setContextMenuQRCodeDetectionEnabled(bool enabled) { m_data.contextMenuQRCodeDetectionEnabled = enabled; }
 #endif
+
+#if ENABLE(APPLE_PAY)
+    bool applePayEnabled() const { return m_data.applePayEnabled; }
+    void setApplePayEnabled(bool enabled) { m_data.applePayEnabled = enabled; }
+#endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+    bool appHighlightsEnabled() const { return m_data.appHighlightsEnabled; }
+    void setAppHighlightsEnabled(bool enabled) { m_data.appHighlightsEnabled = enabled; }
+#endif
+
+    const WTF::String& groupIdentifier() const { return m_data.groupIdentifier; }
+    void setGroupIdentifier(WTF::String&& identifier) { m_data.groupIdentifier = WTFMove(identifier); }
+
+    const WTF::String& mediaContentTypesRequiringHardwareSupport() const { return m_data.mediaContentTypesRequiringHardwareSupport; }
+    void setMediaContentTypesRequiringHardwareSupport(WTF::String&& types) { m_data.mediaContentTypesRequiringHardwareSupport = WTFMove(types); }
+
+    const std::optional<WTF::String>& applicationNameForUserAgent() const { return m_data.applicationNameForUserAgent; }
+    void setApplicationNameForUserAgent(std::optional<WTF::String>&& name) { m_data.applicationNameForUserAgent = WTFMove(name); }
+
+    double sampledPageTopColorMaxDifference() const { return m_data.sampledPageTopColorMaxDifference; }
+    void setSampledPageTopColorMaxDifference(double difference) { m_data.sampledPageTopColorMaxDifference = difference; }
+
+    double sampledPageTopColorMinHeight() const { return m_data.sampledPageTopColorMinHeight; }
+    void setSampledPageTopColorMinHeight(double height) { m_data.sampledPageTopColorMinHeight = height; }
 
     double incrementalRenderingSuppressionTimeout() const { return m_data.incrementalRenderingSuppressionTimeout; }
     void setIncrementalRenderingSuppressionTimeout(double timeout) { m_data.incrementalRenderingSuppressionTimeout = timeout; }
@@ -370,21 +399,21 @@ private:
         LazyInitializedRef<WebKit::WebPreferences, createWebPreferences> preferences;
         LazyInitializedRef<WebKit::VisitedLinkStore, createVisitedLinkStore> visitedLinkStore;
         LazyInitializedRef<WebsitePolicies, createWebsitePolicies> defaultWebsitePolicies;
-        mutable RefPtr<WebKit::WebsiteDataStore> websiteDataStore { };
+        mutable RefPtr<WebKit::WebsiteDataStore> websiteDataStore;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-        WTF::URL requiredWebExtensionBaseURL { };
-        RefPtr<WebKit::WebExtensionController> webExtensionController { };
-        WeakPtr<WebKit::WebExtensionController> weakWebExtensionController { };
+        WTF::URL requiredWebExtensionBaseURL;
+        RefPtr<WebKit::WebExtensionController> webExtensionController;
+        WeakPtr<WebKit::WebExtensionController> weakWebExtensionController;
 #endif
-        RefPtr<WebKit::WebPageGroup> pageGroup { };
-        RefPtr<WebKit::WebPageProxy> relatedPage { };
-        WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom { };
+        RefPtr<WebKit::WebPageGroup> pageGroup;
+        RefPtr<WebKit::WebPageProxy> relatedPage;
+        WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
 
 #if PLATFORM(IOS_FAMILY)
         bool canShowWhileLocked { false };
         WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting { WebKit::AttributionOverrideTesting::NoOverride };
-        RetainPtr<_UIClickInteractionDriving> clickInteractionDriverForTesting { };
+        RetainPtr<_UIClickInteractionDriving> clickInteractionDriverForTesting;
         bool allowsInlineMediaPlayback { !PAL::currentUserInterfaceIdiomIsSmallScreen() };
         bool inlineMediaPlaybackRequiresPlaysInlineAttribute { !allowsInlineMediaPlayback };
         bool allowsInlineMediaPlaybackAfterFullscreen { !allowsInlineMediaPlayback };
@@ -407,29 +436,30 @@ private:
         bool drawsBackground { true };
         bool controlledByAutomation { false };
         bool allowTestOnlyIPC { false };
-        std::optional<bool> delaysWebProcessLaunchUntilFirstLoad { };
-        std::optional<double> cpuLimit { };
-        std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting { };
+        std::optional<bool> delaysWebProcessLaunchUntilFirstLoad;
+        std::optional<double> cpuLimit;
+        std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
 
-        WTF::String overrideContentSecurityPolicy { };
+        WTF::String overrideContentSecurityPolicy;
 
 #if PLATFORM(COCOA)
-        WTF::Vector<WTF::String> additionalSupportedImageTypes { };
+        RetainPtr<ClassStructPtr> attachmentFileWrapperClass;
+        std::optional<WTF::Vector<WTF::String>> additionalSupportedImageTypes;
         bool clientNavigationsRunAtForegroundPriority { true };
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-        RefPtr<ApplicationManifest> applicationManifest { };
+        RefPtr<ApplicationManifest> applicationManifest;
 #endif
 
-        HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers { };
-        Vector<WTF::String> corsDisablingPatterns { };
-        HashSet<WTF::String> maskedURLSchemes { };
+        HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers;
+        Vector<WTF::String> corsDisablingPatterns;
+        HashSet<WTF::String> maskedURLSchemes;
         bool userScriptsShouldWaitUntilNotification { true };
         bool crossOriginAccessControlCheckEnabled { true };
-        WTF::String processDisplayName { };
+        WTF::String processDisplayName;
         bool loadsSubresources { true };
-        std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> allowedNetworkHosts { };
+        std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> allowedNetworkHosts;
 
 #if ENABLE(APP_BOUND_DOMAINS)
         bool ignoresAppBoundDomains { false };
@@ -445,7 +475,17 @@ private:
         bool imageControlsEnabled { false };
         bool contextMenuQRCodeDetectionEnabled { false };
 #endif
-
+#if ENABLE(APPLE_PAY)
+        bool applePayEnabled { DEFAULT_VALUE_FOR_ApplePayEnabled };
+#endif
+#if ENABLE(APP_HIGHLIGHTS)
+        bool appHighlightsEnabled { DEFAULT_VALUE_FOR_AppHighlightsEnabled };
+#endif
+        WTF::String groupIdentifier;
+        WTF::String mediaContentTypesRequiringHardwareSupport;
+        std::optional<WTF::String> applicationNameForUserAgent;
+        double sampledPageTopColorMaxDifference { DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference };
+        double sampledPageTopColorMinHeight { DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight };
         double incrementalRenderingSuppressionTimeout { 5 };
         bool allowsJavaScriptMarkup { true };
         bool convertsPositionStyleOnCopy { false };
@@ -466,7 +506,7 @@ private:
         bool allowsInlinePredictions { false };
 
         WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
-        WTF::String attributedBundleIdentifier { };
+        WTF::String attributedBundleIdentifier;
 
 #if HAVE(TOUCH_BAR)
         bool requiresUserActionForEditingControlsManager { false };
