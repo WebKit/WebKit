@@ -7,32 +7,33 @@
     </head>
 <body>
 <select id="select">
-    <option>Option 1</option>
-    <option>Option 2</option>
-    <option>Option 3</option>
+    <option>1</option>
 </select>
 </body>
 <script>
 jsTestIsAsync = true;
 
 addEventListener("load", async () => {
-    description("This test verifies that a &lt;select&gt; element's menu is updated if options are removed while it is visible.");
+    description("This test verifies that updating a &lt;select&gt; element's menu while it is visible does not result in a hang.");
 
-    shouldBeEqualToString("select.value", "Option 1");
     await UIHelper.activateElement(select);
 
     items = await UIHelper.selectMenuItems();
-    shouldBeTrue("areArraysEqual(items, " + '["Option 1", "Option 2", "Option 3"]' + ")");
+    shouldBeEqualToNumber("items.length", 1);
 
-    select.remove(0);
+    for (let i = 1; i <= 1000; i++) {
+        let option = document.createElement("option");
+        option.text = i + 1;
+        select.appendChild(option);
+    }
+
     await UIHelper.delayFor(200);
 
     items = await UIHelper.selectMenuItems();
-    shouldBeTrue("areArraysEqual(items, " + '["Option 2", "Option 3"]' + ")");
+    shouldBeEqualToNumber("items.length", 1001);
 
     await UIHelper.selectFormAccessoryPickerRow(1);
     await UIHelper.waitForContextMenuToHide();
-    shouldBeEqualToString("select.value", "Option 3");
 
     finishJSTest();
 });
