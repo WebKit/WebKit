@@ -245,7 +245,7 @@ void AXObjectCache::setForceInitialFrameCaching(bool shouldForce)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::shouldServeInitialCachedFrame()
 {
-    return !isTestClient() || forceInitialFrameCaching();
+    return !clientIsInTestMode() || forceInitialFrameCaching();
 }
 
 static const Seconds updateTreeSnapshotTimerInterval { 100_ms };
@@ -988,7 +988,7 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     // especially for large documents, for real clients we build a temporary "empty" isolated tree consisting only of the ScrollView and the WebArea objects.
     // Then we schedule building the entire isolated tree on a Timer.
     // For test clients, LayoutTests or XCTests, build the whole isolated tree.
-    if (LIKELY(!isTestClient())) {
+    if (LIKELY(!clientIsInTestMode())) {
         tree = AXIsolatedTree::createEmpty(*this);
         if (!m_buildIsolatedTreeTimer.isActive())
             m_buildIsolatedTreeTimer.startOneShot(0_s);

@@ -94,6 +94,7 @@ public:
 
 private:
     AccessibilityController();
+    void platformInitialize();
 
 #if PLATFORM(COCOA)
     RetainPtr<id> m_globalNotificationHandler;

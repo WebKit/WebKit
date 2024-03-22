@@ -537,6 +537,10 @@ public:
     void relayNotification(const String&, RetainPtr<NSData>);
 #endif
 
+#if PLATFORM(MAC)
+    static bool clientIsInTestMode();
+#endif
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
     void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
@@ -544,7 +548,6 @@ public:
     WEBCORE_EXPORT static void initializeAXThreadIfNeeded();
 private:
     static bool clientSupportsIsolatedTree();
-    static bool isTestClient();
     AXCoreObject* isolatedTreeRootObject();
     // Propagates the root of the isolated tree back into the Core and WebKit.
     void setIsolatedTreeRoot(AXCoreObject*);

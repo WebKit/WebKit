@@ -755,17 +755,17 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 static bool isTestAXClientType(AXClientType client)
 {
     return client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest;
 }
 
-bool AXObjectCache::isTestClient()
+bool AXObjectCache::clientIsInTestMode()
 {
     return UNLIKELY(isTestAXClientType(_AXGetClientForCurrentRequestUntrusted()));
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::clientSupportsIsolatedTree()
 {
     auto client = _AXGetClientForCurrentRequestUntrusted();

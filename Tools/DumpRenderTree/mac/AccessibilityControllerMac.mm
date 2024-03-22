@@ -38,9 +38,13 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLView.h>
+#import <pal/spi/mac/HIServicesSPI.h>
 
 AccessibilityController::AccessibilityController()
 {
+    // Override the client identifier to be kAXClientTypeWebKitTesting which is treated the same as the VoiceOver identifier in isolated tree mode.
+    // This also allows to enable some APIs during testing only for unit test purposes, not for other clients consumption.
+    _AXSetClientIdentificationOverride((AXClientType)kAXClientTypeWebKitTesting);
 }
 
 AccessibilityController::~AccessibilityController()

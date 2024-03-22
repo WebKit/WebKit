@@ -47,6 +47,7 @@ Ref<AccessibilityController> AccessibilityController::create()
 
 AccessibilityController::AccessibilityController()
 {
+    platformInitialize();
 }
 
 AccessibilityController::~AccessibilityController()
@@ -173,6 +174,12 @@ void AccessibilityController::announce(JSStringRef message)
     auto page = InjectedBundle::singleton().page()->page();
     WKAccessibilityAnnounce(page, toWK(message).get());
 }
+
+#if !PLATFORM(MAC)
+void AccessibilityController::platformInitialize()
+{
+}
+#endif
 
 #if PLATFORM(COCOA)
 

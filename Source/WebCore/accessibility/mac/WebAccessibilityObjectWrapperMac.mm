@@ -84,6 +84,8 @@
 
 using namespace WebCore;
 
+static id attributeValueForTesting(const RefPtr<AXCoreObject>&, NSString *);
+
 // Cell Tables
 #ifndef NSAccessibilitySelectedCellsAttribute
 #define NSAccessibilitySelectedCellsAttribute @"AXSelectedCells"
@@ -2218,7 +2220,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString:@"AXResolvedEditingStyles"])
         return [self baseAccessibilityResolvedEditingStyles];
-    
+
     // This allows us to connect to a plugin that creates a shadow node for editing (like PDFs).
     if ([attributeName isEqualToString:@"_AXAssociatedPluginParent"])
         return [self _associatedPluginParentWith:backingObject];
@@ -2318,47 +2320,55 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"AXAutoInteractable"])
         return @(backingObject->isRemoteFrame());
 
-    // Used by LayoutTests only, not by AT clients.
-    if (UNLIKELY([attributeName isEqualToString:@"AXARIARole"]))
+    if (AXObjectCache::clientIsInTestMode())
+        return attributeValueForTesting(backingObject, attributeName);
+    return nil;
+}
+
+id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString *attributeName)
+{
+    ASSERT_WITH_MESSAGE(AXObjectCache::clientIsInTestMode(), "Should be used for testing only, not for AT clients.");
+
+    if ([attributeName isEqualToString:@"AXARIARole"])
         return backingObject->computedRoleString();
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXStringValue"]))
+    if ([attributeName isEqualToString:@"AXStringValue"])
         return backingObject->stringValue();
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXDateTimeComponentsType"]))
+    if ([attributeName isEqualToString:@"AXDateTimeComponentsType"])
         return [NSNumber numberWithUnsignedShort:(uint8_t)backingObject->dateTimeComponentsType()];
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXControllers"]))
+    if ([attributeName isEqualToString:@"AXControllers"])
         return makeNSArray(backingObject->controllers());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXControllerFor"]))
+    if ([attributeName isEqualToString:@"AXControllerFor"])
         return makeNSArray(backingObject->controlledObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXDescribedBy"]))
+    if ([attributeName isEqualToString:@"AXDescribedBy"])
         return makeNSArray(backingObject->describedByObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXDescriptionFor"]))
+    if ([attributeName isEqualToString:@"AXDescriptionFor"])
         return makeNSArray(backingObject->descriptionForObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXDetailsFor"]))
+    if ([attributeName isEqualToString:@"AXDetailsFor"])
         return makeNSArray(backingObject->detailsForObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXErrorMessageFor"]))
+    if ([attributeName isEqualToString:@"AXErrorMessageFor"])
         return makeNSArray(backingObject->errorMessageForObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXFlowFrom"]))
+    if ([attributeName isEqualToString:@"AXFlowFrom"])
         return makeNSArray(backingObject->flowFromObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXFlowTo"]))
+    if ([attributeName isEqualToString:@"AXFlowTo"])
         return makeNSArray(backingObject->flowToObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXLabelledBy"]))
+    if ([attributeName isEqualToString:@"AXLabelledBy"])
         return makeNSArray(backingObject->labeledByObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXLabelFor"]))
+    if ([attributeName isEqualToString:@"AXLabelFor"])
         return makeNSArray(backingObject->labelForObjects());
 
-    if (UNLIKELY([attributeName isEqualToString:@"AXOwners"]))
+    if ([attributeName isEqualToString:@"AXOwners"])
         return makeNSArray(backingObject->owners());
 
     return nil;
