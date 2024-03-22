@@ -248,7 +248,7 @@ std::optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const Cr
         return std::nullopt;
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(sharedKeyResult->data(), sharedKeyResult->size());
+    crypto->addBytes(sharedKeyResult->span());
     auto sharedKeyHash = crypto->computeHash();
 
     auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
@@ -261,7 +261,7 @@ std::optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const Cr
 
     // The following calculates a SHA-256 digest of the PIN, and shrink to the left 16 bytes.
     crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(pin.data(), pin.length());
+    crypto->addBytes(pin.bytes());
     auto pinHash = crypto->computeHash();
     pinHash.shrink(16);
 
@@ -313,7 +313,7 @@ std::optional<SetPinRequest> SetPinRequest::tryCreate(const String& inputPin, co
         return std::nullopt;
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(sharedKeyResult->data(), sharedKeyResult->size());
+    crypto->addBytes(sharedKeyResult->span());
     auto sharedKeyHash = crypto->computeHash();
 
     auto sharedKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, Vector { sharedKeyHash }, true, CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);

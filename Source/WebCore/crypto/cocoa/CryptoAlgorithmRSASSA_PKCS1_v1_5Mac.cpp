@@ -44,7 +44,7 @@ static ExceptionOr<Vector<uint8_t>> signRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentif
     auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
     if (!digest)
         return Exception { ExceptionCode::OperationError };
-    digest->addBytes(data.data(), data.size());
+    digest->addBytes(data.span());
     auto digestData = digest->computeHash();
 
     Vector<uint8_t> signature(keyLength / 8); // Per https://tools.ietf.org/html/rfc3447#section-8.2.1
@@ -69,7 +69,7 @@ static ExceptionOr<bool> verifyRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentifier hash,
     auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
     if (!digest)
         return Exception { ExceptionCode::OperationError };
-    digest->addBytes(data.data(), data.size());
+    digest->addBytes(data.span());
     auto digestData = digest->computeHash();
 
     auto status = CCRSACryptorVerify(key, ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), signature.size());

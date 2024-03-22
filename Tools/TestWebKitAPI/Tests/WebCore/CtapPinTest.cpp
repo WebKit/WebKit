@@ -134,7 +134,7 @@ TEST(CtapPinTest, TestSetPinRequest)
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(sharedKeyResult->data(), sharedKeyResult->size());
+    crypto->addBytes(sharedKeyResult->span());
     auto sharedKeyHash = crypto->computeHash();
 
     auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageDecrypt);
@@ -322,7 +322,7 @@ TEST(CtapPinTest, TestTokenRequest)
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(sharedKeyResult->data(), sharedKeyResult->size());
+    crypto->addBytes(sharedKeyResult->span());
     auto sharedKeyHash = crypto->computeHash();
 
     auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageDecrypt);

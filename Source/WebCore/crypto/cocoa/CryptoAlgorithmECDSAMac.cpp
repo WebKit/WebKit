@@ -46,7 +46,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
     if (!digest)
         return Exception { ExceptionCode::OperationError };
-    digest->addBytes(data.data(), data.size());
+    digest->addBytes(data.span());
     auto digestData = digest->computeHash();
 
     // The signature produced by CCECCryptorSignHash is in DER format.
@@ -107,7 +107,7 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
     auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
     if (!digest)
         return Exception { ExceptionCode::OperationError };
-    digest->addBytes(data.data(), data.size());
+    digest->addBytes(data.span());
     auto digestData = digest->computeHash();
 
     if (signature.size() != keyLengthInBytes * 2)

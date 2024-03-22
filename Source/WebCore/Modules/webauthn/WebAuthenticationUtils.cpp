@@ -48,7 +48,7 @@ Vector<uint8_t> produceRpIdHash(const String& rpId)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     auto rpIdUTF8 = rpId.utf8();
-    crypto->addBytes(rpIdUTF8.data(), rpIdUTF8.length());
+    crypto->addBytes(rpIdUTF8.bytes());
     return crypto->computeHash();
 }
 

@@ -222,7 +222,7 @@ std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm
     ASSERT(digest->m_context);
     digest->m_context->algorithm = algo;
     digest->m_context->ccContext = createCryptoDigest(algo);
-    digest->addBytes(data.data(), data.size());
+    digest->addBytes(data.span());
     return digest->computeHash();
 }
 } // namespace PAL

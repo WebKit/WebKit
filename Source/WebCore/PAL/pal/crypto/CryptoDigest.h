@@ -47,6 +47,7 @@ public:
     PAL_EXPORT static std::unique_ptr<CryptoDigest> create(Algorithm);
     PAL_EXPORT ~CryptoDigest();
 
+    void addBytes(std::span<const uint8_t>);
     PAL_EXPORT void addBytes(const void* input, size_t length);
     PAL_EXPORT Vector<uint8_t> computeHash();
     PAL_EXPORT String toHexString();
@@ -56,5 +57,10 @@ public:
 private:
     std::unique_ptr<CryptoDigestContext> m_context;
 };
+
+inline void CryptoDigest::addBytes(std::span<const uint8_t> input)
+{
+    return addBytes(input.data(), input.size());
+}
 
 } // namespace PAL

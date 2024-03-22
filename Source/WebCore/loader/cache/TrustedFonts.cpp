@@ -862,7 +862,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& trustedFontHas
 static AtomString hashForFontData(const void* data, size_t size)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    cryptoDigest->addBytes(data, size);
+    cryptoDigest->addBytes(std::span { reinterpret_cast<const uint8_t*>(data), size });
     auto digest = cryptoDigest->computeHash();
     return makeAtomString(base64Encoded(digest.data(), digest.size()));
 }

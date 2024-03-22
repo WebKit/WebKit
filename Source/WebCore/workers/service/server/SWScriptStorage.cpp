@@ -53,7 +53,7 @@ String SWScriptStorage::sha2Hash(const String& input) const
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     crypto->addBytes(m_salt.data(), m_salt.size());
     auto inputUTF8 = input.utf8();
-    crypto->addBytes(inputUTF8.data(), inputUTF8.length());
+    crypto->addBytes(inputUTF8.bytes());
     auto hash = crypto->computeHash();
     return base64URLEncodeToString(hash.data(), hash.size());
 }

@@ -1905,7 +1905,7 @@ static String computeContentSecurityPolicySHA256Hash(const Element& element)
     const PAL::TextEncoding& encodingToUse = documentEncoding.isValid() ? documentEncoding : PAL::UTF8Encoding();
     auto content = encodingToUse.encode(TextNodeTraversal::contentsAsString(element), PAL::UnencodableHandling::Entities);
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    cryptoDigest->addBytes(content.data(), content.size());
+    cryptoDigest->addBytes(content.span());
     auto digest = cryptoDigest->computeHash();
     return makeString("sha256-", base64Encoded(digest.data(), digest.size()));
 }
