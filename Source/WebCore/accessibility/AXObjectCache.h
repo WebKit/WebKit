@@ -370,7 +370,7 @@ public:
 
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();
-    static bool forceDeferredSpellChecking() { return gForceDeferredSpellChecking; }
+    static bool forceDeferredSpellChecking();
     WEBCORE_EXPORT static void setForceDeferredSpellChecking(bool);
 #if PLATFORM(MAC)
     static bool shouldSpellCheck();
@@ -383,9 +383,8 @@ public:
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
 
-    // Note: these may be called from a non-main thread concurrently as other readers.
-    static bool accessibilityEnabled() { return gAccessibilityEnabled; }
-    static bool accessibilityEnhancedUserInterfaceEnabled() { return gAccessibilityEnhancedUserInterfaceEnabled; }
+    WEBCORE_EXPORT static bool accessibilityEnabled();
+    WEBCORE_EXPORT static bool accessibilityEnhancedUserInterfaceEnabled();
 #if ENABLE(AX_THREAD_TEXT_APIS)
     static bool useAXThreadTextApis() { return gAccessibilityThreadTextApisEnabled && !isMainThread(); }
 #endif
@@ -724,13 +723,16 @@ private:
 
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
 
-    WEBCORE_EXPORT static bool gAccessibilityEnabled;
-    WEBCORE_EXPORT static bool gAccessibilityEnhancedUserInterfaceEnabled;
+    static bool gAccessibilityEnabled;
+    static bool gAccessibilityEnhancedUserInterfaceEnabled;
     static bool gForceDeferredSpellChecking;
-    static bool gForceInitialFrameCaching;
+
+    // FIXME: since the following only affects the behavior of isolated objects, we should move it into AXIsolatedTree in order to keep this class main thread only.
+    static std::atomic<bool> gForceInitialFrameCaching;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
-    static bool gAccessibilityThreadTextApisEnabled;
+    // Accessed on and off the main thread.
+    static std::atomic<bool> gAccessibilityThreadTextApisEnabled;
 #endif
 
     HashSet<AXID> m_idsInUse;

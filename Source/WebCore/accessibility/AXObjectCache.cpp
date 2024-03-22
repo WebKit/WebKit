@@ -208,9 +208,15 @@ bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 bool AXObjectCache::gForceDeferredSpellChecking = false;
 #if ENABLE(AX_THREAD_TEXT_APIS)
-bool AXObjectCache::gAccessibilityThreadTextApisEnabled = false;
+std::atomic<bool> AXObjectCache::gAccessibilityThreadTextApisEnabled = false;
 #endif
-bool AXObjectCache::gForceInitialFrameCaching = false;
+std::atomic<bool> AXObjectCache::gForceInitialFrameCaching = false;
+
+bool AXObjectCache::accessibilityEnabled()
+{
+    ASSERT(isMainThread());
+    return gAccessibilityEnabled;
+}
 
 void AXObjectCache::enableAccessibility()
 {
@@ -220,16 +226,31 @@ void AXObjectCache::enableAccessibility()
 
 void AXObjectCache::disableAccessibility()
 {
+    ASSERT(isMainThread());
     gAccessibilityEnabled = false;
+}
+
+bool AXObjectCache::forceDeferredSpellChecking()
+{
+    ASSERT(isMainThread());
+    return gForceDeferredSpellChecking;
 }
 
 void AXObjectCache::setForceDeferredSpellChecking(bool shouldForce)
 {
+    ASSERT(isMainThread());
     gForceDeferredSpellChecking = shouldForce;
+}
+
+bool AXObjectCache::accessibilityEnhancedUserInterfaceEnabled()
+{
+    ASSERT(isMainThread());
+    return gAccessibilityEnhancedUserInterfaceEnabled;
 }
 
 void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool flag)
 {
+    ASSERT(isMainThread());
     gAccessibilityEnhancedUserInterfaceEnabled = flag;
 #if PLATFORM(MAC)
     if (flag)
