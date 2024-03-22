@@ -5140,7 +5140,8 @@ class DownloadBuiltProduct(shell.ShellCommand):
     name = 'download-built-product'
     description = ['downloading built product']
     descriptionDone = ['Downloaded built product']
-    flunkOnFailure = False
+    haltOnFailure = True
+    flunkOnFailure = True
 
     def getResultSummary(self):
         if self.results not in [SUCCESS, SKIPPED]:
