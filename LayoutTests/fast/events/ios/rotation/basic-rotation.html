@@ -21,15 +21,15 @@
         function doTest()
         {
             debug('Before rotation');
-            shouldBe("window.innerWidth", "320");
-            shouldBe("window.innerHeight", "548");
+            shouldBe("window.innerWidth", "390");
+            shouldBe("window.innerHeight", "797");
             if (!window.testRunner)
                 return;
 
             testRunner.runUIScript(getRotationUIScript(), function(result) {
                 debug('After rotation');
-                shouldBe("window.innerWidth", "568");
-                shouldBe("window.innerHeight", "320");
+                shouldBe("window.innerWidth", "844");
+                shouldBe("window.innerHeight", "390");
 
                 if (window.testRunner)
                     testRunner.notifyDone();
@@ -37,14 +37,14 @@
         }
         window.addEventListener('resize', function() {
             debug('In resize event handler:');
-            shouldBe("window.innerWidth", "568");
-            shouldBe("window.innerHeight", "320");
+            shouldBe("window.innerWidth", "844");
+            shouldBe("window.innerHeight", "390");
             debug('');
         }, false);
         window.addEventListener('orientationchange', function() {
             debug('In orientationchange event handler:');
-            shouldBe("window.innerWidth", "568");
-            shouldBe("window.innerHeight", "320");
+            shouldBe("window.innerWidth", "844");
+            shouldBe("window.innerHeight", "390");
             debug('');
         }, false);
 

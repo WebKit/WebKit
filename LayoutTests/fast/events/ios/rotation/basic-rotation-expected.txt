@@ -1,15 +1,15 @@
 Before rotation
-PASS window.innerWidth is 320
-PASS window.innerHeight is 548
-In orientationchange event handler:
-FAIL window.innerWidth should be 568. Was 320.
-FAIL window.innerHeight should be 320. Was 548.
-
+PASS window.innerWidth is 390
+PASS window.innerHeight is 797
 In resize event handler:
-PASS window.innerWidth is 568
-PASS window.innerHeight is 320
+PASS window.innerWidth is 844
+PASS window.innerHeight is 390
+
+In orientationchange event handler:
+PASS window.innerWidth is 844
+PASS window.innerHeight is 390
 
 After rotation
-PASS window.innerWidth is 568
-PASS window.innerHeight is 320
+PASS window.innerWidth is 844
+PASS window.innerHeight is 390
 Rotation test.

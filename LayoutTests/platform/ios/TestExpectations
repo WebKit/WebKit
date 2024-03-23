@@ -4457,9 +4457,6 @@ imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-tex
 
 webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
 
-# rdar://102857582 (iOS17-iOS-Simulator queues timing out before finishing layout tests)
-fast/events/ios/rotation/ [ Skip ]
-
 # These tests require compile-time flags in WebKit that are only enabled in iOS17. They were marked as Skip in
 # https://bugs.webkit.org/show_bug.cgi?id=248545 — re-enable them here.
 fast/images/animations-resume-from-last-displayed-frame.html [ Pass ]
