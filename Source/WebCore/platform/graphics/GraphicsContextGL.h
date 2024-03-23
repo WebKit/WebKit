@@ -1515,7 +1515,7 @@ public:
     using ExternalEGLSyncEvent = int;
 #endif
     virtual GCEGLSync createEGLSync(ExternalEGLSyncEvent) = 0;
-    virtual bool destroyEGLSync(GCEGLSync) = 0;
+    virtual void destroyEGLSync(GCEGLSync) = 0;
     virtual void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) = 0;
 
     // ========== Extension related entry points.

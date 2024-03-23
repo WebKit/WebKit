@@ -3095,17 +3095,15 @@ RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelB
     return returnValue;
 }
 
-bool RemoteGraphicsContextGLProxy::destroyEGLSync(GCEGLSync arg0)
+void RemoteGraphicsContextGLProxy::destroyEGLSync(GCEGLSync arg0)
 {
     if (isContextLost())
-        return { };
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::DestroyEGLSync(static_cast<uint64_t>(reinterpret_cast<intptr_t>(arg0))));
-    if (!sendResult.succeeded()) {
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DestroyEGLSync(static_cast<uint64_t>(reinterpret_cast<intptr_t>(arg0))));
+    if (sendResult != IPC::Error::NoError) {
         markContextLost();
-        return { };
+        return;
     }
-    auto& [returnValue] = sendResult.reply();
-    return returnValue;
 }
 
 void RemoteGraphicsContextGLProxy::clientWaitEGLSyncWithFlush(GCEGLSync arg0, uint64_t timeout)

@@ -328,7 +328,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize) -> (std::span<const int32_t> params) Synchronous
     void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
     void DrawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY arg0) -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
-    void DestroyEGLSync(uint64_t arg0) -> (bool returnValue) Synchronous
+    void DestroyEGLSync(uint64_t arg0)
     void ClientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
     void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
 }

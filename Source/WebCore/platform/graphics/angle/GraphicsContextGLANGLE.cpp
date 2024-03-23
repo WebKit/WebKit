@@ -2876,9 +2876,10 @@ GCEGLSync GraphicsContextGLANGLE::createEGLSync(ExternalEGLSyncEvent)
     return nullptr;
 }
 
-bool GraphicsContextGLANGLE::destroyEGLSync(GCEGLSync sync)
+void GraphicsContextGLANGLE::destroyEGLSync(GCEGLSync sync)
 {
-    return !!EGL_DestroySync(platformDisplay(), sync);
+    bool result = EGL_DestroySync(platformDisplay(), sync);
+    ASSERT_UNUSED(result, !!result);
 }
 
 void GraphicsContextGLANGLE::clientWaitEGLSyncWithFlush(GCEGLSync sync, uint64_t timeout)

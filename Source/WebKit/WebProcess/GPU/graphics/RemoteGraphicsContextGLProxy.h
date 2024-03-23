@@ -365,7 +365,7 @@ public:
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params) final;
     void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
     RefPtr<WebCore::PixelBuffer> drawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY) final;
-    bool destroyEGLSync(GCEGLSync) final;
+    void destroyEGLSync(GCEGLSync) final;
     void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t timeout) final;
 
     bool enableRequiredWebXRExtensions() final;

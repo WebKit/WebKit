@@ -292,7 +292,7 @@ public:
     GCEGLImage createAndBindEGLImage(GCGLenum, EGLImageSource, GCGLint) override;
     void destroyEGLImage(GCEGLImage) final;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
-    bool destroyEGLSync(GCEGLSync) final;
+    void destroyEGLSync(GCEGLSync) final;
     void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;

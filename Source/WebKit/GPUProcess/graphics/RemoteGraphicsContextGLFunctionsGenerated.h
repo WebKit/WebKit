@@ -1499,12 +1499,10 @@
         returnValue = m_context->drawingBufferToPixelBuffer(arg0);
         completionHandler(WTFMove(returnValue));
     }
-    void destroyEGLSync(uint64_t arg0, CompletionHandler<void(bool)>&& completionHandler)
+    void destroyEGLSync(uint64_t arg0)
     {
-        bool returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->destroyEGLSync(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)));
-        completionHandler(returnValue);
+        m_context->destroyEGLSync(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)));
     }
     void clientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
     {
