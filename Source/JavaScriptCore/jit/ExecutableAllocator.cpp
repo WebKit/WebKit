@@ -450,7 +450,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         {
             uint64_t pid = getCurrentProcessID();
             auto uuid = WTF::UUID::createVersion5(jscJITNamespace, std::span { bitwise_cast<const uint8_t*>(&pid), sizeof(pid) });
-            kdebug_trace(KDBG_CODE(DBG_DYLD, DBG_DYLD_UUID, DBG_DYLD_UUID_MAP_A), WTF::bswap64(uuid.high()), WTF::bswap64(uuid.low()), bitwise_cast<uintptr_t>(reservation.base), 0);
+            kdebug_trace(KDBG_CODE(DBG_DYLD, DBG_DYLD_UUID, DBG_DYLD_UUID_MAP_A), WTF::byteSwap64(uuid.high()), WTF::byteSwap64(uuid.low()), bitwise_cast<uintptr_t>(reservation.base), 0);
         }
 #endif
     }
