@@ -39,6 +39,7 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollableArea.h>
 #include <WebCore/TextIndicator.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Identified.h>
 #include <wtf/Lock.h>
 #include <wtf/Range.h>
@@ -391,6 +392,11 @@ protected:
 #endif
 
     RefPtr<WebCore::VoidCallback> m_pdfTestCallback;
+
+#if ENABLE(PDF_HUD)
+    CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)> m_pendingSaveCompletionHandler;
+    CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)> m_pendingOpenCompletionHandler;
+#endif
 
     // Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
     // scrollbars on the body. We can't add annotations directly to the body, because overflow: hidden on the body

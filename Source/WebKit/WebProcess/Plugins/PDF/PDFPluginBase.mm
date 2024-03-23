@@ -136,6 +136,19 @@ void PDFPluginBase::teardown()
 
     destroyScrollbar(ScrollbarOrientation::Horizontal);
     destroyScrollbar(ScrollbarOrientation::Vertical);
+
+#if ENABLE(PDF_HUD)
+    if (auto existingCompletionHandler = std::exchange(m_pendingSaveCompletionHandler, { }))
+        existingCompletionHandler({ }, { }, { });
+
+    if (auto existingCompletionHandler = std::exchange(m_pendingOpenCompletionHandler, { })) {
+        // FrameInfo can't be default-constructed; the receiving process will ASSERT if it is.
+        FrameInfoData frameInfo;
+        if (m_frame)
+            frameInfo = m_frame->info();
+        existingCompletionHandler({ }, WTFMove(frameInfo), { }, { });
+    }
+#endif // ENABLE(PDF_HUD)
 }
 
 Page* PDFPluginBase::page() const
@@ -403,6 +416,14 @@ void PDFPluginBase::streamDidFinishLoading()
     }
 
     tryRunScriptsInPDFDocument();
+
+#if ENABLE(PDF_HUD)
+    if (auto existingCompletionHandler = std::exchange(m_pendingSaveCompletionHandler, { }))
+        save(WTFMove(existingCompletionHandler));
+
+    if (auto existingCompletionHandler = std::exchange(m_pendingOpenCompletionHandler, { }))
+        openWithPreview(WTFMove(existingCompletionHandler));
+#endif // ENABLE(PDF_HUD)
 }
 
 void PDFPluginBase::streamDidFail()
@@ -986,6 +1007,12 @@ bool PDFPluginBase::hudEnabled() const
 
 void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
+    if (!m_documentFinishedLoading) {
+        if (auto existingCompletionHandler = std::exchange(m_pendingSaveCompletionHandler, WTFMove(completionHandler)))
+            existingCompletionHandler({ }, { }, { });
+        return;
+    }
+
     NSData *data = liveData();
     URL url;
     if (m_frame)
@@ -995,10 +1022,19 @@ void PDFPluginBase::save(CompletionHandler<void(const String&, const URL&, std::
 
 void PDFPluginBase::openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
 {
-    NSData *data = liveData();
     FrameInfoData frameInfo;
     if (m_frame)
         frameInfo = m_frame->info();
+
+    if (!m_documentFinishedLoading) {
+        if (auto existingCompletionHandler = std::exchange(m_pendingOpenCompletionHandler, WTFMove(completionHandler))) {
+            // FrameInfo can't be default-constructed; the receiving process will ASSERT if it is.
+            existingCompletionHandler({ }, WTFMove(frameInfo), { }, { });
+        }
+        return;
+    }
+
+    NSData *data = liveData();
     completionHandler(m_suggestedFilename, WTFMove(frameInfo), span(data), createVersion4UUIDString());
 }
 
