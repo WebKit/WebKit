@@ -56,14 +56,13 @@ KeyedDecoderCF::~KeyedDecoderCF()
     ASSERT(m_arrayIndexStack.isEmpty());
 }
 
-bool KeyedDecoderCF::decodeBytes(const String& key, const uint8_t*& bytes, size_t& size)
+bool KeyedDecoderCF::decodeBytes(const String& key, std::span<const uint8_t>& bytes)
 {
     auto data = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(m_dictionaryStack.last(), key.createCFString().get()));
     if (!data)
         return false;
 
-    bytes = CFDataGetBytePtr(data);
-    size = CFDataGetLength(data);
+    bytes = { CFDataGetBytePtr(data), static_cast<size_t>(CFDataGetLength(data)) };
     return true;
 }
 

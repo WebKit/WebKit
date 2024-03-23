@@ -50,9 +50,9 @@ KeyedEncoderGlib::~KeyedEncoderGlib()
     ASSERT(m_objectStack.isEmpty());
 }
 
-void KeyedEncoderGlib::encodeBytes(const String& key, const uint8_t* bytes, size_t size)
+void KeyedEncoderGlib::encodeBytes(const String& key, std::span<const uint8_t> bytes)
 {
-    GRefPtr<GBytes> gBytes = adoptGRef(g_bytes_new_static(bytes, size));
+    GRefPtr<GBytes> gBytes = adoptGRef(g_bytes_new_static(bytes.data(), bytes.size()));
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_from_bytes(G_VARIANT_TYPE("ay"), gBytes.get(), TRUE));
 }
 

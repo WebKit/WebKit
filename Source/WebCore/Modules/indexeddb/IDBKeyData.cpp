@@ -155,7 +155,7 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
         auto* data = std::get<ThreadSafeDataBuffer>(m_value).data();
         encoder.encodeBool("hasBinary"_s, !!data);
         if (data)
-            encoder.encodeBytes("binary"_s, data->data(), data->size());
+            encoder.encodeBytes("binary"_s, data->span());
         return;
     }
     case IndexedDB::KeyType::String:

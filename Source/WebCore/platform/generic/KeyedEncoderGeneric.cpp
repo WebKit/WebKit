@@ -47,12 +47,12 @@ void KeyedEncoderGeneric::encodeString(const String& key)
     RELEASE_ASSERT(result);
 }
 
-void KeyedEncoderGeneric::encodeBytes(const String& key, const uint8_t* bytes, size_t size)
+void KeyedEncoderGeneric::encodeBytes(const String& key, std::span<const uint8_t> bytes)
 {
     m_encoder << Type::Bytes;
     encodeString(key);
-    m_encoder << size;
-    m_encoder.encodeFixedLengthData({ bytes, size });
+    m_encoder << bytes.size();
+    m_encoder.encodeFixedLengthData(bytes);
 }
 
 void KeyedEncoderGeneric::encodeBool(const String& key, bool value)

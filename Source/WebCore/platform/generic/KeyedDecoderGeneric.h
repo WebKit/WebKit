@@ -37,7 +37,7 @@ public:
     using Array = Vector<std::unique_ptr<Dictionary>>;
 
 private:
-    WARN_UNUSED_RETURN bool decodeBytes(const String& key, const uint8_t*&, size_t&) override;
+    WARN_UNUSED_RETURN bool decodeBytes(const String& key, std::span<const uint8_t>&) override;
     WARN_UNUSED_RETURN bool decodeBool(const String& key, bool&) override;
     WARN_UNUSED_RETURN bool decodeUInt32(const String& key, uint32_t&) override;
     WARN_UNUSED_RETURN bool decodeUInt64(const String& key, uint64_t&) override;

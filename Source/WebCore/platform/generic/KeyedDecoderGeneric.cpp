@@ -239,14 +239,13 @@ bool KeyedDecoderGeneric::decodeSimpleValue(const String& key, T& result)
     return true;
 }
 
-bool KeyedDecoderGeneric::decodeBytes(const String& key, const uint8_t*& data, size_t& size)
+bool KeyedDecoderGeneric::decodeBytes(const String& key, std::span<const uint8_t>& data)
 {
     auto value = getPointerFromDictionaryStack<Vector<uint8_t>>(key);
     if (!value)
         return false;
 
-    data = value->data();
-    size = value->size();
+    data = value->span();
     return true;
 }
 

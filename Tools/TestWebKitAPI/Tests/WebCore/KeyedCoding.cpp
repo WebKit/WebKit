@@ -33,46 +33,43 @@
 
 namespace TestWebKitAPI {
 
-static bool checkDecodedBytes(const uint8_t* original, size_t originalSize, const uint8_t* decoded, size_t decodedSize)
+static bool checkDecodedBytes(std::span<const uint8_t> original, std::span<const uint8_t> decoded)
 {
-    if (originalSize != decodedSize)
+    if (original.size() != decoded.size())
         return false;
 
-    return !std::memcmp(original, decoded, originalSize);
+    return !std::memcmp(original.data(), decoded.data(), original.size());
 }
 
 TEST(KeyedCoding, SetAndGetBytes)
 {
-    const uint8_t data[] = { 0x00, 0x01, 0x02, 0x03, 0xde, 0xad, 0xbe, 0xef };
-    const size_t dataLength = std::size(data);
-    const size_t dataLengthOne = 1;
-    const size_t dataLengthZero = 0;
+    constexpr auto inputData = std::to_array<uint8_t>({ 0x00, 0x01, 0x02, 0x03, 0xde, 0xad, 0xbe, 0xef });
 
     auto encoder = WebCore::KeyedEncoder::encoder();
-    encoder->encodeBytes("data"_s, data, dataLength);
-    encoder->encodeBytes("data-size0"_s, data, dataLengthZero);
-    encoder->encodeBytes("data-size1"_s, data, dataLengthOne);
+    encoder->encodeBytes("data"_s, inputData);
+    constexpr size_t zeroLength = 0; // Workaround for llvm bug (https://bugs.llvm.org/show_bug.cgi?id=49295).
+    encoder->encodeBytes("data-size0"_s, std::span { inputData.data(), zeroLength });
+    encoder->encodeBytes("data-size1"_s, std::span { inputData.data(), 1 });
     auto encodedBuffer = encoder->finishEncoding();
 
     auto decoder = WebCore::KeyedDecoder::decoder(encodedBuffer->span());
 
     bool success;
-    const uint8_t* buffer;
-    size_t size;
+    std::span<const uint8_t> decodedData;
 
-    success = decoder->decodeBytes("data"_s, buffer, size);
+    success = decoder->decodeBytes("data"_s, decodedData);
     EXPECT_TRUE(success);
-    EXPECT_EQ(dataLength, size);
-    EXPECT_TRUE(checkDecodedBytes(data, dataLength, buffer, size));
+    EXPECT_EQ(inputData.size(), decodedData.size());
+    EXPECT_TRUE(checkDecodedBytes(inputData, decodedData));
 
-    success = decoder->decodeBytes("data-size0"_s, buffer, size);
+    success = decoder->decodeBytes("data-size0"_s, decodedData);
     EXPECT_TRUE(success);
-    EXPECT_EQ(dataLengthZero, size);
+    EXPECT_EQ(0U, decodedData.size());
 
-    success = decoder->decodeBytes("data-size1"_s, buffer, size);
+    success = decoder->decodeBytes("data-size1"_s, decodedData);
     EXPECT_TRUE(success);
-    EXPECT_EQ(dataLengthOne, size);
-    EXPECT_TRUE(checkDecodedBytes(data, dataLengthOne, buffer, size));
+    EXPECT_EQ(1U, decodedData.size());
+    EXPECT_TRUE(checkDecodedBytes({ inputData.data(), 1 }, decodedData));
 }
 
 template <typename EncodeFunctionType, typename DecodeValueType, typename EncodeValueType>
@@ -193,9 +190,8 @@ TEST(KeyedCoding, GetNonExistingRecord)
     success = decoder->decodeDouble("no-exist-key"_s, doubleValue);
     EXPECT_FALSE(success);
 
-    const uint8_t* buffer;
-    size_t size;
-    success = decoder->decodeBytes("no-exist-key"_s, buffer, size);
+    std::span<const uint8_t> buffer;
+    success = decoder->decodeBytes("no-exist-key"_s, buffer);
     EXPECT_FALSE(success);
 }
 

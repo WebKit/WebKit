@@ -63,14 +63,13 @@ HashMap<String, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVar
     return dictionary;
 }
 
-bool KeyedDecoderGlib::decodeBytes(const String& key, const uint8_t*& bytes, size_t& size)
+bool KeyedDecoderGlib::decodeBytes(const String& key, std::span<const uint8_t>& bytes)
 {
     GRefPtr<GVariant> value = m_dictionaryStack.last().get(key);
     if (!value)
         return false;
 
-    size = g_variant_get_size(value.get());
-    bytes = static_cast<const uint8_t*>(g_variant_get_data(value.get()));
+    bytes = { static_cast<const uint8_t*>(g_variant_get_data(value.get())), g_variant_get_size(value.get()) };
     return true;
 }
 
