@@ -262,7 +262,11 @@ Element::~Element()
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
 
-    elementIdentifiersMap().remove(*this);
+    if (UNLIKELY(hasElementStateFlag(ElementStateFlag::HasElementIdentifier)))
+        elementIdentifiersMap().remove(*this);
+    else
+        ASSERT(!elementIdentifiersMap().contains(*this));
+
     ASSERT(!is<HTMLImageElement>(*this) || !intersectionObserverDataIfExists());
     disconnectFromIntersectionObservers();
 
@@ -5465,7 +5469,10 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
 
 ElementIdentifier Element::identifier() const
 {
-    return elementIdentifiersMap().ensure(const_cast<Element&>(*this), [] { return ElementIdentifier::generate(); }).iterator->value;
+    return elementIdentifiersMap().ensure(const_cast<Element&>(*this), [&] {
+        setElementStateFlag(ElementStateFlag::HasElementIdentifier);
+        return ElementIdentifier::generate();
+    }).iterator->value;
 }
 
 Element* Element::fromIdentifier(ElementIdentifier identifier)
