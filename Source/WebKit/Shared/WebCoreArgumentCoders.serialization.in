@@ -886,6 +886,7 @@ enum class WebCore::ShareDataOriginator : bool
 header: <WebCore/ElementTargetingTypes.h>
 [CustomHeader] struct WebCore::TargetedElementRequest {
     WebCore::FloatPoint pointInRootView
+    bool canIncludeNearbyElements
 };
 
 header: <WebCore/ElementTargetingTypes.h>
@@ -898,6 +899,7 @@ header: <WebCore/ElementTargetingTypes.h>
     WebCore::FloatRect boundsInRootView
     WebCore::PositionType positionType
     Vector<WebCore::FrameIdentifier> childFrameIdentifiers
+    bool isUnderPoint
 };
 
 header: <WebCore/RenderStyleConstants.h>

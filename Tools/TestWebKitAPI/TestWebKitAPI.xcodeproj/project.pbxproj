@@ -1168,6 +1168,7 @@
 		F42F081227449892007E0D90 /* multiple-images.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F42F0811274497C8007E0D90 /* multiple-images.html */; };
 		F434CA1A22E65BCA005DDB26 /* ScrollToRevealSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */; };
 		F4352F9F26D403DE00E605E4 /* editable-responsive-body.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4352F9E26D4037000E605E4 /* editable-responsive-body.html */; };
+		F4365E2B2BB11829005E8C1A /* element-targeting-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4365E232BB1181A005E8C1A /* element-targeting-2.html */; };
 		F43CAB1D278A326500C8D0A2 /* CloseWhileCommittingLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43CAB1C278A326500C8D0A2 /* CloseWhileCommittingLoad.mm */; };
 		F43E3BBF20DADA1E00A4E7ED /* WKScrollViewTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */; };
 		F43E3BC120DADBC500A4E7ED /* fixed-nav-bar.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F43E3BC020DADB8000A4E7ED /* fixed-nav-bar.html */; };
@@ -1623,6 +1624,7 @@
 				F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */,
 				F4BDA43027F8D19C00F9647D /* element-fullscreen.html in Copy Resources */,
 				F4DADD072BABAD0F008B398F /* element-targeting-1.html in Copy Resources */,
+				F4365E2B2BB11829005E8C1A /* element-targeting-2.html in Copy Resources */,
 				51C8E1A91F27F49600BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist in Copy Resources */,
 				49D902B328209B3300E2C3B8 /* emptyTable.html in Copy Resources */,
 				A14AAB651E78DC5400C1ADC2 /* encrypted.pdf in Copy Resources */,
@@ -3523,6 +3525,7 @@
 		F42F081727449FFD007E0D90 /* ImageAnalysisTestingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageAnalysisTestingUtilities.h; path = cocoa/ImageAnalysisTestingUtilities.h; sourceTree = "<group>"; };
 		F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollToRevealSelection.mm; sourceTree = "<group>"; };
 		F4352F9E26D4037000E605E4 /* editable-responsive-body.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "editable-responsive-body.html"; sourceTree = "<group>"; };
+		F4365E232BB1181A005E8C1A /* element-targeting-2.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-targeting-2.html"; sourceTree = "<group>"; };
 		F43C3823278133190099ABCE /* NSResponderTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NSResponderTests.mm; sourceTree = "<group>"; };
 		F43CAB1C278A326500C8D0A2 /* CloseWhileCommittingLoad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CloseWhileCommittingLoad.mm; sourceTree = "<group>"; };
 		F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKScrollViewTests.mm; sourceTree = "<group>"; };
@@ -4823,6 +4826,7 @@
 				F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */,
 				F4BDA42F27F8CF5600F9647D /* element-fullscreen.html */,
 				F4DADCFF2BABA80C008B398F /* element-targeting-1.html */,
+				F4365E232BB1181A005E8C1A /* element-targeting-2.html */,
 				51C8E1A81F27F47300BF731B /* EmptyGrandfatheredResourceLoadStatistics.plist */,
 				F4C2AB211DD6D94100E06D5B /* enormous-video-with-sound.html */,
 				F407FE381F1D0DE60017CF25 /* enormous.svg */,
