@@ -34,11 +34,7 @@ namespace WebCore {
 
 ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::decode(const BufferSource&& input)
 {
-    auto* data = input.data();
-    if (!data)
-        return Exception { ExceptionCode::TypeError, "No data provided"_s };
-
-    auto compressedDataCheck = decompress(data, input.length());
+    auto compressedDataCheck = decompress(input.span());
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
 
@@ -53,7 +49,7 @@ ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::flush()
 {
     m_didFinish = true;
 
-    auto compressedDataCheck = decompress(0, 0);
+    auto compressedDataCheck = decompress({ });
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
     
@@ -64,9 +60,9 @@ ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::flush()
     return Uint8Array::tryCreate(static_cast<uint8_t *>(compressedData->data()), compressedData->byteLength());
 }
 
-inline ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompress(const uint8_t* input, const size_t inputLength)
+inline ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompress(std::span<const uint8_t> input)
 {
-    return decompressZlib(input, inputLength);
+    return decompressZlib(input);
 }
 
 ExceptionOr<bool> DecompressionStreamDecoder::initialize() 
@@ -117,7 +113,7 @@ bool DecompressionStreamDecoder::didInflateContainExtraBytes(int result) const
     return (result == Z_STREAM_END && m_zstream.avail_in) || (result == Z_BUF_ERROR && m_didFinish);
 }
 
-ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(const uint8_t* input, const size_t inputLength)
+ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(std::span<const uint8_t> input)
 {
     size_t allocateSize = startingAllocationSize;
     auto storage = SharedBufferBuilder();
@@ -125,8 +121,8 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib
     int result;    
     bool shouldDecompress = true;
 
-    m_zstream.next_in = const_cast<z_const Bytef*>(input);
-    m_zstream.avail_in = inputLength;
+    m_zstream.next_in = const_cast<z_const Bytef*>(input.data());
+    m_zstream.avail_in = input.size();
 
     if (!m_initialized) {
         auto initializeResult = initialize();
@@ -188,7 +184,7 @@ ExceptionOr<bool> DecompressionStreamDecoder::initializeAppleCompressionFramewor
     return true;
 }
 
-ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCompressionFramework(const uint8_t* input, const size_t inputLength)
+ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCompressionFramework(std::span<const uint8_t> input)
 {
     size_t allocateSize = startingAllocationSize;
     auto storage = SharedBufferBuilder();
@@ -202,8 +198,8 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppl
             return initializeResult.releaseException();
     }
 
-    m_stream.src_ptr = input;
-    m_stream.src_size = inputLength;
+    m_stream.src_ptr = input.data();
+    m_stream.src_size = input.size();
     
     while (shouldDecompress) {
         Vector<uint8_t> output;

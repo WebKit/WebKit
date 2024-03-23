@@ -42,7 +42,7 @@ public:
         return adoptRef(*new CompressionStreamEncoder(format));
     }
 
-    ExceptionOr<RefPtr<Uint8Array>> encode(const BufferSource&& input);
+    ExceptionOr<RefPtr<Uint8Array>> encode(const BufferSource&&);
     ExceptionOr<RefPtr<Uint8Array>> flush();
 
     ~CompressionStreamEncoder()
@@ -54,7 +54,7 @@ public:
 private:
     bool didDeflateFinish(int) const;
 
-    ExceptionOr<RefPtr<JSC::ArrayBuffer>> compress(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<RefPtr<JSC::ArrayBuffer>> compress(std::span<const uint8_t>);
     ExceptionOr<bool> initialize();
 
     explicit CompressionStreamEncoder(unsigned char format)
