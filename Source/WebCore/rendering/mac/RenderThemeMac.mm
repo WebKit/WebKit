@@ -43,6 +43,7 @@
 #import "Icon.h"
 #import "Image.h"
 #import "ImageControlsButtonMac.h"
+#import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
@@ -68,6 +69,7 @@
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSColorSPI.h>
+#import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
@@ -386,17 +388,20 @@ static Color activeButtonTextColor()
 
 static SRGBA<uint8_t> menuBackgroundColor()
 {
-    RetainPtr<NSBitmapImageRep> offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
+    RetainPtr offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
         bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4 bitsPerPixel:32]);
 
-    CGContextRef bitmapContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext;
-    const CGRect rect = CGRectMake(0, 0, 1, 1);
+    {
+        LocalCurrentCGContext localContext { [NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext };
 
-    HIThemeMenuDrawInfo drawInfo;
-    drawInfo.version =  0;
-    drawInfo.menuType = kThemeMenuTypePopUp;
+        [[NSColor clearColor] set];
 
-    HIThemeDrawMenuBackground(&rect, &drawInfo, bitmapContext, kHIThemeOrientationInverted);
+        NSRect rect = NSMakeRect(0, 0, 1, 1);
+        NSRectFill(rect);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        NSDrawMenuBackground(rect, NSZeroRect, NSMenuBackgroundPopupMenu);
+ALLOW_DEPRECATED_DECLARATIONS_END
+    }
 
     NSUInteger pixel[4];
     [offscreenRep getPixel:pixel atX:0 y:0];
@@ -510,7 +515,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
             case CSSValueInfotext:
                 return @selector(textColor);
             case CSSValueMenutext:
-                return @selector(selectedMenuItemTextColor);
+                return @selector(labelColor);
             case CSSValueScrollbar:
                 return @selector(scrollBarColor);
             case CSSValueText:
