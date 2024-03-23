@@ -511,8 +511,8 @@ template<> ALWAYS_INLINE const UChar* StringView::characters<UChar>() const
 inline bool StringView::containsOnlyASCII() const
 {
     if (is8Bit())
-        return charactersAreAllASCII(characters8(), length());
-    return charactersAreAllASCII(characters16(), length());
+        return charactersAreAllASCII(span8());
+    return charactersAreAllASCII(span16());
 }
 
 template<size_t N>

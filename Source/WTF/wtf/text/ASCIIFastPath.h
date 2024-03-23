@@ -84,10 +84,11 @@ inline bool containsOnlyASCII(MachineWord word)
 // Note: This function assume the input is likely all ASCII, and
 // does not leave early if it is not the case.
 template<typename CharacterType>
-inline bool charactersAreAllASCII(const CharacterType* characters, size_t length)
+inline bool charactersAreAllASCII(std::span<const CharacterType> span)
 {
     MachineWord allCharBits = 0;
-    const CharacterType* end = characters + length;
+    auto* characters = span.data();
+    auto* end = characters + span.size();
 
     // Prologue: align the input.
     while (!isAlignedToMachineWord(characters) && characters != end) {
@@ -116,13 +117,14 @@ inline bool charactersAreAllASCII(const CharacterType* characters, size_t length
 // Note: This function assume the input is likely all Latin1, and
 // does not leave early if it is not the case.
 template<typename CharacterType>
-inline bool charactersAreAllLatin1(const CharacterType* characters, size_t length)
+inline bool charactersAreAllLatin1(std::span<const CharacterType> span)
 {
     if constexpr (sizeof(CharacterType) == 1)
         return true;
     else {
         MachineWord allCharBits = 0;
-        const CharacterType* end = characters + length;
+        auto* characters = span.data();
+        auto* end = characters + span.size();
 
         // Prologue: align the input.
         while (!isAlignedToMachineWord(characters) && characters != end) {

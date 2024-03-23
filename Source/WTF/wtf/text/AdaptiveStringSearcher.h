@@ -135,7 +135,7 @@ public:
         , m_start(std::max<int>(0, pattern.size() - bmMaxShift))
     {
         if (sizeof(PatternChar) > sizeof(SubjectChar)) {
-            if (!charactersAreAllLatin1(m_pattern.data(), m_pattern.size())) {
+            if (!charactersAreAllLatin1(m_pattern)) {
                 m_strategy = &failSearch;
                 return;
             }

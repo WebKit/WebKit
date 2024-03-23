@@ -1909,7 +1909,7 @@ static JSValue normalize(JSGlobalObject* globalObject, JSString* string, Normali
     // Latin-1 characters (U+0000..U+00FF) are left unaffected by NFC.
     // ASCII characters (U+0000..U+007F) are left unaffected by all of the Normalization Forms
     // https://unicode.org/reports/tr15/#Description_Norm
-    if (view.is8Bit() && (form == NormalizationForm::NFC || charactersAreAllASCII(view.characters8(), view.length())))
+    if (view.is8Bit() && (form == NormalizationForm::NFC || view.containsOnlyASCII()))
         RELEASE_AND_RETURN(scope, string);
 
     const UNormalizer2* normalizer = JSC::normalizer(form);

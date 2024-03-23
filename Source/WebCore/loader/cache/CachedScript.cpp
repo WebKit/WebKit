@@ -70,7 +70,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
     if (m_decodingState == NeverDecoded
         && PAL::TextEncoding(encoding()).isByteBasedEncoding()
         && contiguousData->size()
-        && charactersAreAllASCII(contiguousData->data(), contiguousData->size())) {
+        && charactersAreAllASCII(contiguousData->span())) {
 
         m_decodingState = DataAndDecodedStringHaveSameBytes;
 

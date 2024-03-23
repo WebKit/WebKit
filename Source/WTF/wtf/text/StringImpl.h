@@ -275,7 +275,7 @@ public:
 
     static Ref<StringImpl> createStaticStringImpl(const char* characters, unsigned length)
     {
-        ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
+        ASSERT(charactersAreAllASCII(std::span { bitwise_cast<const LChar*>(characters), static_cast<size_t>(length) }));
         return createStaticStringImpl(bitwise_cast<const LChar*>(characters), length);
     }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const LChar*, unsigned length);
@@ -874,8 +874,8 @@ inline Ref<StringImpl> StringImpl::isolatedCopy() const
 inline bool StringImpl::containsOnlyASCII() const
 {
     if (is8Bit())
-        return charactersAreAllASCII(characters8(), length());
-    return charactersAreAllASCII(characters16(), length());
+        return charactersAreAllASCII(span8());
+    return charactersAreAllASCII(span16());
 }
 
 inline bool StringImpl::containsOnlyLatin1() const

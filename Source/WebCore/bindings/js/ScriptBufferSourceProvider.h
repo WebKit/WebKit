@@ -62,7 +62,7 @@ public:
         if (!m_contiguousBuffer && (!m_containsOnlyASCII || *m_containsOnlyASCII))
             m_contiguousBuffer = m_scriptBuffer.buffer()->makeContiguous();
         if (!m_containsOnlyASCII) {
-            m_containsOnlyASCII = charactersAreAllASCII(m_contiguousBuffer->data(), m_contiguousBuffer->size());
+            m_containsOnlyASCII = charactersAreAllASCII(m_contiguousBuffer->span());
             if (*m_containsOnlyASCII)
                 m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_contiguousBuffer->span());
         }

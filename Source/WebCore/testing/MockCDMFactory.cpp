@@ -223,16 +223,16 @@ bool MockCDM::supportsInitData(const AtomString& initDataType, const SharedBuffe
 
 RefPtr<SharedBuffer> MockCDM::sanitizeResponse(const SharedBuffer& response) const
 {
-    auto buffer = response.makeContiguous();
-    if (!charactersAreAllASCII(buffer->data(), response.size()))
+    auto contiguousResponse = response.makeContiguous();
+    if (!charactersAreAllASCII(contiguousResponse->span()))
         return nullptr;
 
-    Vector<String> responseArray = String(buffer->data(), response.size()).split(' ');
+    for (auto word : StringView(contiguousResponse->span()).split(' ')) {
+        if (word == "valid-response"_s)
+            return contiguousResponse;
+    }
 
-    if (!responseArray.contains(String("valid-response"_s)))
-        return nullptr;
-
-    return response.makeContiguous();
+    return nullptr;
 }
 
 std::optional<String> MockCDM::sanitizeSessionId(const String& sessionId) const

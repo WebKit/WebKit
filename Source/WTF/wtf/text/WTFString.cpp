@@ -487,7 +487,7 @@ String fromUTF8Impl(const LChar* stringStart, size_t length)
     if (!length)
         return emptyString();
 
-    if (charactersAreAllASCII(stringStart, length))
+    if (charactersAreAllASCII(std::span { stringStart, length }))
         return StringImpl::create(std::span { stringStart, length });
 
     Vector<UChar, 1024> buffer(length);

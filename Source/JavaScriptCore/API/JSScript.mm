@@ -138,7 +138,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!success)
         return createError([NSString stringWithFormat:@"File at path %@ could not be mapped.", static_cast<NSString *>(systemPath)], error);
 
-    if (!charactersAreAllASCII(reinterpret_cast<const LChar*>(fileData.data()), fileData.size()))
+    if (!charactersAreAllASCII(fileData.span()))
         return createError([NSString stringWithFormat:@"Not all characters in file at %@ are ASCII.", static_cast<NSString *>(systemPath)], error);
 
     auto result = adoptNS([[JSScript alloc] init]);
