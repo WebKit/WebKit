@@ -160,10 +160,10 @@ void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* ol
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (!document().settings().layerBasedSVGEngineEnabled() && diff == StyleDifference::Layout)
-        setNeedsBoundariesUpdate();
+        invalidateCachedBoundaries();
 #else
     if (diff == StyleDifference::Layout)
-        setNeedsBoundariesUpdate();
+        invalidateCachedBoundaries();
 #endif
 
     RenderInline::styleDidChange(diff, oldStyle);

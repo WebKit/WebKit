@@ -69,7 +69,7 @@ void LegacyRenderSVGViewportContainer::calcViewport()
 
     m_viewport = newViewport;
 
-    setNeedsBoundariesUpdate();
+    invalidateCachedBoundaries();
     setNeedsTransformUpdate();
 }
 

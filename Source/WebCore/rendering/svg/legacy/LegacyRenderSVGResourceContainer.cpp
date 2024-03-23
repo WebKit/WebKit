@@ -160,7 +160,7 @@ void LegacyRenderSVGResourceContainer::markClientForInvalidation(RenderObject& c
     switch (mode) {
     case LayoutAndBoundariesInvalidation:
     case BoundariesInvalidation:
-        client.setNeedsBoundariesUpdate();
+        client.invalidateCachedBoundaries();
         break;
     case RepaintInvalidation:
         if (!client.renderTreeBeingDestroyed())
