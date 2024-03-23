@@ -8,5 +8,9 @@
 	<true/>
 	<key>dynamic-codesigning</key>
 	<true/>
+	<key>com.apple.security.fatal-exceptions</key>
+	<array>
+		<string>jit</string>
+	</array>
 </dict>
 </plist>
