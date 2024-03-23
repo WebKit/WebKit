@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,7 @@ struct SigInfo {
 using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;
 using SignalHandlerMemory = std::aligned_storage<sizeof(SignalHandler), std::alignment_of<SignalHandler>::value>::type;
 
-static Atomic<bool> fallbackToOldExceptions { false };
+extern Atomic<bool> fallbackToOldExceptions;
 struct SignalHandlers {
     static void initialize();
 

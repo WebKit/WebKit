@@ -70,6 +70,8 @@ extern "C" {
 
 namespace WTF {
 
+Atomic<bool> fallbackToOldExceptions { false };
+
 void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 {
     Config::AssertNotFrozenScope assertScope;
@@ -158,8 +160,7 @@ void initMachExceptionHandlerThread(bool enable, uint32_t signingKey, exception_
         if (ret == 1) {
             fallbackToOldExceptions.store(true);
         } else if (!ret) {
-            kr = task_register_hardened_exception_handler(current_task(),
-                signingKey, exceptionsAllowed | toMachMask(Signal::FloatingPoint),
+            kr = task_register_hardened_exception_handler(current_task(), signingKey, exceptionsAllowed,
                 behaviorsAllowed, flavorsAllowed, handlers.exceptionPort);
             if (kr != KERN_SUCCESS)
                 fallbackToOldExceptions.store(true);
