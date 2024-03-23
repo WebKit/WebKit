@@ -1396,10 +1396,30 @@ void GraphicsContextCG::drawLinesForText(const FloatPoint& point, float thicknes
         if (!dashWidth)
             dashBounds.append(CGRectMake(bounds.x() + left, bounds.y(), width, bounds.height()));
         else {
-            auto startParticle = static_cast<int>(std::ceil(left / (2 * dashWidth)));
-            auto endParticle = static_cast<int>((left + width) / (2 * dashWidth));
-            for (auto j = startParticle; j < endParticle; ++j)
-                dashBounds.append(CGRectMake(bounds.x() + j * 2 * dashWidth, bounds.y(), dashWidth, bounds.height()));
+            auto doubleWidth = 2 * dashWidth;
+            auto quotient = static_cast<int>(left / doubleWidth);
+            auto startOffset = left - quotient * doubleWidth;
+            auto effectiveLeft = left + startOffset;
+            auto startParticle = static_cast<int>(std::floor(effectiveLeft / doubleWidth));
+            auto endParticle = static_cast<int>(std::ceil((left + width) / doubleWidth));
+
+            for (auto j = startParticle; j < endParticle; ++j) {
+                auto actualDashWidth = dashWidth;
+                auto dashStart = bounds.x() + j * doubleWidth;
+
+                if (j == startParticle && startOffset > 0 && startOffset < dashWidth) {
+                    actualDashWidth -= startOffset;
+                    dashStart += startOffset;
+                }
+
+                if (j == endParticle - 1) {
+                    auto remainingWidth = left + width - (j * doubleWidth);
+                    if (remainingWidth < dashWidth)
+                        actualDashWidth = remainingWidth;
+                }
+
+                dashBounds.append(CGRectMake(dashStart, bounds.y(), actualDashWidth, bounds.height()));
+            }
         }
     }
 
