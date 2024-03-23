@@ -324,27 +324,30 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(vm.dateCache);
     if (!gregorianDateTime)
         return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
-    // Maximum amount of space we need in buffer: 7 (max. digits in year) + 2 * 5 (2 characters each for month, day, hour, minute, second) + 4 (. + 3 digits for milliseconds)
-    // 6 for formatting and one for null termination = 28. We add one extra character to allow us to force null termination.
-    char buffer[28];
+
+    // https://tc39.es/ecma262/#sec-date-time-string-format
+
     // If the year is outside the bounds of 0 and 9999 inclusive we want to use the extended year format (ES 15.9.1.15.1).
     int ms = static_cast<int>(fmod(thisDateObj->internalNumber(), msPerSecond));
     if (ms < 0)
         ms += msPerSecond;
 
-    int charactersWritten;
-    if (gregorianDateTime->year() > 9999 || gregorianDateTime->year() < 0) {
-        IGNORE_CLANG_WARNINGS_BEGIN("format-truncation"); // for Clang 18
-        charactersWritten = snprintf(buffer, sizeof(buffer), "%+07d-%02d-%02dT%02d:%02d:%02d.%03dZ", gregorianDateTime->year(), gregorianDateTime->month() + 1, gregorianDateTime->monthDay(), gregorianDateTime->hour(), gregorianDateTime->minute(), gregorianDateTime->second(), ms);
-        IGNORE_CLANG_WARNINGS_END;
-    } else
-        charactersWritten = snprintf(buffer, sizeof(buffer), "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", gregorianDateTime->year(), gregorianDateTime->month() + 1, gregorianDateTime->monthDay(), gregorianDateTime->hour(), gregorianDateTime->minute(), gregorianDateTime->second(), ms);
+    int year = gregorianDateTime->year();
+    int month = gregorianDateTime->month() + 1;
+    int day = gregorianDateTime->monthDay();
+    int hour = gregorianDateTime->hour();
+    int minute = gregorianDateTime->minute();
+    int second = gregorianDateTime->second();
 
-    ASSERT(charactersWritten > 0 && static_cast<unsigned>(charactersWritten) < sizeof(buffer));
-    if (static_cast<unsigned>(charactersWritten) >= sizeof(buffer))
-        return JSValue::encode(jsEmptyString(vm));
+    String prefix;
+    auto yearDigits = 4;
+    if (year < 0 || year > 9999) {
+        prefix = year < 0 ? "-"_s : "+"_s;
+        yearDigits = 6;
+        year = std::abs(year);
+    }
 
-    return JSValue::encode(jsNontrivialString(vm, String(buffer, charactersWritten)));
+    return JSValue::encode(jsNontrivialString(vm, makeString(prefix, pad('0', yearDigits, year), '-', pad('0', 2, month), '-', pad('0', 2, day), 'T', pad('0', 2, hour), ':', pad('0', 2, minute), ':', pad('0', 2, second), '.', pad('0', 3, ms), 'Z')));
 }
 
 JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToDateString, (JSGlobalObject* globalObject, CallFrame* callFrame))
