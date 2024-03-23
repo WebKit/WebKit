@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2021 Igalia S.L
+ *  Copyright (C) 2024 Alexander M (webkit@sata.lol)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -195,6 +196,7 @@ void MediaSessionManagerGLib::setCurrentSession(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::setCurrentSession(session);
 
+    setPrimarySessionIfNeeded(session);
     m_nowPlayingManager->updateSupportedCommands();
 }
 
@@ -260,18 +262,39 @@ RemoteCommandListener::RemoteCommandsSet MediaSessionManagerGLib::supportedComma
     return m_nowPlayingManager->supportedCommands();
 }
 
-PlatformMediaSession* MediaSessionManagerGLib::nowPlayingEligibleSession()
+void MediaSessionManagerGLib::setPrimarySessionIfNeeded(PlatformMediaSession& platformSession)
 {
-    // FIXME: Fix this layering violation.
-    if (auto element = HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::NowPlaying))
-        return &element->mediaSession();
+    if (PlatformMediaSessionManager::currentSession() != &platformSession)
+        return;
 
-    return nullptr;
+    auto session = m_sessions.get(platformSession.mediaSessionIdentifier());
+    ASSERT(session);
+    if (!session)
+        return;
+
+    session->setMprisRegistrationEligibility(MediaSessionGLib::MprisRegistrationEligiblilty::Eligible);
+    unregisterAllOtherSessions(platformSession);
+}
+
+void MediaSessionManagerGLib::unregisterAllOtherSessions(PlatformMediaSession& platformSession)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, platformSession.logIdentifier());
+    for (auto& [sessionId, session] : m_sessions) {
+        if (sessionId != platformSession.mediaSessionIdentifier())
+            session->unregisterMprisSession();
+    }
+}
+
+WeakPtr<PlatformMediaSession> MediaSessionManagerGLib::nowPlayingEligibleSession()
+{
+    return bestEligibleSessionForRemoteControls([](auto& session) {
+        return session.isNowPlayingEligible();
+    }, PlatformMediaSession::PlaybackControlsPurpose::NowPlaying);
 }
 
 void MediaSessionManagerGLib::updateNowPlayingInfo()
 {
-    auto* platformSession = nowPlayingEligibleSession();
+    auto platformSession = nowPlayingEligibleSession();
     if (!platformSession) {
         if (m_registeredAsNowPlayingApplication) {
             ALWAYS_LOG(LOGIDENTIFIER, "clearing now playing info");
