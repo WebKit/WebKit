@@ -188,11 +188,13 @@ void RemoteLayerTreeNode::repositionInteractionRegionsContainerIfNeeded()
         insertionPoint++;
     }
 
-    if ([layer().sublayers objectAtIndex:insertionPoint] == m_interactionRegionsContainer)
-        return;
-
-    [m_interactionRegionsContainer removeFromSuperlayer];
-    [layer() insertSublayer:m_interactionRegionsContainer.get() atIndex:insertionPoint];
+    // We searched through the sublayers, so insertionPoint is always <= sublayers.count.
+    ASSERT(insertionPoint <= layer().sublayers.count);
+    bool shouldAppendLayer = insertionPoint == layer().sublayers.count;
+    if (shouldAppendLayer || [layer().sublayers objectAtIndex:insertionPoint] != m_interactionRegionsContainer) {
+        [m_interactionRegionsContainer removeFromSuperlayer];
+        [layer() insertSublayer:m_interactionRegionsContainer.get() atIndex:insertionPoint];
+    }
 }
 
 void RemoteLayerTreeNode::propagateInteractionRegionsChangeInHierarchy(InteractionRegionsInSubtree interactionRegionsInSubtree)
