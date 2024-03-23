@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -504,7 +505,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     height: var(--reference-page-link-size);
     font-size: 14px;
     line-height: 18px;
-    color: var(--text-color);
+    color: var(--question-mark-color);
     text-decoration: none;
     background-color: var(--button-background-color);
     border: var(--stroke-width) solid var(--border-color);
@@ -527,17 +528,6 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     }
 }
 
-@media (prefers-color-scheme: dark) {
-    .reference-page-link {
-        border: var(--stroke-width) solid hsl(0, 0%, 20%);
-        box-shadow: 0 var(--stroke-width) 1px hsl(0, 0%, 20%);
-    }
-
-    .reference-page-link:active {
-        background-color: hsl(0, 0%, 50%);
-    }
-}
-
 @keyframes tab-bar-console-item-pulse {
     50% { opacity: 0.6; }
 }
@@ -548,6 +538,15 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
 }
 
 @media (prefers-color-scheme: dark) {
+    .reference-page-link {
+        border: var(--stroke-width) solid hsl(0, 0%, 20%);
+        box-shadow: 0 var(--stroke-width) 1px hsl(0, 0%, 20%);
+    }
+
+    .reference-page-link:active {
+        background-color: hsl(0, 0%, 50%);
+    }
+
     #undocked-title-area {
         box-shadow: none;
     }
@@ -587,5 +586,29 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
 
     :is(img, canvas).show-grid {
         --checkerboard-dark-square: hsl(0, 0%, 5%);
+    }
+
+    @media (prefers-contrast: more) {
+        .search-settings > .glyph {
+            color: white;
+        }
+
+        .search-settings:active > .glyph {
+            color: white;
+        }
+
+        .search-settings.active > .glyph {
+            color: white;
+        }
+
+        .search-settings:active.active > .glyph {
+            color: white;
+        }
+
+        body {
+            color: white;
+            --text-color: white;
+            background-size: contain;
+        }
     }
 }

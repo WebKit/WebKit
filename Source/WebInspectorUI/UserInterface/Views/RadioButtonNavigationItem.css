@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,4 +61,32 @@
 
 .navigation-bar .item.radio.button.text-only.selected:active::before {
     filter: brightness(0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+    @media (prefers-contrast: more) {
+        .navigation-bar .item.radio.button.text-only:is(.selected, :hover)::before {
+            --scope-bar-background-color-default: hsl(212, 0%, 20%);
+            --scope-bar-background-color: var(--scope-bar-background-color-override, var(--scope-bar-background-color-default));
+            --scope-bar-background-opacity: var(--scope-bar-background-opacity-override, var(--scope-bar-background-opacity-default));
+        }
+
+        .navigation-bar .item.radio.button.text-only::before {
+            --scope-bar-background-color: var(--scope-bar-background-color-override, var(--scope-bar-background-color-default));
+            --scope-bar-background-opacity: var(--scope-bar-background-opacity-override, var(--scope-bar-background-opacity-default));
+        }
+
+        .navigation-bar .item.radio.button.text-only:is(.selected, :hover)::before {
+            --scope-bar-background-color: var(--scope-bar-background-color-override, var(--scope-bar-background-color-default));
+            --scope-bar-background-opacity: var(--scope-bar-background-opacity-override, var(--scope-bar-background-opacity-default));
+        }
+
+        .navigation-bar .item.button:not(.disabled):is(.activate.activated, .radio.selected) > .glyph {
+            color: hsl(212, 100%, 70%);
+        }
+
+        .navigation-bar .item.radio.button.text-only:is(.selected, :hover)::before {
+            background: hsl(212, 100%, 35%);
+        }
+    }
 }

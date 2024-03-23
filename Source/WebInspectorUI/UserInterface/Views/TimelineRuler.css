@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -261,5 +262,23 @@ body[dir=rtl] .timeline-ruler > .selection-handle.left {
 @media (prefers-color-scheme: dark) {
     .timeline-ruler > .markers > .marker.dom-content-event {
         color: hsl(240, 100%, 70%);
+    }
+
+    @media (prefers-contrast: more) {
+        .timeline-ruler > .markers > .marker.load-event {
+            color: hsl(0, 100%, 100%);
+        }
+
+        .timeline-ruler > .markers > .marker.dom-content-event {
+            color: hsl(240, 100%, 100%);
+        }
+
+        .timeline-ruler > .markers > .marker.timestamp {
+            color: hsl(119, 100%, 100%);
+        }
+
+        .timeline-ruler > .header > .divider > .label {
+            color: hsl(0, 0%, 100%);
+        }
     }
 }

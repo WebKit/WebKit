@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -167,5 +168,19 @@
     .content-view.audit-test-group > header > .percentage-pass > span {
         /* FIXME: Use CSS4 color blend functions once they're available. */
         color: hsla(0, 0%, 88%, 0.65);
+    }
+
+    @media (prefers-contrast: more) {
+        .content-view.audit-test-group > header > .percentage-pass {
+            color: hsla(0, 0%, 100%);
+        }
+
+        .content-view.audit-test-group > header > .percentage-pass > span {
+            color: hsla(0, 0%, 100%);
+        }
+
+        .content-view.audit-test-group.contains-test-case > header {
+            background-color: hsl(0, 0%, 15%);
+        }
     }
 }

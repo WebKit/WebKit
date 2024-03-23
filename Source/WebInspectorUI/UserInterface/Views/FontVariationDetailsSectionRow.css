@@ -140,3 +140,8 @@
     background-size: var(--warning-icon-size) var(--warning-icon-size);
     background-position: center;
 }
+
+@media (prefers-contrast: more) and @media (prefers-color-scheme: dark) {}
+.details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"] {
+    color: black;
+}

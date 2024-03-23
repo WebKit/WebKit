@@ -182,4 +182,14 @@
     .table > .header > :is(.sort-ascending, .sort-descending)::after {
         filter: invert();
     }
+
+    @media (prefers-contrast: more) {
+        .table .cell {
+            background-color: hsl(0, 0%, 15%);
+        }
+
+        .network-table > .table :not(.header) .cell:first-of-type {
+            background: hsl(0, 0%, 15%);
+        }
+    }
 }

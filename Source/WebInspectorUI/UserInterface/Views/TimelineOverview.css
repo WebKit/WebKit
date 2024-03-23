@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -226,5 +227,27 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
 @media (prefers-color-scheme: dark) {
     .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
         background: var(--background-color-alternate);
+    }
+
+    @media (prefers-contrast: more) {
+        .navigation-bar.timelines .item.text.enabled-timelines {
+            color: hsl(0, 0%, 90%);
+        }
+
+        .navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):is(:focus, .activate.activated, .radio.selected) {
+            color: hsl(0, 0%, 95%);
+        }
+
+        .navigation-bar.timelines .item.button.toggle-edit-instruments:not(.disabled):active:is(:focus, .activate.activated, .radio.selected) {
+            color: hsl(0, 0%, 95%);
+        }
+
+        .navigation-bar.timelines .item.button.toggle-edit-instruments.disabled {
+            color: var(--glyph-color-disabled);
+        }
+
+        .navigation-bar.timelines .toggle-edit-instruments:not(.disabled):active {
+            color: hsl(0, 0%, 95%);
+        }
     }
 }
