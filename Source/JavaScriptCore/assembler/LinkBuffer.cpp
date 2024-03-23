@@ -103,7 +103,8 @@ void LinkBuffer::logJITCodeForPerf(CodeRef<LinkBufferPtrTag>& codeRef, ASCIILite
         dumpSimpleName(out, simpleName);
         break;
     }
-    PerfLog::log(out.toCString(), codeRef.code().untaggedPtr<const uint8_t*>(), codeRef.size());
+    if (!m_isRewriting)
+        PerfLog::log(out.toCString(), codeRef.code().untaggedPtr<const uint8_t*>(), codeRef.size());
 #else
     UNUSED_PARAM(codeRef);
     UNUSED_PARAM(simpleName);
