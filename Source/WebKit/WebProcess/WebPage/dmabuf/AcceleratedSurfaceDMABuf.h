@@ -162,7 +162,14 @@ private:
         explicit SwapChain(uint64_t);
         ~SwapChain() = default;
 
-        enum class Type { Invalid, EGLImage, SharedMemory, Texture };
+        enum class Type {
+            Invalid,
+#if USE(GBM)
+            EGLImage,
+#endif
+            SharedMemory,
+            Texture
+        };
 
         Type type() const { return m_type; }
         void resize(const WebCore::IntSize&);

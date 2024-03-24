@@ -128,13 +128,9 @@ if (USE_ATSPI)
 endif ()
 
 if (USE_GBM)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBDRM_INCLUDE_DIR}
-    )
-    list(APPEND WebCore_LIBRARIES
-        GBM::GBM
-        ${LIBDRM_LIBRARIES}
-    )
+    list(APPEND WebCore_LIBRARIES GBM::GBM)
+elseif (USE_LIBDRM)
+    list(APPEND WebCore_LIBRARIES LibDRM::LibDRM)
 endif ()
 
 if (ENABLE_GAMEPAD)

@@ -90,13 +90,9 @@ set(WPEPlatform_LIBRARIES
 )
 
 if (USE_GBM)
-    list(APPEND WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBDRM_INCLUDE_DIR}
-    )
-    list(APPEND WPEPlatform_LIBRARIES
-        GBM::GBM
-        ${LIBDRM_LIBRARIES}
-    )
+    list(APPEND WPEPlatform_LIBRARIES GBM::GBM)
+elseif (USE_LIBDRM)
+    list(APPEND WPEPlatform_LIBRARIES LibDRM::LibDRM)
 endif ()
 
 if (NOT USE_SYSTEM_MALLOC)
@@ -152,7 +148,6 @@ if (ENABLE_WPE_PLATFORM_DRM)
         OPTIONS
             -I${WEBKIT_DIR}/WPEPlatform
             -I${WPEPlatform_DERIVED_SOURCES_DIR}
-            -I${LIBDRM_INCLUDE_DIR}
         SOURCES
             ${WPEPlatformDRM_SOURCES_FOR_INTROSPECTION}
         NO_IMPLICIT_SOURCES

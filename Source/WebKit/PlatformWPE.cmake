@@ -477,15 +477,6 @@ else ()
     )
 endif ()
 
-if (USE_LIBDRM)
-    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBDRM_INCLUDE_DIR}
-    )
-    list(APPEND WebKit_LIBRARIES
-        ${LIBDRM_LIBRARIES}
-    )
-endif ()
-
 if (ENABLE_WPE_PLATFORM)
     list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
         "${WPEPlatform_DERIVED_SOURCES_DIR}"

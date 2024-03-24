@@ -545,8 +545,10 @@ bool AcceleratedSurfaceDMABuf::backgroundColorDidChange()
     if (!AcceleratedSurface::backgroundColorDidChange())
         return false;
 
+#if USE(GBM)
     if (m_swapChain.type() == SwapChain::Type::EGLImage)
         m_swapChain.setupBufferFormat(m_webPage.preferredBufferFormats(), m_isOpaque);
+#endif
 
     return true;
 }

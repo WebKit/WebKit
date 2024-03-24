@@ -376,7 +376,7 @@ SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
 
 if (USE_LIBDRM)
     find_package(LibDRM)
-    if (NOT LIBDRM_FOUND)
+    if (NOT LibDRM_FOUND)
         message(FATAL_ERROR "libdrm is required for USE_LIBDRM")
     endif ()
 endif ()
