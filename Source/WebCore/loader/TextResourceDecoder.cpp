@@ -331,7 +331,7 @@ String TextResourceDecoder::textFromUTF8(std::span<const uint8_t> data)
 {
     auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8");
     if (shouldPrependBOM(data)) {
-        constexpr auto bom = std::to_array<uint8_t>({ 0xEF, 0xBB, 0xBF });
+        constexpr std::array<uint8_t, 3> bom = { 0xEF, 0xBB, 0xBF };
         decoder->decode(bom);
     }
     return decoder->decodeAndFlush(data);
