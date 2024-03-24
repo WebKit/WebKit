@@ -316,7 +316,7 @@ endif ()
 
 if (USE_LIBDRM)
     find_package(LibDRM)
-    if (NOT LIBDRM_FOUND)
+    if (NOT LibDRM_FOUND)
         message(FATAL_ERROR "libdrm is required for USE_LIBDRM")
     endif ()
 endif ()
