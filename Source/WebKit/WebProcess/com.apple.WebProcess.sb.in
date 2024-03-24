@@ -1813,28 +1813,19 @@
     io_registry_entry_get_name_in_plane
     io_registry_entry_get_properties_bin_buf
     io_registry_get_root_entry
-    io_service_close))
-
-(define (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry) (kernel-mig-routine
+    io_service_close
     thread_info
-#if !ENABLE(BLOCK_SET_EXCEPTION_PORTS)
-    thread_set_exception_ports
-#endif
 ))
-
-(define (allow-thread-adopt-exception-handler)
-    (when (defined? 'thread_adopt_exception_handler)
-        (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))
-    )
-)
 
 (define (allow-mach-exceptions)
 #if HAVE(HARDENED_MACH_EXCEPTIONS)
-(if (equal? (param "CPU") "arm64")
-    (when (defined? 'task_register_hardened_exception_handler)
-        (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))
+    (when (equal? (param "CPU") "arm64")
+        (with-filter (require-not (webcontent-process-launched))
+            (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))
+        )
+        (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))
     )
-    ; else
+    (when (not (equal? (param "CPU") "arm64"))
         (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))
     )
 #else
@@ -1848,23 +1839,15 @@
             (deny mach-message-send)
 #if ENABLE(LOCKDOWN_MODE_TELEMETRY)
             (with-filter (require-not (lockdown-mode))
-                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
-                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry))
-                (allow-thread-adopt-exception-handler))
+                (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode)))
             (with-filter (lockdown-mode)
-                (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode))
-                (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry)))
+                (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
 #else
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
-            (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode-avoid-telemetry))
-            (allow-thread-adopt-exception-handler)
 #endif
-#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
-            (with-filter (require-not (webcontent-process-launched))
-                (allow-mach-exceptions))
-#else
-            (allow-mach-exceptions)
-#endif
+            (with-filter (require-not (lockdown-mode))
+                (allow-mach-exceptions)
+            )
 
             (allow mach-message-send (kernel-mig-routines-in-use))
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
