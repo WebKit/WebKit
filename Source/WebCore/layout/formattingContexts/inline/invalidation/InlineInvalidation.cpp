@@ -354,7 +354,7 @@ void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::option
 
     auto partialContentTop = LayoutUnit { invalidatedLine->index ? m_displayContent.lines[invalidatedLine->index - 1].lineBoxLogicalRect().maxY() : 0 } + pageTopAdjustment;
 
-    auto damagedPosition = InlineDamage::Position {
+    auto layoutStartPosition = InlineDamage::LayoutPosition {
         invalidatedLine->index,
         invalidatedLine->leadingInlineItemPosition,
         partialContentTop
@@ -362,7 +362,7 @@ void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::option
 
     m_inlineDamage.setDamageType(type);
     m_inlineDamage.setDamageReason(*reason);
-    m_inlineDamage.setDamagedPosition(WTFMove(damagedPosition));
+    m_inlineDamage.setLayoutStartPosition(WTFMove(layoutStartPosition));
 
     if (shouldApplyRangeLayout == ShouldApplyRangeLayout::Yes)
         m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesAfterDamagedLine(invalidatedLine->index, m_displayContent));

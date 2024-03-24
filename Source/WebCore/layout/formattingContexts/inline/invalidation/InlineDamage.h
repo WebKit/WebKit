@@ -59,12 +59,12 @@ public:
     };
     OptionSet<Reason> reasons() const { return m_damageReasons; }
     // FIXME: Add support for damage range with multiple, different damage types.
-    struct Position {
+    struct LayoutPosition {
         size_t lineIndex { 0 };
         InlineItemPosition inlineItemPosition { };
         LayoutUnit partialContentTop;
     };
-    std::optional<Position> start() const { return m_startPosition; }
+    std::optional<LayoutPosition> layoutStartPosition() const { return m_layoutStartPosition; }
     using TrailingDisplayBoxList = Vector<InlineDisplay::Box>;
     std::optional<InlineDisplay::Box> trailingContentForLine(size_t lineIndex) const;
 
@@ -79,13 +79,13 @@ private:
 
     void setDamageReason(Reason reason) { m_damageReasons.add(reason); }
     void setDamageType(Type type) { m_damageType = type; }
-    void setDamagedPosition(Position position) { m_startPosition = position; }
+    void setLayoutStartPosition(LayoutPosition position) { m_layoutStartPosition = position; }
     void reset();
     void setTrailingDisplayBoxes(TrailingDisplayBoxList&& trailingDisplayBoxes) { m_trailingDisplayBoxes = WTFMove(trailingDisplayBoxes); }
 
     Type m_damageType { Type::Invalid };
     OptionSet<Reason> m_damageReasons;
-    std::optional<Position> m_startPosition;
+    std::optional<LayoutPosition> m_layoutStartPosition;
     TrailingDisplayBoxList m_trailingDisplayBoxes;
     Vector<UniqueRef<Box>> m_detachedLayoutBoxes;
 };
@@ -96,11 +96,11 @@ inline std::optional<InlineDisplay::Box> InlineDamage::trailingContentForLine(si
         // Couldn't compute trailing positions for damaged lines.
         return { };
     }
-    if (!start() || start()->lineIndex > lineIndex) {
+    if (!layoutStartPosition() || layoutStartPosition()->lineIndex > lineIndex) {
         ASSERT_NOT_REACHED();
         return { };
     }
-    auto relativeLineIndex = lineIndex - start()->lineIndex;
+    auto relativeLineIndex = lineIndex - layoutStartPosition()->lineIndex;
     if (relativeLineIndex >= m_trailingDisplayBoxes.size()) {
         // At the time of the damage, we didn't have this line yet -e.g content insert at a new line.
         return { };
@@ -118,7 +118,7 @@ inline void InlineDamage::reset()
 {
     m_damageType = { };
     m_damageReasons = { };
-    m_startPosition = { };
+    m_layoutStartPosition = { };
     m_trailingDisplayBoxes.clear();
     // Never reset m_detachedLayoutBoxes. We need to keep those layout boxes around until after layout.
 }
