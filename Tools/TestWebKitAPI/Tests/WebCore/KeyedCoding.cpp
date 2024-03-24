@@ -43,7 +43,7 @@ static bool checkDecodedBytes(std::span<const uint8_t> original, std::span<const
 
 TEST(KeyedCoding, SetAndGetBytes)
 {
-    constexpr auto inputData = std::to_array<uint8_t>({ 0x00, 0x01, 0x02, 0x03, 0xde, 0xad, 0xbe, 0xef });
+    constexpr std::array<uint8_t, 8> inputData = { 0x00, 0x01, 0x02, 0x03, 0xde, 0xad, 0xbe, 0xef };
 
     auto encoder = WebCore::KeyedEncoder::encoder();
     encoder->encodeBytes("data"_s, inputData);
