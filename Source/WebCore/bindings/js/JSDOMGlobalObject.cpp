@@ -28,6 +28,7 @@
 #include "JSDOMGlobalObject.h"
 
 #include "DOMConstructors.h"
+#include "DOMStructures.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -107,6 +108,7 @@ const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject"_s, &JSGlobalObje
 JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& world, const GlobalObjectMethodTable* globalObjectMethodTable)
     : JSGlobalObject(vm, structure, globalObjectMethodTable)
     , m_constructors(makeUnique<DOMConstructors>())
+    , m_structures(makeUnique<DOMStructures>())
     , m_world(WTFMove(world))
     , m_worldIsNormal(m_world->isNormal())
     , m_builtinInternalFunctions(makeUniqueRefWithoutFastMallocCheck<JSBuiltinInternalFunctions>(vm))
@@ -385,15 +387,15 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         // The GC thread has to grab the GC lock even though it is not mutating the containers.
         Locker locker { thisObject->m_gcLock };
 
-        for (auto& structure : thisObject->m_structures.values())
-            visitor.append(structure);
-
         for (auto& guarded : thisObject->m_guardedObjects)
             guarded->visitAggregate(visitor);
     }
 
     for (auto& constructor : thisObject->constructors().array())
         visitor.append(constructor);
+
+    for (auto& structure : thisObject->structures().array())
+        visitor.append(structure);
 
     thisObject->m_builtinInternalFunctions->visit(visitor);
 }

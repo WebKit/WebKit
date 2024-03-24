@@ -43,6 +43,7 @@ my $supplementalDependencyFile;
 my $isoSubspacesHeaderFile;
 my $clientISOSubspacesHeaderFile;
 my $constructorsHeaderFile;
+my $structuresHeaderFile;
 my $windowConstructorsFile;
 my $workerGlobalScopeConstructorsFile;
 my $shadowRealmGlobalScopeConstructorsFile;
@@ -85,6 +86,7 @@ GetOptions('defines=s' => \$defines,
            'isoSubspacesHeaderFile=s' => \$isoSubspacesHeaderFile,
            'clientISOSubspacesHeaderFile=s' => \$clientISOSubspacesHeaderFile,
            'constructorsHeaderFile=s' => \$constructorsHeaderFile,
+           'structuresHeaderFile=s' => \$structuresHeaderFile,
            'windowConstructorsFile=s' => \$windowConstructorsFile,
            'workerGlobalScopeConstructorsFile=s' => \$workerGlobalScopeConstructorsFile,
            'shadowRealmGlobalScopeConstructorsFile=s' => \$shadowRealmGlobalScopeConstructorsFile,
@@ -119,6 +121,7 @@ $supplementalDependencyFile = CygwinPathIfNeeded($supplementalDependencyFile);
 $isoSubspacesHeaderFile = CygwinPathIfNeeded($isoSubspacesHeaderFile);
 $clientISOSubspacesHeaderFile = CygwinPathIfNeeded($clientISOSubspacesHeaderFile);
 $constructorsHeaderFile = CygwinPathIfNeeded($constructorsHeaderFile);
+$structuresHeaderFile = CygwinPathIfNeeded($structuresHeaderFile);
 $windowConstructorsFile = CygwinPathIfNeeded($windowConstructorsFile);
 $workerGlobalScopeConstructorsFile = CygwinPathIfNeeded($workerGlobalScopeConstructorsFile);
 $shadowRealmGlobalScopeConstructorsFile = CygwinPathIfNeeded($shadowRealmGlobalScopeConstructorsFile);
@@ -217,6 +220,26 @@ namespace WebCore {
 enum class DOMConstructorID : uint16_t {
 END
 
+my @structures = ();
+# Deprecated objects.
+push(@structures, "ObjCRuntimeMethod");
+push(@structures, "ObjCRuntimeObject");
+push(@structures, "ObjcFallbackObjectImp");
+push(@structures, "RuntimeArray");
+push(@structures, "RuntimeObject");
+push(@structures, "JSObservableArray");
+my $structuresHeaderCode = <<END;
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <JavaScriptCore/JSCInlines.h>
+
+#pragma once
+
+namespace WebCore {
+
+enum class DOMStructureID : uint16_t {
+END
+
 # Get rid of duplicates in idlFileNames array.
 my %idlFileNameHash = map { $_, 1 } @idlFileNames;
 
@@ -271,9 +294,11 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
     if (!$isCallbackInterface) {
         $isoSubspacesHeaderCode .= "    std::unique_ptr<IsoSubspace> m_subspaceFor${interfaceName};\n";
         $clientISOSubspacesHeaderCode .= "    std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceFor${interfaceName};\n";
+        push(@structures, "${interfaceName}");
         if (containsIterableInterfaceFromIDL($idlFile)) {
             $isoSubspacesHeaderCode .= "    std::unique_ptr<IsoSubspace> m_subspaceFor${interfaceName}Iterator;\n";
             $clientISOSubspacesHeaderCode .= "    std::unique_ptr<GCClient::IsoSubspace> m_clientSubspaceFor${interfaceName}Iterator;\n";
+            push(@structures, "${interfaceName}Iterator");
         }
     }
 
@@ -376,6 +401,34 @@ if ($constructorsHeaderFile) {
     $constructorsHeaderCode .= "\n";
     $constructorsHeaderCode .= "} // namespace WebCore\n";
     WriteFileIfChanged($constructorsHeaderFile, $constructorsHeaderCode);
+}
+
+if ($structuresHeaderFile) {
+    my $structuresLength = @structures;
+    foreach my $name (@structures) {
+        $structuresHeaderCode .= "    ${name},\n";
+    }
+    $structuresHeaderCode .= "};\n";
+    $structuresHeaderCode .= "\n";
+    $structuresHeaderCode .= "static constexpr unsigned numberOfDOMStructures = $structuresLength;\n";
+    $structuresHeaderCode .= "\n";
+    $structuresHeaderCode .= "class DOMStructures {\n";
+    $structuresHeaderCode .= "    WTF_MAKE_NONCOPYABLE(DOMStructures);\n";
+    $structuresHeaderCode .= "    WTF_MAKE_FAST_ALLOCATED(DOMStructures);\n";
+    $structuresHeaderCode .= "public:\n";
+    $structuresHeaderCode .= "    using StructureArray = std::array<JSC::WriteBarrierStructureID, numberOfDOMStructures>;\n";
+    $structuresHeaderCode .= "    DOMStructures() = default;\n";
+    $structuresHeaderCode .= "    StructureArray& array() { return m_array; }\n";
+    $structuresHeaderCode .= "    const StructureArray& array() const { return m_array; }\n";
+    $structuresHeaderCode .= "    template<typename WrappedClass> JSC::Structure* get() const { return m_array[static_cast<unsigned>(WrappedClass::structureIndex)].get(); }\n";
+    $structuresHeaderCode .= "    template<typename WrappedClass> void set(JSC::VM& vm, JSC::JSCell* owner, JSC::Structure* structure) { m_array[static_cast<unsigned>(WrappedClass::structureIndex)].set(vm, owner, structure); }\n";
+    $structuresHeaderCode .= "\n";
+    $structuresHeaderCode .= "private:\n";
+    $structuresHeaderCode .= "    StructureArray m_array { };\n";
+    $structuresHeaderCode .= "};\n";
+    $structuresHeaderCode .= "\n";
+    $structuresHeaderCode .= "} // namespace WebCore\n";
+    WriteFileIfChanged($structuresHeaderFile, $structuresHeaderCode);
 }
 
 # Resolves partial interfaces and include dependencies.

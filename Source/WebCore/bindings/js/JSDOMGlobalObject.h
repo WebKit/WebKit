@@ -39,13 +39,13 @@ enum class JSPromiseRejectionOperation : unsigned;
 namespace WebCore {
 
 class DOMConstructors;
+class DOMStructures;
 class DOMGuardedObject;
 class JSBuiltinInternalFunctions;
 class Event;
 class DOMWrapperWorld;
 class ScriptExecutionContext;
 
-using JSDOMStructureMap = HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure>>;
 using DOMGuardedObjectSet = HashSet<DOMGuardedObject*>;
 
 class WEBCORE_EXPORT JSDOMGlobalObject : public JSC::JSGlobalObject {
@@ -64,17 +64,16 @@ public:
 public:
     Lock& gcLock() WTF_RETURNS_LOCK(m_gcLock) { return m_gcLock; }
 
-    JSDOMStructureMap& structures() WTF_REQUIRES_LOCK(m_gcLock) { return m_structures; }
     DOMGuardedObjectSet& guardedObjects() WTF_REQUIRES_LOCK(m_gcLock) { return m_guardedObjects; }
     DOMConstructors& constructors() { return *m_constructors; }
+    DOMStructures& structures() { return *m_structures; }
 
     // No locking is necessary for call sites that do not mutate the containers and are not on the GC thread.
-    const JSDOMStructureMap& structures() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_structures; }
     const DOMGuardedObjectSet& guardedObjects() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_guardedObjects; }
     const DOMConstructors& constructors() const { ASSERT(!Thread::mayBeGCThread()); return *m_constructors; }
+    const DOMStructures& structures() const { ASSERT(!Thread::mayBeGCThread()); return *m_structures; }
 
     // The following don't require grabbing the gcLock first and should only be called when the Heap says that mutators don't have to be fenced.
-    inline JSDOMStructureMap& structures(NoLockingNecessaryTag);
     inline DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag);
 
     ScriptExecutionContext* scriptExecutionContext() const;
@@ -129,9 +128,9 @@ protected:
     static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, JSC::JSValue, const JSC::SourceOrigin&);
     static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
 
-    JSDOMStructureMap m_structures WTF_GUARDED_BY_LOCK(m_gcLock);
     DOMGuardedObjectSet m_guardedObjects WTF_GUARDED_BY_LOCK(m_gcLock);
     std::unique_ptr<DOMConstructors> m_constructors;
+    std::unique_ptr<DOMStructures> m_structures;
 
     Ref<DOMWrapperWorld> m_world;
     uint8_t m_worldIsNormal;

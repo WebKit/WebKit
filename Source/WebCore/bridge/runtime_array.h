@@ -27,6 +27,7 @@
 #define RUNTIME_ARRAY_H_
 
 #include "BridgeJSC.h"
+#include "DOMStructures.h"
 #include "JSDOMBinding.h"
 #include <JavaScriptCore/ArrayPrototype.h>
 
@@ -37,6 +38,7 @@ public:
     using Base = JSArray;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesPut | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
     static constexpr bool needsDestruction = true;
+    static constexpr WebCore::DOMStructureID structureIndex = WebCore::DOMStructureID::RuntimeArray;
 
     template<typename CellType, JSC::SubspaceAccess>
     static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)

@@ -27,6 +27,7 @@
 #define KJS_BINDINGS_OBJC_RUNTIME_H
 
 #include "BridgeJSC.h"
+#include "DOMStructures.h"
 #include "JSDOMBinding.h"
 #include "objc_header.h"
 #include <JavaScriptCore/JSGlobalObject.h>
@@ -93,6 +94,7 @@ public:
     using Base = JSDestructibleObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData | OverridesPut;
     static constexpr bool needsDestruction = true;
+    static constexpr WebCore::DOMStructureID structureIndex = WebCore::DOMStructureID::ObjcFallbackObjectImp;
 
     template<typename CellType, JSC::SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)

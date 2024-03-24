@@ -26,6 +26,7 @@
 #import "config.h"
 #import "objc_instance.h"
 
+#import "DOMStructures.h"
 #import "JSDOMBinding.h"
 #import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
@@ -172,6 +173,8 @@ bool ObjcInstance::supportsInvokeDefaultMethod() const
 
 class ObjCRuntimeMethod final : public RuntimeMethod {
 public:
+    static constexpr WebCore::DOMStructureID structureIndex = WebCore::DOMStructureID::ObjCRuntimeMethod;
+
     static ObjCRuntimeMethod* create(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const String& name, Bindings::Method* method)
     {
         VM& vm = globalObject->vm();
