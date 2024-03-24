@@ -61,7 +61,7 @@ std::optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(std::span<const ui
     return STUNMessageLengths { length, roundedLength };
 }
 
-static inline Vector<uint8_t> extractSTUNOrTURNMessages(Vector<uint8_t>&& buffered, const Function<void(const uint8_t* data, size_t size)>& processMessage)
+static inline Vector<uint8_t> extractSTUNOrTURNMessages(Vector<uint8_t>&& buffered, const Function<void(std::span<const uint8_t> data)>& processMessage)
 {
     auto data = buffered.span();
 
@@ -77,13 +77,13 @@ static inline Vector<uint8_t> extractSTUNOrTURNMessages(Vector<uint8_t>&& buffer
             return WTFMove(buffered);
         }
 
-        processMessage(data.data(), lengths->messageLength);
+        processMessage(data.first(lengths->messageLength));
 
         data = data.subspan(lengths->messageLengthWithPadding);
     }
 }
 
-static inline Vector<uint8_t> extractDataMessages(Vector<uint8_t>&& buffered, const Function<void(const uint8_t* data, size_t size)>& processMessage)
+static inline Vector<uint8_t> extractDataMessages(Vector<uint8_t>&& buffered, const Function<void(std::span<const uint8_t> data)>& processMessage)
 {
     constexpr size_t lengthFieldSize = 2; // number of bytes read by be16toh.
 
@@ -105,14 +105,14 @@ static inline Vector<uint8_t> extractDataMessages(Vector<uint8_t>&& buffered, co
         data += lengthFieldSize;
         size -= lengthFieldSize;
 
-        processMessage(data, length);
+        processMessage(std::span { data, length });
 
         data += length;
         size -= length;
     }
 }
 
-Vector<uint8_t> extractMessages(Vector<uint8_t>&& buffer, MessageType type, const Function<void(const uint8_t* data, size_t size)>& processMessage)
+Vector<uint8_t> extractMessages(Vector<uint8_t>&& buffer, MessageType type, const Function<void(std::span<const uint8_t> data)>& processMessage)
 {
     return type == MessageType::STUN ? extractSTUNOrTURNMessages(WTFMove(buffer), processMessage) : extractDataMessages(WTFMove(buffer), processMessage);
 }

@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& key, const uint8_t* data, size_t dataSize)
+ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& key, std::span<const uint8_t> data)
 {
     // FIXME: We should remove the following hack once <rdar://problem/31361050> is fixed.
     // counter = nonce + counter
     // CommonCrypto currently can neither reset the counter nor detect overflow once the counter reaches its max value restricted
     // by the counterLength. It then increments the nonce which should stay same for the whole operation. To remedy this issue,
     // we detect the overflow ahead and divide the operation into two parts.
-    size_t numberOfBlocks = dataSize % kCCBlockSizeAES128 ? dataSize / kCCBlockSizeAES128 + 1 : dataSize / kCCBlockSizeAES128;
+    size_t numberOfBlocks = data.size() % kCCBlockSizeAES128 ? data.size() / kCCBlockSizeAES128 + 1 : data.size() / kCCBlockSizeAES128;
 
     // Detect loop
     if (counterLength < sizeof(size_t) * 8 && numberOfBlocks > (static_cast<size_t>(1) << counterLength))
@@ -49,7 +49,7 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     size_t capacity = counterBlockHelper.countToOverflowSaturating();
 
     // Divide data into two parts if necessary.
-    size_t headSize = dataSize;
+    size_t headSize = data.size();
     if (capacity < numberOfBlocks)
         headSize = capacity * kCCBlockSizeAES128;
 
@@ -62,7 +62,7 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     Vector<uint8_t> head(CCCryptorGetOutputLength(cryptor, headSize, true));
 
     size_t bytesWritten;
-    status = CCCryptorUpdate(cryptor, data, headSize, head.data(), head.size(), &bytesWritten);
+    status = CCCryptorUpdate(cryptor, data.data(), headSize, head.data(), head.size(), &bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 
@@ -87,10 +87,10 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     if (status)
         return Exception { ExceptionCode::OperationError };
 
-    size_t tailSize = dataSize - headSize;
+    size_t tailSize = data.size() - headSize;
     Vector<uint8_t> tail(CCCryptorGetOutputLength(cryptor, tailSize, true));
 
-    status = CCCryptorUpdate(cryptor, data + headSize, tailSize, tail.data(), tail.size(), &bytesWritten);
+    status = CCCryptorUpdate(cryptor, data.data() + headSize, tailSize, tail.data(), tail.size(), &bytesWritten);
     if (status)
         return Exception { ExceptionCode::OperationError };
 

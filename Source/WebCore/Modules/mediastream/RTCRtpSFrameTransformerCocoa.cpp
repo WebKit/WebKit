@@ -69,14 +69,14 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeEncryptionKey(const
     return deriveHDKFSHA256Bits(key.returnValue().data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 128);
 }
 
-ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(const uint8_t* data, size_t size, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
+ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(std::span<const uint8_t> data, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
 {
-    return transformAESCTR(kCCDecrypt, iv, iv.size(), key, data, size);
+    return transformAESCTR(kCCDecrypt, iv, iv.size(), key, data);
 }
 
-ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(const uint8_t* data, size_t size, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
+ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(std::span<const uint8_t> data, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
 {
-    return transformAESCTR(kCCEncrypt, iv, iv.size(), key, data, size);
+    return transformAESCTR(kCCEncrypt, iv, iv.size(), key, data);
 }
 
 static inline Vector<uint8_t, 8> encodeBigEndian(uint64_t value)
@@ -89,10 +89,10 @@ static inline Vector<uint8_t, 8> encodeBigEndian(uint64_t value)
     return result;
 }
 
-Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vector<uint8_t>& nonce, const uint8_t* header, size_t headerSize, const uint8_t* data, size_t dataSize, const Vector<uint8_t>& key)
+Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vector<uint8_t>& nonce, std::span<const uint8_t> header, std::span<const uint8_t> data, const Vector<uint8_t>& key)
 {
-    auto headerLength = encodeBigEndian(headerSize);
-    auto dataLength = encodeBigEndian(dataSize);
+    auto headerLength = encodeBigEndian(header.size());
+    auto dataLength = encodeBigEndian(data.size());
 
     Vector<uint8_t> result(CC_SHA256_DIGEST_LENGTH);
     CCHmacContext context;
@@ -100,8 +100,8 @@ Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vec
     CCHmacUpdate(&context, headerLength.data(), headerLength.size());
     CCHmacUpdate(&context, dataLength.data(), dataLength.size());
     CCHmacUpdate(&context, nonce.data(), 12);
-    CCHmacUpdate(&context, header, headerSize);
-    CCHmacUpdate(&context, data, dataSize);
+    CCHmacUpdate(&context, header.data(), header.size());
+    CCHmacUpdate(&context, data.data(), data.size());
     CCHmacFinal(&context, result.data());
 
     return result;

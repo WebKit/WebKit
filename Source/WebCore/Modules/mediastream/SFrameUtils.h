@@ -37,15 +37,15 @@ struct SFrameCompatibilityPrefixBuffer {
     Vector<uint8_t> buffer;
 };
 
-size_t computeH264PrefixOffset(const uint8_t*, size_t);
-SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t*, size_t);
+size_t computeH264PrefixOffset(std::span<const uint8_t>);
+SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(std::span<const uint8_t>);
 
-WEBCORE_EXPORT bool needsRbspUnescaping(const uint8_t*, size_t);
-WEBCORE_EXPORT Vector<uint8_t> fromRbsp(const uint8_t*, size_t);
+WEBCORE_EXPORT bool needsRbspUnescaping(std::span<const uint8_t>);
+WEBCORE_EXPORT Vector<uint8_t> fromRbsp(std::span<const uint8_t>);
 WEBCORE_EXPORT void toRbsp(Vector<uint8_t>&, size_t);
 
-size_t computeVP8PrefixOffset(const uint8_t*, size_t);
-SFrameCompatibilityPrefixBuffer computeVP8PrefixBuffer(const uint8_t*, size_t);
+size_t computeVP8PrefixOffset(std::span<const uint8_t>);
+SFrameCompatibilityPrefixBuffer computeVP8PrefixBuffer(std::span<const uint8_t>);
 
 } // namespace WebCore
 

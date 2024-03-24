@@ -392,16 +392,16 @@ TEST(RTCRtpSFrameTransformer, TransformCounter65536)
 TEST(RTCRtpSFrameTransformer, RBSPEscaping)
 {
     uint8_t frame0[] = { 0, 33, 00, 24, 236, 156, 127, 8, 0, 0, 4 };
-    EXPECT_FALSE(WebCore::needsRbspUnescaping(frame0, sizeof(frame0)));
+    EXPECT_FALSE(WebCore::needsRbspUnescaping(frame0));
 
     uint8_t frame0b[] = { 0, 33, 00, 24, 236, 156, 127, 8, 0, 0, 3 };
-    EXPECT_FALSE(WebCore::needsRbspUnescaping(frame0b, sizeof(frame0b)));
+    EXPECT_FALSE(WebCore::needsRbspUnescaping(frame0b));
 
     uint8_t frame1[] = { 0, 33, 00, 24, 236, 156, 127, 8, 0, 0, 3, 1 };
     uint8_t frame1Unescaped[] = { 0, 33, 00, 24, 236, 156, 127, 8, 0, 0, 1 };
-    EXPECT_TRUE(WebCore::needsRbspUnescaping(frame1, sizeof(frame1)));
+    EXPECT_TRUE(WebCore::needsRbspUnescaping(frame1));
 
-    auto result = WebCore::fromRbsp(frame1, sizeof(frame1));
+    auto result = WebCore::fromRbsp(frame1);
 
     EXPECT_EQ(result.size(), sizeof(frame1Unescaped));
     for (size_t i = 0; i < sizeof(frame1Unescaped); ++i)
@@ -411,8 +411,8 @@ TEST(RTCRtpSFrameTransformer, RBSPEscaping)
     Vector<uint8_t> escaped { 0, 0, 0, 65, 0, 0, 1, 66, 0, 0, 2, 67, 0, 0, 3, 68, 0, 0, 4, 0, 0, 1 };
 
     WebCore::toRbsp(escaped, 0);
-    EXPECT_TRUE(WebCore::needsRbspUnescaping(escaped.data(), escaped.size()));
-    auto unescaped = WebCore::fromRbsp(escaped.data(), escaped.size());
+    EXPECT_TRUE(WebCore::needsRbspUnescaping(escaped.span()));
+    auto unescaped = WebCore::fromRbsp(escaped.span());
 
     EXPECT_EQ(unescaped.size(), frame2.size());
     for (size_t i = 0; i < frame2.size(); ++i)
