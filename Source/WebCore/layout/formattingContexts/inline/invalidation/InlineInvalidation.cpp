@@ -480,11 +480,6 @@ bool InlineInvalidation::inlineLevelBoxWillBeRemoved(const Box& layoutBox)
     return invalidatedLine.has_value();
 }
 
-void InlineInvalidation::horizontalConstraintChanged()
-{
-    m_inlineDamage.setDamageType(InlineDamage::Type::NeedsLineLayout);
-}
-
 void InlineInvalidation::restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment)
 {
     auto leadingContentDisplayBoxOnDamagedLine = leadingContentDisplayForLineIndex(lineIndex, displayBoxes());
@@ -496,7 +491,7 @@ void InlineInvalidation::restartForPagination(size_t lineIndex, LayoutUnit pageT
 
     auto invalidatedLine = InvalidatedLine { lineIndex, *inlineItemPositionForLeadingDisplayBox };
 
-    updateInlineDamage(InlineDamage::Type::NeedsLineLayout, InlineDamage::Reason::Pagination, invalidatedLine, ShouldApplyRangeLayout::Yes, pageTopAdjustment);
+    updateInlineDamage(InlineDamage::Type::NeedsContentUpdateAndLineLayout, InlineDamage::Reason::Pagination, invalidatedLine, ShouldApplyRangeLayout::Yes, pageTopAdjustment);
 }
 
 }

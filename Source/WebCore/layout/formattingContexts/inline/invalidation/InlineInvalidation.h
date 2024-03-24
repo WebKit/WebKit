@@ -52,8 +52,6 @@ public:
     bool inlineLevelBoxInserted(const Box&);
     bool inlineLevelBoxWillBeRemoved(const Box&);
 
-    void horizontalConstraintChanged();
-
     void restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment);
 
 private:

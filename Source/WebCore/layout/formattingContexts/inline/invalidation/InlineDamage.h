@@ -45,15 +45,7 @@ public:
     enum class Type : uint8_t {
         // Can't decide the type of damage. Let's nuke all the things.
         Invalid,
-        // Content changed or some style property that drives soft wrap opportunities (e.g. going from white-space: pre to normal).
-        // This tells us to re-process the inline content and run line layout.
         NeedsContentUpdateAndLineLayout,
-        // Same content but either the constraint or some style that may affect line breaking changed (e.g. font-size or containing block set new horizontal constraint). 
-        NeedsLineLayout,
-        // Line breaking positions are the same, only height related style changed (e.g img's height changes).
-        NeedsVerticalAdjustment,
-        // Line breaking positions are the same, runs may show up at a different horizontal position (e.g. text-align changes).
-        NeedsHorizontalAdjustment 
     };
     Type type() const { return m_damageType; }
 
