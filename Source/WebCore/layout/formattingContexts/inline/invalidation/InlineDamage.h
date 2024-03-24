@@ -54,7 +54,8 @@ public:
         Insert        = 1 << 1,
         Remove        = 1 << 2,
         ContentChange = 1 << 3,
-        Pagination    = 1 << 4
+        StyleChange   = 1 << 4,
+        Pagination    = 1 << 5
     };
     OptionSet<Reason> reasons() const { return m_damageReasons; }
     // FIXME: Add support for damage range with multiple, different damage types.

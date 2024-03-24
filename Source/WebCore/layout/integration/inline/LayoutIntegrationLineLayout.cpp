@@ -323,10 +323,8 @@ std::optional<LayoutRect> LineLayout::layout()
         // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
         // layout in constructContent.
         clearInlineContent();
-        if (m_lineDamage && (m_lineDamage->type() == Layout::InlineDamage::Type::NeedsContentUpdateAndLineLayout || m_lineDamage->type() == Layout::InlineDamage::Type::Invalid)) {
-            // We are converting partial layout to full. Let's invalidate caches.
+        if (m_lineDamage && m_lineDamage->reasons().contains(Layout::InlineDamage::Reason::StyleChange))
             releaseCaches();
-        }
         m_lineDamage = { };
     };
     clearInlineContentAndCacheBeforeFullLayoutIfNeeded();

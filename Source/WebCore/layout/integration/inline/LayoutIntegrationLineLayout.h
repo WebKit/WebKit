@@ -131,7 +131,7 @@ public:
     // This is temporary, required by partial bailout check.
     bool contentNeedsVisualReordering() const;
     bool isDamaged() const { return !!m_lineDamage; }
-    OptionSet<Layout::InlineDamage::Reason> damageReasons() const { return !m_lineDamage || m_lineDamage->type() == Layout::InlineDamage::Type::Invalid ? OptionSet<Layout::InlineDamage::Reason>() : m_lineDamage->reasons(); }
+    const Layout::InlineDamage* damage() const { return m_lineDamage.get(); }
 #ifndef NDEBUG
     bool hasDetachedContent() const { return m_lineDamage && m_lineDamage->hasDetachedContent(); }
 #endif

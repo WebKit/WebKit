@@ -47,7 +47,7 @@ void InlineInvalidation::styleChanged(const Box& layoutBox, const RenderStyle& o
     UNUSED_PARAM(layoutBox);
     UNUSED_PARAM(oldStyle);
 
-    m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
+    m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
 }
 
 struct DamagedContent {

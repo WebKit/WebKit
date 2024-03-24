@@ -153,12 +153,9 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     if (hasFirstLetter())
         return true;
 
-    if (lineLayout.isDamaged()) {
-        auto previousDamages = lineLayout.damageReasons();
-        if (previousDamages && previousDamages != Layout::InlineDamage::Reason::Append) {
-            // Only support subsequent append operations.
-            return true;
-        }
+    if (auto* previousDamage = lineLayout.damage(); previousDamage && (previousDamage->reasons() != Layout::InlineDamage::Reason::Append || !previousDamage->start())) {
+        // Only support subsequent append operations where we managed to invalidate the content for partial layout.
+        return true;
     }
 
     bool shouldBalance = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Balance;
