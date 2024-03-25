@@ -1,6 +1,8 @@
 // RUN: %not %wgslc | %check
 
-fn f1(x: f32) -> f32 { return x; }
+fn f1(x: f32) -> f32 {
+    // CHECK-L: missing return at end of function
+}
 
 fn f2() {
     // CHECK-L: unresolved call target 'f0'
