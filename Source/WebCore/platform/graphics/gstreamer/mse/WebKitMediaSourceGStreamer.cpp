@@ -789,25 +789,26 @@ static GstStateChangeReturn webKitMediaSrcChangeState(GstElement* element, GstSt
     return GST_ELEMENT_CLASS(webkit_media_src_parent_class)->change_state(element, transition);
 }
 
-static gboolean webKitMediaSrcSendEvent(GstElement* element, GstEvent* event)
+static gboolean webKitMediaSrcSendEvent(GstElement* element, GstEvent* eventTransferFull)
 {
-    switch (GST_EVENT_TYPE(event)) {
+    auto event = adoptGRef(eventTransferFull);
+    switch (GST_EVENT_TYPE(event.get())) {
     case GST_EVENT_SEEK: {
         double rate;
         GstFormat format;
         GstSeekType startType;
         int64_t start;
-        gst_event_parse_seek(event, &rate, &format, nullptr, &startType, &start, nullptr, nullptr);
+        gst_event_parse_seek(event.get(), &rate, &format, nullptr, &startType, &start, nullptr, nullptr);
         if (format != GST_FORMAT_TIME || startType != GST_SEEK_TYPE_SET) {
-            GST_ERROR_OBJECT(element, "Rejecting unsupported seek event: %" GST_PTR_FORMAT, event);
+            GST_ERROR_OBJECT(element, "Rejecting unsupported seek event: %" GST_PTR_FORMAT, event.get());
             return false;
         }
-        GST_DEBUG_OBJECT(element, "Handling seek event: %" GST_PTR_FORMAT, event);
+        GST_DEBUG_OBJECT(element, "Handling seek event: %" GST_PTR_FORMAT, event.get());
         webKitMediaSrcSeek(WEBKIT_MEDIA_SRC(element), start, rate);
         return true;
     }
     default:
-        return GST_ELEMENT_CLASS(webkit_media_src_parent_class)->send_event(element, event);
+        return GST_ELEMENT_CLASS(webkit_media_src_parent_class)->send_event(element, event.leakRef());
     }
 }
 
