@@ -1845,7 +1845,6 @@ webkit.org/b/263044 imported/w3c/web-platform-tests/webrtc-stats/supported-stats
 # webkit.org/b/261308 Batch mark expectations for flaky imported/w3c/web-platform-tests
 [ Monterey+ X86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure ]
-[ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Pass Failure ]
 
 
 webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer.html [ Pass Failure ]
