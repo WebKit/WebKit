@@ -2571,7 +2571,7 @@ void Element::parserSetAttributes(std::span<const Attribute> attributes)
 
     if (auto* inputElement = dynamicDowncast<HTMLInputElement>(*this)) {
         DelayedUpdateValidityScope delayedUpdateValidityScope(*inputElement);
-        inputElement->parserInitializeInputType();
+        inputElement->initializeInputTypeAfterParsingOrCloning();
     }
 
     // Use attributes instead of m_elementData because attributeChanged might modify m_elementData.
@@ -5103,6 +5103,10 @@ void Element::cloneAttributesFromElement(const Element& other)
     other.synchronizeAllAttributes();
     if (!other.m_elementData) {
         m_elementData = nullptr;
+        if (auto* inputElement = dynamicDowncast<HTMLInputElement>(*this)) {
+            DelayedUpdateValidityScope delayedUpdateValidityScope(*inputElement);
+            inputElement->initializeInputTypeAfterParsingOrCloning();
+        }
         return;
     }
 
@@ -5135,6 +5139,11 @@ void Element::cloneAttributesFromElement(const Element& other)
     else
         m_elementData = other.m_elementData->makeUniqueCopy();
 
+    if (auto* inputElement = dynamicDowncast<HTMLInputElement>(*this)) {
+        DelayedUpdateValidityScope delayedUpdateValidityScope(*inputElement);
+        inputElement->initializeInputTypeAfterParsingOrCloning();
+    }
+
     for (const Attribute& attribute : attributesIterator())
         notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::ByCloning);
 
@@ -5145,6 +5154,10 @@ void Element::cloneDataFromElement(const Element& other)
 {
     cloneAttributesFromElement(other);
     copyNonAttributePropertiesFromElement(other);
+#if ASSERT_ENABLED
+    if (auto* input = dynamicDowncast<HTMLInputElement>(*this))
+        ASSERT(!input->userAgentShadowRoot());
+#endif
 }
 
 void Element::createUniqueElementData()
