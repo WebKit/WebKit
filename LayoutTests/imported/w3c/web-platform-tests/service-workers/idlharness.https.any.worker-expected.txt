@@ -97,6 +97,7 @@ PASS Client interface: existence and properties of interface object
 PASS WindowClient interface: existence and properties of interface object
 PASS Clients interface: existence and properties of interface object
 PASS ExtendableEvent interface: existence and properties of interface object
+PASS InstallEvent interface: existence and properties of interface object
 PASS FetchEvent interface: existence and properties of interface object
 PASS ExtendableMessageEvent interface: existence and properties of interface object
 PASS Cache interface: existence and properties of interface object

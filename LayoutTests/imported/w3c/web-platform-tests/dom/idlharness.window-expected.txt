@@ -200,6 +200,7 @@ PASS AbortSignal interface: existence and properties of interface prototype obje
 PASS AbortSignal interface: existence and properties of interface prototype object's @@unscopables property
 PASS AbortSignal interface: operation abort(optional any)
 PASS AbortSignal interface: operation timeout(unsigned long long)
+PASS AbortSignal interface: operation any(sequence<AbortSignal>)
 PASS AbortSignal interface: attribute aborted
 PASS AbortSignal interface: attribute reason
 PASS AbortSignal interface: operation throwIfAborted()
@@ -210,6 +211,8 @@ PASS AbortSignal interface: new AbortController().signal must inherit property "
 PASS AbortSignal interface: calling abort(optional any) on new AbortController().signal with too few arguments must throw TypeError
 PASS AbortSignal interface: new AbortController().signal must inherit property "timeout(unsigned long long)" with the proper type
 PASS AbortSignal interface: calling timeout(unsigned long long) on new AbortController().signal with too few arguments must throw TypeError
+PASS AbortSignal interface: new AbortController().signal must inherit property "any(sequence<AbortSignal>)" with the proper type
+PASS AbortSignal interface: calling any(sequence<AbortSignal>) on new AbortController().signal with too few arguments must throw TypeError
 PASS AbortSignal interface: new AbortController().signal must inherit property "aborted" with the proper type
 PASS AbortSignal interface: new AbortController().signal must inherit property "reason" with the proper type
 PASS AbortSignal interface: new AbortController().signal must inherit property "throwIfAborted()" with the proper type
@@ -903,6 +906,7 @@ PASS ShadowRoot interface: existence and properties of interface prototype objec
 PASS ShadowRoot interface: attribute mode
 PASS ShadowRoot interface: attribute delegatesFocus
 PASS ShadowRoot interface: attribute slotAssignment
+PASS ShadowRoot interface: attribute clonable
 PASS ShadowRoot interface: attribute host
 PASS ShadowRoot interface: attribute onslotchange
 PASS ShadowRoot interface: attribute fullscreenElement
