@@ -59,6 +59,7 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Fie
     : DateTimeFieldElement(document, fieldOwner)
     , m_range(range)
     , m_placeholder(formatValue(placeholder))
+    , m_placeholderValue(placeholder)
 {
 }
 
@@ -160,11 +161,6 @@ String DateTimeNumericFieldElement::value() const
 String DateTimeNumericFieldElement::placeholderValue() const
 {
     return m_placeholder;
-}
-
-int DateTimeNumericFieldElement::valueAsInteger() const
-{
-    return m_hasValue ? m_value : -1;
 }
 
 void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEvent)

@@ -40,6 +40,8 @@ class RenderStyle;
 
 struct DateTimeFieldsState;
 
+enum class DateTimePlaceholderIfNoValue : bool { No, Yes };
+
 class DateTimeFieldElement : public HTMLDivElement {
     WTF_MAKE_ISO_ALLOCATED(DateTimeFieldElement);
 public:
@@ -65,7 +67,7 @@ public:
     String visibleValue() const;
 
     virtual bool hasValue() const = 0;
-    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) = 0;
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue = DateTimePlaceholderIfNoValue::No) = 0;
     virtual void setEmptyValue(EventBehavior = DispatchNoEvent) = 0;
     virtual void setValueAsDate(const DateComponents&) = 0;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) = 0;
@@ -81,6 +83,7 @@ protected:
     void updateVisibleValue(EventBehavior);
     virtual void adjustMinInlineSize(RenderStyle&) const = 0;
     virtual int valueAsInteger() const = 0;
+    virtual int placeholderValueAsInteger() const = 0;
     virtual void handleKeyboardEvent(KeyboardEvent&) = 0;
     virtual void handleBlurEvent(Event&);
 

@@ -145,7 +145,25 @@ ExceptionOr<void> BaseDateAndTimeInputType::setValueAsDate(WallTime value) const
 
 WallTime BaseDateAndTimeInputType::accessibilityValueAsDate() const
 {
-    return WallTime::fromRawSeconds(Seconds::fromMilliseconds(valueAsDouble()).value());
+    double dateAsDouble = valueAsDouble();
+    if (std::isnan(dateAsDouble) && m_dateTimeEditElement) {
+        // The value for this element has not been set. Try to get a value from
+        // m_dateTimeEditElement if exists. That value may have been indirectly
+        // set as placeholder values for the field elements.
+        String value = m_dateTimeEditElement->value();
+        if (value.isEmpty())
+            value = m_dateTimeEditElement->placeholderValue();
+        if (value.isEmpty())
+            return { };
+
+        auto decimal = parseToNumber(value, Decimal::nan());
+        if (decimal.isFinite())
+            dateAsDouble = decimal.toDouble();
+    }
+
+    if (std::isnan(dateAsDouble))
+        return { };
+    return WallTime::fromRawSeconds(Seconds::fromMilliseconds(dateAsDouble).value());
 }
 
 double BaseDateAndTimeInputType::valueAsDouble() const
@@ -601,7 +619,6 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     auto* computedStyle = element.computedStyle();
     parameters.isAnchorElementRTL = computedStyle->direction() == TextDirection::RTL;
     parameters.useDarkAppearance = document.useDarkAppearance(computedStyle);
-
     auto date = valueOrDefault(parseToDateComponents(element.value()));
     parameters.hasSecondField = shouldHaveSecondField(date);
     parameters.hasMillisecondField = shouldHaveMillisecondField(date);

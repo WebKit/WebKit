@@ -73,6 +73,7 @@ public:
     void setEmptyValue(const LayoutParameters&);
     void setValueAsDate(const LayoutParameters&, const DateComponents&);
     String value() const;
+    String placeholderValue() const;
     bool editableFieldsHaveValues() const;
 
 private:
@@ -92,7 +93,7 @@ private:
     size_t fieldIndexOf(const DateTimeFieldElement&) const;
     DateTimeFieldElement* focusedFieldElement() const;
     void layout(const LayoutParameters&);
-    DateTimeFieldsState valueAsDateTimeFieldsState() const;
+    DateTimeFieldsState valueAsDateTimeFieldsState(DateTimePlaceholderIfNoValue = DateTimePlaceholderIfNoValue::No) const;
 
     bool focusOnNextFocusableField(size_t startIndex);
 

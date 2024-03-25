@@ -16,6 +16,10 @@ inputtime4:
 PASS: inputtime.title === 'AXTitle: '
 AXValue: 3:45 PM
 
+inputtime5:
+PASS: inputtime.title === 'AXTitle: '
+AXValue:
+
 
 PASS successfullyParsed is true
 

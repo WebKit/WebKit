@@ -44,7 +44,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 class DateTimeHourFieldElement final : public DateTimeNumericFieldElement {
@@ -58,7 +58,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 class DateTimeMeridiemFieldElement final : public DateTimeSymbolicFieldElement {
@@ -76,7 +76,7 @@ private:
     void setValueAsDate(const DateComponents&) final;
     void setValueAsInteger(int, EventBehavior = DispatchNoEvent) final;
 
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 class DateTimeMillisecondFieldElement final : public DateTimeNumericFieldElement {
@@ -90,7 +90,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 class DateTimeMinuteFieldElement final : public DateTimeNumericFieldElement {
@@ -104,7 +104,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 class DateTimeMonthFieldElement final : public DateTimeNumericFieldElement {
@@ -118,7 +118,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 class DateTimeSecondFieldElement final : public DateTimeNumericFieldElement {
@@ -132,7 +132,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 class DateTimeSymbolicMonthFieldElement final : public DateTimeSymbolicFieldElement {
@@ -146,7 +146,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 class DateTimeYearFieldElement final : public DateTimeNumericFieldElement {
@@ -160,7 +160,7 @@ private:
 
     // DateTimeFieldElement functions:
     void setValueAsDate(const DateComponents&) final;
-    void populateDateTimeFieldsState(DateTimeFieldsState&) final;
+    void populateDateTimeFieldsState(DateTimeFieldsState&, DateTimePlaceholderIfNoValue) final;
 };
 
 } // namespace WebCore

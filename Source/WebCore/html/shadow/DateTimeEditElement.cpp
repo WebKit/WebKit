@@ -404,11 +404,16 @@ String DateTimeEditElement::value() const
     return m_editControlOwner ? m_editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState()) : emptyString();
 }
 
-DateTimeFieldsState DateTimeEditElement::valueAsDateTimeFieldsState() const
+String DateTimeEditElement::placeholderValue() const
+{
+    return m_editControlOwner ? m_editControlOwner->formatDateTimeFieldsState(valueAsDateTimeFieldsState(DateTimePlaceholderIfNoValue::Yes)) : emptyString();
+}
+
+DateTimeFieldsState DateTimeEditElement::valueAsDateTimeFieldsState(DateTimePlaceholderIfNoValue placeholderIfNoValue) const
 {
     DateTimeFieldsState dateTimeFieldsState;
     for (auto& field : m_fields)
-        field->populateDateTimeFieldsState(dateTimeFieldsState);
+        field->populateDateTimeFieldsState(dateTimeFieldsState, placeholderIfNoValue);
     return dateTimeFieldsState;
 }
 

@@ -41,7 +41,8 @@ protected:
     bool hasValue() const final;
     void setEmptyValue(EventBehavior = DispatchNoEvent) override;
     void setValueAsInteger(int, EventBehavior = DispatchNoEvent) override;
-    int valueAsInteger() const final;
+    int valueAsInteger() const final { return m_selectedIndex; }
+    int placeholderValueAsInteger() const final { return m_placeholderIndex; }
 
 private:
     static constexpr int invalidIndex = -1;

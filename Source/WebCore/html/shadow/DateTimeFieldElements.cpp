@@ -56,10 +56,12 @@ Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document,
     return element;
 }
 
-void DateTimeDayFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeDayFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.dayOfMonth = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.dayOfMonth = placeholderValueAsInteger();
 }
 
 void DateTimeDayFieldElement::setValueAsDate(const DateComponents& date)
@@ -84,12 +86,12 @@ Ref<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document& documen
     return element;
 }
 
-void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
-    if (!hasValue())
+    if (!hasValue() && placeholderIfNoValue == DateTimePlaceholderIfNoValue::No)
         return;
 
-    int value = valueAsInteger();
+    int value = hasValue() ? valueAsInteger() : placeholderValueAsInteger();
 
     switch (maximum()) {
     case 11:
@@ -157,10 +159,12 @@ void DateTimeMeridiemFieldElement::updateAriaValueAttributes()
     setAttributeWithoutSynchronization(HTMLNames::aria_valuetextAttr, AtomString { visibleValue() });
 }
 
-void DateTimeMeridiemFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeMeridiemFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.meridiem = valueAsInteger() ? DateTimeFieldsState::Meridiem::PM : DateTimeFieldsState::Meridiem::AM;
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.meridiem = placeholderValueAsInteger() ? DateTimeFieldsState::Meridiem::PM : DateTimeFieldsState::Meridiem::AM;
 }
 
 void DateTimeMeridiemFieldElement::setValueAsDate(const DateComponents& date)
@@ -198,10 +202,12 @@ Ref<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Doc
     return element;
 }
 
-void DateTimeMillisecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeMillisecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.millisecond = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.millisecond = placeholderValueAsInteger();
 }
 
 void DateTimeMillisecondFieldElement::setValueAsDate(const DateComponents& date)
@@ -226,10 +232,12 @@ Ref<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document& doc
     return element;
 }
 
-void DateTimeMinuteFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeMinuteFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.minute = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.minute = placeholderValueAsInteger();
 }
 
 void DateTimeMinuteFieldElement::setValueAsDate(const DateComponents& date)
@@ -254,10 +262,12 @@ Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& docum
     return element;
 }
 
-void DateTimeMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.month = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.month = placeholderValueAsInteger();
 }
 
 void DateTimeMonthFieldElement::setValueAsDate(const DateComponents& date)
@@ -283,10 +293,12 @@ Ref<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document& doc
     return element;
 }
 
-void DateTimeSecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeSecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.second = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.second = placeholderValueAsInteger();
 }
 
 void DateTimeSecondFieldElement::setValueAsDate(const DateComponents& date)
@@ -311,10 +323,12 @@ Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create
     return element;
 }
 
-void DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.month = valueAsInteger() + 1;
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.month = placeholderValueAsInteger() + 1;
 }
 
 void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& date)
@@ -339,10 +353,12 @@ Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& documen
     return element;
 }
 
-void DateTimeYearFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeYearFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.year = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.year = placeholderValueAsInteger();
 }
 
 void DateTimeYearFieldElement::setValueAsDate(const DateComponents& date)
