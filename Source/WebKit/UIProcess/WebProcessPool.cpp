@@ -637,6 +637,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         static NeverDestroyed<Ref<WebProcessPool>> remoteWorkerProcessPool(WebProcessPool::create(API::ProcessPoolConfiguration::create().get()));
 
     RefPtr requestingProcess = requestingProcessIdentifier ? WebProcessProxy::processForIdentifier(*requestingProcessIdentifier) : nullptr;
+    auto lockdownMode = requestingProcess ? requestingProcess->lockdownMode() : (lockdownModeEnabledBySystem() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled);
     Ref processPool = requestingProcess ? requestingProcess->processPool() : processPools()[0].get();
 
     RefPtr<WebProcessProxy> remoteWorkerProcessProxy;
@@ -671,6 +672,8 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
                 continue;
             if (!process->isMatchingRegistrableDomain(registrableDomain))
                 continue;
+            if (process->lockdownMode() != lockdownMode)
+                continue;
 
             useProcessForRemoteWorkers(process);
 
@@ -694,7 +697,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     ASSERT(preferencesStore);
 
     if (!remoteWorkerProcessProxy) {
-        Ref newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
+        Ref newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore, lockdownMode);
         remoteWorkerProcessProxy = newProcessProxy.copyRef();
 
         WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy.get(), workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processID());
@@ -2403,6 +2406,37 @@ size_t WebProcessPool::serviceWorkerProxiesCount() const
             ++count;
     });
     return count;
+}
+
+void WebProcessPool::isJITDisabledInAllRemoteWorkerProcesses(CompletionHandler<void(bool)>&& completionHandler) const
+{
+    class JITDisabledCallbackAggregator : public RefCounted<JITDisabledCallbackAggregator> {
+    public:
+        static auto create(CompletionHandler<void(bool)>&& callback) { return adoptRef(*new JITDisabledCallbackAggregator(WTFMove(callback))); }
+
+        ~JITDisabledCallbackAggregator()
+        {
+            if (m_callback)
+                m_callback(m_isJITDisabled);
+        }
+
+        void setJITEnabled(bool isJITEnabled) { m_isJITDisabled &= !isJITEnabled; }
+
+    private:
+        explicit JITDisabledCallbackAggregator(CompletionHandler<void(bool)>&& callback)
+            : m_callback(WTFMove(callback))
+        { }
+
+        CompletionHandler<void(bool)> m_callback;
+        bool m_isJITDisabled { true };
+    };
+
+    Ref callbackAggregator = JITDisabledCallbackAggregator::create(WTFMove(completionHandler));
+    remoteWorkerProcesses().forEach([&](auto& process) {
+        process.sendWithAsyncReply(Messages::WebProcess::IsJITEnabled(), [callbackAggregator](bool isJITEnabled) {
+            callbackAggregator->setJITEnabled(isJITEnabled);
+        }, 0);
+    });
 }
 
 bool WebProcessPool::hasServiceWorkerForegroundActivityForTesting() const

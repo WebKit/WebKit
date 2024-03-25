@@ -1526,6 +1526,8 @@ public:
     bool userIsInteracting() const { return m_userIsInteracting; }
     void setUserIsInteracting(bool userIsInteracting) { m_userIsInteracting = userIsInteracting; }
 
+    static void adjustSettingsForLockdownMode(WebCore::Settings&, const WebPreferencesStore*);
+
 #if PLATFORM(IOS_FAMILY)
     // This excludes layout overflow, includes borders.
     static WebCore::IntRect rootViewBounds(const WebCore::Node&);

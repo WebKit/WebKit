@@ -483,6 +483,13 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     return _processPool->serviceWorkerProxiesCount();
 }
 
+- (void)_isJITDisabledInAllRemoteWorkerProcesses:(void(^)(BOOL))completionHandler
+{
+    _processPool->isJITDisabledInAllRemoteWorkerProcesses([completionHandler = makeBlockPtr(completionHandler)] (bool result) {
+        completionHandler(result);
+    });
+}
+
 + (void)_forceGameControllerFramework
 {
 #if ENABLE(GAMEPAD)

@@ -98,6 +98,7 @@ static String retrievedString;
     NSString *_expectedMessage;
 }
 - (instancetype)initWithExpectedMessage:(NSString *)expectedMessage;
+- (void)resetExpectedMessage:(NSString *)expectedMessage;
 @end
 
 @interface SWMessageHandlerWithExpectedMessage : NSObject <WKScriptMessageHandler>
@@ -121,6 +122,11 @@ static String retrievedString;
     _expectedMessage = expectedMessage;
 
     return self;
+}
+
+- (void)resetExpectedMessage:(NSString *)expectedMessage
+{
+    _expectedMessage = expectedMessage;
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
@@ -229,6 +235,18 @@ static constexpr auto scriptBytes = R"SWRESOURCE(
 
 self.addEventListener("message", (event) => {
     event.source.postMessage("ServiceWorker received: " + event.data);
+});
+
+)SWRESOURCE"_s;
+
+static constexpr auto scriptWithEvalBytes = R"SWRESOURCE(
+
+self.addEventListener("message", (event) => {
+    if (event.data == "Hello from the web page") {
+        event.source.postMessage("ServiceWorker received: " + event.data);
+        return;
+    }
+    event.source.postMessage("Evaluation result: " + eval(event.data));
 });
 
 )SWRESOURCE"_s;
@@ -1737,6 +1755,89 @@ TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughInProcessServiceWorker
     bool firstLoadAboutBlank = true;
 
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, firstLoadAboutBlank));
+}
+
+TEST(ServiceWorkers, LockdownModeInServiceWorkerProcess)
+{
+    // Turn on lockdown mode globally.
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+    TestWebKitAPI::Util::spinRunLoop();
+
+    // Start with a clean slate data store.
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"Message from worker: ServiceWorker received: Hello from the web page"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, scriptWithEvalBytes } }
+    });
+
+    RetainPtr processPool = retainPtr(configuration.get().processPool);
+
+    // Make sure that the service worker launches in its own process.
+    [processPool _setUseSeparateServiceWorkerProcess:YES];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigationBoolean = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
+
+    // Check that JIT is disabled in the service worker process.
+    done = false;
+    [processPool _isJITDisabledInAllRemoteWorkerProcesses:^(BOOL isJITDisabled) {
+        EXPECT_TRUE(isJITDisabled);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto runJSCheck = [&](const String& jsToEvalInWorker) {
+        bool finishedRunningScript = false;
+        done = false;
+        String js = makeString("worker.postMessage('", jsToEvalInWorker,"');");
+        [webView evaluateJavaScript:js completionHandler:[&] (id result, NSError *error) {
+            EXPECT_NULL(error);
+            finishedRunningScript = true;
+        }];
+        TestWebKitAPI::Util::run(&finishedRunningScript);
+        TestWebKitAPI::Util::run(&done);
+    };
+
+    [messageHandler resetExpectedMessage:@"Message from worker: Evaluation result: true"];
+    runJSCheck("!!self.URL"_s);
+
+    // Check individual settings that are meant to be disabled in lockdown mode.
+    [messageHandler resetExpectedMessage:@"Message from worker: Evaluation result: false"];
+    runJSCheck("!!self.WebGL2RenderingContext"_s);
+    runJSCheck("!!self.FileSystemHandle"_s); // File System Access.
+#if ENABLE(NOTIFICATIONS)
+    runJSCheck("!!self.Notification"_s); // Notification API.
+#endif
+    runJSCheck("!!self.Cache"_s); // Cache API.
+    runJSCheck("!!self.CacheStorage"_s); // Cache API.
+    runJSCheck("!!self.FileReader"_s); // FileReader API.
+    runJSCheck("!!self.FileSystemFileHandle"_s); // File System Access API.
+    runJSCheck("!!self.PushManager"_s); // Push API.
+    runJSCheck("!!self.PushSubscription"_s); // Push API.
+    runJSCheck("!!self.PushSubscriptionOptions"_s); // Push API.
+    runJSCheck("!!self.LockManager"_s); // WebLockManager API.
 }
 
 enum class UseSeparateServiceWorkerProcess : bool { No, Yes };
