@@ -147,6 +147,7 @@ enum class FlexDirection : uint8_t;
 enum class FlexWrap : uint8_t;
 enum class Float : uint8_t;
 enum class FontOrientation : bool;
+enum class GridTrackSizingDirection : uint8_t;
 enum class HangingPunctuation : uint8_t;
 enum class Hyphens : uint8_t;
 enum class ImageRendering : uint8_t;
@@ -775,6 +776,7 @@ public:
 
     inline const Vector<GridTrackSize>& gridColumnTrackSizes() const;
     inline const Vector<GridTrackSize>& gridRowTrackSizes() const;
+    inline const Vector<GridTrackSize>& gridTrackSizes(GridTrackSizingDirection) const;
     inline const GridTrackList& gridColumnList() const;
     inline const GridTrackList& gridRowList() const;
     inline const Vector<GridTrackSize>& gridAutoRepeatColumns() const;
