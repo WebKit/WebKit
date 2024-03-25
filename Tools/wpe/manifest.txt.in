@@ -99,6 +99,8 @@ file CMakeLists.txt
 file Tools/CMakeLists.txt
 file Tools/PlatformWPE.cmake
 
+file Tools/Scripts/rewrite-compile-commands
+
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-javascriptcore-${WPE_API_VERSION} Documentation/wpe-javascriptcore-${WPE_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-webkit-${WPE_API_VERSION} Documentation/wpe-webkit-${WPE_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/${WPE_WEB_PROCESS_EXTENSION_PC_MODULE} Documentation/wpe-web-extension-${WPE_API_VERSION}
