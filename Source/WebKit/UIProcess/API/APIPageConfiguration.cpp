@@ -100,6 +100,21 @@ BrowsingContextGroup& PageConfiguration::browsingContextGroup() const
     return m_data.browsingContextGroup.get();
 }
 
+void PageConfiguration::setBrowsingContextGroup(RefPtr<BrowsingContextGroup>&& group)
+{
+    m_data.browsingContextGroup = WTFMove(group);
+}
+
+RefPtr<WebKit::WebProcessProxy> PageConfiguration::openerProcess() const
+{
+    return m_data.openerProcess;
+}
+
+void PageConfiguration::setOpenerProcess(RefPtr<WebKit::WebProcessProxy>&& process)
+{
+    m_data.openerProcess = WTFMove(process);
+}
+
 WebProcessPool& PageConfiguration::processPool() const
 {
     return m_data.processPool.get();

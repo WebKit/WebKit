@@ -340,13 +340,14 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     [m_mainWebView->platformView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:YES];
 }
 
-UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
+UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef originalConfiguration, const TestOptions& options)
 {
     auto newConfiguration = adoptNS([globalWebViewConfiguration() copy]);
     if (parentView)
         [newConfiguration _setRelatedWebView:static_cast<WKWebView*>(parentView->platformView())];
     if ([newConfiguration _relatedWebView])
         [newConfiguration setWebsiteDataStore:[newConfiguration _relatedWebView].configuration.websiteDataStore];
+    WKPageConfigurationCopySiteIsolationState((__bridge WKPageConfigurationRef)newConfiguration.get(), originalConfiguration);
     [newConfiguration _setPortsForUpgradingInsecureSchemeForTesting:@[@(options.insecureUpgradePort()), @(options.secureUpgradePort())]];
     auto view = makeUniqueRef<PlatformWebView>(newConfiguration.get(), options);
     finishCreatingPlatformWebView(view.ptr(), options);

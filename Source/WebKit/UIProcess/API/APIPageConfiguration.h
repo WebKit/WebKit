@@ -29,10 +29,12 @@
 #include "WebPreferencesDefaultValues.h"
 #include "WebURLSchemeHandler.h"
 #include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/Markable.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -95,6 +97,10 @@ public:
     Ref<PageConfiguration> copy() const;
 
     WebKit::BrowsingContextGroup& browsingContextGroup() const;
+    void setBrowsingContextGroup(RefPtr<WebKit::BrowsingContextGroup>&&);
+
+    RefPtr<WebKit::WebProcessProxy> openerProcess() const;
+    void setOpenerProcess(RefPtr<WebKit::WebProcessProxy>&&);
 
     WebKit::WebProcessPool& processPool() const;
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
@@ -446,6 +452,7 @@ private:
 #endif
         RefPtr<WebKit::WebPageGroup> pageGroup;
         WeakPtr<WebKit::WebPageProxy> relatedPage;
+        RefPtr<WebKit::WebProcessProxy> openerProcess;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
         WeakPtr<WebKit::WebPageProxy> alternateWebViewForNavigationGestures;
 

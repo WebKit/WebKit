@@ -7447,6 +7447,10 @@ void WebPageProxy::createNewPage(WindowFeatures&& windowFeatures, NavigationActi
 
     Ref configuration = this->configuration().copy();
     configuration->setRelatedPage(*this);
+    if (m_preferences->siteIsolationEnabled()) {
+        if (RefPtr openerFrame = WebFrameProxy::webFrame(originatingFrameInfoData.frameID))
+            configuration->setOpenerProcess(&openerFrame->process());
+    }
 
     trySOAuthorization(WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = Ref { *this }, windowFeatures = WTFMove(windowFeatures), configuration = WTFMove(configuration)] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
 

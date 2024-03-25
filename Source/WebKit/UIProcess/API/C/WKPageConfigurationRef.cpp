@@ -27,6 +27,7 @@
 #include "WKPageConfigurationRef.h"
 
 #include "APIPageConfiguration.h"
+#include "BrowsingContextGroup.h"
 #include "WKAPICast.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -122,4 +123,10 @@ void WKPageConfigurationSetAllowTestOnlyIPC(WKPageConfigurationRef configuration
 void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfigurationRef configuration, uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort)
 {
     toImpl(configuration)->setPortsForUpgradingInsecureSchemeForTesting(upgradeFromInsecurePort, upgradeToSecurePort);
+}
+
+void WKPageConfigurationCopySiteIsolationState(WKPageConfigurationRef destination, WKPageConfigurationRef source)
+{
+    toImpl(destination)->setBrowsingContextGroup(&toImpl(source)->browsingContextGroup());
+    toImpl(destination)->setOpenerProcess(toImpl(source)->openerProcess());
 }
