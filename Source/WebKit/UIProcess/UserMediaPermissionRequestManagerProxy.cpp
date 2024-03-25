@@ -344,8 +344,10 @@ void UserMediaPermissionRequestManagerProxy::resetAccess(std::optional<FrameIden
     ALWAYS_LOG(LOGIDENTIFIER, frameID ? frameID->object().toUInt64() : 0);
 
     if (RefPtr currentUserMediaRequest = m_currentUserMediaRequest; currentUserMediaRequest && (!frameID || m_currentUserMediaRequest->frameID() == *frameID)) {
-        currentUserMediaRequest->invalidate();
-        m_currentUserMediaRequest = nullptr;
+        // Avoid starting pending requests after denying current request.
+        auto pendingUserMediaRequests = std::exchange(m_pendingUserMediaRequests, { });
+        currentUserMediaRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure);
+        m_pendingUserMediaRequests = std::exchange(pendingUserMediaRequests, { });
     }
 
     if (frameID) {
