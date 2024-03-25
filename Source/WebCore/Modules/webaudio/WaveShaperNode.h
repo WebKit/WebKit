@@ -41,7 +41,7 @@ public:
 
     // setCurve() is called on the main thread.
     ExceptionOr<void> setCurveForBindings(RefPtr<Float32Array>&&);
-    Float32Array* curveForBindings();
+    RefPtr<Float32Array> curveForBindings();
 
     void setOversampleForBindings(OverSampleType);
     OverSampleType oversampleForBindings() const;
