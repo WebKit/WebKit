@@ -152,88 +152,15 @@ void RenderTextLineBoxes::dirtyAll()
         box->dirtyLineBoxes();
 }
 
-bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsigned end, int lengthDelta)
+bool RenderTextLineBoxes::dirtyForTextChange(RenderText& renderer)
 {
-    LegacyRootInlineBox* firstRootBox = nullptr;
-    LegacyRootInlineBox* lastRootBox = nullptr;
+    dirtyAll();
 
-    // Verify the DOM and RenderText lengths are in sync. Certain text operations, like upper casing,
-    // may be reflected only on the Render side causing the DOM and Render lengths to differ.
-    if (!renderer.style().textTransform().isEmpty() && renderer.textNode()
-        && renderer.length() != renderer.textNode()->wholeText().length()) {
-        dirtyAll();
-        return true;
-    }
-
-    // Dirty all text boxes that include characters in between offset and offset+len.
-    bool dirtiedLines = false;
-    for (auto* current = m_first; current; current = current->nextTextBox()) {
-        // FIXME: This shouldn't rely on the end of a dirty line box. See https://bugs.webkit.org/show_bug.cgi?id=97264
-        // Text run is entirely before the affected range.
-        if (current->end() <= start)
-            continue;
-        // Text run is entirely after the affected range.
-        if (current->start() >= end) {
-            current->offsetRun(lengthDelta);
-            auto& rootBox = current->root();
-            if (!firstRootBox) {
-                firstRootBox = &rootBox;
-                if (!dirtiedLines) {
-                    // The affected area was in between two runs. Mark the root box of the run after the affected area as dirty.
-                    firstRootBox->markDirty();
-                    dirtiedLines = true;
-                }
-            }
-            lastRootBox = &rootBox;
-            continue;
-        }
-        if (current->end() > start && current->end() <= end) {
-            // Text run overlaps with the left end of the affected range.
-            current->dirtyLineBoxes();
-            dirtiedLines = true;
-            continue;
-        }
-        if (current->start() <= start && current->end() >= end) {
-            // Text run subsumes the affected range.
-            current->dirtyLineBoxes();
-            dirtiedLines = true;
-            continue;
-        }
-        if (current->start() < end && current->end() >= end) {
-            // Text run overlaps with right end of the affected range.
-            current->dirtyLineBoxes();
-            dirtiedLines = true;
-            continue;
-        }
-    }
-
-    // Now we have to walk all of the clean lines and adjust their cached line break information
-    // to reflect our updated offsets.
-    if (lastRootBox)
-        lastRootBox = lastRootBox->nextRootBox();
-    if (firstRootBox) {
-        auto previousRootBox = firstRootBox->prevRootBox();
-        if (previousRootBox)
-            firstRootBox = previousRootBox;
-    } else if (m_last) {
-        ASSERT(!lastRootBox);
-        firstRootBox = &m_last->root();
-        firstRootBox->markDirty();
-        dirtiedLines = true;
-    }
-
-    for (auto* current = firstRootBox; current && current != lastRootBox; current = current->nextRootBox()) {
-        auto lineBreakPos = current->lineBreakPos();
-        if (current->lineBreakObj() == &renderer && (lineBreakPos > end || (start != end && lineBreakPos == end)))
-            current->setLineBreakPos(current->lineBreakPos() + lengthDelta);
-    }
-
-    // If the text node is empty, dirty the line where new text will be inserted.
     if (!m_first && renderer.parent()) {
         renderer.parent()->dirtyLinesFromChangedChild(renderer);
-        dirtiedLines = true;
+        return true;
     }
-    return dirtiedLines;
+    return m_first;
 }
 
 inline void RenderTextLineBoxes::checkConsistency() const

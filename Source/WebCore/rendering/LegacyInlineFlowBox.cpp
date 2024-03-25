@@ -145,8 +145,6 @@ void LegacyInlineFlowBox::removeChild(LegacyInlineBox* child)
     if (!isDirty())
         dirtyLineBoxes();
 
-    root().childRemoved(child);
-
     if (child == m_firstChild)
         m_firstChild = child->nextOnLine();
     if (child == m_lastChild)

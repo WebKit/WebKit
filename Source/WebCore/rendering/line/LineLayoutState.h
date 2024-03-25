@@ -43,67 +43,20 @@ namespace WebCore {
 // during an entire linebox tree layout pass (aka layoutInlineChildren).
 class LineLayoutState {
 public:
-    LineLayoutState(const RenderBlockFlow& blockFlow, bool fullLayout, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
-        : m_repaintLogicalTop(repaintLogicalTop)
-        , m_repaintLogicalBottom(repaintLogicalBottom)
-        , m_marginInfo(blockFlow, blockFlow.borderAndPaddingBefore(), blockFlow.borderAndPaddingAfter() + blockFlow.scrollbarLogicalHeight())
-        , m_endLineMatched(false)
-        , m_isFullLayout(fullLayout)
-        , m_usesRepaintBounds(false)
+    LineLayoutState(const RenderBlockFlow& blockFlow)
+        : m_marginInfo(blockFlow, blockFlow.borderAndPaddingBefore(), blockFlow.borderAndPaddingAfter() + blockFlow.scrollbarLogicalHeight())
     {
     }
 
     LineInfo& lineInfo() { return m_lineInfo; }
     const LineInfo& lineInfo() const { return m_lineInfo; }
 
-    LayoutUnit endLineLogicalTop() const { return m_endLineLogicalTop; }
-    void setEndLineLogicalTop(LayoutUnit logicalTop) { m_endLineLogicalTop = logicalTop; }
-
-    LegacyRootInlineBox* endLine() const { return m_endLine.get(); }
-    void setEndLine(LegacyRootInlineBox* line) { m_endLine = line; }
-
-    LayoutUnit adjustedLogicalLineTop() const { return m_adjustedLogicalLineTop; }
-    void setAdjustedLogicalLineTop(LayoutUnit value) { m_adjustedLogicalLineTop = value; }
-
-    bool endLineMatched() const { return m_endLineMatched; }
-    void setEndLineMatched(bool endLineMatched) { m_endLineMatched = endLineMatched; }
-
-    void markForFullLayout() { m_isFullLayout = true; }
-    bool isFullLayout() const { return m_isFullLayout; }
-
-    bool usesRepaintBounds() const { return m_usesRepaintBounds; }
-
-    void setRepaintRange(LayoutUnit logicalHeight)
-    {
-        m_usesRepaintBounds = true;
-        m_repaintLogicalTop = m_repaintLogicalBottom = logicalHeight;
-    }
-
-    void updateRepaintRangeFromBox(LegacyRootInlineBox* box, LayoutUnit paginationDelta = 0_lu)
-    {
-        m_usesRepaintBounds = true;
-        m_repaintLogicalTop = std::min(m_repaintLogicalTop, box->logicalTopVisualOverflow() + std::min<LayoutUnit>(paginationDelta, 0));
-        m_repaintLogicalBottom = std::max(m_repaintLogicalBottom, box->logicalBottomVisualOverflow() + std::max<LayoutUnit>(paginationDelta, 0));
-    }
-
     RenderBlockFlow::MarginInfo& marginInfo() { return m_marginInfo; }
 
 private:
     LineInfo m_lineInfo;
-    LayoutUnit m_endLineLogicalTop;
-    WeakPtr<LegacyRootInlineBox> m_endLine;
-
-    LayoutUnit m_adjustedLogicalLineTop;
-
-    // FIXME: Should this be a range object instead of two ints?
-    LayoutUnit& m_repaintLogicalTop;
-    LayoutUnit& m_repaintLogicalBottom;
 
     RenderBlockFlow::MarginInfo m_marginInfo;
-
-    bool m_endLineMatched : 1;
-    bool m_isFullLayout : 1;
-    bool m_usesRepaintBounds : 1;
 };
 
 } // namespace WebCore

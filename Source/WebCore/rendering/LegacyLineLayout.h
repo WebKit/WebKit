@@ -62,13 +62,12 @@ public:
     LegacyRootInlineBox* firstRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.firstLineBox()); }
     LegacyRootInlineBox* lastRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.lastLineBox()); }
 
-    void layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    void layoutLineBoxes();
 
     LegacyRootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     void addOverflowFromInlineChildren();
 
     size_t lineCount() const;
-    size_t lineCountUntil(const LegacyRootInlineBox*) const;
 
     static void appendRunsForObject(BidiRunList<BidiRun>*, int start, int end, RenderObject&, InlineBidiResolver&);
     static void updateLogicalWidthForAlignment(RenderBlockFlow&, const TextAlignMode&, const LegacyRootInlineBox*, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
@@ -83,11 +82,7 @@ private:
     inline BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns, BidiContext* currentContext);
     LegacyRootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo&);
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
-    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const LegacyInlineIterator& cleanLineStart);
-    void linkToEndLineIfNeeded(LineLayoutState&);
-    LegacyRootInlineBox* determineStartPosition(LineLayoutState&, InlineBidiResolver&);
-    void determineEndPosition(LineLayoutState&, LegacyRootInlineBox* startLine, LegacyInlineIterator& cleanLineStart);
-    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const LegacyInlineIterator& endLineStart);
+    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&);
 
     const RenderStyle& style() const;
     const LocalFrameViewLayoutContext& layoutContext() const;

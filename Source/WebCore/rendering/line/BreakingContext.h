@@ -94,13 +94,11 @@ public:
         , m_autoWrapWasEverTrueOnLine(false)
         , m_floatsFitOnLine(true)
         , m_collapseWhiteSpace(false)
-        , m_startingNewParagraph(m_lineInfo.previousLineBrokeCleanly())
         , m_allowImagesToBreak(!block.document().inQuirksMode() || !block.isRenderTableCell() || !m_blockStyle.logicalWidth().isIntrinsicOrAuto())
         , m_atEnd(false)
         , m_hadUncommittedWidthBeforeCurrent(false)
         , m_lineWhitespaceCollapsingState(resolver.whitespaceCollapsingState())
     {
-        m_lineInfo.setPreviousLineBrokeCleanly(false);
     }
 
     RenderObject* currentObject() { return m_current.renderer(); }
@@ -193,7 +191,6 @@ private:
     bool m_autoWrapWasEverTrueOnLine;
     bool m_floatsFitOnLine;
     bool m_collapseWhiteSpace;
-    bool m_startingNewParagraph;
     bool m_allowImagesToBreak;
     bool m_atEnd;
     bool m_hadUncommittedWidthBeforeCurrent;
@@ -328,7 +325,7 @@ inline void BreakingContext::handleEmptyInline()
         // An empty inline that only has line-height, vertical-align or font-metrics will only get a
         // line box to affect the height of the line if the rest of the line is not empty.
         if (requiresLineBox)
-            m_lineInfo.setEmpty(false, &m_block, &m_width);
+            m_lineInfo.setEmpty(false);
         if (m_ignoringSpaces) {
             m_trailingObjects.clear();
             m_lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(*m_current.renderer());
@@ -506,7 +503,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements)
         }
 
         if (!m_collapseWhiteSpace || !m_currentCharacterIsSpace)
-            m_lineInfo.setEmpty(false, &m_block, &m_width);
+            m_lineInfo.setEmpty(false);
 
         bool applyWordSpacing = false;
 
@@ -610,7 +607,6 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements)
                         if (!stoppedIgnoringSpaces && m_current.offset() > 0)
                             ensureCharacterGetsLineBox(m_lineWhitespaceCollapsingState, m_current);
                         m_lineBreak.increment();
-                        m_lineInfo.setPreviousLineBrokeCleanly(true);
                         wordMeasurement.endOffset = m_lineBreak.offset();
                     }
                     if (m_lineBreak.offset() && m_lineBreak.offset() != (unsigned)wordMeasurement.endOffset && !wordMeasurement.width) {
@@ -635,7 +631,6 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements)
                     ensureCharacterGetsLineBox(m_lineWhitespaceCollapsingState, m_current);
                 commitLineBreakAtCurrentWidth(renderer, m_current.offset(), m_current.nextBreakablePosition());
                 m_lineBreak.increment();
-                m_lineInfo.setPreviousLineBrokeCleanly(true);
                 return true;
             }
 

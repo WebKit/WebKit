@@ -191,7 +191,6 @@ void RenderCombineText::combineTextIfNeeded()
         m_combinedTextWidth = combinedTextWidth;
         m_combinedTextAscent = glyphOverflow.top;
         m_combinedTextDescent = glyphOverflow.bottom;
-        m_lineBoxes.dirtyRange(*this, 0, originalText().length(), originalText().length());
         setNeedsLayout();
     }
 }

@@ -271,7 +271,6 @@ private:
             , m_extracted(extracted)
             , m_hasVirtualLogicalHeight(false)
             , m_isHorizontal(isHorizontal)
-            , m_endsWithBreak(false)
             , m_knownToHaveNoOverflow(true)
             , m_determinedIfNextOnLineExists(false)
             , m_nextOnLineExists(false)
