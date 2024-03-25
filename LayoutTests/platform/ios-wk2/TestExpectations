@@ -2768,3 +2768,5 @@ imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-re
 webkit.org/b/271445 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure ]
 
 webkit.org/b/271669 fast/images/async-image-intersect-different-size-for-drawing.html [ Failure ]
+
+webkit.org/b/271678 imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element.html [ ImageOnlyFailure ]
