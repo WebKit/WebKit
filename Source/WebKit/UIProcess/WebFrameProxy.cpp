@@ -430,7 +430,7 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
         // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
         RegistrableDomain mainFrameDomain(page->mainFrame()->url());
 
-        m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, group.ensureProcessForDomain(navigationDomain, process, page->preferences()));
+        m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, group.ensureProcessForDomain(navigationDomain, process, page->preferences()), navigation.currentRequestIsCrossSiteRedirect());
         page->websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process.coreProcessIdentifier(), mainFrameDomain, LoadedWebArchive::No), WTFMove(completionHandler));
     }
 

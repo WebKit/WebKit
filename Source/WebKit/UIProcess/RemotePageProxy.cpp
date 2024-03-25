@@ -34,6 +34,7 @@
 #include "NativeWebMouseEvent.h"
 #include "NavigationActionData.h"
 #include "PageLoadState.h"
+#include "ProvisionalFrameProxy.h"
 #include "RemotePageDrawingAreaProxy.h"
 #include "RemotePageVisitedLinkStoreRegistration.h"
 #include "WebFrameProxy.h"
@@ -184,6 +185,9 @@ void RemotePageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameInfo, 
 
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame)
+        return;
+
+    if (auto* provisionalFrame = frame->provisionalFrame(); provisionalFrame && provisionalFrame->isCrossSiteRedirect())
         return;
 
     m_page->didFailProvisionalLoadForFrameShared(m_process.copyRef(), *frame, WTFMove(frameInfo), WTFMove(request), navigationID, provisionalURL, error, willContinueLoading, userData, willInternallyHandleFailure);

@@ -34,6 +34,7 @@
 @property (nonatomic, copy) void (^decidePolicyForNavigationActionWithPreferences)(WKNavigationAction *, WKWebpagePreferences *, void (^)(WKNavigationActionPolicy, WKWebpagePreferences *));
 @property (nonatomic, copy) void (^decidePolicyForNavigationResponse)(WKNavigationResponse *, void (^)(WKNavigationResponsePolicy));
 @property (nonatomic, copy) void (^didFailProvisionalNavigation)(WKWebView *, WKNavigation *, NSError *);
+@property (nonatomic, copy) void (^didFailProvisionalLoadWithRequestInFrameWithError)(WKWebView *, NSURLRequest *, WKFrameInfo *, NSError *);
 @property (nonatomic, copy) void (^didStartProvisionalNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didCommitNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didCommitLoadWithRequestInFrame)(WKWebView *, NSURLRequest *, WKFrameInfo *);

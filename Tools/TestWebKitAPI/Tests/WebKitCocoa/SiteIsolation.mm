@@ -2721,6 +2721,37 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringSameSiteProvisionalNavig
     Util::run(&receivedRequestFromSubframe);
 }
 
+TEST(SiteIsolation, ProvisionalLoadFailureOnCrossSiteRedirect)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { ""_s } },
+        { "/redirect"_s, { 302, { { "Location"_s, "https://example.com/terminate"_s } }, "redirecting..."_s } },
+        { "/terminate"_s, { HTTPResponse::TerminateConnection::Yes } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKFrameInfo> childFrameInfo;
+    __block bool done = false;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrameInfo = mainFrame.childFrames.firstObject.info;
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    navigationDelegate.get().didFailProvisionalLoadWithRequestInFrameWithError = ^(WKWebView *, NSURLRequest *request, WKFrameInfo *, NSError *) {
+        EXPECT_WK_STREQ(request.URL.absoluteString, "https://example.com/terminate");
+        done = true;
+    };
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/redirect'" inFrame:childFrameInfo.get() inContentWorld:WKContentWorld.pageWorld completionHandler:nil];
+    Util::run(&done);
+}
+
 // FIXME: <rdar://121240941> Add tests covering provisional navigation failures in cases like SiteIsolation.NavigateOpener.
 
 }

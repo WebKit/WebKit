@@ -40,7 +40,7 @@ class WebProcessProxy;
 class ProvisionalFrameProxy : public CanMakeWeakPtr<ProvisionalFrameProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
+    ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&, bool isCrossSiteRedirect);
     ~ProvisionalFrameProxy();
 
     WebProcessProxy& process() const;
@@ -50,10 +50,13 @@ public:
 
     Ref<FrameProcess> takeFrameProcess();
 
+    bool isCrossSiteRedirect() const { return m_isCrossSiteRedirect; }
+
 private:
     WeakRef<WebFrameProxy> m_frame;
     Ref<FrameProcess> m_frameProcess;
     Ref<VisitedLinkStore> m_visitedLinkStore;
+    bool m_isCrossSiteRedirect;
     WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
 };
 

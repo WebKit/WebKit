@@ -193,12 +193,6 @@ workers [ Skip ]
 # Tests that crash #
 ####################
 http/tests/security/beforeload-iframe-server-redirect.html [ Skip ]
-http/tests/security/cors-post-redirect-301.html [ Skip ]
-http/tests/security/cors-post-redirect-302.html [ Skip ]
-http/tests/security/cors-post-redirect-303.html [ Skip ]
-http/tests/security/cors-post-redirect-307-pson.html [ Skip ]
-http/tests/security/cors-post-redirect-307.html [ Skip ]
-http/tests/security/cors-post-redirect-308.html [ Skip ]
 http/tests/security/cross-frame-access-call.html [ Skip ]
 http/tests/security/cross-frame-access-custom.html [ Skip ]
 http/tests/security/cross-frame-access-delete.html [ Skip ]
