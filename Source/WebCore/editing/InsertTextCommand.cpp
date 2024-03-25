@@ -175,7 +175,7 @@ void InsertTextCommand::doApply()
     // It is possible for the node that contains startPosition to contain only unrendered whitespace,
     // and so deleteInsignificantText could remove it.  Save the position before the node in case that happens.
     Position positionBeforeStartNode(positionInParentBeforeNode(startPosition.containerNode()));
-    deleteInsignificantText(startPosition.upstream(), startPosition.downstream());
+    deleteInsignificantText(startPosition, startPosition.downstream());
     if (!startPosition.anchorNode()->isConnected())
         startPosition = positionBeforeStartNode;
     if (!startPosition.isCandidate())
