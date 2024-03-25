@@ -47,6 +47,11 @@ NetworkMDNSRegister::NetworkMDNSRegister(NetworkConnectionToWebProcess& connecti
 
 NetworkMDNSRegister::~NetworkMDNSRegister() = default;
 
+bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
+{
+    return m_registeredNames.contains(name);
+}
+
 #if ENABLE_MDNS
 struct NetworkMDNSRegister::DNSServiceDeallocator {
     void operator()(DNSServiceRef service) const { DNSServiceRefDeallocate(service); }
@@ -57,11 +62,6 @@ void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIde
     m_services.remove(documentIdentifier);
     for (auto& name : m_perDocumentRegisteredNames.take(documentIdentifier))
         m_registeredNames.remove(name);
-}
-
-bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
-{
-    return m_registeredNames.contains(name);
 }
 
 struct PendingRegistrationRequest {
