@@ -2766,3 +2766,5 @@ http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy.html [ Pass Failure ]
 
 webkit.org/b/271445 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure ]
+
+webkit.org/b/271669 fast/images/async-image-intersect-different-size-for-drawing.html [ Failure ]
