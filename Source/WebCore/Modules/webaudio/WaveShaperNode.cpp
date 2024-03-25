@@ -90,10 +90,16 @@ ExceptionOr<void> WaveShaperNode::setCurveForBindings(RefPtr<Float32Array>&& cur
     return { };
 }
 
-Float32Array* WaveShaperNode::curveForBindings()
+RefPtr<Float32Array> WaveShaperNode::curveForBindings()
 {
     ASSERT(isMainThread());
-    return waveShaperProcessor()->curveForBindings();
+    RefPtr curve = waveShaperProcessor()->curveForBindings();
+    if (!curve)
+        return nullptr;
+
+    // Make a clone of our internal array so that JS cannot modify our internal array
+    // on the main thread while the audio thread is using it for rendering.
+    return Float32Array::create(curve->data(), curve->length());
 }
 
 static inline WaveShaperProcessor::OverSampleType processorType(OverSampleType type)
