@@ -49,7 +49,7 @@ bool PublicSuffixStore::platformIsPublicSuffix(StringView domain) const
     return isPublicSuffixCF(domainString);
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(const String& host) const
+String PublicSuffixStore::platformRegistrableDomain(const String& host) const
 {
     size_t separatorPosition;
     for (unsigned labelStart = 0; (separatorPosition = host.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {

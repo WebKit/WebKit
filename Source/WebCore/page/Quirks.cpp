@@ -100,8 +100,8 @@ static HashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentString
 #if PLATFORM(IOS_FAMILY)
 static inline bool isYahooMail(Document& document)
 {
-    auto host = document.topDocument().url().host();
-    return host.startsWith("mail."_s) && PublicSuffixStore::singleton().topPrivatelyControlledDomain(host.toString()).startsWith("yahoo."_s);
+    auto url = document.topDocument().url();
+    return url.host().startsWith("mail."_s) && PublicSuffixStore::singleton().registrableDomain(url).startsWith("yahoo."_s);
 }
 #endif
 
@@ -263,7 +263,7 @@ bool Quirks::shouldHideSearchFieldResultsButton() const
     if (!needsQuirks())
         return false;
 
-    if (PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host().toString()).startsWith("google."_s))
+    if (PublicSuffixStore::singleton().registrableDomain(m_document->topDocument().url()).startsWith("google."_s))
         return true;
 #endif
     return false;
@@ -454,13 +454,13 @@ bool Quirks::shouldDisableWritingSuggestionsByDefaultQuirk() const
 #if ENABLE(TOUCH_EVENTS)
 bool Quirks::isAmazon() const
 {
-    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host().toString()).startsWith("amazon."_s);
+    return PublicSuffixStore::singleton().registrableDomain(m_document->topDocument().url()).startsWith("amazon."_s);
 }
 
 bool Quirks::isGoogleMaps() const
 {
     auto& url = m_document->topDocument().url();
-    return PublicSuffixStore::singleton().topPrivatelyControlledDomain(url.host().toString()).startsWith("google."_s) && startsWithLettersIgnoringASCIICase(url.path(), "/maps/"_s);
+    return PublicSuffixStore::singleton().registrableDomain(url).startsWith("google."_s) && startsWithLettersIgnoringASCIICase(url.path(), "/maps/"_s);
 }
 
 // rdar://49124313

@@ -56,7 +56,7 @@ String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
 
 String WebsiteDataRecord::displayNameForHostName(const String& hostName)
 {
-    return WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(hostName);
+    return WebCore::PublicSuffixStore::singleton().registrableDomain(URL { hostName });
 }
 
 String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData& securityOrigin)
@@ -67,7 +67,7 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData
         return displayNameForLocalFiles();
 
     if (protocol == "http"_s || protocol == "https"_s)
-        return WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(securityOrigin.host());
+        return WebCore::PublicSuffixStore::singleton().registrableDomain(securityOrigin.toURL());
 
     return String();
 }
@@ -140,10 +140,10 @@ String WebsiteDataRecord::topPrivatelyControlledDomain()
 {
     auto& publicSuffixStore = WebCore::PublicSuffixStore::singleton();
     if (!cookieHostNames.isEmpty())
-        return publicSuffixStore.topPrivatelyControlledDomain(cookieHostNames.takeAny());
+        return publicSuffixStore.registrableDomain(URL { cookieHostNames.takeAny() });
     
     if (!origins.isEmpty())
-        return publicSuffixStore.topPrivatelyControlledDomain(origins.takeAny().securityOrigin().get().host());
+        return publicSuffixStore.registrableDomain(origins.takeAny().securityOrigin().get().toURL());
     
     return emptyString();
 }

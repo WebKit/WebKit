@@ -40,12 +40,12 @@ public:
     RegistrableDomain() = default;
 
     explicit RegistrableDomain(const URL& url)
-        : RegistrableDomain(registrableDomainFromHost(url.host().toString()))
+        : RegistrableDomain(registrableDomainFromURL(url))
     {
     }
 
     explicit RegistrableDomain(const SecurityOriginData& origin)
-        : RegistrableDomain(registrableDomainFromHost(origin.host()))
+        : RegistrableDomain(registrableDomainFromURL(origin.toURL()))
     {
     }
 
@@ -91,7 +91,7 @@ public:
     
     static RegistrableDomain uncheckedCreateFromHost(const String& host)
     {
-        auto registrableDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(host);
+        auto registrableDomain = PublicSuffixStore::singleton().registrableDomain(URL { host });
         if (registrableDomain.isEmpty())
             return uncheckedCreateFromRegistrableDomainString(host);
         return RegistrableDomain { WTFMove(registrableDomain) };
@@ -114,13 +114,15 @@ private:
         return host[host.length() - m_registrableDomain.length() - 1] == '.';
     }
 
-    static inline String registrableDomainFromHost(const String& host)
+    static inline String registrableDomainFromURL(const URL& url)
     {
-        auto domain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(host);
-        if (host.isEmpty())
-            domain = "nullOrigin"_s;
-        else if (domain.isEmpty())
-            domain = host;
+        if (url.host().isEmpty())
+            return "nullOrigin"_s;
+
+        auto domain = PublicSuffixStore::singleton().registrableDomain(url);
+        if (domain.isEmpty())
+            return url.host().toString();
+
         return domain;
     }
 

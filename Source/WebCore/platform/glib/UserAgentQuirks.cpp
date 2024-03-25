@@ -168,7 +168,7 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 
     String domain = url.host().toString();
     UserAgentQuirks quirks;
-    String baseDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain);
+    String baseDomain = PublicSuffixStore::singleton().registrableDomain(domain);
 
     if (urlRequiresChromeBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);
