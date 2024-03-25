@@ -129,6 +129,35 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         if (iosurface.height != static_cast<NSInteger>(height) || iosurface.width != static_cast<NSInteger>(width))
             return device.generateAValidationError("Invalid surface size"_s);
     }
+
+    if (!allowedFormat(descriptor.format)) {
+        device.generateAValidationError([NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)]);
+        return;
+    }
+
+    if (descriptor.width > limits.maxTextureDimension2D || descriptor.height > limits.maxTextureDimension2D) {
+        device.generateAValidationError("Requested canvas width and/or height are too large"_s);
+        return;
+    }
+
+    for (auto viewFormat : descriptor.viewFormats) {
+        if (!allowedViewFormat(viewFormat)) {
+            device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
+            return;
+        }
+    }
+
+    Vector viewFormats(std::span { wgpuTextureDescriptor.viewFormats, wgpuTextureDescriptor.viewFormatCount });
+    if (NSString *error = device.errorValidatingTextureCreation(wgpuTextureDescriptor, viewFormats)) {
+        device.generateAValidationError(error);
+        return;
+    }
+
+    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
+        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
+        return;
+    }
+
     for (IOSurface *iosurface in m_ioSurfaces) {
         RefPtr<Texture> parentLuminanceClampTexture;
         if (textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float) {
@@ -153,28 +182,6 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         m_renderBuffers.append({ parentTexture, parentLuminanceClampTexture });
     }
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
-
-    if (!allowedFormat(descriptor.format)) {
-        device.generateAValidationError([NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)]);
-        return;
-    }
-
-    if (descriptor.width > limits.maxTextureDimension2D || descriptor.height > limits.maxTextureDimension2D) {
-        device.generateAValidationError("Requested canvas width and/or height are too large"_s);
-        return;
-    }
-
-    for (auto viewFormat : descriptor.viewFormats) {
-        if (!allowedViewFormat(viewFormat)) {
-            device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
-            return;
-        }
-    }
-
-    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
-        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
-        return;
-    }
 
     if (needsLuminanceClampFunction) {
         NSError *error = nil;
