@@ -5,7 +5,7 @@
   "indentation" : {
     "spaces" : 4
   },
-  "indentConditionalCompilationBlocks" : false,
+  "indentConditionalCompilationBlocks" : true,
   "indentSwitchCaseLabels" : false,
   "lineBreakAroundMultilineExpressionChainComponents" : false,
   "lineBreakBeforeControlFlowKeywords" : false,

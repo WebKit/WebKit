@@ -1,4 +1,0 @@
-module PALSwift {
-    header "PALSwift.h"
-    export *
-}

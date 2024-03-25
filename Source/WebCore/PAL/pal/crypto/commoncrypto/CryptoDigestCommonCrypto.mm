@@ -26,11 +26,8 @@
 #include "config.h"
 #include "CryptoDigest.h"
 
-#if HAVE(SWIFT_CPP_INTEROP)
 #include "PALSwift.h"
-#endif
 #include <CommonCrypto/CommonCrypto.h>
-#include <optional>
 
 namespace PAL {
 
@@ -192,27 +189,35 @@ String CryptoDigest::toHexString()
 
 std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm algo, const Vector<uint8_t>& data, bool useCryptoKit)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     if (useCryptoKit) {
+        Vector<uint8_t> digest;
         switch (algo) {
         case CryptoDigest::Algorithm::SHA_1:
-            return PAL::Digest::sha1(data.span());
+            digest.grow(WebCryptoDigestSizeSha1);
+            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha1:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+                return std::nullopt;
+            break;
         case CryptoDigest::Algorithm::SHA_256:
-            return PAL::Digest::sha256(data.span());
+            digest.grow(WebCryptoDigestSizeSha256);
+            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha256:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+                return std::nullopt;
+            break;
         case CryptoDigest::Algorithm::SHA_384:
-            return PAL::Digest::sha384(data.span());
+            digest.grow(WebCryptoDigestSizeSha384);
+            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha384:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+                return std::nullopt;
+            break;
         case CryptoDigest::Algorithm::SHA_512:
-            return PAL::Digest::sha512(data.span());
+            digest.grow(WebCryptoDigestSizeSha512);
+            if (WebCryptoErrorCodesSuccess != [WebCryptoDigest sha512:data.data() dataSize:data.size() digest:digest.data() digestSize:digest.size()])
+                return std::nullopt;
+            break;
         case CryptoDigest::Algorithm::SHA_224:
             RELEASE_ASSERT_NOT_REACHED();
             return std::nullopt;
         }
-        return std::nullopt;
+        return digest;
     }
-#else
-    UNUSED_PARAM(useCryptoKit);
-#endif
-
     std::unique_ptr<CryptoDigest> digest = WTF::makeUnique<CryptoDigest>();
     ASSERT(digest->m_context);
     digest->m_context->algorithm = algo;

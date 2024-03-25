@@ -23,13 +23,10 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#if swift(>=5.9)
-
 import CryptoKit
 import Foundation
 
-import PALSwift
-
+@objc(WebCryptoErrorCodes)
 public enum ErrorCodes: Int {
     case success = 0
     case wrongTagSize = 1
@@ -41,12 +38,13 @@ public enum ErrorCodes: Int {
     case hashingFailed = 7
 }
 
-private class Utils {
+private final class Utils {
     static let zeroArray = [UInt8](repeating: 0, count: 0)
 }
+@objc(WebCryptoAesGcm)
+public final class AesGcm: NSObject {
 
-public class AesGcm {
-    public static func encrypt(
+    @objc public static func encrypt(
         _ key: UnsafePointer<UInt8>,
         keySize: UInt,
         iv: UnsafePointer<UInt8>,
@@ -68,8 +66,7 @@ public class AesGcm {
             if ivSize == 0 {
                 return .invalidArgument
             }
-            let nonce = try AES.GCM.Nonce(
-                data: UnsafeBufferPointer(start: iv, count: Int(ivSize)))
+            let nonce = try AES.GCM.Nonce(data: UnsafeBufferPointer(start: iv, count: Int(ivSize)))
             var message = UnsafeBufferPointer(start: plainText, count: Int(plainTextSize))
             if plainTextSize == 0 {
                 Utils.zeroArray.withUnsafeBufferPointer { ptr in
@@ -95,8 +92,7 @@ public class AesGcm {
                 )
             }
             sealedBox.ciphertext.copyBytes(to: cipherText, count: Int(plainTextSize))
-            sealedBox.tag.copyBytes(
-                to: cipherText + Int(plainTextSize), count: sealedBox.tag.count)
+            sealedBox.tag.copyBytes(to: cipherText + Int(plainTextSize), count: sealedBox.tag.count)
         } catch {
             return .encryptionFailed
         }
@@ -104,21 +100,23 @@ public class AesGcm {
     }
 }
 
-public struct AesKwRV {
-    public var errCode: ErrorCodes = ErrorCodes.success
-    public var outputSize: UInt64 = 0
+@objc(WebCryptoAesKwReturnValue)
+public final class AesKwReturnValue: NSObject {
+    @objc public var errCode: ErrorCodes = ErrorCodes.success
+    @objc public var outputSize: UInt64 = 0
 }
 
-public class AesKw {
-    public static func wrap(
+@objc(WebCryptoAesKw)
+public final class AesKw: NSObject {
+    @objc public static func wrap(
         _ key: UnsafePointer<UInt8>,
         keySize: UInt,
         data: UnsafePointer<UInt8>,
         dataSize: UInt,
         cipherText: UnsafeMutablePointer<UInt8>,
         cipherTextSize: UInt64
-    ) -> AesKwRV {
-        var rv = AesKwRV()
+    ) -> AesKwReturnValue {
+        let rv = AesKwReturnValue()
         rv.errCode = .success
         if keySize > Int.max
             || dataSize > Int.max
@@ -133,8 +131,7 @@ public class AesKw {
         do {
             let cipher = try AES.KeyWrap.wrap(
                 SymmetricKey(data: UnsafeBufferPointer(start: data, count: Int(dataSize))),
-                using: SymmetricKey(
-                    data: UnsafeBufferPointer(start: key, count: Int(keySize))))
+                using: SymmetricKey(data: UnsafeBufferPointer(start: key, count: Int(keySize))))
             if cipher.count > Int(cipherTextSize) {
                 rv.errCode = .encryptionFailed
                 return rv
@@ -149,15 +146,15 @@ public class AesKw {
         return rv
     }
 
-    public static func unwrap(
+    @objc public static func unwrap(
         _ key: UnsafePointer<UInt8>,
         keySize: UInt,
         cipherText: UnsafePointer<UInt8>,
         cipherTextSize: UInt,
         data: UnsafeMutablePointer<UInt8>,
         dataSize: UInt64
-    ) -> AesKwRV {
-        var rv = AesKwRV()
+    ) -> AesKwReturnValue {
+        let rv = AesKwReturnValue()
         rv.errCode = ErrorCodes.success
         if keySize > Int.max
             || dataSize > Int.max
@@ -172,15 +169,13 @@ public class AesKw {
         do {
             let unwrappedKey = try AES.KeyWrap.unwrap(
                 UnsafeBufferPointer(start: cipherText, count: Int(cipherTextSize)),
-                using: SymmetricKey(
-                    data: UnsafeBufferPointer(start: key, count: Int(keySize))))
+                using: SymmetricKey(data: UnsafeBufferPointer(start: key, count: Int(keySize))))
             if (unwrappedKey.bitCount / 8) > Int(dataSize) {
                 rv.errCode = .encryptionFailed
                 return rv
             }
             unwrappedKey.withUnsafeBytes { buf in
-                let mutable = UnsafeMutableRawBufferPointer(
-                    start: data, count: Int(dataSize))
+                let mutable = UnsafeMutableRawBufferPointer(start: data, count: Int(dataSize))
                 mutable.copyBytes(from: buf)
             }
             rv.errCode = .success
@@ -193,34 +188,108 @@ public class AesKw {
     }
 }  // AesKw
 
-public class Digest {
-    public static func sha1(_ data: SpanConstUInt8) -> VectorUInt8 {
-        return digest(data, Insecure.SHA1.self)
-    }
-    public static func sha256(_ data: SpanConstUInt8) -> VectorUInt8 {
-        return digest(data, SHA256.self)
-    }
-    public static func sha384(_ data: SpanConstUInt8) -> VectorUInt8 {
-        return digest(data, SHA384.self)
-    }
-    public static func sha512(_ data: SpanConstUInt8) -> VectorUInt8 {
-        return digest(data, SHA512.self)
-    }
-    private static func digest<T: HashFunction>(_ data: SpanConstUInt8, _: T.Type)
-        -> VectorUInt8
-    {
-        let forceDestructorLink = VectorUInt8()
-        var hasher = T()
-        hasher.update(data: data)
-        let digest = hasher.finalize()
-        var returnValue = VectorUInt8(T.Digest.byteCount)
-        var index = 0
-        digest.forEach { val in
-            returnValue[index] = val
-            index += 1
-        }
-        return returnValue
-    }
+@objc(WebCryptoDigestSize)
+public enum DigestSize: Int {
+    case sha1 = 20
+    case sha256 = 32
+    case sha384 = 48
+    case sha512 = 64
 }
 
-#endif
+@objc(WebCryptoDigest)
+public final class Digest: NSObject {
+    @objc public static func sha1(
+        _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
+        digestSize: UInt
+    ) -> ErrorCodes {
+        guard
+            checkInputs(dataSize: dataSize, digestSize: digestSize, Insecure.SHA1.self) == .success
+                && digestSize == Insecure.SHA1.byteCount
+        else {
+            return .invalidArgument
+        }
+        var d = UnsafeMutableRawBufferPointer(start: digest, count: Int(digestSize))
+        return Self.digest(
+            data: UnsafeBufferPointer(start: data, count: Int(dataSize)),
+            out: &d,
+            Insecure.SHA1.self
+        )
+    }
+    @objc public static func sha256(
+        _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
+        digestSize: UInt
+    ) -> ErrorCodes {
+        guard
+            checkInputs(dataSize: dataSize, digestSize: digestSize, SHA256.self) == .success
+                && digestSize == SHA256.byteCount
+        else {
+            return .invalidArgument
+        }
+        var d = UnsafeMutableRawBufferPointer(start: digest, count: Int(digestSize))
+        return Self.digest(
+            data: UnsafeBufferPointer(start: data, count: Int(dataSize)), out: &d, SHA256.self)
+    }
+    @objc public static func sha384(
+        _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
+        digestSize: UInt
+    ) -> ErrorCodes {
+        guard
+            checkInputs(dataSize: dataSize, digestSize: digestSize, SHA384.self) == .success
+                && digestSize == SHA384.byteCount
+        else {
+            return .invalidArgument
+        }
+
+        var d = UnsafeMutableRawBufferPointer(start: digest, count: Int(digestSize))
+        return Self.digest(
+            data: UnsafeBufferPointer(start: data, count: Int(dataSize)), out: &d, SHA384.self)
+    }
+    @objc public static func sha512(
+        _ data: UnsafePointer<UInt8>, dataSize: UInt, digest: UnsafeMutablePointer<UInt8>,
+        digestSize: UInt
+    ) -> ErrorCodes {
+        guard
+            checkInputs(dataSize: dataSize, digestSize: digestSize, SHA512.self) == .success
+                && digestSize == SHA512.byteCount
+        else {
+            return .invalidArgument
+        }
+
+        var d = UnsafeMutableRawBufferPointer(start: digest, count: Int(digestSize))
+        return Self.digest(
+            data: UnsafeBufferPointer(start: data, count: Int(dataSize)), out: &d, SHA512.self)
+    }
+    private static func digest<T: HashFunction>(
+        data: UnsafeBufferPointer<UInt8>, out: inout UnsafeMutableRawBufferPointer, _: T.Type
+    ) -> ErrorCodes {
+        var hasher = T()
+        var inputData = data
+        if data.count == 0 {
+            Utils.zeroArray.withUnsafeBufferPointer { buf in
+                inputData = buf
+            }
+        }
+        hasher.update(
+            bufferPointer: UnsafeRawBufferPointer(
+                start: inputData.baseAddress, count: inputData.count))
+        let result = hasher.finalize()
+        return result.withUnsafeBytes { buf in
+            if buf.count != out.count {
+                return ErrorCodes.hashingFailed
+            }
+            out.copyBytes(from: buf)
+            return .success
+        }
+    }
+    private static func checkInputs<T: HashFunction>(dataSize: UInt, digestSize: UInt, _: T.Type)
+        -> ErrorCodes
+    {
+        if dataSize > Int.max
+            || digestSize == 0
+            || digestSize > Int.max
+        {
+            return .invalidArgument
+        }
+        return .success
+    }
+}

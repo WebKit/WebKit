@@ -27,10 +27,8 @@
 #include "CryptoAlgorithmAESKW.h"
 
 #include "CryptoKeyAES.h"
+#include "PALSwift.h"
 #include <CommonCrypto/CommonCrypto.h>
-#if HAVE(SWIFT_CPP_INTEROP)
-#include <pal/PALSwift.h>
-#endif
 
 namespace WebCore {
 
@@ -42,6 +40,17 @@ static ExceptionOr<Vector<uint8_t>> wrapKeyAESKW(const Vector<uint8_t>& key, con
         return Exception { ExceptionCode::OperationError };
 
     result.shrink(resultSize);
+    return WTFMove(result);
+}
+
+static ExceptionOr<Vector<uint8_t>> wrapKeyAESKWCryptoKit(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
+{
+    Vector<uint8_t> result(data.size() + CryptoAlgorithmAESKW::s_extraSize);
+    uint64_t resultSize = result.size();
+    const WebCryptoAesKwReturnValue* rv = [WebCryptoAesKw wrap:key.data() keySize:key.size() data:data.data() dataSize:data.size() cipherText:result.data() cipherTextSize:resultSize];
+    if (WebCryptoErrorCodesSuccess != rv.errCode)
+        return Exception { ExceptionCode::OperationError };
+    result.shrink(rv.outputSize);
     return WTFMove(result);
 }
 
@@ -60,51 +69,30 @@ static ExceptionOr<Vector<uint8_t>> unwrapKeyAESKW(const Vector<uint8_t>& key, c
     return WTFMove(result);
 }
 
-#if HAVE(SWIFT_CPP_INTEROP)
-static ExceptionOr<Vector<uint8_t>> wrapKeyAESKWCryptoKit(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
-{
-    Vector<uint8_t> result(data.size() + CryptoAlgorithmAESKW::s_extraSize);
-    uint64_t resultSize = result.size();
-    const PAL::AesKwRV rv = PAL::AesKw::wrap(key.data(), key.size(), data.data(), data.size(), result.data(), resultSize);
-    if (!rv.getErrCode().isSuccess())
-        return Exception { ExceptionCode::OperationError };
-    result.shrink(rv.getOutputSize());
-    return WTFMove(result);
-}
-
 static ExceptionOr<Vector<uint8_t>> unwrapKeyAESKWCryptoKit(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     Vector<uint8_t> dataOut(data.size());
     uint64_t dataOutSize = dataOut.size();
-    const PAL::AesKwRV rv = PAL::AesKw::unwrap(key.data(), key.size(), data.data(), data.size(), dataOut.data(), dataOutSize);
-    if (!rv.getErrCode().isSuccess())
+    const WebCryptoAesKwReturnValue* rv = [WebCryptoAesKw unwrap:key.data() keySize:key.size() cipherText:data.data() cipherTextSize:data.size() data:dataOut.data() dataSize:dataOutSize];
+    if (WebCryptoErrorCodesSuccess != rv.errCode)
         return Exception { ExceptionCode::OperationError };
-    if (rv.getOutputSize() % 8)
+    if (rv.outputSize % 8)
         return Exception { ExceptionCode::OperationError };
-    dataOut.shrink(rv.getOutputSize());
+    dataOut.shrink(rv.outputSize);
     return WTFMove(dataOut);
 }
-#endif
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESKW::platformWrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data, bool useCryptoKit)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     if (useCryptoKit)
         return wrapKeyAESKWCryptoKit(key.key(), data);
-#else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     return wrapKeyAESKW(key.key(), data);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESKW::platformUnwrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data, bool useCryptoKit)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     if (useCryptoKit)
         return unwrapKeyAESKWCryptoKit(key.key(), data);
-#else
-    UNUSED_PARAM(useCryptoKit);
-#endif
     return unwrapKeyAESKW(key.key(), data);
 }
 
