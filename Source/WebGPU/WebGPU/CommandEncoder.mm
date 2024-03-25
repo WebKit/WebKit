@@ -923,10 +923,8 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         sourceBytesPerRow = std::min<uint32_t>(sourceBytesPerRow, blockSize * m_device->limits().maxTextureDimension1D);
         break;
     case WGPUTextureDimension_2D:
-        sourceBytesPerRow = std::min<uint32_t>(sourceBytesPerRow, blockSize * m_device->limits().maxTextureDimension2D);
-        break;
     case WGPUTextureDimension_3D:
-        sourceBytesPerRow = std::min<uint32_t>(sourceBytesPerRow, blockSize * m_device->limits().maxTextureDimension3D);
+        sourceBytesPerRow = std::min<uint32_t>(sourceBytesPerRow, blockSize * m_device->limits().maxTextureDimension2D);
         break;
     case WGPUTextureDimension_Force32:
         break;
@@ -1262,10 +1260,8 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         destinationBytesPerRow = std::min<uint32_t>(destinationBytesPerRow, blockSize * m_device->limits().maxTextureDimension1D);
         break;
     case WGPUTextureDimension_2D:
-        destinationBytesPerRow = std::min<uint32_t>(destinationBytesPerRow, blockSize * m_device->limits().maxTextureDimension2D);
-        break;
     case WGPUTextureDimension_3D:
-        destinationBytesPerRow = std::min<uint32_t>(destinationBytesPerRow, blockSize * m_device->limits().maxTextureDimension3D);
+        destinationBytesPerRow = std::min<uint32_t>(destinationBytesPerRow, blockSize * m_device->limits().maxTextureDimension2D);
         break;
     case WGPUTextureDimension_Force32:
         break;

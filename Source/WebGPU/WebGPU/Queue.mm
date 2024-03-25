@@ -477,10 +477,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         bytesPerRow = std::min<uint32_t>(bytesPerRow, blockSize * device->limits().maxTextureDimension1D);
         break;
     case WGPUTextureDimension_2D:
-        bytesPerRow = std::min<uint32_t>(bytesPerRow, blockSize * device->limits().maxTextureDimension2D);
-        break;
     case WGPUTextureDimension_3D:
-        bytesPerRow = std::min<uint32_t>(bytesPerRow, blockSize * device->limits().maxTextureDimension3D);
+        bytesPerRow = std::min<uint32_t>(bytesPerRow, blockSize * device->limits().maxTextureDimension2D);
         break;
     case WGPUTextureDimension_Force32:
         break;
