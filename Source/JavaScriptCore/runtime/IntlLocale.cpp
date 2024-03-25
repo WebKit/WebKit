@@ -643,7 +643,7 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
         return nullptr;
     }
 
-    dataLogLnIf(IntlLocaleInternal::verbose, "pattern:(", StringView(pattern.data(), pattern.size()), ")");
+    dataLogLnIf(IntlLocaleInternal::verbose, "pattern:(", StringView { pattern.span() }, ")");
 
     switch (IntlDateTimeFormat::hourCycleFromPattern(pattern)) {
     case IntlDateTimeFormat::HourCycle::None:

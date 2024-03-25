@@ -1143,8 +1143,19 @@ inline void copyElements(LChar* __restrict destination, const UChar* __restrict 
     copyElements(bitwise_cast<uint8_t*>(destination), bitwise_cast<const uint16_t*>(source), length);
 }
 
+inline std::span<const LChar> span(const LChar& character)
+{
+    return { &character, 1 };
+}
+
+inline std::span<const UChar> span(const UChar& character)
+{
+    return { &character, 1 };
+}
+
 }
 
 using WTF::equalIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICase;
 using WTF::isLatin1;
+using WTF::span;

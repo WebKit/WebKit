@@ -134,7 +134,7 @@ static std::optional<uint64_t> readSizeFile(const String& sizeDirectoryPath)
     if (!buffer)
         return std::nullopt;
 
-    return parseInteger<uint64_t>({ buffer->data(), static_cast<unsigned>(buffer->size()) });
+    return parseInteger<uint64_t>(buffer->span());
 }
 
 static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)

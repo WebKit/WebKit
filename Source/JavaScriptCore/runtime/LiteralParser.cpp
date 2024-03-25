@@ -769,7 +769,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lex(LiteralParserToken<C
             return tokenType;
         }
     }
-    m_lexErrorMessage = makeString("Unrecognized token '"_s, StringView { m_ptr, 1 }, '\'');
+    m_lexErrorMessage = makeString("Unrecognized token '"_s, span(*m_ptr), '\'');
     return TokError;
 }
 
@@ -952,7 +952,7 @@ slowPathBegin:
                     } // uNNNN == 5 characters
                     for (int i = 1; i < 5; i++) {
                         if (!isASCIIHexDigit(m_ptr[i])) {
-                            m_lexErrorMessage = makeString("\"\\"_s, StringView { m_ptr, 5 }, "\" is not a valid unicode escape"_s);
+                            m_lexErrorMessage = makeString("\"\\"_s, std::span { m_ptr, 5 }, "\" is not a valid unicode escape"_s);
                             return TokError;
                         }
                     }
@@ -966,7 +966,7 @@ slowPathBegin:
                         m_ptr++;
                         break;
                     }
-                    m_lexErrorMessage = makeString("Invalid escape character "_s, StringView { m_ptr, 1 });
+                    m_lexErrorMessage = makeString("Invalid escape character "_s, span(*m_ptr));
                     return TokError;
             }
         }
@@ -1144,7 +1144,7 @@ ALWAYS_INLINE JSValue LiteralParser<CharType>::parsePrimitiveValue(VM& vm)
 
         auto tryMakeErrorString = [&] (unsigned length) -> String {
             bool addEllipsis = length != token->stringOrIdentifierLength;
-            return tryMakeString("Unexpected identifier \""_s, StringView { token->identifierStart, length }, addEllipsis ? "..."_s : ""_s, '"');
+            return tryMakeString("Unexpected identifier \""_s, std::span { token->identifierStart, length }, addEllipsis ? "..."_s : ""_s, '"');
         };
 
         constexpr unsigned maxLength = 200;

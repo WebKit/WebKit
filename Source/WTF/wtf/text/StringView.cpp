@@ -209,9 +209,7 @@ public:
 
     StringView operator*() const
     {
-        if (m_stringView.is8Bit())
-            return StringView(m_stringView.characters8() + m_index, m_indexEnd - m_index);
-        return StringView(m_stringView.characters16() + m_index, m_indexEnd - m_index);
+        return m_stringView.substring(m_index, m_indexEnd - m_index);
     }
 
     bool operator==(const Impl& other) const
@@ -301,7 +299,7 @@ static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned
 {
     for (unsigned i = 0; i < length; ++i) {
         if (UNLIKELY(isASCIIUpper(input[i])))
-            return makeAtomString(asASCIILowercase(StringView { input, length }));
+            return makeAtomString(asASCIILowercase(std::span { input, length }));
     }
     // Fast path when the StringView is already all lowercase.
     return AtomString(input, length);

@@ -123,7 +123,7 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
         if (!ianaTimeZone)
             break;
 
-        StringView ianaTimeZoneView(ianaTimeZone, ianaTimeZoneLength);
+        StringView ianaTimeZoneView(std::span(ianaTimeZone, ianaTimeZoneLength));
         if (!equalIgnoringASCIICase(timeZoneName, ianaTimeZoneView))
             continue;
 
@@ -888,7 +888,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
                     return;
                 }
                 replaceHourCycleInSkeleton(skeleton, specifiedHour12);
-                dataLogLnIf(IntlDateTimeFormatInternal::verbose, "replaced:(", StringView(skeleton.data(), skeleton.size()), ")");
+                dataLogLnIf(IntlDateTimeFormatInternal::verbose, "replaced:(", StringView { skeleton.span() }, ")");
 
                 patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, skeleton.data(), skeleton.size(), status);
                 if (U_FAILURE(status)) {
@@ -940,7 +940,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     if (hourCycle != HourCycle::None)
         replaceHourCycleInPattern(patternBuffer, hourCycle);
 
-    StringView pattern(patternBuffer.data(), patternBuffer.size());
+    StringView pattern(patternBuffer.span());
     setFormatsFromPattern(pattern);
 
     dataLogLnIf(IntlDateTimeFormatInternal::verbose, "locale:(", m_locale, "),dataLocale:(", dataLocaleWithExtensions, "),pattern:(", pattern, ")");
@@ -1356,7 +1356,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
     if (!parts)
         return throwOutOfMemoryError(globalObject, scope);
 
-    StringView resultStringView(result.data(), result.size());
+    StringView resultStringView(result.span());
     auto literalString = jsNontrivialString(vm, "literal"_s);
 
     int32_t resultLength = result.size();
@@ -1697,7 +1697,7 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
     Vector<UChar, 32> buffer(std::span<const UChar> { formattedStringPointer, static_cast<size_t>(formattedStringLength) });
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
-    StringView resultStringView(buffer.data(), buffer.size());
+    StringView resultStringView(buffer.span());
 
     // We care multiple categories (UFIELD_CATEGORY_DATE and UFIELD_CATEGORY_DATE_INTERVAL_SPAN).
     // So we do not constraint iterator.

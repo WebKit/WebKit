@@ -179,7 +179,7 @@ template<typename CharacterType> static std::optional<LinkHeader::LinkParameterN
     skipWhile<isTabOrSpace>(buffer);
     bool hasEqual = skipExactly(buffer, '=');
     skipWhile<isTabOrSpace>(buffer);
-    auto name = parameterNameFromString(StringView { nameStart, static_cast<unsigned>(nameEnd - nameStart) });
+    auto name = parameterNameFromString(std::span { nameStart, static_cast<size_t>(nameEnd - nameStart) });
     if (hasEqual)
         return name;
     bool validParameterValueEnd = buffer.atEnd() || isParameterValueEnd(*buffer);

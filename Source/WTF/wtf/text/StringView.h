@@ -68,13 +68,12 @@ public:
     StringView(const String&);
     StringView(const StringImpl&);
     StringView(const StringImpl*);
-    StringView(const LChar*, unsigned length);
-    StringView(const UChar*, unsigned length);
-    StringView(const char*, unsigned length);
+    StringView(std::span<const LChar>);
+    StringView(std::span<const UChar>);
+    StringView(std::span<const char>); // FIXME: Consider dropping this overload. Callers should pass LChars/UChars instead.
+    StringView(const char*, unsigned length); // FIXME: Drop once all call sites pass a span.
     StringView(const void*, unsigned length, bool is8bit);
     StringView(ASCIILiteral);
-    ALWAYS_INLINE StringView(std::span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
-    ALWAYS_INLINE StringView(std::span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
 
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
@@ -216,8 +215,8 @@ private:
     friend WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
     friend size_t findCommon(StringView haystack, StringView needle, unsigned start);
 
-    void initialize(const LChar*, unsigned length);
-    void initialize(const UChar*, unsigned length);
+    void initialize(std::span<const LChar>);
+    void initialize(std::span<const UChar>);
 
     WTF_EXPORT_PRIVATE size_t find(const LChar* match, unsigned matchLength, unsigned start) const;
     WTF_EXPORT_PRIVATE size_t reverseFind(const LChar* match, unsigned matchLength, unsigned start) const;
@@ -384,38 +383,43 @@ inline StringView& StringView::operator=(const StringView& other)
 
 #endif // CHECK_STRINGVIEW_LIFETIME
 
-inline void StringView::initialize(const LChar* characters, unsigned length)
+inline void StringView::initialize(std::span<const LChar> characters)
 {
-    m_characters = characters;
-    m_length = length;
+    m_characters = characters.data();
+    m_length = characters.size();
     m_is8Bit = true;
 }
 
-inline void StringView::initialize(const UChar* characters, unsigned length)
+inline void StringView::initialize(std::span<const UChar> characters)
 {
-    m_characters = characters;
-    m_length = length;
+    m_characters = characters.data();
+    m_length = characters.size();
     m_is8Bit = false;
 }
 
-inline StringView::StringView(const LChar* characters, unsigned length)
+inline StringView::StringView(std::span<const LChar> characters)
 {
-    initialize(characters, length);
+    initialize(characters);
 }
 
-inline StringView::StringView(const UChar* characters, unsigned length)
+inline StringView::StringView(std::span<const UChar> characters)
 {
-    initialize(characters, length);
+    initialize(characters);
 }
 
 inline StringView::StringView(const char* characters)
 {
-    initialize(reinterpret_cast<const LChar*>(characters), characters ? strlen(characters) : 0);
+    initialize(std::span { reinterpret_cast<const LChar*>(characters), characters ? strlen(characters) : 0 });
+}
+
+inline StringView::StringView(std::span<const char> characters)
+{
+    initialize(std::span { reinterpret_cast<const LChar*>(characters.data()), characters.size() });
 }
 
 inline StringView::StringView(const char* characters, unsigned length)
 {
-    initialize(reinterpret_cast<const LChar*>(characters), length);
+    initialize(std::span { reinterpret_cast<const LChar*>(characters), length });
 }
 
 inline StringView::StringView(const void* characters, unsigned length, bool is8bit)
@@ -427,16 +431,16 @@ inline StringView::StringView(const void* characters, unsigned length, bool is8b
 
 inline StringView::StringView(ASCIILiteral string)
 {
-    initialize(string.characters8(), string.length());
+    initialize(string.span8());
 }
 
 inline StringView::StringView(const StringImpl& string)
 {
     setUnderlyingString(&string);
     if (string.is8Bit())
-        initialize(string.characters8(), string.length());
+        initialize(string.span8());
     else
-        initialize(string.characters16(), string.length());
+        initialize(string.span16());
 }
 
 inline StringView::StringView(const StringImpl* string)
@@ -446,9 +450,9 @@ inline StringView::StringView(const StringImpl* string)
 
     setUnderlyingString(string);
     if (string->is8Bit())
-        initialize(string->characters8(), string->length());
+        initialize(string->span8());
     else
-        initialize(string->characters16(), string->length());
+        initialize(string->span16());
 }
 
 inline StringView::StringView(const String& string)
@@ -459,10 +463,10 @@ inline StringView::StringView(const String& string)
         return;
     }
     if (string.is8Bit()) {
-        initialize(string.characters8(), string.length());
+        initialize(string.span8());
         return;
     }
-    initialize(string.characters16(), string.length());
+    initialize(string.span16());
 }
 
 inline StringView::StringView(const AtomString& atomString)
@@ -571,11 +575,11 @@ inline StringView StringView::substring(unsigned start, unsigned length) const
     }
 
     if (is8Bit()) {
-        StringView result(characters8() + start, length);
+        StringView result(span8().subspan(start, length));
         result.setUnderlyingString(*this);
         return result;
     }
-    StringView result(characters16() + start, length);
+    StringView result(span16().subspan(start, length));
     result.setUnderlyingString(*this);
     return result;
 }
@@ -1161,7 +1165,7 @@ inline StringView StringView::trim(const CharacterType* characters, const Matche
     if (!start && end == m_length - 1)
         return *this;
 
-    StringView result(characters + start, end + 1 - start);
+    StringView result(std::span<const CharacterType> { characters + start, end + 1 - start });
     result.setUnderlyingString(*this);
     return result;
 }

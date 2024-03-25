@@ -59,7 +59,7 @@ String makeString(const IndexOrName& ion)
     const String moduleName = ion.nameSection()->moduleName.size() ? String(ion.nameSection()->moduleName.data(), ion.nameSection()->moduleName.size()) : String(ion.nameSection()->moduleHash.data(), ion.nameSection()->moduleHash.size());
     if (ion.isIndex())
         return makeString(moduleName, ".wasm-function["_s, ion.index(), ']');
-    return makeString(moduleName, ".wasm-function["_s, StringView(ion.name()->data(), ion.name()->size()), ']');
+    return makeString(moduleName, ".wasm-function["_s, ion.name()->span(), ']');
 }
 
 } } // namespace JSC::Wasm

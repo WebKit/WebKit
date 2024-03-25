@@ -71,7 +71,7 @@ static Length parseLength(const UChar* data, unsigned length)
             return Length(r, LengthType::Percent);
         return Length(1, LengthType::Relative);
     }
-    auto r = parseInteger<int>({ data, intLength });
+    auto r = parseInteger<int>(std::span { data, intLength });
     if (next == '*')
         return Length(r.value_or(1), LengthType::Relative);
     if (r)

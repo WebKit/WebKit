@@ -141,7 +141,7 @@ static std::optional<Duration> parseDuration(StringParsingBuffer<CharacterType>&
         while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
             digits++;
 
-        double integer = factor * parseInt({ buffer.position(), digits }, 10);
+        double integer = factor * parseInt(buffer.span().first(digits), 10);
         buffer.advanceBy(digits);
         if (buffer.atEnd())
             return std::nullopt;
@@ -186,7 +186,7 @@ static std::optional<Duration> parseDuration(StringParsingBuffer<CharacterType>&
         while (digits < buffer.lengthRemaining() && isASCIIDigit(buffer[digits]))
             digits++;
 
-        double integer = factor * parseInt({ buffer.position(), digits }, 10);
+        double integer = factor * parseInt(buffer.span().first(digits), 10);
         buffer.advanceBy(digits);
         if (buffer.atEnd())
             return std::nullopt;
@@ -200,7 +200,7 @@ static std::optional<Duration> parseDuration(StringParsingBuffer<CharacterType>&
             if (!digits || digits > 9)
                 return std::nullopt;
 
-            fractionalPart = { buffer.position(), digits };
+            fractionalPart = buffer.span().first(digits);
             buffer.advanceBy(digits);
             if (buffer.atEnd())
                 return std::nullopt;

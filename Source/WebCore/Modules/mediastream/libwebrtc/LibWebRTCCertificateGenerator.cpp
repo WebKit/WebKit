@@ -65,7 +65,7 @@ public:
             auto stats = certificate->GetSSLCertificate().GetStats();
             auto* info = stats.get();
             while (info) {
-                StringView fingerprint { reinterpret_cast<const unsigned char*>(info->fingerprint.data()), static_cast<unsigned>(info->fingerprint.length()) };
+                StringView fingerprint { std::span { info->fingerprint } };
                 fingerprints.append({ fromStdString(info->fingerprint_algorithm), fingerprint.convertToASCIILowercase() });
                 info = info->issuer.get();
             };

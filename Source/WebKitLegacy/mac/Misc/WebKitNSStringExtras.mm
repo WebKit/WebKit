@@ -69,7 +69,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
 
     if (canUseFastRenderer(buffer.data(), length)) {
         FontCascade webCoreFont(FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-        TextRun run(StringView(reinterpret_cast<const UChar*>(buffer.data()), length));
+        TextRun run(StringView(std::span { reinterpret_cast<const UChar*>(buffer.data()), length }));
 
         // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
         // If you change it, be sure to test all the text drawn this way in Safari, including
@@ -109,7 +109,7 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
 
     if (canUseFastRenderer(buffer.data(), length)) {
         FontCascade webCoreFont(FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-        TextRun run(StringView(reinterpret_cast<const UChar*>(buffer.data()), length));
+        TextRun run(StringView(std::span { reinterpret_cast<const UChar*>(buffer.data()), length }));
         return webCoreFont.width(run);
     }
 

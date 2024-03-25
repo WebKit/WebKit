@@ -236,10 +236,10 @@ static bool hasValidImportConditions(StringView conditions)
 
 void CSSPreloadScanner::emitRule()
 {
-    StringView rule(m_rule.data(), m_rule.size());
+    StringView rule(m_rule.span());
     if (equalLettersIgnoringASCIICase(rule, "import"_s)) {
         String url = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
-        StringView conditions(m_ruleConditions.data(), m_ruleConditions.size());
+        StringView conditions(m_ruleConditions.span());
         if (!url.isEmpty() && hasValidImportConditions(conditions)) {
             URL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScanner via scan(): without it we will get relative URLs wrong.
             // FIXME: Should this be including the charset in the preload request?

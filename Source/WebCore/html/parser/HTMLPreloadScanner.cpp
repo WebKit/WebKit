@@ -120,8 +120,7 @@ public:
         Ref document = protectedDocument();
         for (auto& attribute : attributes) {
             auto knownAttributeName = AtomString::lookUp(attribute.name.data(), attribute.name.size());
-            StringView attributeValue { attribute.value.data(), static_cast<unsigned>(attribute.value.size()) };
-            processAttribute(knownAttributeName, attributeValue, pictureState);
+            processAttribute(knownAttributeName, attribute.value.span(), pictureState);
         }
 
         if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last() && m_mediaMatched && m_typeMatched && !m_srcSetAttribute.isEmpty()) {

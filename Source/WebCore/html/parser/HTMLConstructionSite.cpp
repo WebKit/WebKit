@@ -656,7 +656,7 @@ static NEVER_INLINE unsigned findBreakIndexSlow(const String& string, unsigned c
     // see <https://bugs.webkit.org/show_bug.cgi?id=29092>.
     // We need at least two characters look-ahead to account for UTF-16 surrogates.
     unsigned breakSearchLength = std::min(proposedBreakIndex - currentPosition + 2, stringLength - currentPosition);
-    NonSharedCharacterBreakIterator it(StringView(string.characters16(), stringLength).substring(currentPosition, breakSearchLength));
+    NonSharedCharacterBreakIterator it(StringView(string).substring(currentPosition, breakSearchLength));
 
     unsigned stringLengthLimit = proposedBreakIndex - currentPosition;
     if (ubrk_isBoundary(it, stringLengthLimit))

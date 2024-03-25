@@ -318,7 +318,7 @@ static String trimInputSample(CharType* p, size_t length)
 {
     if (length <= maxInputSampleSize)
         return String(p, length);
-    return makeString(StringView(p, length).left(maxInputSampleSize), horizontalEllipsis);
+    return makeString(std::span { p, length }.first(maxInputSampleSize), horizontalEllipsis);
 }
 
 std::optional<WallTime> parseHTTPDate(const String& value)
@@ -756,7 +756,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
     }
 
     nameSize = name.size();
-    nameStr = StringView(namePtr, nameSize);
+    nameStr = std::span { namePtr, nameSize };
 
     for (; p < end && *p == 0x20; p++) { }
 

@@ -555,7 +555,7 @@ ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterT
 template<typename CharacterType>
 void URLParser::encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEncoding& encoding, CodePointIterator<CharacterType> iterator)
 {
-    auto encoded = encoding.encodeForURLParsing(StringView(source.data(), source.size()));
+    auto encoded = encoding.encodeForURLParsing(source.span());
     auto* data = encoded.data();
     size_t length = encoded.size();
     
@@ -838,7 +838,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
         m_url.m_schemeEnd = base.m_schemeEnd;
     }
 
-    switch (scheme(StringView(m_asciiBuffer.data(), m_url.m_schemeEnd))) {
+    switch (scheme(m_asciiBuffer.subspan(0, m_url.m_schemeEnd))) {
     case Scheme::WS:
     case Scheme::WSS:
         nonUTF8QueryEncoding = nullptr;
@@ -1060,7 +1060,7 @@ ALWAYS_INLINE StringView URLParser::parsedDataView(size_t start, size_t length)
 {
     if (UNLIKELY(m_didSeeSyntaxViolation)) {
         ASSERT(start + length <= m_asciiBuffer.size());
-        return StringView(m_asciiBuffer.data() + start, length);
+        return m_asciiBuffer.subspan(start, length);
     }
     ASSERT(start + length <= m_inputString.length());
     return StringView(m_inputString).substring(start, length);
@@ -2576,7 +2576,7 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
         UNUSED_PARAM(numCharactersConverted);
 #endif // ASSERT_ENABLED
         ascii.append(std::span { hostnameBuffer, numCharactersConverted });
-        if (domain != StringView(ascii.data(), ascii.size()))
+        if (domain != StringView(ascii.span()))
             syntaxViolation(iteratorForSyntaxViolationPosition);
         return ascii;
     }
@@ -2856,7 +2856,7 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
     String domain = String::fromUTF8(percentDecoded.data(), percentDecoded.size());
     if (domain.isNull())
         return HostParsingResult::InvalidHost;
-    if (domain != StringView(percentDecoded.data(), percentDecoded.size()))
+    if (domain != StringView(percentDecoded.span()))
         syntaxViolation(hostBegin);
     auto asciiDomain = domainToASCII(*domain.impl(), hostBegin);
     if (!asciiDomain || hasForbiddenHostCodePoint(asciiDomain.value()))

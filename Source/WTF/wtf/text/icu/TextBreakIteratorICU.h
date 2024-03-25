@@ -44,7 +44,7 @@ public:
     };
     using Mode = std::variant<LineMode, CharacterMode>;
 
-    TextBreakIteratorICU(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, const AtomString& locale)
+    TextBreakIteratorICU(StringView string, std::span<const UChar> priorContext, Mode mode, const AtomString& locale)
     {
         auto type = switchOn(mode, [](LineMode) {
             return UBRK_LINE;
@@ -67,7 +67,7 @@ public:
         RELEASE_ASSERT(m_iterator);
         RELEASE_ASSERT(U_SUCCESS(status));
 
-        setText(string, priorContext, priorContextLength);
+        setText(string, priorContext);
     }
 
     TextBreakIteratorICU() = delete;
@@ -95,7 +95,7 @@ public:
             ubrk_close(m_iterator); // FIXME: Use an RAII wrapper for this
     }
 
-    void setText(StringView string, const UChar* priorContext, unsigned priorContextLength)
+    void setText(StringView string, std::span<const UChar> priorContext)
     {
         ASSERT(m_iterator);
 
@@ -107,9 +107,9 @@ public:
         UErrorCode status = U_ZERO_ERROR;
         UText* text = nullptr;
         if (string.is8Bit())
-            text = openLatin1ContextAwareUTextProvider(&textLocal, string.characters8(), string.length(), priorContext, priorContextLength, &status);
+            text = openLatin1ContextAwareUTextProvider(&textLocal, string.characters8(), string.length(), priorContext, &status);
         else
-            text = openUTF16ContextAwareUTextProvider(&textLocal.text, string.characters16(), string.length(), priorContext, priorContextLength, &status);
+            text = openUTF16ContextAwareUTextProvider(&textLocal.text, string.characters16(), string.length(), priorContext, &status);
         ASSERT(U_SUCCESS(status));
         ASSERT(text);
 
@@ -117,7 +117,7 @@ public:
             ubrk_setUText(m_iterator, text, &status);
             ASSERT(U_SUCCESS(status));
             utext_close(text);
-            m_priorContextLength = priorContextLength;
+            m_priorContextLength = priorContext.size();
         } else
             m_priorContextLength = 0;
     }

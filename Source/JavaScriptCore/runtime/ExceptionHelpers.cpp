@@ -168,11 +168,7 @@ String notAFunctionSourceAppender(const String& originalMessage, StringView sour
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
     auto notAFunctionIndex = originalMessage.reverseFind("is not a function"_s);
     RELEASE_ASSERT(notAFunctionIndex != notFound);
-    StringView displayValue;
-    if (originalMessage.is8Bit()) 
-        displayValue = StringView(originalMessage.characters8(), notAFunctionIndex - 1);
-    else
-        displayValue = StringView(originalMessage.characters16(), notAFunctionIndex - 1);
+    auto displayValue = StringView { originalMessage }.left(notAFunctionIndex - 1);
 
     StringView base = functionCallBase(sourceText);
     if (!base)

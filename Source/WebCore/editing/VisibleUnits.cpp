@@ -265,7 +265,7 @@ static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePositi
     }
     append(string, textBox->originalText());
 
-    return wordBreakIterator(StringView(string.data(), string.size()));
+    return WTF::wordBreakIterator(string.span());
 }
 
 static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, InlineIterator::TextBoxIterator textBox,
@@ -289,7 +289,7 @@ static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePositi
         append(string, nextTextBox->originalText());
     }
 
-    return wordBreakIterator(StringView(string.data(), string.size()));
+    return WTF::wordBreakIterator(string.span());
 }
 
 static bool isLogicalStartOfWord(UBreakIterator* iter, int position, bool hardLineBreak)
@@ -491,7 +491,7 @@ unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterat
             prependRepeatedCharacter(string, 'x', it.text().length());
         }
         if (string.size() > suffixLength) {
-            next = searchFunction(StringView(string.data(), string.size()), string.size() - suffixLength, MayHaveMoreContext, needMoreContext);
+            next = searchFunction(string.span(), string.size() - suffixLength, MayHaveMoreContext, needMoreContext);
             if (next > 1) // FIXME: This is a work around for https://webkit.org/b/115070. We need to provide more contexts in general case.
                 break;
         }
@@ -500,7 +500,7 @@ unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterat
     if (needMoreContext && string.size() > suffixLength) {
         // The last search returned the beginning of the buffer and asked for more context,
         // but there is no earlier text. Force a search with what's available.
-        next = searchFunction(StringView(string.data(), string.size()), string.size() - suffixLength, DontHaveMoreContext, needMoreContext);
+        next = searchFunction(string.span(), string.size() - suffixLength, DontHaveMoreContext, needMoreContext);
         ASSERT(!needMoreContext);
     }
     
@@ -522,7 +522,7 @@ unsigned forwardSearchForBoundaryWithTextIterator(TextIterator& it, Vector<UChar
             appendRepeatedCharacter(string, 'x', it.text().length());
         }
         if (string.size() > prefixLength) {
-            next = searchFunction(StringView(string.data(), string.size()), prefixLength, MayHaveMoreContext, needMoreContext);
+            next = searchFunction(string.span(), prefixLength, MayHaveMoreContext, needMoreContext);
             if (next != string.size())
                 break;
         }
@@ -531,7 +531,7 @@ unsigned forwardSearchForBoundaryWithTextIterator(TextIterator& it, Vector<UChar
     if (needMoreContext && string.size() > prefixLength) {
         // The last search returned the end of the buffer and asked for more context,
         // but there is no further text. Force a search with what's available.
-        next = searchFunction(StringView(string.data(), string.size()), prefixLength, DontHaveMoreContext, needMoreContext);
+        next = searchFunction(string.span(), prefixLength, DontHaveMoreContext, needMoreContext);
         ASSERT(!needMoreContext);
     }
     

@@ -1097,12 +1097,8 @@ ALWAYS_INLINE StringView JSRopeString::unsafeView(JSGlobalObject* globalObject) 
 {
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
-    if (isSubstring()) {
-        auto& base = substringBase()->valueInternal();
-        if (base.is8Bit())
-            return StringView(base.characters8() + substringOffset(), length());
-        return StringView(base.characters16() + substringOffset(), length());
-    }
+    if (isSubstring())
+        return StringView { substringBase()->valueInternal() }.substring(substringOffset(), length());
     return resolveRope(globalObject);
 }
 
@@ -1112,9 +1108,7 @@ ALWAYS_INLINE StringViewWithUnderlyingString JSRopeString::viewWithUnderlyingStr
         vm().verifyCanGC();
     if (isSubstring()) {
         auto& base = substringBase()->valueInternal();
-        if (base.is8Bit())
-            return { { base.characters8() + substringOffset(), length() }, base };
-        return { { base.characters16() + substringOffset(), length() }, base };
+        return { StringView { base }.substring(substringOffset(), length()), base };
     }
     auto& string = resolveRope(globalObject);
     return { string, string };

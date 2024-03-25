@@ -363,7 +363,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
     if (fieldLength && !fieldLength.value())
         return;
 
-    StringView field { &m_receiveBuffer[position], fieldLength ? fieldLength.value() : lineLength };
+    StringView field { m_receiveBuffer.subspan(position, fieldLength ? fieldLength.value() : lineLength) };
 
     unsigned step;
     if (!fieldLength)
@@ -381,7 +381,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
     } else if (field == "event"_s)
         m_eventName = { &m_receiveBuffer[position], valueLength };
     else if (field == "id"_s) {
-        StringView parsedEventId = { &m_receiveBuffer[position], valueLength };
+        StringView parsedEventId = m_receiveBuffer.subspan(position, valueLength);
         constexpr UChar nullCharacter = '\0';
         if (!parsedEventId.contains(nullCharacter))
             m_currentlyParsedEventId = parsedEventId.toString();
@@ -389,7 +389,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
         if (!valueLength)
             m_reconnectDelay = defaultReconnectDelay;
         else {
-            if (auto reconnectDelay = parseInteger<uint64_t>({ &m_receiveBuffer[position], valueLength }))
+            if (auto reconnectDelay = parseInteger<uint64_t>(m_receiveBuffer.subspan(position, valueLength)))
                 m_reconnectDelay = *reconnectDelay;
         }
     }

@@ -56,7 +56,7 @@ template<typename CharType>
 static void appendDescriptorAndReset(const CharType*& descriptorStart, const CharType* position, Vector<StringView>& descriptors)
 {
     if (position > descriptorStart)
-        descriptors.append(StringView(descriptorStart, position - descriptorStart));
+        descriptors.append(StringView { std::span(descriptorStart, position - descriptorStart) });
     descriptorStart = nullptr;
 }
 
@@ -208,7 +208,7 @@ static Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(const Char
 
         ASSERT(imageURLEnd > imageURLStart);
         unsigned imageURLLength = imageURLEnd - imageURLStart;
-        imageCandidates.append(ImageCandidate(StringViewWithUnderlyingString(StringView(imageURLStart, imageURLLength), String()), result, ImageCandidate::SrcsetOrigin));
+        imageCandidates.append(ImageCandidate(StringViewWithUnderlyingString(std::span(imageURLStart, imageURLLength), String()), result, ImageCandidate::SrcsetOrigin));
         // 11. Return to the step labeled splitting loop.
     }
     return imageCandidates;

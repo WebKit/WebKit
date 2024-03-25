@@ -54,6 +54,7 @@ struct HexNumberBuffer {
     unsigned length;
 
     const LChar* characters() const { return &*(buffer.end() - length); }
+    std::span<const LChar> span() const { return { characters(), length }; }
 };
 
 template<typename NumberType> HexNumberBuffer hex(NumberType number, unsigned minimumDigits = 0, HexConversionMode mode = Uppercase)

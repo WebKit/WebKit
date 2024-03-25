@@ -87,7 +87,7 @@ static String trimInputSample(const uint8_t* p, size_t length)
 {
     if (length <= maxInputSampleSize)
         return String(p, length);
-    return makeString(StringView(p, length).left(maxInputSampleSize), horizontalEllipsis);
+    return makeString(std::span { p, length }.first(maxInputSampleSize), horizontalEllipsis);
 }
 
 static String generateSecWebSocketKey()
@@ -409,13 +409,13 @@ int WebSocketHandshake::readStatusLine(const uint8_t* header, size_t headerLengt
         return lineLength;
     }
 
-    StringView httpStatusLine(header, space1 - header);
+    StringView httpStatusLine(std::span(header, space1 - header));
     if (!headerHasValidHTTPVersion(httpStatusLine)) {
         m_failureReason = makeString("Invalid HTTP version string: ", httpStatusLine);
         return lineLength;
     }
 
-    StringView statusCodeString(space1 + 1, space2 - space1 - 1);
+    StringView statusCodeString(std::span(space1 + 1, space2 - space1 - 1));
     if (statusCodeString.length() != 3) // Status code must consist of three digits.
         return lineLength;
     for (int i = 0; i < 3; ++i) {
@@ -439,7 +439,7 @@ const uint8_t* WebSocketHandshake::readHTTPHeaders(const uint8_t* start, const u
     bool sawSecWebSocketProtocolHeaderField = false;
     auto p = start;
     for (; p < end; p++) {
-        size_t consumedLength = parseHTTPHeader(std::span { p, static_cast<size_t>(end - p) }, m_failureReason, name, value);
+        size_t consumedLength = parseHTTPHeader(std::span(p, end - p), m_failureReason, name, value);
         if (!consumedLength)
             return nullptr;
         p += consumedLength;

@@ -67,7 +67,7 @@ public:
                 m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_contiguousBuffer->span());
         }
         if (*m_containsOnlyASCII)
-            return { m_contiguousBuffer->data(), static_cast<unsigned>(m_contiguousBuffer->size()) };
+            return m_contiguousBuffer->span();
 
         if (!m_cachedScriptString) {
             m_cachedScriptString = m_scriptBuffer.toString();

@@ -69,7 +69,7 @@ template<typename CharacterType> static std::optional<ResourceCryptographicDiges
     if (buffer.position() == beginHashValue)
         return std::nullopt;
 
-    StringView hashValue(beginHashValue, buffer.position() - beginHashValue);
+    StringView hashValue(std::span(beginHashValue, buffer.position() - beginHashValue));
 
     if (auto digest = base64Decode(hashValue))
         return ResourceCryptographicDigest { *algorithm, WTFMove(*digest) };

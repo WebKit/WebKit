@@ -3155,12 +3155,12 @@ TextRun RenderBlock::constructTextRun(const RenderText& text, unsigned offset, u
 
 TextRun RenderBlock::constructTextRun(const LChar* characters, unsigned length, const RenderStyle& style, ExpansionBehavior expansion)
 {
-    return constructTextRun(StringView(characters, length), style, expansion);
+    return constructTextRun(StringView { std::span { characters, length } }, style, expansion);
 }
 
 TextRun RenderBlock::constructTextRun(const UChar* characters, unsigned length, const RenderStyle& style, ExpansionBehavior expansion)
 {
-    return constructTextRun(StringView(characters, length), style, expansion);
+    return constructTextRun(StringView { std::span { characters, length } }, style, expansion);
 }
 
 #if ASSERT_ENABLED

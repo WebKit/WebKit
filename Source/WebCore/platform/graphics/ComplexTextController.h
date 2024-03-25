@@ -102,6 +102,7 @@ public:
         unsigned glyphCount() const { return m_glyphCount; }
         const Font& font() const { return m_font; }
         const UChar* characters() const { return m_characters; }
+        std::span<const UChar> span() const { return { m_characters, stringLength() }; }
         unsigned stringLocation() const { return m_stringLocation; }
         unsigned stringLength() const { return m_stringLength; }
         ALWAYS_INLINE unsigned indexAt(unsigned) const;

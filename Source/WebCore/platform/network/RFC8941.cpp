@@ -55,7 +55,7 @@ template<typename CharType> static StringView parseKey(StringParsingBuffer<CharT
     auto keyStart = buffer.position();
     ++buffer;
     skipUntil<isEndOfKey>(buffer);
-    return StringView(keyStart, buffer.position() - keyStart);
+    return std::span(keyStart, buffer.position() - keyStart);
 }
 
 // Parsing a String (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.5).

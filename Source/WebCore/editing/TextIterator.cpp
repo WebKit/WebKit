@@ -1627,7 +1627,7 @@ void WordAwareIterator::advance()
 StringView WordAwareIterator::text() const
 {
     if (!m_buffer.isEmpty())
-        return StringView(m_buffer.data(), m_buffer.size());
+        return m_buffer.span();
     if (m_previousText.text().length())
         return m_previousText.text();
     return m_underlyingIterator.text();
@@ -2186,7 +2186,7 @@ inline bool SearchBuffer::isWordEndMatch(size_t start, size_t length) const
 
     // Start searching at the end of matched search, so that multiple word matches succeed.
     int endWord;
-    findEndWordBoundary(StringView(m_buffer.data(), m_buffer.size()), start + length - 1, &endWord);
+    findEndWordBoundary(m_buffer.span(), start + length - 1, &endWord);
     return static_cast<size_t>(endWord) == start + length;
 }
 
@@ -2241,7 +2241,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 
     size_t wordBreakSearchStart = start + length;
     while (wordBreakSearchStart > start)
-        wordBreakSearchStart = findNextWordFromIndex(StringView(m_buffer.data(), m_buffer.size()), wordBreakSearchStart, false /* backwards */);
+        wordBreakSearchStart = findNextWordFromIndex(m_buffer.span(), wordBreakSearchStart, false /* backwards */);
     return wordBreakSearchStart == start;
 }
 
@@ -2284,7 +2284,7 @@ nextMatch:
             // determining if it is at a word boundary.
             unsigned wordBoundaryContextStart = matchStart;
             U16_BACK_1(m_buffer.data(), 0, wordBoundaryContextStart);
-            wordBoundaryContextStart = startOfLastWordBoundaryContext(StringView(m_buffer.data(), wordBoundaryContextStart));
+            wordBoundaryContextStart = startOfLastWordBoundaryContext(m_buffer.subspan(0, wordBoundaryContextStart));
             overlap = std::min(size - 1, std::max(overlap, size - wordBoundaryContextStart));
         }
         memcpy(m_buffer.data(), m_buffer.data() + size - overlap, overlap * sizeof(UChar));

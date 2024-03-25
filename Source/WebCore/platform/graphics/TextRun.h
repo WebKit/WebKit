@@ -118,6 +118,8 @@ public:
     UChar operator[](unsigned i) const { RELEASE_ASSERT(i < m_text.length()); return m_text[i]; }
     const LChar* data8(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_text.length()); ASSERT(is8Bit()); return &m_text.characters8()[i]; }
     const UChar* data16(unsigned i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < m_text.length()); ASSERT(!is8Bit()); return &m_text.characters16()[i]; }
+    std::span<const LChar> span8(unsigned i) { ASSERT(is8Bit()); return m_text.span8().subspan(i); }
+    std::span<const UChar> span16(unsigned i) { ASSERT(!is8Bit()); return m_text.span16().subspan(i); }
 
     const LChar* characters8() const { ASSERT(is8Bit()); return m_text.characters8(); }
     const UChar* characters16() const { ASSERT(!is8Bit()); return m_text.characters16(); }
@@ -125,8 +127,8 @@ public:
     bool is8Bit() const { return m_text.is8Bit(); }
     unsigned length() const { return m_text.length(); }
 
-    void setText(const LChar* text, unsigned length) { setText({ text, length }); }
-    void setText(const UChar* text, unsigned length) { setText({ text, length }); }
+    void setText(const LChar* text, unsigned length) { setText(std::span { text, length }); }
+    void setText(const UChar* text, unsigned length) { setText(std::span { text, length }); }
     void setText(StringView text) { ASSERT(!text.isNull()); m_text = text.toStringWithoutCopying(); }
 
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }

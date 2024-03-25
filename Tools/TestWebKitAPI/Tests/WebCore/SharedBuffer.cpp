@@ -320,12 +320,12 @@ TEST_F(FragmentedSharedBufferTest, read)
     auto check = [](FragmentedSharedBuffer& sharedBuffer) {
         Vector<uint8_t> data = sharedBuffer.read(4, 3);
         EXPECT_EQ(data.size(), 3u);
-        EXPECT_EQ(StringView(data.data(), 3), " is"_s);
+        EXPECT_EQ(StringView(data.subspan(0, 3)), " is"_s);
 
         data = sharedBuffer.read(4, 1000);
         EXPECT_EQ(data.size(), 18u);
 
-        EXPECT_EQ(StringView(data.data(), 18), " is a simple test."_s);
+        EXPECT_EQ(StringView(data.subspan(0, 18)), " is a simple test."_s);
     };
     auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
     check(sharedBuffer);
