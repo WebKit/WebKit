@@ -983,8 +983,6 @@ RefPtr<Element> Editor::findEventTargetFrom(const VisibleSelection& selection) c
     RefPtr target { selection.start().anchorElementAncestor() };
     if (!target)
         target = document().bodyOrFrameset();
-    if (!target)
-        return nullptr;
 
     return target;
 }
