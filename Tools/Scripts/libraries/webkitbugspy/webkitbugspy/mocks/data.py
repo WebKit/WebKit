@@ -49,6 +49,7 @@ ISSUES = [
     dict(
         title='Example issue 1',
         timestamp=1639536160,
+        modified=1710884407,
         opened=True,
         creator=USERS['Felix Filer'],
         assignee=USERS['Tim Contributor'],
@@ -72,6 +73,7 @@ ISSUES = [
     ), dict(
         title='Example feature 1',
         timestamp=1639536320,
+        modified=1710886067,
         opened=True,
         creator=USERS['Tim Contributor'],
         assignee=USERS['Tim Contributor'],
@@ -92,6 +94,7 @@ ISSUES = [
     ), dict(
         title='Example issue 2',
         timestamp=1639540010,
+        modified=1710884407,
         opened=False,
         creator=USERS['Felix Filer'],
         assignee=USERS['Tim Contributor'],
