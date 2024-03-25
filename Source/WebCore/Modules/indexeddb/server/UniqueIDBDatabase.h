@@ -59,11 +59,11 @@ class IDBConnectionToClient;
 class UniqueIDBDatabaseConnection;
 class UniqueIDBDatabaseManager;
 
-typedef Function<void(const IDBError&)> ErrorCallback;
-typedef Function<void(const IDBError&, const IDBKeyData&)> KeyDataCallback;
-typedef Function<void(const IDBError&, const IDBGetResult&)> GetResultCallback;
-typedef Function<void(const IDBError&, const IDBGetAllResult&)> GetAllResultsCallback;
-typedef Function<void(const IDBError&, uint64_t)> CountCallback;
+using ErrorCallback = Function<void(const IDBError&)>;
+using KeyDataCallback = Function<void(const IDBError&, const IDBKeyData&)>;
+using GetResultCallback = Function<void(const IDBError&, const IDBGetResult&)>;
+using GetAllResultsCallback = Function<void(const IDBError&, const IDBGetAllResult&)>;
+using CountCallback = Function<void(const IDBError&, uint64_t)>;
 
 class UniqueIDBDatabase : public CanMakeWeakPtr<UniqueIDBDatabase> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -83,23 +83,23 @@ public:
         Pass,
         Fail
     };
-    void createObjectStore(UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void deleteObjectStore(UniqueIDBDatabaseTransaction&, const String& objectStoreName, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void renameObjectStore(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, const String& newName, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void clearObjectStore(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void createIndex(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void deleteIndex(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, const String& indexName, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void renameIndex(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback);
-    void putOrAddAfterSpaceCheck(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback, bool isKeyGenerated, const IndexIDToIndexKeyMap&, const IDBObjectStoreInfo&, SpaceCheckResult);
-    void getRecord(const IDBRequestData&, const IDBGetRecordData&, GetResultCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&, GetAllResultsCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void getCount(const IDBRequestData&, const IDBKeyRangeData&, CountCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void openCursor(const IDBRequestData&, const IDBCursorInfo&, GetResultCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&, GetResultCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void commitTransaction(UniqueIDBDatabaseTransaction&, uint64_t handledRequestResultsCount, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
-    void abortTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void createObjectStore(UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void deleteObjectStore(UniqueIDBDatabaseTransaction&, const String& objectStoreName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void renameObjectStore(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, const String& newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void clearObjectStore(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void createIndex(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void deleteIndex(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, const String& indexName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void renameIndex(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback&&);
+    void putOrAddAfterSpaceCheck(const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback&&, bool isKeyGenerated, const IndexIDToIndexKeyMap&, const IDBObjectStoreInfo&, SpaceCheckResult);
+    void getRecord(const IDBRequestData&, const IDBGetRecordData&, GetResultCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&, GetAllResultsCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void getCount(const IDBRequestData&, const IDBKeyRangeData&, CountCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void deleteRecord(const IDBRequestData&, const IDBKeyRangeData&, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void openCursor(const IDBRequestData&, const IDBCursorInfo&, GetResultCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&, GetResultCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void commitTransaction(UniqueIDBDatabaseTransaction&, uint64_t handledRequestResultsCount, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
+    void abortTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
 
     void didFinishHandlingVersionChange(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& transactionIdentifier);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
