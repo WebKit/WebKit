@@ -34,8 +34,7 @@ extern "C" {
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 90000) \
     || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 160000) \
     || PLATFORM(VISION)
-
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && !defined(__swift__)
 #include <sys/reason.h>
 #else
 void abort_with_reason(uint32_t reason_namespace, uint64_t reason_code, const char *reason_string, uint64_t reason_flags);
@@ -51,7 +50,7 @@ void abort_with_reason(uint32_t reason_namespace, uint64_t reason_code, const ch
 }
 #endif
 
-#if !USE(APPLE_INTERNAL_SDK)
+#if !USE(APPLE_INTERNAL_SDK) || defined(__swift__)
 #define OS_REASON_FLAG_NO_CRASH_REPORT     0x1
 #define OS_REASON_FLAG_SECURITY_SENSITIVE  0x1000
 #define OS_REASON_WEBKIT 31
