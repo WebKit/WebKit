@@ -90,7 +90,7 @@ header: <WebCore/ResourceRequest.h>
 [Nested] struct WebCore::AttributedString::ParagraphStyleWithTableAndListIDs {
     RetainPtr<NSParagraphStyle> style
     Vector<std::optional<WebCore::AttributedString::TableBlockAndTableIDPair>> tableBlockAndTableIDs
-    Vector<WebCore::AttributedString::TextListID> listIDs
+    Vector<WebCore::AttributedStringTextListID> listIDs
 }
 using WebCore::AttributedString::TableBlockAndTableIDPair = std::pair<WebCore::AttributedStringTextTableBlockID, WebCore::AttributedStringTextTableID>
 
@@ -357,3 +357,14 @@ NSNumber wrapped by CoreIPCNumber
 NSString wrapped by CoreIPCString
 NSDictionary wrapped by CoreIPCDictionary
 NSPresentationIntent wrapped by CoreIPCPresentationIntent
+
+#if PLATFORM(MAC)
+using NSColor = PlatformColor
+using CGDirectDisplayID = uint32_t
+#endif
+
+using CFTimeInterval = double
+using CGGlyph = uint16_t
+using NSRect = CGRect
+
+using OSStatus = int32_t

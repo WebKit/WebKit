@@ -2021,7 +2021,9 @@ enum class WebCore::DiagnosticLoggingDomain : uint8_t {
     Media
 };
 
-#if !USE(CG)
+#if USE(CG)
+using WebCore::PlatformColorSpace = RetainPtr<CGColorSpaceRef>;
+#else
 [Nested] enum class WebCore::PlatformColorSpace::Name : uint8_t {
         SRGB
         , LinearSRGB
@@ -2885,6 +2887,8 @@ struct WebCore::GraphicsContextGLAttributes {
 #endif
     WebCore::GraphicsContextGLSimulatedCreationFailure failContextCreationForTesting;
 };
+
+enum class WebCore::GraphicsContextGLFlipY : bool
 
 enum class WebCore::GraphicsContextGLSimulatedEventForTesting : uint8_t {
     GPUStatusFailure,
@@ -5688,7 +5692,7 @@ struct WebCore::MediaControlsContextMenuItem {
 
 struct WebCore::WorkerOptions {
     WebCore::WorkerType type;
-    WebCore::FetchRequestCredentials credentials;
+    WebCore::FetchOptionsCredentials credentials;
     String name;
 };
 
@@ -7964,6 +7968,23 @@ using WebCore::GraphicsContextGL::EGLImageSource = int
 #endif
 
 using WebCore::DOMCacheEngine::CacheInfosOrError = Expected<WebCore::DOMCacheEngine::CacheInfos, WebCore::DOMCacheEngine::Error>;
+using WebCore::DOMCacheEngine::CacheIdentifierOrError = Expected<WebCore::DOMCacheEngine::CacheIdentifierOperationResult, WebCore::DOMCacheEngine::Error>
+using WebCore::DOMCacheEngine::RecordIdentifiersOrError = Expected<Vector<uint64_t>, WebCore::DOMCacheEngine::Error>
+using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = Expected<Vector<WebCore::DOMCacheEngine::CrossThreadRecord>, WebCore::DOMCacheEngine::Error>
+using WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError = Expected<bool, WebCore::DOMCacheEngine::Error>
 
 using WebCore::MediaPlayerEnums::VideoFullscreenMode = uint32_t
 using WebCore::SVGFilterExpression = Vector<WebCore::SVGFilterExpressionTerm>;
+using WebCore::SandboxFlags = int
+using WebCore::TrackID = uint64_t
+using WebCore::EpochTimeStamp = uint64_t
+using WebCore::SharedMemory::Handle = WebCore::SharedMemoryHandle
+using WebCore::ServiceWorkerOrClientIdentifier = std::variant<WebCore::ServiceWorkerIdentifier, WebCore::ScriptExecutionContextIdentifier>
+
+enum class WebCore::HighlightVisibility : bool
+
+#if OS(WINDOWS)
+using ProcessID = int;
+#else
+using ProcessID = pid_t;
+#endif

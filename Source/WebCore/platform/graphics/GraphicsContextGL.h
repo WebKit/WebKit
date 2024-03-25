@@ -89,6 +89,8 @@ enum class GraphicsContextGLSurfaceBuffer : bool {
     DisplayBuffer
 };
 
+enum class GraphicsContextGLFlipY : bool { No, Yes };
+
 // Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
 public:
@@ -1045,7 +1047,7 @@ public:
         DOMSourceNone,
     };
 
-    enum class FlipY : bool { No, Yes };
+    using FlipY = GraphicsContextGLFlipY;
 
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() = 0;
 

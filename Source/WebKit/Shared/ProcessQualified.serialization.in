@@ -30,7 +30,14 @@ additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifie
 additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = ObjectIdentifier<SharedWorkerObjectIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = AtomicObjectIdentifier<WebLockIdentifierType>; }
 
-
+using WebCore::BackForwardItemIdentifierID = ObjectIdentifier<WebCore::BackForwardItemIdentifierType>
+using WebCore::DOMCacheIdentifierID = AtomicObjectIdentifier<WebCore::DOMCacheIdentifierType>
+using WebCore::FrameIdentifierID = ObjectIdentifier<WebCore::FrameIdentifierType>
+using WebCore::OpaqueOriginIdentifier = AtomicObjectIdentifier<WebCore::OpaqueOriginIdentifierType>
+using WebCore::PlatformLayerIdentifierID = ObjectIdentifier<WebCore::PlatformLayerIdentifierType>
+using WebCore::ScrollingNodeIdentifier = ObjectIdentifier<WebCore::ScrollingNodeIDType>
+using WebCore::SharedWorkerObjectIdentifierID = ObjectIdentifier<WebCore::SharedWorkerObjectIdentifierType>
+using WebCore::WebLockIdentifierID = AtomicObjectIdentifier<WebCore::WebLockIdentifierType>
 
 header: <WebCore/ProcessQualified.h>
 [Alias=class ProcessQualified<BackForwardItemIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::BackForwardItemIdentifier {
