@@ -521,8 +521,22 @@ bool InlineFormattingContext::rebuildInlineItemListIfNeeded(const InlineDamage* 
     if (!inlineItemListNeedsUpdate)
         return false;
 
-    auto needsLayoutStartPosition = !lineDamage || !lineDamage->layoutStartPosition() ? InlineItemPosition() : lineDamage->layoutStartPosition()->inlineItemPosition;
-    InlineItemsBuilder { inlineContentCache, root(), m_layoutState.securityOrigin() }.build(needsLayoutStartPosition);
+    auto startPositionForInlineItemsBuilding = [&]() -> InlineItemPosition {
+        if (!lineDamage) {
+            ASSERT(inlineContentCache.inlineItems().isEmpty());
+            return { };
+        }
+        if (auto startPosition = lineDamage->layoutStartPosition()) {
+            if (lineDamage->reasons().contains(InlineDamage::Reason::Pagination)) {
+                // FIXME: We don't support partial rebuild with certain types of content. Let's just re-collect inline items.
+                return { };
+            }
+            return startPosition->inlineItemPosition;
+        }
+        // Unsupported damage. Need to run full build/layout.
+        return { };
+    };
+    InlineItemsBuilder { inlineContentCache, root(), m_layoutState.securityOrigin() }.build(startPositionForInlineItemsBuilding());
     return true;
 }
 
