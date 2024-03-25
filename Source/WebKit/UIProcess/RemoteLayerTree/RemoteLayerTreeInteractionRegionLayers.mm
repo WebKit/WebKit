@@ -210,7 +210,9 @@ static CACornerMask convertToCACornerMask(OptionSet<InteractionRegion::CornerMas
 
 void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 {
-    if (node.eventRegion().interactionRegions().isEmpty()) {
+    ASSERT(node.uiView());
+
+    if (node.eventRegion().interactionRegions().isEmpty() || !node.uiView()) {
         node.removeInteractionRegionsContainer();
         return;
     }

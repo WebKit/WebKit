@@ -120,17 +120,16 @@ void RemoteLayerTreeNode::initializeLayer()
 CALayer* RemoteLayerTreeNode::ensureInteractionRegionsContainer()
 {
     if (m_interactionRegionsContainer)
-        return m_interactionRegionsContainer.get();
+        return [m_interactionRegionsContainer layer];
 
-    m_interactionRegionsContainer = adoptNS([[CALayer alloc] init]);
-    [m_interactionRegionsContainer setName:@"InteractionRegions Container"];
-    [m_interactionRegionsContainer setValue:@(YES) forKey:WKInteractionRegionContainerKey];
-    [m_interactionRegionsContainer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+    m_interactionRegionsContainer = adoptNS([[UIView alloc] init]);
+    [[m_interactionRegionsContainer layer] setName:@"InteractionRegions Container"];
+    [[m_interactionRegionsContainer layer] setValue:@YES forKey:WKInteractionRegionContainerKey];
 
     repositionInteractionRegionsContainerIfNeeded();
     propagateInteractionRegionsChangeInHierarchy(InteractionRegionsInSubtree::Yes);
 
-    return m_interactionRegionsContainer.get();
+    return [m_interactionRegionsContainer layer];
 }
 
 void RemoteLayerTreeNode::removeInteractionRegionsContainer()
@@ -138,7 +137,7 @@ void RemoteLayerTreeNode::removeInteractionRegionsContainer()
     if (!m_interactionRegionsContainer)
         return;
 
-    [m_interactionRegionsContainer removeFromSuperlayer];
+    [m_interactionRegionsContainer removeFromSuperview];
     m_interactionRegionsContainer = nullptr;
 
     propagateInteractionRegionsChangeInHierarchy(InteractionRegionsInSubtree::Unknown);
@@ -174,13 +173,14 @@ void RemoteLayerTreeNode::repositionInteractionRegionsContainerIfNeeded()
 {
     if (!m_interactionRegionsContainer)
         return;
+    ASSERT(uiView());
 
     NSUInteger insertionPoint = 0;
-    for (CALayer *sublayer in layer().sublayers) {
-        if ([sublayer valueForKey:WKInteractionRegionContainerKey])
+    for (UIView *subview in uiView().subviews) {
+        if ([subview.layer valueForKey:WKInteractionRegionContainerKey])
             continue;
 
-        if (auto *subnode = forCALayer(sublayer)) {
+        if (auto *subnode = forCALayer(subview.layer)) {
             if (subnode->hasInteractionRegions())
                 break;
         }
@@ -188,12 +188,12 @@ void RemoteLayerTreeNode::repositionInteractionRegionsContainerIfNeeded()
         insertionPoint++;
     }
 
-    // We searched through the sublayers, so insertionPoint is always <= sublayers.count.
-    ASSERT(insertionPoint <= layer().sublayers.count);
-    bool shouldAppendLayer = insertionPoint == layer().sublayers.count;
-    if (shouldAppendLayer || [layer().sublayers objectAtIndex:insertionPoint] != m_interactionRegionsContainer) {
-        [m_interactionRegionsContainer removeFromSuperlayer];
-        [layer() insertSublayer:m_interactionRegionsContainer.get() atIndex:insertionPoint];
+    // We searched through the subviews, so insertionPoint is always <= subviews.count.
+    ASSERT(insertionPoint <= uiView().subviews.count);
+    bool shouldAppendView = insertionPoint == uiView().subviews.count;
+    if (shouldAppendView || [uiView().subviews objectAtIndex:insertionPoint] != m_interactionRegionsContainer) {
+        [m_interactionRegionsContainer removeFromSuperview];
+        [uiView() insertSubview:m_interactionRegionsContainer.get() atIndex:insertionPoint];
     }
 }
 

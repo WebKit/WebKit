@@ -68,6 +68,10 @@ static void configureSeparatedLayer(CALayer *) { }
     NSUInteger numOldSubviews = self.subviews.count;
     NSUInteger numNewSubviews = newSubviews.count;
 
+    // This method does not handle interleaved UIView and CALayer children of
+    // a UIView, so we must not have any non-UIView-backed CALayer children.
+    ASSERT(numOldSubviews == self.layer.sublayers.count);
+
     NSUInteger currIndex = 0;
     for (currIndex = 0; currIndex < numNewSubviews; ++currIndex) {
         UIView *currNewSubview = [newSubviews objectAtIndex:currIndex];
@@ -393,10 +397,6 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
 #endif
         return childNode->layer();
     }).get();
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    node.updateInteractionRegionAfterHierarchyChange();
-#endif
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
