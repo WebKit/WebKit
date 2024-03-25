@@ -28,6 +28,7 @@
 #include "ElementIdentifier.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "FrameIdentifier.h"
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -48,6 +49,7 @@ struct TargetedElementInfo {
     Vector<String> selectors;
     FloatRect boundsInRootView;
     PositionType positionType { PositionType::Static };
+    Vector<FrameIdentifier> childFrameIdentifiers;
 };
 
 } // namespace WebCore

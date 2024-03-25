@@ -186,6 +186,16 @@ static inline RectEdges<bool> computeOffsetEdges(const RenderStyle& style)
     };
 }
 
+static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(Element& element)
+{
+    Vector<FrameIdentifier> identifiers;
+    for (auto& owner : descendantsOfType<HTMLFrameOwnerElement>(element)) {
+        if (RefPtr frame = owner.protectedContentFrame())
+            identifiers.append(frame->frameID());
+    }
+    return identifiers;
+}
+
 static TargetedElementInfo targetedElementInfo(Element& element)
 {
     CheckedPtr renderer = element.renderer();
@@ -196,7 +206,8 @@ static TargetedElementInfo targetedElementInfo(Element& element)
         .renderedText = TextExtraction::extractRenderedText(element),
         .selectors = selectorsForTarget(element),
         .boundsInRootView = element.boundingBoxInRootViewCoordinates(),
-        .positionType = renderer->style().position()
+        .positionType = renderer->style().position(),
+        .childFrameIdentifiers = collectChildFrameIdentifiers(element),
     };
 }
 

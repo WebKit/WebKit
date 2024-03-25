@@ -37,6 +37,12 @@ body, html {
     background: blueviolet;
 }
 
+iframe {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+}
+
 main {
     line-height: 200%;
 }
@@ -44,7 +50,7 @@ main {
 </head>
 <body>
     <div class="fixed container">
-        <p>The round pegs in the square holes. <a href="https://webkit.org">The ones who see things differently</a>.</p>
+        <iframe title="Outer Subframe"></iframe>
     </div>
     <div id="absolute" class="container">
         <p>Here’s to the crazy ones. <strong>The misfits.</strong> The rebels. The troublemakers.
@@ -56,5 +62,18 @@ main {
         <section><p>Sollicitudin aliquam ultrices sagittis orci a. Mattis pellentesque id nibh tortor id aliquet lectus proin nibh. Duis at consectetur lorem donec massa sapien faucibus. Massa tincidunt dui ut ornare lectus sit amet est placerat. In ante metus dictum at. Urna nec tincidunt praesent semper feugiat nibh sed. Tempus quam pellentesque nec nam. Sapien pellentesque habitant morbi tristique senectus et netus et malesuada. Orci sagittis eu volutpat odio facilisis. Morbi tristique senectus et netus et malesuada. Phasellus vestibulum lorem sed risus ultricies tristique nulla aliquet. Sem nulla pharetra diam sit. Rhoncus urna neque viverra justo nec. Ultrices vitae auctor eu augue ut lectus arcu bibendum at.</p></section>
         <section><p>Turpis egestas integer eget aliquet nibh praesent tristique. Diam volutpat commodo sed egestas egestas fringilla phasellus faucibus. Enim diam vulputate ut pharetra sit amet aliquam. Congue nisi vitae suscipit tellus mauris a diam. Placerat vestibulum lectus mauris ultrices eros in cursus turpis. Consequat mauris nunc congue nisi vitae suscipit. Est ullamcorper eget nulla facilisi etiam. Nisl nisi scelerisque eu ultrices. Ut tortor pretium viverra suspendisse potenti nullam ac. Sagittis eu volutpat odio facilisis mauris sit amet massa vitae. Aliquet nec ullamcorper sit amet risus. Pretium vulputate sapien nec sagittis. Vel facilisis volutpat est velit egestas dui. Id semper risus in hendrerit gravida rutrum quisque non tellus. Mauris ultrices eros in cursus turpis. Amet consectetur adipiscing elit ut aliquam.</p></section>
     </main>
+    <script>
+        subframeLoaded = false;
+        addEventListener("message", event => {
+            if (event.data !== "subframeLoaded")
+                return;
+            subframeLoaded = true;
+        });
+
+        addEventListener("load", () => {
+            const subframe = document.querySelector("iframe");
+            subframe.src = "nested-frames.html";
+        });
+    </script>
 </body>
 </html>

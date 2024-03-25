@@ -57,4 +57,15 @@ RefPtr<FrameHandle> FrameInfo::parentFrameHandle() const
     return FrameHandle::create(*m_data.parentFrameID);
 }
 
+WTF::String FrameInfo::title() const
+{
+    if (!m_page)
+        return { };
+
+    if (RefPtr frame = WebKit::WebFrameProxy::webFrame(m_data.frameID); frame && frame->page() == m_page)
+        return frame->title();
+
+    return { };
+}
+
 } // namespace API

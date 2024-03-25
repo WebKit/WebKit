@@ -27,6 +27,8 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>
 
@@ -52,6 +54,26 @@
 
 @end
 
+@interface _WKTargetedElementInfo (TestingAdditions)
+@property (nonatomic, readonly) NSArray<_WKFrameTreeNode *> *childFrames;
+@end
+
+@implementation _WKTargetedElementInfo (TestingAdditions)
+
+- (NSArray<_WKFrameTreeNode *> *)childFrames
+{
+    __block RetainPtr<NSArray<_WKFrameTreeNode *>> result;
+    __block bool done = false;
+    [self getChildFrames:^(NSArray<_WKFrameTreeNode *> *frames) {
+        result = frames;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 TEST(ElementTargeting, BasicElementTargeting)
@@ -59,28 +81,53 @@ TEST(ElementTargeting, BasicElementTargeting)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-1"];
 
-    auto elements = [webView targetedElementInfoAt:CGPointMake(150, 150)];
-    EXPECT_EQ(elements.count, 3U);
+    Util::waitForConditionWithLogging([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.subframeLoaded"] boolValue];
+    }, 5, @"Timed out waiting for subframes to finish loading.");
+
+    RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(150, 150)];
+    EXPECT_EQ([elements count], 3U);
     {
-        EXPECT_EQ(elements[0].positionType, _WKTargetedElementPositionFixed);
-        EXPECT_WK_STREQ(".fixed.container", elements[0].selectors.firstObject);
-        EXPECT_TRUE([elements[0].renderedText containsString:@"The round pegs"]);
-        EXPECT_EQ(elements[0].renderedText.length, 70U);
-        EXPECT_EQ(elements[0].offsetEdges, _WKRectEdgeLeft | _WKRectEdgeTop);
+        auto element = [elements objectAtIndex:0];
+        EXPECT_EQ(element.positionType, _WKTargetedElementPositionFixed);
+        EXPECT_WK_STREQ(".fixed.container", element.selectors.firstObject);
+        EXPECT_TRUE([element.renderedText containsString:@"The round pegs"]);
+        EXPECT_EQ(element.renderedText.length, 70U);
+        EXPECT_EQ(element.offsetEdges, _WKRectEdgeLeft | _WKRectEdgeTop);
+
+        RetainPtr childFrames = [element childFrames];
+        EXPECT_EQ([childFrames count], 1U);
+
+        auto childFrame = [childFrames firstObject];
+        EXPECT_FALSE(childFrame.info.mainFrame);
+        EXPECT_WK_STREQ(childFrame.info.request.URL.lastPathComponent, "nested-frames.html");
+        EXPECT_WK_STREQ(childFrame.info._title, "Outer Subframe");
+        EXPECT_EQ(childFrame.childFrames.count, 1U);
+
+        auto nestedChildFrame = childFrame.childFrames.firstObject;
+        EXPECT_FALSE(nestedChildFrame.info.mainFrame);
+        EXPECT_FALSE(nestedChildFrame.info.mainFrame);
+        EXPECT_WK_STREQ(nestedChildFrame.info.request.URL.scheme, "about");
+        EXPECT_WK_STREQ(nestedChildFrame.info._title, "Inner Subframe");
+        EXPECT_EQ(nestedChildFrame.childFrames.count, 0U);
     }
     {
-        EXPECT_EQ(elements[1].positionType, _WKTargetedElementPositionAbsolute);
-        EXPECT_WK_STREQ("#absolute", elements[1].selectors.firstObject);
-        EXPECT_TRUE([elements[1].renderedText containsString:@"the crazy ones"]);
-        EXPECT_EQ(elements[1].renderedText.length, 64U);
-        EXPECT_EQ(elements[1].offsetEdges, _WKRectEdgeRight | _WKRectEdgeBottom);
+        auto element = [elements objectAtIndex:1];
+        EXPECT_EQ(element.positionType, _WKTargetedElementPositionAbsolute);
+        EXPECT_WK_STREQ("#absolute", element.selectors.firstObject);
+        EXPECT_TRUE([element.renderedText containsString:@"the crazy ones"]);
+        EXPECT_EQ(element.renderedText.length, 64U);
+        EXPECT_EQ(element.offsetEdges, _WKRectEdgeRight | _WKRectEdgeBottom);
+        EXPECT_EQ(element.childFrames.count, 0U);
     }
     {
-        EXPECT_EQ(elements[2].positionType, _WKTargetedElementPositionStatic);
-        EXPECT_WK_STREQ("MAIN > SECTION:first-of-type", elements[2].selectors.firstObject);
-        EXPECT_TRUE([elements[2].renderedText containsString:@"Lorem ipsum"]);
-        EXPECT_EQ(elements[2].renderedText.length, 896U);
-        EXPECT_EQ(elements[2].offsetEdges, _WKRectEdgeNone);
+        auto element = [elements objectAtIndex:2];
+        EXPECT_EQ(element.positionType, _WKTargetedElementPositionStatic);
+        EXPECT_WK_STREQ("MAIN > SECTION:first-of-type", element.selectors.firstObject);
+        EXPECT_TRUE([element.renderedText containsString:@"Lorem ipsum"]);
+        EXPECT_EQ(element.renderedText.length, 896U);
+        EXPECT_EQ(element.offsetEdges, _WKRectEdgeNone);
+        EXPECT_EQ(element.childFrames.count, 0U);
     }
 }
 

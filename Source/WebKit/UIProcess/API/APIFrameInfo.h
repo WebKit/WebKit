@@ -59,6 +59,7 @@ public:
     ProcessID processID() const { return m_data.processID; }
     bool isFocused() const { return m_data.isFocused; }
     bool errorOccurred() const { return m_data.errorOccurred; }
+    WTF::String title() const;
 
 private:
     FrameInfo(WebKit::FrameInfoData&&, RefPtr<WebKit::WebPageProxy>&&);

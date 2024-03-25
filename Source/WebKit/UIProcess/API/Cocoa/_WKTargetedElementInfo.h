@@ -35,6 +35,8 @@ typedef NS_ENUM(NSInteger, _WKTargetedElementPosition) {
     _WKTargetedElementPositionFixed
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+@class _WKFrameTreeNode;
+
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKTargetedElementInfo : NSObject
 
@@ -46,6 +48,8 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly) _WKRectEdge offsetEdges;
 
 - (BOOL)isSameElement:(_WKTargetedElementInfo *)other;
+
+- (void)getChildFrames:(void(^)(NSArray<_WKFrameTreeNode *> *))completionHandler;
 
 @end
 

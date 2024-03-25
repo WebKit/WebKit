@@ -897,6 +897,7 @@ header: <WebCore/ElementTargetingTypes.h>
     Vector<String> selectors
     WebCore::FloatRect boundsInRootView
     WebCore::PositionType positionType
+    Vector<WebCore::FrameIdentifier> childFrameIdentifiers
 };
 
 header: <WebCore/RenderStyleConstants.h>

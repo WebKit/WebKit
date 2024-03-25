@@ -26,8 +26,13 @@
 #include "config.h"
 #include "APITargetedElementInfo.h"
 
+#include "APIFrameTreeNode.h"
+#include "FrameTreeNodeData.h"
 #include "PageClient.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxy.h"
+#include <wtf/Box.h>
+#include <wtf/CallbackAggregator.h>
 
 namespace API {
 using namespace WebKit;
@@ -41,7 +46,8 @@ TargetedElementInfo::TargetedElementInfo(WebPageProxy& page, WebCore::TargetedEl
 bool TargetedElementInfo::isSameElement(const TargetedElementInfo& other) const
 {
     return m_info.elementIdentifier == other.m_info.elementIdentifier
-        && m_info.documentIdentifier == other.m_info.documentIdentifier;
+        && m_info.documentIdentifier == other.m_info.documentIdentifier
+        && m_page == other.m_page;
 }
 
 WebCore::FloatRect TargetedElementInfo::boundsInWebView() const
@@ -50,6 +56,33 @@ WebCore::FloatRect TargetedElementInfo::boundsInWebView() const
     if (!page)
         return { };
     return page->pageClient().rootViewToWebView(boundsInRootView());
+}
+
+void TargetedElementInfo::childFrames(CompletionHandler<void(Vector<Ref<FrameTreeNode>>&&)>&& completion) const
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return completion({ });
+
+    auto aggregateData = Box<Vector<FrameTreeNodeData>>::create();
+    auto aggregator = CallbackAggregator::create([page, aggregateData, completion = WTFMove(completion)]() mutable {
+        completion(WTF::map(WTFMove(*aggregateData), [&](auto&& data) {
+            return FrameTreeNode::create(WTFMove(data), *page);
+        }));
+    });
+
+    for (auto identifier : m_info.childFrameIdentifiers) {
+        RefPtr frame = WebFrameProxy::webFrame(identifier);
+        if (!frame)
+            continue;
+
+        if (frame->page() != page)
+            continue;
+
+        frame->getFrameInfo([aggregator, aggregateData](auto&& data) {
+            aggregateData->append(WTFMove(data));
+        });
+    }
 }
 
 } // namespace API
