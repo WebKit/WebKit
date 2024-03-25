@@ -3,6 +3,10 @@ PASS Declarative Shadow DOM: Basic test
 PASS Declarative Shadow DOM: Feature detection
 PASS Shadowrootmode reflection
 PASS Shadowrootmode reflection, setter
+PASS Shadowrootdelegatesfocus reflection
+PASS Shadowrootdelegatesfocus reflection, setter
+PASS Shadowrootclonable reflection
+PASS Shadowrootclonable reflection, setter
 PASS Declarative Shadow DOM: Fragment parser basic test
 PASS Declarative Shadow DOM: Invalid shadow root attribute
 PASS Declarative Shadow DOM: Closed shadow root attribute
