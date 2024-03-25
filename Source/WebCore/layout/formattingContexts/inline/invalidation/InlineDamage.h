@@ -42,13 +42,6 @@ public:
     InlineDamage() = default;
     ~InlineDamage();
 
-    enum class Type : uint8_t {
-        // Can't decide the type of damage. Let's nuke all the things.
-        Invalid,
-        NeedsContentUpdateAndLineLayout,
-    };
-    Type type() const { return m_damageType; }
-
     enum class Reason : uint8_t {
         Append        = 1 << 0,
         Insert        = 1 << 1,
@@ -58,6 +51,7 @@ public:
         Pagination    = 1 << 5
     };
     OptionSet<Reason> reasons() const { return m_damageReasons; }
+
     // FIXME: Add support for damage range with multiple, different damage types.
     struct LayoutPosition {
         size_t lineIndex { 0 };
@@ -65,6 +59,7 @@ public:
         LayoutUnit partialContentTop;
     };
     std::optional<LayoutPosition> layoutStartPosition() const { return m_layoutStartPosition; }
+
     using TrailingDisplayBoxList = Vector<InlineDisplay::Box>;
     std::optional<InlineDisplay::Box> trailingContentForLine(size_t lineIndex) const;
 
@@ -78,12 +73,10 @@ private:
     friend class InlineInvalidation;
 
     void setDamageReason(Reason reason) { m_damageReasons.add(reason); }
-    void setDamageType(Type type) { m_damageType = type; }
     void setLayoutStartPosition(LayoutPosition position) { m_layoutStartPosition = position; }
-    void reset();
+    void resetLayoutPosition();
     void setTrailingDisplayBoxes(TrailingDisplayBoxList&& trailingDisplayBoxes) { m_trailingDisplayBoxes = WTFMove(trailingDisplayBoxes); }
 
-    Type m_damageType { Type::Invalid };
     OptionSet<Reason> m_damageReasons;
     std::optional<LayoutPosition> m_layoutStartPosition;
     TrailingDisplayBoxList m_trailingDisplayBoxes;
@@ -114,10 +107,8 @@ inline InlineDamage::~InlineDamage()
     m_detachedLayoutBoxes.clear();
 }
 
-inline void InlineDamage::reset()
+inline void InlineDamage::resetLayoutPosition()
 {
-    m_damageType = { };
-    m_damageReasons = { };
     m_layoutStartPosition = { };
     m_trailingDisplayBoxes.clear();
     // Never reset m_detachedLayoutBoxes. We need to keep those layout boxes around until after layout.

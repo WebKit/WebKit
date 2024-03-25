@@ -56,8 +56,8 @@ public:
 
 private:
     enum class ShouldApplyRangeLayout : bool { No, Yes };
-    void updateInlineDamage(InlineDamage::Type, std::optional<InlineDamage::Reason>, std::optional<InvalidatedLine>, ShouldApplyRangeLayout = ShouldApplyRangeLayout::No, LayoutUnit restartPaginationAdjustment = 0_lu);
-    bool applyFullDamageIfNeeded(const Box&);
+    bool updateInlineDamage(const InvalidatedLine&, InlineDamage::Reason, ShouldApplyRangeLayout = ShouldApplyRangeLayout::No, LayoutUnit restartPaginationAdjustment = 0_lu);
+    bool setFullLayoutIfNeeded(const Box&);
     const InlineDisplay::Boxes& displayBoxes() const { return m_displayContent.boxes; }
     const InlineDisplay::Lines& displayLines() const { return m_displayContent.lines; }
 
