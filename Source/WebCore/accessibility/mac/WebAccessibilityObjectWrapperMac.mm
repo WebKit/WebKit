@@ -1087,12 +1087,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityTitleAttribute,
         NSAccessibilityChildrenAttribute,
     ];
+    static NeverDestroyed<RetainPtr<NSArray>> sharedControlAttrs = @[
+        NSAccessibilityTitleUIElementAttribute,
+        NSAccessibilityAccessKeyAttribute,
+        NSAccessibilityRequiredAttribute,
+        NSAccessibilityInvalidAttribute,
+    ];
+    static NeverDestroyed<RetainPtr<NSArray>> sharedComboBoxAttrs = @[
+        NSAccessibilitySelectedChildrenAttribute,
+        NSAccessibilityExpandedAttribute,
+        NSAccessibilityOrientationAttribute,
+    ];
     static NeverDestroyed controlAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
-        [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
-        [tempArray addObject:NSAccessibilityAccessKeyAttribute];
-        [tempArray addObject:NSAccessibilityRequiredAttribute];
-        [tempArray addObject:NSAccessibilityInvalidAttribute];
+        [tempArray addObjectsFromArray:sharedControlAttrs.get().get()];
         return tempArray;
     }();
     static NeverDestroyed buttonAttrs = [] {
@@ -1105,8 +1113,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }();
     static NeverDestroyed comboBoxAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:controlAttrs.get().get()]);
-        [tempArray addObject:NSAccessibilityExpandedAttribute];
-        [tempArray addObject:NSAccessibilityOrientationAttribute];
+        [tempArray addObjectsFromArray:sharedComboBoxAttrs.get().get()];
+        return tempArray;
+    }();
+    static NeverDestroyed textComboBoxAttrs = [] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:textAttrs.get().get()]);
+        [tempArray addObjectsFromArray:sharedControlAttrs.get().get()];
+        [tempArray addObjectsFromArray:sharedComboBoxAttrs.get().get()];
         return tempArray;
     }();
     static NeverDestroyed tableAttrs = [] {
@@ -1225,6 +1238,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = webAreaAttrs.get().get();
     else if (backingObject->isStaticText())
         objectAttributes = staticTextAttrs.get().get();
+    else if (backingObject->isComboBox() && backingObject->isTextControl())
+        objectAttributes = textComboBoxAttrs.get().get();
+    else if (backingObject->isComboBox())
+        objectAttributes = comboBoxAttrs.get().get();
     else if (backingObject->isTextControl())
         objectAttributes = textAttrs.get().get();
     else if (backingObject->isLink())
@@ -1255,8 +1272,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = listBoxAttrs.get().get();
     else if (backingObject->isList())
         objectAttributes = listAttrs.get().get();
-    else if (backingObject->isComboBox())
-        objectAttributes = comboBoxAttrs.get().get();
     else if (backingObject->isProgressIndicator() || backingObject->isSlider())
         objectAttributes = rangeAttrs.get().get();
     // These are processed in order because an input image is a button, and a button is a control.

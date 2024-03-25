@@ -132,6 +132,7 @@ bool AXCoreObject::canHaveSelectedChildren() const
     // focused element.
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:
+    case AccessibilityRole::ComboBox:
 #if USE(ATSPI)
     case AccessibilityRole::MenuListPopup:
 #endif

@@ -4295,6 +4295,10 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedChildren(
 
     AccessibilityChildrenVector result;
     switch (roleValue()) {
+    case AccessibilityRole::ComboBox:
+        if (auto* descendant = activeDescendant())
+            result = { descendant };
+        break;
     case AccessibilityRole::ListBox:
         // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
         result = ariaListboxSelectedChildren();
