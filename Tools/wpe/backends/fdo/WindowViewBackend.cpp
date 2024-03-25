@@ -25,7 +25,6 @@
 
 #include "WindowViewBackend.h"
 
-#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <linux/input.h>
@@ -33,7 +32,6 @@
 #include <mutex>
 #include <sys/mman.h>
 #include <unistd.h>
-#include <vector>
 
 // This include order is necessary to enforce the Wayland EGL platform.
 #include <wayland-egl.h>
@@ -138,14 +136,12 @@ GSourceFuncs EventSource::sourceFuncs = {
 
 const struct wl_registry_listener WindowViewBackend::s_registryListener = {
     // global
-    [](void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version)
+    [](void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t)
     {
         auto* window = static_cast<WindowViewBackend*>(data);
 
-        if (!std::strcmp(interface, "wl_compositor")) {
-            window->m_compositor = static_cast<struct wl_compositor*>(wl_registry_bind(registry, name, &wl_compositor_interface, std::max(1U, std::min(4U, version))));
-            window->m_canUseDamage = window->m_canUseDamage && (wl_compositor_get_version(window->m_compositor) >= 4);
-        }
+        if (!std::strcmp(interface, "wl_compositor"))
+            window->m_compositor = static_cast<struct wl_compositor*>(wl_registry_bind(registry, name, &wl_compositor_interface, 1));
 
         if (!std::strcmp(interface, "xdg_wm_base"))
             window->m_xdg.wm = static_cast<struct xdg_wm_base*>(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
@@ -974,9 +970,6 @@ bool WindowViewBackend::initialize(EGLDisplay eglDisplay)
     if (!m_eglContext)
         return false;
 
-    m_canUseDamage = m_canUseDamage && (epoxy_has_egl_extension(eglDisplay, "EGL_EXT_swap_buffers_with_damage")
-        || epoxy_has_egl_extension(eglDisplay, "EGL_KHR_swap_buffers_with_damage"));
-
     static struct wpe_view_backend_exportable_fdo_egl_client exportableClient = {
         // export_egl_image
         nullptr,
@@ -1019,8 +1012,6 @@ void WindowViewBackend::deinitialize(EGLDisplay eglDisplay)
 
     if (m_exportable)
         wpe_view_backend_exportable_fdo_destroy(m_exportable);
-
-    m_canUseDamage = false;
 }
 
 void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
@@ -1072,23 +1063,7 @@ void WindowViewBackend::displayBuffer(struct wpe_fdo_egl_exported_image* image)
     struct wl_callback* callback = wl_surface_frame(m_surface);
     wl_callback_add_listener(callback, &s_frameListener, this);
 
-    if (m_canUseDamage) {
-        uint32_t damageRectsCount;
-        const auto* damageRects = wpe_fdo_egl_exported_image_get_damage_regions(image, &damageRectsCount);
-        const auto imageHeight = wpe_fdo_egl_exported_image_get_height(image);
-
-        std::vector<EGLint> rects;
-        rects.reserve(damageRectsCount);
-        for (uint32_t i = 0; i < damageRectsCount; ++i) {
-            rects.push_back(damageRects[i].x);
-            rects.push_back(imageHeight - damageRects[i].y - damageRects[i].height);
-            rects.push_back(damageRects[i].width);
-            rects.push_back(damageRects[i].height);
-        }
-
-        eglSwapBuffersWithDamageEXT(connection.eglDisplay, m_eglSurface, rects.data(), damageRectsCount);
-    } else
-        eglSwapBuffers(connection.eglDisplay, m_eglSurface);
+    eglSwapBuffers(connection.eglDisplay, m_eglSurface);
 }
 
 #if WPE_FDO_CHECK_VERSION(1, 5, 0)

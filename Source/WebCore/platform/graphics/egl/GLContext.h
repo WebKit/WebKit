@@ -41,12 +41,8 @@ typedef void* EGLConfig;
 typedef void* EGLContext;
 typedef void* EGLDisplay;
 typedef void* EGLSurface;
-typedef int EGLint;
-typedef unsigned EGLBoolean;
 
 namespace WebCore {
-
-class IntRect;
 
 class GLContext final : public GLContextWrapper {
     WTF_MAKE_NONCOPYABLE(GLContext); WTF_MAKE_FAST_ALLOCATED;
@@ -71,12 +67,10 @@ public:
     PlatformDisplay& display() const { return m_display; }
     unsigned version();
     EGLConfig config() const { return m_config; }
-    bool isSurfaceless() const { return m_type == Surfaceless; }
 
     WEBCORE_EXPORT bool makeContextCurrent();
     bool unmakeContextCurrent();
     WEBCORE_EXPORT void swapBuffers();
-    WEBCORE_EXPORT void swapBuffersWithDamage(const Vector<IntRect>&);
     GCGLContext platformContext() const;
 
     struct GLExtensions {
@@ -142,7 +136,6 @@ private:
     EGLSurface m_surface { nullptr };
     EGLConfig m_config { nullptr };
     EGLSurfaceType m_type;
-    EGLBoolean (*m_eglSwapBuffersWithDamage)(EGLDisplay, EGLSurface, EGLint *, EGLint) { nullptr };
 #if USE(WPE_RENDERER)
     struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };
 #endif

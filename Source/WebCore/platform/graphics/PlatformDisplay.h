@@ -111,10 +111,8 @@ public:
     struct EGLExtensions {
         bool KHR_image_base { false };
         bool KHR_surfaceless_context { false };
-        bool KHR_swap_buffers_with_damage { false };
         bool EXT_image_dma_buf_import { false };
         bool EXT_image_dma_buf_import_modifiers { false };
-        bool EXT_swap_buffers_with_damage { false };
         bool MESA_image_dma_buf_export { false };
     };
     const EGLExtensions& eglExtensions() const;
