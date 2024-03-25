@@ -2455,8 +2455,6 @@ imported/w3c/web-platform-tests/clear-site-data/resource.html [ Skip ]
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin.html [ Pass Failure ]
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html [ Pass Failure ]
 
-webkit.org/b/244913 [ Debug ] fast/mediastream/getDisplayMedia-displaySurface.html [ Skip ]
-
 webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure Timeout ]
 
 webkit.org/b/245009 http/wpt/service-workers/controlled-sharedworker.https.html [ Pass Failure ]
