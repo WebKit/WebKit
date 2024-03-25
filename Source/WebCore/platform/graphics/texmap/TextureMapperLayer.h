@@ -45,7 +45,7 @@ class WEBCORE_EXPORT TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLay
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperLayer();
+    TextureMapperLayer(const Settings&);
     virtual ~TextureMapperLayer();
 
 #if USE(COORDINATED_GRAPHICS)
@@ -174,6 +174,7 @@ private:
         return FloatRect(FloatPoint::zero(), m_state.size);
     }
 
+    const Settings& m_settings;
     Vector<TextureMapperLayer*> m_children;
     TextureMapperLayer* m_parent { nullptr };
     WeakPtr<TextureMapperLayer> m_effectTarget;

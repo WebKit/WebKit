@@ -49,6 +49,8 @@ class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadS
 public:
     class Client {
     public:
+        virtual const WebCore::Settings& settings() = 0;
+
         virtual uint64_t nativeSurfaceHandleForCompositing() = 0;
         virtual void didCreateGLContext() = 0;
         virtual void willDestroyGLContext() = 0;

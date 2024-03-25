@@ -5268,6 +5268,20 @@ ProcessSwapOnCrossSiteWindowOpenEnabled:
      WebKit:
        default: false
 
+PropagateDamagingInformation:
+   type: bool
+   status: testable
+   category: dom
+   humanReadableName: "Propagate Damaging Information"
+   humanReadableDescription: "Propagate Damaging Information"
+   defaultValue:
+     WebCore:
+       default: false
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: false
+
 PunchOutWhiteBackgroundsInDarkMode:
   type: bool
   status: embedder

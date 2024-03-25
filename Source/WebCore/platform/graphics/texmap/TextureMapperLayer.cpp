@@ -60,7 +60,10 @@ struct TextureMapperLayer::ComputeTransformData {
     }
 };
 
-TextureMapperLayer::TextureMapperLayer() = default;
+TextureMapperLayer::TextureMapperLayer(const Settings& settings)
+    : m_settings(settings)
+{
+}
 
 TextureMapperLayer::~TextureMapperLayer()
 {
@@ -1091,6 +1094,8 @@ void TextureMapperLayer::dismissDamageVisitor()
 
 void TextureMapperLayer::markDamaged(std::optional<FloatRect> target)
 {
+    if (!m_settings.propagateDamagingInformation())
+        return;
 
     auto newRegion = target ? (*target) : layerRect();
 

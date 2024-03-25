@@ -103,7 +103,7 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
         m_display.updateTimer->startOneShot(Seconds { 1.0 / m_display.displayUpdate.updatesPerSecond });
 #endif
 
-        m_scene = adoptRef(new CoordinatedGraphicsScene(this));
+        m_scene = adoptRef(new CoordinatedGraphicsScene(this, m_client.settings()));
         m_nativeSurfaceHandle = m_client.nativeSurfaceHandleForCompositing();
 
         createGLContext();

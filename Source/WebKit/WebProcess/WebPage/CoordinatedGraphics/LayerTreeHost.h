@@ -133,6 +133,7 @@ private:
     void frameComplete() override;
 
     // ThreadedCompositor::Client
+    const WebCore::Settings& settings() override;
     uint64_t nativeSurfaceHandleForCompositing() override;
     void didCreateGLContext() override;
     void willDestroyGLContext() override;

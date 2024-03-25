@@ -38,8 +38,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient* client)
-    : m_client(client)
+    CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient* client, const WebCore::Settings& settings)
+    : m_settings(settings)
+    , m_client(client)
 {
 }
 
@@ -93,11 +94,11 @@ void CoordinatedGraphicsScene::onNewBufferAvailable()
     updateViewport();
 }
 
-TextureMapperLayer& texmapLayer(Nicosia::CompositionLayer& compositionLayer)
+TextureMapperLayer& texmapLayer(Nicosia::CompositionLayer& compositionLayer, const WebCore::Settings& settings)
 {
     auto& compositionState = compositionLayer.compositionState();
     if (!compositionState.layer) {
-        compositionState.layer = makeUnique<TextureMapperLayer>();
+        compositionState.layer = makeUnique<TextureMapperLayer>(settings);
         compositionState.layer->setID(compositionLayer.id());
     }
     return *compositionState.layer;
@@ -222,7 +223,7 @@ void CoordinatedGraphicsScene::updateSceneState()
             // Handle the root layer, adding it to the TextureMapperLayer tree
             // on the first update. No such change is expected later.
             {
-                auto& rootLayer = texmapLayer(*state.rootLayer);
+                auto& rootLayer = texmapLayer(*state.rootLayer, m_settings);
                 if (rootLayer.id() != m_rootLayerID) {
                     m_rootLayerID = rootLayer.id();
                     RELEASE_ASSERT(m_rootLayer->children().isEmpty());
@@ -260,7 +261,7 @@ void CoordinatedGraphicsScene::updateSceneState()
             // the incoming state changes. Layer backings are stored so that the updates
             // (possibly time-consuming) can be done outside of this scene update.
             for (auto& compositionLayer : m_nicosia.state.layers) {
-                auto& layer = texmapLayer(*compositionLayer);
+                auto& layer = texmapLayer(*compositionLayer, m_settings);
                 compositionLayer->commitState(
                     [this, &layer, &layersByBacking, &replacedProxiesToInvalidate]
                     (const Nicosia::CompositionLayer::LayerState& layerState)
@@ -296,7 +297,7 @@ void CoordinatedGraphicsScene::updateSceneState()
                         if (layerState.delta.filtersChanged)
                             layer.setFilters(layerState.filters);
                         if (layerState.delta.backdropFiltersChanged)
-                            layer.setBackdropLayer(layerState.backdropLayer ? &texmapLayer(*layerState.backdropLayer) : nullptr);
+                            layer.setBackdropLayer(layerState.backdropLayer ? &texmapLayer(*layerState.backdropLayer, m_settings) : nullptr);
                         if (layerState.delta.backdropFiltersRectChanged)
                             layer.setBackdropFiltersRect(layerState.backdropFiltersRect);
                         if (layerState.delta.animationsChanged)
@@ -304,13 +305,13 @@ void CoordinatedGraphicsScene::updateSceneState()
 
                         if (layerState.delta.childrenChanged) {
                             layer.setChildren(WTF::map(layerState.children,
-                                [](auto& child) { return &texmapLayer(*child); }));
+                                                       [this](auto& child) { return &texmapLayer(*child, m_settings); }));
                         }
 
                         if (layerState.delta.maskChanged)
-                            layer.setMaskLayer(layerState.mask ? &texmapLayer(*layerState.mask) : nullptr);
+                            layer.setMaskLayer(layerState.mask ? &texmapLayer(*layerState.mask, m_settings) : nullptr);
                         if (layerState.delta.replicaChanged)
-                            layer.setReplicaLayer(layerState.replica ? &texmapLayer(*layerState.replica) : nullptr);
+                            layer.setReplicaLayer(layerState.replica ? &texmapLayer(*layerState.replica, m_settings) : nullptr);
 
                         if (layerState.delta.flagsChanged) {
                             layer.setContentsOpaque(layerState.flags.contentsOpaque);
@@ -436,7 +437,7 @@ void CoordinatedGraphicsScene::ensureRootLayer()
     if (m_rootLayer)
         return;
 
-    m_rootLayer = makeUnique<TextureMapperLayer>();
+    m_rootLayer = makeUnique<TextureMapperLayer>(m_settings);
     m_rootLayer->acceptDamageVisitor(*this);
     m_rootLayer->setMasksToBounds(false);
     m_rootLayer->setDrawsContent(false);
