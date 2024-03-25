@@ -444,9 +444,6 @@
 (allow iokit-get-properties
        (iokit-property "IORegistryEntryPropertyKeys"))
 
-(allow ipc-posix-sem-open (with telemetry)
-       (ipc-posix-name "containermanagerd.fb_check"))
-
 (with-filter (ipc-posix-name "purplebuddy.sentinel")
     (deny ipc-posix-sem-create ipc-posix-sem-post ipc-posix-sem-unlink ipc-posix-sem-wait)
     (allow ipc-posix-sem-open))
