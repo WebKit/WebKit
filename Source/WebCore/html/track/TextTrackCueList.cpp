@@ -54,6 +54,12 @@ Ref<TextTrackCueList> TextTrackCueList::create()
     return adoptRef(*new TextTrackCueList);
 }
 
+void TextTrackCueList::didMoveToNewDocument(Document& newDocument)
+{
+    for (RefPtr cue : m_vector)
+        cue->didMoveToNewDocument(newDocument);
+}
+
 unsigned TextTrackCueList::cueIndex(const TextTrackCue& cue) const
 {
     ASSERT(m_vector.contains(&cue));

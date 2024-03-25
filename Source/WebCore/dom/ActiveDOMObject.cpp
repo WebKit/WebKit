@@ -109,6 +109,15 @@ void ActiveDOMObject::assertSuspendIfNeededWasCalled() const
 
 #endif // ASSERT_ENABLED
 
+void ActiveDOMObject::didMoveToNewDocument(Document& newDocument)
+{
+    if (RefPtr context = scriptExecutionContext())
+        context->willDestroyActiveDOMObject(*this);
+    Ref newScriptExecutionContext = newDocument.contextDocument();
+    observeContext(newScriptExecutionContext.ptr());
+    newScriptExecutionContext->didCreateActiveDOMObject(*this);
+}
+
 void ActiveDOMObject::suspend(ReasonForSuspension)
 {
 }

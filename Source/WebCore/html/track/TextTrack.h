@@ -50,6 +50,8 @@ public:
     static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);
     virtual ~TextTrack();
 
+    void didMoveToNewDocument(Document& newDocument) final;
+
     static TextTrack& captionMenuOffItem();
     static TextTrack& captionMenuAutomaticItem();
 
@@ -81,6 +83,7 @@ public:
     TextTrackCueList* activeCues() const;
 
     TextTrackCueList* cuesInternal() const { return m_cues.get(); }
+    inline RefPtr<TextTrackCueList> protectedCues() const;
 
     void addClient(TextTrackClient&);
     void clearClient(TextTrackClient&);

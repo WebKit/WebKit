@@ -75,6 +75,11 @@ TrackBase::TrackBase(ScriptExecutionContext* context, Type type, const std::opti
 #endif
 }
 
+void TrackBase::didMoveToNewDocument(Document& newDocument)
+{
+    observeContext(&newDocument.contextDocument());
+}
+
 void TrackBase::setTrackList(TrackListBase& trackList)
 {
     m_trackList = trackList;

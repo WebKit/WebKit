@@ -142,6 +142,18 @@ TextTrack::~TextTrack()
     }
 }
 
+inline RefPtr<TextTrackCueList> TextTrack::protectedCues() const
+{
+    return m_cues.copyRef();
+}
+
+void TextTrack::didMoveToNewDocument(Document& newDocument)
+{
+    TrackBase::didMoveToNewDocument(newDocument);
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
+    protectedCues()->didMoveToNewDocument(newDocument);
+}
+
 TextTrackList* TextTrack::textTrackList() const
 {
     return downcast<TextTrackList>(trackList());

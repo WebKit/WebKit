@@ -69,6 +69,8 @@ class TextTrackCue : public RefCounted<TextTrackCue>, public EventTarget, public
 public:
     static ExceptionOr<Ref<TextTrackCue>> create(Document&, double start, double end, DocumentFragment&);
 
+    void didMoveToNewDocument(Document&);
+
     TextTrack* track() const;
     RefPtr<TextTrack> protectedTrack() const;
     void setTrack(TextTrack*);

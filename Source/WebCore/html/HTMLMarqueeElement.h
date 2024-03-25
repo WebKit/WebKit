@@ -57,6 +57,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
     const char* activeDOMObjectName() const final { return "HTMLMarqueeElement"; }
