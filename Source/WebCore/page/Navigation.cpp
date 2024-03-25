@@ -433,7 +433,9 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     if (apiMethodTracker)
         apiMethodTracker->info = JSC::jsUndefined();
 
+IGNORE_GCC_WARNINGS_BEGIN("use-after-free")
     Ref event = NavigateEvent::create(eventNames().navigateEvent, init, abortController);
+IGNORE_GCC_WARNINGS_END
     m_ongoingNavigateEvent = event.ptr();
     m_focusChangedDuringOnoingNavigation = false;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
