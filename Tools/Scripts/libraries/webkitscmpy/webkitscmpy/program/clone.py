@@ -102,7 +102,7 @@ class Clone(Command):
         ), None)
 
     @classmethod
-    def main(cls, args, repository, merge_back=None, **kwargs):
+    def main(cls, args, repository, merge_back=None, clone_filter=None, **kwargs):
         rdar = None
         if args.merge_back is not None:
             merge_back = args.merge_back
@@ -244,7 +244,7 @@ class Clone(Command):
             parent = cls.parent(rdar, milestone.name)
             if not parent:
                 sys.stderr.write('Failed to find existing Merge-Back umbrella\n')
-                sys.stderr.write(u"Make sure you have a '{} Merge-Back' radar in {} assigned to you\n".format(cls.UMBRELLA, args.milestone))
+                sys.stderr.write(u"Make sure you have a '{} Merge-Back' radar in {} assigned to you\n".format(cls.UMBRELLA, milestone.name))
                 return 255
             milestone = milestones.get('Internal Tools - {}'.format(milestone.name), milestone)
 
@@ -270,11 +270,18 @@ class Clone(Command):
                 return False
             return value
 
-        category = pick_attr('category', 'categories', None)
-        event = pick_attr('event', 'events')
-        tentpole = pick_attr('tentpole', 'tentpoles')
+        details = dict(
+            category=pick_attr('category', 'categories', None),
+            event=pick_attr('event', 'events'),
+            tentpole=pick_attr('tentpole', 'tentpoles'),
+        )
 
-        if False in (category, event, tentpole):
+        if clone_filter:
+            details = clone_filter(args, raw_issue, milestone_association, **details)
+            if not details:
+                return 255
+
+        if False in details.values():
             sys.stderr.write('Too few attributes specified to clone {}\n'.format(issue))
             return 255
 
@@ -285,13 +292,10 @@ class Clone(Command):
                 print("    as child of {}".format(parent.link))
             if prefix:
                 print("    with tile '{} {}'".format(prefix, issue.title))
-            if category:
-                print("    with category '{}'".format(category.name))
-            if event:
-                print("    with event '{}'".format(event.name))
-            if tentpole:
-                print("    with tentpole '{}'".format(tentpole.name))
-            return 255
+            for key, value in details.items():
+                if value:
+                    print("    with {} '{}'".format(key, value.name))
+            return 0
 
         cloned = rdar.clone(issue, reason=args.reason)
         if not cloned:
@@ -321,9 +325,9 @@ class Clone(Command):
 
         try:
             raw_clone.milestone = milestone
-            raw_clone.category = category
-            raw_clone.event = event
-            raw_clone.tentpole = tentpole
+            raw_clone.category = details['category']
+            raw_clone.event = details['event']
+            raw_clone.tentpole = details['tentpole']
             raw_clone.commit_changes()
         except rdar.radarclient().exceptions.UnsuccessfulResponseException:
             sys.stderr.write('Completed clone, but failed to set milestone, category, event and tentpole\n')
