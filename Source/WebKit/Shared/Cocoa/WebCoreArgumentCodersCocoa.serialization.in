@@ -366,5 +366,3 @@ using CGDirectDisplayID = uint32_t
 using CFTimeInterval = double
 using CGGlyph = uint16_t
 using NSRect = CGRect
-
-using OSStatus = int32_t
