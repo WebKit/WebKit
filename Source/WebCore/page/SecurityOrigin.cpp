@@ -417,17 +417,18 @@ bool SecurityOrigin::isSameSiteAs(const SecurityOrigin& other) const
     // https://html.spec.whatwg.org/#same-site
     if (isOpaque() != other.isOpaque())
         return false;
+
     if (!isOpaque() && protocol() != other.protocol())
         return false;
 
     if (isOpaque())
         return isSameOriginAs(other);
 
-    auto topDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain());
+    auto topDomain = PublicSuffixStore::singleton().registrableDomain(toURL());
     if (topDomain.isEmpty())
         return host() == other.host();
 
-    return topDomain == PublicSuffixStore::singleton().topPrivatelyControlledDomain(other.domain());
+    return topDomain == PublicSuffixStore::singleton().registrableDomain(toURL());
 }
 
 bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffix, bool treatIPAddressAsDomain) const

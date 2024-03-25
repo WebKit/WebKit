@@ -4064,10 +4064,10 @@ const URL& Document::urlForBindings() const
         if (preNavigationURL.isEmpty() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data()))
             return false;
 
-        auto areSameSiteIgnoringPublicSuffix = [](StringView domain, StringView otherDomain) {
+        auto areSameSiteIgnoringPublicSuffix = [](const URL& url, const URL& otherURL) {
             auto& publicSuffixStore = PublicSuffixStore::singleton();
-            auto domainString = publicSuffixStore.topPrivatelyControlledDomain(domain.toStringWithoutCopying());
-            auto otherDomainString = publicSuffixStore.topPrivatelyControlledDomain(otherDomain.toStringWithoutCopying());
+            auto domainString = publicSuffixStore.registrableDomain(url);
+            auto otherDomainString = publicSuffixStore.registrableDomain(otherURL);
             auto substringToSeparator = [](const String& string) -> String {
                 auto indexOfFirstSeparator = string.find('.');
                 if (indexOfFirstSeparator == notFound)
@@ -4078,8 +4078,8 @@ const URL& Document::urlForBindings() const
             return !firstSubstring.isEmpty() && firstSubstring == substringToSeparator(otherDomainString);
         };
 
-        auto currentHost = securityOrigin().data().host();
-        if (areSameSiteIgnoringPublicSuffix(preNavigationURL.host(), currentHost))
+        auto currentURL = securityOrigin().toURL();
+        if (areSameSiteIgnoringPublicSuffix(preNavigationURL, currentURL))
             return false;
 
         if (!m_hasLoadedThirdPartyScript)
@@ -4089,7 +4089,7 @@ const URL& Document::urlForBindings() const
             if (RegistrableDomain { sourceURL }.matches(securityOrigin().data()))
                 return false;
 
-            if (areSameSiteIgnoringPublicSuffix(sourceURL.host(), currentHost))
+            if (areSameSiteIgnoringPublicSuffix(sourceURL, currentURL))
                 return false;
         }
 

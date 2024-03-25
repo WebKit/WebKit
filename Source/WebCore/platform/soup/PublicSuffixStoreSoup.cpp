@@ -58,7 +58,7 @@ static String permissiveTopPrivateDomain(const String& domain)
     return foundDot ? domain : String();
 }
 
-String PublicSuffixStore::platformTopPrivatelyControlledDomain(const String& domain) const
+String PublicSuffixStore::platformRegistrableDomain(const String& domain) const
 {
     CString domainUTF8 = domain.utf8();
 

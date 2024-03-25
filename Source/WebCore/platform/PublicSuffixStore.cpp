@@ -43,8 +43,8 @@ PublicSuffixStore& PublicSuffixStore::singleton()
 
 void PublicSuffixStore::clearHostTopPrivatelyControlledDomainCache()
 {
-    Locker locker { m_HostTopPrivatelyControlledDomainCacheLock };
-    m_hostTopPrivatelyControlledDomainCache.clear();
+    Locker locker { m_hostRegistrableDomainCacheLock };
+    m_hostRegistrableDomainCache.clear();
 }
 
 bool PublicSuffixStore::isPublicSuffix(StringView domain) const
@@ -52,50 +52,51 @@ bool PublicSuffixStore::isPublicSuffix(StringView domain) const
     return platformIsPublicSuffix(domain);
 }
 
-String PublicSuffixStore::publicSuffix(const String& host) const
+String PublicSuffixStore::publicSuffix(const URL& url) const
 {
-    // FIXME: if host is a URL, we could drop these checks.
-    if (host.isEmpty() || !host.containsOnlyASCII())
+    if (!url.isValid())
         return { };
 
-    const auto lowercaseHost = host.convertToASCIILowercase();
-    if (URL::hostIsIPAddress(lowercaseHost))
+    auto host = url.host();
+    if (host.isEmpty() || URL::hostIsIPAddress(host))
         return { };
 
     size_t separatorPosition;
     for (unsigned labelStart = 0; (separatorPosition = host.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
-        auto candidate = lowercaseHost.substring(separatorPosition + 1);
+        auto candidate = host.substring(separatorPosition + 1);
         if (isPublicSuffix(candidate))
-            return candidate;
+            return candidate.toString();
     }
 
     return { };
 }
 
-String PublicSuffixStore::topPrivatelyControlledDomain(const String& host) const
+String PublicSuffixStore::registrableDomain(const URL& url) const
 {
-    // FIXME: if host is a URL, we could drop these checks.
+    if (!url.isValid())
+        return { };
+
+    auto host = url.host();
     if (host.isEmpty())
         return { };
 
     if (!host.containsOnlyASCII())
-        return host;
+        return host.toString();
 
-    Locker locker { m_HostTopPrivatelyControlledDomainCacheLock };
-    auto hostCopy = crossThreadCopy(host);
-    auto& result = m_hostTopPrivatelyControlledDomainCache.ensure(hostCopy, [&] {
-        const auto lowercaseHost = hostCopy.convertToASCIILowercase();
-        if (lowercaseHost == "localhost"_s || URL::hostIsIPAddress(lowercaseHost))
-            return lowercaseHost;
+    Locker locker { m_hostRegistrableDomainCacheLock };
+    auto hostString = crossThreadCopy(host.toString());
+    auto& result = m_hostRegistrableDomainCache.ensure(hostString, [&] {
+        if (hostString == "localhost"_s || URL::hostIsIPAddress(hostString))
+            return hostString;
 
-        return platformTopPrivatelyControlledDomain(lowercaseHost);
+        return platformRegistrableDomain(hostString);
     }).iterator->value;
 
-    constexpr auto maxHostTopPrivatelyControlledDomainCache = 128;
-    if (m_hostTopPrivatelyControlledDomainCache.size() > maxHostTopPrivatelyControlledDomainCache)
-        m_hostTopPrivatelyControlledDomainCache.remove(m_hostTopPrivatelyControlledDomainCache.random());
+    constexpr auto maxHostRegistrableDomainCacheSize = 128;
+    if (m_hostRegistrableDomainCache.size() > maxHostRegistrableDomainCacheSize)
+        m_hostRegistrableDomainCache.remove(m_hostRegistrableDomainCache.random());
 
-    return result.isolatedCopy();
+    return crossThreadCopy(result);
 }
 
 } // namespace WebCore

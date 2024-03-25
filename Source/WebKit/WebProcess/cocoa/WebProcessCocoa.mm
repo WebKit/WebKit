@@ -781,7 +781,7 @@ static void prewarmLogs()
     // This call will create container manager log objects.
     // FIXME: this can be removed if we move all calls to topPrivatelyControlledDomain out of the WebContent process.
     // This would be desirable, since the WebContent process is blocking access to the container manager daemon.
-    PublicSuffixStore::singleton().topPrivatelyControlledDomain("apple.com"_s);
+    PublicSuffixStore::singleton().registrableDomain(URL { "apple.com"_s });
 
     static std::array<std::pair<const char*, const char*>, 5> logs { {
         { "com.apple.CFBundle", "strings" },

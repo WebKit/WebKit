@@ -829,7 +829,7 @@ String ResourceRequestBase::partitionName(const String& domain)
 {
     if (domain.isNull())
         return emptyString();
-    auto highLevel = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain);
+    auto highLevel = PublicSuffixStore::singleton().registrableDomain(URL { domain });
     if (highLevel.isNull())
         return emptyString();
     return highLevel;

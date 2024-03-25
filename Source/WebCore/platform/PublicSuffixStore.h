@@ -38,8 +38,8 @@ public:
 
     // https://url.spec.whatwg.org/#host-public-suffix
     WEBCORE_EXPORT bool isPublicSuffix(StringView domain) const;
-    WEBCORE_EXPORT String publicSuffix(const String& domain) const;
-    WEBCORE_EXPORT String topPrivatelyControlledDomain(const String& host) const;
+    WEBCORE_EXPORT String publicSuffix(const URL&) const;
+    WEBCORE_EXPORT String registrableDomain(const URL&) const;
     WEBCORE_EXPORT void clearHostTopPrivatelyControlledDomainCache();
 
 #if PLATFORM(COCOA)
@@ -52,10 +52,10 @@ private:
     PublicSuffixStore() = default;
 
     bool platformIsPublicSuffix(StringView domain) const;
-    String platformTopPrivatelyControlledDomain(const String& host) const;
+    String platformRegistrableDomain(const String& host) const;
 
-    mutable Lock m_HostTopPrivatelyControlledDomainCacheLock;
-    mutable HashMap<String, String, ASCIICaseInsensitiveHash> m_hostTopPrivatelyControlledDomainCache WTF_GUARDED_BY_LOCK(m_HostTopPrivatelyControlledDomainCacheLock);
+    mutable Lock m_hostRegistrableDomainCacheLock;
+    mutable HashMap<String, String, ASCIICaseInsensitiveHash> m_hostRegistrableDomainCache WTF_GUARDED_BY_LOCK(m_hostRegistrableDomainCacheLock);
 #if PLATFORM(COCOA)
     mutable Lock m_publicSuffixCacheLock;
     std::optional<HashSet<String, ASCIICaseInsensitiveHash>> m_publicSuffixCache WTF_GUARDED_BY_LOCK(m_publicSuffixCacheLock);
