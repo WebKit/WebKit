@@ -35,9 +35,10 @@ namespace JSC { namespace DFG {
 
 class Phase {
 public:
-    Phase(Graph& graph, const char* name)
+    Phase(Graph& graph, const char* name, const bool validateGraph = true)
         : m_graph(graph)
         , m_name(name)
+        , m_validateGraph(validateGraph)
     {
         beginPhase();
     }
@@ -72,7 +73,8 @@ private:
     // Call these hooks when starting and finishing.
     void beginPhase();
     void endPhase();
-    
+
+    bool m_validateGraph { true };
     CString m_graphDumpBeforePhase;
 };
 
