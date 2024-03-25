@@ -651,7 +651,7 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
     auto expectedSourceBuffer = string.charactersWithNullTermination();
     if (!expectedSourceBuffer)
         return std::nullopt;
-    auto sourceBuffer = expectedSourceBuffer.value();
+    auto sourceBuffer = expectedSourceBuffer->span();
 
     UChar destinationBuffer[URLParser::hostnameBufferLength];
     UErrorCode uerror = U_ZERO_ERROR;
