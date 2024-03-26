@@ -230,11 +230,13 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
         // calls from CoordinatedGraphicsLayer.
         for (auto& region : m_damaged)
             recordDamage(region, transform, options);
+        clearDamaged();
         return;
     }
 
     // Layers with content layer are always fully damaged for now...
     recordDamage(layerRect(), transform, options);
+    clearDamaged();
 
     if (!m_state.contentsTileSize.isEmpty()) {
         options.textureMapper.setWrapMode(TextureMapper::WrapMode::Repeat);
@@ -1120,6 +1122,9 @@ void TextureMapperLayer::clearDamaged()
 
 void TextureMapperLayer::recordDamage(const FloatRect& rect, const TransformationMatrix& transform, const TextureMapperPaintOptions& options)
 {
+    if (!m_visitor)
+        return;
+
     FloatQuad quad(rect);
     quad = transform.mapQuad(quad);
     FloatRect transformedRect = quad.boundingBox();
@@ -1128,10 +1133,7 @@ void TextureMapperLayer::recordDamage(const FloatRect& rect, const Transformatio
     // we have to undo it.
     if (!options.offset.isZero())
         transformedRect.move(-options.offset);
-    if (m_visitor) {
-        m_visitor->recordDamage(transformedRect);
-        clearDamaged();
-    }
+    m_visitor->recordDamage(transformedRect);
 }
 
 }
