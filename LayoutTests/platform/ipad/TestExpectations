@@ -127,3 +127,5 @@ imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Fail
 imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.html  [ Failure ]
 imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/user-activation/propagation-sameorigin.html  [ Failure ]
+
+webkit.org/b/271712 fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Timeout ]
