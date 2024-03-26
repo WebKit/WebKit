@@ -1705,7 +1705,8 @@ void RenderLayerBacking::updateAfterDescendants()
         m_graphicsLayer->setContentsOpaque(!m_hasSubpixelRounding && m_owningLayer.backgroundIsKnownToBeOpaqueInRect(compositedBounds()));
     }
 
-    if (layerRendererStyleHas3DTransformOperation(m_owningLayer))
+    if (layerRendererStyleHas3DTransformOperation(m_owningLayer)
+        || m_owningLayer.hasCompositedScrollableOverflow())
         m_graphicsLayer->markDamageRectsUnreliable();
 
     m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants());
