@@ -1947,6 +1947,13 @@ public:
         return MacroAssemblerX86Common::branchTest8(cond, Address(scratchRegister()), mask8);
     }
 
+    using MacroAssemblerX86Common::branch16;
+    Jump branch16(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
+    {
+        MacroAssemblerX86Common::move(TrustedImmPtr(left.m_ptr), scratchRegister());
+        return MacroAssemblerX86Common::branch16(cond, Address(scratchRegister()), right);
+    }
+
     using MacroAssemblerX86Common::branchTest16;
     Jump branchTest16(ResultCondition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {

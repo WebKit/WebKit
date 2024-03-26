@@ -496,6 +496,12 @@ public:
         return PatchableJump(branch8(cond, address, imm));
     }
 
+    PatchableJump patchableBranch16(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        padBeforePatch();
+        return PatchableJump(branch16(cond, address, imm));
+    }
+
     PatchableJump patchableBranch32(RelationalCondition cond, Address address, TrustedImm32 imm)
     {
         padBeforePatch();

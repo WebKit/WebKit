@@ -2473,7 +2473,7 @@ public:
         MacroAssemblerHelpers::load8OnCondition(*this, cond, left, scratch);
         return branch32(cond, scratch, right8);
     }
-    
+
     Jump branch8(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 right)
     {
         // Use addressTempRegister instead of dataTempRegister, since branch32 uses dataTempRegister.
@@ -2482,7 +2482,41 @@ public:
         MacroAssemblerHelpers::load8OnCondition(*this, cond, armAddress, addressTempRegister);
         return branch32(cond, addressTempRegister, right8);
     }
-    
+
+    Jump branch16(RelationalCondition cond, RegisterID left, TrustedImm32 right)
+    {
+        TrustedImm32 right16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, right);
+        compare32AndSetFlags(left, right16);
+        return Jump(makeBranch(cond));
+    }
+
+    Jump branch16(RelationalCondition cond, Address left, TrustedImm32 right)
+    {
+        // use addressTempRegister incase the branch16 we call uses dataTempRegister. :-/
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        TrustedImm32 right16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, right);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, left, scratch);
+        return branch16(cond, scratch, right16);
+    }
+
+    Jump branch16(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
+    {
+        // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        TrustedImm32 right16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, right);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, left, scratch);
+        return branch32(cond, scratch, right16);
+    }
+
+    Jump branch16(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 right)
+    {
+        // Use addressTempRegister instead of dataTempRegister, since branch32 uses dataTempRegister.
+        TrustedImm32 right16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, right);
+        ArmAddress armAddress = setupArmAddress(address);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, armAddress, addressTempRegister);
+        return branch32(cond, addressTempRegister, right16);
+    }
+
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         ASSERT(cond == Zero || cond == NonZero || cond == Signed || cond == PositiveOrZero);
@@ -2975,6 +3009,14 @@ public:
     {
         m_makeJumpPatchable = true;
         Jump result = branch8(cond, left, imm);
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
+    }
+
+    PatchableJump patchableBranch16(RelationalCondition cond, Address left, TrustedImm32 imm)
+    {
+        m_makeJumpPatchable = true;
+        Jump result = branch16(cond, left, imm);
         m_makeJumpPatchable = false;
         return PatchableJump(result);
     }

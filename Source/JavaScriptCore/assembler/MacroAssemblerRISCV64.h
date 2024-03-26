@@ -2246,6 +2246,24 @@ public:
         return makeBranch(cond, temp.memory(), temp.data());
     }
 
+    Jump branch16(RelationalCondition cond, Address address, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lhInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
+    Jump branch16(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 imm)
+    {
+        auto temp = temps<Data, Memory>();
+        loadImmediate(TrustedImmPtr(address.m_ptr), temp.memory());
+        m_assembler.lhInsn(temp.memory(), temp.memory(), Imm::I<0>());
+        loadImmediate(imm, temp.data());
+        return makeBranch(cond, temp.memory(), temp.data());
+    }
+
     Jump branch32(RelationalCondition cond, RegisterID lhs, RegisterID rhs)
     {
         auto temp = temps<Data, Memory>();
