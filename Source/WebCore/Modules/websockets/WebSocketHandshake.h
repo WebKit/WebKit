@@ -69,7 +69,7 @@ public:
 
     WEBCORE_EXPORT void reset();
 
-    WEBCORE_EXPORT int readServerHandshake(const uint8_t* header, size_t len);
+    WEBCORE_EXPORT int readServerHandshake(std::span<const uint8_t> header);
     WEBCORE_EXPORT Mode mode() const;
     WEBCORE_EXPORT String failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
 
@@ -88,10 +88,10 @@ public:
 
 private:
 
-    int readStatusLine(const uint8_t* header, size_t headerLength, int& statusCode, String& statusText);
+    int readStatusLine(std::span<const uint8_t> header, int& statusCode, String& statusText);
 
     // Reads all headers except for the two predefined ones.
-    const uint8_t* readHTTPHeaders(const uint8_t* start, const uint8_t* end);
+    std::span<const uint8_t> readHTTPHeaders(std::span<const uint8_t>);
     void processHeaders();
     bool checkResponseHeaders();
 

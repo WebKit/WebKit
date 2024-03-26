@@ -289,7 +289,7 @@ Expected<bool, String> WebSocketTask::validateOpeningHandshake()
         return makeUnexpected("Unexpected handshakeing condition"_s);
     }
 
-    auto headerLength = m_handshake->readServerHandshake(m_receiveBuffer.data(), m_receiveBuffer.size());
+    auto headerLength = m_handshake->readServerHandshake(m_receiveBuffer.span());
     if (headerLength <= 0)
         return false;
 

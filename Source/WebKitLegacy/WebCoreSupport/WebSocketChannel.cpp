@@ -458,7 +458,7 @@ bool WebSocketChannel::processBuffer()
     Ref<WebSocketChannel> protectedThis(*this); // The client can close the channel, potentially removing the last reference.
 
     if (m_handshake->mode() == WebSocketHandshake::Incomplete) {
-        int headerLength = m_handshake->readServerHandshake(m_buffer.data(), m_buffer.size());
+        int headerLength = m_handshake->readServerHandshake(m_buffer.span());
         if (headerLength <= 0)
             return false;
         if (m_handshake->mode() == WebSocketHandshake::Connected) {
