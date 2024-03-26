@@ -48,7 +48,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformStrategies.h"
 #include "PrivateClickMeasurement.h"
-#include "Quirks.h"
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
@@ -104,7 +103,7 @@ bool HTMLAnchorElement::isMouseFocusable() const
 {
 #if !(PLATFORM(GTK) || PLATFORM(WPE))
     // Only allow links with tabIndex or contentEditable to be mouse focusable.
-    if (isLink() && !document().quirks().needsAnchorElementsToBeMouseFocusable())
+    if (isLink())
         return HTMLElement::supportsFocus();
 #endif
 
