@@ -5695,7 +5695,7 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return callback();
-        protectedThis->callAfterNextPresentationUpdateAndLayerCommit(WTFMove(callback));
+        protectedThis->callAfterNextPresentationUpdate(WTFMove(callback));
     });
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [aggregator] { }, pageID);
@@ -11899,13 +11899,6 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
 #else
     callback();
 #endif
-}
-#endif
-
-#if !PLATFORM(COCOA)
-void WebPageProxy::callAfterNextPresentationUpdateAndLayerCommit(CompletionHandler<void()>&& callback)
-{
-    return callAfterNextPresentationUpdate(WTFMove(callback));
 }
 #endif
 
