@@ -192,7 +192,6 @@ struct BasicBlock : RefCounted<BasicBlock> {
     BranchDirection cfaBranchDirection;
     bool cfaHasVisited;
     bool cfaShouldRevisit;
-    bool cfaThinksShouldTryConstantFolding { false };
     bool cfaDidFinish;
     bool intersectionOfCFAHasVisited;
     bool isOSRTarget;
