@@ -33,6 +33,7 @@
 #include "AXTreeStore.h"
 #include "PageIdentifier.h"
 #include "RenderStyleConstants.h"
+#include "RuntimeApplicationChecks.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
@@ -370,7 +371,8 @@ public:
     // During layout tests, it is called on the main thread.
     void applyPendingChanges();
 
-    AXID treeID() const { return m_id; }
+    constexpr AXID treeID() const { return m_id; }
+    constexpr ProcessID processID() const { return m_processID; }
     void setPageActivityState(OptionSet<ActivityState>);
     OptionSet<ActivityState> pageActivityState() const;
     // Use only if the s_storeLock is already held like in findAXTree.
@@ -425,6 +427,7 @@ private:
     Vector<NodeChange> resolveAppends();
     void queueAppendsAndRemovals(Vector<NodeChange>&&, Vector<AXID>&&);
 
+    const ProcessID m_processID { presentingApplicationPID() };
     unsigned m_maxTreeDepth { 0 };
     WeakPtr<AXObjectCache> m_axObjectCache;
     OptionSet<ActivityState> m_pageActivityState;

@@ -35,6 +35,7 @@
 #include "FloatQuad.h"
 #include "LayoutRect.h"
 #include "Path.h"
+#include "RuntimeApplicationChecks.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
@@ -814,6 +815,7 @@ protected:
     unsigned getLengthForTextRange() const;
 
 private:
+    ProcessID processID() const final { return presentingApplicationPID(); }
     bool hasAncestorFlag(AXAncestorFlag flag) const { return ancestorFlagsAreInitialized() && m_ancestorFlags.contains(flag); }
     std::optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
     std::optional<SimpleRange> selectionRange() const;

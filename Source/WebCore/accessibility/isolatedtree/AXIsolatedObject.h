@@ -84,6 +84,7 @@ public:
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 private:
+    constexpr ProcessID processID() const final { return tree()->processID(); }
     void detachRemoteParts(AccessibilityDetachmentType) final;
     void detachPlatformWrapper(AccessibilityDetachmentType) final;
 
