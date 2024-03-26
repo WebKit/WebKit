@@ -2063,7 +2063,7 @@ http/tests/preload/onload_event.html [ Pass Failure ]
 
 webkit.org/b/226520 media/video-played-collapse.html [ Pass Timeout Failure ]
 
-webkit.org/b/238824 http/tests/workers/service/openwindow-from-notification-click.html [ Pass Failure ]
+webkit.org/b/271732 [ Ventura+ ] http/tests/workers/service/openwindow-from-notification-click.html [ Pass Failure Crash ]
 
 webkit.org/b/215335 [ Release ] webanimations/css-transition-retargeting-during-ready-promise.html [ Pass Failure ]
 
