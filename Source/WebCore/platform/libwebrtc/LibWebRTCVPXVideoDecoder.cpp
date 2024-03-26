@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
 #include "CVUtilities.h"
+#include "IOSurface.h"
 #include "LibWebRTCDav1dDecoder.h"
 #include "Logging.h"
 #include "VideoFrameLibWebRTC.h"
@@ -79,6 +80,7 @@ private:
     std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
     bool m_useIOSurface { false };
+    ProcessIdentity m_resourceOwner;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };
@@ -171,6 +173,7 @@ LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXV
     , m_postTaskCallback(WTFMove(postTaskCallback))
     , m_internalDecoder(createInternalDecoder(type))
     , m_useIOSurface(config.pixelBuffer == VideoDecoder::HardwareBuffer::Yes)
+    , m_resourceOwner(config.resourceOwner)
 {
     m_internalDecoder->RegisterDecodeCompleteCallback(this);
     webrtc::VideoDecoder::Settings settings;
@@ -224,6 +227,12 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
                     RELEASE_LOG_ERROR(Media, "Failed creating a pixel buffer for converting a VPX frame with error %d", status);
                     return nullptr;
                 }
+
+                if (protectedThis->m_resourceOwner) {
+                    if (auto surface = CVPixelBufferGetIOSurface(pixelBuffer))
+                        IOSurface::setOwnershipIdentity(surface, protectedThis->m_resourceOwner);
+                }
+
                 return pixelBuffer;
             }));
         });

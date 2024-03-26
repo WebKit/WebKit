@@ -292,6 +292,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, 
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
+    m_mediaSourcePrivate->setResourceOwner(m_resourceOwner);
     m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
     m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
 
@@ -979,6 +980,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
 
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
     m_decompressionSession->setTimebase([m_synchronizer timebase]);
+    m_decompressionSession->setResourceOwner(m_resourceOwner);
 
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());

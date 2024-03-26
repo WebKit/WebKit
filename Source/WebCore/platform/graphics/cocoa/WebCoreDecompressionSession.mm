@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCoreDecompressionSession.h"
 
+#import "IOSurface.h"
 #import "Logging.h"
 #import "PixelBufferConformerCV.h"
 #import "VideoDecoder.h"
@@ -826,7 +827,7 @@ void WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics(double ratio
 
 Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCode codec)
 {
-    VideoDecoder::Config config { { }, 0, 0, VideoDecoder::HardwareAcceleration::Yes, VideoDecoder::HardwareBuffer::Yes };
+    VideoDecoder::Config config { { }, 0, 0, VideoDecoder::HardwareAcceleration::Yes, VideoDecoder::HardwareBuffer::Yes, m_resourceOwner };
     MediaPromise::Producer producer;
     auto promise = producer.promise();
     VideoDecoder::create(VideoDecoder::fourCCToCodecString(codec), config, [protectedThis = Ref { *this }, this, producer = WTFMove(producer)](VideoDecoder::CreateResult&& result) {
