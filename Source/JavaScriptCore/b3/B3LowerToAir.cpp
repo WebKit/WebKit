@@ -3299,7 +3299,8 @@ private:
                     return false;
                 uint64_t width = WTF::bitCount(mask);
                 uint64_t datasize = opcode == ExtractUnsignedBitfield32 ? 32 : 64;
-                if (lsb + width > datasize)
+                uint64_t resultDataSize = 0;
+                if (!WTF::safeAdd(lsb, width, resultDataSize) || resultDataSize > datasize)
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
@@ -3379,7 +3380,8 @@ private:
                 uint64_t highWidth = highWidthValue->asInt();
                 uint64_t lowWidth = lowWidthValue->asInt();
                 uint64_t datasize = opcode == ExtractRegister32 ? 32 : 64;
-                if (lowWidth + highWidth != datasize || maskBitCount != lowWidth || lowWidth == datasize)
+                uint64_t resultWidth = 0;
+                if (!WTF::safeAdd(lowWidth, highWidth, resultWidth) || resultWidth != datasize || maskBitCount != lowWidth || lowWidth == datasize)
                     return false;
 
                 append(opcode, tmp(nValue), tmp(mValue), imm(lowWidthValue), tmp(m_value));
@@ -3415,7 +3417,8 @@ private:
                     return false;
                 uint64_t datasize = opcode == InsertBitField32 ? 32 : 64;
                 uint64_t width = WTF::bitCount(mask1);
-                if (lsb + width > datasize)
+                uint64_t resultDataSize = 0;
+                if (!WTF::safeAdd(lsb, width, resultDataSize) || resultDataSize > datasize)
                     return false;
 
                 uint64_t mask2 = maskValue2->asInt();
@@ -3465,7 +3468,8 @@ private:
                     return false;
                 uint64_t width = WTF::bitCount(mask1);
                 uint64_t datasize = opcode == ExtractInsertBitfieldAtLowEnd32 ? 32 : 64;
-                if (lsb + width > datasize)
+                uint64_t resultDataSize = 0;
+                if (!WTF::safeAdd(lsb, width, resultDataSize) || resultDataSize > datasize)
                     return false;
                 uint64_t mask2 = maskValue2->asInt();
 
@@ -3639,7 +3643,8 @@ private:
 
                     uint64_t width = WTF::bitCount(mask);
                     uint64_t datasize = opcode == InsertUnsignedBitfieldInZero32 ? 32 : 64;
-                    if (lsb + width > datasize)
+                    uint64_t resultDataSize = 0;
+                    if (!WTF::safeAdd(lsb, width, resultDataSize) || resultDataSize > datasize)
                         return false;
 
                     append(opcode, tmp(nValue), imm(right), imm(width), tmp(m_value));
@@ -3701,8 +3706,13 @@ private:
                 uint64_t amount2 = amount2Value->asInt();
                 uint64_t lsb = lsbValue->asInt();
                 uint64_t datasize = opcode == InsertSignedBitfieldInZero32 ? 32 : 64;
+
+                if (amount1 >= datasize)
+                    return false;
+
                 uint64_t width = datasize - amount1;
-                if (amount1 != amount2 || !width || lsb + width > datasize)
+                uint64_t resultDataSize = 0;
+                if (!WTF::safeAdd(lsb, width, resultDataSize) || amount1 != amount2 || !width || resultDataSize > datasize)
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
@@ -3749,8 +3759,13 @@ private:
                 uint64_t amount2 = amount2Value->asInt();
                 uint64_t lsb = lsbValue->asInt();
                 uint64_t datasize = opcode == ExtractSignedBitfield32 ? 32 : 64;
+
+                if (amount1 >= datasize)
+                    return false;
+
                 uint64_t width = datasize - amount1;
-                if (amount1 != amount2 || !width || lsb + width > datasize)
+                uint64_t resultDataSize = 0;
+                if (!WTF::safeAdd(lsb, width, resultDataSize) || amount1 != amount2 || !width || resultDataSize > datasize)
                     return false;
 
                 append(opcode, tmp(srcValue), imm(lsbValue), imm(width), tmp(m_value));
