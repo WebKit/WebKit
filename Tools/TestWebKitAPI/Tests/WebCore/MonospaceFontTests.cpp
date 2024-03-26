@@ -68,7 +68,7 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
                     fontCascade.fonts()->widthCache().clear();
                     float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
                     fontCascade.fonts()->widthCache().clear();
-                    float originalWidth = fontCascade.widthForSimpleText(content);
+                    float originalWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(content);
                     EXPECT_EQ(originalWidth , width);
                 }
                 {
@@ -80,7 +80,7 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
                     fontCascade.fonts()->widthCache().clear();
                     float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
                     fontCascade.fonts()->widthCache().clear();
-                    float originalWidth = fontCascade.widthForSimpleText(content);
+                    float originalWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(content);
                     EXPECT_EQ(originalWidth , width);
                 }
             }

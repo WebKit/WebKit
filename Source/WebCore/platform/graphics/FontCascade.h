@@ -137,7 +137,7 @@ public:
 
     float widthOfTextRange(const TextRun&, unsigned from, unsigned to, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, float* outWidthBeforeRange = nullptr, float* outWidthAfterRange = nullptr) const;
     WEBCORE_EXPORT float width(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
-    float widthForSimpleText(StringView text, TextDirection = TextDirection::LTR) const;
+    float widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection = TextDirection::LTR) const;
     WEBCORE_EXPORT float widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const;
 
     std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
@@ -232,7 +232,7 @@ private:
     GlyphBuffer layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&, CustomFontNotReadyAction) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float widthForTextUsingWidthIterator(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, float*) const;
@@ -244,7 +244,7 @@ private:
     static bool canExpandAroundIdeographsInComplexText();
 
     GlyphBuffer layoutComplexText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    float floatWidthForComplexText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float widthForTextUsingComplexTextController(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
@@ -406,7 +406,7 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     return result - (syntheticBoldInclusion == Font::SyntheticBoldInclusion::Exclude ? font.syntheticBoldOffset() : 0);
 }
 
-inline float FontCascade::widthForSimpleText(StringView text, TextDirection textDirection) const
+inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection textDirection) const
 {
     if (text.isNull() || text.isEmpty())
         return 0;

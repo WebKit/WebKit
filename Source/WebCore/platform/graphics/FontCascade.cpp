@@ -318,9 +318,9 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
 
     float result;
     if (codePathToUse == CodePath::Complex)
-        result = floatWidthForComplexText(run, fallbackFonts, glyphOverflow);
+        result = widthForTextUsingComplexTextController(run, fallbackFonts, glyphOverflow);
     else
-        result = floatWidthForSimpleText(run, fallbackFonts, glyphOverflow);
+        result = widthForTextUsingWidthIterator(run, fallbackFonts, glyphOverflow);
 
     if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences())
         *cacheEntry = result;
@@ -1541,7 +1541,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }
 
-float FontCascade::floatWidthForSimpleText(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::widthForTextUsingWidthIterator(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     WidthIterator it(*this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
@@ -1558,7 +1558,7 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, SingleThreadWeakH
     return it.runWidthSoFar();
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::widthForTextUsingComplexTextController(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
     if (glyphOverflow) {
@@ -1614,7 +1614,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     GlyphBuffer localGlyphBuffer;
     unsigned offset;
     if (run.rtl()) {
-        delta -= floatWidthForSimpleText(run);
+        delta -= widthForTextUsingWidthIterator(run);
         while (1) {
             offset = it.currentCharacterIndex();
             float w;

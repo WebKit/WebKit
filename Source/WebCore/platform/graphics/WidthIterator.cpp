@@ -371,7 +371,7 @@ static void updateCharacterAndSmallCapsIfNeeded(SmallCapsState& smallCapsState, 
 template <typename TextIterator>
 inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer& glyphBuffer)
 {
-    // The core logic here needs to match FontCascade::widthForSimpleText()
+    // The core logic here needs to match FontCascade::widthForTextUsingSimplifiedMeasuring()
     FloatRect bounds;
     auto fontDescription = m_font->fontDescription();
     Ref primaryFont = m_font->primaryFont();

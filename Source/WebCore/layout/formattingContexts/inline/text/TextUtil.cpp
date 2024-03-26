@@ -74,7 +74,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
         if (fontCascade.canTakeFixedPitchFastContentMeasuring())
             width = fontCascade.widthForSimpleTextWithFixedPitch(view, inlineTextBox.style().collapseWhiteSpace());
         else
-            width = fontCascade.widthForSimpleText(view);
+            width = fontCascade.widthForTextUsingSimplifiedMeasuring(view);
     } else {
         auto& style = inlineTextBox.style();
         auto directionalOverride = style.unicodeBidi() == UnicodeBidi::Override;
