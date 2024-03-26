@@ -2154,14 +2154,25 @@ else ()
 
         Source/webrtc/modules/audio_device/linux/alsasymboltable_linux.cc
         Source/webrtc/modules/audio_device/linux/audio_device_alsa_linux.cc
-        Source/webrtc/modules/audio_device/linux/audio_device_pulse_linux.cc
         Source/webrtc/modules/audio_device/linux/audio_mixer_manager_alsa_linux.cc
-        Source/webrtc/modules/audio_device/linux/audio_mixer_manager_pulse_linux.cc
         Source/webrtc/modules/audio_device/linux/latebindingsymboltable_linux.cc
-        Source/webrtc/modules/audio_device/linux/pulseaudiosymboltable_linux.cc
 
         Source/webrtc/modules/video_coding/codecs/h264/h264.cc
     )
+
+    find_package(LibPulse)
+    if (NOT LIBPULSE_FOUND)
+        message(STATUS "libpulse is not found, not building support.")
+    else()
+        list(APPEND webrtc_SOURCES
+            Source/webrtc/modules/audio_device/linux/audio_device_pulse_linux.cc
+            Source/webrtc/modules/audio_device/linux/audio_mixer_manager_pulse_linux.cc
+            Source/webrtc/modules/audio_device/linux/pulseaudiosymboltable_linux.cc
+        )
+        target_include_directories(webrtc PRIVATE ${LibPulse_INCLUDE_DIRS})
+        target_compile_options(webrtc PRIVATE ${LibPulse_COMPILE_OPTIONS})
+    endif ()
+
 endif ()
 
 add_library(webrtc STATIC ${webrtc_SOURCES})
