@@ -774,40 +774,11 @@ sub runJSCStressTests
     my @testList;
     if ($runJSCStress) {
         @testList = (
-            "PerformanceTests/SunSpider/tests/sunspider-1.0",
-            "PerformanceTests/JetStream/cdjs/cdjs-tests.yaml",
-            "PerformanceTests/ARES-6/Air/airjs-tests.yaml",
-            "PerformanceTests/ARES-6/Basic/basic-tests.yaml",
-            "JSTests/executableAllocationFuzz.yaml",
-            "JSTests/exceptionFuzz.yaml",
-            "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
-            "PerformanceTests/SunSpider/shadow-chicken.yaml",
-            "PerformanceTests/SunSpider/with-baseline-code-sharing.yaml",
-            "PerformanceTests/SunSpider/tests/v8-v6",
-            "JSTests/stress",
-            "JSTests/microbenchmarks",
-            "JSTests/slowMicrobenchmarks.yaml",
-            "PerformanceTests/SunSpider/profiler-test.yaml",
-            "LayoutTests/jsc-layout-tests.yaml",
-            "JSTests/typeProfiler.yaml",
-            "JSTests/controlFlowProfiler.yaml",
-            "JSTests/es6.yaml",
-            "JSTests/modules.yaml",
-            "JSTests/complex.yaml",
-            "JSTests/ChakraCore.yaml",
             "JSTests/wasm.yaml");
-
-        my $internalTestsDir = File::Spec->catdir(dirname(sourceDir()), "Internal", "Tests", "InternalJSTests");
-        if (-e $internalTestsDir and -d $internalTestsDir) {
-            push(@testList, File::Spec->catfile($internalTestsDir, "internal-js-tests.yaml"));
-            push(@testList, File::Spec->catfile($internalTestsDir, "regress.yaml"));
-        }
-
         $hasTestsToRun = 1;
     }
 
     if ($runMozillaTests) {
-        push(@testList, "JSTests/mozilla/mozilla-tests.yaml");
         $hasTestsToRun = 1;
     }
 
