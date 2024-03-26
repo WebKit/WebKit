@@ -1,0 +1,22 @@
+This test ensures we update the accessibility tree when static text changes.
+
+#button text alternatives:
+	AXLabel: Initial button text
+
+#checkbox text alternatives:
+	AXLabel: Initial label text
+
+PASS: accessibilityController.accessibleElementById('textarea').stringValue.includes('Initial textarea text') === true
+
+#button text alternatives:
+	AXLabel: Changed button text
+
+#checkbox text alternatives:
+	AXLabel: Changed label text
+
+PASS: accessibilityController.accessibleElementById('textarea').stringValue.includes('Changed textarea text') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Initial static text Changed button text Changed label text

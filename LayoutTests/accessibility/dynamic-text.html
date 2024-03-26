@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+Initial static text
+<button id="button">Initial button text</button>
+<label id="label" for="checkbox">Initial label text</label>
+<input id="checkbox" type="checkbox" name="checkbox" />
+<textarea id="textarea">Initial textarea text</textarea>
+    
+<script>
+var output = "This test ensures we update the accessibility tree when static text changes.\n\n";
+
+function textAlternatives(id) {
+    let result = '';
+    result += `#${id} text alternatives:\n`
+    result += `${platformTextAlternatives(accessibilityController.accessibleElementById(id))}\n\n`;
+    return result;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    const isIOS = accessibilityController.platformName === "ios";
+
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    if (accessibilityController.platformName === "mac") {
+        // Static text stringValue.
+        output += expect("webarea.childAtIndex(0).role.toLowerCase().includes('text')", "true");
+        output += `${webarea.childAtIndex(0).stringValue}\n\n`;
+    }
+
+    output += textAlternatives("button");
+
+    if (!isIOS)
+        output += expect("accessibilityController.accessibleElementById('label').stringValue.includes('Initial label text')", "true");
+
+    // Labelled control title.
+    output += textAlternatives("checkbox");
+
+    // Textarea stringValue.
+    output += expect("accessibilityController.accessibleElementById('textarea').stringValue.includes('Initial textarea text')", "true");
+    output += "\n";
+
+    document.getElementById("button").firstChild.nodeValue = "Changed button text";
+    setTimeout(async function() {
+        let newPlatformText;
+        await waitFor(() => {
+            newPlatformText = textAlternatives("button");
+            return newPlatformText.includes("Changed button text");
+        });
+        output += newPlatformText;
+
+
+        if (!isIOS) {
+            document.getElementsByTagName("body")[0].firstChild.nodeValue = "Changed static text";
+            output += await expectAsync("webarea.childAtIndex(0).stringValue.includes('Changed static text')", "true");
+        }
+
+        document.getElementById("label").firstChild.nodeValue = "Changed label text";
+        if (!isIOS)
+            output += await expectAsync("accessibilityController.accessibleElementById('label').stringValue.includes('Changed label text')", "true");
+        output += textAlternatives("checkbox");
+
+        document.getElementById("textarea").firstChild.nodeValue = "Changed textarea text";
+        output += await expectAsync("accessibilityController.accessibleElementById('textarea').stringValue.includes('Changed textarea text')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -417,6 +417,7 @@ public:
         AXSortDirectionChanged,
         AXTextChanged,
         AXTextCompositionChanged,
+        AXTextUnderElementChanged,
         AXTextSecurityChanged,
         AXElementBusyChanged,
         AXDraggingStarted,

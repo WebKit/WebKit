@@ -401,6 +401,12 @@ TextStream& operator<<(TextStream& stream, const AccessibilitySearchCriteria& cr
     return stream;
 }
 
+TextStream& operator<<(TextStream& stream, AccessibilityText text)
+{
+    stream << text.textSource << ": " << text.text;
+    return stream;
+}
+
 TextStream& operator<<(TextStream& stream, AccessibilityTextSource source)
 {
     switch (source) {
@@ -762,6 +768,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXTextCompositionChanged:
         stream << "AXTextCompositionChanged";
+        break;
+    case AXObjectCache::AXNotification::AXTextUnderElementChanged:
+        stream << "AXTextUnderElementChanged";
         break;
     case AXObjectCache::AXNotification::AXTextSecurityChanged:
         stream << "AXTextSecurityChanged";
