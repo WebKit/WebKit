@@ -800,6 +800,7 @@ public:
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
     std::span<const T> span() const { return { data(), size() }; }
+    std::span<T> mutableSpan() { return { data(), size() }; }
 
     Vector<T> subvector(size_t offset, size_t length = std::dynamic_extent) const
     {

@@ -84,12 +84,12 @@ private:
     void getSizeForNext();
     void dispatchDidReceiveResponse();
     std::optional<Error> seek();
-    void consumeData(const uint8_t* data, int bytesRead);
+    void consumeData(std::span<const uint8_t>);
     void read();
     void readData(const WebCore::BlobDataItem&);
     void readFile(const WebCore::BlobDataItem&);
     void download();
-    bool writeDownload(const uint8_t* data, int bytesRead);
+    bool writeDownload(std::span<const uint8_t>);
     void cleanDownloadFiles();
     void didFailDownload(const WebCore::ResourceError&);
     void didFinishDownload();

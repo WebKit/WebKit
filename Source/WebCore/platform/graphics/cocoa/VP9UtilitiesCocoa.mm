@@ -603,7 +603,7 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     view->set(8, record.transferCharacteristics, false);
     view->set(9, record.matrixCoefficients, false);
     view->set(10, codecIntializationDataSize, false);
-    videoInfo->atomData = SharedBuffer::create(static_cast<uint8_t*>(view->data()), view->byteLength());
+    videoInfo->atomData = SharedBuffer::create(view->span());
     videoInfo->colorSpace.fullRange = record.videoFullRangeFlag == VPConfigurationRange::FullRange;
     videoInfo->colorSpace.primaries = convertToPlatformVideoColorPrimaries(record.colorPrimaries);
     videoInfo->colorSpace.transfer = convertToPlatformVideoTransferCharacteristics(record.transferCharacteristics);

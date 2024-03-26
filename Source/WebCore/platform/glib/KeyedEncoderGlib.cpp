@@ -137,7 +137,7 @@ RefPtr<SharedBuffer> KeyedEncoderGlib::finishEncoding()
     g_assert(m_variantBuilderStack.last() == &m_variantBuilder);
     GRefPtr<GVariant> variant = g_variant_builder_end(&m_variantBuilder);
     GRefPtr<GBytes> data = adoptGRef(g_variant_get_data_as_bytes(variant.get()));
-    return SharedBuffer::create(static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), static_cast<unsigned>(g_bytes_get_size(data.get())));
+    return SharedBuffer::create(std::span { static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), static_cast<unsigned>(g_bytes_get_size(data.get())) });
 }
 
 } // namespace WebCore

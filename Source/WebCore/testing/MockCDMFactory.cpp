@@ -330,7 +330,7 @@ void MockCDMInstanceSession::requestLicense(LicenseType licenseType, KeyGrouping
     factory->addKeysToSessionWithID(sessionID, WTFMove(keyIDs.value()));
 
     CString license { "license" };
-    callback(SharedBuffer::create(license.data(), license.length()), sessionID, false, SuccessValue::Succeeded);
+    callback(SharedBuffer::create(license.span()), sessionID, false, SuccessValue::Succeeded);
 }
 
 void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType, Ref<SharedBuffer>&& response, LicenseUpdateCallback&& callback)
@@ -375,7 +375,7 @@ void MockCDMInstanceSession::loadSession(LicenseType, const String&, const Strin
     // FIXME: Key status and expiration handling should be implemented once the relevant algorithms are supported.
 
     CString messageData { "session loaded" };
-    Message message { MessageType::LicenseRenewal, SharedBuffer::create(messageData.data(), messageData.length()) };
+    Message message { MessageType::LicenseRenewal, SharedBuffer::create(messageData.span()) };
 
     callback(std::nullopt, std::nullopt, WTFMove(message), SuccessValue::Succeeded, SessionLoadFailure::None);
 }
@@ -406,7 +406,7 @@ void MockCDMInstanceSession::removeSessionData(const String& id, LicenseType, Re
     });
 
     CString message { "remove-message" };
-    callback(WTFMove(keyStatusVector), SharedBuffer::create(message.data(), message.length()), SuccessValue::Succeeded);
+    callback(WTFMove(keyStatusVector), SharedBuffer::create(message.span()), SuccessValue::Succeeded);
 }
 
 void MockCDMInstanceSession::storeRecordOfKeyUsage(const String&)

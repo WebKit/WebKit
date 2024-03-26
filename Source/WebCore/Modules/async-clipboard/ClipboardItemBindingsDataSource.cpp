@@ -260,7 +260,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didFinishLoading(
     if (!stringResult.isNull())
         m_data = { stringResult };
     else if (auto arrayBuffer = m_blobLoader->arrayBufferResult())
-        m_data = { SharedBuffer::create(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength()) };
+        m_data = { SharedBuffer::create(arrayBuffer->span()) };
     m_blobLoader = nullptr;
     invokeCompletionHandler();
 }

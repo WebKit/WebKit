@@ -1639,7 +1639,7 @@ SubstituteData FrameLoader::defaultSubstituteDataForURL(const URL& url)
     CString encodedSrcdoc = srcdoc.string().utf8();
 
     ResourceResponse response(URL(), textHTMLContentTypeAtom(), encodedSrcdoc.length(), "UTF-8"_s);
-    return SubstituteData(SharedBuffer::create(encodedSrcdoc.data(), encodedSrcdoc.length()), URL(), response, SubstituteData::SessionHistoryVisibility::Hidden);
+    return SubstituteData(SharedBuffer::create(encodedSrcdoc.span()), URL(), response, SubstituteData::SessionHistoryVisibility::Hidden);
 }
 
 void FrameLoader::load(FrameLoadRequest&& request)

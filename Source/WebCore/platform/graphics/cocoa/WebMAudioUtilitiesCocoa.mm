@@ -251,7 +251,7 @@ bool parseOpusTOCData(const SharedBuffer& frameData, OpusCookieContents& cookie)
 #endif
 }
 
-bool parseOpusPrivateData(size_t codecPrivateSize, const uint8_t* codecPrivateData, SharedBuffer& frameData, OpusCookieContents& cookie)
+bool parseOpusPrivateData(std::span<const uint8_t> codecPrivateData, SharedBuffer& frameData, OpusCookieContents& cookie)
 {
 #if ENABLE(OPUS)
     // https://tools.ietf.org/html/rfc7845
@@ -280,45 +280,44 @@ bool parseOpusPrivateData(size_t codecPrivateSize, const uint8_t* codecPrivateDa
     //      |                                                               |
     //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-    if (codecPrivateSize < kOpusHeaderSize)
+    if (codecPrivateData.size() < kOpusHeaderSize)
         return { };
 
     // 1. Magic Signature:
     //
     //     This is an 8-octet (64-bit) field that allows codec
     //     identification and is human readable.
-    if (strncmp("OpusHead", reinterpret_cast<const char*>(codecPrivateData), 8))
+    if (strncmp("OpusHead", reinterpret_cast<const char*>(codecPrivateData.data()), 8))
         return false;
 
     // 2. Version (8 bits, unsigned):
-    cookie.version = *(codecPrivateData + 8);
+    cookie.version = codecPrivateData[8];
 
     // 3. Output Channel Count 'C' (8 bits, unsigned):
-    cookie.channelCount = *(codecPrivateData + 9);
+    cookie.channelCount = codecPrivateData[9];
 
     // 4. Pre-skip (16 bits, unsigned, little endian):
-    cookie.preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(codecPrivateData + 10), true);
+    cookie.preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(codecPrivateData.data() + 10), true);
 
     // 5. Input Sample Rate (32 bits, unsigned, little endian):
-    cookie.sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(codecPrivateData + 12), true);
+    cookie.sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(codecPrivateData.data() + 12), true);
 
     // 6. Output Gain (16 bits, signed, little endian):
-    cookie.outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(codecPrivateData + 16), true);
+    cookie.outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(codecPrivateData.data() + 16), true);
 
     // 7. Channel Mapping Family (8 bits, unsigned):
-    cookie.mappingFamily = *(codecPrivateData + 18);
+    cookie.mappingFamily = codecPrivateData[18];
 
     if (!parseOpusTOCData(frameData, cookie))
         return false;
 
 #if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    cookie.cookieData = SharedBuffer::create(codecPrivateData, codecPrivateSize);
+    cookie.cookieData = SharedBuffer::create(codecPrivateData);
 #endif
 
     return true;
 
 #else
-    UNUSED_PARAM(codecPrivateSize);
     UNUSED_PARAM(codecPrivateData);
     UNUSED_PARAM(frameData);
     UNUSED_PARAM(cookie);

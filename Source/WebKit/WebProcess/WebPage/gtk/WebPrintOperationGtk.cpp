@@ -212,7 +212,7 @@ void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, Compl
 
     auto writeCairoStream = [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
         auto& printOperation = *static_cast<WebPrintOperationGtk*>(userData);
-        printOperation.m_buffer.append(data, length);
+        printOperation.m_buffer.append(std::span { data, length });
         return CAIRO_STATUS_SUCCESS;
     };
 

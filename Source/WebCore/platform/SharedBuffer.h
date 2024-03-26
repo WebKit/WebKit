@@ -163,8 +163,7 @@ public:
     using IPCData = std::variant<std::optional<WebCore::SharedMemoryHandle>, Vector<std::span<const uint8_t>>>;
 
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create();
-    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(const uint8_t*, size_t);
-    static Ref<FragmentedSharedBuffer> create(const char* data, size_t size) { return create(reinterpret_cast<const uint8_t*>(data), size); }
+    WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(std::span<const uint8_t>);
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(FileSystem::MappedFileData&&);
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Ref<SharedBuffer>&&);
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(Vector<uint8_t>&&);
@@ -243,8 +242,7 @@ protected:
     bool m_contiguous { false };
 
     WEBCORE_EXPORT FragmentedSharedBuffer();
-    explicit FragmentedSharedBuffer(const uint8_t* data, size_t size) { append(data, size); }
-    explicit FragmentedSharedBuffer(const char* data, size_t size) { append(data, size); }
+    explicit FragmentedSharedBuffer(std::span<const uint8_t> data) { append(data); }
     explicit FragmentedSharedBuffer(Vector<uint8_t>&& data) { append(WTFMove(data)); }
     WEBCORE_EXPORT explicit FragmentedSharedBuffer(FileSystem::MappedFileData&&);
     WEBCORE_EXPORT explicit FragmentedSharedBuffer(DataSegment::Provider&&);
@@ -267,8 +265,6 @@ private:
     friend class SharedBufferBuilder;
     WEBCORE_EXPORT void append(const FragmentedSharedBuffer&);
     WEBCORE_EXPORT void append(std::span<const uint8_t>);
-    void append(const uint8_t* data, size_t length) { append(std::span { data, length }); } // FIXME: Call sites should pass in a span.
-    void append(const char* data, size_t length) { append(reinterpret_cast<const uint8_t*>(data), length); }
     WEBCORE_EXPORT void append(Vector<uint8_t>&&);
 #if USE(FOUNDATION)
     WEBCORE_EXPORT void append(NSData *);

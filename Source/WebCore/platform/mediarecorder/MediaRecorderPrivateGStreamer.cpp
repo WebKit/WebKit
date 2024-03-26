@@ -406,7 +406,7 @@ void MediaRecorderPrivateBackend::processSample(GRefPtr<GstSample>&& sample)
     Locker locker { m_dataLock };
 
     GST_LOG_OBJECT(m_transcoder.get(), "Queueing %zu bytes of encoded data, caps: %" GST_PTR_FORMAT, buffer.size(), gst_sample_get_caps(sample.get()));
-    m_data.append(buffer.data(), buffer.size());
+    m_data.append(std::span<const uint8_t> { buffer.data(), buffer.size() });
 }
 
 void MediaRecorderPrivateBackend::notifyEOS()

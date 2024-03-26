@@ -181,10 +181,10 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
                 break;
             }
             // Note that we use line.utf8() and not line.ascii() as ascii turns special characters (such as tab, line-feed...) into '?'.
-            content.append(line.utf8().data(), line.length());
+            content.append(line.utf8().span());
             if (mimeHeader.contentTransferEncoding() == MIMEHeader::QuotedPrintable) {
                 // The line reader removes the \r\n, but we need them for the content in this case as the QuotedPrintable decoder expects CR-LF terminated lines.
-                content.append("\r\n", 2);
+                content.append("\r\n"_span);
             }
         }
     }
