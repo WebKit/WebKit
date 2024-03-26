@@ -2830,5 +2830,3 @@ webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues
 webkit.org/b/271423 [ Sonoma+ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation.html [ Failure ]
 webkit.org/b/271423 [ Sonoma+ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-exif-orientation_none.html [ Failure ]
 webkit.org/b/271423 [ Sonoma+ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imagebitmap-replication-exif-orientation.html [ Failure ]
-
-webkit.org/b/271479 [ Sonoma+ ] css3/filters/effect-sepia-square.html [ ImageOnlyFailure ]
