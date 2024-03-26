@@ -57,10 +57,8 @@ public:
     {
         bool changed = false;
 
-        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            if (block->cfaThinksShouldTryConstantFolding)
-                changed |= foldConstants(block);
-        }
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder())
+            changed |= foldConstants(block);
         
         if (changed && m_graph.m_form == SSA) {
             // It's now possible that we have Upsilons pointed at JSConstants. Fix that.
@@ -1283,6 +1281,8 @@ private:
             
             changed = true;
         }
+        if (m_graph.m_form == SSA || m_graph.m_form == ThreadedCPS)
+            m_state.endBasicBlock();
         m_state.reset();
         m_insertionSet.execute(block);
         
