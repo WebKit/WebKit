@@ -709,14 +709,14 @@ static FunctionType addNthChildType(const CSSSelector& selector, SelectorContext
             globalFunctionType = FunctionType::SelectorCheckerWithCheckingContext;
 
         SelectorFragmentList* selectorFragments = nullptr;
-        for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+        for (const auto& subselector : *selectorList) {
             if (!selectorFragments) {
                 nthChildOfSelectorInfo.selectorList.append(SelectorFragmentList());
                 selectorFragments = &nthChildOfSelectorInfo.selectorList.last();
             }
 
             VisitedMode ignoreVisitedMode = VisitedMode::None;
-            FunctionType functionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
+            FunctionType functionType = constructFragments(&subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
             ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
             switch (functionType) {
             case FunctionType::SimpleSelectorChecker:
@@ -1261,14 +1261,14 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
             SelectorFragmentList* selectorFragments = nullptr;
-            for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+            for (const auto& subselector : *selectorList) {
                 if (!selectorFragments) {
                     fragment.notFilters.append(SelectorFragmentList());
                     selectorFragments = &fragment.notFilters.last();
                 }
 
                 VisitedMode ignoreVisitedMode = VisitedMode::None;
-                FunctionType localFunctionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
+                FunctionType localFunctionType = constructFragments(&subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
                 ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
                 // Since this is not pseudo class filter, CannotMatchAnything implies this filter always passes.
@@ -1312,16 +1312,17 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         {
             SelectorList matchesList;
             const CSSSelectorList* selectorList = selector.selectorList();
+            ASSERT(selectorList);
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
             SelectorFragmentList* selectorFragments = nullptr;
-            for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+            for (const auto& subselector : *selectorList) {
                 if (!selectorFragments) {
                     matchesList.append(SelectorFragmentList());
                     selectorFragments = &matchesList.last();
                 }
 
                 VisitedMode ignoreVisitedMode = VisitedMode::None;
-                FunctionType localFunctionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, pseudoElementMatchingBehavior);
+                FunctionType localFunctionType = constructFragments(&subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, pseudoElementMatchingBehavior);
                 ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
                 // Since this fragment never matches against the element, don't insert it to matchesList.

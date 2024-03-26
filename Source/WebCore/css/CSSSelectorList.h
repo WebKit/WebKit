@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSSelector.h"
+#include <iterator>
 #include <memory>
 #include <wtf/UniqueArray.h>
 
@@ -57,6 +58,29 @@ public:
             return notFound;
         return current - m_selectorArray.get();
     }
+
+    struct const_iterator {
+        friend class CSSSelectorList;
+        using value_type = CSSSelector;
+        using difference_type = std::ptrdiff_t;
+        using pointer = const CSSSelector*;
+        using reference = const CSSSelector&;
+        using iterator_category = std::forward_iterator_tag;
+        reference operator*() const { return *m_ptr; }
+        pointer operator->() const { return m_ptr; }
+        bool operator!=(const const_iterator& other) const { return m_ptr != other.m_ptr; }
+        const_iterator() = default;
+        const_iterator(pointer ptr) : m_ptr(ptr) { };
+        const_iterator& operator++()
+        {
+            m_ptr = CSSSelectorList::next(m_ptr);
+            return *this;
+        }
+    private:
+        pointer m_ptr = nullptr;
+    };
+    const_iterator begin() const { return { first() }; };
+    const_iterator end() const { return { }; }
 
     bool hasExplicitNestingParent() const;
     bool hasOnlyNestingSelector() const;
