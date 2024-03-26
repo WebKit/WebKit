@@ -409,6 +409,7 @@ protected:
     // Only for non-WebGL 2.0 contexts.
     GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength);
+    bool validateClearBufferv(GCGLenum buffer, size_t valuesSize);
 
     HashSet<String> m_availableExtensions;
     HashSet<String> m_requestableExtensions;
