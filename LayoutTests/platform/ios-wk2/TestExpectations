@@ -2770,3 +2770,5 @@ webkit.org/b/271445 fast/events/ios/rotation/resize-iframe-after-orientation-cha
 webkit.org/b/271669 fast/images/async-image-intersect-different-size-for-drawing.html [ Failure ]
 
 webkit.org/b/271678 imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element.html [ ImageOnlyFailure ]
+
+webkit.org/b/271682 imported/w3c/web-platform-tests/css/css-content/quotes-007.html [ ImageOnlyFailure ]
