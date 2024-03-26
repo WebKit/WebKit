@@ -103,7 +103,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(Node);
+WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(Node);
 
 using namespace HTMLNames;
 
@@ -117,7 +117,7 @@ struct SameSizeAsNode : EventTarget {
     uint32_t nodeFlags;
     void* parentNode;
     void* treeScope;
-    void* previous;
+    uint8_t previous[8];
     void* next;
     uint8_t rendererWithStyleFlags[8];
     uint8_t rareDataWithBitfields[8];
@@ -430,7 +430,7 @@ Node::~Node()
 
     ASSERT(!renderer());
     ASSERT(!parentNode());
-    ASSERT(!m_previous);
+    ASSERT(!m_previous.pointer());
     ASSERT(!m_next);
 
     {
