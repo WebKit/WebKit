@@ -260,7 +260,7 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
 
         frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument->securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList, WTFMove(stopDelayingLoadEvent));
     } else
-        frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame.loader().outgoingReferrer());
+        frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame.loader().outgoingReferrerURL());
 
     if (!frame)
         return nullptr;
@@ -269,7 +269,7 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
     return dynamicDowncast<LocalFrame>(ownerElement.contentFrame());
 }
 
-RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const String& referrer)
+RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const URL& referrer)
 {
     Ref protectedFrame { m_frame };
     Ref document = ownerElement.document();

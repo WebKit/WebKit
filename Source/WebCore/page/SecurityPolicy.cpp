@@ -56,10 +56,10 @@ static OriginAccessMap& originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
     return originAccessMap;
 }
 
-bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
+bool SecurityPolicy::shouldHideReferrer(const URL& url, const URL& referrer)
 {
-    bool referrerIsSecureURL = protocolIs(referrer, "https"_s);
-    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http"_s);
+    bool referrerIsSecureURL = referrer.protocolIs("https"_s);
+    bool referrerIsWebURL = referrerIsSecureURL || referrer.protocolIs("http"_s);
 
     if (!referrerIsWebURL)
         return true;
@@ -72,9 +72,9 @@ bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
     return !URLIsSecureURL;
 }
 
-String SecurityPolicy::referrerToOriginString(const String& referrer)
+String SecurityPolicy::referrerToOriginString(const URL& referrer)
 {
-    String originString = SecurityOrigin::createFromString(referrer)->toString();
+    String originString = SecurityOrigin::create(referrer)->toString();
     if (originString == "null"_s)
         return String();
     // A security origin is not a canonical URL as it lacks a path. Add /
@@ -82,15 +82,15 @@ String SecurityPolicy::referrerToOriginString(const String& referrer)
     return originString + "/";
 }
 
-String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const String& referrer, const OriginAccessPatterns& patterns)
+String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const URL& referrer, const OriginAccessPatterns& patterns)
 {
-    ASSERT(referrer == URL { referrer }.strippedForUseAsReferrer()
-        || referrer == SecurityOrigin::create(URL { referrer })->toString());
+    ASSERT(referrer.string() == URL { referrer.string() }.strippedForUseAsReferrer().string
+        || referrer.string() == SecurityOrigin::create(URL { referrer.string() })->toString());
 
     if (referrer.isEmpty())
         return String();
 
-    if (!protocolIsInHTTPFamily(referrer))
+    if (!referrer.protocolIsInHTTPFamily())
         return String();
 
     switch (referrerPolicy) {
@@ -102,7 +102,7 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
     case ReferrerPolicy::NoReferrerWhenDowngrade:
         break;
     case ReferrerPolicy::SameOrigin: {
-        auto origin = SecurityOrigin::createFromString(referrer);
+        auto origin = SecurityOrigin::create(referrer);
         if (!origin->canRequest(url, patterns))
             return String();
         break;
@@ -114,13 +114,13 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
             return String();
         return referrerToOriginString(referrer);
     case ReferrerPolicy::OriginWhenCrossOrigin: {
-        auto origin = SecurityOrigin::createFromString(referrer);
+        auto origin = SecurityOrigin::create(referrer);
         if (!origin->canRequest(url, patterns))
             return referrerToOriginString(referrer);
         break;
     }
     case ReferrerPolicy::StrictOriginWhenCrossOrigin: {
-        auto origin = SecurityOrigin::createFromString(referrer);
+        auto origin = SecurityOrigin::create(referrer);
         if (!origin->canRequest(url, patterns)) {
             if (shouldHideReferrer(url, referrer))
                 return String();
@@ -129,10 +129,10 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
         break;
     }
     case ReferrerPolicy::UnsafeUrl:
-        return referrer;
+        return referrer.string();
     }
 
-    return shouldHideReferrer(url, referrer) ? String() : referrer;
+    return shouldHideReferrer(url, referrer) ? String() : referrer.string();
 }
 
 String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const URL& url, const SecurityOrigin& securityOrigin, const OriginAccessPatterns& patterns)

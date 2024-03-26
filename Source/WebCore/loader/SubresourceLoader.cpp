@@ -705,7 +705,7 @@ Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessContr
         updateRequestForAccessControl(newRequest, *m_origin, options().storedCredentialsPolicy);
     }
 
-    updateRequestReferrer(newRequest, referrerPolicy(), previousRequest.httpReferrer(), OriginAccessPatternsForWebProcess::singleton());
+    updateRequestReferrer(newRequest, referrerPolicy(), URL { previousRequest.httpReferrer() }, OriginAccessPatternsForWebProcess::singleton());
 
     FrameLoader::addHTTPOriginIfNeeded(newRequest, m_origin ? m_origin->toString() : String());
 

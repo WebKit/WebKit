@@ -65,9 +65,9 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     return true;
 }
 
-void updateRequestReferrer(ResourceRequest& request, ReferrerPolicy referrerPolicy, const String& outgoingReferrer, const OriginAccessPatterns& patterns)
+void updateRequestReferrer(ResourceRequest& request, ReferrerPolicy referrerPolicy, const URL& outgoingReferrerURL, const OriginAccessPatterns& patterns)
 {
-    String newOutgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrer, patterns);
+    String newOutgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrerURL, patterns);
     if (newOutgoingReferrer.isEmpty())
         request.clearHTTPReferrer();
     else
