@@ -28,7 +28,7 @@ import Combine
 @_spi(Safari) import GroupActivities
 import Foundation
 
-@available(macOS 15.0, iOS 18.0, *)
+@available(macOS 9999.0, iOS 9999.0, tvOS 9999.0, *)
 @objc(WKGroupSessionState)
 public enum GroupSessionState : Int {
     case waiting = 0
@@ -36,7 +36,7 @@ public enum GroupSessionState : Int {
     case invalidated = 2
 }
 
-@available(macOS 15.0, iOS 18.0, *)
+@available(macOS 9999.0, iOS 9999.0, tvOS 9999.0, *)
 @objc(WKURLActivity)
 public final class URLActivityWrapper : NSObject {
     private var urlActivity: URLActivity
@@ -50,7 +50,7 @@ public final class URLActivityWrapper : NSObject {
     }
 }
 
-@available(macOS 15.0, iOS 18.0, *)
+@available(macOS 9999.0, iOS 9999.0, tvOS 9999.0, *)
 @objc(WKGroupSession)
 public final class GroupSessionWrapper : NSObject {
     private var groupSession: GroupSession<URLActivity>
@@ -128,7 +128,7 @@ public final class GroupSessionWrapper : NSObject {
     }
 }
 
-@available(macOS 15.0, iOS 18.0, *)
+@available(macOS 9999.0, iOS 9999.0, tvOS 9999.0, *)
 @objc(WKGroupSessionObserver)
 public class GroupSessionObserver : NSObject {
     @objc public var newSessionCallback: ((GroupSessionWrapper) -> Void)?
