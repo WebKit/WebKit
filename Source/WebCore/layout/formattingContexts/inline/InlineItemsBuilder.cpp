@@ -135,7 +135,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 
 static inline bool isTextOrLineBreak(const Box& layoutBox)
 {
-    return layoutBox.isInlineTextBox() || (layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity());
+    return layoutBox.isInFlow() && (layoutBox.isInlineTextBox() || (layoutBox.isLineBreakBox() && !layoutBox.isWordBreakOpportunity()));
 }
 
 static bool requiresVisualReordering(const Box& layoutBox)
