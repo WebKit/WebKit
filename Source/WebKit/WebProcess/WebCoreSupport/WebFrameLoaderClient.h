@@ -60,7 +60,6 @@ protected:
     WebFrameLoaderClient(Ref<WebFrame>&&);
 
     void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, uint64_t, std::optional<WebCore::HitTestResult>&&, bool, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&);
-    void broadcastFrameRemovalToOtherProcesses();
 
     Ref<WebFrame> m_frame;
 };

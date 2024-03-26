@@ -200,12 +200,4 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     });
 }
 
-void WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
-{
-    auto* webPage = m_frame->page();
-    if (!webPage)
-        return;
-    webPage->send(Messages::WebPageProxy::BroadcastFrameRemovalToOtherProcesses(m_frame->frameID()));
-}
-
 }

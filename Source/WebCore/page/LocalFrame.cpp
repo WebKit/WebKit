@@ -364,11 +364,6 @@ void LocalFrame::changeLocation(FrameLoadRequest&& request)
     checkedLoader()->changeLocation(WTFMove(request));
 }
 
-void LocalFrame::broadcastFrameRemovalToOtherProcesses()
-{
-    checkedLoader()->client().broadcastFrameRemovalToOtherProcesses();
-}
-
 void LocalFrame::didFinishLoadInAnotherProcess()
 {
     checkedLoader()->provisionalLoadFailedInAnotherProcess();

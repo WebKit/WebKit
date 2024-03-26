@@ -53,7 +53,6 @@ private:
     void unbindRemoteAccessibilityFrames(int) final;
     void updateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint) final;
 
-    void broadcastFrameRemovalToOtherProcesses() final;
     void closePage() final;
     void focus() final;
     void unfocus() final;

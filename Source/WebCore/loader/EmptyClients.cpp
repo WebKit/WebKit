@@ -606,10 +606,6 @@ void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navig
 {
 }
 
-void EmptyFrameLoaderClient::broadcastFrameRemovalToOtherProcesses()
-{
-}
-
 void EmptyFrameLoaderClient::broadcastMainFrameURLChangeToOtherProcesses(const URL&)
 {
 }

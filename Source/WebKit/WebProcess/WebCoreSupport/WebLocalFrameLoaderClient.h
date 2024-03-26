@@ -276,7 +276,6 @@ private:
 
     inline bool hasPlugInView() const;
 
-    void broadcastFrameRemovalToOtherProcesses() final;
     void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
 
     void documentLoaderDetached(uint64_t navigationID, WebCore::LoadWillContinueInAnotherProcess) final;

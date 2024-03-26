@@ -134,11 +134,6 @@ void WebRemoteFrameClient::bindRemoteAccessibilityFrames(int processIdentifier, 
     completionHandler(resultToken, processIdentifierResult);
 }
 
-void WebRemoteFrameClient::broadcastFrameRemovalToOtherProcesses()
-{
-    WebFrameLoaderClient::broadcastFrameRemovalToOtherProcesses();
-}
-
 void WebRemoteFrameClient::closePage()
 {
     if (auto* page = m_frame->page())

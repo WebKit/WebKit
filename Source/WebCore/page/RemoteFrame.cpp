@@ -95,11 +95,6 @@ void RemoteFrame::changeLocation(FrameLoadRequest&& request)
     m_client->changeLocation(WTFMove(request));
 }
 
-void RemoteFrame::broadcastFrameRemovalToOtherProcesses()
-{
-    m_client->broadcastFrameRemovalToOtherProcesses();
-}
-
 void RemoteFrame::updateRemoteFrameAccessibilityOffset(IntPoint offset)
 {
     m_client->updateRemoteFrameAccessibilityOffset(frameID(), offset);
