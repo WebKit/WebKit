@@ -445,6 +445,11 @@ const String& WebPageProxy::Internals::paymentCoordinatorBoundInterfaceIdentifie
     return page.websiteDataStore().configuration().boundInterfaceIdentifier();
 }
 
+void WebPageProxy::Internals::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    completionHandler(page.userAgent());
+}
+
 const String& WebPageProxy::Internals::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
 {
     return page.websiteDataStore().configuration().sourceApplicationBundleIdentifier();

@@ -279,6 +279,11 @@ public:
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&);
 #endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&);
+#endif
+
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void updateBundleIdentifier(const String&, CompletionHandler<void()>&&);

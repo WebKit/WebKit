@@ -280,7 +280,7 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
     }
 }
 
-RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
+RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     auto result = adoptNS([PAL::allocPKPaymentRequestInstance() init]);
 
@@ -388,18 +388,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [result setDeferredPaymentRequest:platformDeferredPaymentRequest(*deferredPaymentRequest).get()];
 #endif
 
-#if HAVE(PKPAYMENTREQUEST_USERAGENT)
-    auto userAgent = [webPageProxyID] {
-        if (auto page = WebProcessProxy::webPage(webPageProxyID))
-            return page->userAgent();
-        return WebPageProxy::standardUserAgent();
-    }();
-    [result setUserAgent:userAgent];
-#else
-    UNUSED_PARAM(webPageProxyID);
-#endif // HAVE(PKPAYMENTREQUEST_USERAGENT)
-
     return result;
+}
+
+void WebPaymentCoordinatorProxy::platformSetPaymentRequestUserAgent(PKPaymentRequest *paymentRequest, const String& userAgent)
+{
+#if HAVE(PKPAYMENTREQUEST_USERAGENT)
+    [paymentRequest setUserAgent:userAgent];
+#else
+    UNUSED_PARAM(paymentRequest);
+    UNUSED_PARAM(userAgent);
+#endif // HAVE(PKPAYMENTREQUEST_USERAGENT)
 }
 
 void WebPaymentCoordinatorProxy::platformCompletePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)

@@ -56,31 +56,36 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
         paymentRequest = RetainPtr<PKPaymentRequest>((PKPaymentRequest *)disbursementRequest);
     } else
 #endif
-        paymentRequest = platformPaymentRequest(webPageProxyID, originatingURL, linkIconURLStrings, request);
+        paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
 
-    ASSERT(!m_authorizationPresenter);
-    m_authorizationPresenter = m_client.paymentCoordinatorAuthorizationPresenter(*this, paymentRequest.get());
-    if (!m_authorizationPresenter)
-        return completionHandler(false);
+    m_client.getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [webPageProxyID, paymentRequest, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](const String& userAgent) mutable {
+        auto paymentCoordinatorProxy = weakThis.get();
+        if (!paymentCoordinatorProxy)
+            return completionHandler(false);
+
+        paymentCoordinatorProxy->platformSetPaymentRequestUserAgent(paymentRequest.get(), userAgent);
+
+        ASSERT(!paymentCoordinatorProxy->m_authorizationPresenter);
+        paymentCoordinatorProxy->m_authorizationPresenter = paymentCoordinatorProxy->m_client.paymentCoordinatorAuthorizationPresenter(*paymentCoordinatorProxy, paymentRequest.get());
+        if (!paymentCoordinatorProxy->m_authorizationPresenter)
+            return completionHandler(false);
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    m_client.getWindowSceneAndBundleIdentifierForPaymentPresentation(webPageProxyID, [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](const String& sceneIdentifier, const String& bundleIdentifier) mutable {
-        if (!weakThis) {
-            completionHandler(false);
-            return;
-        }
+        paymentCoordinatorProxy->m_client.getWindowSceneAndBundleIdentifierForPaymentPresentation(webPageProxyID, [weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)](const String& sceneIdentifier, const String& bundleIdentifier) mutable {
+            auto paymentCoordinatorProxy = weakThis.get();
+            if (!paymentCoordinatorProxy)
+                return completionHandler(false);
 
-        if (!weakThis->m_authorizationPresenter) {
-            completionHandler(false);
-            return;
-        }
+            if (!paymentCoordinatorProxy->m_authorizationPresenter)
+                return completionHandler(false);
 
-        weakThis->m_authorizationPresenter->presentInScene(sceneIdentifier, bundleIdentifier, WTFMove(completionHandler));
-    });
+            paymentCoordinatorProxy->m_authorizationPresenter->presentInScene(sceneIdentifier, bundleIdentifier, WTFMove(completionHandler));
+        });
 #else
-    UNUSED_PARAM(webPageProxyID);
-    m_authorizationPresenter->present(m_client.paymentCoordinatorPresentingViewController(*this), WTFMove(completionHandler));
+        UNUSED_VARIABLE(webPageProxyID);
+        paymentCoordinatorProxy->m_authorizationPresenter->present(paymentCoordinatorProxy->m_client.paymentCoordinatorPresentingViewController(*paymentCoordinatorProxy), WTFMove(completionHandler));
 #endif
+    });
 }
 
 void WebPaymentCoordinatorProxy::platformHidePaymentUI()

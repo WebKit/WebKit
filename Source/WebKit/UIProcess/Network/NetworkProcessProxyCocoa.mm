@@ -152,4 +152,15 @@ void NetworkProcessProxy::getWindowSceneAndBundleIdentifierForPaymentPresentatio
 }
 #endif
 
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+void NetworkProcessProxy::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    RefPtr page = WebProcessProxy::webPage(webPageProxyIdentifier);
+    if (!page)
+        return completionHandler(WebPageProxy::standardUserAgent());
+
+    completionHandler(page->userAgent());
+}
+#endif
+
 }
