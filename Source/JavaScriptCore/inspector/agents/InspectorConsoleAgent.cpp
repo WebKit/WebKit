@@ -79,11 +79,8 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::enable()
         expiredMessage.addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
     }
 
-    Vector<std::unique_ptr<ConsoleMessage>> messages;
-    m_consoleMessages.swap(messages);
-
-    for (size_t i = 0; i < messages.size(); ++i)
-        messages[i]->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
+    for (auto& message : m_consoleMessages)
+        message->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, false);
 
     return { };
 }
