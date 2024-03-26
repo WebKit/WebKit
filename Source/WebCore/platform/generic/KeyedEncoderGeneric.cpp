@@ -145,7 +145,7 @@ void KeyedEncoderGeneric::endArray()
 
 RefPtr<SharedBuffer> KeyedEncoderGeneric::finishEncoding()
 {
-    return SharedBuffer::create(m_encoder.span());
+    return SharedBuffer::create(m_encoder.buffer(), m_encoder.bufferSize());
 }
 
 } // namespace WebCore

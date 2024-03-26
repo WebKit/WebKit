@@ -168,7 +168,7 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const Strin
     if (m_cdmVersion == 2)
         m_identifier = initData;
     else
-        m_initData = SharedBuffer::create(initData->span());
+        m_initData = SharedBuffer::create(initData->data(), initData->length());
 
     ASSERT(!m_certificate);
     String certificateString("certificate"_s);

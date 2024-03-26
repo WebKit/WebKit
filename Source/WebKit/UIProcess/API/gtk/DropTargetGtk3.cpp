@@ -212,7 +212,7 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
         int length;
         const auto* customData = gtk_selection_data_get_data_with_length(data, &length);
         if (length > 0)
-            m_selectionData->setCustomData(SharedBuffer::create(std::span { customData, static_cast<size_t>(length) }));
+            m_selectionData->setCustomData(SharedBuffer::create(customData, static_cast<size_t>(length)));
         break;
     }
     }

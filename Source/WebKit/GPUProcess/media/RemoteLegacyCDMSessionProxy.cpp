@@ -78,7 +78,7 @@ static RefPtr<WebCore::SharedBuffer> convertToOptionalSharedBuffer(T array)
 {
     if (!array)
         return nullptr;
-    return SharedBuffer::create(array->span());
+    return SharedBuffer::create((const char*)array->data(), array->byteLength());
 }
 
 void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, RefPtr<SharedBuffer>&& initData, GenerateKeyCallback&& completion)

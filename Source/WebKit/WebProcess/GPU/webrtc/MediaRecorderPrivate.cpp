@@ -177,7 +177,7 @@ void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::Frag
         // FIXME: If completion handler is called following a GPUProcess connection being closed, we should fail the MediaRecorder.
         RefPtr<FragmentedSharedBuffer> buffer;
         if (data.size())
-            buffer = SharedBuffer::create(data);
+            buffer = SharedBuffer::create(data.data(), data.size());
         completionHandler(WTFMove(buffer), mimeType, timeCode);
     }, identifier());
 }

@@ -313,13 +313,13 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
         if (bodyOffset + bodySize != buffer.size())
             return std::nullopt;
 
-        auto bodyData = buffer.subspan(bodyOffset, bodySize);
+        auto bodyData = std::span(buffer.data() + bodyOffset, bodySize);
         if (storedInfo->metaData.bodyHash != computeSHA1(bodyData, m_salt))
             return std::nullopt;
 
         // FIXME: avoid copying inline body data here, perhaps by adding offset support to
         // MappedFileData, or by taking a read-only virtual copy of bodyData.
-        responseBody = WebCore::SharedBuffer::create(bodyData);
+        responseBody = WebCore::SharedBuffer::create(bodyData.data(), bodyData.size());
     } else {
         if (!blobBuffer)
             return std::nullopt;

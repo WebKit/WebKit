@@ -36,7 +36,6 @@
 #endif
 #include <wtf/MainThread.h>
 #include <wtf/StringExtras.h>
-#include <wtf/text/StringCommon.h>
 
 using namespace WebCore;
 
@@ -81,7 +80,7 @@ TEST_F(FragmentedSharedBufferTest, appendBufferCreatedWithContentsOfExistingFile
     ASSERT_NOT_NULL(buffer);
     SharedBufferBuilder builder;
     builder.append(*buffer);
-    builder.append("a"_span);
+    builder.append("a", 1);
     EXPECT_TRUE(builder.size() == (strlen(FragmentedSharedBufferTest::testData()) + 1));
     EXPECT_TRUE(!memcmp(builder.get()->makeContiguous()->data(), FragmentedSharedBufferTest::testData(), strlen(FragmentedSharedBufferTest::testData())));
     EXPECT_EQ('a', builder.get()->makeContiguous()->data()[strlen(FragmentedSharedBufferTest::testData())]);
@@ -89,9 +88,12 @@ TEST_F(FragmentedSharedBufferTest, appendBufferCreatedWithContentsOfExistingFile
 
 TEST_F(FragmentedSharedBufferTest, tryCreateArrayBuffer)
 {
-    SharedBufferBuilder builder(std::in_place, "Hello"_span);
-    builder.append("World"_span);
-    builder.append("Goodbye"_span);
+    char testData0[] = "Hello";
+    char testData1[] = "World";
+    char testData2[] = "Goodbye";
+    SharedBufferBuilder builder(std::in_place, testData0, strlen(testData0));
+    builder.append(testData1, strlen(testData1));
+    builder.append(testData2, strlen(testData2));
     RefPtr<ArrayBuffer> arrayBuffer = builder.get()->tryCreateArrayBuffer();
     char expectedConcatenation[] = "HelloWorldGoodbye";
     ASSERT_EQ(strlen(expectedConcatenation), arrayBuffer->byteLength());
@@ -126,7 +128,7 @@ TEST_F(FragmentedSharedBufferTest, tryCreateArrayBufferLargeSegments)
 
 TEST_F(FragmentedSharedBufferTest, copy)
 {
-    const auto testData = "Habitasse integer eros tincidunt a scelerisque! Enim elit? Scelerisque magnis,"
+    char testData[] = "Habitasse integer eros tincidunt a scelerisque! Enim elit? Scelerisque magnis,"
     "et montes ultrices tristique a! Pid. Velit turpis, dapibus integer rhoncus sociis amet facilisis,"
     "adipiscing pulvinar nascetur magnis tempor sit pulvinar, massa urna enim porttitor sociis sociis proin enim?"
     "Lectus, platea dolor, integer a. A habitasse hac nunc, nunc, nec placerat vut in sit nunc nec, sed. Sociis,"
@@ -142,12 +144,12 @@ TEST_F(FragmentedSharedBufferTest, copy)
     "sagittis sed, tortor auctor nascetur rhoncus nec, rhoncus, magna integer. Sit eu massa vut?"
     "Porta augue porttitor elementum, enim, rhoncus pulvinar duis integer scelerisque rhoncus natoque,"
     "mattis dignissim massa ac pulvinar urna, nunc ut. Sagittis, aliquet penatibus proin lorem, pulvinar lectus,"
-    "augue proin! Ac, arcu quis. Placerat habitasse, ridiculus ridiculus."_span;
-    unsigned length = testData.size();
-    SharedBufferBuilder builder1(std::in_place, testData);
-    builder1.append(testData);
-    builder1.append(testData);
-    builder1.append(testData);
+    "augue proin! Ac, arcu quis. Placerat habitasse, ridiculus ridiculus.";
+    unsigned length = strlen(testData);
+    SharedBufferBuilder builder1(std::in_place, testData, length);
+    builder1.append(testData, length);
+    builder1.append(testData, length);
+    builder1.append(testData, length);
     // sharedBuffer must contain data more than segmentSize (= 0x1000) to check copy().
     EXPECT_EQ(length * 4, builder1.size());
     RefPtr<FragmentedSharedBuffer> clone = builder1.copy();
@@ -156,7 +158,7 @@ TEST_F(FragmentedSharedBufferTest, copy)
 
     SharedBufferBuilder builder2;
     builder2.append(*clone);
-    builder2.append(testData);
+    builder2.append(testData, length);
     EXPECT_EQ(length * 5, builder2.size());
     auto buffer = builder2.take();
     EXPECT_EQ(length * 5, buffer->size());
@@ -168,8 +170,8 @@ TEST_F(FragmentedSharedBufferTest, copy)
 
 TEST_F(FragmentedSharedBufferTest, builder)
 {
-    const auto testData0 = "Hello"_span;
-    SharedBufferBuilder builder1(std::in_place, testData0);
+    char testData0[] = "Hello";
+    SharedBufferBuilder builder1(std::in_place, testData0, strlen(testData0));
     EXPECT_FALSE(builder1.isNull());
     EXPECT_FALSE(builder1.isEmpty());
     auto copy = builder1.copy();
@@ -182,7 +184,7 @@ TEST_F(FragmentedSharedBufferTest, builder)
     SharedBufferBuilder builder2;
     EXPECT_TRUE(builder2.isNull());
     EXPECT_TRUE(builder2.isEmpty());
-    builder2.append(testData0);
+    builder2.append(testData0, strlen(testData0));
     EXPECT_FALSE(builder2.isNull());
     EXPECT_FALSE(builder2.isEmpty());
     builder2.reset();
@@ -313,7 +315,7 @@ TEST_F(FragmentedSharedBufferTest, toHexString)
 
 TEST_F(FragmentedSharedBufferTest, read)
 {
-    const auto simpleText = "This is a simple test."_span;
+    const char* const simpleText = "This is a simple test.";
 
     auto check = [](FragmentedSharedBuffer& sharedBuffer) {
         Vector<uint8_t> data = sharedBuffer.read(4, 3);
@@ -325,26 +327,26 @@ TEST_F(FragmentedSharedBufferTest, read)
 
         EXPECT_EQ(StringView(data.subspan(0, 18)), " is a simple test."_s);
     };
-    auto sharedBuffer = SharedBuffer::create(simpleText);
+    auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
     check(sharedBuffer);
 
     SharedBufferBuilder builder;
-    for (size_t i = 0; i < simpleText.size(); ++i)
-        builder.append(simpleText.subspan(i, 1));
+    for (size_t i = 0; i < strlen(simpleText); i++)
+        builder.append(&simpleText[i], 1);
     check(builder.take());
     EXPECT_TRUE(builder.isNull() && !builder);
     EXPECT_EQ(builder.size(), 0u);
 
-    for (size_t i = 0; i < simpleText.size(); i += 2)
-        builder.append(simpleText.subspan(i, 2));
-    EXPECT_EQ(builder.size(), simpleText.size());
+    for (size_t i = 0; i < strlen(simpleText); i += 2)
+        builder.append(&simpleText[i], 2);
+    EXPECT_EQ(builder.size(), strlen(simpleText));
     check(builder.take());
 }
 
 TEST_F(FragmentedSharedBufferTest, extractData)
 {
-    const auto simpleText = "This is a simple test."_span;
-    auto original = SharedBuffer::create(simpleText);
+    const char* const simpleText = "This is a simple test.";
+    auto original = SharedBuffer::create(simpleText, strlen(simpleText));
     auto copy = original->copy();
     auto vector = copy->extractData();
     EXPECT_TRUE(copy->isEmpty());
@@ -357,9 +359,9 @@ TEST_F(FragmentedSharedBufferTest, copyIsContiguous)
 {
     EXPECT_TRUE(SharedBuffer::create()->copy()->isContiguous());
     EXPECT_FALSE(FragmentedSharedBuffer::create()->copy()->isContiguous());
-    const auto simpleText = "This is a simple test."_span;
-    EXPECT_TRUE(SharedBuffer::create(simpleText)->copy()->isContiguous());
-    EXPECT_FALSE(FragmentedSharedBuffer::create(simpleText)->copy()->isContiguous());
+    const char* const simpleText = "This is a simple test.";
+    EXPECT_TRUE(SharedBuffer::create(simpleText, strlen(simpleText))->copy()->isContiguous());
+    EXPECT_FALSE(FragmentedSharedBuffer::create(simpleText, strlen(simpleText))->copy()->isContiguous());
 }
 
 #if ENABLE(MHTML)
@@ -411,25 +413,25 @@ TEST_F(SharedBufferChunkReaderTest, includeSeparator)
 
         EXPECT_FALSE(chunkReader.nextChunk(out));
     };
-    std::array<uint8_t, 256> data { };
+    uint8_t data[256];
     for (size_t i = 0; i < 256; ++i)
         data[i] = i;
-    auto sharedBuffer = SharedBuffer::create(std::span<const uint8_t> { data });
+    auto sharedBuffer = SharedBuffer::create(data, 256);
     check(sharedBuffer);
 
-    SharedBufferBuilder builder(std::in_place, std::span<const uint8_t> { data });
+    SharedBufferBuilder builder(std::in_place, data, 256);
     check(builder.take());
 
     for (size_t i = 0; i < 256; ++i) {
-        LChar c = i;
-        builder.append(std::span<const uint8_t> { &c, 1 });
+        char c = i;
+        builder.append(&c, 1);
     }
     check(builder.take());
 }
 
 TEST_F(SharedBufferChunkReaderTest, peekData)
 {
-    const auto simpleText = "This is a simple test."_span;
+    const char* const simpleText = "This is a simple test.";
 
     auto check = [](FragmentedSharedBuffer& sharedBuffer) {
         SharedBufferChunkReader chunkReader(&sharedBuffer, "is");
@@ -458,25 +460,25 @@ TEST_F(SharedBufferChunkReaderTest, peekData)
         chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
         EXPECT_TRUE(chunk.isNull());
     };
-    auto sharedBuffer = SharedBuffer::create(simpleText);
+    auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
     check(sharedBuffer);
 
-    SharedBufferBuilder builder(std::in_place, simpleText);
+    SharedBufferBuilder builder(std::in_place, simpleText, strlen(simpleText));
     check(builder.take());
 
-    for (size_t i = 0; i < simpleText.size(); i++)
-        builder.append(simpleText.subspan(i, 1));
+    for (size_t i = 0; i < strlen(simpleText); i++)
+        builder.append(&simpleText[i], 1);
     check(builder.take());
 
-    for (size_t i = 0; i < simpleText.size(); i += 2)
-        builder.append(simpleText.subspan(i, 2));
-    EXPECT_EQ(builder.size(), simpleText.size());
+    for (size_t i = 0; i < strlen(simpleText); i += 2)
+        builder.append(&simpleText[i], 2);
+    EXPECT_EQ(builder.size(), strlen(simpleText));
     check(builder.take());
 }
 
 TEST_F(SharedBufferChunkReaderTest, readAllChunksInMultiSegment)
 {
-    const auto simpleText = "This is the most ridiculous history there is."_span;
+    const char* const simpleText = "This is the most ridiculous history there is.";
     auto check = [](FragmentedSharedBuffer& sharedBuffer) {
         std::vector<String> chunks;
         const char* const expectedChunks1WithoutSeparator[] = { "Th", "s ", "s the most r", "d", "culous h", "story there ", "s." };
@@ -508,28 +510,28 @@ TEST_F(SharedBufferChunkReaderTest, readAllChunksInMultiSegment)
         readAllChunks(&chunks, sharedBuffer, "ist"_s, true);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks3WithSeparator, arraysize(expectedChunks3WithSeparator)));
     };
-    auto sharedBuffer = SharedBuffer::create(simpleText);
+    auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
     check(sharedBuffer);
 
-    SharedBufferBuilder builder(std::in_place, simpleText);
+    SharedBufferBuilder builder(std::in_place, simpleText, strlen(simpleText));
     check(builder.take());
 
-    for (size_t i = 0; i < simpleText.size(); i++)
-        builder.append(simpleText.subspan(i, 1));
-    EXPECT_EQ(builder.size(), simpleText.size());
+    for (size_t i = 0; i < strlen(simpleText); i++)
+        builder.append(&simpleText[i], 1);
+    EXPECT_EQ(builder.size(), strlen(simpleText));
     check(builder.take());
 
-    for (size_t i = 0; i < simpleText.size(); i += 5)
-        builder.append(simpleText.subspan(i, 5));
-    EXPECT_EQ(builder.size(), simpleText.size());
+    for (size_t i = 0; i < strlen(simpleText); i += 5)
+        builder.append(&simpleText[i], 5);
+    EXPECT_EQ(builder.size(), strlen(simpleText));
     check(builder.take());
 }
 
 TEST_F(SharedBufferChunkReaderTest, changingIterator)
 {
     {
-        const auto simpleText = "This is the most ridiculous history there is."_span;
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        const char* const simpleText = "This is the most ridiculous history there is.";
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
         SharedBufferChunkReader chunkReader(sharedBuffer.ptr(), "is");
         String chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback();
         EXPECT_EQ(chunk, "Th"_s);
@@ -556,8 +558,8 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
     }
 
     {
-        const auto simpleText = "dog"_span;
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        const char* const simpleText = "dog";
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
         const char* const expectedChunksWithoutSeparator[] = { "" };
         std::vector<String> chunks;
         readAllChunks(&chunks, sharedBuffer, "dog"_s);
@@ -571,8 +573,8 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
 
     // Ends with repeated separators.
     {
-        const auto simpleText = "Beaucoup de chats catcatcatcatcat"_span;
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        const char* const simpleText = "Beaucoup de chats catcatcatcatcat";
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
         const char* const expectedChunksWithoutSeparator[] = { "Beaucoup de chats ", "", "", "", "" };
         std::vector<String> chunks;
         readAllChunks(&chunks, sharedBuffer, "cat"_s);
@@ -584,18 +586,18 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
         EXPECT_TRUE(checkChunks(chunks, expectedChunksWithSeparator, arraysize(expectedChunksWithSeparator)));
     }
     {
-        const auto simpleText = "This is a simple test.\r\nNothing special.\r\n"_span;
+        const char* const simpleText = "This is a simple test.\r\nNothing special.\r\n";
         const char* const expectedChunks[] = { "This is a simple test.", "Nothing special." };
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
         std::vector<String> chunks;
         readAllChunks(&chunks, sharedBuffer);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks, arraysize(expectedChunks)));
     }
 
     {
-        const auto simpleText = "This is a simple test.\r\nNothing special."_span;
+        const char* const simpleText = "This is a simple test.\r\nNothing special.";
         const char* const expectedChunks[] = { "This is a simple test.", "Nothing special." };
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
 
         std::vector<String> chunks;
         readAllChunks(&chunks, sharedBuffer);
@@ -603,9 +605,9 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
     }
 
     {
-        const auto simpleText = "Simple line with no EOL."_span;
+        const char* const simpleText = "Simple line with no EOL.";
         const char* const expectedChunks[] = { "Simple line with no EOL." };
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
 
         std::vector<String> chunks;
         readAllChunks(&chunks, sharedBuffer);
@@ -613,9 +615,9 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
     }
 
     {
-        const auto simpleText = "Line that has a EOL\r\nand then ends with a CR\r"_span;
+        const char* const simpleText = "Line that has a EOL\r\nand then ends with a CR\r";
         const char* const expectedChunks[] = { "Line that has a EOL", "and then ends with a CR\r" };
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
 
         std::vector<String> chunks;
         readAllChunks(&chunks, sharedBuffer);
@@ -623,18 +625,18 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
     }
 
     {
-        const auto simpleText = "Repeated CRs should not cause probems\r\r\r\nShouln't they?"_span;
+        const char* const simpleText = "Repeated CRs should not cause probems\r\r\r\nShouln't they?";
         const char* const expectedChunks[] = { "Repeated CRs should not cause probems\r\r", "Shouln't they?" };
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
 
         std::vector<String> chunks;
         readAllChunks(&chunks, sharedBuffer);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks, arraysize(expectedChunks)));
     }
     {
-        const auto simpleText = "EOL\r\n betwe\r\nen segments"_span;
+        const char* const simpleText = "EOL\r\n betwe\r\nen segments";
         const char* const expectedChunks[] = { "EOL", " betwe", "en segments" };
-        auto sharedBuffer = SharedBuffer::create(simpleText);
+        auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
 
         std::vector<String> chunks;
         readAllChunks(&chunks, sharedBuffer);

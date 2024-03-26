@@ -193,7 +193,7 @@ private:
     bool isRemoved() const;
     void scheduleEvent(const AtomString& eventName);
 
-    ExceptionOr<void> appendBufferInternal(std::span<const uint8_t>);
+    ExceptionOr<void> appendBufferInternal(const unsigned char*, unsigned);
     void sourceBufferPrivateAppendComplete(MediaPromise::Result&&);
     void resetParserState();
 

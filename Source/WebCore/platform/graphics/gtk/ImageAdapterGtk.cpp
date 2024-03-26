@@ -42,7 +42,7 @@ static Ref<Image> loadImageFromGResource(const char* iconName)
     GUniquePtr<char> path(g_strdup_printf("/org/webkitgtk/resources/images/%s", iconName));
     GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.get(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     ASSERT(data);
-    icon->setData(SharedBuffer::create(std::span { static_cast<const uint8_t*>(g_bytes_get_data(data.get(), nullptr)), g_bytes_get_size(data.get()) }), true);
+    icon->setData(SharedBuffer::create(static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), g_bytes_get_size(data.get())), true);
     return icon;
 }
 

@@ -51,7 +51,7 @@ public:
     static void loadResourceSynchronously(BlobData*, const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
 
     void start();
-    int readSync(std::span<uint8_t>);
+    int readSync(uint8_t*, int);
 
     bool aborted() const { return m_aborted; }
 
@@ -79,20 +79,20 @@ private:
     void doStart();
     void getSizeForNext();
     std::optional<Error> seek();
-    void consumeData(std::span<const uint8_t>);
+    void consumeData(const uint8_t* data, int bytesRead);
     void failed(Error);
 
     void readAsync();
     void readDataAsync(const BlobDataItem&);
     void readFileAsync(const BlobDataItem&);
 
-    int readDataSync(const BlobDataItem&, std::span<uint8_t>);
-    int readFileSync(const BlobDataItem&, std::span<uint8_t>);
+    int readDataSync(const BlobDataItem&, void*, int);
+    int readFileSync(const BlobDataItem&, void*, int);
 
     void notifyResponse();
     void notifyResponseOnSuccess();
     void notifyResponseOnError();
-    void notifyReceiveData(std::span<const uint8_t>);
+    void notifyReceiveData(const uint8_t*, int);
     void notifyFail(Error);
     void notifyFinish();
 

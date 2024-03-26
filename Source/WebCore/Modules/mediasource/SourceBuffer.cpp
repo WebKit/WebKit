@@ -307,7 +307,7 @@ ExceptionOr<void> SourceBuffer::setAppendWindowEnd(double newValue)
 
 ExceptionOr<void> SourceBuffer::appendBuffer(const BufferSource& data)
 {
-    return appendBufferInternal(data.span());
+    return appendBufferInternal(static_cast<const unsigned char*>(data.data()), data.length());
 }
 
 void SourceBuffer::resetParserState()
@@ -582,7 +582,7 @@ void SourceBuffer::scheduleEvent(const AtomString& eventName)
     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-ExceptionOr<void> SourceBuffer::appendBufferInternal(std::span<const uint8_t> data)
+ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, unsigned size)
 {
     // Section 3.2 appendBuffer()
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-appendBuffer-void-ArrayBufferView-data
@@ -597,7 +597,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(std::span<const uint8_t> da
     if (isRemoved() || m_updating)
         return Exception { ExceptionCode::InvalidStateError };
 
-    ALWAYS_LOG(LOGIDENTIFIER, "size = ", data.size(), "maximumBufferSize = ", maximumBufferSize(), "buffered = ", m_buffered->ranges(), " streaming = ", m_source->streaming());
+    ALWAYS_LOG(LOGIDENTIFIER, "size = ", size, "maximumBufferSize = ", maximumBufferSize(), "buffered = ", m_buffered->ranges(), " streaming = ", m_source->streaming());
 
     // 3. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
     // 3.1. Set the readyState attribute of the parent media source to "open"
@@ -605,7 +605,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(std::span<const uint8_t> da
     m_source->openIfInEndedState();
 
     // 4. Run the coded frame eviction algorithm.
-    bool bufferFull = m_private->evictCodedFrames(data.size(), m_source->currentTime());
+    bool bufferFull = m_private->evictCodedFrames(size, m_source->currentTime());
 
     // 5. If the buffer full flag equals true, then throw a QuotaExceededError exception and abort these step.
     if (bufferFull) {
@@ -616,7 +616,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(std::span<const uint8_t> da
     // NOTE: Return to 3.2 appendBuffer()
     // 3. Add data to the end of the input buffer.
     ASSERT(!m_pendingAppendData);
-    m_pendingAppendData = SharedBuffer::create(data);
+    m_pendingAppendData = SharedBuffer::create(data, size);
 
     // 4. Set the updating attribute to true.
     m_updating = true;

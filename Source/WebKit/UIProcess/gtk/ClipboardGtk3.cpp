@@ -168,7 +168,7 @@ void Clipboard::readBuffer(const char* format, CompletionHandler<void(Ref<WebCor
         std::unique_ptr<ReadBufferAsyncData> data(static_cast<ReadBufferAsyncData*>(userData));
         int contentsLength;
         const auto* contents = gtk_selection_data_get_data_with_length(selection, &contentsLength);
-        data->completionHandler(WebCore::SharedBuffer::create(std::span { contents, static_cast<size_t>(std::max(0, contentsLength)) }));
+        data->completionHandler(WebCore::SharedBuffer::create(contents, contentsLength > 0 ? static_cast<size_t>(contentsLength) : 0));
     }, new ReadBufferAsyncData(WTFMove(completionHandler)));
 }
 

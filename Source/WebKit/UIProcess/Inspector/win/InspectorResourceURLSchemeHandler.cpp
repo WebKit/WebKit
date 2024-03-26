@@ -58,7 +58,7 @@ void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLS
     if (contentType.isEmpty())
         contentType = "application/octet-stream"_s;
     WebCore::ResourceResponse response(requestURL, contentType, file.size(), "UTF-8"_s);
-    auto data = WebCore::SharedBuffer::create(file.span());
+    auto data = WebCore::SharedBuffer::create(static_cast<const char*>(file.data()), file.size());
 
     task.didReceiveResponse(response);
     task.didReceiveData(WTFMove(data));

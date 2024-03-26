@@ -50,7 +50,7 @@ static inline void append(Vector<uint8_t>& buffer, std::span<const uint8_t> byte
 
 static inline void append(Vector<uint8_t>& buffer, const char* string)
 {
-    buffer.append(span8(string));
+    buffer.append(std::span { string, strlen(string) });
 }
 
 static inline void append(Vector<uint8_t>& buffer, const CString& string)

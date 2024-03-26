@@ -213,7 +213,7 @@ static String getFullCFHTML(IDataObject* data)
 
 static void append(Vector<char>& vector, const char* string)
 {
-    vector.append(span(string));
+    vector.append(std::span { string, strlen(string) });
 }
 
 static void append(Vector<char>& vector, const CString& string)

@@ -351,7 +351,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
                 return;
             }
 
-            data.append(*chunk);
+            data.append(chunk->data(), chunk->size());
         });
         m_sink->pipeFrom(*stream);
         return;

@@ -1296,8 +1296,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRes
             return makeUnexpected("Unable to decode given content"_s);
 
         overrideData = SharedBuffer::create(WTFMove(*buffer));
-    } else
-        overrideData = SharedBuffer::create(content.utf8().span());
+    } else {
+        auto utf8Content = content.utf8();
+        overrideData = SharedBuffer::create(utf8Content.data(), utf8Content.length());
+    }
 
     pendingInterceptResponse->respond(overrideResponse, overrideData);
 
@@ -1322,8 +1324,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequest
             return makeUnexpected("Unable to decode given content"_s);
 
         data = SharedBuffer::create(WTFMove(*buffer));
-    } else
-        data = SharedBuffer::create(content.utf8().span());
+    } else {
+        auto utf8Content = content.utf8();
+        data = SharedBuffer::create(utf8Content.data(), utf8Content.length());
+    }
 
     // Mimic data URL load behavior - report didReceiveResponse & didFinishLoading.
     ResourceResponse response(pendingRequest->m_loader->url(), mimeType, data->size(), String());

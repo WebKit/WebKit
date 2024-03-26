@@ -275,7 +275,7 @@ bool flushFile(PlatformFileHandle)
     return false;
 }
 
-int64_t writeToFile(PlatformFileHandle handle, const void* data, size_t length)
+int writeToFile(PlatformFileHandle handle, const void* data, int length)
 {
     if (!isHandleValid(handle))
         return -1;
@@ -285,10 +285,10 @@ int64_t writeToFile(PlatformFileHandle handle, const void* data, size_t length)
 
     if (!success)
         return -1;
-    return static_cast<int64_t>(bytesWritten);
+    return static_cast<int>(bytesWritten);
 }
 
-int64_t readFromFile(PlatformFileHandle handle, void* data, size_t length)
+int readFromFile(PlatformFileHandle handle, void* data, int length)
 {
     if (!isHandleValid(handle))
         return -1;
@@ -298,7 +298,7 @@ int64_t readFromFile(PlatformFileHandle handle, void* data, size_t length)
 
     if (!success)
         return -1;
-    return static_cast<int64_t>(bytesRead);
+    return static_cast<int>(bytesRead);
 }
 
 String localUserSpecificStorageDirectory()

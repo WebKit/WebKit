@@ -1153,20 +1153,9 @@ inline std::span<const UChar> span(const UChar& character)
     return { &character, 1 };
 }
 
-inline std::span<const LChar> span8(const char* string)
-{
-    return { reinterpret_cast<const LChar*>(string), string ? strlen(string) : 0 };
-}
-
-inline std::span<const char> span(const char* string)
-{
-    return { string, string ? strlen(string) : 0 };
-}
-
 }
 
 using WTF::equalIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICase;
 using WTF::isLatin1;
 using WTF::span;
-using WTF::span8;

@@ -69,7 +69,7 @@ std::span<const uint8_t> WebCompiledContentRuleList::serializedActions() const
 std::span<const uint8_t> WebCompiledContentRuleList::spanWithOffsetAndLength(size_t offset, size_t length) const
 {
     RELEASE_ASSERT(offset + length <= m_data.data->size());
-    return m_data.data->span().subspan(offset, length);
+    return m_data.data->bytes().subspan(offset, length);
 }
 
 } // namespace WebKit

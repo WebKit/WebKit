@@ -117,7 +117,7 @@ void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* hand
 
     // Read all the data.
     m_data.resize(static_cast<size_t>(response.expectedContentLength()));
-    static_cast<BlobResourceHandle*>(handle)->readSync(m_data.mutableSpan());
+    static_cast<BlobResourceHandle*>(handle)->readSync(m_data.data(), static_cast<int>(m_data.size()));
     completionHandler();
 }
 
@@ -321,7 +321,7 @@ auto BlobResourceHandle::seek() -> std::optional<Error>
     return std::nullopt;
 }
 
-int BlobResourceHandle::readSync(std::span<uint8_t> buffer)
+int BlobResourceHandle::readSync(uint8_t* buf, int length)
 {
     ASSERT(isMainThread());
 
@@ -329,7 +329,7 @@ int BlobResourceHandle::readSync(std::span<uint8_t> buffer)
     Ref<BlobResourceHandle> protectedThis(*this);
 
     int offset = 0;
-    size_t remaining = buffer.size();
+    int remaining = length;
     while (remaining) {
         // Do not continue if the request is aborted or an error occurs.
         if (erroredOrAborted())
@@ -342,9 +342,9 @@ int BlobResourceHandle::readSync(std::span<uint8_t> buffer)
         const BlobDataItem& item = m_blobData->items().at(m_readItemCount);
         int bytesRead = 0;
         if (item.type() == BlobDataItem::Type::Data)
-            bytesRead = readDataSync(item, buffer.subspan(offset));
+            bytesRead = readDataSync(item, buf + offset, remaining);
         else if (item.type() == BlobDataItem::Type::File)
-            bytesRead = readFileSync(item, buffer.subspan(offset));
+            bytesRead = readFileSync(item, buf + offset, remaining);
         else
             ASSERT_NOT_REACHED();
 
@@ -358,10 +358,10 @@ int BlobResourceHandle::readSync(std::span<uint8_t> buffer)
     if (erroredOrAborted())
         result = -1;
     else
-        result = buffer.size() - remaining;
+        result = length - remaining;
 
     if (result > 0)
-        notifyReceiveData(buffer);
+        notifyReceiveData(buf, result);
 
     if (!result)
         notifyFinish();
@@ -369,15 +369,17 @@ int BlobResourceHandle::readSync(std::span<uint8_t> buffer)
     return result;
 }
 
-int BlobResourceHandle::readDataSync(const BlobDataItem& item, std::span<uint8_t> buffer)
+int BlobResourceHandle::readDataSync(const BlobDataItem& item, void* buf, int length)
 {
     ASSERT(isMainThread());
 
     ASSERT(!m_async);
 
     long long remaining = item.length() - m_currentItemReadSize;
-    long long bytesToRead = std::min(std::min<long long>(remaining, buffer.size()), m_totalRemainingSize);
-    memcpy(buffer.data(), item.data()->data() + item.offset() + m_currentItemReadSize, bytesToRead);
+    int bytesToRead = (length > remaining) ? static_cast<int>(remaining) : length;
+    if (bytesToRead > m_totalRemainingSize)
+        bytesToRead = static_cast<int>(m_totalRemainingSize);
+    memcpy(buf, item.data()->data() + item.offset() + m_currentItemReadSize, bytesToRead);
     m_totalRemainingSize -= bytesToRead;
 
     m_currentItemReadSize += bytesToRead;
@@ -389,7 +391,7 @@ int BlobResourceHandle::readDataSync(const BlobDataItem& item, std::span<uint8_t
     return bytesToRead;
 }
 
-int BlobResourceHandle::readFileSync(const BlobDataItem& item, std::span<uint8_t> buffer)
+int BlobResourceHandle::readFileSync(const BlobDataItem& item, void* buf, int length)
 {
     ASSERT(isMainThread());
 
@@ -409,7 +411,7 @@ int BlobResourceHandle::readFileSync(const BlobDataItem& item, std::span<uint8_t
         m_fileOpened = true;
     }
 
-    int bytesRead = m_stream->read(buffer.data(), buffer.size());
+    int bytesRead = m_stream->read(buf, length);
     if (bytesRead < 0) {
         m_errorCode = Error::NotReadableError;
         return 0;
@@ -459,10 +461,10 @@ void BlobResourceHandle::readDataAsync(const BlobDataItem& item)
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = m_totalRemainingSize;
 
-    auto data = item.data()->span().subspan(item.offset() + m_currentItemReadSize, bytesToRead);
+    auto* data = item.data()->data() + item.offset() + m_currentItemReadSize;
     m_currentItemReadSize = 0;
 
-    consumeData(data);
+    consumeData(data, static_cast<int>(bytesToRead));
 }
 
 void BlobResourceHandle::readFileAsync(const BlobDataItem& item)
@@ -502,23 +504,23 @@ void BlobResourceHandle::didRead(int bytesRead)
         return;
     }
 
-    consumeData(m_buffer.subspan(0, bytesRead));
+    consumeData(m_buffer.data(), bytesRead);
 }
 
-void BlobResourceHandle::consumeData(std::span<const uint8_t> data)
+void BlobResourceHandle::consumeData(const uint8_t* data, int bytesRead)
 {
     ASSERT(m_async);
     Ref<BlobResourceHandle> protectedThis(*this);
 
-    m_totalRemainingSize -= data.size();
+    m_totalRemainingSize -= bytesRead;
 
     // Notify the client.
-    if (!data.empty())
-        notifyReceiveData(data);
+    if (bytesRead)
+        notifyReceiveData(data, bytesRead);
 
     if (m_fileOpened) {
         // When the current item is a file item, the reading is completed only if bytesRead is 0.
-        if (data.empty()) {
+        if (!bytesRead) {
             // Close the file.
             m_fileOpened = false;
             m_asyncStream->close();
@@ -589,10 +591,10 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     });
 }
 
-void BlobResourceHandle::notifyReceiveData(std::span<const uint8_t> data)
+void BlobResourceHandle::notifyReceiveData(const uint8_t* data, int bytesRead)
 {
     if (client())
-        client()->didReceiveBuffer(this, SharedBuffer::create(data), data.size());
+        client()->didReceiveBuffer(this, SharedBuffer::create(data, bytesRead), bytesRead);
 }
 
 void BlobResourceHandle::notifyFail(Error errorCode)

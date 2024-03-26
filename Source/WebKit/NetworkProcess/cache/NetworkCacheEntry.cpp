@@ -187,7 +187,7 @@ void Entry::initializeBufferFromStorageRecord() const
             return;
     }
 #endif
-    m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.span());
+    m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.data(), m_sourceStorageRecord.body.size());
 }
 
 WebCore::FragmentedSharedBuffer* Entry::buffer() const

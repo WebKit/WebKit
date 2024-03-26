@@ -128,7 +128,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     }
 
     // 3. Let certificate be a copy of the contents of the serverCertificate parameter.
-    auto certificate = SharedBuffer::create(serverCertificate.span());
+    auto certificate = SharedBuffer::create(serverCertificate.data(), serverCertificate.length());
 
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:

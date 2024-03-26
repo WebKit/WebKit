@@ -377,7 +377,7 @@ void BackgroundFetch::Record::didReceiveResponseBodyChunk(const SharedBuffer& da
         m_fetch->storeResponseBodyChunk(m_index, data);
 
     if (!m_responseBodyCallbacks.isEmpty()) {
-        RefPtr buffer = SharedBuffer::create(data.span());
+        RefPtr buffer = SharedBuffer::create(data.data(), data.size());
         for (auto& callback : m_responseBodyCallbacks)
             callback(buffer.copyRef());
     }

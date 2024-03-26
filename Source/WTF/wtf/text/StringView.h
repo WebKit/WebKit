@@ -408,7 +408,7 @@ inline StringView::StringView(std::span<const UChar> characters)
 
 inline StringView::StringView(const char* characters)
 {
-    initialize(WTF::span8(characters));
+    initialize(std::span { reinterpret_cast<const LChar*>(characters), characters ? strlen(characters) : 0 });
 }
 
 inline StringView::StringView(std::span<const char> characters)
