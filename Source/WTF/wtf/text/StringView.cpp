@@ -135,32 +135,32 @@ size_t StringView::find(AdaptiveStringSearcherTables& tables, StringView matchSt
     return searchStringRaw(tables, characters16(), length(), matchString.characters16(), matchString.length(), start);
 }
 
-size_t StringView::find(const LChar* match, unsigned matchLength, unsigned start) const
+size_t StringView::find(std::span<const LChar> match, unsigned start) const
 {
-    ASSERT(matchLength);
+    ASSERT(!match.empty());
     auto length = this->length();
     if (start > length)
         return notFound;
 
     unsigned searchLength = length - start;
-    if (matchLength > searchLength)
+    if (match.size() > searchLength)
         return notFound;
 
     if (is8Bit())
-        return findInner(characters8() + start, match, start, searchLength, matchLength);
-    return findInner(characters16() + start, match, start, searchLength, matchLength);
+        return findInner(characters8() + start, match.data(), start, searchLength, match.size());
+    return findInner(characters16() + start, match.data(), start, searchLength, match.size());
 }
 
-size_t StringView::reverseFind(const LChar* match, unsigned matchLength, unsigned start) const
+size_t StringView::reverseFind(std::span<const LChar> match, unsigned start) const
 {
-    ASSERT(matchLength);
+    ASSERT(!match.empty());
     auto length = this->length();
-    if (matchLength > length)
+    if (match.size() > length)
         return notFound;
 
     if (is8Bit())
-        return reverseFindInner(characters8(), match, start, length, matchLength);
-    return reverseFindInner(characters16(), match, start, length, matchLength);
+        return reverseFindInner(characters8(), match.data(), start, length, match.size());
+    return reverseFindInner(characters16(), match.data(), start, length, match.size());
 }
 
 void StringView::SplitResult::Iterator::findNextSubstring()
