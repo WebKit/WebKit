@@ -830,7 +830,9 @@ class RunTest(fake_filesystem_unittest.TestCase, StreamTestingMixin):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
         host = MockHost()
-        host.filesystem.remove('/tmp')  # Remove the /tmp symlink.
+        if host.filesystem.exists('/tmp'):
+            # Remove any /tmp symlink.
+            host.filesystem.remove('/tmp')
         host.filesystem.maybe_make_directory('/tmp/cwd')
         host.filesystem.chdir('/tmp/cwd')
         _, _, user = logging_run(['--results-directory=foo'], tests_included=True, host=host)

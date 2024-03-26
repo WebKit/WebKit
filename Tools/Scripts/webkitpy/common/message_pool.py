@@ -69,6 +69,17 @@ def get(caller, worker_factory, num_workers, worker_startup_delay_secs=0.0, host
 
 class _MessagePool(object):
     def __init__(self, caller, worker_factory, num_workers, worker_startup_delay_secs=0.0, host=None, timeout=30):
+        if (
+            num_workers > 1
+            and sys.platform == "darwin"
+            and (
+                sys.version_info < (3, 4)
+                or multiprocessing.get_start_method() != "spawn"
+            )
+        ):
+            msg = "macOS only supports a single worker when the fork start method is being used"
+            raise ValueError(msg)
+
         self._caller = caller
         self._worker_factory = worker_factory
         self._num_workers = num_workers
