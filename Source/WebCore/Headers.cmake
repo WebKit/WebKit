@@ -1504,7 +1504,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/DragController.h
     page/DummySpeechRecognitionProvider.h
     page/EditorClient.h
-    page/ElementTargeting.h
+    page/ElementTargetingController.h
     page/ElementTargetingTypes.h
     page/EventHandler.h
     page/FocusController.h

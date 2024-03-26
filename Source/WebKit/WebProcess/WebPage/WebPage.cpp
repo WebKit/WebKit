@@ -196,7 +196,7 @@
 #include <WebCore/Editing.h>
 #include <WebCore/Editor.h>
 #include <WebCore/ElementIterator.h>
-#include <WebCore/ElementTargeting.h>
+#include <WebCore/ElementTargetingController.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/ExceptionCode.h>
@@ -9369,7 +9369,11 @@ void WebPage::renderTreeAsText(WebCore::FrameIdentifier frameID, size_t baseInde
 
 void WebPage::requestTargetedElement(TargetedElementRequest&& request, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&& completion)
 {
-    completion(findTargetedElements(Ref { *corePage() }, WTFMove(request)));
+    RefPtr page = corePage();
+    if (!page)
+        return completion({ });
+
+    completion(page->checkedElementTargetingController()->findTargets(WTFMove(request)));
 }
 
 void WebPage::requestTextExtraction(std::optional<FloatRect>&& collectionRectInRootView, CompletionHandler<void(TextExtraction::Item&&)>&& completion)
@@ -9417,6 +9421,10 @@ void WebPage::remoteViewPointToRootView(FrameIdentifier frameID, FloatPoint poin
 
 void WebPage::adjustVisibilityForTargetedElements(const Vector<std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier>>& identifiers, CompletionHandler<void(bool)>&& completion)
 {
+    RefPtr page = corePage();
+    if (!page)
+        return completion(false);
+
     Vector<Ref<Element>> elements;
     elements.reserveInitialCapacity(identifiers.size());
     for (auto [elementID, documentID] : identifiers) {
@@ -9425,7 +9433,7 @@ void WebPage::adjustVisibilityForTargetedElements(const Vector<std::pair<WebCore
             continue;
         elements.append(foundElement.releaseNonNull());
     }
-    completion(WebCore::adjustVisibilityForTargetedElements(elements));
+    completion(page->checkedElementTargetingController()->adjustVisibility(elements));
 }
 
 } // namespace WebKit

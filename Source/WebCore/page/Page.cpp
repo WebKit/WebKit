@@ -62,6 +62,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "ElementTargetingController.h"
 #include "EmptyClients.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -307,6 +308,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(makeUniqueRef<PointerLockController>(*this))
 #endif
+    , m_elementTargetingController(makeUniqueRef<ElementTargetingController>(*this))
     , m_settings(Settings::create(this))
     , m_cryptoClient(WTFMove(pageConfiguration.cryptoClient))
     , m_progress(makeUniqueRef<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
@@ -1550,6 +1552,8 @@ void Page::didCommitLoad()
         geolocationController->didNavigatePage();
 #endif
 
+    m_elementTargetingController->resetAdjustmentRegions();
+
     m_isWaitingForLoadToFinish = true;
 }
 
@@ -1866,6 +1870,10 @@ void Page::updateRendering()
 
     runProcessingStep(RenderingUpdateStep::MediaQueryEvaluation, [] (Document& document) {
         document.evaluateMediaQueriesAndReportChanges();        
+    });
+
+    runProcessingStep(RenderingUpdateStep::AdjustVisibility, [&] (auto& document) {
+        m_elementTargetingController->adjustVisibilityInRepeatedlyTargetedRegions(document);
     });
 
     runProcessingStep(RenderingUpdateStep::Animations, [] (Document& document) {
@@ -4373,6 +4381,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::AccessibilityRegionUpdate: ts << "AccessibilityRegionUpdate"; break;
 #endif
     case RenderingUpdateStep::RestoreScrollPositionAndViewState: ts << "RestoreScrollPositionAndViewState"; break;
+    case RenderingUpdateStep::AdjustVisibility: ts << "AdjustVisibility"; break;
     }
     return ts;
 }
@@ -4684,6 +4693,11 @@ CheckedRef<ProgressTracker> Page::checkedProgress()
 CheckedRef<const ProgressTracker> Page::checkedProgress() const
 {
     return m_progress.get();
+}
+
+CheckedRef<ElementTargetingController> Page::checkedElementTargetingController()
+{
+    return m_elementTargetingController.get();
 }
 
 String Page::sceneIdentifier() const

@@ -2172,6 +2172,12 @@ window.UIHelper = class UIHelper {
         if (!this.isWebKit2())
             return Promise.resolve();
 
+        if (x instanceof HTMLElement) {
+            const point = this.midPointOfRect(x.getBoundingClientRect());
+            x = point.x;
+            y = point.y;
+        }
+
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
                 uiController.adjustVisibilityForFrontmostTarget(${x}, ${y}, result => uiController.uiScriptComplete(result));

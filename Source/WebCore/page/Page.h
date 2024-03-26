@@ -110,6 +110,7 @@ class DiagnosticLoggingClient;
 class DragCaretController;
 class DragController;
 class EditorClient;
+class ElementTargetingController;
 class Element;
 class FocusController;
 class FormData;
@@ -241,6 +242,7 @@ enum class RenderingUpdateStep : uint32_t {
     AccessibilityRegionUpdate       = 1 << 22,
 #endif
     RestoreScrollPositionAndViewState = 1 << 23,
+    AdjustVisibility                  = 1 << 24,
 };
 
 enum class LinkDecorationFilteringTrigger : uint8_t {
@@ -271,6 +273,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::CaretAnimation,
     RenderingUpdateStep::UpdateContentRelevancy,
     RenderingUpdateStep::PerformPendingViewTransitions,
+    RenderingUpdateStep::AdjustVisibility,
 };
 
 constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {
@@ -392,6 +395,8 @@ public:
     WEBCORE_EXPORT void disableICECandidateFiltering();
     WEBCORE_EXPORT void enableICECandidateFiltering();
     bool shouldEnableICECandidateFilteringByDefault() const { return m_shouldEnableICECandidateFilteringByDefault; }
+
+    WEBCORE_EXPORT CheckedRef<ElementTargetingController> checkedElementTargetingController();
 
     void didChangeMainDocument();
     void mainFrameDidChangeToNonInitialEmptyDocument();
@@ -1176,6 +1181,7 @@ private:
 #if ENABLE(POINTER_LOCK)
     UniqueRef<PointerLockController> m_pointerLockController;
 #endif
+    UniqueRef<ElementTargetingController> m_elementTargetingController;
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
     const RefPtr<Settings> m_settings;

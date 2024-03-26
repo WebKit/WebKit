@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+div[class^=fixed] {
+    top: 0;
+    left: 0;
+    background: tomato;
+    position: fixed;
+    width: 300px;
+    height: 150px;
+    display: block;
+    visibility: visible;
+    opacity: 0.5;
+}
+
+.content {
+    width: 320px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<div class="fixed"></div>
+<p class="content">This test requires WebKitTestRunner.</p>
+<script>
+testRunner.waitUntilDone();
+
+function addNewFixedContainer() {
+    const container = document.createElement("div");
+    const randomSalt = Math.random().toPrecision(10);
+    container.classList.add(`fixed_${randomSalt.substr(randomSalt.length - 10)}`);
+    document.body.appendChild(container);
+    return container;
+}
+
+addEventListener("load", async () => {
+    await UIHelper.adjustVisibilityForFrontmostTarget(document.querySelector(".fixed"));
+    await UIHelper.renderingUpdate();
+
+    await UIHelper.adjustVisibilityForFrontmostTarget(addNewFixedContainer());
+    await UIHelper.renderingUpdate();
+
+    for (let i = 0; i < 10; ++i)
+        addNewFixedContainer();
+
+    await UIHelper.renderingUpdate();
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>
