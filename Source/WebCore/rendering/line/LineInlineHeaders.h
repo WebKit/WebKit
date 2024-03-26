@@ -121,21 +121,4 @@ inline bool requiresLineBox(const LegacyInlineIterator& it, const LineInfo& line
     return notJustWhitespace || rendererIsEmptyInline;
 }
 
-inline void setStaticPositions(RenderBlockFlow& block, RenderBox& child, IndentTextOrNot shouldIndentText)
-{
-    // FIXME: The math here is actually not really right. It's a best-guess approximation that
-    // will work for the common cases
-    RenderElement* containerBlock = child.container();
-    LayoutUnit blockHeight = block.logicalHeight();
-    if (auto* renderInline = dynamicDowncast<RenderInline>(*containerBlock)) {
-        // A relative positioned inline encloses us. In this case, we also have to determine our
-        // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
-        // inline so that we can obtain the value later.
-        renderInline->layer()->setStaticInlinePosition(block.startAlignedOffsetForLine(blockHeight, DoNotIndentText));
-        renderInline->layer()->setStaticBlockPosition(blockHeight);
-    }
-    block.updateStaticInlinePositionForChild(child, blockHeight, shouldIndentText);
-    child.layer()->setStaticBlockPosition(blockHeight);
-}
-
 } // namespace WebCore
