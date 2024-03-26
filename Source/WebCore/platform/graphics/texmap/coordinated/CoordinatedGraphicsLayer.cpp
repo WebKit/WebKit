@@ -511,6 +511,11 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
     addRepaintRect(contentsRect());
 }
 
+void CoordinatedGraphicsLayer::markDamageRectsUnreliable()
+{
+    m_damagedRectsAreUnreliable = true;
+}
+
 void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
 {
 #if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
@@ -1055,6 +1060,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     state.damagedRects = m_nicosia.damagedRects;
                     m_nicosia.damagedRects = { };
                 }
+                state.damagedRectsAreUnreliable = m_nicosia.damagedRectsAreUnreliable;
                 // TODO we need to update the pending state with the current damage tracking information
                 // TODO what about already existing damage information?
             });
@@ -1171,6 +1177,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
         layerState.mainBackingStore->invalidate({ { }, IntSize { m_size } });
     }
     m_nicosia.delta.damagedRectsChanged = true;
+    m_nicosia.damagedRectsAreUnreliable = m_damagedRectsAreUnreliable;
 
     m_needsDisplay.completeLayer = false;
     m_needsDisplay.rects.clear();

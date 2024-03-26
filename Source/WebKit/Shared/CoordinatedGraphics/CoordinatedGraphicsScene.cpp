@@ -183,6 +183,8 @@ void CoordinatedGraphicsScene::commitSceneState(const RefPtr<Nicosia::Scene>& sc
 
 void CoordinatedGraphicsScene::updateSceneState()
 {
+    m_lastDamagedRectsAreUnreliable = false;
+
     if (!m_nicosia.scene)
         return;
 
@@ -360,6 +362,8 @@ void CoordinatedGraphicsScene::updateSceneState()
                             for (auto& region : layerState.damagedRects)
                                 layer.markDamaged(region);
                         }
+
+                        m_lastDamagedRectsAreUnreliable |= layerState.damagedRectsAreUnreliable;
                     });
             }
         });

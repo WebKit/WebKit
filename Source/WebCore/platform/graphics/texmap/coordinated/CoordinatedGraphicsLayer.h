@@ -123,6 +123,7 @@ public:
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
     void setContentsNeedsDisplay() override;
+    void markDamageRectsUnreliable() override;
     void deviceOrPageScaleFactorChanged() override;
     void flushCompositingState(const FloatRect&) override;
     void flushCompositingStateForThisLayerOnly() override;
@@ -254,6 +255,7 @@ private:
         bool completeLayer { false };
         Vector<FloatRect> rects;
     } m_needsDisplay;
+    bool m_damagedRectsAreUnreliable { false };
 
     RefPtr<Image> m_compositedImage;
     RefPtr<NativeImage> m_compositedNativeImage;
@@ -270,6 +272,7 @@ private:
         Nicosia::CompositionLayer::LayerState::DebugBorder debugBorder;
         bool performLayerSync { false };
         Vector<FloatRect> damagedRects;
+        bool damagedRectsAreUnreliable { false };
 
         RefPtr<Nicosia::BackingStore> backingStore;
         RefPtr<Nicosia::ContentLayer> contentLayer;

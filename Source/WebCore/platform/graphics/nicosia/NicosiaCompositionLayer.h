@@ -126,6 +126,7 @@ public:
         WebCore::FloatSize contentsTileSize;
         WebCore::FloatRoundedRect contentsClippingRect;
         Vector<WebCore::FloatRect> damagedRects;
+        bool damagedRectsAreUnreliable { false };
 
         float opacity { 0 };
         WebCore::Color solidColor;
@@ -237,6 +238,8 @@ public:
             staging.animatedBackingStoreClient = pending.animatedBackingStoreClient;
         if (pending.delta.damagedRectsChanged)
             staging.damagedRects = pending.damagedRects;
+
+        staging.damagedRectsAreUnreliable = pending.damagedRectsAreUnreliable;
 
         pending.delta = { };
 
