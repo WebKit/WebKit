@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,4 +179,12 @@
 
 .sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .css-documentation-button {
     display: none;
+}
+
+@media (prefers-contrast: more) {
+    @media (prefers-color-scheme: dark) {
+        .computed-style-section .computed-property-item .property-trace-item .selector {
+            color: hsl(0, 0%, 90%);
+        }
+    }
 }

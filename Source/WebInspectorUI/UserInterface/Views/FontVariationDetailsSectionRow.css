@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,4 +140,12 @@
     background-repeat: no-repeat;
     background-size: var(--warning-icon-size) var(--warning-icon-size);
     background-position: center;
+}
+
+@media (prefers-contrast: more) {
+    @media (prefers-color-scheme: dark) {
+        .details-section > .content > .group > .row.font-variation > .variation-range > input[type="range"] {
+            color: hsl(0, 0%, 10%);
+        }
+    }
 }

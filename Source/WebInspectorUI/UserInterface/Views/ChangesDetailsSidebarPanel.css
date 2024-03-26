@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,4 +106,12 @@
     position: absolute;
     left: var(--css-declaration-horizontal-padding);
     pointer-events: none;
+}
+
+@media (prefers-contrast: more) {
+    @media (prefers-color-scheme: dark) {
+        .changes-panel .css-property-line.added {
+            color: hsl(90, 61%, 10%);
+        }
+    }
 }

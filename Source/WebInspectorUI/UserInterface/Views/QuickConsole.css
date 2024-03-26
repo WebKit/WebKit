@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,5 +123,15 @@
 
     .quick-console.showing-log {
         border-top-color: var(--console-message-separator) !important;
+    }
+
+    @media (prefers-contrast: more) {
+        .quick-console {
+            color: hsla(0, 0%, 88%);
+        }
+
+        .quick-console.showing-log {
+            border-top-color: hsla(0, 0%, 88%, 80%);
+        }
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +63,7 @@
 .details-section .row.box-model .box.border {
     border-color: black;
 
-    --has-border-radius-border-radius: 10px;
+    --box-model-border-radius: 10px;
 }
 
 .details-section .row.box-model:not(.hovered) .box.border,
@@ -76,22 +77,22 @@
 
 .details-section .row.box-model .box.border.has-top-left-radius,
 .details-section .row.box-model .box.border.has-top-left-radius .box {
-    border-top-left-radius: var(--has-border-radius-border-radius);
+    border-top-left-radius: var(--box-model-border-radius);
 }
 
 .details-section .row.box-model .box.border.has-top-right-radius,
 .details-section .row.box-model .box.border.has-top-right-radius .box {
-    border-top-right-radius: var(--has-border-radius-border-radius);
+    border-top-right-radius: var(--box-model-border-radius);
 }
 
 .details-section .row.box-model .box.border.has-bottom-right-radius,
 .details-section .row.box-model .box.border.has-bottom-right-radius .box {
-    border-bottom-right-radius: var(--has-border-radius-border-radius);
+    border-bottom-right-radius: var(--box-model-border-radius);
 }
 
 .details-section .row.box-model .box.border.has-bottom-left-radius,
 .details-section .row.box-model .box.border.has-bottom-left-radius .box {
-    border-bottom-left-radius: var(--has-border-radius-border-radius);
+    border-bottom-left-radius: var(--box-model-border-radius);
 }
 
 .details-section .row.box-model .box.padding {
@@ -188,5 +189,60 @@
     .details-section .row.box-model .box.border {
         border-color: var(--text-color-quaternary);
     }
-}
 
+    @media (prefers-contrast: more) {
+        .details-section .row.box-model .box.margin {
+            --box-model-border-color: black;
+            border-color: var(--box-model-border-color);
+        }
+
+        .details-section .row.box-model .box.border {
+            border-color: var(--box-model-border-color);
+        }
+
+        .details-section .row.box-model .box {
+            border-color: var(--box-model-border-color);
+        }
+
+        .details-section .row.box-model:not(.hovered) .box.margin,
+        .details-section .row.box-model .box.margin.active {
+            background-color: hsla(30, 100%, 90%);
+        }
+
+        .details-section .row.box-model:not(.hovered) .box.padding,
+        .details-section .row.box-model .box.padding.active {
+            background-color: hsla(100, 100%, 90%);
+        }
+
+        .details-section .row.box-model:not(.hovered) .box.border,
+        .details-section .row.box-model .box.border.active {
+            background-color: hsla(70, 100%, 90%);
+        }
+
+        .details-section .row.box-model:is(.hovered) .box.margin,
+        .details-section .row.box-model .box.margin.active {
+            --box-model-border-color-hovered: white;
+            border-color: var(--box-model-border-color-hovered);
+        }
+
+        .details-section .row.box-model:is(.hovered) .box.padding,
+        .details-section .row.box-model .box.padding.active {
+            border-color: var(--box-model-border-color-hovered);
+        }
+
+        .details-section .row.box-model:is(.hovered) .box.border,
+        .details-section .row.box-model .box.border.active {
+            border-color: var(--box-model-border-color-hovered);
+        }
+
+        .details-section .row.box-model:is(.hovered) .box.position,
+        .details-section .row.box-model .box.position.active {
+            border-color: var(--box-model-border-color-hovered);
+        }
+
+        .details-section .row.box-model:is(.hovered) .box.content,
+        .details-section .row.box-model .box.content.active {
+            border-color: var(--box-model-border-color-hovered);
+        }
+    }
+}
