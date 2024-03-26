@@ -1280,16 +1280,26 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
 
-    _page->callAfterNextPresentationUpdateAndLayerCommit([callSnapshotRect = WTFMove(callSnapshotRect), handler, page = Ref { *_page }] () mutable {
+    _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler, page = Ref { *_page }] () mutable {
+
         if (!page->hasRunningProcess()) {
             tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
 
-        dispatch_async(dispatch_get_main_queue(), [callSnapshotRect = WTFMove(callSnapshotRect)] {
-            callSnapshotRect();
-        });
+        // Create an implicit transaction to ensure a commit will happen next.
+        [CATransaction activate];
+
+        // Wait for the next flush to ensure the latest IOSurfaces are pushed to backboardd before taking the snapshot.
+        [CATransaction addCommitHandler:[callSnapshotRect = WTFMove(callSnapshotRect)]() mutable {
+            // callSnapshotRect() calls the client callback which may call directly or indirectly addCommitHandler.
+            // It is prohibited by CA to add a commit handler while processing a registered commit handler.
+            // So postpone calling callSnapshotRect() till CATransaction processes its commit handlers.
+            dispatch_async(dispatch_get_main_queue(), [callSnapshotRect = WTFMove(callSnapshotRect)] {
+                callSnapshotRect();
+            });
+        } forPhase:kCATransactionPhasePostCommit];
     });
 #endif
 }

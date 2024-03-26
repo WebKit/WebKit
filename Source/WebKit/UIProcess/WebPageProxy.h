@@ -1863,7 +1863,6 @@ public:
     // For testing
     void clearWheelEventTestMonitor();
     void callAfterNextPresentationUpdate(CompletionHandler<void()>&&);
-    void callAfterNextPresentationUpdateAndLayerCommit(CompletionHandler<void()>&&);
 
     void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
 
