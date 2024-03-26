@@ -331,10 +331,10 @@ void NetworkDataTaskBlob::readData(const BlobDataItem& item)
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = m_totalRemainingSize;
 
-    auto* data = item.data()->data() + item.offset() + m_currentItemReadSize;
+    std::span data { item.data()->data() + item.offset() + m_currentItemReadSize, static_cast<size_t>(bytesToRead) };
     m_currentItemReadSize = 0;
 
-    consumeData(data, static_cast<int>(bytesToRead));
+    consumeData(data);
 }
 
 void NetworkDataTaskBlob::readFile(const BlobDataItem& item)
@@ -383,26 +383,26 @@ void NetworkDataTaskBlob::didRead(int bytesRead)
     }
 
     Ref<NetworkDataTaskBlob> protectedThis(*this);
-    consumeData(m_buffer.data(), bytesRead);
+    consumeData(m_buffer.subspan(0, bytesRead));
 }
 
-void NetworkDataTaskBlob::consumeData(const uint8_t* data, int bytesRead)
+void NetworkDataTaskBlob::consumeData(std::span<const uint8_t> data)
 {
-    m_totalRemainingSize -= bytesRead;
+    m_totalRemainingSize -= data.size();
 
-    if (bytesRead) {
+    if (!data.empty()) {
         if (m_downloadFile != FileSystem::invalidPlatformFileHandle) {
-            if (!writeDownload(data, bytesRead))
+            if (!writeDownload(data))
                 return;
         } else {
             ASSERT(m_client);
-            m_client->didReceiveData(SharedBuffer::create(data, bytesRead));
+            m_client->didReceiveData(SharedBuffer::create(data));
         }
     }
 
     if (m_fileOpened) {
         // When the current item is a file item, the reading is completed only if bytesRead is 0.
-        if (!bytesRead) {
+        if (data.empty()) {
             // Close the file.
             m_fileOpened = false;
             m_stream->close();
@@ -462,11 +462,11 @@ void NetworkDataTaskBlob::download()
     read();
 }
 
-bool NetworkDataTaskBlob::writeDownload(const uint8_t* data, int bytesRead)
+bool NetworkDataTaskBlob::writeDownload(std::span<const uint8_t> data)
 {
     ASSERT(isDownload());
-    int bytesWritten = FileSystem::writeToFile(m_downloadFile, data, bytesRead);
-    if (bytesWritten != bytesRead) {
+    int bytesWritten = FileSystem::writeToFile(m_downloadFile, data.data(), data.size());
+    if (static_cast<size_t>(bytesWritten) != data.size()) {
         didFailDownload(cancelledError(m_firstRequest));
         return false;
     }

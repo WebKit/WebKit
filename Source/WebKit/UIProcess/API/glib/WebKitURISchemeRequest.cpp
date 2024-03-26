@@ -268,7 +268,7 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
         return;
     }
 
-    priv->task->didReceiveData(SharedBuffer::create(priv->readBuffer, bytesRead));
+    priv->task->didReceiveData(SharedBuffer::create(std::span(priv->readBuffer, bytesRead)));
     priv->bytesRead += bytesRead;
     g_input_stream_read_async(inputStream, priv->readBuffer, gReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, priv->cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request.get()));

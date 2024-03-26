@@ -72,7 +72,7 @@ public:
 private:
 #if ENABLE(MEDIA_SOURCE)
     bool isMaybeWebM(const uint8_t* data, size_t dataSize) const;
-    std::unique_ptr<AudioFileReaderWebMData> demuxWebMData(const uint8_t* data, size_t dataSize) const;
+    std::unique_ptr<AudioFileReaderWebMData> demuxWebMData(std::span<const uint8_t>) const;
     Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef) const;
     std::optional<size_t> decodeWebMData(AudioBufferList&, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const;
 #endif

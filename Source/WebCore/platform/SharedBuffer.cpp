@@ -50,9 +50,9 @@ Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create()
     return adoptRef(*new FragmentedSharedBuffer);
 }
 
-Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(const uint8_t* data, size_t size)
+Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(std::span<const uint8_t> data)
 {
-    return adoptRef(*new FragmentedSharedBuffer(data, size));
+    return adoptRef(*new FragmentedSharedBuffer(data));
 }
 
 Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::create(FileSystem::MappedFileData&& mappedFileData)
@@ -103,7 +103,7 @@ std::optional<Ref<FragmentedSharedBuffer>> FragmentedSharedBuffer::fromIPCData(I
         RefPtr sharedMemoryBuffer = SharedMemory::map(WTFMove(handle.value()), SharedMemory::Protection::ReadOnly);
         if (!sharedMemoryBuffer)
             return std::nullopt;
-        return SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), sharedMemoryBuffer->size());
+        return SharedBuffer::create(sharedMemoryBuffer->span());
     });
 }
 

@@ -134,20 +134,20 @@ bool flushFile(PlatformFileHandle handle)
     return !fsync(handle);
 }
 
-int writeToFile(PlatformFileHandle handle, const void* data, int length)
+int64_t writeToFile(PlatformFileHandle handle, const void* data, size_t length)
 {
     do {
-        int bytesWritten = write(handle, data, static_cast<size_t>(length));
+        auto bytesWritten = write(handle, data, length);
         if (bytesWritten >= 0)
             return bytesWritten;
     } while (errno == EINTR);
     return -1;
 }
 
-int readFromFile(PlatformFileHandle handle, void* data, int length)
+int64_t readFromFile(PlatformFileHandle handle, void* data, size_t length)
 {
     do {
-        int bytesRead = read(handle, data, static_cast<size_t>(length));
+        auto bytesRead = read(handle, data, length);
         if (bytesRead >= 0)
             return bytesRead;
     } while (errno == EINTR);

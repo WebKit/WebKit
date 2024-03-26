@@ -3345,7 +3345,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView).loadData({ reinterpret_cast<const uint8_t*>(plainText), plainText ? strlen(plainText) : 0 }, "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
+    getPage(webView).loadData(span8(plainText), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
 }
 
 /**

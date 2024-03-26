@@ -403,7 +403,7 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
     auto document = protectedDocument();
 
     String primaryType = MULTI_REPRESENTATION_HEIC_MIME_TYPE_STRING;
-    auto primaryBuffer = FragmentedSharedBuffer::create(data.data(), data.size());
+    auto primaryBuffer = FragmentedSharedBuffer::create(data);
 
     String fallbackType = "image/png"_s;
     auto fallbackData = encodeData(data, fallbackType, std::nullopt);

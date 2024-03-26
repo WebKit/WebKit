@@ -858,7 +858,7 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
                 continue;
 
             auto& keyId = keyIdElement.value();
-            m_keyIds.append(std::make_pair(trackEntry.track_uid.value(), SharedBuffer::create(keyId.data(), keyId.size())));
+            m_keyIds.append(std::make_pair(trackEntry.track_uid.value(), SharedBuffer::create(std::span { keyId })));
         }
     }
 
@@ -1226,7 +1226,7 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
                 return Skip(&reader, bytesRemaining);
             }
             OpusCookieContents cookieContents;
-            if (!parseOpusPrivateData(privateData.size(), privateData.data(), *contiguousBuffer, cookieContents)) {
+            if (!parseOpusPrivateData(std::span { privateData }, *contiguousBuffer, cookieContents)) {
                 PARSER_LOG_ERROR_IF_POSSIBLE("Failed to parse Opus private data");
                 return Skip(&reader, bytesRemaining);
             }
@@ -1265,7 +1265,7 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
             PARSER_LOG_ERROR_IF_POSSIBLE("AudioTrackData::consumeFrameData: unable to create contiguous data block");
             return Skip(&reader, bytesRemaining);
         }
-        if (!parseOpusPrivateData(privateData.size(), privateData.data(), *contiguousBuffer, cookieContents)
+        if (!parseOpusPrivateData(std::span { privateData }, *contiguousBuffer, cookieContents)
             || cookieContents.framesPerPacket != m_framesPerPacket
             || cookieContents.frameDuration != m_frameDuration) {
             PARSER_LOG_ERROR_IF_POSSIBLE("Opus frames-per-packet changed within a track; error");

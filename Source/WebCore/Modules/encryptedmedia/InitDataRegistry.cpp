@@ -116,8 +116,7 @@ static RefPtr<SharedBuffer> sanitizeKeyids(const SharedBuffer& buffer)
         kidsArray->pushString(base64URLEncodeToString(buffer->data(), buffer->size()));
     object->setArray("kids"_s, WTFMove(kidsArray));
 
-    CString jsonData = object->toJSONString().utf8();
-    return SharedBuffer::create(jsonData.data(), jsonData.length());
+    return SharedBuffer::create(object->toJSONString().utf8().span());
 }
 
 std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> InitDataRegistry::extractPsshBoxesFromCenc(const SharedBuffer& buffer)
@@ -179,7 +178,7 @@ std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(con
             if (CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes().contains(scheme)) {
                 for (const auto& request : fpsPssh->initDataBox().requests()) {
                     auto& keyID = request.requestInfo().keyID();
-                    keyIDs.append(SharedBuffer::create(keyID.data(), keyID.size()));
+                    keyIDs.append(SharedBuffer::create(keyID.span()));
                 }
             }
         }

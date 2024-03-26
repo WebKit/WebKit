@@ -221,7 +221,7 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
 
     object->setArray("kids"_s, WTFMove(keyIdsArray));
     CString jsonData = object->toJSONString().utf8();
-    return SharedBuffer::create(jsonData.data(), jsonData.length());
+    return SharedBuffer::create(jsonData.span());
 }
 
 static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initData)
@@ -242,8 +242,7 @@ static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initDa
     keyIdsArray->pushString(base64URLEncodeToString(initData.data(), initData.size()));
 
     object->setArray("kids"_s, WTFMove(keyIdsArray));
-    CString jsonData = object->toJSONString().utf8();
-    return SharedBuffer::create(jsonData.data(), jsonData.length());
+    return SharedBuffer::create(object->toJSONString().utf8().span());
 }
 
 CDMFactoryClearKey& CDMFactoryClearKey::singleton()
@@ -576,8 +575,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
 
         // Copy the JSON data into a SharedBuffer object.
         String messageString = rootObject->toJSONString();
-        CString messageCString = messageString.utf8();
-        message = SharedBuffer::create(messageCString.data(), messageCString.length());
+        message = SharedBuffer::create(messageString.utf8().span());
     }
 
     m_keyStore.unrefAllKeys();

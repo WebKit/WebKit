@@ -149,7 +149,7 @@ AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
 {
 #if ENABLE(MEDIA_SOURCE)
     if (isMaybeWebM(static_cast<const uint8_t*>(data), dataSize)) {
-        m_webmData = demuxWebMData(static_cast<const uint8_t*>(data), dataSize);
+        m_webmData = demuxWebMData(std::span { static_cast<const uint8_t*>(data), dataSize });
         if (m_webmData)
             return;
     }
@@ -181,12 +181,12 @@ bool AudioFileReader::isMaybeWebM(const uint8_t* data, size_t dataSize) const
     return dataSize >= 4 && data[0] == 0x1A && data[1] == 0x45 && data[2] == 0xDF && data[3] == 0xA3;
 }
 
-std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const uint8_t* data, size_t dataSize) const
+std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(std::span<const uint8_t> data) const
 {
     auto parser = SourceBufferParserWebM::create();
     if (!parser)
         return nullptr;
-    auto buffer = SharedBuffer::create(data, dataSize);
+    auto buffer = SharedBuffer::create(data);
 
     std::optional<uint64_t> audioTrackId;
     MediaTime duration;

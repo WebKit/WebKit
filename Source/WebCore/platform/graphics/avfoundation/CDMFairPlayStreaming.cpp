@@ -248,9 +248,7 @@ RefPtr<SharedBuffer> CDMPrivateFairPlayStreaming::sanitizeMpts(const SharedBuffe
 
 const Vector<Ref<SharedBuffer>>& CDMPrivateFairPlayStreaming::mptsKeyIDs() {
     static NeverDestroyed<Vector<Ref<SharedBuffer>>> mptsKeyID = [] {
-        ASCIILiteral keyID = "TransportStreamIdentifier"_s;
-        Ref keyBuffer = SharedBuffer::create(keyID.characters(), keyID.length());
-        return Vector { 1, WTFMove(keyBuffer) };
+        return Vector { 1, SharedBuffer::create("TransportStreamIdentifier"_span) };
     }();
     return mptsKeyID;
 }
