@@ -813,6 +813,7 @@ void HTMLImageElement::addCandidateSubresourceURLs(ListHashSet<URL>& urls) const
 
 void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
     oldDocument.removeDynamicMediaQueryDependentImage(*this);
 
     selectImageSource(RelevantMutation::No);

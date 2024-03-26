@@ -51,6 +51,8 @@ class TrackBase
 public:
     virtual ~TrackBase() = default;
 
+    virtual void didMoveToNewDocument(Document&);
+
     enum Type { BaseTrack, TextTrack, AudioTrack, VideoTrack };
     Type type() const { return m_type; }
 

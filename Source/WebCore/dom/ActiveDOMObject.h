@@ -56,6 +56,8 @@ public:
     void suspendIfNeeded();
     void assertSuspendIfNeededWasCalled() const;
 
+    void didMoveToNewDocument(Document&);
+
     // This function is used by JS bindings to determine if the JS wrapper should be kept alive or not.
     bool hasPendingActivity() const { return m_pendingActivityInstanceCount || virtualHasPendingActivity(); }
 
