@@ -64,6 +64,7 @@ public:
     WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
     WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
     ALWAYS_INLINE String(std::span<const LChar> characters) : String(characters.data(), characters.size()) { }
+    ALWAYS_INLINE String(std::span<const char> characters) : String(characters.data(), characters.size()) { }
     ALWAYS_INLINE static String fromLatin1(const char* characters) { return String { characters }; }
 
     // Construct a string referencing an existing StringImpl.

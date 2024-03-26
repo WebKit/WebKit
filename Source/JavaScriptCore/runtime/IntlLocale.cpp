@@ -112,7 +112,7 @@ void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringVi
 {
     unsigned length = strlen(m_buffer.data());
 
-    StringView localeIDView { m_buffer.data(), length };
+    StringView localeIDView { m_buffer.subspan(0, length) };
 
     auto endOfLanguageScriptRegionVariant = localeIDView.find(ULOC_KEYWORD_SEPARATOR);
     if (endOfLanguageScriptRegionVariant == notFound)

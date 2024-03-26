@@ -1059,7 +1059,7 @@ TEST(WKHTTPCookieStore, SameSiteWithPatternMatch)
                 co_await connection.awaitableSend(HTTPResponse({ { { "Set-Cookie"_s, "exists=1;samesite=strict"_s } }, "<body></body>"_s }).serialize());
                 continue;
             }
-            StringView requestView(request.data(), request.size());
+            StringView requestView(request.span());
             if (path == "http://site1.example/get-cookie"_s)
                 EXPECT_EQ(requestView.find("Cookie: exists=1"_s), notFound);
             else if (path == "http://site2.example/get-cookie"_s)

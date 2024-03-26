@@ -2044,7 +2044,7 @@ PrivateTokenTestSetupState setupWebViewForPrivateTokenTests(bool& didDecideServi
 "});"_s;
 
     auto headerFromRequest = [](const Vector<char>& request, const ASCIILiteral& headerPrefix) {
-        StringView requestView(request.data(), request.size());
+        StringView requestView(request.span());
         auto headerStart = requestView.find(headerPrefix);
         const auto headerLen = strlen(headerPrefix);
         if (headerStart == notFound)

@@ -333,7 +333,7 @@ Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString& t
 
 Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vector<char, 32>&& buffer)
 {
-    StringView locale(buffer.data(), buffer.size());
+    StringView locale(buffer.span());
     ASSERT(locale.is8Bit());
     size_t extensionIndex = locale.find("-u-"_s);
     if (extensionIndex == notFound)

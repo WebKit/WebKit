@@ -473,7 +473,7 @@ private:
 
         if (!track.codec_id.is_present())
             return emptyString();
-        StringView codecID { track.codec_id.value().data(), (unsigned)track.codec_id.value().length() };
+        StringView codecID { std::span { track.codec_id.value() } };
         if (!codecID.startsWith("V_"_s) && !codecID.startsWith("A_"_s) && !codecID.startsWith("S_"_s))
             return emptyString();
 
@@ -862,7 +862,7 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
         }
     }
 
-    StringView codecString { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
+    StringView codecString { std::span { trackEntry.codec_id.value() } };
     auto track = [&]() -> UniqueRef<TrackData> {
 #if ENABLE(VP9)
         if (codecString == "V_VP9"_s && isVP9DecoderAvailable())

@@ -405,7 +405,7 @@ bool TrackPrivateBaseGStreamer::updateTrackIDFromTags(const GRefPtr<GstTagList>&
     if (!gst_tag_list_get_string(tags.get(), "container-specific-track-id", &trackIDString.outPtr()))
         return false;
 
-    auto trackID = WTF::parseInteger<TrackID>(StringView { trackIDString.get(), static_cast<unsigned>(strlen(trackIDString.get())) });
+    auto trackID = WTF::parseInteger<TrackID>(StringView { std::span { trackIDString.get(), strlen(trackIDString.get()) } });
     if (trackID && *trackID != m_trackID.value_or(0)) {
         m_trackID = *trackID;
         m_stringId = AtomString::number(static_cast<unsigned long long>(*m_trackID));

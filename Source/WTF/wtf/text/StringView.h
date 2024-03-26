@@ -71,7 +71,6 @@ public:
     StringView(std::span<const LChar>);
     StringView(std::span<const UChar>);
     StringView(std::span<const char>); // FIXME: Consider dropping this overload. Callers should pass LChars/UChars instead.
-    StringView(const char*, unsigned length); // FIXME: Drop once all call sites pass a span.
     StringView(const void*, unsigned length, bool is8bit);
     StringView(ASCIILiteral);
 
@@ -279,7 +278,7 @@ WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
 WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
 
 inline StringView nullStringView() { return { }; }
-inline StringView emptyStringView() { return StringView("", 0); }
+inline StringView emptyStringView() { return ""_span; }
 
 } // namespace WTF
 
@@ -415,11 +414,6 @@ inline StringView::StringView(const char* characters)
 inline StringView::StringView(std::span<const char> characters)
 {
     initialize(std::span { reinterpret_cast<const LChar*>(characters.data()), characters.size() });
-}
-
-inline StringView::StringView(const char* characters, unsigned length)
-{
-    initialize(std::span { reinterpret_cast<const LChar*>(characters), length });
 }
 
 inline StringView::StringView(const void* characters, unsigned length, bool is8bit)

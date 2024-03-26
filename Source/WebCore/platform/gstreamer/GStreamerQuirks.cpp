@@ -68,7 +68,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
     const char* quirksList = g_getenv("WEBKIT_GST_QUIRKS");
     GST_DEBUG("Attempting to parse requested quirks: %s", GST_STR_NULL(quirksList));
     if (quirksList) {
-        StringView quirks { quirksList, static_cast<unsigned>(strlen(quirksList)) };
+        StringView quirks { std::span { quirksList, strlen(quirksList) } };
         if (WTF::equalLettersIgnoringASCIICase(quirks, "help"_s)) {
             WTFLogAlways("Supported quirks for WEBKIT_GST_QUIRKS are: amlogic, broadcom, bcmnexus, realtek, westeros");
             return;
@@ -104,7 +104,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
     if (!holePunchQuirk)
         return;
 
-    StringView identifier { holePunchQuirk, static_cast<unsigned>(strlen(holePunchQuirk)) };
+    StringView identifier { std::span { holePunchQuirk, strlen(holePunchQuirk) } };
     if (WTF::equalLettersIgnoringASCIICase(identifier, "help"_s)) {
         WTFLogAlways("Supported quirks for WEBKIT_GST_HOLE_PUNCH_QUIRK are: fake, westeros, bcmnexus");
         return;
