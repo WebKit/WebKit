@@ -4694,6 +4694,8 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-009.html
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-010.html [ ImageOnlyFailure ]
 
 # currentColor support in relative color syntax.
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Crash ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html [ Crash ]
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-a98rgb-01.html [ ImageOnlyFailure ]
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-displayp3-01.html [ ImageOnlyFailure ]
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-hsl-01.html [ ImageOnlyFailure ]

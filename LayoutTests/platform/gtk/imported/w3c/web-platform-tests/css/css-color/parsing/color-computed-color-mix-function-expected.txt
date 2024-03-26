@@ -200,13 +200,13 @@ Error: assert_array_approx_equals: Numeric parameters are approximately equal. p
 PASS Property color value 'color-mix(in lch, lch(0.1 0.2 120deg / 0), lch(0.3 0.4 30deg))'
 PASS Property color value 'color-mix(in lch, lch(0.1 0.2 120deg / 0) 10%, lch(0.3 0.4 30deg))'
 FAIL Property color value 'color-mix(in lch, white, blue)' Colors do not match.
-Actual:   lch(64.78553 65.61608 278.12225)
+Actual:   lch(64.78553 65.61609 278.06592)
 Expected: lch(64.78 65.6 301.37).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 301.37 +/- 0.1, expected 301.37 but got 278.12225
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 301.37 +/- 0.1, expected 301.37 but got 278.06592
 FAIL Property color value 'color-mix(in lch, white 10%, blue)' Colors do not match.
-Actual:   lch(36.61409 118.09725 296.71927)
+Actual:   lch(36.61409 118.09725 296.708)
 Expected: lch(36.61 118.09 301.37).
-Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 301.37 +/- 0.1, expected 301.37 but got 296.71927
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 301.37 +/- 0.1, expected 301.37 but got 296.708
 PASS Property color value 'color-mix(in lch, lch(100 0 40deg), lch(100 0 60deg))'
 PASS Property color value 'color-mix(in lch, lch(100 0 60deg), lch(100 0 40deg))'
 PASS Property color value 'color-mix(in lch, lch(100 0 50deg), lch(100 0 330deg))'
@@ -285,11 +285,11 @@ Error: assert_array_approx_equals: Numeric parameters are approximately equal. p
 PASS Property color value 'color-mix(in oklch, oklch(0.1 20 120deg / 0), oklch(0.3 40 30deg))'
 PASS Property color value 'color-mix(in oklch, oklch(0.1 20 120deg / 0) 10%, oklch(0.3 40 30deg))'
 FAIL Property color value 'color-mix(in oklch, white, blue)' Colors do not match.
-Actual:   oklch(0.72600687 0.15660723 177.02602)
+Actual:   oklch(0.72600687 0.15660721 177.02602)
 Expected: oklch(0.726 0.156 264.052).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 264.052 +/- 0.01, expected 264.052 but got 177.02602
 FAIL Property color value 'color-mix(in oklch, white 10%, blue)' Colors do not match.
-Actual:   oklch(0.50681233 0.28189296 246.64684)
+Actual:   oklch(0.50681233 0.28189293 246.64684)
 Expected: oklch(0.506 0.281 264.052).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 264.052 +/- 0.01, expected 264.052 but got 246.64684
 PASS Property color value 'color-mix(in oklch, oklch(1 0 40deg), oklch(1 0 60deg))'

@@ -335,6 +335,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-009-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-almost-0-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-almost-0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-almost-0.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-almost-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-almost-1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-almost-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-over-1-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-over-1-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-l-over-1-2-expected.html
@@ -366,6 +372,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-011-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-almost-0-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-almost-0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-almost-0.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-almost-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-almost-1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-almost-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-over-1-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-over-1-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-l-over-1-2-expected.html
