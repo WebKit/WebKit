@@ -262,7 +262,7 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
     return 0;
 }
 
-bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedTextBreakIterator& graphemeClusterIterator, unsigned& currentIndex, char32_t& baseCharacter, unsigned& markCount)
+bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedTextBreakIterator& graphemeClusterIterator, unsigned& currentIndex, char32_t& baseCharacter)
 {
     unsigned remainingCharacters = m_end - currentIndex;
     ASSERT(remainingCharacters);
@@ -279,7 +279,6 @@ bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedText
     unsigned i = 0;
     U16_NEXT(buffer, i, bufferLength, baseCharacter);
     if (U_IS_SURROGATE(baseCharacter)) {
-        markCount = 0;
         currentIndex += i;
         return false;
     }
@@ -288,7 +287,6 @@ bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedText
     if (auto following = graphemeClusterIterator.following(currentIndex))
         delta = *following - currentIndex;
 
-    markCount = delta - 1;
     currentIndex += delta;
 
     return true;
@@ -330,9 +328,8 @@ void ComplexTextController::collectComplexTextRuns()
 
     CachedTextBreakIterator graphemeClusterIterator(m_run.text(), { }, TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
 
-    unsigned markCount;
     char32_t baseCharacter;
-    if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter, markCount))
+    if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter))
         return;
 
     // We don't perform font fallback on the capitalized characters when small caps is synthesized.
@@ -360,7 +357,7 @@ void ComplexTextController::collectComplexTextRuns()
         isSmallCaps = nextIsSmallCaps;
         auto previousIndex = currentIndex;
 
-        if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter, markCount))
+        if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter))
             return;
 
         if (synthesizedFont) {
