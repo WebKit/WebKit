@@ -202,7 +202,7 @@ protected:
         HasFormAssociatedCustomElementInterface = 1 << 11,
         HasShadowRootContainingSlots = 1 << 12,
         IsInTopLayer = 1 << 13,
-        CapturedInViewTransition = 1 << 14,
+        // 1-bit free
         // SVGElement bits
         HasPendingResources = 1 << 15,
     };

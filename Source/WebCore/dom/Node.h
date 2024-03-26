@@ -264,8 +264,8 @@ public:
     bool hasShadowRootContainingSlots() const { return hasEventTargetFlag(EventTargetFlag::HasShadowRootContainingSlots); }
     void setHasShadowRootContainingSlots(bool flag) { setEventTargetFlag(EventTargetFlag::HasShadowRootContainingSlots, flag); }
 
-    bool needsSVGRendererUpdate() const { return hasStateFlag(StateFlag::NeedsSVGRendererUpdate); }
-    void setNeedsSVGRendererUpdate(bool flag) { setStateFlag(StateFlag::NeedsSVGRendererUpdate, flag); }
+    bool needsSVGRendererUpdate() const { return hasElementStateFlag(ElementStateFlag::NeedsSVGRendererUpdate); }
+    void setNeedsSVGRendererUpdate(bool flag) { setElementStateFlag(ElementStateFlag::NeedsSVGRendererUpdate, flag); }
 
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
@@ -290,9 +290,9 @@ public:
     bool isPrecustomizedCustomElement() const { return customElementState() == CustomElementState::FailedOrPrecustomized && !isUnknownElement(); }
     bool isPrecustomizedOrDefinedCustomElement() const { return isPrecustomizedCustomElement() || isDefinedCustomElement(); }
 
-    bool isInCustomElementReactionQueue() const { return hasStateFlag(StateFlag::IsInCustomElementReactionQueue); }
-    void setIsInCustomElementReactionQueue() { setStateFlag(StateFlag::IsInCustomElementReactionQueue); }
-    void clearIsInCustomElementReactionQueue() { clearStateFlag(StateFlag::IsInCustomElementReactionQueue); }
+    bool isInCustomElementReactionQueue() const { return hasElementStateFlag(ElementStateFlag::IsInCustomElementReactionQueue); }
+    void setIsInCustomElementReactionQueue() { setElementStateFlag(ElementStateFlag::IsInCustomElementReactionQueue); }
+    void clearIsInCustomElementReactionQueue() { clearElementStateFlag(ElementStateFlag::IsInCustomElementReactionQueue); }
 
     // Returns null, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
@@ -350,8 +350,8 @@ public:
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool /* error loading subresource */) { }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
-    bool isUserActionElement() const { return hasStateFlag(StateFlag::IsUserActionElement); }
-    void setUserActionElement(bool flag) { setStateFlag(StateFlag::IsUserActionElement, flag); }
+    bool isUserActionElement() const { return hasElementStateFlag(ElementStateFlag::IsUserActionElement); }
+    void setUserActionElement(bool flag) { setElementStateFlag(ElementStateFlag::IsUserActionElement, flag); }
 
     bool inRenderedDocument() const;
     bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid || hasInvalidRenderer(); }
@@ -627,28 +627,30 @@ protected:
 
     enum class StateFlag : uint16_t {
         IsLink = 1 << 0,
-        IsUserActionElement = 1 << 1,
-        IsParsingChildren = 1 << 2,
-        EverHadSmoothScroll = 1 << 3,
-        SelfOrPrecedingNodesAffectDirAuto = 1 << 4,
-        EffectiveLangKnownToMatchDocumentElement = 1 << 5,
-        IsComputedStyleInvalidFlag = 1 << 6,
-        NeedsSVGRendererUpdate = 1 << 7,
-        NeedsUpdateQueryContainerDependentStyle = 1 << 8,
-#if ENABLE(FULLSCREEN_API)
-        IsFullscreen = 1 << 9,
-#endif
-        HasInvalidRenderer = 1 << 10,
-        ContainsOnlyASCIIWhitespace = 1 << 11, // Only used on CharacterData.
-        ContainsOnlyASCIIWhitespaceIsValid = 1 << 12, // Only used on CharacterData.
-        HasHeldBackChildrenChanged = 1 << 13,
-        HasStartedDeletion = 1 << 14,
-        IsInCustomElementReactionQueue = 1 << 15,
+        IsParsingChildren = 1 << 1,
+        SelfOrPrecedingNodesAffectDirAuto = 1 << 2,
+        EffectiveLangKnownToMatchDocumentElement = 1 << 3,
+        IsComputedStyleInvalidFlag = 1 << 4,
+        HasInvalidRenderer = 1 << 5,
+        ContainsOnlyASCIIWhitespace = 1 << 6, // Only used on CharacterData.
+        ContainsOnlyASCIIWhitespaceIsValid = 1 << 7, // Only used on CharacterData.
+        HasHeldBackChildrenChanged = 1 << 8,
+        HasStartedDeletion = 1 << 9,
+        // 6-bits free.
     };
 
     enum class ElementStateFlag : uint16_t {
         HasElementIdentifier = 1 << 0,
-        // 15-bits free.
+        IsUserActionElement = 1 << 1,
+        IsInCustomElementReactionQueue = 1 << 2,
+        NeedsSVGRendererUpdate = 1 << 3,
+        NeedsUpdateQueryContainerDependentStyle = 1 << 4,
+        EverHadSmoothScroll = 1 << 5,
+        CapturedInViewTransition = 1 << 6,
+#if ENABLE(FULLSCREEN_API)
+        IsFullscreen = 1 << 7,
+#endif
+        // 8-bits free.
     };
 
     enum class TabIndexState : uint8_t {
