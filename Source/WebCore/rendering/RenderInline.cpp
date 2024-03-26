@@ -505,16 +505,12 @@ LayoutUnit RenderInline::innerPaddingBoxHeight() const
 
 IntRect RenderInline::linesBoundingBox() const
 {
-    IntRect result;
-
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
-        if (!layout->contains(*this))
-            return result;
-
-        if (!layoutBox()) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
+        if (!layoutBox() || !layout->contains(*this)) {
+            // Repaint may be issued on subtrees during content mutation with newly inserted renderers
+            // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
             ASSERT(needsLayout());
-            return result;
+            return { };
         }
         return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
     }
@@ -523,6 +519,7 @@ IntRect RenderInline::linesBoundingBox() const
     // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
     // builds and help us someday figure out why.  We also put in a redundant check of lastLineBox() to avoid the crash for now.
     ASSERT(!firstLineBox() == !lastLineBox());  // Either both are null or both exist.
+    IntRect result;
     if (firstLineBox() && lastLineBox()) {
         // Return the width of the minimal left side and the maximal right side.
         float logicalLeftSide = 0;
