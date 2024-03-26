@@ -132,7 +132,7 @@ private:
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
 public:
     // GraphicsContextGL override.
-    GCEGLImage createAndBindEGLImage(GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint) final;
+    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint) final;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
 
     // RemoteGraphicsContextGLProxy overrides.
@@ -157,11 +157,11 @@ private:
     friend class RemoteGraphicsContextGLProxy;
 };
 
-GCEGLImage RemoteGraphicsContextGLProxyCocoa::createAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer)
+GCEGLImage RemoteGraphicsContextGLProxyCocoa::createAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer)
 {
     if (isContextLost())
         return nullptr;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateAndBindEGLImage(target, WTFMove(source), layer));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateAndBindEGLImage(target, internalFormat, WTFMove(source), layer));
     if (!sendResult.succeeded()) {
         markContextLost();
         return nullptr;

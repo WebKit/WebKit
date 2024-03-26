@@ -156,9 +156,13 @@ void SimulatedXRDevice::frameTimerFired()
     for (auto& layer : m_layers) {
 #if PLATFORM(COCOA)
         auto surface = IOSurface::create(nullptr, recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB());
-        data.layers.add(layer.key, PlatformXR::FrameData::LayerData { .colorTexture = std::make_tuple(surface->createSendRight(), false) });
+        data.layers.add(layer.key, PlatformXR::FrameData::LayerData {
+            .colorTexture = std::make_tuple(surface->createSendRight(), false)
+        });
 #else
-        data.layers.add(layer.key, PlatformXR::FrameData::LayerData { .opaqueTexture = layer.value });
+        data.layers.add(layer.key, PlatformXR::FrameData::LayerData {
+            .opaqueTexture = layer.value
+        });
 #endif
     }
 

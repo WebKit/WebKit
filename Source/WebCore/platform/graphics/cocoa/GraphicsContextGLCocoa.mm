@@ -65,6 +65,8 @@ WTF_WEAK_LINK_FORCE_IMPORT(EGL_GetPlatformDisplayEXT);
 
 namespace WebCore {
 
+using GL = GraphicsContextGL;
+
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
 // and it always contains nullptr and nullptr is always written to it.
@@ -616,7 +618,7 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
     WebCore::destroyPbufferAndDetachIOSurface(m_displayObj, handle);
 }
 
-GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source, GCGLint layer)
+GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, EGLImageSource source, GCGLint layer)
 {
     EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(platformDisplay(), EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
@@ -665,7 +667,11 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLIma
         return nullptr;
 
     // Create an EGLImage out of the MTLTexture
-    const EGLint attributes[] = { EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer, EGL_NONE };
+    const EGLint attributes[] = {
+        EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer,
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
+        EGL_NONE
+    };
     auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), attributes);
     if (!eglImage)
         return nullptr;
@@ -678,6 +684,28 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLIma
 
     return eglImage;
 }
+
+#if ENABLE(WEBXR)
+bool GraphicsContextGLCocoa::createFoveation(PlatformXR::Layout layout, IntSize physicalSize, IntSize screenSize, std::span<const GCGLfloat> horizontalSamples, std::span<const GCGLfloat> verticalSamples)
+{
+    RELEASE_ASSERT(layout != PlatformXR::Layout::Layered);
+    m_rasterizationRateMap[layout] = newRasterizationRateMap(m_displayObj, physicalSize, screenSize, horizontalSamples, verticalSamples);
+    return m_rasterizationRateMap[layout];
+}
+
+void GraphicsContextGLCocoa::enableFoveation(PlatformXR::Layout layout)
+{
+    RELEASE_ASSERT(layout != PlatformXR::Layout::Layered);
+    GL_BindMetalRasterizationRateMapANGLE(m_rasterizationRateMap[layout].get());
+    GL_Enable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
+}
+
+void GraphicsContextGLCocoa::disableFoveation()
+{
+    GL_Disable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
+    GL_BindMetalRasterizationRateMapANGLE(nullptr);
+}
+#endif
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
 {

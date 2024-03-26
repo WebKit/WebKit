@@ -2810,6 +2810,10 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_RGBX8_ANGLE";
                 case 0x96BB:
                     return "GL_SHADER_BINARY_ANGLE";
+                case 0x96BC:
+                    return "GL_VARIABLE_RASTERIZATION_RATE_ANGLE";
+                case 0x96BD:
+                    return "GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE";
                 case 0x96E0:
                     return "GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE";
                 case 0x96E1:
@@ -22077,6 +22081,7 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_MESH_SUBROUTINE_UNIFORM_NV", 0x957E},
     {"GL_MESH_VERTICES_OUT_NV", 0x9579},
     {"GL_MESH_WORK_GROUP_SIZE_NV", 0x953E},
+    {"GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE", 0x96BD},
     {"GL_MIN", 0x8007},
     {"GL_MINMAX", 0x802E},
     {"GL_MINMAX_EXT", 0x802E},
@@ -24727,6 +24732,7 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_VARIABLE_E_NV", 0x8527},
     {"GL_VARIABLE_F_NV", 0x8528},
     {"GL_VARIABLE_G_NV", 0x8529},
+    {"GL_VARIABLE_RASTERIZATION_RATE_ANGLE", 0x96BC},
     {"GL_VARIANT_ARRAY_EXT", 0x87E8},
     {"GL_VARIANT_ARRAY_POINTER_EXT", 0x87E9},
     {"GL_VARIANT_ARRAY_STRIDE_EXT", 0x87E6},

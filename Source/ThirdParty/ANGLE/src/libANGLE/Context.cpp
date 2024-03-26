@@ -9899,6 +9899,12 @@ void Context::textureFoveationParameters(TextureID texturePacked,
     texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
 }
 
+void Context::bindMetalRasterizationRateMap(GLMTLRasterizationRateMapANGLE map)
+{
+    ANGLE_CONTEXT_TRY(mImplementation->bindMetalRasterizationRateMap(this, map));
+    getMutablePrivateState()->setVariableRasterizationRateMap(map);
+}
+
 // ErrorSet implementation.
 ErrorSet::ErrorSet(Debug *debug,
                    const angle::FrontendFeatures &frontendFeatures,

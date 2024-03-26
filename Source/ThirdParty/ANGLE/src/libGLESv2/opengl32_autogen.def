@@ -666,6 +666,9 @@ EXPORTS
     ; GL_ANGLE_translated_shader_source
     glGetTranslatedShaderSourceANGLE
 
+    ; GL_ANGLE_variable_rasterization_rate_metal
+    glBindMetalRasterizationRateMapANGLE
+
     ; GL_ANGLE_vulkan_image
     glAcquireTexturesANGLE
     glReleaseTexturesANGLE

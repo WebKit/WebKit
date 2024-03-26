@@ -80,6 +80,53 @@ void destroyPbufferAndDetachIOSurface(EGLDisplay display, void* handle)
     EGL_DestroySurface(display, handle);
 }
 
+RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, IntSize physicalSize, IntSize screenSize, std::span<const float> horizontalSamples, std::span<const float> verticalSamples)
+{
+    EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
+    if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))
+        return nullptr;
+
+    id<MTLDevice> mtlDevice = nil;
+    if (!EGL_QueryDeviceAttribEXT(device, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
+        return nullptr;
+
+    RetainPtr<MTLRasterizationRateMapDescriptor> descriptor = adoptNS([MTLRasterizationRateMapDescriptor new]);
+
+    id<MTLRasterizationRateMapDescriptorSPI> descriptor_spi = (id<MTLRasterizationRateMapDescriptorSPI>)descriptor.get();
+    descriptor_spi.skipSampleValidationAndApplySampleAtTileGranularity = YES;
+    descriptor_spi.mutability = MTLMutabilityDefault;
+    descriptor_spi.minFactor  = 0.01;
+
+    auto mtlPhysicalSize = MTLSizeMake(physicalSize.width(), physicalSize.height(), 0);
+    auto mtlScreenSize = MTLSizeMake(screenSize.width(), screenSize.height(), 0);
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptor = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:mtlScreenSize];
+
+    memcpy([layerDescriptor horizontalSampleStorage], horizontalSamples.data(), horizontalSamples.size_bytes());
+    memcpy([layerDescriptor verticalSampleStorage], verticalSamples.data(), verticalSamples.size_bytes());
+    [layerDescriptor setSampleCount:MTLSizeMake(horizontalSamples.size(), verticalSamples.size(), 0)];
+
+    [descriptor setScreenSize:mtlScreenSize];
+    [descriptor layers][0] = layerDescriptor.get();
+
+    for (unsigned i = 0; i < [layerDescriptor sampleCount].width; i++) {
+        assert([layerDescriptor horizontalSampleStorage][i] > 0.01);
+        assert([layerDescriptor horizontalSampleStorage][i] <= 1.0);
+    }
+    for (unsigned i = 0; i < [layerDescriptor sampleCount].height; i++) {
+        assert([layerDescriptor verticalSampleStorage][i] > 0.01);
+        assert([layerDescriptor verticalSampleStorage][i] <= 1.0);
+    }
+
+    RetainPtr rasterizationRateMap = [mtlDevice newRasterizationRateMapWithDescriptor:descriptor.get()];
+    ASSERT([rasterizationRateMap screenSize].width == mtlScreenSize.width);
+    ASSERT([rasterizationRateMap screenSize].height == mtlScreenSize.height);
+    MTLSize physical_size = [rasterizationRateMap physicalSizeForLayer:0];
+    ASSERT(physical_size.width == mtlPhysicalSize.width);
+    ASSERT(physical_size.height == mtlPhysicalSize.height);
+
+    return rasterizationRateMap;
+}
+
 RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(GCGLDisplay display, mach_port_t machPort)
 {
     // FIXME: Check for invalid mach_port_t
