@@ -1524,7 +1524,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/Document+SVG.idl \
     $(WebCore)/svg/SVGAElement.idl \
     $(WebCore)/svg/SVGAngle.idl \
-    $(WebCore)/svg/SVGAnimateColorElement.idl \
     $(WebCore)/svg/SVGAnimateElement.idl \
     $(WebCore)/svg/SVGAnimateMotionElement.idl \
     $(WebCore)/svg/SVGAnimateTransformElement.idl \

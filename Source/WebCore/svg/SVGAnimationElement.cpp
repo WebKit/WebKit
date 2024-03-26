@@ -34,7 +34,6 @@
 #include "FloatConversion.h"
 #include "NodeName.h"
 #include "RenderObject.h"
-#include "SVGAnimateColorElement.h"
 #include "SVGAnimateElement.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
@@ -490,7 +489,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     }
 
     CalcMode calcMode = this->calcMode();
-    if (is<SVGAnimateElement>(*this) || is<SVGAnimateColorElement>(*this)) {
+    if (is<SVGAnimateElement>(*this)) {
         ASSERT(targetElement());
         if (downcast<SVGAnimateElementBase>(*this).isDiscreteAnimator())
             calcMode = CalcMode::Discrete;

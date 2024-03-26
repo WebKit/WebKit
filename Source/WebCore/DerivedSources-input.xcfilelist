@@ -1868,7 +1868,6 @@ $(PROJECT_DIR)/storage/StorageEvent.idl
 $(PROJECT_DIR)/svg/Document+SVG.idl
 $(PROJECT_DIR)/svg/SVGAElement.idl
 $(PROJECT_DIR)/svg/SVGAngle.idl
-$(PROJECT_DIR)/svg/SVGAnimateColorElement.idl
 $(PROJECT_DIR)/svg/SVGAnimateElement.idl
 $(PROJECT_DIR)/svg/SVGAnimateMotionElement.idl
 $(PROJECT_DIR)/svg/SVGAnimateTransformElement.idl

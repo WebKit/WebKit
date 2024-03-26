@@ -2528,8 +2528,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAngle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAngle.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateColorElement.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateColorElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateMotionElement.cpp

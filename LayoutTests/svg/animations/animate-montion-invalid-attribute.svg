@@ -6,7 +6,7 @@
                     begin="0ms"
                     dur="100ms"
                     fill="freeze"/>
-    <animateColor attributeName="fill" 
+    <animate attributeName="fill" 
                     attributeType="XML"
                     from="DarkRed"
                     to="Green"

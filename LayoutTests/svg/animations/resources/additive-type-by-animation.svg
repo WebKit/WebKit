@@ -23,7 +23,7 @@
 <animate id="an1" xlink:href="#marker" attributeName="orient" begin="0s" dur="4s" by="45deg" fill="freeze"/>
 
 <!-- AnimatedColor -->
-<animateColor xlink:href="#rect" attributeName="fill" begin="0s" dur="4s" by="green" fill="freeze"/>
+<animate xlink:href="#rect" attributeName="fill" begin="0s" dur="4s" by="green" fill="freeze"/>
 
 <!-- AnimatedLength -->
 <animate xlink:href="#rect" attributeName="y" begin="0s" dur="4s" by="100" fill="freeze"/>

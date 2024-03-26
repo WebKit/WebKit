@@ -1515,7 +1515,6 @@ set(WebCore_SVG_IDL_FILES
     svg/Document+SVG.idl
     svg/SVGAElement.idl
     svg/SVGAngle.idl
-    svg/SVGAnimateColorElement.idl
     svg/SVGAnimateElement.idl
     svg/SVGAnimateMotionElement.idl
     svg/SVGAnimateTransformElement.idl

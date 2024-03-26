@@ -2933,7 +2933,6 @@ svg/SVGAltGlyphDefElement.cpp
 svg/SVGAltGlyphElement.cpp
 svg/SVGAltGlyphItemElement.cpp
 svg/SVGAngleValue.cpp
-svg/SVGAnimateColorElement.cpp
 svg/SVGAnimateElement.cpp
 svg/SVGAnimateElementBase.cpp
 svg/SVGAnimateMotionElement.cpp
@@ -4194,7 +4193,6 @@ JSSQLTransactionCallback.cpp
 JSSQLTransactionErrorCallback.cpp
 JSSVGAElement.cpp
 JSSVGAngle.cpp
-JSSVGAnimateColorElement.cpp
 JSSVGAnimateElement.cpp
 JSSVGAnimateMotionElement.cpp
 JSSVGAnimateTransformElement.cpp

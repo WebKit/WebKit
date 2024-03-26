@@ -8,7 +8,7 @@ altGlyph JSInterfaceName=SVGElement
 altGlyphDef JSInterfaceName=SVGElement
 altGlyphItem JSInterfaceName=SVGElement
 animate
-animateColor
+animateColor interfaceName=SVGUnknownElement, JSInterfaceName=SVGElement, noConstructor
 animateMotion
 animateTransform
 set
