@@ -71,11 +71,7 @@ namespace WTR {
 class PlatformWebView {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-#if PLATFORM(COCOA)
-    PlatformWebView(WKWebViewConfiguration*, const TestOptions&);
-#else
     PlatformWebView(WKPageConfigurationRef, const TestOptions&);
-#endif
     ~PlatformWebView();
 
     WKPageRef page();

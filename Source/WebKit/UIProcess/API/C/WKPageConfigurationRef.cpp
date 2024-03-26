@@ -124,9 +124,3 @@ void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfi
 {
     toImpl(configuration)->setPortsForUpgradingInsecureSchemeForTesting(upgradeFromInsecurePort, upgradeToSecurePort);
 }
-
-void WKPageConfigurationCopySiteIsolationState(WKPageConfigurationRef destination, WKPageConfigurationRef source)
-{
-    toImpl(destination)->setBrowsingContextGroup(&toImpl(source)->browsingContextGroup());
-    toImpl(destination)->setOpenerProcess(toImpl(source)->openerProcess());
-}
