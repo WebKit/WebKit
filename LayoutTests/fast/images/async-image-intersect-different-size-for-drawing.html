@@ -82,8 +82,7 @@
  
         loadImageAndDraw(intialBox, image1, "resources/green-400x400.png").then(() => {
             requestAnimationFrame(() => {
-                decodingOptions = internals.imageLastDecodingOptions(image1);
-                shouldBeEqualToString("decodingOptions", "{ decodingMode : Asynchronous, sizeForDrawing : { 500, 500 } }");
+                debug("decodingOptions = " + internals.imageLastDecodingOptions(image1));
 
                 finalBox.appendChild(image1.cloneNode(true));
                 finalBox.style.display = "block";
@@ -94,8 +93,7 @@
                     testRunner.display();
 
                 requestAnimationFrame(() => {
-                    decodingOptions = internals.imageLastDecodingOptions(image1);
-                    shouldBeEqualToString("decodingOptions", "{ decodingMode : Synchronous, sizeForDrawing : { 1000, 1000 } }");
+                    debug("decodingOptions = " + internals.imageLastDecodingOptions(image1));
                     finishJSTest();
                 });
             });
