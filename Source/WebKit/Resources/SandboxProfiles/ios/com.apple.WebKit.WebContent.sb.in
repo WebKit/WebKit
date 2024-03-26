@@ -444,10 +444,6 @@
 (allow iokit-get-properties
        (iokit-property "IORegistryEntryPropertyKeys"))
 
-(with-filter (ipc-posix-name "purplebuddy.sentinel")
-    (deny ipc-posix-sem-create ipc-posix-sem-post ipc-posix-sem-unlink ipc-posix-sem-wait)
-    (allow ipc-posix-sem-open))
-
 (deny mach-lookup (with no-report)
     (global-name "com.apple.runningboard")
 )
