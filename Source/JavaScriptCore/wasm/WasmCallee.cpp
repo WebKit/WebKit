@@ -29,7 +29,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "InPlaceInterpreter.h"
+#include "LLIntData.h"
 #include "LLIntExceptions.h"
+#include "LLIntThunks.h"
 #include "NativeCalleeRegistry.h"
 #include "WasmCallingConvention.h"
 #include "WasmModuleInformation.h"
@@ -71,6 +73,9 @@ inline void Callee::runWithDowncast(const Func& func)
         break;
     case CompilationMode::LLIntMode:
         func(static_cast<LLIntCallee*>(this));
+        break;
+    case CompilationMode::JSEntrypointInterpreterMode:
+        func(static_cast<JSEntrypointInterpreterCallee*>(this));
         break;
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     case CompilationMode::BBQMode:
@@ -391,6 +396,25 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
     return iter->value;
 }
 #endif
+
+JSEntrypointInterpreterCallee::JSEntrypointInterpreterCallee(Vector<JSEntrypointInterpreterCalleeMetadata>&& metadata, LLIntCallee* callee)
+    : JITCallee(Wasm::CompilationMode::JSEntrypointInterpreterMode)
+    , TrailingArray<JSEntrypointInterpreterCallee, JSEntrypointInterpreterCalleeMetadata>(metadata.size(), metadata.begin(), metadata.end())
+    , wasmCallee(reinterpret_cast<intptr_t>(CalleeBits::boxNativeCalleeIfExists(callee)))
+{
+    if (Options::useJIT())
+        wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<LLintToWasmEntryPtrTag>();
+    else
+        wasmFunctionPrologue = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline);
+
+}
+
+CodePtr<WasmEntryPtrTag> JSEntrypointInterpreterCallee::entrypointImpl() const
+{
+    if (m_replacementCallee)
+        return m_replacementCallee->entrypoint();
+    return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
+}
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 

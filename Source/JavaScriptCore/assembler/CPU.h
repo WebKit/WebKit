@@ -124,6 +124,15 @@ constexpr bool isRISCV64()
 #endif
 }
 
+constexpr bool isJSValue3264()
+{
+#if USE(JSVALUE32_64)
+    return true;
+#else
+    return false;
+#endif
+}
+
 constexpr bool is64Bit()
 {
 #if USE(JSVALUE64)

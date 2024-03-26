@@ -62,7 +62,7 @@ public:
     CodePtr<WasmEntryPtrTag> jsEntrypoint(ArityCheckMode arity)
     {
         ASSERT_UNUSED(arity, arity == ArityCheckNotRequired || arity == MustCheckArity);
-        return m_jsEntrypoint;
+        return m_jsEntrypoint.entrypoint();
     }
 
     CodePtr<JSEntryPtrTag> jsCallEntrypoint()
@@ -88,12 +88,15 @@ private:
 
     RegisterSet calleeSaves() const;
 
-    // It's safe to just hold the raw jsEntrypoint because we have a reference
+    // It's safe to just hold the raw callee because we have a reference
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature/code doesn't get deallocated.
-    CodePtr<WasmEntryPtrTag> m_jsEntrypoint;
+    Wasm::Callee& m_jsEntrypoint;
     // This is the callee needed by LLInt/IPInt
     uintptr_t m_boxedWasmCallee;
+    // This let's the JS->Wasm interpreter find its metadata
+    RefPtr<Wasm::JSEntrypointInterpreterCallee> m_jsToWasmInterpreterCallee;
+    void* m_jsToWasmBoxedInterpreterCallee;
 #if ENABLE(JIT)
     RefPtr<Wasm::JSToWasmICCallee> m_jsToWasmICCallee;
 #endif

@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmCallee.h"
 #include "WasmEntryPlan.h"
 #include "WasmFunctionCodeBlockGenerator.h"
 
@@ -40,7 +41,7 @@ class LLIntCallee;
 class JSEntrypointCallee;
 class StreamingCompiler;
 
-using JSEntrypointCalleeMap = HashMap<uint32_t, RefPtr<JSEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+using JSEntrypointCalleeMap = HashMap<uint32_t, RefPtr<JITCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
 using TailCallGraph = HashMap<uint32_t, HashSet<uint32_t, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
@@ -91,6 +92,8 @@ private:
 
     void addTailCallEdge(uint32_t, uint32_t);
     void computeTransitiveTailCalls() const;
+
+    bool makeInterpretedJSToWasmCallee(unsigned functionIndex);
 
     Vector<std::unique_ptr<FunctionCodeBlockGenerator>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };

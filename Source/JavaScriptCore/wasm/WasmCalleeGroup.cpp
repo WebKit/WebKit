@@ -118,7 +118,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
             m_wasmIndirectCallWasmCallees = FixedVector<RefPtr<Wasm::Callee>>(m_calleeCount);
 
             BBQPlan* bbqPlan = static_cast<BBQPlan*>(m_plan.get());
-            bbqPlan->initializeCallees([&] (unsigned calleeIndex, RefPtr<JSEntrypointCallee>&& jsEntrypointCallee, RefPtr<BBQCallee>&& wasmEntrypoint) {
+            bbqPlan->initializeCallees([&] (unsigned calleeIndex, RefPtr<JITCallee>&& jsEntrypointCallee, RefPtr<BBQCallee>&& wasmEntrypoint) {
                 if (jsEntrypointCallee) {
                     auto result = m_jsEntrypointCallees.set(calleeIndex, WTFMove(jsEntrypointCallee));
                     ASSERT_UNUSED(result, result.isNewEntry);
@@ -187,7 +187,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
             m_wasmIndirectCallWasmCallees = FixedVector<RefPtr<Wasm::Callee>>(m_calleeCount);
 
             BBQPlan* bbqPlan = static_cast<BBQPlan*>(m_plan.get());
-            bbqPlan->initializeCallees([&] (unsigned calleeIndex, RefPtr<JSEntrypointCallee>&& jsEntrypointCallee, RefPtr<BBQCallee>&& wasmEntrypoint) {
+            bbqPlan->initializeCallees([&] (unsigned calleeIndex, RefPtr<JITCallee>&& jsEntrypointCallee, RefPtr<BBQCallee>&& wasmEntrypoint) {
                 if (jsEntrypointCallee) {
                     auto result = m_jsEntrypointCallees.set(calleeIndex, WTFMove(jsEntrypointCallee));
                     ASSERT_UNUSED(result, result.isNewEntry);
