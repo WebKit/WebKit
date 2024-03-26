@@ -41,6 +41,9 @@ typedef struct CATransform3D CATransform3D;
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
 #endif
+#if PLATFORM(COCOA)
+#include <simd/simd.h>
+#endif
 #if USE(SKIA)
 class SkM44;
 #endif
@@ -398,6 +401,10 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT TransformationMatrix(const CGAffineTransform&);
     WEBCORE_EXPORT operator CGAffineTransform() const;
+#endif
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT TransformationMatrix(const simd_float4x4&);
+    WEBCORE_EXPORT operator simd_float4x4() const;
 #endif
 #if USE(SKIA)
     TransformationMatrix(const SkM44&);

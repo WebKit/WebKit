@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "TransformationMatrix.h"
 
-#include "LayerHostingContextIdentifier.h"
-#include "PlatformLayerIdentifier.h"
-#include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
+#if PLATFORM(COCOA)
+
+#include <simd/simd.h>
 
 namespace WebCore {
 
-class ModelPlayer;
-class ResourceError;
+TransformationMatrix::TransformationMatrix(const simd_float4x4& t)
+: TransformationMatrix(t.columns[0][0], t.columns[0][1], t.columns[0][2], t.columns[0][3],
+    t.columns[1][0], t.columns[1][1], t.columns[1][2], t.columns[1][3],
+    t.columns[2][0], t.columns[2][1], t.columns[2][2], t.columns[2][3],
+    t.columns[3][0], t.columns[3][1], t.columns[3][2], t.columns[3][3])
+{
+}
 
-class WEBCORE_EXPORT ModelPlayerClient : public CanMakeWeakPtr<ModelPlayerClient> {
-public:
-    virtual ~ModelPlayerClient();
-
-    virtual void didUpdateLayerHostingContextIdentifier(ModelPlayer&, LayerHostingContextIdentifier) = 0;
-    virtual void didFinishLoading(ModelPlayer&) = 0;
-    virtual void didFailLoading(ModelPlayer&, const ResourceError&) = 0;
-#if ENABLE(MODEL_PROCESS)
-    virtual void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) = 0;
-#endif
-    virtual PlatformLayerIdentifier platformLayerID() = 0;
-};
+TransformationMatrix::operator simd_float4x4() const
+{
+    return simd_float4x4 {
+        simd_float4 { (float)m11(), (float)m12(), (float)m13(), (float)m14() },
+        simd_float4 { (float)m21(), (float)m22(), (float)m23(), (float)m24() },
+        simd_float4 { (float)m31(), (float)m32(), (float)m33(), (float)m34() },
+        simd_float4 { (float)m41(), (float)m42(), (float)m43(), (float)m44() }
+    };
+}
 
 }
+
+#endif // PLATFORM(COCOA)

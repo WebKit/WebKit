@@ -40,6 +40,7 @@
 #import <WebCore/LayerHostingContextIdentifier.h>
 #import <WebCore/Model.h>
 #import <WebCore/ResourceError.h>
+#import <WebCore/TransformationMatrix.h>
 #import <WebKitAdditions/REModel.h>
 #import <WebKitAdditions/REModelLoader.h>
 #import <WebKitAdditions/REPtr.h>
@@ -74,6 +75,27 @@ ModelProcessModelPlayerProxy::~ModelProcessModelPlayerProxy()
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy deallocated id=%" PRIu64, this, m_id.toUInt64());
 }
 
+bool ModelProcessModelPlayerProxy::transformSupported(const simd_float4x4& transform)
+{
+    RESRT srt = REMakeSRTFromMatrix(transform);
+
+    // Scale must be uniform across all 3 axis
+    if (simd_reduce_max(srt.scale) - simd_reduce_min(srt.scale) > FLT_EPSILON) {
+        RELEASE_LOG_ERROR(ModelElement, "Rejecting non-uniform scaling %.05f %.05f %.05f", srt.scale[0], srt.scale[1], srt.scale[2]);
+        return false;
+    }
+
+    // Matrix must be a SRT (scale/rotation/translation) matrix - no shear.
+    // RESRT itself is already clean of shear, so we just need to see if the input is the same as the cleaned RESRT
+    simd_float4x4 noShearMatrix = RESRTMatrix(srt);
+    if (!simd_almost_equal_elements(transform, noShearMatrix, FLT_EPSILON)) {
+        RELEASE_LOG_ERROR(ModelElement, "Rejecting shear matrix");
+        return false;
+    }
+
+    return true;
+}
+
 void ModelProcessModelPlayerProxy::invalidate()
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy invalidated id=%" PRIu64, this, m_id.toUInt64());
@@ -84,6 +106,8 @@ ALWAYS_INLINE void ModelProcessModelPlayerProxy::send(T&& message)
 {
     m_webProcessConnection->send(std::forward<T>(message), m_id);
 }
+
+// MARK: - Messages
 
 void ModelProcessModelPlayerProxy::createLayer()
 {
@@ -119,6 +143,8 @@ void ModelProcessModelPlayerProxy::loadModel(Ref<WebCore::Model>&& model, WebCor
     load(model, layoutSize);
 }
 
+// MARK: - RE stuff
+
 static inline simd_float2 makeMeterSizeFromPointSize(CGSize pointSize, CGFloat pointsPerMeter)
 {
     return simd_make_float2(pointSize.width / pointsPerMeter, pointSize.height / pointsPerMeter);
@@ -144,6 +170,8 @@ static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, 
 
     RESRT srt;
     srt.scale = simd_make_float3(extents.x / originalBoundingBoxExtents.x, extents.y / originalBoundingBoxExtents.y, extents.z / originalBoundingBoxExtents.z);
+    float minScale = simd_reduce_min(srt.scale);
+    srt.scale = simd_make_float3(minScale, minScale, minScale); // FIXME: assume object-fit:contain for now
 
     // Must be normalized, but these obviously are.
     simd_float3 xAxis = simd_make_float3(1, 0, 0);
@@ -187,17 +215,28 @@ void ModelProcessModelPlayerProxy::updateBackgroundColor()
         [m_layer setValue:(__bridge id)CGColorGetConstantColor(kCGColorWhite) forKeyPath:@"separatedOptions.material.clearColor"];
 }
 
-void ModelProcessModelPlayerProxy::updateTransform()
+void ModelProcessModelPlayerProxy::computeTransform()
 {
     if (!m_model || !m_layer)
         return;
 
     // FIXME: Use the value of the 'object-fit' property here to compute an appropriate SRT.
     RESRT newSRT = computeSRT(m_layer.get(), m_originalBoundingBoxExtents, m_pitch, m_yaw, true, effectivePointsPerMeter(m_layer.get()));
+    m_transformSRT = newSRT;
 
-    auto transform = REEntityGetOrAddComponentByClass(m_model->rootEntity(), RETransformComponentGetComponentType());
-    RETransformComponentSetLocalSRT(transform, newSRT);
-    RENetworkMarkComponentDirty(transform);
+    simd_float4x4 matrix = RESRTMatrix(m_transformSRT);
+    WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
+    send(Messages::ModelProcessModelPlayer::DidUpdateEntityTransform(transform));
+}
+
+void ModelProcessModelPlayerProxy::updateTransform()
+{
+    if (!m_model || !m_layer)
+        return;
+
+    auto transformComponent = REEntityGetOrAddComponentByClass(m_model->rootEntity(), RETransformComponentGetComponentType());
+    RETransformComponentSetLocalSRT(transformComponent, m_transformSRT);
+    RENetworkMarkComponentDirty(transformComponent);
 }
 
 void ModelProcessModelPlayerProxy::updateOpacity()
@@ -317,8 +356,11 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     REEntitySetName(rootEntity, "WebKit:ClientComponentRoot");
     REEntitySetName(m_model->rootEntity(), "WebKit:ModelRootEntity");
     REEntitySetParent(m_model->rootEntity(), rootEntity);
+    RENetworkMarkEntityMetadataDirty(rootEntity);
+    RENetworkMarkEntityMetadataDirty(m_model->rootEntity());
 
     updateBackgroundColor();
+    computeTransform();
     updateTransform();
     updateOpacity();
     startAnimating();
@@ -373,6 +415,12 @@ void ModelProcessModelPlayerProxy::setBackgroundColor(WebCore::Color color)
 {
     m_backgroundColor = color.opaqueColor();
     updateBackgroundColor();
+}
+
+void ModelProcessModelPlayerProxy::setEntityTransform(WebCore::TransformationMatrix transform)
+{
+    m_transformSRT = REMakeSRTFromMatrix(transform);
+    updateTransform();
 }
 
 void ModelProcessModelPlayerProxy::enterFullscreen()

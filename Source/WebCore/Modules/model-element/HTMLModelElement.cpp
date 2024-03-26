@@ -29,6 +29,7 @@
 #if ENABLE(MODEL_ELEMENT)
 
 #include "CachedResourceLoader.h"
+#include "DOMMatrixReadOnly.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -75,6 +76,9 @@ HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& docum
     : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
     , ActiveDOMObject(document)
     , m_readyPromise { makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve) }
+#if ENABLE(MODEL_PROCESS)
+    , m_entityTransform(DOMMatrixReadOnly::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::No))
+#endif
 {
 }
 
@@ -151,6 +155,10 @@ void HTMLModelElement::setSourceURL(const URL& url)
 
     if (m_modelPlayer)
         m_modelPlayer = nullptr;
+
+#if ENABLE(MODEL_PROCESS)
+    m_entityTransform = DOMMatrixReadOnly::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::No);
+#endif
 
     if (!m_readyPromise->isFulfilled())
         m_readyPromise->reject(Exception { ExceptionCode::AbortError });
@@ -284,6 +292,9 @@ void HTMLModelElement::createModelPlayer()
         return;
 
     ASSERT(document().page());
+#if ENABLE(MODEL_PROCESS)
+    m_entityTransform = DOMMatrixReadOnly::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::No);
+#endif
     m_modelPlayer = document().page()->modelPlayerProvider().createModelPlayer(*this);
     if (!m_modelPlayer) {
         if (!m_readyPromise->isFulfilled())
@@ -376,6 +387,37 @@ void HTMLModelElement::applyBackgroundColor(Color color)
     if (m_modelPlayer)
         m_modelPlayer->setBackgroundColor(color);
 }
+
+#if ENABLE(MODEL_PROCESS)
+const DOMMatrixReadOnly& HTMLModelElement::entityTransform() const
+{
+    return m_entityTransform.get();
+}
+
+ExceptionOr<void> HTMLModelElement::setEntityTransform(const DOMMatrixReadOnly& transform)
+{
+    auto player = m_modelPlayer;
+    if (!player) {
+        ASSERT_NOT_REACHED();
+        return Exception { ExceptionCode::UnknownError };
+    }
+
+    TransformationMatrix matrix = transform.transformationMatrix();
+
+    if (!player->supportsTransform(matrix))
+        return Exception { ExceptionCode::NotSupportedError };
+
+    m_entityTransform = DOMMatrixReadOnly::create(matrix, DOMMatrixReadOnly::Is2D::No);
+    player->setEntityTransform(matrix);
+
+    return { };
+}
+
+void HTMLModelElement::didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix& transform)
+{
+    m_entityTransform = DOMMatrixReadOnly::create(transform, DOMMatrixReadOnly::Is2D::No);
+}
+#endif // ENABLE(MODEL_PROCESS)
 
 // MARK: - Fullscreen support.
 

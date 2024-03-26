@@ -64,6 +64,8 @@ public:
     static Ref<ModelProcessModelPlayerProxy> create(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&);
     ~ModelProcessModelPlayerProxy();
 
+    static bool transformSupported(const simd_float4x4& transform);
+
     WebCore::ModelPlayerIdentifier identifier() const { return m_id; }
     void invalidate();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -88,6 +90,7 @@ public:
     PlatformLayer* layer() final;
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() final;
     void setBackgroundColor(WebCore::Color) final;
+    void setEntityTransform(WebCore::TransformationMatrix) final;
     void enterFullscreen() final;
     bool supportsMouseInteraction() final;
     bool supportsDragging() final;
@@ -112,6 +115,8 @@ public:
 private:
     ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&);
 
+    void computeTransform();
+
     WebCore::ModelPlayerIdentifier m_id;
     Ref<IPC::Connection> m_webProcessConnection;
     WeakPtr<ModelProcessModelPlayerManagerProxy> m_manager;
@@ -127,6 +132,8 @@ private:
     float m_pitch { 0 };
     float m_yaw { 0 };
     REAnimationPlaybackToken m_animationPlaybackToken { kInvalidAnimationToken };
+
+    RESRT m_transformSRT; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
 };
 
 } // namespace WebKit

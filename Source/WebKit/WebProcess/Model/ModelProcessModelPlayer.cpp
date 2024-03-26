@@ -75,6 +75,13 @@ void ModelProcessModelPlayer::didFinishLoading()
     m_client->didFinishLoading(*this);
 }
 
+/// This comes from Model Process side, so that Web Process has the most up-to-date knowledge about the transform actually applied to the entity.
+/// Not to be confused with setEntityTransform().
+void ModelProcessModelPlayer::didUpdateEntityTransform(const WebCore::TransformationMatrix& transform)
+{
+    m_client->didUpdateEntityTransform(*this, transform);
+}
+
 // MARK: - WebCore::ModelPlayer
 
 void ModelProcessModelPlayer::load(WebCore::Model& model, WebCore::LayoutSize size)
@@ -113,6 +120,17 @@ void ModelProcessModelPlayer::enterFullscreen()
 void ModelProcessModelPlayer::setBackgroundColor(WebCore::Color color)
 {
     send(Messages::ModelProcessModelPlayerProxy::SetBackgroundColor(color));
+}
+
+/// This comes from JS side, so we need to tell Model Process about it. Not to be confused with didUpdateEntityTransform().
+void ModelProcessModelPlayer::setEntityTransform(WebCore::TransformationMatrix transform)
+{
+    send(Messages::ModelProcessModelPlayerProxy::SetEntityTransform(transform));
+}
+
+bool ModelProcessModelPlayer::supportsTransform(WebCore::TransformationMatrix transform)
+{
+    return ModelProcessModelPlayerProxy::transformSupported(transform);
 }
 
 void ModelProcessModelPlayer::getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&& completionHandler)

@@ -39,6 +39,7 @@ namespace WebCore {
 
 class Color;
 class Model;
+class TransformationMatrix;
 
 class WEBCORE_EXPORT ModelPlayer : public RefCounted<ModelPlayer> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -50,9 +51,11 @@ public:
     virtual PlatformLayer* layer() = 0;
     virtual std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() = 0;
     virtual void setBackgroundColor(Color);
+    virtual void setEntityTransform(TransformationMatrix);
     virtual void enterFullscreen() = 0;
     virtual bool supportsMouseInteraction();
     virtual bool supportsDragging();
+    virtual bool supportsTransform(TransformationMatrix);
     virtual void setInteractionEnabled(bool);
     virtual void handleMouseDown(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseMove(const LayoutPoint&, MonotonicTime) = 0;

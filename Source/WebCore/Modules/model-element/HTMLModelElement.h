@@ -31,6 +31,7 @@
 #include "CachedRawResource.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "ExceptionOr.h"
 #include "HTMLElement.h"
 #include "HTMLModelElementCamera.h"
 #include "IDLTypes.h"
@@ -43,6 +44,7 @@
 
 namespace WebCore {
 
+class DOMMatrixReadOnly;
 class Event;
 class LayoutSize;
 class Model;
@@ -79,6 +81,11 @@ public:
     std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() const;
 
     void applyBackgroundColor(Color);
+
+#if ENABLE(MODEL_PROCESS)
+    const DOMMatrixReadOnly& entityTransform() const;
+    ExceptionOr<void> setEntityTransform(const DOMMatrixReadOnly&);
+#endif
 
     void enterFullscreen();
 
@@ -157,6 +164,9 @@ private:
     void didUpdateLayerHostingContextIdentifier(ModelPlayer&, LayerHostingContextIdentifier) final;
     void didFinishLoading(ModelPlayer&) final;
     void didFailLoading(ModelPlayer&, const ResourceError&) final;
+#if ENABLE(MODEL_PROCESS)
+    void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) final;
+#endif
     PlatformLayerIdentifier platformLayerID() final;
 
     void defaultEventHandler(Event&) final;
@@ -180,6 +190,9 @@ private:
     bool m_shouldCreateModelPlayerUponRendererAttachment { false };
 
     RefPtr<ModelPlayer> m_modelPlayer;
+#if ENABLE(MODEL_PROCESS)
+    Ref<DOMMatrixReadOnly> m_entityTransform;
+#endif
 };
 
 } // namespace WebCore
