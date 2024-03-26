@@ -198,7 +198,7 @@ LayoutRect LegacyRootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) 
 
 LayoutUnit LegacyRootInlineBox::lineBoxWidth() const
 {
-    return blockFlow().availableLogicalWidthForLine(lineBoxTop(), isFirstLine() ? IndentText : DoNotIndentText, lineBoxHeight());
+    return blockFlow().availableLogicalWidthForLine(lineBoxTop(), lineBoxHeight());
 }
 
 #if ENABLE(TREE_DEBUGGING)

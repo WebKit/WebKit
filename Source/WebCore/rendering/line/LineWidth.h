@@ -40,11 +40,9 @@ class RenderStyle;
 
 struct LineSegment;
 
-enum IndentTextOrNot { DoNotIndentText, IndentText };
-
 class LineWidth {
 public:
-    LineWidth(RenderBlockFlow&, bool isFirstLine, IndentTextOrNot shouldIndentText);
+    LineWidth(RenderBlockFlow&, bool isFirstLine);
 
     bool fitsOnLine(bool ignoringTrailingSpace = false) const;
     bool fitsOnLineIncludingExtraWidth(float extra) const;
@@ -74,8 +72,7 @@ public:
     void commit();
     void fitBelowFloats(bool isFirstLine = false);
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
-    IndentTextOrNot shouldIndentText() const { return m_shouldIndentText; }
-    
+
     bool isFirstLine() const { return m_isFirstLine; }
 
 private:
@@ -96,9 +93,6 @@ private:
     bool m_hasCommitted { false };
     bool m_hasCommittedReplaced { false };
     bool m_hasUncommittedReplaced { false };
-    IndentTextOrNot m_shouldIndentText;
 };
-
-IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, const RenderStyle&);
 
 } // namespace WebCore
