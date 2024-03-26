@@ -56,6 +56,8 @@ public:
     WebCore::FloatRect boundsInRootView() const { return m_info.boundsInRootView; }
     WebCore::FloatRect boundsInWebView() const;
 
+    bool isUnderPoint() const { return m_info.isUnderPoint; }
+
     void childFrames(CompletionHandler<void(Vector<Ref<FrameTreeNode>>&&)>&&) const;
 
     bool isSameElement(const TargetedElementInfo&) const;

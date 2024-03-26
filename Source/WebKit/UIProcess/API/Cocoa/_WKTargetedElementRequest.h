@@ -33,5 +33,6 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKTargetedElementRequest : NSObject
 
 @property (nonatomic) CGPoint point;
+@property (nonatomic) BOOL canIncludeNearbyElements;
 
 @end

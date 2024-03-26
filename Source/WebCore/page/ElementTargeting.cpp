@@ -41,6 +41,7 @@
 #include "LocalFrameView.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "Region.h"
 #include "RenderDescendantIterator.h"
 #include "RenderIFrame.h"
 #include "RenderView.h"
@@ -196,7 +197,8 @@ static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(Element& elem
     return identifiers;
 }
 
-static TargetedElementInfo targetedElementInfo(Element& element)
+enum class IsUnderPoint : bool { No, Yes };
+static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint isUnderPoint)
 {
     CheckedPtr renderer = element.renderer();
     return {
@@ -208,6 +210,7 @@ static TargetedElementInfo targetedElementInfo(Element& element)
         .boundsInRootView = element.boundingBoxInRootViewCoordinates(),
         .positionType = renderer->style().position(),
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
+        .isUnderPoint = isUnderPoint == IsUnderPoint::Yes,
     };
 }
 
@@ -260,70 +263,87 @@ Vector<TargetedElementInfo> findTargetedElements(Page& page, TargetedElementRequ
         onlyMainElement = &descendant;
     }
 
+    auto isCandidate = [&](Element& element) {
+        if (!element.renderer())
+            return false;
+
+        if (&element == document->body())
+            return false;
+
+        if (&element == document->documentElement())
+            return false;
+
+        if (onlyMainElement && (onlyMainElement == &element || element.contains(*onlyMainElement)))
+            return false;
+
+        if (elementAndAncestorsAreOnlyChildren(element))
+            return false;
+
+        return true;
+    };
+
     auto candidates = [&] {
         auto& results = result.listBasedTestResult();
         Vector<Ref<Element>> elements;
         elements.reserveInitialCapacity(results.size());
         for (auto& node : results) {
-            RefPtr element = dynamicDowncast<Element>(node);
-            if (!element)
-                continue;
-
-            if (!element->renderer())
-                continue;
-
-            if (element == document->body())
-                continue;
-
-            if (element == document->documentElement())
-                continue;
-
-            if (elementAndAncestorsAreOnlyChildren(*element))
-                continue;
-
-            if (onlyMainElement && (onlyMainElement == element || element->contains(*onlyMainElement)))
-                continue;
-
-            elements.append(element.releaseNonNull());
+            if (RefPtr element = dynamicDowncast<Element>(node); element && isCandidate(*element))
+                elements.append(element.releaseNonNull());
         }
         return elements;
     }();
 
-    Vector<Ref<Element>> targets; // The front-most target is last in this list.
-    auto addTarget = [&](Element& newTarget) {
-        targets.append(newTarget);
-        candidates.removeAllMatching([&](auto& element) {
-            return &newTarget == element.ptr() || newTarget.contains(element);
-        });
+    static constexpr auto maximumAreaRatioForAbsolutelyPositionedContent = 0.75;
+    static constexpr auto maximumAreaRatioForInFlowContent = 0.5;
+    static constexpr auto maximumAreaRatioForNearbyTargets = 0.25;
+    static constexpr auto minimumAreaRatioForInFlowContent = 0.01;
+
+    auto computeViewportAreaRatio = [&](IntRect boundingBox) {
+        auto area = boundingBox.area<RecordOverflow>();
+        return area.hasOverflowed() ? std::numeric_limits<float>::max() : area.value() / viewportArea;
     };
 
-    static constexpr auto areaRatioForAbsolutelyPositionedContent = 0.75;
-    static constexpr auto areaRatioForInFlowContent = 0.5;
-    static constexpr auto minimumAreaForNonFixedOrStickyContent = 10000;
+    Vector<Ref<Element>> targets; // The front-most target is last in this list.
+    Region additionalRegionForNearbyElements;
 
     // Prioritize parent elements over their children by traversing backwards over the candidates.
     // This allows us to target only the top-most container elements that satisfy the criteria.
+    // While adding targets, we also accumulate additional regions, wherein we should report any
+    // nearby targets.
     while (!candidates.isEmpty()) {
-        Ref element = candidates.takeLast();
-        CheckedPtr renderer = element->renderer();
-        if (renderer->isFixedPositioned() || renderer->isStickilyPositioned()) {
-            addTarget(element);
-            continue;
-        }
+        Ref target = candidates.takeLast();
+        CheckedPtr targetRenderer = target->renderer();
+        auto targetBoundingBox = target->boundingBoxInRootViewCoordinates();
+        auto targetAreaRatio = computeViewportAreaRatio(targetBoundingBox);
+        bool shouldAddTarget = targetRenderer->isFixedPositioned()
+            || targetRenderer->isStickilyPositioned()
+            || (targetRenderer->isAbsolutelyPositioned() && targetAreaRatio < maximumAreaRatioForAbsolutelyPositionedContent)
+            || (minimumAreaRatioForInFlowContent < targetAreaRatio && targetAreaRatio < maximumAreaRatioForInFlowContent);
 
-        auto boundingBox = element->boundingBoxInRootViewCoordinates();
-        auto area = boundingBox.area<RecordOverflow>();
-        if (!area.hasOverflowed() && area.value() < minimumAreaForNonFixedOrStickyContent)
+        if (!shouldAddTarget)
             continue;
 
-        auto elementAreaRatio = area.hasOverflowed() ? std::numeric_limits<float>::max() : area.value() / viewportArea;
-        if (renderer->isAbsolutelyPositioned() && elementAreaRatio < areaRatioForAbsolutelyPositionedContent) {
-            addTarget(element);
-            continue;
-        }
+        bool checkForNearbyTargets = request.canIncludeNearbyElements
+            && targetRenderer->isOutOfFlowPositioned()
+            && targetAreaRatio < maximumAreaRatioForNearbyTargets;
 
-        if (elementAreaRatio < areaRatioForInFlowContent)
-            addTarget(element);
+        if (checkForNearbyTargets && computeViewportAreaRatio(targetBoundingBox) < maximumAreaRatioForNearbyTargets)
+            additionalRegionForNearbyElements.unite(targetBoundingBox);
+
+        candidates.removeAllMatching([&](auto& candidate) {
+            if (target.ptr() != candidate.ptr() && !target->contains(candidate))
+                return false;
+
+            if (checkForNearbyTargets) {
+                auto boundingBox = candidate->boundingBoxInRootViewCoordinates();
+                if (computeViewportAreaRatio(boundingBox) < maximumAreaRatioForNearbyTargets)
+                    additionalRegionForNearbyElements.unite(boundingBox);
+            }
+
+            return true;
+        });
+
+        targets.append(WTFMove(target));
     }
 
     if (targets.isEmpty())
@@ -332,7 +352,48 @@ Vector<TargetedElementInfo> findTargetedElements(Page& page, TargetedElementRequ
     Vector<TargetedElementInfo> results;
     results.reserveInitialCapacity(targets.size());
     for (auto iterator = targets.rbegin(); iterator != targets.rend(); ++iterator)
-        results.append(targetedElementInfo(*iterator));
+        results.append(targetedElementInfo(*iterator, IsUnderPoint::Yes));
+
+    if (additionalRegionForNearbyElements.isEmpty())
+        return results;
+
+    auto nearbyTargets = [&] {
+        HashSet<Ref<Element>> targets;
+        CheckedPtr bodyRenderer = bodyElement->renderer();
+        if (!bodyRenderer)
+            return targets;
+
+        for (auto& renderer : descendantsOfType<RenderElement>(*bodyRenderer)) {
+            if (!renderer.isOutOfFlowPositioned())
+                continue;
+
+            RefPtr element = renderer.protectedElement();
+            if (!element)
+                continue;
+
+            if (targets.contains(*element))
+                continue;
+
+            if (result.listBasedTestResult().contains(*element))
+                continue;
+
+            if (!isCandidate(*element))
+                continue;
+
+            auto boundingBox = element->boundingBoxInRootViewCoordinates();
+            if (!additionalRegionForNearbyElements.contains(boundingBox))
+                continue;
+
+            if (computeViewportAreaRatio(boundingBox) > maximumAreaRatioForNearbyTargets)
+                continue;
+
+            targets.add(element.releaseNonNull());
+        }
+        return targets;
+    }();
+
+    for (auto& element : nearbyTargets)
+        results.append(targetedElementInfo(element, IsUnderPoint::No));
 
     return results;
 }

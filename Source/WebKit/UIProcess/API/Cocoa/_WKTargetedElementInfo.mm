@@ -110,4 +110,9 @@
     return _info->isSameElement(*other->_info);
 }
 
+- (BOOL)isUnderPoint
+{
+    return _info->isUnderPoint();
+}
+
 @end

@@ -39,6 +39,7 @@ namespace WebCore {
 
 struct TargetedElementRequest {
     FloatPoint pointInRootView;
+    bool canIncludeNearbyElements { true };
 };
 
 struct TargetedElementInfo {
@@ -50,6 +51,7 @@ struct TargetedElementInfo {
     FloatRect boundsInRootView;
     PositionType positionType { PositionType::Static };
     Vector<FrameIdentifier> childFrameIdentifiers;
+    bool isUnderPoint { true };
 };
 
 } // namespace WebCore

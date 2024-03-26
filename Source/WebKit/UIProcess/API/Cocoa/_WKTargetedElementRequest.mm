@@ -28,4 +28,13 @@
 
 @implementation _WKTargetedElementRequest
 
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _canIncludeNearbyElements = YES;
+    return self;
+}
+
 @end

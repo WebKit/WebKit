@@ -2753,6 +2753,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #else
         request.point,
 #endif
+        static_cast<bool>(request.canIncludeNearbyElements)
     };
     _page->requestTargetedElement(WTFMove(coreRequest), [completion = makeBlockPtr(completion)](auto& elements) {
         completion(createNSArray(elements, [](auto& element) {

@@ -131,4 +131,26 @@ TEST(ElementTargeting, BasicElementTargeting)
     }
 }
 
+TEST(ElementTargeting, NearbyOutOfFlowElements)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-2"];
+
+    auto elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
+    EXPECT_EQ(elements.count, 4U);
+    EXPECT_TRUE(elements[0].underPoint);
+    EXPECT_FALSE(elements[1].underPoint);
+    EXPECT_FALSE(elements[2].underPoint);
+    EXPECT_FALSE(elements[3].underPoint);
+    EXPECT_WK_STREQ(".fixed.container", elements[0].selectors.firstObject);
+    __auto_type nextThreeSelectors = [NSSet setWithArray:@[
+        elements[1].selectors.firstObject,
+        elements[2].selectors.firstObject,
+        elements[3].selectors.firstObject,
+    ]];
+    EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.top-right"]);
+    EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-left"]);
+    EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-right"]);
+}
+
 } // namespace TestWebKitAPI
