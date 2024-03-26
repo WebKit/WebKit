@@ -77,7 +77,7 @@ public:
     };
 
     static Ref<NavigateEvent> create(const AtomString& type, const Init&);
-    static Ref<NavigateEvent> create(const AtomString& type, const Init&, RefPtr<AbortController>);
+    static Ref<NavigateEvent> create(const AtomString& type, const Init&, AbortController*);
 
     NavigationNavigationType navigationType() const { return m_navigationType; };
     bool canIntercept() const { return m_canIntercept; };
@@ -102,7 +102,7 @@ public:
     Vector<RefPtr<NavigationInterceptHandler>> handlers() { return m_handlers; };
 
 private:
-    NavigateEvent(const AtomString& type, const Init&, RefPtr<AbortController>);
+    NavigateEvent(const AtomString& type, const Init&, AbortController*);
 
     ExceptionOr<void> sharedChecks();
 

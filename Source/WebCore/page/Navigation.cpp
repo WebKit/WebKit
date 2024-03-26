@@ -433,7 +433,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
     if (apiMethodTracker)
         apiMethodTracker->info = JSC::jsUndefined();
 
-    Ref event = NavigateEvent::create(eventNames().navigateEvent, init, abortController);
+    Ref event = NavigateEvent::create(eventNames().navigateEvent, init, abortController.get());
     m_ongoingNavigateEvent = event.ptr();
     m_focusChangedDuringOnoingNavigation = false;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;

@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigateEvent);
 
-NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init, RefPtr<AbortController> abortController)
+NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init, AbortController* abortController)
     : Event(EventInterfaceType::NavigateEvent, type, init, Event::IsTrusted::Yes)
     , m_navigationType(init.navigationType)
     , m_destination(init.destination)
@@ -50,7 +50,7 @@ NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& 
 {
 }
 
-Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init, RefPtr<AbortController> abortController)
+Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init, AbortController* abortController)
 {
     return adoptRef(*new NavigateEvent(type, init, abortController));
 }
