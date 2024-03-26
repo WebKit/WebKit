@@ -64,6 +64,7 @@ class ElementRareData;
 class FormAssociatedCustomElement;
 class FormListedElement;
 class HTMLDocument;
+class HTMLFormControlElement;
 class IntSize;
 class JSCustomElementInterface;
 class KeyframeEffectStack;
@@ -620,7 +621,7 @@ public:
     void clearPopoverData();
     bool isPopoverShowing() const;
 
-    virtual void handleInvokeInternal(const AtomString&) { }
+    virtual bool handleInvokeInternal(const HTMLFormControlElement&, const AtomString&) { return false; }
 
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);

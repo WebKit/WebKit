@@ -447,7 +447,7 @@ void HTMLFormControlElement::handleInvokeAction()
     invokee->dispatchEvent(event);
 
     if (!event->defaultPrevented())
-        invokee->handleInvokeInternal(action);
+        invokee->handleInvokeInternal(*this, action);
 }
 
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.

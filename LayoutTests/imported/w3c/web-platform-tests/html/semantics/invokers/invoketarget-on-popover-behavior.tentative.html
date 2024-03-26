@@ -35,6 +35,19 @@
   }, "invoking (as auto) closed popover with preventDefault does not open");
 
   promise_test(async function (t) {
+    assert_false(invokee.matches(":popover-open"));
+    invokee.addEventListener("invoke", (e) => { invokerbutton.setAttribute('invokeaction', 'hidepopover'); }, {
+      once: true,
+    });
+    await clickOn(invokerbutton);
+    t.add_cleanup(() => {
+      invokee.hidePopover();
+      invokerbutton.removeAttribute("invokeaction");
+    });
+    assert_true(invokee.matches(":popover-open"));
+  }, "changing invokeaction attribute inside invokeevent doesn't impact the invocation");
+
+  promise_test(async function (t) {
     invokee.showPopover();
     assert_true(invokee.matches(":popover-open"));
     await clickOn(invokerbutton);

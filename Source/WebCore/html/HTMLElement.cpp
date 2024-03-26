@@ -1573,6 +1573,36 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
         ensurePopoverData().setPopoverState(newPopoverState);
 }
 
+constexpr ASCIILiteral togglePopoverLiteral = "togglepopover"_s;
+constexpr ASCIILiteral showPopoverLiteral = "showpopover"_s;
+constexpr ASCIILiteral hidePopoverLiteral = "hidepopover"_s;
+
+bool HTMLElement::handleInvokeInternal(const HTMLFormControlElement& invoker, const AtomString& action)
+{
+    if (popoverState() == PopoverState::None)
+        return false;
+
+    if (isPopoverShowing()) {
+        bool shouldHide = action.isEmpty()
+            || equalLettersIgnoringASCIICase(action, togglePopoverLiteral)
+            || equalLettersIgnoringASCIICase(action, hidePopoverLiteral);
+        if (shouldHide) {
+            hidePopover();
+            return true;
+        }
+    } else {
+        bool shouldShow = action.isEmpty()
+            || equalLettersIgnoringASCIICase(action, togglePopoverLiteral)
+            || equalLettersIgnoringASCIICase(action, showPopoverLiteral);
+        if (shouldShow) {
+            showPopover(&invoker);
+            return true;
+        }
+    }
+
+    return false;
+}
+
 const AtomString& HTMLElement::popover() const
 {
     switch (popoverState()) {
