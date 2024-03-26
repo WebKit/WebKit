@@ -579,7 +579,7 @@ static void videoEncoderConstructed(GObject* encoder)
             if (gst_structure_has_name(structure, "encoder-bitrate-change-request")) {
                 uint32_t bitrate;
                 gst_structure_get_uint(structure, "bitrate", &bitrate);
-                g_object_set(parent, "target-bitrate", bitrate, nullptr);
+                g_object_set(parent, "bitrate", bitrate, nullptr);
                 return TRUE;
             }
         }
