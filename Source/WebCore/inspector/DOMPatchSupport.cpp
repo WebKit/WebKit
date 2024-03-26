@@ -408,7 +408,7 @@ std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node& nod
     SHA1 sha1;
 
     auto nodeType = node.nodeType();
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(&nodeType), sizeof(nodeType));
+    sha1.addBytes(std::span { reinterpret_cast<const uint8_t*>(&nodeType), sizeof(nodeType) });
     addStringToSHA1(sha1, node.nodeName());
     addStringToSHA1(sha1, node.nodeValue());
 

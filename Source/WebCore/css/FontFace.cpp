@@ -81,14 +81,14 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
             return { };
         },
         [&, fontTrustedTypes] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
-            if (!arrayBufferView || fontBinaryParsingPolicy(arrayBufferView->data(), arrayBufferView->byteLength(), fontTrustedTypes) == FontParsingPolicy::Deny)
+            if (!arrayBufferView || fontBinaryParsingPolicy(arrayBufferView->span(), fontTrustedTypes) == FontParsingPolicy::Deny)
                 return { };
 
             dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(result->backing(), arrayBufferView.releaseNonNull());
             return { };
         },
         [&, fontTrustedTypes] (RefPtr<ArrayBuffer>& arrayBuffer) -> ExceptionOr<void> {
-            if (!arrayBuffer || fontBinaryParsingPolicy(arrayBuffer->data(), arrayBuffer->byteLength(), fontTrustedTypes) == FontParsingPolicy::Deny)
+            if (!arrayBuffer || fontBinaryParsingPolicy(arrayBuffer->span(), fontTrustedTypes) == FontParsingPolicy::Deny)
                 return { };
 
             unsigned byteLength = arrayBuffer->byteLength();

@@ -54,7 +54,7 @@ static bool shouldStoreBodyAsBlob(const Vector<uint8_t>& bodyData)
 static SHA1::Digest computeSHA1(std::span<const uint8_t> span, FileSystem::Salt salt)
 {
     SHA1 sha1;
-    sha1.addBytes(salt.data(), salt.size());
+    sha1.addBytes(salt);
     sha1.addBytes(span);
     SHA1::Digest digest;
     sha1.computeHash(digest);

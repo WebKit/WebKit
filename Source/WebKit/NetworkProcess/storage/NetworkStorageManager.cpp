@@ -83,7 +83,7 @@ static String encode(const String& string, FileSystem::Salt salt)
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     auto utf8String = string.utf8();
     crypto->addBytes(utf8String.span());
-    crypto->addBytes(salt.data(), salt.size());
+    crypto->addBytes(salt);
     auto hash = crypto->computeHash();
     return base64URLEncodeToString(hash.data(), hash.size());
 }

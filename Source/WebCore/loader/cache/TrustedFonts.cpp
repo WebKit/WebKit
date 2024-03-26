@@ -859,15 +859,15 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& trustedFontHas
     return trustedFontHashes;
 }
 
-static AtomString hashForFontData(const void* data, size_t size)
+static AtomString hashForFontData(std::span<const uint8_t> data)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    cryptoDigest->addBytes(std::span { reinterpret_cast<const uint8_t*>(data), size });
+    cryptoDigest->addBytes(data);
     auto digest = cryptoDigest->computeHash();
-    return makeAtomString(base64Encoded(digest.data(), digest.size()));
+    return makeAtomString(base64Encoded(digest.span()));
 }
 
-FontParsingPolicy fontBinaryParsingPolicy(const void* data, size_t size, DownloadableBinaryFontTrustedTypes trustedType)
+FontParsingPolicy fontBinaryParsingPolicy(std::span<const uint8_t> data, DownloadableBinaryFontTrustedTypes trustedType)
 {
     switch (trustedType) {
     case DownloadableBinaryFontTrustedTypes::Any:
@@ -876,7 +876,7 @@ FontParsingPolicy fontBinaryParsingPolicy(const void* data, size_t size, Downloa
         return FontParsingPolicy::Deny;
     case DownloadableBinaryFontTrustedTypes::Restricted:
     case DownloadableBinaryFontTrustedTypes::FallbackParser: {
-        auto sha = hashForFontData(data, size);
+        auto sha = hashForFontData(data);
         if (trustedFontHashesInLockdownMode().contains(sha))
             return FontParsingPolicy::LoadWithSystemFontParser;
         if (trustedType == DownloadableBinaryFontTrustedTypes::FallbackParser)
@@ -887,11 +887,6 @@ FontParsingPolicy fontBinaryParsingPolicy(const void* data, size_t size, Downloa
     }
     ASSERT_NOT_REACHED();
     return FontParsingPolicy::Deny;
-}
-
-FontParsingPolicy fontBinaryParsingPolicy(std::span<const uint8_t> data, DownloadableBinaryFontTrustedTypes trustedType)
-{
-    return fontBinaryParsingPolicy(data.data(), data.size(), trustedType);
 }
 
 }; // namespace WebCore

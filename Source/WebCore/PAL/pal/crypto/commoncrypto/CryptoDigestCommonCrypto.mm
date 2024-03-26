@@ -119,25 +119,25 @@ std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algor
     return digest;
 }
 
-void CryptoDigest::addBytes(const void* input, size_t length)
+void CryptoDigest::addBytes(std::span<const uint8_t> input)
 {
     switch (m_context->algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CC_SHA1_Update(toSHA1Context(m_context.get()), input, length);
+        CC_SHA1_Update(toSHA1Context(m_context.get()), static_cast<const void*>(input.data()), input.size());
         ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     case CryptoDigest::Algorithm::SHA_224:
-        CC_SHA224_Update(toSHA224Context(m_context.get()), input, length);
+        CC_SHA224_Update(toSHA224Context(m_context.get()), static_cast<const void*>(input.data()), input.size());
         return;
     case CryptoDigest::Algorithm::SHA_256:
-        CC_SHA256_Update(toSHA256Context(m_context.get()), input, length);
+        CC_SHA256_Update(toSHA256Context(m_context.get()), static_cast<const void*>(input.data()), input.size());
         return;
     case CryptoDigest::Algorithm::SHA_384:
-        CC_SHA384_Update(toSHA384Context(m_context.get()), input, length);
+        CC_SHA384_Update(toSHA384Context(m_context.get()), static_cast<const void*>(input.data()), input.size());
         return;
     case CryptoDigest::Algorithm::SHA_512:
-        CC_SHA512_Update(toSHA512Context(m_context.get()), input, length);
+        CC_SHA512_Update(toSHA512Context(m_context.get()), static_cast<const void*>(input.data()), input.size());
         return;
     }
 }

@@ -44,7 +44,7 @@ uint8_t* Encoder::grow(size_t size)
 void Encoder::updateChecksumForData(SHA1& sha1, std::span<const uint8_t> span)
 {
     auto typeSalt = Salt<uint8_t*>::value;
-    sha1.addBytes(reinterpret_cast<uint8_t*>(&typeSalt), sizeof(typeSalt));
+    sha1.addBytes(std::span { reinterpret_cast<uint8_t*>(&typeSalt), sizeof(typeSalt) });
     sha1.addBytes(span);
 }
 

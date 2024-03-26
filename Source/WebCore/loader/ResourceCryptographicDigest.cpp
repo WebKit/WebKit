@@ -148,10 +148,10 @@ static PAL::CryptoDigest::Algorithm toCryptoDigestAlgorithm(ResourceCryptographi
     return PAL::CryptoDigest::Algorithm::SHA_512;
 }
 
-ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm algorithm, const void* bytes, size_t length)
+ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm algorithm, std::span<const uint8_t> bytes)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
-    cryptoDigest->addBytes(bytes, length);
+    cryptoDigest->addBytes(bytes);
     return { algorithm, cryptoDigest->computeHash() };
 }
 

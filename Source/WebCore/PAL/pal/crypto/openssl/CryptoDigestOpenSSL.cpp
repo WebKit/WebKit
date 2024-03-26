@@ -69,7 +69,7 @@ namespace PAL {
 
 struct CryptoDigestContext {
     virtual ~CryptoDigestContext() = default;
-    virtual void addBytes(const void* input, size_t length) = 0;
+    virtual void addBytes(std::span<const uint8_t> input) = 0;
     virtual Vector<uint8_t> computeHash() = 0;
 };
 
@@ -87,9 +87,9 @@ struct CryptoDigestContextImpl : public CryptoDigestContext {
         SHAFunctions::init(&m_context);
     }
 
-    void addBytes(const void* input, size_t length) override
+    void addBytes(std::span<const uint8_t> input) override
     {
-        SHAFunctions::update(&m_context, input, length);
+        SHAFunctions::update(&m_context, static_cast<const void*>(input.data()), input.size());
     }
 
     Vector<uint8_t> computeHash() override
@@ -131,10 +131,10 @@ std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algor
     return digest;
 }
 
-void CryptoDigest::addBytes(const void* input, size_t length)
+void CryptoDigest::addBytes(std::span<const uint8_t> input)
 {
     ASSERT(m_context);
-    m_context->addBytes(input, length);
+    m_context->addBytes(input);
 }
 
 Vector<uint8_t> CryptoDigest::computeHash()
@@ -151,7 +151,7 @@ std::optional<Vector<uint8_t>> CryptoDigest::computeHash(CryptoDigest::Algorithm
     digest->m_context = createCryptoDigest(algo);
     if (!digest->m_context)
         return { };
-    digest->m_context->addBytes(data.data(), data.size());
+    digest->m_context->addBytes(data.span());
     return digest->m_context->computeHash();
 }
 

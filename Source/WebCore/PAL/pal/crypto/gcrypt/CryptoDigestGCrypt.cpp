@@ -78,9 +78,9 @@ std::unique_ptr<CryptoDigest> CryptoDigest::create(CryptoDigest::Algorithm algor
     return digest;
 }
 
-void CryptoDigest::addBytes(const void* input, size_t length)
+void CryptoDigest::addBytes(std::span<const uint8_t> input)
 {
-    gcry_md_write(m_context->md, input, length);
+    gcry_md_write(m_context->md, static_cast<const void*>(input.data()), input.size());
 }
 
 Vector<uint8_t> CryptoDigest::computeHash()

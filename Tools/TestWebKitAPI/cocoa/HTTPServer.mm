@@ -550,10 +550,10 @@ void Connection::webSocketHandshake(CompletionHandler<void()>&& connectionHandle
             const char* keyEnd = strnstr(keyBegin, "\r\n", request.size() + (keyBegin - request.data()));
             ASSERT(keyEnd);
 
-            constexpr auto* webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+            const auto webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"_span;
             SHA1 sha1;
-            sha1.addBytes(reinterpret_cast<const uint8_t*>(keyBegin), keyEnd - keyBegin);
-            sha1.addBytes(reinterpret_cast<const uint8_t*>(webSocketKeyGUID), strlen(webSocketKeyGUID));
+            sha1.addBytes(std::span { reinterpret_cast<const uint8_t*>(keyBegin), static_cast<size_t>(keyEnd - keyBegin) });
+            sha1.addBytes(webSocketKeyGUID);
             SHA1::Digest hash;
             sha1.computeHash(hash);
             return base64EncodeToString(hash.data(), SHA1::hashSize);

@@ -106,8 +106,8 @@ template <typename Type>
 void Encoder::updateChecksumForNumber(SHA1& sha1, Type value)
 {
     auto typeSalt = Salt<Type>::value;
-    sha1.addBytes(reinterpret_cast<uint8_t*>(&typeSalt), sizeof(typeSalt));
-    sha1.addBytes(reinterpret_cast<uint8_t*>(&value), sizeof(value));
+    sha1.addBytes(std::span { reinterpret_cast<uint8_t*>(&typeSalt), sizeof(typeSalt) });
+    sha1.addBytes(std::span { reinterpret_cast<uint8_t*>(&value), sizeof(value) });
 }
 
 }

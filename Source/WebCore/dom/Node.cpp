@@ -1791,7 +1791,7 @@ void Node::setTextContent(String&& text)
 static SHA1::Digest hashPointer(const void* pointer)
 {
     SHA1 sha1;
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(&pointer), sizeof(pointer));
+    sha1.addBytes(std::span { reinterpret_cast<const uint8_t*>(&pointer), sizeof(pointer) });
     SHA1::Digest digest;
     sha1.computeHash(digest);
     return digest;

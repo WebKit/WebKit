@@ -50,7 +50,7 @@ static std::string computeSHA1HashStringForPixmap(const SkPixmap& pixmap)
     SHA1 sha1;
     const auto* bitmapData = pixmap.addr8();
     for (size_t row = 0; row < pixelsHight; ++row) {
-        sha1.addBytes(bitmapData, 4 * pixelsWidth);
+        sha1.addBytes(std::span { bitmapData, 4 * pixelsWidth });
         bitmapData += bytesPerRow;
     }
     auto hexString = sha1.computeHexDigest();

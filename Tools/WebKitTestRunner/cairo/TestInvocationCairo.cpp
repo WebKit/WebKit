@@ -54,7 +54,7 @@ static void computeSHA1HashStringForCairoSurface(cairo_surface_t* surface, char 
     SHA1 sha1;
     unsigned char* bitmapData = static_cast<unsigned char*>(cairo_image_surface_get_data(surface));
     for (size_t row = 0; row < pixelsHigh; ++row) {
-        sha1.addBytes(bitmapData, 4 * pixelsWide);
+        sha1.addBytes(std::span { bitmapData, 4 * pixelsWide });
         bitmapData += bytesPerRow;
     }
     SHA1::Digest hash;

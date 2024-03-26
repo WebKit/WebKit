@@ -62,11 +62,6 @@ public:
         addBytes(input.span());
     }
 
-    void addBytes(const uint8_t* input, size_t length)
-    {
-        addBytes(std::span(input, length));
-    }
-
     // Size of the SHA1 hash
     WTF_EXPORT_PRIVATE static constexpr size_t hashSize = 20;
 

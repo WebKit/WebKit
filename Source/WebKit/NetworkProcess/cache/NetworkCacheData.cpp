@@ -82,7 +82,7 @@ Data adoptAndMapFile(FileSystem::PlatformFileHandle handle, size_t offset, size_
 SHA1::Digest computeSHA1(const Data& data, const Salt& salt)
 {
     SHA1 sha1;
-    sha1.addBytes(salt.data(), salt.size());
+    sha1.addBytes(salt);
     data.apply([&sha1](std::span<const uint8_t> span) {
         sha1.addBytes(span);
         return true;

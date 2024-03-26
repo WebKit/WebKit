@@ -105,7 +105,7 @@ static RetainPtr<NSData> produceClientDataJson(_WKWebAuthenticationType type, NS
 static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(clientDataJson.bytes, clientDataJson.length);
+    crypto->addBytes(span(clientDataJson));
     return crypto->computeHash();
 }
 
@@ -617,7 +617,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 
     NSData *nsPublicKeyData = (NSData *)publicKeyDataRep.get();
     auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
-    digest->addBytes(nsPublicKeyData.bytes, nsPublicKeyData.length);
+    digest->addBytes(span(nsPublicKeyData));
     auto credentialId = digest->computeHash();
     auto nsCredentialId = adoptNS([[NSData alloc] initWithBytes:credentialId.data() length:credentialId.size()]);
 

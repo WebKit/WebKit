@@ -171,24 +171,24 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!success)
         return;
 
-    const uint8_t* fileData = reinterpret_cast<const uint8_t*>(mappedFile.data());
-    unsigned fileTotalSize = mappedFile.size();
+    auto fileData = mappedFile.span();
 
     // Ensure we at least have a SHA1::Digest to read.
-    if (fileTotalSize < sizeof(SHA1::Digest)) {
+    if (fileData.size() < sizeof(SHA1::Digest)) {
         FileSystem::deleteFile(cacheFilename);
         return;
     }
 
-    unsigned fileDataSize = fileTotalSize - sizeof(SHA1::Digest);
+    unsigned fileDataSize = fileData.size() - sizeof(SHA1::Digest);
 
     SHA1::Digest computedHash;
     SHA1 sha1;
-    sha1.addBytes(fileData, fileDataSize);
+    sha1.addBytes(fileData.subspan(0, fileDataSize));
     sha1.computeHash(computedHash);
 
     SHA1::Digest fileHash;
-    memcpy(&fileHash, fileData + fileDataSize, sizeof(SHA1::Digest));
+    auto hashSpan = fileData.subspan(fileDataSize, sizeof(SHA1::Digest));
+    memcpy(&fileHash, hashSpan.data(), hashSpan.size());
 
     if (computedHash != fileHash) {
         FileSystem::deleteFile(cacheFilename);
@@ -346,7 +346,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     SHA1::Digest computedHash;
     SHA1 sha1;
-    sha1.addBytes(m_cachedBytecode->data(), m_cachedBytecode->size());
+    sha1.addBytes(m_cachedBytecode->span());
     sha1.computeHash(computedHash);
     FileSystem::writeToFile(tempFD, computedHash.data(), sizeof(computedHash));
 

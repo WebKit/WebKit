@@ -89,12 +89,11 @@ static void hashString(SHA1& sha1, const String& string)
     if (string.is8Bit() && string.containsOnlyASCII()) {
         const uint8_t nullByte = 0;
         sha1.addBytes(string.span8());
-        sha1.addBytes(&nullByte, 1);
+        sha1.addBytes(std::span { &nullByte, 1 });
         return;
     }
-    auto cString = string.utf8();
-    // Include terminating null byte.
-    sha1.addBytes(cString.dataAsUInt8Ptr(), cString.length() + 1);
+
+    sha1.addBytes(string.utf8().spanIncludingNullTerminator());
 }
 
 Key::HashType Key::computeHash(const Salt& salt) const
@@ -102,7 +101,7 @@ Key::HashType Key::computeHash(const Salt& salt) const
     // We don't really need a cryptographic hash. The key is always verified against the entry header.
     // SHA1 just happens to be suitably sized, fast and available.
     SHA1 sha1;
-    sha1.addBytes(salt.data(), salt.size());
+    sha1.addBytes(salt);
 
     hashString(sha1, m_partition);
     hashString(sha1, m_type);
@@ -127,7 +126,7 @@ Key::HashType Key::computePartitionHash(const Salt& salt) const
 Key::HashType Key::partitionToPartitionHash(const String& partition, const Salt& salt)
 {
     SHA1 sha1;
-    sha1.addBytes(salt.data(), salt.size());
+    sha1.addBytes(salt);
 
     hashString(sha1, partition);
 

@@ -100,11 +100,11 @@ static String generateSecWebSocketKey()
 
 String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocketKey)
 {
-    constexpr uint8_t webSocketKeyGUID[] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+    const auto webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"_span;
     SHA1 sha1;
     CString keyData = secWebSocketKey.ascii();
     sha1.addBytes(keyData.span());
-    sha1.addBytes(webSocketKeyGUID, std::size(webSocketKeyGUID) - 1);
+    sha1.addBytes(webSocketKeyGUID);
     SHA1::Digest hash;
     sha1.computeHash(hash);
     return base64EncodeToString(hash.data(), SHA1::hashSize);
