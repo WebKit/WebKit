@@ -30,6 +30,9 @@
 #include "CCallHelpers.h"
 #include "LinkBuffer.h"
 #include "Options.h"
+#if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
+#include "ThunkGenerator.h"
+#endif
 #include "VM.h"
 #include "Yarr.h"
 #include "YarrCanonicalize.h"
@@ -52,6 +55,26 @@ static constexpr bool verbose = false;
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
 enum class TryReadUnicodeCharCodeLocation { CompiledInline, CompiledAsHelper };
+#endif
+
+#if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
+JSC_DECLARE_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (unsigned, unsigned, CanonicalMode));
+
+// Since the generator areCanonicallyEquivalentThunkGenerator() needs to be static,
+// we set the incoming argument registers to the thunk here and ASSERT at runtime
+// that they match.
+#if CPU(ARM64)
+static constexpr GPRReg areCanonicallyEquivalentCharArgReg = ARM64Registers::x6;
+static constexpr GPRReg areCanonicallyEquivalentPattCharArgReg = ARM64Registers::x7;
+static constexpr GPRReg areCanonicallyEquivalentCanonicalModeArgReg = ARM64Registers::x10;
+#elif CPU(X86_64) && !OS(WINDOWS)
+static constexpr GPRReg areCanonicallyEquivalentCharArgReg = X86Registers::eax;
+static constexpr GPRReg areCanonicallyEquivalentPattCharArgReg = X86Registers::r9;
+static constexpr GPRReg areCanonicallyEquivalentCanonicalModeArgReg = X86Registers::r13;
+
+// The thunk code assumes that we return the result to areCanonicallyEquivalentCharArgReg.
+static_assert(areCanonicallyEquivalentCharArgReg == GPRInfo::returnValueGPR);
+#endif
 #endif
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && defined(UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
@@ -1413,12 +1436,23 @@ class YarrGenerator final : public YarrJITInfo {
 
         MacroAssembler::Label loop(&m_jit);
 
+#if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
+        if (!m_decodeSurrogatePairs)
+            readCharacter(0, patternCharacter, patternIndex);
+        else {
+            // For reading Unicode characters, use the standard resultReg so we can call the standard tryReadUnicodeChar()
+            // helper instead of emitting an inlined version.
+            readCharacter(op.m_checkedOffset - term->inputPosition, character, patternIndex);
+            m_jit.move(character, patternCharacter);
+        }
+#else
         readCharacter(0, patternCharacter, patternIndex);
+#endif
         readCharacter(op.m_checkedOffset - term->inputPosition, character);
     
         if (!m_pattern.ignoreCase())
             characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
-        else {
+        else if (m_charSize == CharSize::Char8) {
             MacroAssembler::Jump charactersMatch = m_jit.branch32(MacroAssembler::Equal, character, patternCharacter);
             MacroAssembler::ExtendedAddress characterTableEntry(character, reinterpret_cast<intptr_t>(&canonicalTableLChar));
             m_jit.load16(characterTableEntry, character);
@@ -1427,6 +1461,38 @@ class YarrGenerator final : public YarrJITInfo {
             characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
             charactersMatch.link(&m_jit);
         }
+#if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
+        else {
+            // 16 Bit ignore case matching.
+            RELEASE_ASSERT(character == areCanonicallyEquivalentCharArgReg);
+            RELEASE_ASSERT(patternCharacter == areCanonicallyEquivalentPattCharArgReg);
+            RELEASE_ASSERT(m_regs.regUnicodeInputAndTrail == areCanonicallyEquivalentCanonicalModeArgReg);
+
+            MacroAssembler::JumpList charactersMatch;
+            charactersMatch.append(m_jit.branch32(MacroAssembler::Equal, character, patternCharacter));
+            MacroAssembler::Jump notASCII = m_jit.branch32(MacroAssembler::GreaterThan, character, MacroAssembler::TrustedImm32(127));
+            // The ASCII part of canonicalTableLChar works for UCS2 and Unicode patterns.
+            MacroAssembler::ExtendedAddress characterTableEntry(character, reinterpret_cast<intptr_t>(&canonicalTableLChar));
+            m_jit.load16(characterTableEntry, character);
+            MacroAssembler::ExtendedAddress patternTableEntry(patternCharacter, reinterpret_cast<intptr_t>(&canonicalTableLChar));
+            m_jit.load16(patternTableEntry, patternCharacter);
+            characterMatchFails.append(m_jit.branch32(MacroAssembler::NotEqual, character, patternCharacter));
+            charactersMatch.append(m_jit.jump());
+            notASCII.link(&m_jit);
+
+            // We are safe to use the regUnicodeInputAndTrail register as an argument since it
+            // is only used when reading unicode characters.
+            int32_t canonicalMode = static_cast<int32_t>(m_decodeSurrogatePairs ? CanonicalMode::Unicode : CanonicalMode::UCS2);
+            m_jit.move(MacroAssembler::TrustedImm32(canonicalMode), areCanonicallyEquivalentCanonicalModeArgReg);
+
+            m_jit.nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(areCanonicallyEquivalentThunkGenerator).retaggedCode<NoPtrTag>() });
+
+            // Match return as a bool in character reg.
+            characterMatchFails.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::Imm32(0)));
+            // Add code to compare non-ASCII Unicode codepoints.
+            charactersMatch.link(&m_jit);
+        }
+#endif
 
         m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
         m_jit.add32(MacroAssembler::TrustedImm32(1), patternIndex);
@@ -1456,18 +1522,20 @@ class YarrGenerator final : public YarrJITInfo {
         YarrOp& op = m_ops[opIndex];
         PatternTerm* term = op.m_term;
 
+#if !ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
         if (m_pattern.ignoreCase() && m_charSize != CharSize::Char8) {
             m_failureReason = JITFailureReason::BackReference;
             return;
         }
+#endif
 
         unsigned subpatternId = term->backReferenceSubpatternId;
         unsigned duplicateNamedGroupId = m_pattern.hasDuplicateNamedCaptureGroups() ? m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId] : 0;
         unsigned parenthesesFrameLocation = term->frameLocation;
 
         const MacroAssembler::RegisterID characterOrTemp = m_regs.regT0;
-        const MacroAssembler::RegisterID patternIndex = m_regs.regT1;
-        const MacroAssembler::RegisterID patternTemp = m_regs.regT2;
+        const MacroAssembler::RegisterID patternTemp = m_regs.regT1;
+        const MacroAssembler::RegisterID patternIndex = m_regs.regT2;
 
         MacroAssembler::RegisterID subpatternIdReg = InvalidGPRReg;
 
@@ -4509,8 +4577,87 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.load32(MacroAssembler::Address(endIndex, sizeof(unsigned)), endIndex);
     }
 
+#if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
+    static MacroAssemblerCodeRef<JITThunkPtrTag> areCanonicallyEquivalentThunkGenerator(VM&)
+    {
+        CCallHelpers jit(nullptr);
+
+        unsigned pushCount = 0;
+
+#if CPU(ARM64)
+        constexpr unsigned registersToSave = 16;
+
+        auto pushCallerSavePair = [&]() {
+            jit.pushPair(GPRInfo::toRegister(pushCount), GPRInfo::toRegister(pushCount + 1));
+            pushCount += 2;
+        };
+
+        auto popCallerSavePair = [&]() {
+            pushCount -= 2;
+            jit.popPair(GPRInfo::toRegister(pushCount), GPRInfo::toRegister(pushCount + 1));
+        };
+#elif CPU(X86_64) && !OS(WINDOWS)
+        constexpr unsigned registersToSave = 7;
+
+        constexpr GPRReg callerSaves[registersToSave] = {
+            // We don't save RAX since the return value ends up there.
+            X86Registers::ecx,
+            X86Registers::edx,
+            X86Registers::esi,
+            X86Registers::edi,
+            X86Registers::r8,
+            X86Registers::r9,
+            X86Registers::r10
+        };
+
+        auto pushCallerSave = [&]() {
+            jit.push(callerSaves[pushCount]);
+            pushCount++;
+        };
+
+        auto popCallerSave = [&]() {
+            pushCount--;
+            jit.pop(callerSaves[pushCount]);
+        };
+#endif
+
+        jit.emitFunctionPrologue();
+
+#if CPU(ARM64)
+        while (pushCount < registersToSave)
+            pushCallerSavePair();
+#elif CPU(X86_64) && !OS(WINDOWS)
+        while (pushCount < registersToSave)
+            pushCallerSave();
+#endif
+
+        jit.setupArguments<decltype(operationAreCanonicallyEquivalent)>(areCanonicallyEquivalentCharArgReg, areCanonicallyEquivalentPattCharArgReg, areCanonicallyEquivalentCanonicalModeArgReg);
+        jit.callOperation<OperationPtrTag>(operationAreCanonicallyEquivalent);
+
+#if CPU(ARM64)
+        jit.move(GPRInfo::returnValueGPR, ARM64Registers::ip0);
+        while (pushCount)
+            popCallerSavePair();
+
+        jit.move(ARM64Registers::ip0, areCanonicallyEquivalentCharArgReg);
+#elif CPU(X86_64) && !OS(WINDOWS)
+        while (pushCount)
+            popCallerSave();
+#endif
+
+        ASSERT(!pushCount);
+
+        jit.emitFunctionEpilogue();
+        jit.ret();
+
+        LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::YarrJIT);
+
+        return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "YARR areCanonicallyEquivalent call thunk");
+    }
+#endif
+
 public:
-    YarrGenerator(CCallHelpers& jit, const VM* vm, YarrCodeBlock* codeBlock, const YarrJITRegs& regs, YarrPattern& pattern, StringView patternString, CharSize charSize, JITCompileMode compileMode, std::optional<StringView> sampleString)
+    YarrGenerator(CCallHelpers& jit, VM* vm, YarrCodeBlock* codeBlock, const YarrJITRegs& regs, YarrPattern& pattern, StringView patternString, CharSize charSize, JITCompileMode compileMode, std::optional<StringView> sampleString)
         : m_jit(jit)
         , m_vm(vm)
         , m_codeBlock(codeBlock)
@@ -4531,7 +4678,7 @@ public:
     {
     }
 
-    YarrGenerator(CCallHelpers& jit, const VM* vm, YarrBoyerMooreData* yarrBMData, const YarrJITRegs& regs, YarrPattern& pattern, StringView patternString, CharSize charSize, JITCompileMode compileMode)
+    YarrGenerator(CCallHelpers& jit, VM* vm, YarrBoyerMooreData* yarrBMData, const YarrJITRegs& regs, YarrPattern& pattern, StringView patternString, CharSize charSize, JITCompileMode compileMode)
         : m_jit(jit)
         , m_vm(vm)
         , m_codeBlock(nullptr)
@@ -4586,7 +4733,11 @@ public:
 
         if (m_pattern.m_containsBackreferences
 #if ENABLE(YARR_JIT_BACKREFERENCES)
+#if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
+            && (m_compileMode == JITCompileMode::MatchOnly)
+#else
             && (m_compileMode == JITCompileMode::MatchOnly || (m_pattern.ignoreCase() && m_charSize != CharSize::Char8))
+#endif
 #endif
             ) {
                 codeBlock.setFallBackWithFailureReason(JITFailureReason::BackReference);
@@ -5095,7 +5246,7 @@ public:
 
 private:
     CCallHelpers& m_jit;
-    const VM* const m_vm;
+    VM* m_vm;
     YarrCodeBlock* const m_codeBlock;
     YarrBoyerMooreData* const m_boyerMooreData;
     const YarrJITRegs& m_regs;
@@ -5126,7 +5277,6 @@ private:
     MacroAssembler::JumpList m_hitMatchLimit;
     Vector<MacroAssembler::Call> m_tryReadUnicodeCharacterCalls;
     MacroAssembler::Label m_tryReadUnicodeCharacterEntry;
-
     MacroAssembler::JumpList m_inlinedMatched;
     MacroAssembler::JumpList m_inlinedFailedMatch;
 
@@ -5149,6 +5299,13 @@ private:
     std::optional<StringView> m_sampleString;
     SubjectSampler m_sampler;
 };
+
+#if ENABLE(YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS)
+JSC_DEFINE_JIT_OPERATION(operationAreCanonicallyEquivalent, bool, (unsigned a, unsigned b, CanonicalMode canonicalMode))
+{
+    return areCanonicallyEquivalent(static_cast<char32_t>(a), static_cast<char32_t>(b), canonicalMode);
+}
+#endif
 
 static void dumpCompileFailure(JITFailureReason failure)
 {
@@ -5209,7 +5366,7 @@ void jitCompile(YarrPattern& pattern, StringView patternString, CharSize charSiz
 #error "No support for inlined JIT'ing of RegExp.test for this CPU / OS combination."
 #endif
 
-void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, StringView patternString, OptionSet<Yarr::Flags> flags, CharSize charSize, const VM* vm, YarrBoyerMooreData& boyerMooreData, CCallHelpers& jit, YarrJITRegisters& jitRegisters)
+void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, StringView patternString, OptionSet<Yarr::Flags> flags, CharSize charSize, VM* vm, YarrBoyerMooreData& boyerMooreData, CCallHelpers& jit, YarrJITRegisters& jitRegisters)
 {
     Yarr::ErrorCode errorCode;
     Yarr::YarrPattern pattern(patternString, flags, errorCode);
