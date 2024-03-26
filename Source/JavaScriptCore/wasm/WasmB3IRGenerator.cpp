@@ -5267,6 +5267,8 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
         bool needsOverflowCheck = false;
         irGenerator.computeStackCheckSize(needsOverflowCheck, checkSize);
         ASSERT(checkSize || !needsOverflowCheck);
+        if (!needsOverflowCheck)
+            checkSize = stackCheckNotNeeded;
         static_cast<OSREntryCallee*>(&callee)->setStackCheckSize(checkSize);
     }
 

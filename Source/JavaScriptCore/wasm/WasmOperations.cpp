@@ -328,6 +328,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
     auto doStackCheck = [instance](OSREntryCallee* callee) -> bool {
         uintptr_t stackPointer = reinterpret_cast<uintptr_t>(currentStackPointer());
         ASSERT(callee->stackCheckSize());
+        if (callee->stackCheckSize() == stackCheckNotNeeded)
+            return true;
         uintptr_t stackExtent = stackPointer - callee->stackCheckSize();
         uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
         if (UNLIKELY(stackExtent >= stackPointer || stackExtent <= stackLimit)) {

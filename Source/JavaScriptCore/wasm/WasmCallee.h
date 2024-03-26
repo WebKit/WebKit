@@ -243,6 +243,9 @@ private:
     Vector<Ref<NameSection>, 0> nameSections;
 };
 
+constexpr int32_t stackCheckUnset = 0;
+constexpr int32_t stackCheckNotNeeded = -1;
+
 class OSREntryCallee final : public OptimizingJITCallee {
     WTF_MAKE_TZONE_ALLOCATED(OSREntryCallee);
 public:
@@ -261,8 +264,18 @@ public:
         OptimizingJITCallee::setEntrypoint(WTFMove(entrypoint), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations));
     }
 
-    void setStackCheckSize(unsigned stackCheckSize) { m_stackCheckSize = stackCheckSize; }
-    unsigned stackCheckSize() const { return m_stackCheckSize; }
+    void setStackCheckSize(int32_t stackCheckSize)
+    {
+        ASSERT(m_stackCheckSize == stackCheckUnset);
+        ASSERT(stackCheckSize > 0 || stackCheckSize == stackCheckNotNeeded);
+        m_stackCheckSize = stackCheckSize;
+    }
+
+    int32_t stackCheckSize() const
+    {
+        ASSERT(m_stackCheckSize > 0 || m_stackCheckSize == stackCheckNotNeeded);
+        return m_stackCheckSize;
+    }
 
 private:
     OSREntryCallee(CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
@@ -273,7 +286,7 @@ private:
 
     unsigned m_osrEntryScratchBufferSize { 0 };
     uint32_t m_loopIndex;
-    unsigned m_stackCheckSize { 0 };
+    int32_t m_stackCheckSize { stackCheckUnset };
 };
 
 #endif // ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
@@ -354,8 +367,17 @@ public:
         return m_switchJumpTables.last().ptr();
     }
 
-    void setStackCheckSize(unsigned stackCheckSize) { m_stackCheckSize = stackCheckSize; }
-    unsigned stackCheckSize() const { return m_stackCheckSize; }
+    void setStackCheckSize(unsigned stackCheckSize)
+    {
+        ASSERT(m_stackCheckSize == stackCheckUnset);
+        ASSERT(stackCheckSize > 0 || int32_t(stackCheckSize) == stackCheckNotNeeded);
+        m_stackCheckSize = stackCheckSize;
+    }
+    int32_t stackCheckSize() const
+    {
+        ASSERT(m_stackCheckSize > 0 || int32_t(m_stackCheckSize) == stackCheckNotNeeded);
+        return m_stackCheckSize;
+    }
 
 private:
     BBQCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, SavedFPWidth savedFPWidth)
