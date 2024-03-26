@@ -457,8 +457,12 @@ bool ValidateGetPointerv(const Context *context,
     }
     else
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES1or32Required);
-        return false;
+        switch (pname)
+        {
+            default:
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES1or32Required);
+                return false;
+        }
     }
 }
 

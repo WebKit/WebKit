@@ -1540,6 +1540,79 @@ void GL_APIENTRY GL_ProvokingVertexANGLE(GLenum provokeMode)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
+// GL_ANGLE_rasterization_rate_map_metal
+void GL_APIENTRY GL_FramebufferMTLRasterizationRateMapANGLE(GLenum target,
+                                                            GLMTLRasterizationRateMapANGLE map)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLFramebufferMTLRasterizationRateMapANGLE,
+          "context = %d, target = %s, map = 0x%016" PRIxPTR "", CID(context),
+          GLenumToString(GLESEnum::AllEnums, target), (uintptr_t)map);
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(
+                  context->getPrivateState(), context->getMutableErrorSetForValidation(),
+                  angle::EntryPoint::GLFramebufferMTLRasterizationRateMapANGLE) &&
+              ValidateFramebufferMTLRasterizationRateMapANGLE(
+                  context, angle::EntryPoint::GLFramebufferMTLRasterizationRateMapANGLE, target,
+                  map)));
+        if (isCallValid)
+        {
+            context->framebufferMTLRasterizationRateMap(target, map);
+        }
+        ANGLE_CAPTURE_GL(FramebufferMTLRasterizationRateMapANGLE, isCallValid, context, target,
+                         map);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
+GLMTLRasterizationRateMapANGLE GL_APIENTRY
+GL_GetFramebufferMTLRasterizationRateMapANGLE(GLenum target)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetFramebufferMTLRasterizationRateMapANGLE, "context = %d, target = %s",
+          CID(context), GLenumToString(GLESEnum::AllEnums, target));
+
+    GLMTLRasterizationRateMapANGLE returnValue;
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateGetFramebufferMTLRasterizationRateMapANGLE(
+                 context, angle::EntryPoint::GLGetFramebufferMTLRasterizationRateMapANGLE, target));
+        if (isCallValid)
+        {
+            returnValue = context->getFramebufferMTLRasterizationRateMap(target);
+        }
+        else
+        {
+            returnValue = GetDefaultReturnValue<
+                angle::EntryPoint::GLGetFramebufferMTLRasterizationRateMapANGLE,
+                GLMTLRasterizationRateMapANGLE>();
+        }
+        ANGLE_CAPTURE_GL(GetFramebufferMTLRasterizationRateMapANGLE, isCallValid, context, target,
+                         returnValue);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+        returnValue =
+            GetDefaultReturnValue<angle::EntryPoint::GLGetFramebufferMTLRasterizationRateMapANGLE,
+                                  GLMTLRasterizationRateMapANGLE>();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    return returnValue;
+}
+
 // GL_ANGLE_renderability_validation
 
 // GL_ANGLE_request_extension

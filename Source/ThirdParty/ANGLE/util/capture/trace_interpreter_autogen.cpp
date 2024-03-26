@@ -2190,6 +2190,14 @@ CallCapture ParseCallCapture(const Token &nameToken,
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLFramebufferFoveationParametersQCOM, std::move(params));
     }
+    if (strcmp(nameToken, "glFramebufferMTLRasterizationRateMapANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<
+            std::remove_pointer<PFNGLFRAMEBUFFERMTLRASTERIZATIONRATEMAPANGLEPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLFramebufferMTLRasterizationRateMapANGLE,
+                           std::move(params));
+    }
     if (strcmp(nameToken, "glFramebufferMemorylessPixelLocalStorageANGLE") == 0)
     {
         ParamBuffer params = ParseParameters<
@@ -2699,6 +2707,14 @@ CallCapture ParseCallCapture(const Token &nameToken,
             std::remove_pointer<PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVROBUSTANGLEPROC>::type>(
             paramTokens, strings);
         return CallCapture(EntryPoint::GLGetFramebufferAttachmentParameterivRobustANGLE,
+                           std::move(params));
+    }
+    if (strcmp(nameToken, "glGetFramebufferMTLRasterizationRateMapANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<
+            std::remove_pointer<PFNGLGETFRAMEBUFFERMTLRASTERIZATIONRATEMAPANGLEPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLGetFramebufferMTLRasterizationRateMapANGLE,
                            std::move(params));
     }
     if (strcmp(nameToken, "glGetFramebufferParameteriv") == 0)

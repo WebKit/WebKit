@@ -385,6 +385,7 @@ struct RenderPassDesc
     std::array<RenderPassColorAttachmentDesc, kMaxRenderTargets> colorAttachments;
     RenderPassDepthAttachmentDesc depthAttachment;
     RenderPassStencilAttachmentDesc stencilAttachment;
+    RasterizationRateMapRef rasterizationRateMap;
 
     void convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
                             uint32_t deviceMaxRenderTargets) const;

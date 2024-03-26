@@ -357,6 +357,15 @@ bool ValidateProvokingVertexANGLE(const PrivateState &state,
                                   angle::EntryPoint entryPoint,
                                   ProvokingVertexConvention provokeModePacked);
 
+// GL_ANGLE_rasterization_rate_map_metal
+bool ValidateFramebufferMTLRasterizationRateMapANGLE(const Context *context,
+                                                     angle::EntryPoint entryPoint,
+                                                     GLenum target,
+                                                     GLMTLRasterizationRateMapANGLE map);
+bool ValidateGetFramebufferMTLRasterizationRateMapANGLE(const Context *context,
+                                                        angle::EntryPoint entryPoint,
+                                                        GLenum target);
+
 // GL_ANGLE_renderability_validation
 
 // GL_ANGLE_request_extension

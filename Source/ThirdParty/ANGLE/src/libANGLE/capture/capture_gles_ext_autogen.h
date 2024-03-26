@@ -353,6 +353,18 @@ angle::CallCapture CaptureProvokingVertexANGLE(const State &glState,
                                                bool isCallValid,
                                                ProvokingVertexConvention provokeModePacked);
 
+// GL_ANGLE_rasterization_rate_map_metal
+angle::CallCapture CaptureFramebufferMTLRasterizationRateMapANGLE(
+    const State &glState,
+    bool isCallValid,
+    GLenum target,
+    GLMTLRasterizationRateMapANGLE map);
+angle::CallCapture CaptureGetFramebufferMTLRasterizationRateMapANGLE(
+    const State &glState,
+    bool isCallValid,
+    GLenum target,
+    GLMTLRasterizationRateMapANGLE returnValue);
+
 // GL_ANGLE_renderability_validation
 
 // GL_ANGLE_request_extension

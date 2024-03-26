@@ -9,6 +9,11 @@
         Includes data used to auto-generate ANGLE classes.
     </comment>
 
+    <!-- SECTION: GL type definitions. -->
+    <types>
+        <type>typedef void *<name>GLMTLRasterizationRateMapANGLE</name>;</type>
+    </types>
+
     <!-- SECTION: GL parameter class type definitions. -->
     <groups>
         <group name="CreateFlagMask">
@@ -958,7 +963,7 @@
             <param><ptype>GLuint</ptype> <name>handle</name></param>
         </command>
         <command>
-            <proto>void <name>glAcquireTexturesANGLE</name></proto>
+          <proto>void <name>glAcquireTexturesANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>numTextures</name></param>
             <param len="COMPSIZE(numTextures)">const <ptype>GLuint</ptype> *<name>textures</name></param>
             <param group="TextureLayout" len="COMPSIZE(numTextures)">const <ptype>GLenum</ptype> *<name>layouts</name></param>
@@ -1047,6 +1052,15 @@
             <proto>void <name>glLogicOpANGLE</name></proto>
             <param group="LogicOp"><ptype>GLenum</ptype> <name>opcode</name></param>
             <alias name="glLogicOp"/>
+        </command>
+        <command>
+            <proto>void <name>glFramebufferMTLRasterizationRateMapANGLE</name></proto>
+            <param><ptype>GLenum</ptype> <name>target</name></param>
+            <param><ptype>GLMTLRasterizationRateMapANGLE</ptype> <name>map</name></param>
+        </command>
+        <command>
+            <proto><ptype>GLMTLRasterizationRateMapANGLE</ptype> <name>glGetFramebufferMTLRasterizationRateMapANGLE</name></proto>
+            <param><ptype>GLenum</ptype> <name>target</name></param>
         </command>
     </commands>
 
@@ -1444,6 +1458,12 @@
         <extension name="GL_ANGLE_shader_binary" supported='gles2'>
             <require>
                 <enum name="GL_SHADER_BINARY_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="GL_ANGLE_rasterization_rate_map_metal" supported="gles2">
+            <require>
+                <command name="glFramebufferMTLRasterizationRateMapANGLE"/>
+                <command name="glGetFramebufferMTLRasterizationRateMapANGLE"/>
             </require>
         </extension>
     </extensions>

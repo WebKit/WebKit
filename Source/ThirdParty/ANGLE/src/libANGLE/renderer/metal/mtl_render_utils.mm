@@ -688,6 +688,8 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
         GetViewport(params.dstRect, params.dstTextureSize.height, params.dstFlipY);
     MTLScissorRect scissorRectMtl =
         GetScissorRect(params.dstScissorRect, params.dstTextureSize.height, params.dstFlipY);
+    // TODO(djg): Should the rasterization rate map affect blit operations?
+    // Would this require changes to the shader to apply transformation
     cmdEncoder->setViewport(viewportMtl);
     cmdEncoder->setScissorRect(scissorRectMtl);
 

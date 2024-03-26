@@ -1524,6 +1524,39 @@ CallCapture CaptureProvokingVertexANGLE(const State &glState,
     return CallCapture(angle::EntryPoint::GLProvokingVertexANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureFramebufferMTLRasterizationRateMapANGLE(const State &glState,
+                                                           bool isCallValid,
+                                                           GLenum target,
+                                                           GLMTLRasterizationRateMapANGLE map)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("target", GLESEnum::AllEnums, ParamType::TGLenum, target);
+    paramBuffer.addValueParam("map", ParamType::TGLMTLRasterizationRateMapANGLE, map);
+
+    return CallCapture(angle::EntryPoint::GLFramebufferMTLRasterizationRateMapANGLE,
+                       std::move(paramBuffer));
+}
+
+CallCapture CaptureGetFramebufferMTLRasterizationRateMapANGLE(
+    const State &glState,
+    bool isCallValid,
+    GLenum target,
+    GLMTLRasterizationRateMapANGLE returnValue)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("target", GLESEnum::AllEnums, ParamType::TGLenum, target);
+
+    ParamCapture returnValueCapture("returnValue", ParamType::TGLMTLRasterizationRateMapANGLE);
+    InitParamValue(ParamType::TGLMTLRasterizationRateMapANGLE, returnValue,
+                   &returnValueCapture.value);
+    paramBuffer.addReturnValue(std::move(returnValueCapture));
+
+    return CallCapture(angle::EntryPoint::GLGetFramebufferMTLRasterizationRateMapANGLE,
+                       std::move(paramBuffer));
+}
+
 CallCapture CaptureRequestExtensionANGLE(const State &glState, bool isCallValid, const GLchar *name)
 {
     ParamBuffer paramBuffer;

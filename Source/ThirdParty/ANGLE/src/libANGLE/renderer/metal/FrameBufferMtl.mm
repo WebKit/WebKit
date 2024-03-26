@@ -665,6 +665,10 @@ angle::Result FramebufferMtl::syncState(const gl::Context *context,
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_SAMPLES:
             case gl::Framebuffer::DIRTY_BIT_DEFAULT_FIXED_SAMPLE_LOCATIONS:
                 break;
+            case gl::Framebuffer::DIRTY_BIT_RASTERIZATION_RATE_MAP:
+                mRenderPassDesc.rasterizationRateMap = mtl::RasterizationRateMap::MakeFromMetal(
+                    (__bridge id<MTLRasterizationRateMap>)(mState.getRasterizationRateMap()));
+                break;
             default:
             {
                 static_assert(gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 == 0, "FB dirty bits");

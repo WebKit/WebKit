@@ -381,7 +381,8 @@ FramebufferState::FramebufferState(rx::UniqueSerial serial)
       mFlipY(GL_FALSE),
       mWebGLDepthStencilConsistent(true),
       mDefaultFramebufferReadAttachmentInitialized(false),
-      mSrgbWriteControlMode(SrgbWriteControlMode::Default)
+      mSrgbWriteControlMode(SrgbWriteControlMode::Default),
+      mRasterizationRateMap(nullptr)
 {
     ASSERT(mDrawBufferStates.size() > 0);
     mEnabledDrawBuffers.set(0);
@@ -404,7 +405,8 @@ FramebufferState::FramebufferState(const Caps &caps, FramebufferID id, rx::Uniqu
       mFlipY(GL_FALSE),
       mWebGLDepthStencilConsistent(true),
       mDefaultFramebufferReadAttachmentInitialized(false),
-      mSrgbWriteControlMode(SrgbWriteControlMode::Default)
+      mSrgbWriteControlMode(SrgbWriteControlMode::Default),
+      mRasterizationRateMap(nullptr)
 {
     ASSERT(mId != Framebuffer::kDefaultDrawFramebufferHandle);
     ASSERT(mDrawBufferStates.size() > 0);
@@ -2856,6 +2858,24 @@ PixelLocalStorage &Framebuffer::getPixelLocalStorage(const Context *context)
 std::unique_ptr<PixelLocalStorage> Framebuffer::detachPixelLocalStorage()
 {
     return std::move(mPixelLocalStorage);
+}
+
+GLMTLRasterizationRateMapANGLE Framebuffer::getRasterizationRateMap() const
+{
+    return mState.mRasterizationRateMap;
+}
+
+void Framebuffer::setRasterizationRateMap(GLMTLRasterizationRateMapANGLE map)
+{
+    if (mState.mRasterizationRateMap == map)
+    {
+        // Nothing to do, early out.
+        return;
+    }
+
+    mState.mRasterizationRateMap = map;
+    mDirtyBits.set(DIRTY_BIT_RASTERIZATION_RATE_MAP);
+    onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
 }
 
 angle::Result Framebuffer::syncAllDrawAttachmentState(const Context *context, Command command) const

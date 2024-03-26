@@ -232,6 +232,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_program_binary](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_program_binary.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_program_cache_control](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_program_cache_control.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_provoking_vertex](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_provoking_vertex.txt) |  |  |  |  |  |  |  |
+| [GL_ANGLE_rasterization_rate_map_metal](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_rasterization_rate_map_metal.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_read_only_depth_stencil_feedback_loops](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_read_only_depth_stencil_feedback_loops.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_relaxed_vertex_attribute_type](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_relaxed_vertex_attribute_type.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_renderability_validation](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_renderability_validation.txt) |  |  |  |  |  |  |  |

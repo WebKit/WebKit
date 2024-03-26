@@ -3125,6 +3125,19 @@ void GL_APIENTRY glProvokingVertexANGLE(GLenum provokeMode)
     return GL_ProvokingVertexANGLE(provokeMode);
 }
 
+// GL_ANGLE_rasterization_rate_map_metal
+void GL_APIENTRY glFramebufferMTLRasterizationRateMapANGLE(GLenum target,
+                                                           GLMTLRasterizationRateMapANGLE map)
+{
+    return GL_FramebufferMTLRasterizationRateMapANGLE(target, map);
+}
+
+GLMTLRasterizationRateMapANGLE GL_APIENTRY
+glGetFramebufferMTLRasterizationRateMapANGLE(GLenum target)
+{
+    return GL_GetFramebufferMTLRasterizationRateMapANGLE(target);
+}
+
 // GL_ANGLE_renderability_validation
 
 // GL_ANGLE_request_extension

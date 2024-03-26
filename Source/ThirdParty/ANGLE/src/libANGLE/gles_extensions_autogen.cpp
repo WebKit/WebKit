@@ -244,6 +244,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_ANGLE_program_binary"] = esOnlyExtension(&Extensions::programBinaryANGLE);
         map["GL_ANGLE_program_cache_control"] = esOnlyExtension(&Extensions::programCacheControlANGLE);
         map["GL_ANGLE_provoking_vertex"] = enableableExtension(&Extensions::provokingVertexANGLE);
+        map["GL_ANGLE_rasterization_rate_map_metal"] = enableableExtension(&Extensions::rasterizationRateMapMetalANGLE);
         map["GL_ANGLE_read_only_depth_stencil_feedback_loops"] = enableableExtension(&Extensions::readOnlyDepthStencilFeedbackLoopsANGLE);
         map["GL_ANGLE_relaxed_vertex_attribute_type"] = esOnlyExtension(&Extensions::relaxedVertexAttributeTypeANGLE);
         map["GL_ANGLE_renderability_validation"] = enableableExtension(&Extensions::renderabilityValidationANGLE);
