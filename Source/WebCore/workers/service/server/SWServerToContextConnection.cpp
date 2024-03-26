@@ -138,7 +138,7 @@ void SWServerToContextConnection::terminateWhenPossible()
 
     bool hasServiceWorkerWithPendingEvents = false;
     protectedServer()->forEachServiceWorker([&](auto& worker) {
-        if (worker.isRunning() && worker.registrableDomain() == m_registrableDomain && worker.hasPendingEvents()) {
+        if (worker.isRunning() && worker.topRegistrableDomain() == m_registrableDomain && worker.hasPendingEvents()) {
             hasServiceWorkerWithPendingEvents = true;
             return false;
         }

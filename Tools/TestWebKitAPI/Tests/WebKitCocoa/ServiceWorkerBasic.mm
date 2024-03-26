@@ -669,6 +669,164 @@ TEST(ServiceWorkers, RestoreFromDisk)
     done = false;
 }
 
+static constexpr auto scriptBytesWithFetchSupport = R"SWRESOURCE(
+
+self.addEventListener("message", (event) => {
+    if (event.data = 'do-fetch') {
+        fetch("foo.txt").then((response) => {
+            event.source.postMessage("Load succeeded");
+        }).catch((err) => {
+            event.source.postMessage("Load failed");
+        });
+    }
+});
+
+)SWRESOURCE"_s;
+
+static constexpr auto mainRegisteringAlreadyExistingWorkerRequestFetchBytes = R"SWRESOURCE(
+<script>
+let activeServiceWorker = null;
+try {
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+addEventListener("message", function(event) {
+    if (event.data === "do-fetch") {
+        if (activeServiceWorker)
+            activeServiceWorker.postMessage("do-fetch");
+        else
+            log("FAIL: activeServiceWorker is null");
+    } else
+        log("FAIL: unrecognized command: " + event.data);
+});
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    log("Message from worker: " + event.data);
+});
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    if (reg.installing) {
+        log("FAIL: Registration had an installing worker");
+        return;
+    }
+    if (reg.active) {
+        if (reg.active.state == "activated") {
+            log("PASS: Registration already has an active worker");
+            activeServiceWorker = reg.active;
+        } else
+            log("FAIL: Registration has an active worker but its state is not activated");
+    } else
+        log("FAIL: Registration does not have an active worker");
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+</script>
+)SWRESOURCE"_s;
+
+TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/index.html"_s, { "<script>onload = () => { webkit.messageHandlers.sw.postMessage('LOADED'); }</script>"_s } },
+        { "/thirdPartyIframeWithSW.html"_s, { mainRegisteringWorkerBytes } },
+        { "/thirdPartyIframeWithSW2.html"_s, { mainRegisteringAlreadyExistingWorkerRequestFetchBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytesWithFetchSupport } },
+        { "/foo.txt"_s, { "FOO"_s } }
+    });
+
+    // Normally, service workers get terminated several seconds after their clients are gone.
+    // Disable this delay for the purpose of testing.
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    // Start with a clean slate data store
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+
+    RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"LOADED"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadRequest:server.request("/index.html"_s)];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [messageHandler resetExpectedMessage:@"PASS: Registration was successful and service worker was activated"];
+
+    String thirdPartyIframeURL = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW.html"_s).URL).string();
+    String injectFrameScript = makeString("let frame = document.createElement('iframe'); frame.src = '", thirdPartyIframeURL, "'; document.body.append(frame);");
+    bool addedIframe = false;
+    [webView evaluateJavaScript:(NSString *)injectFrameScript completionHandler: [&] (id, NSError *error) {
+        EXPECT_TRUE(!error);
+        addedIframe = true;
+    }];
+
+    TestWebKitAPI::Util::run(&addedIframe);
+    TestWebKitAPI::Util::run(&done);
+
+    [webView _close];
+    webView = nullptr;
+    configuration = nullptr;
+    messageHandler = nullptr;
+    done = false;
+
+    // Let the service worker process exit.
+    TestWebKitAPI::Util::runFor(1_s);
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+
+    messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"LOADED"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadRequest:server.request("/index.html"_s)];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [messageHandler resetExpectedMessage:@"PASS: Registration already has an active worker"];
+
+    String thirdPartyIframeURL2 = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW2.html"_s).URL).string();
+    String injectFrameScript2 = makeString("let frame = document.createElement('iframe'); frame.src = '", thirdPartyIframeURL2, "'; document.body.append(frame);");
+    addedIframe = false;
+    [webView evaluateJavaScript:(NSString *)injectFrameScript2 completionHandler: [&] (id, NSError *error) {
+        EXPECT_TRUE(!error);
+        addedIframe = true;
+    }];
+
+    TestWebKitAPI::Util::run(&addedIframe);
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [messageHandler resetExpectedMessage:@"Message from worker: Load succeeded"];
+
+    bool requestedFetch = false;
+    [webView evaluateJavaScript:@"frames[0].postMessage('do-fetch', '*');" completionHandler: [&] (id, NSError *error) {
+        EXPECT_TRUE(!error);
+        requestedFetch = true;
+    }];
+    TestWebKitAPI::Util::run(&requestedFetch);
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
