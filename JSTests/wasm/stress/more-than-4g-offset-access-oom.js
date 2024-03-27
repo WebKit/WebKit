@@ -21,7 +21,7 @@ async function test() {
     // And then, accessing to redzone, and this causes fault. And signal handler throws an error correctly.
     print("ERROR THROWING");
     assert.throws(() => {
-        test(0xffffffff);
+        test(0x00);
     }, WebAssembly.RuntimeError, `Out of bounds memory access`);
     print("ERROR THROWING DONE");
 }
