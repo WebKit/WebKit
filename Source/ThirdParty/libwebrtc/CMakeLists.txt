@@ -2169,10 +2169,7 @@ else ()
             Source/webrtc/modules/audio_device/linux/audio_mixer_manager_pulse_linux.cc
             Source/webrtc/modules/audio_device/linux/pulseaudiosymboltable_linux.cc
         )
-        target_include_directories(webrtc PRIVATE ${LibPulse_INCLUDE_DIRS})
-        target_compile_options(webrtc PRIVATE ${LibPulse_COMPILE_OPTIONS})
     endif ()
-
 endif ()
 
 add_library(webrtc STATIC ${webrtc_SOURCES})
@@ -2303,6 +2300,10 @@ else ()
 endif ()
 
 target_include_directories(webrtc ${webrtc_INCLUDE_DIRECTORIES})
+if (LIBPULSE_FOUND)
+    target_include_directories(webrtc PRIVATE ${LibPulse_INCLUDE_DIRS})
+    target_compile_options(webrtc PRIVATE ${LibPulse_COMPILE_OPTIONS})
+endif ()
 
 # libsrtp package compilation
 set(libsrtp_SOURCES
