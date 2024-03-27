@@ -334,7 +334,7 @@ public:
     GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) final;
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
-    void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
+    void getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
     String getTranslatedShaderSourceANGLE(PlatformGLObject arg0) final;
     void drawBuffersEXT(std::span<const GCGLenum> bufs) final;
     PlatformGLObject createQueryEXT() final;
@@ -413,6 +413,7 @@ private:
     void waitUntilInitialized();
     void disconnectGpuProcessIfNeeded();
     void abandonGpuProcess();
+    uint32_t createObjectName();
 
     RefPtr<IPC::Connection> m_connection;
     bool m_didInitialize { false };
@@ -430,6 +431,7 @@ private:
 #endif
     GCGLenum m_externalImageTarget { 0 };
     GCGLenum m_externalImageBindingQuery { 0 };
+    uint32_t m_nextObjectName { 0 };
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

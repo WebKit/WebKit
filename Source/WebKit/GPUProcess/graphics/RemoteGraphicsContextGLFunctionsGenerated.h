@@ -33,31 +33,38 @@
     void attachShader(uint32_t program, uint32_t shader)
     {
         assertIsCurrent(workQueue());
+        program = m_objectNames.get(program);
+        shader = m_objectNames.get(shader);
         m_context->attachShader(program, shader);
     }
     void bindAttribLocation(uint32_t arg0, uint32_t index, String&& name)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.get(arg0);
         m_context->bindAttribLocation(arg0, index, name);
     }
     void bindBuffer(uint32_t target, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
+        arg1 = m_objectNames.get(arg1);
         m_context->bindBuffer(target, arg1);
     }
     void bindFramebuffer(uint32_t target, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
+        arg1 = m_objectNames.get(arg1);
         m_context->bindFramebuffer(target, arg1);
     }
     void bindRenderbuffer(uint32_t target, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
+        arg1 = m_objectNames.get(arg1);
         m_context->bindRenderbuffer(target, arg1);
     }
     void bindTexture(uint32_t target, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
+        arg1 = m_objectNames.get(arg1);
         m_context->bindTexture(target, arg1);
     }
     void blendColor(float red, float green, float blue, float alpha)
@@ -87,8 +94,8 @@
     }
     void checkFramebufferStatus(uint32_t target, CompletionHandler<void(uint32_t)>&& completionHandler)
     {
-        GCGLenum returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLenum returnValue = { };
         returnValue = m_context->checkFramebufferStatus(target);
         completionHandler(returnValue);
     }
@@ -120,6 +127,7 @@
     void compileShader(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.get(arg0);
         m_context->compileShader(arg0);
     }
     void copyTexImage2D(uint32_t target, int32_t level, uint32_t internalformat, int32_t x, int32_t y, int32_t width, int32_t height, int32_t border)
@@ -132,47 +140,41 @@
         assertIsCurrent(workQueue());
         m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
     }
-    void createBuffer(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createBuffer(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createBuffer();
-        completionHandler(returnValue);
+        auto result = m_context->createBuffer();
+        m_objectNames.add(name, result);
     }
-    void createFramebuffer(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createFramebuffer(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createFramebuffer();
-        completionHandler(returnValue);
+        auto result = m_context->createFramebuffer();
+        m_objectNames.add(name, result);
     }
-    void createProgram(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createProgram(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createProgram();
-        completionHandler(returnValue);
+        auto result = m_context->createProgram();
+        m_objectNames.add(name, result);
     }
-    void createRenderbuffer(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createRenderbuffer(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createRenderbuffer();
-        completionHandler(returnValue);
+        auto result = m_context->createRenderbuffer();
+        m_objectNames.add(name, result);
     }
-    void createShader(uint32_t arg0, CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createShader(uint32_t name, uint32_t arg0)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createShader(arg0);
-        completionHandler(returnValue);
+        auto result = m_context->createShader(arg0);
+        m_objectNames.add(name, result);
     }
-    void createTexture(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createTexture(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createTexture();
-        completionHandler(returnValue);
+        auto result = m_context->createTexture();
+        m_objectNames.add(name, result);
     }
     void cullFace(uint32_t mode)
     {
@@ -182,31 +184,37 @@
     void deleteBuffer(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.take(arg0);
         m_context->deleteBuffer(arg0);
     }
     void deleteFramebuffer(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.take(arg0);
         m_context->deleteFramebuffer(arg0);
     }
     void deleteProgram(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.take(arg0);
         m_context->deleteProgram(arg0);
     }
     void deleteRenderbuffer(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.take(arg0);
         m_context->deleteRenderbuffer(arg0);
     }
     void deleteShader(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.take(arg0);
         m_context->deleteShader(arg0);
     }
     void deleteTexture(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.take(arg0);
         m_context->deleteTexture(arg0);
     }
     void depthFunc(uint32_t func)
@@ -232,6 +240,8 @@
     void detachShader(uint32_t arg0, uint32_t arg1)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.get(arg0);
+        arg1 = m_objectNames.get(arg1);
         m_context->detachShader(arg0, arg1);
     }
     void disable(uint32_t cap)
@@ -277,11 +287,13 @@
     void framebufferRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
     {
         assertIsCurrent(workQueue());
+        arg3 = m_objectNames.get(arg3);
         m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, arg3);
     }
     void framebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level)
     {
         assertIsCurrent(workQueue());
+        arg3 = m_objectNames.get(arg3);
         m_context->framebufferTexture2D(target, attachment, textarget, arg3, level);
     }
     void frontFace(uint32_t mode)
@@ -296,186 +308,198 @@
     }
     void getActiveAttrib(uint32_t program, uint32_t index, CompletionHandler<void(bool, struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
     {
-        bool returnValue = { };
-        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         assertIsCurrent(workQueue());
+        bool returnValue = { };
+        program = m_objectNames.get(program);
+        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         returnValue = m_context->getActiveAttrib(program, index, arg2);
         completionHandler(returnValue, WTFMove(arg2));
     }
     void getActiveUniform(uint32_t program, uint32_t index, CompletionHandler<void(bool, struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
     {
-        bool returnValue = { };
-        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         assertIsCurrent(workQueue());
+        bool returnValue = { };
+        program = m_objectNames.get(program);
+        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         returnValue = m_context->getActiveUniform(program, index, arg2);
         completionHandler(returnValue, WTFMove(arg2));
     }
     void getAttribLocation(uint32_t arg0, String&& name, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getAttribLocation(arg0, name);
         completionHandler(returnValue);
     }
     void getBufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
         returnValue = m_context->getBufferParameteri(target, pname);
         completionHandler(returnValue);
     }
     void getString(uint32_t name, CompletionHandler<void(String&&)>&& completionHandler)
     {
-        String returnValue = { };
         assertIsCurrent(workQueue());
+        String returnValue = { };
         returnValue = m_context->getString(name);
         completionHandler(WTFMove(returnValue));
     }
     void getFloatv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
     {
-        Vector<GCGLfloat, 16> value(valueSize, 0);
         assertIsCurrent(workQueue());
+        Vector<GCGLfloat, 16> value(valueSize, 0);
         m_context->getFloatv(pname, value);
         completionHandler(std::span<const float>(reinterpret_cast<const float*>(value.data()), value.size()));
     }
     void getIntegerv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
-        Vector<GCGLint, 4> value(valueSize, 0);
         assertIsCurrent(workQueue());
+        Vector<GCGLint, 4> value(valueSize, 0);
         m_context->getIntegerv(pname, value);
         completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
     }
     void getIntegeri_v(uint32_t pname, uint32_t index, CompletionHandler<void(std::span<const int32_t, 4>)>&& completionHandler) // NOLINT
     {
-        std::array<GCGLint, 4> value { };
         assertIsCurrent(workQueue());
+        std::array<GCGLint, 4> value { };
         m_context->getIntegeri_v(pname, index, value);
         completionHandler(std::span<const int32_t, 4>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
     }
     void getInteger64(uint32_t pname, CompletionHandler<void(int64_t)>&& completionHandler)
     {
-        GCGLint64 returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint64 returnValue = { };
         returnValue = m_context->getInteger64(pname);
         completionHandler(static_cast<int64_t>(returnValue));
     }
     void getInteger64i(uint32_t pname, uint32_t index, CompletionHandler<void(int64_t)>&& completionHandler)
     {
-        GCGLint64 returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint64 returnValue = { };
         returnValue = m_context->getInteger64i(pname, index);
         completionHandler(static_cast<int64_t>(returnValue));
     }
     void getProgrami(uint32_t program, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
+        program = m_objectNames.get(program);
         returnValue = m_context->getProgrami(program, pname);
         completionHandler(returnValue);
     }
     void getBooleanv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const bool>)>&& completionHandler)
     {
-        Vector<GCGLboolean, 4> value(valueSize, 0);
         assertIsCurrent(workQueue());
+        Vector<GCGLboolean, 4> value(valueSize, 0);
         m_context->getBooleanv(pname, value);
         completionHandler(std::span<const bool>(reinterpret_cast<const bool*>(value.data()), value.size()));
     }
     void getFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
         returnValue = m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
         completionHandler(returnValue);
     }
     void getProgramInfoLog(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
-        String returnValue = { };
         assertIsCurrent(workQueue());
+        String returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getProgramInfoLog(arg0);
         completionHandler(WTFMove(returnValue));
     }
     void getRenderbufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
         returnValue = m_context->getRenderbufferParameteri(target, pname);
         completionHandler(returnValue);
     }
     void getShaderi(uint32_t arg0, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getShaderi(arg0, pname);
         completionHandler(returnValue);
     }
     void getShaderInfoLog(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
-        String returnValue = { };
         assertIsCurrent(workQueue());
+        String returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getShaderInfoLog(arg0);
         completionHandler(WTFMove(returnValue));
     }
     void getShaderPrecisionFormat(uint32_t shaderType, uint32_t precisionType, CompletionHandler<void(std::span<const int32_t, 2>, int32_t)>&& completionHandler)
     {
+        assertIsCurrent(workQueue());
         std::array<GCGLint, 2> range { };
         GCGLint precision = { };
-        assertIsCurrent(workQueue());
         m_context->getShaderPrecisionFormat(shaderType, precisionType, range, &precision);
         completionHandler(std::span<const int32_t, 2>(reinterpret_cast<const int32_t*>(range.data()), range.size()), precision);
     }
     void getShaderSource(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
-        String returnValue = { };
         assertIsCurrent(workQueue());
+        String returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getShaderSource(arg0);
         completionHandler(WTFMove(returnValue));
     }
     void getTexParameterf(uint32_t target, uint32_t pname, CompletionHandler<void(float)>&& completionHandler)
     {
-        GCGLfloat returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLfloat returnValue = { };
         returnValue = m_context->getTexParameterf(target, pname);
         completionHandler(returnValue);
     }
     void getTexParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
         returnValue = m_context->getTexParameteri(target, pname);
         completionHandler(returnValue);
     }
     void getUniformfv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
     {
-        Vector<GCGLfloat, 16> value(valueSize, 0);
         assertIsCurrent(workQueue());
+        program = m_objectNames.get(program);
+        Vector<GCGLfloat, 16> value(valueSize, 0);
         m_context->getUniformfv(program, location, value);
         completionHandler(std::span<const float>(reinterpret_cast<const float*>(value.data()), value.size()));
     }
     void getUniformiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
-        Vector<GCGLint, 4> value(valueSize, 0);
         assertIsCurrent(workQueue());
+        program = m_objectNames.get(program);
+        Vector<GCGLint, 4> value(valueSize, 0);
         m_context->getUniformiv(program, location, value);
         completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
     }
     void getUniformuiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
     {
-        Vector<GCGLuint, 4> value(valueSize, 0);
         assertIsCurrent(workQueue());
+        program = m_objectNames.get(program);
+        Vector<GCGLuint, 4> value(valueSize, 0);
         m_context->getUniformuiv(program, location, value);
         completionHandler(std::span<const uint32_t>(reinterpret_cast<const uint32_t*>(value.data()), value.size()));
     }
     void getUniformLocation(uint32_t arg0, String&& name, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getUniformLocation(arg0, name);
         completionHandler(returnValue);
     }
     void getVertexAttribOffset(uint32_t index, uint32_t pname, CompletionHandler<void(uint64_t)>&& completionHandler)
     {
-        GCGLsizeiptr returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLsizeiptr returnValue = { };
         returnValue = m_context->getVertexAttribOffset(index, pname);
         completionHandler(static_cast<uint64_t>(returnValue));
     }
@@ -486,50 +510,56 @@
     }
     void isBuffer(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isBuffer(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
     void isEnabled(uint32_t cap, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
         returnValue = m_context->isEnabled(cap);
         completionHandler(static_cast<bool>(returnValue));
     }
     void isFramebuffer(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isFramebuffer(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
     void isProgram(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isProgram(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
     void isRenderbuffer(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isRenderbuffer(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
     void isShader(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isShader(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
     void isTexture(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isTexture(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
@@ -541,6 +571,7 @@
     void linkProgram(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.get(arg0);
         m_context->linkProgram(arg0);
     }
     void pixelStorei(uint32_t pname, int32_t param)
@@ -571,6 +602,7 @@
     void shaderSource(uint32_t arg0, String&& arg1)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.get(arg0);
         m_context->shaderSource(arg0, arg1);
     }
     void stencilFunc(uint32_t func, int32_t ref, uint32_t mask)
@@ -711,11 +743,13 @@
     void useProgram(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.get(arg0);
         m_context->useProgram(arg0);
     }
     void validateProgram(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.get(arg0);
         m_context->validateProgram(arg0);
     }
     void vertexAttrib1f(uint32_t index, float x)
@@ -843,28 +877,30 @@
         assertIsCurrent(workQueue());
         m_context->vertexAttribDivisor(index, divisor);
     }
-    void createVertexArray(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createVertexArray(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createVertexArray();
-        completionHandler(returnValue);
+        auto result = m_context->createVertexArray();
+        m_objectNames.add(name, result);
     }
     void deleteVertexArray(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.take(arg0);
         m_context->deleteVertexArray(arg0);
     }
     void isVertexArray(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->isVertexArray(arg0);
         completionHandler(static_cast<bool>(returnValue));
     }
     void bindVertexArray(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
+        arg0 = m_objectNames.get(arg0);
         m_context->bindVertexArray(arg0);
     }
     void copyBufferSubData(uint32_t readTarget, uint32_t writeTarget, uint64_t readOffset, uint64_t writeOffset, uint64_t arg4)
@@ -874,8 +910,8 @@
     }
     void getBufferSubData(uint32_t target, uint64_t offset, size_t dataSize, CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
     {
-        Vector<uint8_t, 4> data(dataSize, 0);
         assertIsCurrent(workQueue());
+        Vector<uint8_t, 4> data(dataSize, 0);
         m_context->getBufferSubData(target, static_cast<GCGLintptr>(offset), data);
         completionHandler(std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
     }
@@ -887,6 +923,7 @@
     void framebufferTextureLayer(uint32_t target, uint32_t attachment, uint32_t texture, int32_t level, int32_t layer)
     {
         assertIsCurrent(workQueue());
+        texture = m_objectNames.get(texture);
         m_context->framebufferTextureLayer(target, attachment, texture, level, layer);
     }
     void invalidateFramebuffer(uint32_t target, std::span<const uint32_t>&& attachments)
@@ -966,8 +1003,9 @@
     }
     void getFragDataLocation(uint32_t program, String&& name, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
+        program = m_objectNames.get(program);
         returnValue = m_context->getFragDataLocation(program, name);
         completionHandler(returnValue);
     }
@@ -1096,28 +1134,30 @@
         assertIsCurrent(workQueue());
         m_context->clearBufferfi(buffer, drawbuffer, depth, stencil);
     }
-    void createQuery(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createQuery(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createQuery();
-        completionHandler(returnValue);
+        auto result = m_context->createQuery();
+        m_objectNames.add(name, result);
     }
     void deleteQuery(uint32_t query)
     {
         assertIsCurrent(workQueue());
+        query = m_objectNames.take(query);
         m_context->deleteQuery(query);
     }
     void isQuery(uint32_t query, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        query = m_objectNames.get(query);
         returnValue = m_context->isQuery(query);
         completionHandler(static_cast<bool>(returnValue));
     }
     void beginQuery(uint32_t target, uint32_t query)
     {
         assertIsCurrent(workQueue());
+        query = m_objectNames.get(query);
         m_context->beginQuery(target, query);
     }
     void endQuery(uint32_t target)
@@ -1127,77 +1167,84 @@
     }
     void getQuery(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
         returnValue = m_context->getQuery(target, pname);
         completionHandler(returnValue);
     }
     void getQueryObjectui(uint32_t query, uint32_t pname, CompletionHandler<void(uint32_t)>&& completionHandler)
     {
-        GCGLuint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLuint returnValue = { };
+        query = m_objectNames.get(query);
         returnValue = m_context->getQueryObjectui(query, pname);
         completionHandler(returnValue);
     }
-    void createSampler(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createSampler(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createSampler();
-        completionHandler(returnValue);
+        auto result = m_context->createSampler();
+        m_objectNames.add(name, result);
     }
     void deleteSampler(uint32_t sampler)
     {
         assertIsCurrent(workQueue());
+        sampler = m_objectNames.take(sampler);
         m_context->deleteSampler(sampler);
     }
     void isSampler(uint32_t sampler, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        sampler = m_objectNames.get(sampler);
         returnValue = m_context->isSampler(sampler);
         completionHandler(static_cast<bool>(returnValue));
     }
     void bindSampler(uint32_t unit, uint32_t sampler)
     {
         assertIsCurrent(workQueue());
+        sampler = m_objectNames.get(sampler);
         m_context->bindSampler(unit, sampler);
     }
     void samplerParameteri(uint32_t sampler, uint32_t pname, int32_t param)
     {
         assertIsCurrent(workQueue());
+        sampler = m_objectNames.get(sampler);
         m_context->samplerParameteri(sampler, pname, param);
     }
     void samplerParameterf(uint32_t sampler, uint32_t pname, float param)
     {
         assertIsCurrent(workQueue());
+        sampler = m_objectNames.get(sampler);
         m_context->samplerParameterf(sampler, pname, param);
     }
     void getSamplerParameterf(uint32_t sampler, uint32_t pname, CompletionHandler<void(float)>&& completionHandler)
     {
-        GCGLfloat returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLfloat returnValue = { };
+        sampler = m_objectNames.get(sampler);
         returnValue = m_context->getSamplerParameterf(sampler, pname);
         completionHandler(returnValue);
     }
     void getSamplerParameteri(uint32_t sampler, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
+        sampler = m_objectNames.get(sampler);
         returnValue = m_context->getSamplerParameteri(sampler, pname);
         completionHandler(returnValue);
     }
     void fenceSync(uint32_t condition, uint32_t flags, CompletionHandler<void(uint64_t)>&& completionHandler)
     {
-        GCGLsync returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLsync returnValue = { };
         returnValue = m_context->fenceSync(condition, flags);
         completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(returnValue)));
     }
     void isSync(uint64_t arg0, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
         returnValue = m_context->isSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)));
         completionHandler(static_cast<bool>(returnValue));
     }
@@ -1208,8 +1255,8 @@
     }
     void clientWaitSync(uint64_t arg0, uint32_t flags, uint64_t timeout, CompletionHandler<void(uint32_t)>&& completionHandler)
     {
-        GCGLenum returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLenum returnValue = { };
         returnValue = m_context->clientWaitSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), flags, static_cast<GCGLuint64>(timeout));
         completionHandler(returnValue);
     }
@@ -1220,33 +1267,35 @@
     }
     void getSynci(uint64_t arg0, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
         returnValue = m_context->getSynci(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), pname);
         completionHandler(returnValue);
     }
-    void createTransformFeedback(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createTransformFeedback(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createTransformFeedback();
-        completionHandler(returnValue);
+        auto result = m_context->createTransformFeedback();
+        m_objectNames.add(name, result);
     }
     void deleteTransformFeedback(uint32_t id)
     {
         assertIsCurrent(workQueue());
+        id = m_objectNames.take(id);
         m_context->deleteTransformFeedback(id);
     }
     void isTransformFeedback(uint32_t id, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        id = m_objectNames.get(id);
         returnValue = m_context->isTransformFeedback(id);
         completionHandler(static_cast<bool>(returnValue));
     }
     void bindTransformFeedback(uint32_t target, uint32_t id)
     {
         assertIsCurrent(workQueue());
+        id = m_objectNames.get(id);
         m_context->bindTransformFeedback(target, id);
     }
     void beginTransformFeedback(uint32_t primitiveMode)
@@ -1262,12 +1311,14 @@
     void transformFeedbackVaryings(uint32_t program, Vector<String>&& varyings, uint32_t bufferMode)
     {
         assertIsCurrent(workQueue());
+        program = m_objectNames.get(program);
         m_context->transformFeedbackVaryings(program, varyings, bufferMode);
     }
     void getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
     {
-        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         assertIsCurrent(workQueue());
+        program = m_objectNames.get(program);
+        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         m_context->getTransformFeedbackVarying(program, index, arg2);
         completionHandler(WTFMove(arg2));
     }
@@ -1284,57 +1335,66 @@
     void bindBufferBase(uint32_t target, uint32_t index, uint32_t buffer)
     {
         assertIsCurrent(workQueue());
+        buffer = m_objectNames.get(buffer);
         m_context->bindBufferBase(target, index, buffer);
     }
     void bindBufferRange(uint32_t target, uint32_t index, uint32_t buffer, uint64_t offset, uint64_t arg4)
     {
         assertIsCurrent(workQueue());
+        buffer = m_objectNames.get(buffer);
         m_context->bindBufferRange(target, index, buffer, static_cast<GCGLintptr>(offset), static_cast<GCGLsizeiptr>(arg4));
     }
     void getUniformIndices(uint32_t program, Vector<String>&& uniformNames, CompletionHandler<void(Vector<uint32_t>&&)>&& completionHandler)
     {
-        Vector<GCGLuint> returnValue = { };
         assertIsCurrent(workQueue());
+        Vector<GCGLuint> returnValue = { };
+        program = m_objectNames.get(program);
         returnValue = m_context->getUniformIndices(program, uniformNames);
         completionHandler(WTFMove(returnValue));
     }
     void getActiveUniforms(uint32_t program, Vector<uint32_t>&& uniformIndices, uint32_t pname, CompletionHandler<void(Vector<int32_t>&&)>&& completionHandler)
     {
-        Vector<GCGLint> returnValue = { };
         assertIsCurrent(workQueue());
+        Vector<GCGLint> returnValue = { };
+        program = m_objectNames.get(program);
         returnValue = m_context->getActiveUniforms(program, uniformIndices, pname);
         completionHandler(WTFMove(returnValue));
     }
     void getUniformBlockIndex(uint32_t program, String&& uniformBlockName, CompletionHandler<void(uint32_t)>&& completionHandler)
     {
-        GCGLuint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLuint returnValue = { };
+        program = m_objectNames.get(program);
         returnValue = m_context->getUniformBlockIndex(program, uniformBlockName);
         completionHandler(returnValue);
     }
     void getActiveUniformBlockName(uint32_t program, uint32_t uniformBlockIndex, CompletionHandler<void(String&&)>&& completionHandler)
     {
-        String returnValue = { };
         assertIsCurrent(workQueue());
+        String returnValue = { };
+        program = m_objectNames.get(program);
         returnValue = m_context->getActiveUniformBlockName(program, uniformBlockIndex);
         completionHandler(WTFMove(returnValue));
     }
     void uniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding)
     {
         assertIsCurrent(workQueue());
+        program = m_objectNames.get(program);
         m_context->uniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
     }
     void getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
-        Vector<GCGLint, 4> params(paramsSize, 0);
         assertIsCurrent(workQueue());
+        program = m_objectNames.get(program);
+        Vector<GCGLint, 4> params(paramsSize, 0);
         m_context->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
         completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(params.data()), params.size()));
     }
     void getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
-        String returnValue = { };
         assertIsCurrent(workQueue());
+        String returnValue = { };
+        arg0 = m_objectNames.get(arg0);
         returnValue = m_context->getTranslatedShaderSourceANGLE(arg0);
         completionHandler(WTFMove(returnValue));
     }
@@ -1343,28 +1403,30 @@
         assertIsCurrent(workQueue());
         m_context->drawBuffersEXT(bufs);
     }
-    void createQueryEXT(CompletionHandler<void(uint32_t)>&& completionHandler)
+    void createQueryEXT(uint32_t name)
     {
-        PlatformGLObject returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createQueryEXT();
-        completionHandler(returnValue);
+        auto result = m_context->createQueryEXT();
+        m_objectNames.add(name, result);
     }
     void deleteQueryEXT(uint32_t query)
     {
         assertIsCurrent(workQueue());
+        query = m_objectNames.take(query);
         m_context->deleteQueryEXT(query);
     }
     void isQueryEXT(uint32_t query, CompletionHandler<void(bool)>&& completionHandler)
     {
-        GCGLboolean returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLboolean returnValue = { };
+        query = m_objectNames.get(query);
         returnValue = m_context->isQueryEXT(query);
         completionHandler(static_cast<bool>(returnValue));
     }
     void beginQueryEXT(uint32_t target, uint32_t query)
     {
         assertIsCurrent(workQueue());
+        query = m_objectNames.get(query);
         m_context->beginQueryEXT(target, query);
     }
     void endQueryEXT(uint32_t target)
@@ -1375,33 +1437,36 @@
     void queryCounterEXT(uint32_t query, uint32_t target)
     {
         assertIsCurrent(workQueue());
+        query = m_objectNames.get(query);
         m_context->queryCounterEXT(query, target);
     }
     void getQueryiEXT(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
         returnValue = m_context->getQueryiEXT(target, pname);
         completionHandler(returnValue);
     }
     void getQueryObjectiEXT(uint32_t query, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint returnValue = { };
+        query = m_objectNames.get(query);
         returnValue = m_context->getQueryObjectiEXT(query, pname);
         completionHandler(returnValue);
     }
     void getQueryObjectui64EXT(uint32_t query, uint32_t pname, CompletionHandler<void(uint64_t)>&& completionHandler)
     {
-        GCGLuint64 returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLuint64 returnValue = { };
+        query = m_objectNames.get(query);
         returnValue = m_context->getQueryObjectui64EXT(query, pname);
         completionHandler(static_cast<uint64_t>(returnValue));
     }
     void getInteger64EXT(uint32_t pname, CompletionHandler<void(int64_t)>&& completionHandler)
     {
-        GCGLint64 returnValue = { };
         assertIsCurrent(workQueue());
+        GCGLint64 returnValue = { };
         returnValue = m_context->getInteger64EXT(pname);
         completionHandler(static_cast<int64_t>(returnValue));
     }
@@ -1482,8 +1547,8 @@
     }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
-        Vector<GCGLint, 4> params(paramsSize, 0);
         assertIsCurrent(workQueue());
+        Vector<GCGLint, 4> params(paramsSize, 0);
         m_context->getInternalformativ(target, internalformat, pname, params);
         completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(params.data()), params.size()));
     }
@@ -1494,8 +1559,8 @@
     }
     void drawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY&& arg0, CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
     {
-        RefPtr<WebCore::PixelBuffer> returnValue = { };
         assertIsCurrent(workQueue());
+        RefPtr<WebCore::PixelBuffer> returnValue = { };
         returnValue = m_context->drawingBufferToPixelBuffer(arg0);
         completionHandler(WTFMove(returnValue));
     }
@@ -1511,8 +1576,8 @@
     }
     void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
     {
-        bool returnValue = { };
         assertIsCurrent(workQueue());
+        bool returnValue = { };
         returnValue = m_context->enableRequiredWebXRExtensions();
         completionHandler(returnValue);
     }

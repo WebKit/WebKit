@@ -42,9 +42,7 @@ from typing import List, Dict, Iterable, Callable, Tuple, Set, Optional, Generat
 
 root_dir = (pathlib.Path(__file__).parent / ".." / "..").resolve()
 
-functions_input_fns = [
-    root_dir / "Source" / "WebKit" / "WebProcess" / "GPU" / "graphics" / "RemoteGraphicsContextGLProxy.h"
-]
+functions_input_fns = [root_dir / "Source" / "WebKit" / "WebProcess" / "GPU" / "graphics" / "RemoteGraphicsContextGLProxy.h"]
 types_input_fn = root_dir / "Source" / "WebKit" / "WebProcess" / "GPU" / "graphics" / "RemoteGraphicsContextGLProxy.h"
 
 
@@ -109,7 +107,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void SurfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer) -> (std::optional<WebKit::RemoteVideoFrameProxyProperties> properties) Synchronous
 #endif
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
-    void CopyTextureFromVideoFrame(struct WebKit::SharedVideoFrame frame, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous NotStreamEncodable
+    void CopyTextureFromVideoFrame(struct WebKit::SharedVideoFrame frame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous NotStreamEncodable
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
@@ -163,10 +161,11 @@ def write_file(fn, new_contents):
     with open(fn, "w") as f:
         f.write(new_contents)
 
+
 class cpp_type(object):
     type_name: str
 
-    def __init__(self, type_name : str):
+    def __init__(self, type_name: str):
         self.type_name = type_name
 
     def __str__(self):
@@ -211,49 +210,58 @@ class cpp_type(object):
     def is_const_reference(self) -> bool:
         return False
 
-    def get_value_type(self) -> 'cpp_type':
+    def get_value_type(self) -> "cpp_type":
         return self
 
-    def get_decay_type(self) -> 'cpp_type':
+    def get_decay_type(self) -> "cpp_type":
         if self.is_const():
             return get_cpp_type(self.type_name[6:])
         return self
 
-    def get_rvalue_type(self) -> 'cpp_type':
+    def get_rvalue_type(self) -> "cpp_type":
         return get_cpp_type(self.type_name + "&&")
 
-    def get_pointer_type(self) -> 'cpp_type':
+    def get_pointer_type(self) -> "cpp_type":
         return get_cpp_type(self.type_name + "*")
 
+
 class cpp_type_container(cpp_type):
-    def __init__(self, type_name : str, container_name : str, contained_type : cpp_type, arity : Optional[int] = None):
+    def __init__(self, type_name: str, container_name: str, contained_type: cpp_type, arity: Optional[int] = None):
         cpp_type.__init__(self, type_name)
         self.container_name = container_name
         self.contained_type = contained_type
         self.arity = arity
+
     def is_container(self) -> bool:
         return True
+
     def is_span(self) -> bool:
         return self.container_name == "std::span"
+
     def is_dynamic_span(self) -> bool:
         return (self.container_name == "std::span" and self.arity is None) or self.container_name == "GCGLSpanTuple"
+
     def get_container_name(self):
         return self.container_name
+
     def get_arity(self) -> Optional[int]:
         return self.arity
+
     def get_contained_type(self) -> cpp_type:
         return self.contained_type
+
     def is_output_buffer_type(self) -> bool:
         return self.contained_type.is_const()
 
-def create_cpp_type_container(type_name : str) -> Optional[cpp_type_container]:
+
+def create_cpp_type_container(type_name: str) -> Optional[cpp_type_container]:
     # The logic to determine container is to just assume all templates are containers.
     m = re.match(r"([\w:]+)<(.+)>$", type_name)
     if not m:
         return None
     container_name = m[1]
     # All templates are containers except these below.
-    if container_name in ['RefPtr', 'Ref', 'RetainPtr', 'std::optional']:
+    if container_name in ["RefPtr", "Ref", "RetainPtr", "std::optional"]:
         return None
     templates = m[2]
     arity = None
@@ -263,64 +271,74 @@ def create_cpp_type_container(type_name : str) -> Optional[cpp_type_container]:
         arity = int(m[2])
     return cpp_type_container(type_name, container_name, get_cpp_type(templates), arity)
 
+
 class cpp_type_function(cpp_type):
-    def __init__(self, type_name : str, return_value_type : cpp_type, argument_types : List[cpp_type]):
+    def __init__(self, type_name: str, return_value_type: cpp_type, argument_types: List[cpp_type]):
         cpp_type.__init__(self, type_name)
-        self.return_value_type  = return_value_type
+        self.return_value_type = return_value_type
         self.argument_types = argument_types
 
-def cpp_split_args_specs(args_spec : str) -> Iterator[str]:
-     # https://stackoverflow.com/questions/33527245/python-split-by-comma-skipping-the-content-inside-parentheses
+
+def cpp_split_args_specs(args_spec: str) -> Iterator[str]:
+    # https://stackoverflow.com/questions/33527245/python-split-by-comma-skipping-the-content-inside-parentheses
     comma = r",(?!(?:[^<]*\<[^>]*\>)*[^<>]*\>)"
     return filter(None, [a.strip() for a in re.split(comma, args_spec.strip())])
 
-def create_cpp_type_function(type_name : str) -> Optional[cpp_type_function]:
-    m = re.match(r'(.*)\((.*)\)', type_name)
+
+def create_cpp_type_function(type_name: str) -> Optional[cpp_type_function]:
+    m = re.match(r"(.*)\((.*)\)", type_name)
     if not m:
         return None
     return_value_type = get_cpp_type(m[1])
     args_types = [get_cpp_type(a) for a in cpp_split_args_specs(m[2])]
     return cpp_type_function(type_name, return_value_type, args_types)
 
+
 # Pointer or refererence
 class cpp_type_indirect(cpp_type):
-    category : str
-    value_type : cpp_type
+    category: str
+    value_type: cpp_type
 
-    def __init__(self, type_name : str, category : str, value_type : cpp_type):
+    def __init__(self, type_name: str, category: str, value_type: cpp_type):
         cpp_type.__init__(self, type_name)
         self.category = category
         self.value_type = value_type
 
     def is_const_pointer(self):
-        return self.category == '*' and self.is_const()
+        return self.category == "*" and self.is_const()
+
     def is_pointer(self):
-        return self.category == '*' and not self.is_const()
+        return self.category == "*" and not self.is_const()
+
     def is_const_reference(self):
-        return self.category == '&' and self.is_const()
+        return self.category == "&" and self.is_const()
+
     def is_reference(self):
-        return self.category == '&' and not self.is_const()
+        return self.category == "&" and not self.is_const()
+
     def is_rvalue_reference(self):
-        return self.category == '&&'
+        return self.category == "&&"
+
     def get_value_type(self):
         return self.value_type
 
-def create_cpp_type_indirect(type_name : str) -> Optional[cpp_type_indirect]:
+
+def create_cpp_type_indirect(type_name: str) -> Optional[cpp_type_indirect]:
     m = re.match(r"const (.+)&&$", type_name)
     if not m:
         m = re.match(r"(.+)&&$", type_name)
     if m:
-        return cpp_type_indirect(type_name, '&&', get_cpp_type(m[1]))
+        return cpp_type_indirect(type_name, "&&", get_cpp_type(m[1]))
     m = re.match(r"const (.+)&$", type_name)
     if not m:
         m = re.match(r"(.+)&$", type_name)
     if m:
-        return cpp_type_indirect(type_name, '&', get_cpp_type(m[1]))
+        return cpp_type_indirect(type_name, "&", get_cpp_type(m[1]))
     m = re.match(r"const (.+)\*$", type_name)
     if not m:
         m = re.match(r"(.+)\*$", type_name)
     if m:
-        return cpp_type_indirect(type_name, '*', get_cpp_type(m[1]))
+        return cpp_type_indirect(type_name, "*", get_cpp_type(m[1]))
     return None
 
 
@@ -339,15 +357,19 @@ class cpp_expr(object):
 CppExprConverter = Callable[[cpp_expr, cpp_type], cpp_expr]
 
 
-def cpp_reinterpret_cast_from_pointer_through(cast_through_type : cpp_type) -> Callable[[cpp_expr, cpp_type], cpp_expr]:
+def cpp_reinterpret_cast_from_pointer_through(cast_through_type: cpp_type) -> Callable[[cpp_expr, cpp_type], cpp_expr]:
     def cpp_reinterpret_cast_from_pointer(expr: cpp_expr, type: cpp_type) -> cpp_expr:
         return cpp_expr(type, f"static_cast<{type.type_name}>(reinterpret_cast<{str(cast_through_type)}>({str(expr)}))")
+
     return cpp_reinterpret_cast_from_pointer
 
-def cpp_reinterpret_cast_to_pointer_through(cast_through_type : cpp_type) -> Callable[[cpp_expr, cpp_type], cpp_expr]:
+
+def cpp_reinterpret_cast_to_pointer_through(cast_through_type: cpp_type) -> Callable[[cpp_expr, cpp_type], cpp_expr]:
     def cpp_reinterpret_cast_to_pointer(expr: cpp_expr, type: cpp_type) -> cpp_expr:
         return cpp_expr(type, f"reinterpret_cast<{type.type_name}>(static_cast<{str(cast_through_type)}>({str(expr)}))")
+
     return cpp_reinterpret_cast_to_pointer
+
 
 def cpp_static_cast(expr: cpp_expr, type: cpp_type) -> cpp_expr:
     return cpp_expr(type, f"static_cast<{type.type_name}>({str(expr)})")
@@ -368,11 +390,8 @@ def cpp_move_expr(expr: cpp_expr) -> cpp_expr:
 
 cpp_types: Dict[str, cpp_type] = {}
 
-cpp_type_constructors : List[Callable[[str], Optional[cpp_type]]] = [
-    create_cpp_type_function,
-    create_cpp_type_container,
-    create_cpp_type_indirect
-]
+cpp_type_constructors: List[Callable[[str], Optional[cpp_type]]] = [create_cpp_type_function, create_cpp_type_container, create_cpp_type_indirect]
+
 
 def get_cpp_type(type_name: str):
     r = cpp_types.get(type_name, None)
@@ -453,7 +472,7 @@ class cpp_func(object):
         in_args = []
         out_args = []
         for a in self.args.args:
-            #fmt: off
+            # fmt: off
             if a.type.is_pointer() or \
                 a.type.is_reference():
                 out_args += [a]
@@ -461,7 +480,7 @@ class cpp_func(object):
                 out_args += [a]
             else:
                 in_args += [a]
-            #fmt: on
+            # fmt: on
         return in_args, out_args
 
     def is_implemented_type(self, type: cpp_type):
@@ -470,9 +489,9 @@ class cpp_func(object):
         return True
 
     def is_implemented(self):
-        #" in a.type.type_name for a in self.args.args):
+        # " in a.type.type_name for a in self.args.args):
         #    return False
-        #if "GCGLsync" in self.return_type.type_name:
+        # if "GCGLsync" in self.return_type.type_name:
         #    return False
         if any(a.name == "bufSize" for a in self.args.args):
             return False
@@ -493,7 +512,7 @@ webkit_ipc_types_converters: Dict[Tuple[cpp_type, cpp_type], CppExprConverter] =
 
 
 def webkit_ipc_convert_expr(expr: cpp_expr, type: cpp_type) -> cpp_expr:
-    """ Converts `expr` of type of `self` to `type` """
+    """Converts `expr` of type of `self` to `type`"""
     convert = webkit_ipc_types_converters.get((expr.type, type), None)
     if not convert:
         if expr.type == type:
@@ -502,20 +521,19 @@ def webkit_ipc_convert_expr(expr: cpp_expr, type: cpp_type) -> cpp_expr:
     return convert(expr, type)
 
 
-def webkit_ipc_get_span_transfer_type(type : cpp_type_container) -> cpp_type:
+def webkit_ipc_get_span_transfer_type(type: cpp_type_container) -> cpp_type:
     element_type = type.get_contained_type().get_decay_type()
     arity = type.get_arity()
-    webkit_ipc_element_type = webkit_ipc_types[element_type] if not element_type.is_void() else get_cpp_type('uint8_t')
+    webkit_ipc_element_type = webkit_ipc_types[element_type] if not element_type.is_void() else get_cpp_type("uint8_t")
     if arity is not None:
         return get_cpp_type(f"std::span<const {str(webkit_ipc_element_type)}, {arity}>")
     return get_cpp_type(f"std::span<const {str(webkit_ipc_element_type)}>")
 
 
-
 def webkit_ipc_get_span_store_type(type: cpp_type_container) -> cpp_type:
     element_type = type.get_contained_type().get_decay_type()
     if element_type.is_void():
-        element_type = get_cpp_type('GCGLchar')
+        element_type = get_cpp_type("GCGLchar")
     if type.is_dynamic_span():
         inline_capacity = 16 if "float" in element_type.type_name else 4
         return get_cpp_type(f"Vector<{str(element_type)}, {str(inline_capacity)}>")
@@ -544,6 +562,30 @@ def webkit_ipc_msg_name(func: cpp_func):
     return func.name[0].capitalize() + func.name[1:] + func.overload_suffix
 
 
+def to_variable_name(name: str) -> str:
+    return name[0].lower() + name[1:]
+
+
+def to_member_variable_name(name: str) -> str:
+    return f"m_{to_variable_name(name)}"
+
+
+def is_create_func(func: cpp_func) -> bool:
+    return func.name.startswith("create")
+
+
+def get_create_func_object_name(name: str) -> str:
+    return name[len("create") :]
+
+
+def is_delete_func(func: cpp_func) -> bool:
+    return func.name.startswith("delete")
+
+
+def get_delete_func_object_name(name: str) -> str:
+    return name[len("delete") :]
+
+
 class webkit_ipc_msg(object):
     name: str
     in_args: cpp_arg_list
@@ -554,7 +596,10 @@ class webkit_ipc_msg(object):
         in_args, out_args = func.get_args_categories()
         ipc_in_args = [cpp_arg(webkit_ipc_types[a.type], a.name) for a in in_args]
         ipc_out_args = []
-        if not func.return_type.is_void():
+        if is_create_func(func):
+            name = get_create_func_object_name(func.name)
+            ipc_in_args.insert(0, cpp_arg(webkit_ipc_types[func.return_type], to_variable_name(name)))
+        elif not func.return_type.is_void():
             ipc_out_args += [cpp_arg(webkit_ipc_types[func.return_type], "returnValue")]
         for a in out_args:
             ipc_out_args += [cpp_arg(webkit_ipc_types[a.type], a.name)]
@@ -571,6 +616,7 @@ class webkit_ipc_msg(object):
 
 class webkit_ipc_cpp_proxy_impl(object):
     name: str
+    is_create: bool
     msg_name: str
     return_type: cpp_type
     args: cpp_arg_list
@@ -584,6 +630,7 @@ class webkit_ipc_cpp_proxy_impl(object):
 
     def __init__(self, cpp_func: cpp_func):
         self.name = cpp_func.name
+        self.is_create = is_create_func(cpp_func)
         self.msg_name = webkit_ipc_msg_name(cpp_func)
         self.return_type = cpp_func.return_type
         self.args = cpp_func.args
@@ -602,12 +649,15 @@ class webkit_ipc_cpp_proxy_impl(object):
     def process_call(self):
         in_exprs = ", ".join([str(i) for i in self.in_exprs])
         out_exprs = ", ".join(str(o) for o in self.out_exprs)
-        is_async = self.return_type.is_void() and len(out_exprs) == 0
-        self.call_stmts += [ "if (isContextLost())" ]
+        is_async = (self.return_type.is_void() or self.is_create) and len(out_exprs) == 0
+        self.call_stmts += ["if (isContextLost())"]
         if self.return_type.is_void():
-            self.call_stmts += [ "    return;" ]
+            self.call_stmts += ["    return;"]
         else:
-            self.call_stmts += [ "    return { };"]
+            self.call_stmts += ["    return { };"]
+        if self.is_create:
+            
+            self.call_stmts += [f"auto name = createObjectName();"]
         if is_async:
             self.call_stmts += [
                 f"auto sendResult = send(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));",
@@ -631,8 +681,9 @@ class webkit_ipc_cpp_proxy_impl(object):
                 "}",
             ]
 
-
     def process_in_args(self, in_args: List[cpp_arg]):
+        if self.is_create:
+            self.in_exprs += [webkit_ipc_convert_expr(cpp_expr(self.return_type, "name"), webkit_ipc_types[self.return_type])]
         for i in in_args:
             if i.type.is_const_pointer():
                 assert False
@@ -648,10 +699,10 @@ class webkit_ipc_cpp_proxy_impl(object):
                 e = cpp_expr(v.type, v.name)
                 self.out_exprs += [e]
                 self.post_call_stmts += [
-                    #fmt: off
+                    # fmt: off
                     f"if ({o.name})",
                     f"    *{o.name} = {webkit_ipc_convert_expr(e, value_type)};"
-                    #fmt: on
+                    # fmt: on
                 ]
             elif o.type.is_reference():
                 value_type = o.type.get_value_type()
@@ -663,7 +714,7 @@ class webkit_ipc_cpp_proxy_impl(object):
                 ]
             elif o.type.is_span():
                 webkit_ipc_type = webkit_ipc_types[o.type]
-                assert(isinstance(webkit_ipc_type, cpp_type_container))
+                assert isinstance(webkit_ipc_type, cpp_type_container)
                 v = cpp_arg(webkit_ipc_type, o.name + "Reply")
                 self.out_exprs += [cpp_expr(v.type, v.name)]
                 if o.type.is_dynamic_span():
@@ -677,11 +728,14 @@ class webkit_ipc_cpp_proxy_impl(object):
         if self.out_exprs:
             out_exprs = ", ".join(str(o) for o in self.out_exprs)
             self.post_call_stmts = [
-                    f"auto& [{out_exprs}] = sendResult.reply();",
-                ] + self.post_call_stmts
+                f"auto& [{out_exprs}] = sendResult.reply();",
+            ] + self.post_call_stmts
 
     def process_return_value(self, return_type: cpp_type):
         if return_type.is_void():
+            return
+        if self.is_create:
+            self.return_stmts = [f"return name;"]
             return
         self.return_type = return_type
         ipc_return_type = webkit_ipc_types[return_type]
@@ -749,6 +803,8 @@ class webkit_ipc_cpp_impl(object):
 
     def __init__(self, cpp_func: cpp_func):
         self.name = cpp_func.name
+        self.is_create = is_create_func(cpp_func)
+        self.is_delete = is_delete_func(cpp_func)
         self.overload_suffix = cpp_func.overload_suffix
         self.args = cpp_arg_list([])
         self.pre_call_stmts = []
@@ -758,14 +814,13 @@ class webkit_ipc_cpp_impl(object):
         self.out_exprs = []
         self.return_value_expr = None
 
+        self.pre_call_stmts += ["assertIsCurrent(workQueue());"]
         self.process_return_value(cpp_func.return_type)
         in_args, out_args = cpp_func.get_args_categories()
         self.process_args(cpp_func.args.args, set(in_args), set(out_args))
         self.process_call()
 
     def process_call(self):
-        self.call_stmts += [ "assertIsCurrent(workQueue());" ]
-
         in_exprs = ", ".join(str(e) for e in self.in_exprs)
         is_async = len(self.out_exprs) == 0
 
@@ -793,6 +848,13 @@ class webkit_ipc_cpp_impl(object):
     def process_in_arg(self, a: cpp_arg):
         self.args.args += [cpp_arg(webkit_ipc_get_message_forwarder_type(webkit_ipc_types[a.type]), a.name)]
         self.in_exprs += [webkit_ipc_convert_expr(cpp_expr(webkit_ipc_types[a.type], a.name), a.type)]
+        if a.type.type_name == "PlatformGLObject":
+            if self.is_create:
+                self.pre_call_stmts += [f"if (UNLIKELY(!{a.name})) {{", f"    ASSERT_IS_TESTING_IPC();", f"    return;", f"}}"]
+            if self.is_delete:
+                self.pre_call_stmts += [f"{a.name} = m_objectNames.take({a.name});"]
+            else:
+                self.pre_call_stmts += [f"{a.name} = m_objectNames.get({a.name});"]
 
     def process_out_arg(self, a: cpp_arg):
         if a.type.is_pointer():
@@ -803,7 +865,7 @@ class webkit_ipc_cpp_impl(object):
             webkit_ipc_value_type = webkit_ipc_types[e.type]
             self.out_exprs += [webkit_ipc_convert_expr(e, webkit_ipc_value_type)]
         elif a.type.is_dynamic_span():
-            assert(isinstance(a.type, cpp_type_container))
+            assert isinstance(a.type, cpp_type_container)
             size_arg = cpp_arg(get_cpp_type("size_t"), f"{a.name}Size")
             self.args.args += [size_arg]
             store_arg = cpp_arg(webkit_ipc_get_span_store_type(a.type), a.name)
@@ -812,7 +874,7 @@ class webkit_ipc_cpp_impl(object):
             webkit_ipc_type = webkit_ipc_types[a.type]
             self.out_exprs += [webkit_ipc_convert_expr(cpp_expr(store_arg.type, store_arg.name), webkit_ipc_type)]
         elif a.type.is_span():
-            assert(isinstance(a.type, cpp_type_container))
+            assert isinstance(a.type, cpp_type_container)
             store_arg = cpp_arg(webkit_ipc_get_span_store_type(a.type), a.name)
             self.pre_call_stmts += [f"{str(store_arg.type)} {str(store_arg.name)} {{ }};"]
             self.in_exprs += [cpp_expr(store_arg.type, store_arg.name)]
@@ -828,6 +890,13 @@ class webkit_ipc_cpp_impl(object):
             self.out_exprs += [webkit_ipc_move_expr(webkit_ipc_convert_expr(e, webkit_ipc_type))]
 
     def process_return_value(self, return_type: cpp_type):
+        if self.is_create:
+            ipc_return_type = webkit_ipc_types[return_type]
+            self.args.args += [cpp_arg(webkit_ipc_get_message_forwarder_type(ipc_return_type), "name")]
+            return_value_expr = cpp_expr(return_type, f"auto result")
+            self.return_value_expr = return_value_expr
+            self.post_call_stmts += [f"m_objectNames.add(name, result);"]
+            return
         if return_type.is_void():
             return
         ipc_return_type = webkit_ipc_types[return_type]
@@ -849,9 +918,10 @@ class webkit_ipc_cpp_impl(object):
             return "WebCore::GraphicsContextGL::" + str(type)
         return str(type)
 
-def webkit_ipc_resolve_overload_suffix(funcs : Iterable[cpp_func]):
+
+def webkit_ipc_resolve_overload_suffix(funcs: Iterable[cpp_func]):
     counts = collections.Counter(f.name for f in funcs)
-    suffixes : Counter[str] = collections.Counter()
+    suffixes: Counter[str] = collections.Counter()
     for f in funcs:
         if counts[f.name] > 1:
             f.overload_suffix = str(suffixes[f.name])
@@ -910,11 +980,12 @@ def create_cpp_func(name: str, return_spec: str, args_specs: List[str]):
     return cpp_func(name=name, return_type=get_cpp_type(return_spec), args=create_cpp_arg_list(args_specs))
 
 
-def read_lines_until(lines : Iterable[str], match : str) -> Generator[str, None, None]:
+def read_lines_until(lines: Iterable[str], match: str) -> Generator[str, None, None]:
     for line in lines:
         if re.match(match, line.strip()):
             break
         yield line
+
 
 def main():
     parser = argparse.ArgumentParser("usage: %prog [options]")
@@ -945,9 +1016,13 @@ def main():
                     else:
                         unimplemented.append(func)
 
-
     webkit_ipc_resolve_overload_suffix(funcs)
     # Initialize WebKit IPC generation. Construct type mappings for the used C++ types -> IPC types.
+    # Populate types that are needed but not present in the interfaces.
+    for needed in ["unsigned"]:
+        cpp_type = get_cpp_type(needed)
+        webkit_ipc_types[cpp_type] = cpp_type
+
     # TODO: namespacing issues.
     ai_type = get_cpp_type("ActiveInfo&")
     ai_transfer_type = get_cpp_type("WebCore::GraphicsContextGL::ActiveInfo")
@@ -1000,7 +1075,7 @@ def main():
     # TODO: this is not driven by the typing.
     all_types = set()
     for func in funcs:
-       all_types.update(func.args.types() + [func.return_type])
+        all_types.update(func.args.types() + [func.return_type])
     # Sort by len so that template args come before templates.
     for cpp_type in sorted(all_types, key=lambda x: len(x.type_name)):
         if cpp_type in webkit_ipc_types:
@@ -1025,12 +1100,11 @@ def main():
                     # in the IPC definition. There is no sensible way to do this at the moment. We do not convert, rather
                     # expect that all the invocations are taken care of the fact that GCGLint is the same type as int32_t.
                     # This will not hold for all types such as GCGLboolean.
-                    #webkit_ipc_types_converters[(cpp_type, transfer_type)] = cpp_array_reinterpret_cast_conversion
+                    # webkit_ipc_types_converters[(cpp_type, transfer_type)] = cpp_array_reinterpret_cast_conversion
             else:
                 webkit_ipc_types[cpp_type] = value_type
         else:
             webkit_ipc_types[cpp_type] = cpp_type.get_value_type()
-
     # The input to the generators is list of functions to remote.
     # Run the various generators.
     generators = [

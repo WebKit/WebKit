@@ -510,6 +510,11 @@ void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
     ASSERT(isContextLost());
 }
 
+uint32_t RemoteGraphicsContextGLProxy::createObjectName()
+{
+    return ++m_nextObjectName;
+}
+
 } // namespace WebKit
 
 #endif
