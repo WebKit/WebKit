@@ -182,11 +182,7 @@ static void* progressObservingContext = &progressObservingContext;
     }
 
     if (m_progressSubscriber) {
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
-        [NSProgress _removeSubscriber:m_progressSubscriber.get()];
-#else
         [NSProgress removeSubscriber:m_progressSubscriber.get()];
-#endif
         m_progressSubscriber = nullptr;
     }
 
@@ -225,11 +221,7 @@ static void* progressObservingContext = &progressObservingContext;
             return static_cast<NSProgressUnpublishingHandler>(nil);
         });
 
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
-        m_progressSubscriber = [NSProgress _addSubscriberForFileURL:m_progressURL.get() withPublishingHandler:publishingHandler.get()];
-#else
         m_progressSubscriber = [NSProgress addSubscriberForFileURL:m_progressURL.get() withPublishingHandler:publishingHandler.get()];
-#endif
     }
     TestWebKitAPI::Util::run(&m_hasProgress);
 }

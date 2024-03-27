@@ -78,11 +78,7 @@ void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const 
 void Download::platformDestroyDownload()
 {
     if (m_progress)
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
-        [m_progress _unpublish];
-#else
         [m_progress unpublish];
-#endif
 }
 
 void Download::publishProgress(const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
@@ -97,11 +93,7 @@ void Download::publishProgress(const URL& url, SandboxExtension::Handle&& sandbo
         return;
 
     m_progress = adoptNS([[WKDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url sandboxExtension:sandboxExtension]);
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
-    [m_progress _publish];
-#else
     [m_progress publish];
-#endif
 }
 
 }

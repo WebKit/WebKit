@@ -77,35 +77,19 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
     return self;
 }
 
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
-- (void)_publish
-#else
 - (void)publish
-#endif
 {
     BOOL consumedExtension = m_sandboxExtension->consume();
     ASSERT_UNUSED(consumedExtension, consumedExtension);
 
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
-    [super _publish];
-#else
     [super publish];
-#endif
 }
 
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
-- (void)_unpublish
-#else
 - (void)unpublish
-#endif
 {
     [self _updateProgressExtendedAttributeOnProgressFile];
 
-#if HAVE(NSPROGRESS_PUBLISHING_SPI)
-    [super _unpublish];
-#else
     [super unpublish];
-#endif
 
     m_sandboxExtension->revoke();
     m_sandboxExtension = nullptr;
