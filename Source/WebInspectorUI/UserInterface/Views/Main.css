@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -504,7 +505,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     height: var(--reference-page-link-size);
     font-size: 14px;
     line-height: 18px;
-    color: var(--text-color);
+    color: var(--question-mark-color);
     text-decoration: none;
     background-color: var(--button-background-color);
     border: var(--stroke-width) solid var(--border-color);
@@ -536,18 +537,16 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     .reference-page-link:active {
         background-color: hsl(0, 0%, 50%);
     }
-}
 
-@keyframes tab-bar-console-item-pulse {
-    50% { opacity: 0.6; }
-}
+    @keyframes tab-bar-console-item-pulse {
+        50% { opacity: 0.6; }
+    }
 
-.tab-bar > .navigation-bar :is(.console-warnings, .console-errors):not(.disabled).pulsing {
-    animation-name: tab-bar-console-item-pulse;
-    animation-duration: 0.75s;
-}
+    .tab-bar > .navigation-bar :is(.console-warnings, .console-errors):not(.disabled).pulsing {
+        animation-name: tab-bar-console-item-pulse;
+        animation-duration: 0.75s;
+    }
 
-@media (prefers-color-scheme: dark) {
     #undocked-title-area {
         box-shadow: none;
     }
@@ -587,5 +586,25 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
 
     :is(img, canvas).show-grid {
         --checkerboard-dark-square: hsl(0, 0%, 5%);
+    }
+
+    @media (prefers-contrast: more) {
+        .search-settings > .glyph {
+            --glyph-color: white;
+            color: var(--glyph-color);
+        }
+
+        .search-settings:active > .glyph {
+            color: var(--glyph-color);
+        }
+
+        .search-settings:active.active > .glyph {
+            color: var(--glyph-color);
+        }
+
+        body {
+            color: white;
+            background-size: contain;
+        }
     }
 }

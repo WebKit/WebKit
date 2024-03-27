@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -251,6 +252,16 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:not(.large):fo
 
 @media (prefers-color-scheme: dark) {
     .tree-outline .item .subtitle {
-        color: var(--text-color-secondary);
+        color: hsl(0, 0%, 90%);
+    }
+
+    @media (prefers-contrast: more) {
+        .tree-outline .item .highlighted {
+            background-color: hsl(53, 83%, 30%);
+        }
+
+        .tree-outline .item.selected {
+            background-color: hsl(53, 83%, 35%);
+        }
     }
 }

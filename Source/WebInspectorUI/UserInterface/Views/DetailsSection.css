@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -312,5 +313,21 @@ body[dir=rtl] .details-section > .header::before {
     .details-section > .header > label,
     .details-section > .content > .group > .row.simple > .label {
         color: var(--text-color-secondary);
+    }
+
+    @media (prefers-contrast: more) {
+        .details-section > .header {
+            --details-section-header-color: white;
+            color: var(--details-section-header-color);
+        }
+
+        .details-section > .content > .group > .row:is(.empty, .text) {
+            color: var(--details-section-header-color);
+        }
+
+        .details-section > .header > label,
+        .details-section > .content > .group > .row.simple > .label {
+            color: var(--details-section-header-color);
+        }
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -415,5 +416,38 @@ body.window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disable
 
     body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
         --tab-item-background: hsl(0, 0%, 19%);
+    }
+
+    @media (prefers-contrast: more) {
+        .tab-bar > .tabs > .item:not(.disabled).selected > .name {
+            color: hsl(0, 0%, var(--foreground-lightness));
+        }
+
+        .tab-bar > .tabs > .item:not(.selected):hover > .name {
+            color: hsl(0, 0%, var(--foreground-lightness));
+        }
+
+        .tab-bar > .tabs > .item > .name {
+            color: hsla(0, 0%, var(--foreground-lightness));
+        }
+
+        @media (prefers-contrast: more) {
+            .tab-bar > .tabs > .item > .icon {
+                color: hsl(0, 0%, 90%);
+            }
+
+            .tab-bar > .tabs > .item:not(.disabled).selected > .name {
+                color: hsl(0, 0%, 100%);
+            }
+
+            .tab-bar > .tabs > .item > .name {
+                color: hsla(0, 0%, 90%);
+                border: white;
+            }
+
+            .tab-bar > .tabs > .item:not(.selected):hover > .name {
+                color: hsl(0, 0%, 100%);
+            }
+        }
     }
 }

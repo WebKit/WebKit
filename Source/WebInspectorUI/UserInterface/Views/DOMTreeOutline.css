@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -298,5 +299,11 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline.dom:focus-with
 
     .tree-outline.dom .html-pseudo-element {
         color: hsl(0, 80%, 65%);
+    }
+
+    @media (prefers-contrast: more) {
+        .content-view.dom-tree.deemphasize-unrendered .tree-outline.dom li:not(.rendered, .selected) > span > *:not(.html-comment), .content-view.dom-tree.deemphasize-unrendered .tree-outline.dom:not(:focus-within) li.selected:not(.rendered) > span > *:not(.html-comment), body:is(.window-inactive, .window-docked-inactive) .content-view.dom-tree.deemphasize-unrendered .tree-outline.dom li.selected:not(.rendered) > span > *:not(.html-comment) {
+            opacity: 1;
+        }
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,5 +116,23 @@ body.window-inactive .navigation-bar .item.button.disabled > img {
 
     .navigation-bar .item.button.disabled > img {
         filter: invert();
+    }
+
+    @media (prefers-contrast: more) {
+        .navigation-bar .item.button > .glyph {
+            opacity: 85%;
+        }
+
+        .navigation-bar .item.button:not(.disabled) > .glyph {
+            color: var(--glyph-color);
+        }
+
+        .navigation-bar .item.button:not(.disabled):is(.activate.activated, .radio.selected) > .glyph {
+            color: hsl(212, 100%, 90%);
+        }
+
+        .navigation-bar .item.button:not(.disabled):active:is(.activate.activated, .radio.selected) > .glyph {
+            color: hsl(212, 92%, 90%);;
+        }
     }
 }
