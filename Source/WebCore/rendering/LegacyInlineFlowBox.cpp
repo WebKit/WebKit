@@ -26,7 +26,6 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineBoxPainter.h"
-#include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
@@ -118,7 +117,7 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
             hasMarkers = textBox->hasMarkers();
         if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMark::None || childStyle->hasPositiveStrokeWidth() || hasMarkers || !childStyle->textUnderlineOffset().isAuto() || !childStyle->textDecorationThickness().isAuto() || childStyle->textUnderlinePosition() != TextUnderlinePosition::Auto)
             child->clearKnownToHaveNoOverflow();
-    } else if (childStyle.boxShadow() || child->boxModelObject()->hasSelfPaintingLayer() || childStyle.hasBorderImageOutsets())
+    } else if (child->boxModelObject()->hasSelfPaintingLayer())
         child->clearKnownToHaveNoOverflow();
     else if (childStyle.hasOutlineInVisualOverflow())
         child->clearKnownToHaveNoOverflow();
@@ -221,67 +220,6 @@ void LegacyInlineFlowBox::adjustPosition(float dx, float dy)
         m_overflow->move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
-inline void LegacyInlineFlowBox::addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow)
-{
-    // box-shadow on root line boxes is applying to the block and not to the lines.
-    if (!parent())
-        return;
-
-    const RenderStyle& lineStyle = this->lineStyle();
-    if (!lineStyle.boxShadow())
-        return;
-
-    LayoutUnit boxShadowLogicalTop;
-    LayoutUnit boxShadowLogicalBottom;
-    lineStyle.getBoxShadowBlockDirectionExtent(boxShadowLogicalTop, boxShadowLogicalBottom);
-    
-    // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite shadow that applies, since
-    // the line is "upside down" in terms of block coordinates.
-    LayoutUnit shadowLogicalTop = lineStyle.isFlippedLinesWritingMode() ? -boxShadowLogicalBottom : boxShadowLogicalTop;
-    LayoutUnit shadowLogicalBottom = lineStyle.isFlippedLinesWritingMode() ? -boxShadowLogicalTop : boxShadowLogicalBottom;
-    
-    LayoutUnit logicalTopVisualOverflow = std::min(LayoutUnit(logicalTop() + shadowLogicalTop), logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = std::max(LayoutUnit(logicalBottom() + shadowLogicalBottom), logicalVisualOverflow.maxY());
-    
-    LayoutUnit boxShadowLogicalLeft;
-    LayoutUnit boxShadowLogicalRight;
-    lineStyle.getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
-
-    LayoutUnit logicalLeftVisualOverflow = std::min(LayoutUnit(logicalLeft() + boxShadowLogicalLeft), logicalVisualOverflow.x());
-    LayoutUnit logicalRightVisualOverflow = std::max(LayoutUnit(logicalRight() + boxShadowLogicalRight), logicalVisualOverflow.maxX());
-    
-    logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow, logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
-}
-
-inline void LegacyInlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logicalVisualOverflow)
-{
-    // border-image-outset on root line boxes is applying to the block and not to the lines.
-    if (!parent())
-        return;
-    
-    const RenderStyle& lineStyle = this->lineStyle();
-    if (!lineStyle.hasBorderImageOutsets())
-        return;
-
-    LayoutBoxExtent borderOutsets = lineStyle.borderImageOutsets();
-
-    LayoutUnit borderOutsetLogicalTop = borderOutsets.before(lineStyle.writingMode());
-    LayoutUnit borderOutsetLogicalBottom = borderOutsets.after(lineStyle.writingMode());
-
-    // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite border that applies, since
-    // the line is "upside down" in terms of block coordinates. vertical-rl and horizontal-bt are the flipped line modes.
-    LayoutUnit outsetLogicalTop = lineStyle.isFlippedLinesWritingMode() ? borderOutsetLogicalBottom : borderOutsetLogicalTop;
-    LayoutUnit outsetLogicalBottom = lineStyle.isFlippedLinesWritingMode() ? borderOutsetLogicalTop : borderOutsetLogicalBottom;
-
-    LayoutUnit logicalTopVisualOverflow = std::min(LayoutUnit(logicalTop() - outsetLogicalTop), logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = std::max(LayoutUnit(logicalBottom() + outsetLogicalBottom), logicalVisualOverflow.maxY());
-
-    LayoutUnit logicalLeftVisualOverflow = std::min(LayoutUnit(logicalLeft()), logicalVisualOverflow.x());
-    LayoutUnit logicalRightVisualOverflow = std::max(LayoutUnit(logicalRight()), logicalVisualOverflow.maxX());
-    
-    logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow, logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
-}
-
 inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutRect& logicalVisualOverflow)
 {
     if (textBox.knownToHaveNoOverflow())
@@ -345,41 +283,6 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     textBox.setLogicalOverflowRect(logicalVisualOverflow);
 }
 
-inline void LegacyInlineFlowBox::addOutlineVisualOverflow(LayoutRect& logicalVisualOverflow)
-{
-    const auto& lineStyle = this->lineStyle();
-    if (!lineStyle.hasOutlineInVisualOverflow())
-        return;
-    LayoutUnit outlineSize { lineStyle.outlineSize() };
-    LayoutUnit logicalTopVisualOverflow = std::min(LayoutUnit(logicalTop() - outlineSize), logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = std::max(LayoutUnit(logicalBottom() + outlineSize), logicalVisualOverflow.maxY());
-    LayoutUnit logicalLeftVisualOverflow = std::min(LayoutUnit(logicalLeft() - outlineSize), logicalVisualOverflow.x());
-    LayoutUnit logicalRightVisualOverflow = std::max(LayoutUnit(logicalRight() + outlineSize), logicalVisualOverflow.maxX());
-    logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
-        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
-}
-
-inline void LegacyInlineFlowBox::addReplacedChildOverflow(const LegacyInlineBox* inlineBox, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow)
-{
-    const RenderBox& box = downcast<RenderBox>(inlineBox->renderer());
-    
-    // Visual overflow only propagates if the box doesn't have a self-painting layer. This rectangle does not include
-    // transforms or relative positioning (since those objects always have self-painting layers), but it does need to be adjusted
-    // for writing-mode differences.
-    if (!box.hasSelfPaintingLayer()) {
-        LayoutRect childLogicalVisualOverflow = box.logicalVisualOverflowRectForPropagation(&renderer().style());
-        childLogicalVisualOverflow.move(inlineBox->logicalLeft(), inlineBox->logicalTop());
-        logicalVisualOverflow.unite(childLogicalVisualOverflow);
-    }
-
-    // Layout overflow internal to the child box only propagates if the child box doesn't have overflow clip set.
-    // Otherwise the child border box propagates as layout overflow. This rectangle must include transforms and relative positioning
-    // and be adjusted for writing-mode differences.
-    LayoutRect childLogicalLayoutOverflow = box.logicalLayoutOverflowRectForPropagation(&renderer().style());
-    childLogicalLayoutOverflow.move(inlineBox->logicalLeft(), inlineBox->logicalTop());
-    logicalLayoutOverflow.unite(childLogicalLayoutOverflow);
-}
-
 void LegacyInlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     // If we know we have no overflow, we can just bail.
@@ -392,12 +295,7 @@ void LegacyInlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBot
     // Visual overflow just includes overflow for stuff we need to repaint ourselves. Self-painting layers are ignored.
     // Layout overflow is used to determine scrolling extent, so it still includes child layers and also factors in
     // transforms, relative positioning, etc.
-    LayoutRect logicalLayoutOverflow(enclosingLayoutRect(logicalFrameRectIncludingLineHeight(lineTop, lineBottom)));
-    LayoutRect logicalVisualOverflow(logicalLayoutOverflow);
-
-    addBoxShadowVisualOverflow(logicalVisualOverflow);
-    addOutlineVisualOverflow(logicalVisualOverflow);
-    addBorderOutsetVisualOverflow(logicalVisualOverflow);
+    LayoutRect logicalVisualOverflow(enclosingLayoutRect(logicalFrameRectIncludingLineHeight(lineTop, lineBottom)));
 
     for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (is<RenderText>(child->renderer())) {
@@ -410,26 +308,9 @@ void LegacyInlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBot
             flow.computeOverflow(lineTop, lineBottom, textBoxDataMap);
             if (!flow.renderer().hasSelfPaintingLayer())
                 logicalVisualOverflow.unite(flow.logicalVisualOverflowRect(lineTop, lineBottom));
-            LayoutRect childLayoutOverflow = flow.logicalLayoutOverflowRect(lineTop, lineBottom);
-            childLayoutOverflow.move(flow.renderer().relativePositionLogicalOffset());
-            logicalLayoutOverflow.unite(childLayoutOverflow);
-        } else
-            addReplacedChildOverflow(child, logicalLayoutOverflow, logicalVisualOverflow);
+        }
     }
-    
-    setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, lineTop, lineBottom);
-}
-
-void LegacyInlineFlowBox::setLayoutOverflow(const LayoutRect& rect, LayoutUnit lineTop, LayoutUnit lineBottom)
-{
-    LayoutRect frameBox = enclosingLayoutRect(frameRectIncludingLineHeight(lineTop, lineBottom));
-    if (frameBox.contains(rect) || rect.isEmpty())
-        return;
-
-    if (!m_overflow)
-        m_overflow = adoptRef(new RenderOverflow(frameBox, frameBox));
-    
-    m_overflow->setLayoutOverflow(rect);
+    setOverflowFromLogicalRects(logicalVisualOverflow, lineTop, lineBottom);
 }
 
 void LegacyInlineFlowBox::setVisualOverflow(const LayoutRect& rect, LayoutUnit lineTop, LayoutUnit lineBottom)
@@ -444,11 +325,8 @@ void LegacyInlineFlowBox::setVisualOverflow(const LayoutRect& rect, LayoutUnit l
     m_overflow->setVisualOverflow(rect);
 }
 
-void LegacyInlineFlowBox::setOverflowFromLogicalRects(const LayoutRect& logicalLayoutOverflow, const LayoutRect& logicalVisualOverflow, LayoutUnit lineTop, LayoutUnit lineBottom)
+void LegacyInlineFlowBox::setOverflowFromLogicalRects(const LayoutRect& logicalVisualOverflow, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    LayoutRect layoutOverflow(isHorizontal() ? logicalLayoutOverflow : logicalLayoutOverflow.transposedRect());
-    setLayoutOverflow(layoutOverflow, lineTop, lineBottom);
-    
     LayoutRect visualOverflow(isHorizontal() ? logicalVisualOverflow : logicalVisualOverflow.transposedRect());
     setVisualOverflow(visualOverflow, lineTop, lineBottom);
 }

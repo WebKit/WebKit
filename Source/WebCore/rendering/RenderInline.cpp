@@ -34,7 +34,6 @@
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
@@ -487,11 +486,11 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
         return { };
 
     if (style().isLeftToRightDirection()) {
-        firstInlineBoxPaddingBoxLeft = firstInlineBox->logicalLeft() + firstInlineBox->borderLogicalLeft();
-        lastInlineBoxPaddingBoxRight = lastInlineBox->logicalRight() - lastInlineBox->borderLogicalRight();
+        firstInlineBoxPaddingBoxLeft = firstInlineBox->logicalLeft();
+        lastInlineBoxPaddingBoxRight = lastInlineBox->logicalRight();
     } else {
-        lastInlineBoxPaddingBoxRight = firstInlineBox->logicalRight() - firstInlineBox->borderLogicalRight();
-        firstInlineBoxPaddingBoxLeft = lastInlineBox->logicalLeft() + lastInlineBox->borderLogicalLeft();
+        lastInlineBoxPaddingBoxRight = firstInlineBox->logicalRight();
+        firstInlineBoxPaddingBoxLeft = lastInlineBox->logicalLeft();
     }
     return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
 }

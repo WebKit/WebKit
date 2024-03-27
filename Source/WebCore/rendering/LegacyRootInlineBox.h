@@ -82,8 +82,6 @@ public:
     void removeLineBoxFromRenderObject() final;
     
     FontBaseline baselineType() const { return static_cast<FontBaseline>(m_baselineType); }
-
-    LayoutRect paddedLayoutOverflowRect(LayoutUnit endPadding) const;
     
     LayoutUnit logicalTopVisualOverflow() const
     {
@@ -92,14 +90,6 @@ public:
     LayoutUnit logicalBottomVisualOverflow() const
     {
         return LegacyInlineFlowBox::logicalBottomVisualOverflow(lineBottom());
-    }
-    LayoutUnit logicalTopLayoutOverflow() const
-    {
-        return LegacyInlineFlowBox::logicalTopLayoutOverflow(lineTop());
-    }
-    LayoutUnit logicalBottomLayoutOverflow() const
-    {
-        return LegacyInlineFlowBox::logicalBottomLayoutOverflow(lineBottom());
     }
 
 #if ENABLE(TREE_DEBUGGING)

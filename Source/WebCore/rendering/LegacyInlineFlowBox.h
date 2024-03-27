@@ -89,22 +89,6 @@ public:
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
-    // logicalLeft = left in a horizontal line and top in a vertical line.
-    inline LayoutUnit marginBorderPaddingLogicalLeft() const;
-    inline LayoutUnit marginBorderPaddingLogicalRight() const;
-    LayoutUnit marginLogicalLeft() const
-    {
-        return 0;
-    }
-    LayoutUnit marginLogicalRight() const
-    {
-        return 0;
-    }
-    inline float borderLogicalLeft() const;
-    inline float borderLogicalRight() const;
-    inline float paddingLogicalLeft() const;
-    inline float paddingLogicalRight() const;
-
     void computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, GlyphOverflowAndFallbackFontsMap&);
     
     void removeChild(LegacyInlineBox* child);
@@ -118,33 +102,6 @@ public:
     
     void checkConsistency() const;
     void setHasBadChildList();
-
-    // Line visual and layout overflow are in the coordinate space of the block. This means that they aren't purely physical directions.
-    // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
-    // respectively are flipped when compared to their physical counterparts. For example minX is on the left in vertical-lr, but it is on the right in vertical-rl.
-    LayoutRect layoutOverflowRect(LayoutUnit lineTop, LayoutUnit lineBottom) const
-    {
-        return m_overflow ? m_overflow->layoutOverflowRect() : enclosingLayoutRect(frameRectIncludingLineHeight(lineTop, lineBottom));
-    }
-    LayoutUnit logicalTopLayoutOverflow(LayoutUnit lineTop) const
-    {
-        if (m_overflow)
-            return isHorizontal() ? m_overflow->layoutOverflowRect().y() : m_overflow->layoutOverflowRect().x();
-        return lineTop;
-    }
-    LayoutUnit logicalBottomLayoutOverflow(LayoutUnit lineBottom) const
-    {
-        if (m_overflow)
-            return isHorizontal() ? m_overflow->layoutOverflowRect().maxY() : m_overflow->layoutOverflowRect().maxX();
-        return lineBottom;
-    }
-    LayoutRect logicalLayoutOverflowRect(LayoutUnit lineTop, LayoutUnit lineBottom) const
-    {
-        LayoutRect result = layoutOverflowRect(lineTop, lineBottom);
-        if (!renderer().isHorizontalWritingMode())
-            result = result.transposedRect();
-        return result;
-    }
 
     LayoutRect visualOverflowRect(LayoutUnit lineTop, LayoutUnit lineBottom) const
     { 
@@ -172,8 +129,7 @@ public:
         return result;
     }
 
-    void setOverflowFromLogicalRects(const LayoutRect& logicalLayoutOverflow, const LayoutRect& logicalVisualOverflow, LayoutUnit lineTop, LayoutUnit lineBottom);
-    void setLayoutOverflow(const LayoutRect&, LayoutUnit lineTop, LayoutUnit lineBottom);
+    void setOverflowFromLogicalRects(const LayoutRect& logicalVisualOverflow, LayoutUnit lineTop, LayoutUnit lineBottom);
     void setVisualOverflow(const LayoutRect&, LayoutUnit lineTop, LayoutUnit lineBottom);
 
     FloatRect frameRectIncludingLineHeight(LayoutUnit lineTop, LayoutUnit lineBottom) const
@@ -194,11 +150,7 @@ private:
     bool isInlineFlowBox() const final { return true; }
     void boxModelObject() const = delete;
 
-    void addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow);
-    void addBorderOutsetVisualOverflow(LayoutRect& logicalVisualOverflow);
     void addTextBoxVisualOverflow(LegacyInlineTextBox&, GlyphOverflowAndFallbackFontsMap&, LayoutRect& logicalVisualOverflow);
-    void addOutlineVisualOverflow(LayoutRect& logicalVisualOverflow);
-    void addReplacedChildOverflow(const LegacyInlineBox*, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow);
 
 private:
     unsigned m_hasTextChildren : 1 { false };

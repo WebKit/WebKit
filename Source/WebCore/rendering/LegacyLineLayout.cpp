@@ -34,11 +34,10 @@
 #include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
 #include "InlineWalker.h"
-#include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineIterator.h"
 #include "LegacyInlineTextBox.h"
+#include "LineInfo.h"
 #include "LineInlineHeaders.h"
-#include "LineLayoutState.h"
 #include "Logging.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderFragmentContainer.h"
@@ -432,8 +431,6 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
     bool isSVGRootInlineBox = is<SVGRootInlineBox>(*lineBox);
     ASSERT(isSVGRootInlineBox);
 
-    GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-    
     // Now we position all of our text runs horizontally.
 
     removeEmptyTextBoxesAndUpdateVisualReordering(lineBox, bidiRuns.firstRun());
@@ -447,10 +444,10 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_flow.isRenderSVGText());
         downcast<SVGRootInlineBox>(*lineBox).computePerCharacterLayoutInformation();
     }
-    
-    // Compute our overflow now.
+
+    GlyphOverflowAndFallbackFontsMap textBoxDataMap;
     lineBox->computeOverflow(lineBox->lineTop(), lineBox->lineBottom(), textBoxDataMap);
-    
+
     return lineBox;
 }
 
@@ -468,11 +465,9 @@ static void repaintSelfPaintInlineBoxes(const LegacyRootInlineBox& firstRootInli
     }
 }
 
-void LegacyLineLayout::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInlineChild)
+void LegacyLineLayout::layoutRunsAndFloats(bool hasInlineChild)
 {
     m_lineBoxes.deleteLineBoxTree();
-
-    layoutState.lineInfo().setFirstLine(true);
 
     TextDirection direction = style().direction();
     if (style().unicodeBidi() == UnicodeBidi::Plaintext)
@@ -494,28 +489,29 @@ void LegacyLineLayout::layoutRunsAndFloats(LineLayoutState& layoutState, bool ha
         }
     }
 
-    layoutRunsAndFloatsInRange(layoutState, resolver);
+    layoutRunsAndFloatsInRange(resolver);
     if (firstRootBox())
         repaintSelfPaintInlineBoxes(*firstRootBox(), *lastRootBox());
 }
 
-void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, InlineBidiResolver& resolver)
+void LegacyLineLayout::layoutRunsAndFloatsInRange(InlineBidiResolver& resolver)
 {
     const RenderStyle& styleToUse = style();
     LineWhitespaceCollapsingState& lineWhitespaceCollapsingState = resolver.whitespaceCollapsingState();
     LegacyInlineIterator end = resolver.position();
     RenderTextInfo renderTextInfo;
 
+    LineInfo lineInfo { };
     LineBreaker lineBreaker(m_flow);
 
     while (!end.atEnd()) {
         lineWhitespaceCollapsingState.reset();
 
-        layoutState.lineInfo().setEmpty(true);
-        layoutState.lineInfo().resetRunsFromLeadingWhitespace();
+        lineInfo.setEmpty(true);
+        lineInfo.resetRunsFromLeadingWhitespace();
 
         WordMeasurements wordMeasurements;
-        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, wordMeasurements);
+        end = lineBreaker.nextLineBreak(resolver, lineInfo, renderTextInfo, wordMeasurements);
         m_flow.cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIteratorFactory);
         renderTextInfo.lineBreakIteratorFactory.priorContext().reset();
         if (resolver.position().atEnd()) {
@@ -529,7 +525,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
 
         ASSERT(end != resolver.position());
 
-        if (!layoutState.lineInfo().isEmpty()) {
+        if (!lineInfo.isEmpty()) {
             VisualDirectionOverride override = (styleToUse.rtlOrdering() == Order::Visual ? (styleToUse.direction() == TextDirection::LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
 
             if (styleToUse.unicodeBidi() == UnicodeBidi::Plaintext && !resolver.context()->parent()) {
@@ -543,20 +539,15 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
             ASSERT(resolver.position() == end);
 
             // Now that the runs have been ordered, we create the line boxes.
-            // At the same time we figure out where border/padding/margin should be applied for
-            // inline flow boxes.
 
-            LegacyRootInlineBox* lineBox = createLineBoxesFromBidiRuns(resolver.status().context->level(), bidiRuns, end, layoutState.lineInfo());
+            createLineBoxesFromBidiRuns(resolver.status().context->level(), bidiRuns, end, lineInfo);
 
             bidiRuns.clear();
             resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).
-
-            if (lineBox)
-                layoutState.marginInfo().setAtBeforeSideOfBlock(false);
         }
 
-        if (!layoutState.lineInfo().isEmpty())
-            layoutState.lineInfo().setFirstLine(false);
+        if (!lineInfo.isEmpty())
+            lineInfo.setFirstLine(false);
 
         lineWhitespaceCollapsingState.reset();
         resolver.setPosition(end, numberOfIsolateAncestors(end));
@@ -565,9 +556,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
 
 void LegacyLineLayout::layoutLineBoxes()
 {
-    m_flow.setLogicalHeight(m_flow.borderAndPaddingBefore());
-
-    LineLayoutState layoutState(m_flow);
+    m_flow.setLogicalHeight(0_lu);
 
     lineBoxes().deleteLineBoxes();
 
@@ -588,15 +577,8 @@ void LegacyLineLayout::layoutLineBoxes()
             o.clearNeedsLayout();
         }
 
-        layoutRunsAndFloats(layoutState, hasInlineChild);
+        layoutRunsAndFloats(hasInlineChild);
     }
-
-    // Now do the handling of the bottom of the block, adding in our bottom border/padding and
-    // determining the correct collapsed bottom margin information. This collapse is only necessary
-    // if our last child was an anonymous inline block that might need to propagate margin information out to
-    // us.
-    LayoutUnit afterEdge = m_flow.borderAndPaddingAfter() + m_flow.scrollbarLogicalHeight();
-    m_flow.setLogicalHeight(m_flow.logicalHeight() + afterEdge);
 
     if (!firstRootBox() && m_flow.hasLineIfEmpty())
         m_flow.setLogicalHeight(m_flow.logicalHeight() + m_flow.lineHeight(true, m_flow.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
@@ -604,18 +586,9 @@ void LegacyLineLayout::layoutLineBoxes()
 
 void LegacyLineLayout::addOverflowFromInlineChildren()
 {
-    LayoutUnit endPadding = m_flow.hasNonVisibleOverflow() ? m_flow.paddingEnd() : 0_lu;
-    // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
-    if (!endPadding)
-        endPadding = m_flow.endPaddingWidthForCaret();
-    if (m_flow.hasNonVisibleOverflow() && !endPadding && m_flow.element() && m_flow.element()->isRootEditableElement() && style().isLeftToRightDirection())
-        endPadding = 1;
     for (auto* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        m_flow.addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
-        if (!m_flow.hasNonVisibleOverflow()) {
-            LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
-            m_flow.addVisualOverflow(childVisualOverflowRect);
-        }
+        LayoutRect childVisualOverflowRect = curr->visualOverflowRect(curr->lineTop(), curr->lineBottom());
+        m_flow.addVisualOverflow(childVisualOverflowRect);
     }
 }
 

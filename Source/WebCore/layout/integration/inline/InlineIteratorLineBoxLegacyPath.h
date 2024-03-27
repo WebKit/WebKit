@@ -53,8 +53,8 @@ public:
     float logicalWidth() const { return m_rootInlineBox->lineBoxWidth().toFloat(); }
     float inkOverflowLogicalTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
     float inkOverflowLogicalBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
-    float scrollableOverflowTop() const { return m_rootInlineBox->logicalTopLayoutOverflow(); }
-    float scrollableOverflowBottom() const { return m_rootInlineBox->logicalBottomLayoutOverflow(); }
+    float scrollableOverflowTop() const { return logicalTop(); }
+    float scrollableOverflowBottom() const { return logicalBottom(); }
 
     bool hasEllipsis() const { return false; }
     FloatRect ellipsisVisualRectIgnoringBlockDirection() const

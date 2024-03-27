@@ -175,27 +175,6 @@ void LegacyRootInlineBox::attachLineBoxToRenderObject()
     blockFlow().legacyLineLayout()->lineBoxes().attachLineBox(this);
 }
 
-LayoutRect LegacyRootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) const
-{
-    LayoutRect lineLayoutOverflow = layoutOverflowRect(lineTop(), lineBottom());
-    if (!endPadding)
-        return lineLayoutOverflow;
-    
-    if (isHorizontal()) {
-        if (isLeftToRightDirection())
-            lineLayoutOverflow.shiftMaxXEdgeTo(std::max(lineLayoutOverflow.maxX(), LayoutUnit(logicalRight() + endPadding)));
-        else
-            lineLayoutOverflow.shiftXEdgeTo(std::min(lineLayoutOverflow.x(), LayoutUnit(logicalLeft() - endPadding)));
-    } else {
-        if (isLeftToRightDirection())
-            lineLayoutOverflow.shiftMaxYEdgeTo(std::max(lineLayoutOverflow.maxY(), LayoutUnit(logicalRight() + endPadding)));
-        else
-            lineLayoutOverflow.shiftYEdgeTo(std::min(lineLayoutOverflow.y(), LayoutUnit(logicalLeft() - endPadding)));
-    }
-    
-    return lineLayoutOverflow;
-}
-
 LayoutUnit LegacyRootInlineBox::lineBoxWidth() const
 {
     return blockFlow().availableLogicalWidthForLine(lineBoxTop(), lineBoxHeight());

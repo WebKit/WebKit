@@ -33,18 +33,6 @@ namespace WebCore {
 
 enum WhitespacePosition : bool { LeadingWhitespace, TrailingWhitespace };
 
-inline bool hasInlineDirectionBordersPaddingOrMargin(const RenderInline& flow)
-{
-    // Where an empty inline is split across anonymous blocks we should only give lineboxes to the 'sides' of the
-    // inline that have borders, padding or margin.
-    bool shouldApplyStartBorderPaddingOrMargin = !flow.parent()->isAnonymousBlock() || !flow.isContinuation();
-    if (shouldApplyStartBorderPaddingOrMargin && (flow.borderStart() || flow.marginStart() || flow.paddingStart()))
-        return true;
-
-    bool shouldApplyEndBorderPaddingOrMargin = !flow.parent()->isAnonymousBlock() || flow.isContinuation() || !flow.inlineContinuation();
-    return shouldApplyEndBorderPaddingOrMargin && (flow.borderEnd() || flow.marginEnd() || flow.paddingEnd());
-}
-
 inline const RenderStyle& lineStyle(const RenderObject& renderer, const LineInfo& lineInfo)
 {
     return lineInfo.isFirstLine() ? renderer.firstLineStyle() : renderer.style();
@@ -90,25 +78,11 @@ inline bool skipNonBreakingSpace(const LegacyInlineIterator& it, const LineInfo&
     return true;
 }
 
-inline bool alwaysRequiresLineBox(const RenderInline& flow)
-{
-    // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
-    // We need to fix this, though, because at the very least, inlines containing only
-    // ignorable whitespace should should also have line boxes.
-    return isEmptyInline(flow) && hasInlineDirectionBordersPaddingOrMargin(flow);
-}
-
 inline bool requiresLineBox(const LegacyInlineIterator& it, const LineInfo& lineInfo = LineInfo(), WhitespacePosition whitespacePosition = LeadingWhitespace)
 {
-    if (it.renderer()->isFloatingOrOutOfFlowPositioned())
-        return false;
-
-    if (it.renderer()->isBR())
-        return true;
-
     bool rendererIsEmptyInline = false;
     if (auto* inlineRenderer = dynamicDowncast<RenderInline>(*it.renderer())) {
-        if (!alwaysRequiresLineBox(*inlineRenderer) && !requiresLineBoxForContent(*inlineRenderer, lineInfo))
+        if (!requiresLineBoxForContent(*inlineRenderer, lineInfo))
             return false;
         rendererIsEmptyInline = isEmptyInline(*inlineRenderer);
     }

@@ -29,7 +29,6 @@
 #include "LineBreaker.h"
 #include "LineInfo.h"
 #include "LineInlineHeaders.h"
-#include "LineLayoutState.h"
 #include "LineWidth.h"
 #include "RenderBlockInlines.h"
 #include "RenderCounter.h"
@@ -320,12 +319,9 @@ inline void BreakingContext::handleEmptyInline()
     // to make sure that we stop to include this object and then start ignoring spaces again.
     // If this object is at the start of the line, we need to behave like list markers and
     // start ignoring spaces.
-    bool requiresLineBox = alwaysRequiresLineBox(flowBox);
-    if (requiresLineBox || requiresLineBoxForContent(flowBox, m_lineInfo)) {
+    if (requiresLineBoxForContent(flowBox, m_lineInfo)) {
         // An empty inline that only has line-height, vertical-align or font-metrics will only get a
         // line box to affect the height of the line if the rest of the line is not empty.
-        if (requiresLineBox)
-            m_lineInfo.setEmpty(false);
         if (m_ignoringSpaces) {
             m_trailingObjects.clear();
             m_lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(*m_current.renderer());

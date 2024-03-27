@@ -39,7 +39,6 @@ class FloatWithRect;
 class LegacyInlineBox;
 class LegacyInlineIterator;
 class LineInfo;
-class LineLayoutState;
 class LocalFrameViewLayoutContext;
 class RenderBlockFlow;
 class RenderObject;
@@ -80,8 +79,8 @@ private:
     void removeEmptyTextBoxesAndUpdateVisualReordering(LegacyRootInlineBox*, BidiRun* firstRun);
     inline BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns, BidiContext* currentContext);
     LegacyRootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo&);
-    void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
-    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&);
+    void layoutRunsAndFloats(bool hasInlineChild);
+    void layoutRunsAndFloatsInRange(InlineBidiResolver&);
 
     const RenderStyle& style() const;
     const LocalFrameViewLayoutContext& layoutContext() const;
