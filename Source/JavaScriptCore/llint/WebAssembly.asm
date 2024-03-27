@@ -623,8 +623,8 @@ end
         subp JSEntrypointInterpreterCalleeSaveSpaceStackAligned, sp
         if ARM64 or ARM64E
             storepairq metadataTable, PB, -16[cfr]
-            storepairq memoryBase, boundsCheckingSize, -24[cfr]
-            storepairq wasmInstance, MP, -32[cfr]
+            storepairq memoryBase, boundsCheckingSize, -32[cfr]
+            storepairq wasmInstance, MP, -48[cfr]
         elsif X86_64 or RISCV64
             storep PB, -0x8[cfr]
             storep PM, -0x10[cfr]
@@ -640,8 +640,8 @@ end
     macro restoreJSEntrypointInterpreterRegisters()
         if ARM64 or ARM64E
             loadpairq -16[cfr], metadataTable, PB
-            loadpairq -24[cfr], memoryBase, boundsCheckingSize
-            loadpairq -32[cfr], wasmInstance, MP
+            loadpairq -32[cfr], memoryBase, boundsCheckingSize
+            loadpairq -48[cfr], wasmInstance, MP
         elsif X86_64 or RISCV64
             loadp -0x8[cfr], PB
             loadp -0x10[cfr], PM

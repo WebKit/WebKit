@@ -442,6 +442,7 @@ RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
         ASSERT(registers.numberOfSetRegisters() == 6);
         calleeSaveRegisters.construct(WTFMove(registers));
     });
+    dataLogLn("CALLEE ", calleeSaveRegisters.get());
     return &calleeSaveRegisters.get();
 }
 
