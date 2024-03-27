@@ -38,6 +38,11 @@ namespace WebCore {
 
 bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime) const
 {
+    return hasFutureTime(currentTime, futureDataThreshold());
+}
+
+bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime, const MediaTime& threshold) const
+{
     if (currentTime >= duration())
         return false;
 
@@ -51,10 +56,17 @@ bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime) const
         return false;
 
     MediaTime localEnd = ranges.end(found);
+
     if (localEnd == duration())
         return true;
 
-    return localEnd - currentTime > timeFudgeFactor();
+    // https://html.spec.whatwg.org/multipage/media.html#dom-media-have_future_data
+    // "Data for the immediate current playback position is available, as well as enough data
+    // for the user agent to advance the current playback position in the direction of playback
+    // at least a little without immediately reverting to the HAVE_METADATA state."
+    // So we check if currentTime could progress further from its current value by at least one
+    // video frame if paused, or if currentTime could go still progress.
+    return localEnd - currentTime > threshold;
 }
 
 MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
@@ -166,11 +178,22 @@ void MediaSourcePrivate::bufferedChanged(const PlatformTimeRanges& buffered)
     m_buffered = buffered;
 }
 
+void MediaSourcePrivate::trackBufferedChanged(SourceBufferPrivate&, Vector<PlatformTimeRanges>&&)
+{
+}
+
 PlatformTimeRanges MediaSourcePrivate::buffered() const
 {
     Locker locker { m_lock };
 
     return m_buffered;
+}
+
+bool MediaSourcePrivate::hasBufferedData() const
+{
+    Locker locker { m_lock };
+
+    return m_buffered.length();
 }
 
 PlatformTimeRanges MediaSourcePrivate::seekable() const
@@ -266,6 +289,13 @@ MediaTime MediaSourcePrivate::currentTime() const
     if (RefPtr player = this->player())
         return player->currentOrPendingSeekTime();
     return MediaTime::invalidTime();
+}
+
+bool MediaSourcePrivate::timeIsProgressing() const
+{
+    if (RefPtr player = this->player())
+        return player->timeIsProgressing();
+    return false;
 }
 
 } // namespace WebCore

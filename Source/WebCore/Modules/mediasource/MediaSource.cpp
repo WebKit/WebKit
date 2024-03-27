@@ -497,7 +497,7 @@ bool MediaSource::hasFutureTime()
     if (isClosed())
         return false;
 
-    return m_private->hasFutureTime(currentTime());
+    return m_private->hasFutureTime(currentTime(), m_private->timeIsProgressing() ? MediaTime::zeroTime() : MediaSourcePrivate::futureDataThreshold());
 }
 
 bool MediaSource::isBuffered(const PlatformTimeRanges& ranges) const

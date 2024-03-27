@@ -304,7 +304,7 @@ private:
     void setResourceOwner(const ProcessIdentity& resourceOwner) final { m_resourceOwner = resourceOwner; }
 
     void checkNewVideoFrameMetadata(CMTime);
-    MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
+    MediaTime clampTimeToSensicalValue(const MediaTime&) const;
 
     bool shouldEnsureLayer() const;
     bool shouldEnsureVideoRenderer() const;
@@ -320,6 +320,7 @@ private:
 #endif
 
     friend class MediaSourcePrivateAVFObjC;
+    void bufferedChanged();
 
     std::optional<SeekTarget> m_pendingSeek;
 
@@ -340,7 +341,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     mutable MediaPlayer::CurrentTimeDidChangeCallback m_currentTimeDidChangeCallback;
     RetainPtr<id> m_timeChangedObserver;
     RetainPtr<id> m_timeJumpedObserver;
-    RetainPtr<id> m_durationObserver;
+    RetainPtr<id> m_gapObserver;
     RetainPtr<id> m_performTaskObserver;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     RefPtr<NativeImage> m_lastImage;

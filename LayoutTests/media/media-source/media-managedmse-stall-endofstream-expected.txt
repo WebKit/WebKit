@@ -3,27 +3,25 @@ RUN(video.src = URL.createObjectURL(source))
 RUN(video.muted = true)
 RUN(video.playsInline = true)
 RUN(video.disableRemotePlayback = true)
-RUN(video.autoplay = true)
 EVENT(sourceopen)
 RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
 RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(loadedmetadata)
 EVENT(update)
+RUN(video.play())
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
 EVENT(update)
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
 EVENT(update)
-RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
-EVENT(update)
 EXPECTED (video.buffered.length == '1') OK
-EXPECTED (video.buffered.end(0) == '3') OK
+EXPECTED (video.buffered.end(0) == '2') OK
 EVENT(waiting)
-EXPECTED (video.currentTime == '3') OK
-RUN(sourceBuffer.appendBuffer(loader.mediaSegment(3)))
-EVENT(update)
-RUN(sourceBuffer.appendBuffer(loader.mediaSegment(4)))
-EVENT(update)
-RUN(sourceBuffer.appendBuffer(loader.mediaSegment(5)))
-EVENT(update)
-EXPECTED (video.currentTime >= '3.5') OK
+EXPECTED (video.currentTime == video.buffered.end(0) == 'true') OK
+RUN(source.endOfStream())
+EVENT(sourceended)
+EVENT(ended)
+EXPECTED (video.buffered.end(0) > endBuffered == 'true') OK
+EXPECTED (video.buffered.end(0) == video.duration == 'true') OK
+EXPECTED (video.currentTime == video.buffered.end(0) == 'true') OK
 END OF TEST
 

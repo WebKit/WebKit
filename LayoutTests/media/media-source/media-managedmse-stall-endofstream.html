@@ -8,6 +8,7 @@
     var loader;
     var source;
     var sourceBuffer;
+    var endBuffered;
 
     function loaderPromise(loader) {
         return new Promise((resolve, reject) => {
@@ -27,42 +28,33 @@
         run('video.muted = true');
         run('video.playsInline = true');
         run('video.disableRemotePlayback = true');
-        run('video.autoplay = true');
         await waitFor(source, 'sourceopen');
         waitFor(video, 'error').then(failTest);
         const playingPromise = waitFor(video, 'playing', true);
 
         run('sourceBuffer = source.addSourceBuffer(loader.type())');
         run('sourceBuffer.appendBuffer(loader.initSegment())');
-        await waitFor(sourceBuffer, 'update');
+        await Promise.all([ waitFor(video, 'loadedmetadata'), waitFor(sourceBuffer, 'update') ]);
+        run('video.play()');
 
-        // Buffer a minimum of 3s to reach canPlayThrough and therefore autoplay.
         run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
         await waitFor(sourceBuffer, 'update');
         run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
         await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
-        await waitFor(sourceBuffer, 'update');
         testExpected('video.buffered.length', 1);
-        testExpected('video.buffered.end(0)', 3);
+        testExpected('video.buffered.end(0)', 2);
         await playingPromise;
-
-        await waitFor(video, 'waiting');
-        testExpected('video.currentTime', video.buffered.end(0));
-
-        sourceBuffer.timestampOffset = -0.5;
-
-        // Again, buffer a minimum of 3s, see reasons above.
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(3))');
-        await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(4))');
-        await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(5))');
-        await waitFor(sourceBuffer, 'update');
-
-        // Marching beyond 3s (range buffered before the stall) is enough to prove that playback has continued.
-        await testExpectedEventually("video.currentTime", 3.5, ">=");
-
+        await Promise.all([ waitFor(video, 'waiting') ]);
+        testExpected('video.currentTime == video.buffered.end(0)', true);
+        const endedPromise = waitFor(video, 'ended');
+        endBuffered = video.buffered.end(0);
+        run('source.endOfStream()');
+        await Promise.all([ waitFor(source, 'sourceended'), endedPromise ]);
+        // Following call to endOfStream() buffered range was extended to the last
+        // known sample and playback resumed to the end.
+        testExpected('video.buffered.end(0) > endBuffered', true);
+        testExpected('video.buffered.end(0) == video.duration', true);
+        testExpected('video.currentTime == video.buffered.end(0)', true);
         endTest();
     });
     </script>

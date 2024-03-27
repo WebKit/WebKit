@@ -12,7 +12,7 @@ EVENT(update)
 RUN(video.play())
 EVENT(playing)
 EVENT(waiting)
-EXPECTED (video.currentTime >= '1') OK
+EXPECTED (video.currentTime == '1') OK
 RUN(video.pause())
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
 EXPECTED (video.currentTime == currentTimeWhenStalling == 'true') OK

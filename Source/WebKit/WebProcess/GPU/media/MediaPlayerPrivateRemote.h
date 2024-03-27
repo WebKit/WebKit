@@ -220,15 +220,18 @@ private:
         void setRate(double);
         Lock& lock() const { return m_lock; };
         MediaTime currentTimeWithLockHeld() const;
+        MediaTime cachedTimeWithLockHeld() const;
     private:
         mutable Lock m_lock;
-        bool m_timeIsProgressing WTF_GUARDED_BY_LOCK(m_lock) { false };
+        std::atomic<bool> m_timeIsProgressing { false };
         MediaTime m_cachedMediaTime WTF_GUARDED_BY_LOCK(m_lock);
         MonotonicTime m_cachedMediaTimeQueryTime WTF_GUARDED_BY_LOCK(m_lock);
         double m_rate WTF_GUARDED_BY_LOCK(m_lock) { 1.0 };
         const MediaPlayerPrivateRemote& m_parent;
     };
     TimeProgressEstimator m_currentTimeEstimator;
+
+    MediaTime currentTimeWithLockHeld() const;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }

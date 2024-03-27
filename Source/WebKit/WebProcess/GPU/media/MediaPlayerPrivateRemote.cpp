@@ -142,9 +142,14 @@ MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::cachedTime() const
     return m_cachedMediaTime;
 }
 
+MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::cachedTimeWithLockHeld() const
+{
+    assertIsHeld(m_lock);
+    return m_cachedMediaTime;
+}
+
 bool MediaPlayerPrivateRemote::TimeProgressEstimator::timeIsProgressing() const
 {
-    Locker locker { m_lock };
     return m_timeIsProgressing;
 }
 
@@ -344,7 +349,44 @@ MediaTime MediaPlayerPrivateRemote::duration() const
 
 MediaTime MediaPlayerPrivateRemote::currentTime() const
 {
-    return m_currentTimeEstimator.currentTime();
+    Locker locker { m_currentTimeEstimator.lock() };
+    return currentTimeWithLockHeld();
+}
+
+MediaTime MediaPlayerPrivateRemote::currentTimeWithLockHeld() const
+{
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSourcePrivate && timeIsProgressing()) {
+        if (!m_mediaSourcePrivate->hasBufferedData())
+            return m_currentTimeEstimator.cachedTimeWithLockHeld();
+        MediaTime currentTime = m_currentTimeEstimator.currentTimeWithLockHeld();
+        if (currentTime >= duration())
+            return duration();
+        auto ranges = m_mediaSourcePrivate->buffered();
+        // Handle the most common case.
+        MediaTime startGap;
+        if (ranges.start(ranges.length() - 1) <= currentTime) {
+            if (currentTime <= ranges.maximumBufferedTime())
+                return currentTime; // We are in the buffered range.
+            startGap = ranges.maximumBufferedTime();
+        } else {
+            unsigned i = 0;
+            for (; i < ranges.length(); i++) {
+                if (ranges.start(i) <= currentTime && currentTime <= ranges.end(i))
+                    return currentTime; // We are in the buffered range.
+                // We allow currentTime to be in a buffered gap smaller than the fudge factor.
+                if (i < ranges.length() - 1 && (ranges.start(i + 1) - ranges.end(i)) <= m_mediaSourcePrivate->timeFudgeFactor() && ranges.start(i + 1) >= currentTime)
+                    return currentTime;
+                if (ranges.start(i) > currentTime)
+                    break;
+            }
+            startGap = ranges.end(i - 1);
+        }
+        // The GPU's time is the reference time, it can't go backward.
+        return std::max(startGap, m_currentTimeEstimator.cachedTimeWithLockHeld());
+    }
+#endif
+    return m_currentTimeEstimator.currentTimeWithLockHeld();
 }
 
 bool MediaPlayerPrivateRemote::timeIsProgressing() const
@@ -371,7 +413,7 @@ MediaTime MediaPlayerPrivateRemote::currentOrPendingSeekTime() const
     auto pendingSeekTime = MediaPlayerPrivateInterface::pendingSeekTime();
     if (pendingSeekTime.isValid())
         return pendingSeekTime;
-    return m_currentTimeEstimator.currentTimeWithLockHeld();
+    return currentTimeWithLockHeld();
 }
 
 void MediaPlayerPrivateRemote::seekToTarget(const WebCore::SeekTarget& target)
@@ -427,6 +469,8 @@ void MediaPlayerPrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
     ensureOnMainRunLoop([protectedThis = Ref { *this }, this, readyState] {
         if (std::exchange(m_readyState, readyState) == readyState)
             return;
+        if (readyState > MediaPlayer::ReadyState::HaveCurrentData && m_readyState == MediaPlayer::ReadyState::HaveCurrentData)
+            ALWAYS_LOG(LOGIDENTIFIER, "stall detected");
         if (auto player = m_player.get())
             player->readyStateChanged();
     });

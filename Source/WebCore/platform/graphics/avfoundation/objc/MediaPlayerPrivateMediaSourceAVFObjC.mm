@@ -166,7 +166,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
         if (!weakThis)
             return;
 
-        auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
+        auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToSensicalValue(PAL::toMediaTime(time)) : MediaTime::zeroTime();
         ALWAYS_LOG(logSiteIdentifier, "synchronizer fired: time clamped = ", clampedTime, ", seeking = ", m_isSynchronizerSeeking, ", pending = ", !!m_pendingSeek);
 
         if (m_isSynchronizerSeeking && !m_pendingSeek) {
@@ -192,10 +192,10 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
     if (m_timeChangedObserver)
         [m_synchronizer removeTimeObserver:m_timeChangedObserver.get()];
-    if (m_durationObserver)
-        [m_synchronizer removeTimeObserver:m_durationObserver.get()];
     if (m_videoFrameMetadataGatheringObserver)
         [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
+    if (m_gapObserver)
+        [m_synchronizer removeTimeObserver:m_gapObserver.get()];
     flushPendingSizeChanges();
 
     destroyLayer();
@@ -471,10 +471,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentTime() const
 {
     if (seeking())
         return m_pendingSeek ? m_pendingSeek->time : m_lastSeekTime;
-    MediaTime synchronizerTime = clampTimeToLastSeekTime(PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase])));
-    if (synchronizerTime < MediaTime::zeroTime())
-        return MediaTime::zeroTime();
-    return synchronizerTime;
+    return clampTimeToSensicalValue(PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase])));
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::timeIsProgressing() const
@@ -482,11 +479,15 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::timeIsProgressing() const
     return m_isPlaying && [m_synchronizer rate];
 }
 
-MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToLastSeekTime(const MediaTime& time) const
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToSensicalValue(const MediaTime& time) const
 {
     if (m_lastSeekTime.isFinite() && time < m_lastSeekTime)
         return m_lastSeekTime;
 
+    if (time < MediaTime::zeroTime())
+        return MediaTime::zeroTime();
+    if (time > duration())
+        return duration();
     return time;
 }
 
@@ -499,7 +500,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(Media
             if (!m_currentTimeDidChangeCallback)
                 return;
 
-            auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
+            auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToSensicalValue(PAL::toMediaTime(time)) : MediaTime::zeroTime();
             m_currentTimeDidChangeCallback(clampedTime);
         }];
 
@@ -677,6 +678,48 @@ const PlatformTimeRanges& MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
     ASSERT_NOT_REACHED();
     return PlatformTimeRanges::emptyRanges();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
+{
+    if (m_gapObserver) {
+        [m_synchronizer removeTimeObserver:m_gapObserver.get()];
+        m_gapObserver = nullptr;
+    }
+
+    auto ranges = m_mediaSourcePrivate->buffered();
+    auto currentTime = this->currentTime();
+    size_t index = ranges.find(currentTime);
+    if (index == notFound)
+        return;
+    // Find the next gap (or end of media)
+    for (; index < ranges.length(); index++) {
+        if ((index < ranges.length() - 1 && ranges.start(index + 1) - ranges.end(index) > m_mediaSourcePrivate->timeFudgeFactor())
+            || (index == ranges.length() - 1 && ranges.end(index) > currentTime)) {
+            auto gapStart = ranges.end(index);
+            NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(gapStart)]];
+
+            auto logSiteIdentifier = LOGIDENTIFIER;
+            UNUSED_PARAM(logSiteIdentifier);
+
+            m_gapObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }, this, logSiteIdentifier, gapStart] {
+                if (!weakThis)
+                    return;
+                if (m_mediaSourcePrivate->hasFutureTime(gapStart))
+                    return; // New data was added, don't stall.
+                MediaTime now = weakThis->currentTime();
+                ALWAYS_LOG(logSiteIdentifier, "boundary time observer called, now = ", now);
+
+                if (gapStart == duration())
+                    weakThis->pauseInternal();
+                // Experimentation shows that between the time the boundary time observer is called, the time have progressed by a few milliseconds. Re-adjust time. This seek doesn't require re-enqueuing/flushing.
+                [m_synchronizer setRate:0 time:PAL::toCMTime(gapStart)];
+                if (auto player = m_player.get())
+                    player->timeChanged();
+            }];
+            return;
+        }
+    }
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const
@@ -1171,9 +1214,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSample
 
 void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 {
-    if (m_durationObserver)
-        [m_synchronizer removeTimeObserver:m_durationObserver.get()];
-
     if (!m_mediaSourcePrivate)
         return;
 
@@ -1185,32 +1225,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
             player->durationChanged();
     }
     m_duration = duration;
-
-    NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(duration)]];
-
-    auto logSiteIdentifier = LOGIDENTIFIER;
-    DEBUG_LOG(logSiteIdentifier, duration);
-    UNUSED_PARAM(logSiteIdentifier);
-
-    m_durationObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }, duration, logSiteIdentifier, this] {
-        if (!weakThis)
-            return;
-
-        MediaTime now = weakThis->currentTime();
-        ALWAYS_LOG(logSiteIdentifier, "boundary time observer called, now = ", now);
-
-        weakThis->pauseInternal();
-        if (now < duration) {
-            ERROR_LOG(logSiteIdentifier, "ERROR: boundary time observer called before duration");
-            [weakThis->m_synchronizer setRate:0 time:PAL::toCMTime(duration)];
-        }
-        if (auto player = weakThis->m_player.get())
-            player->timeChanged();
-
-    }];
-
-    if (m_isPlaying && duration <= currentTime())
-        pauseInternal();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
@@ -1364,7 +1378,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState
     if (m_readyState == readyState)
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, readyState);
+    if (m_readyState > MediaPlayer::ReadyState::HaveCurrentData && readyState == MediaPlayer::ReadyState::HaveCurrentData)
+        ALWAYS_LOG(LOGIDENTIFIER, "stall detected currentTime:", currentTime());
+
     m_readyState = readyState;
 
     if (shouldBePlaying())

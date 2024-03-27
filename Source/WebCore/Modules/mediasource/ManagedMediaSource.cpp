@@ -127,6 +127,10 @@ void ManagedMediaSource::monitorSourceBuffers()
         return;
     }
 
+    if (currentTime >= limitAhead(*m_highThreshold)) {
+        setStreaming(false);
+        return;
+    }
     PlatformTimeRanges neededBufferedRange { currentTime, limitAhead(*m_highThreshold) };
     if (isBuffered(neededBufferedRange))
         setStreaming(false);

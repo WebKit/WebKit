@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>mediasource-resume-after-stall</title>
+    <title>mediasource-resume-after-remove</title>
     <script src="media-source-loader.js"></script>
     <script src="../video-test.js"></script>
     <script>
     var loader;
     var source;
     var sourceBuffer;
+    var currentTime;
 
     function loaderPromise(loader) {
         return new Promise((resolve, reject) => {
@@ -19,7 +20,7 @@
     window.addEventListener('load', async event => {
         findMediaElement();
 
-        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader = new MediaSourceLoader('content/test-vp9-profile0-manifest.json');
         await loaderPromise(loader);
 
         source = new ManagedMediaSource();
@@ -36,32 +37,27 @@
         run('sourceBuffer.appendBuffer(loader.initSegment())');
         await waitFor(sourceBuffer, 'update');
 
-        // Buffer a minimum of 3s to reach canPlayThrough and therefore autoplay.
         run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
         await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
-        await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
-        await waitFor(sourceBuffer, 'update');
-        testExpected('video.buffered.length', 1);
-        testExpected('video.buffered.end(0)', 3);
         await playingPromise;
+        run('video.currentTime = 1');
+        await Promise.all([ waitFor(video, 'seeked'), testExpectedEventually("video.currentTime", 1.5, ">=") ]);
 
-        await waitFor(video, 'waiting');
-        testExpected('video.currentTime', video.buffered.end(0));
+        run('sourceBuffer.remove(1, sourceBuffer.buffered.end(0))');
+        await Promise.all([ waitFor(video, 'waiting'), waitFor(sourceBuffer, 'update', true)]);
+        testExpected('video.currentTime', 1.5, ">=");
+        currentTime = video.currentTime;
+        testExpected('video.readyState', video.HAVE_METADATA);
 
-        sourceBuffer.timestampOffset = -0.5;
+        // make sure currentTime didn't progress.
+        await sleepFor(500);
+        testExpected('video.currentTime == currentTime',true);
+        testExpected('video.readyState', video.HAVE_METADATA);
 
-        // Again, buffer a minimum of 3s, see reasons above.
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(3))');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
         await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(4))');
-        await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(5))');
-        await waitFor(sourceBuffer, 'update');
-
-        // Marching beyond 3s (range buffered before the stall) is enough to prove that playback has continued.
-        await testExpectedEventually("video.currentTime", 3.5, ">=");
+        await testExpectedEventually("video.currentTime", 2, ">=");
+        testExpected('video.readyState >= video.HAVE_CURRENT_DATA', true);
 
         endTest();
     });

@@ -137,6 +137,9 @@ Ref<MediaPromise> SourceBufferPrivate::updateBuffered()
 {
     assertIsCurrent(m_dispatcher);
 
+    if (RefPtr mediaSource = m_mediaSource.get())
+        mediaSource->trackBufferedChanged(*this, trackBuffersRanges());
+
     if (RefPtr client = this->client())
         return client->sourceBufferPrivateBufferedChanged(trackBuffersRanges());
     return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);

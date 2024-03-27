@@ -106,6 +106,8 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate& sourceBu
 {
     if (downcast<SourceBufferPrivateAVFObjC>(&sourceBuffer) == m_sourceBufferWithSelectedVideo)
         m_sourceBufferWithSelectedVideo = nullptr;
+    if (m_bufferedRanges.contains(&sourceBuffer))
+        m_bufferedRanges.remove(&sourceBuffer);
 
     MediaSourcePrivate::removeSourceBuffer(sourceBuffer);
 }
@@ -118,7 +120,7 @@ void MediaSourcePrivateAVFObjC::notifyActiveSourceBuffersChanged()
 
 RefPtr<MediaPlayerPrivateInterface> MediaSourcePrivateAVFObjC::player() const
 {
-    return RefPtr { m_player.get() };
+    return m_player.get();
 }
 
 void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime& duration)
@@ -283,6 +285,29 @@ bool MediaSourcePrivateAVFObjC::needsVideoLayer() const
     return anyOf(m_sourceBuffers, [] (auto& sourceBuffer) {
         return downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->needsVideoLayer();
     });
+}
+
+void MediaSourcePrivateAVFObjC::bufferedChanged(const PlatformTimeRanges& buffered)
+{
+    MediaSourcePrivate::bufferedChanged(buffered);
+    if (RefPtr player = m_player.get())
+        player->bufferedChanged();
+}
+
+void MediaSourcePrivateAVFObjC::trackBufferedChanged(SourceBufferPrivate& sourceBuffer, Vector<PlatformTimeRanges>&& ranges)
+{
+    auto it = m_bufferedRanges.find(&sourceBuffer);
+    if (it == m_bufferedRanges.end())
+        m_bufferedRanges.add(&sourceBuffer, WTFMove(ranges));
+    else
+        it->value = WTFMove(ranges);
+
+    PlatformTimeRanges intersectionRange { MediaTime::zeroTime(), MediaTime::positiveInfiniteTime() };
+    for (auto& ranges : m_bufferedRanges.values()) {
+        for (auto& range : ranges)
+            intersectionRange.intersectWith(range);
+    }
+    bufferedChanged(intersectionRange);
 }
 
 }

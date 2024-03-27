@@ -80,6 +80,7 @@ public:
     virtual void notifyActiveSourceBuffersChanged() = 0;
     virtual void durationChanged(const MediaTime&); // Base class method must be called in overrides. Must be thread-safe
     virtual void bufferedChanged(const PlatformTimeRanges&); // Base class method must be called in overrides. Must be thread-safe.
+    virtual void trackBufferedChanged(SourceBufferPrivate&, Vector<PlatformTimeRanges>&&);
 
     virtual MediaPlayer::ReadyState mediaPlayerReadyState() const = 0;
     virtual void setMediaPlayerReadyState(MediaPlayer::ReadyState) = 0;
@@ -105,7 +106,11 @@ public:
     PlatformTimeRanges buffered() const;
     PlatformTimeRanges seekable() const;
 
+    bool hasBufferedData() const;
     bool hasFutureTime(const MediaTime& currentTime) const;
+    bool timeIsProgressing() const;
+    static constexpr MediaTime futureDataThreshold() { return MediaTime { 1001, 24000 }; }
+    bool hasFutureTime(const MediaTime& currentTime, const MediaTime& threshold) const;
     bool hasAudio() const;
     bool hasVideo() const;
 

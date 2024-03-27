@@ -40,10 +40,10 @@
         run('video.play()');
         await waitFor(video, 'playing');
         await Promise.all([
-        testExpectedEventuallySilent('video.currentTime', 1, '>='),
+            testExpectedEventuallySilent('video.currentTime', 1, '>='),
             waitFor(video, 'waiting')
         ]);
-        testExpected('video.currentTime', 1, '>=');
+        testExpected('video.currentTime', 1, '==');
         currentTimeWhenStalling = video.currentTime;
 
         // Issue pause() command while playback has stalled.
