@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "CommonAtomStrings.h"
 #import "DragData.h"
 #import "Image.h"
 #import "LegacyNSPasteboardTypes.h"

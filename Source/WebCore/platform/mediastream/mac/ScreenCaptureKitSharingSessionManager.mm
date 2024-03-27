@@ -28,11 +28,13 @@
 
 #if HAVE(SCREEN_CAPTURE_KIT)
 
+#import "CaptureDevice.h"
 #import "Logging.h"
 #import "PlatformMediaSessionManager.h"
 #import "ScreenCaptureKitCaptureSource.h"
 #import <pal/spi/mac/ScreenCaptureKitSPI.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
 #import <ScreenCaptureKit/SCContentSharingPicker.h>
@@ -569,6 +571,11 @@ RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::create
     m_activeSources.append(newSession);
 
     return newSession;
+}
+
+bool ScreenCaptureKitSharingSessionManager::promptingInProgress() const
+{
+    return !!m_completionHandler;
 }
 
 void ScreenCaptureKitSharingSessionManager::cleanupSessionSource(ScreenCaptureSessionSource& source)

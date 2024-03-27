@@ -62,6 +62,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void removeSourceBuffer(SourceBufferPrivateAVFObjC*);
     void setSessionId(const String& sessionId) { m_sessionId = sessionId; }
 
+    using Keys = Vector<Ref<SharedBuffer>>;
+    virtual bool isAnyKeyUsable(const Keys&) const = 0;
+    virtual void attachContentKeyToSample(const MediaSampleAVFObjC&) = 0;
+
     void invalidateCDM() { m_cdm = nullptr; }
 
 protected:
