@@ -200,6 +200,7 @@ static bool hasTransparentContainerStyle(const RenderStyle& style)
     return !style.hasBackground()
         && !style.hasOutline()
         && !style.boxShadow()
+        && !style.clipPath()
         && !style.hasExplicitlySetBorderRadius()
         // No visible borders or borders that do not create a complete box.
         && (!style.hasVisibleBorder()
@@ -420,8 +421,12 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     float cornerRadius = 0;
     OptionSet<InteractionRegion::CornerMask> maskedCorners { };
     std::optional<Path> clipPath = std::nullopt;
+    RefPtr styleClipPath = regionRenderer.style().clipPath();
 
-    if (iconImage && originalElement) {
+    if (styleClipPath && styleClipPath->type() == PathOperation::OperationType::Shape) {
+        auto boundingRect = originalElement->boundingClientRect();
+        clipPath = styleClipPath->getPath(TransformOperationData(FloatRect(FloatPoint(), boundingRect.size())));
+    } else if (iconImage && originalElement) {
         LayoutRect imageRect(rect);
         Ref shape = Shape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode::HorizontalTb, 0);
         Shape::DisplayPaths paths;
