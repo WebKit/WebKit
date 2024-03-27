@@ -1372,12 +1372,14 @@
 (define (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode)
     (kernel-mig-routine
         clock_get_time
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
         io_connect_add_client
         io_connect_async_method
         io_connect_map_memory_into_task ;; <rdar://88300200>
         io_connect_method
         io_connect_set_notification_port_64
         io_service_close
+#endif
         mach_exception_raise
         mach_vm_region
         task_threads_from_user))
