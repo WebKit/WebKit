@@ -1,0 +1,40 @@
+<!-- webkit-test-runner [ PDFPluginHUDEnabled=false ] -->
+<style>
+    .container {
+        width: 200px;
+        height: 200px;
+        overflow: clip;
+    }
+    embed {
+        width: 400px;
+        height: 400px;
+        transform: translate(-100px, -100px);
+    }
+</style>
+<body>
+    <div class="container">
+        <embed src="../resources/400x400-green-jpeg2000.pdf">
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        addEventListener("load", () => {
+            if (!window.testRunner)
+                return;
+
+            // 50 rAFs should be enough to skip the PDF fade animation.
+            const rAFsCount = 50;
+            let rAFs = 0;
+
+            let skipFadeAnimation = (timestamp) => {
+                if (++rAFs < rAFsCount)
+                    requestAnimationFrame(skipFadeAnimation);
+                else
+                    testRunner.notifyDone();
+            }
+
+            requestAnimationFrame(skipFadeAnimation);
+        });
+    </script>
+</body>

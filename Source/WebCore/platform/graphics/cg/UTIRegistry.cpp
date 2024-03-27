@@ -154,6 +154,9 @@ Vector<String> allowableImageTypes()
     allowableImageTypes.append("public.heif"_s);
     allowableImageTypes.append("public.heic"_s);
 #endif
+    // JPEG2000 is supported only for PDF. Allow it at the process
+    // level but disallow it in WebCore.
+    allowableImageTypes.append("public.jpeg-2000"_s);
     return allowableImageTypes;
 }
 
