@@ -374,6 +374,8 @@ public:
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const;
 
+    JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
+
     static ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmCallee); }
     static ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointInterpreterCallee, wasmFunctionPrologue); }
     static constexpr ptrdiff_t offsetOfMetadataStorage() { return offsetOfData(); }

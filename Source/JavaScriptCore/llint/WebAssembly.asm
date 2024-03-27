@@ -602,6 +602,59 @@ op(js_to_wasm_wrapper_entry, macro ()
         error
     end
 
+    const MP = csr1 # Metadata / bytecode pointer
+    const AccumulatorTag = invalidGPR # Only used for JSVALUE32_64
+
+if ARM64 or ARM64E
+    const CP = ws3 # Callee prologue (jump target) pointer
+    const Accumulator = ws0
+    const Scratch = ws1
+    const Scratch2 = ws2
+else
+    const CP = r0 # Callee prologue (jump target) pointer
+    const Accumulator = ws1
+    const Scratch = csr0
+    const Scratch2 = csr2
+end
+
+    const JSEntrypointInterpreterCalleeSaveSpaceStackAligned = (6 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
+
+    macro saveJSEntrypointInterpreterRegisters()
+        subp JSEntrypointInterpreterCalleeSaveSpaceStackAligned, sp
+        if ARM64 or ARM64E
+            storepairq metadataTable, PB, -16[cfr]
+            storepairq memoryBase, boundsCheckingSize, -24[cfr]
+            storepairq wasmInstance, MP, -32[cfr]
+        elsif X86_64 or RISCV64
+            storep PB, -0x8[cfr]
+            storep PM, -0x10[cfr]
+            storep wasmInstance, -0x18[cfr]
+        elsif ARMv7
+            store2ia PM, PB, -8[cfr]
+            storep wasmInstance, -16[cfr]
+        else
+            error
+        end
+    end
+
+    macro restoreJSEntrypointInterpreterRegisters()
+        if ARM64 or ARM64E
+            loadpairq -16[cfr], metadataTable, PB
+            loadpairq -24[cfr], memoryBase, boundsCheckingSize
+            loadpairq -32[cfr], wasmInstance, MP
+        elsif X86_64 or RISCV64
+            loadp -0x8[cfr], PB
+            loadp -0x10[cfr], PM
+            loadp -0x18[cfr], wasmInstance
+        elsif ARMv7
+            load2ia -8[cfr], PM, PB
+            loadp -16[cfr], wasmInstance
+        else
+            error
+        end
+        addp JSEntrypointInterpreterCalleeSaveSpaceStackAligned, sp
+    end
+
     macro clobberVolatileRegisters()
         if ARM64 or ARM64E
             emit "movz  x9, #0xBAD"
@@ -631,23 +684,9 @@ op(js_to_wasm_wrapper_entry, macro ()
 
     clobberVolatileRegisters()
 
-    const MP = csr1 # Metadata / bytecode pointer
-    const AccumulatorTag = invalidGPR # Only used for JSVALUE32_64
-
-if ARM64 or ARM64E
-    const CP = ws3 # Callee prologue (jump target) pointer
-    const Accumulator = ws0
-    const Scratch = ws1
-    const Scratch2 = ws2
-else
-    const CP = r0 # Callee prologue (jump target) pointer
-    const Accumulator = ws1
-    const Scratch = csr0
-    const Scratch2 = csr2
-end
-
     tagReturnAddress sp
     preserveCallerPCAndCFR()
+    saveJSEntrypointInterpreterRegisters()
 
     # Load metadata from the entry callee
     # This was written by doVMEntry
@@ -684,40 +723,6 @@ end
 
     # Store Callee's wasm callee
     storep t3, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
-
-    macro forEachPreservedRegister(fn)
-        if ARM64 or ARM64E
-            fn(0 * 8, wasmInstance, memoryBase)
-            fn(2 * 8, boundsCheckingSize, MP)
-            fn(12 * 8, csr0, csr1)
-            fn(14 * 8, csr2, csr3)
-            fn(16 * 8, csr4, csr5)
-            fn(18 * 8, csr6, csr7)
-        elsif JSVALUE64
-            fn(0 * 8, wasmInstance)
-            fn(1 * 8, memoryBase)
-            fn(2 * 8, boundsCheckingSize)
-            fn(3 * 8, Scratch)
-            fn(4 * 8, Scratch2)
-            fn(5 * 8, MP)
-        else
-            fn(0 * 8, wasmInstance, MP)
-        end
-    end
-
-if ARM64 or ARM64E
-    forEachPreservedRegister(macro (offset, gpr1, gpr2)
-        storepairq gpr2, gpr1, -offset - 16[cfr]
-    end)
-elsif JSVALUE64
-    forEachPreservedRegister(macro (offset, gpr)
-        storeq gpr, -offset - 8[cfr]
-    end)
-else
-    forEachPreservedRegister(macro (offset, gprMsw, gpLsw)
-        store2ia gpLsw, gprMsw, -offset - 8[cfr]
-    end)
-end
 
     loadp constexpr CallFrameSlot::codeBlock * 8[cfr], wasmInstance
 
@@ -899,21 +904,7 @@ opcodesEnd()
 
 .done:
     clobberVolatileRegisters()
-
-if ARM64 or ARM64E
-    forEachPreservedRegister(macro (offset, gpr1, gpr2)
-        loadpairq -offset - 16[cfr], gpr2, gpr1
-    end)
-elsif JSVALUE64
-    forEachPreservedRegister(macro (offset, gpr)
-        loadq -offset - 8[cfr], gpr
-    end)
-else
-    forEachPreservedRegister(macro (offset, gprMsw, gpLsw)
-        load2ia -offset - 8[cfr], gpLsw, gprMsw
-    end)
-end
-
+    restoreJSEntrypointInterpreterRegisters()
     restoreCallerPCAndCFR()
     ret
     break

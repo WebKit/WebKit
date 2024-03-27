@@ -111,7 +111,7 @@ const UnboxedWasmCalleeStackSlot = CallerFrame - constexpr Wasm::numberOfIPIntCa
 # Callee Save
 
 # FIXME: This happens to work because UnboxedWasmCalleeStackSlot sits in the extra space we should be more precise in case we want to use an even number of callee saves in the future.
-const IPIntCalleeSaveSpaceStackAligned = 2*CalleeSaveSpaceStackAligned
+const IPIntCalleeSaveSpaceStackAligned = 2 * CalleeSaveSpaceStackAligned
 
 macro saveIPIntRegisters()
     subp IPIntCalleeSaveSpaceStackAligned, sp
