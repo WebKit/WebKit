@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
 #include "HTMLParagraphElement.h"
+#include "HTMLPictureElement.h"
 #include "HTMLSpanElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextFormControlElement.h"
@@ -73,7 +74,7 @@ static bool isVisiblyAdjacent(const Position&, const Position&);
 
 bool canHaveChildrenForEditing(const Node& node)
 {
-    return !is<Text>(node) && node.canContainRangeEndPoint();
+    return !is<Text>(node) && !is<HTMLPictureElement>(node) && node.canContainRangeEndPoint();
 }
 
 // Atomic means that the node has no children, or has children which are ignored for the purposes of editing.
