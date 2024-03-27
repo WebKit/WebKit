@@ -58,6 +58,7 @@ public:
     enum class ErrorType : uint8_t {
         Unknown,
         NotConnected,
+        MessageInvalid,
     };
 
     using Error = std::optional<std::pair<ErrorType, std::optional<String>>>;

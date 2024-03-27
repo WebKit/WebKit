@@ -225,8 +225,10 @@ void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, 
             return;
         }
 
-        if (replyMessage)
-            THROW_UNLESS(isValidJSONObject(replyMessage, JSONOptions::FragmentsAllowed), @"Reply message is not JSON-serializable");
+        if (replyMessage && !isValidJSONObject(replyMessage, JSONOptions::FragmentsAllowed)) {
+            completionHandler(toWebExtensionError(apiName, nil, @"reply message was not JSON-serializable"));
+            return;
+        }
 
         completionHandler(String(encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed)));
     }).get()];
