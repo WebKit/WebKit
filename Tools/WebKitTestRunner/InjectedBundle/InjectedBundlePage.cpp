@@ -693,60 +693,11 @@ void InjectedBundlePage::dumpAllFrameScrollPositions(StringBuilder& stringBuilde
     dumpDescendantFrameScrollPositions(frame, stringBuilder);
 }
 
-static bool hasDocumentElement(WKBundleFrameRef frame)
-{
-    auto context = WKBundleFrameGetJavaScriptContext(frame);
-    if (!context)
-        return false;
-    return objectProperty(context, JSContextGetGlobalObject(context), { "document", "documentElement" });
-}
-
-static void dumpFrameText(WKBundleFrameRef frame, StringBuilder& builder)
-{
-    // If the frame doesn't have a document element, its inner text will be an empty string, so
-    // we'll end up just appending a single newline below. Since DumpRenderTree didn't append
-    // anything in this case, we decided to preserve that behavior.
-    if (!hasDocumentElement(frame))
-        return;
-
-    // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
-    // Breaking the string up into lines lets us efficiently strip and has a side effect of adding a newline after the last line.
-    auto text = toWTFString(adoptWK(WKBundleFrameCopyInnerText(frame)));
-    for (auto line : StringView(text).splitAllowingEmptyEntries('\n')) {
-        while (line.endsWith(' '))
-            line = line.left(line.length() - 1);
-        builder.append(line, '\n');
-    }
-}
-
-static void dumpDescendantFramesText(WKBundleFrameRef frame, StringBuilder& stringBuilder)
-{
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto childFrames = adoptWK(WKBundleFrameCopyChildFrames(frame));
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    size_t size = WKArrayGetSize(childFrames.get());
-    for (size_t i = 0; i < size; ++i) {
-        WKBundleFrameRef subframe = static_cast<WKBundleFrameRef>(WKArrayGetItemAtIndex(childFrames.get(), i));
-        auto subframeName = adoptWK(WKBundleFrameCopyName(subframe));
-
-        // DumpRenderTree ignores empty frames, so do the same thing here.
-        if (!hasDocumentElement(subframe))
-            continue;
-
-        stringBuilder.append("\n--------\nFrame: '", subframeName.get(), "'\n--------\n");
-
-        dumpFrameText(subframe, stringBuilder);
-        dumpDescendantFramesText(subframe, stringBuilder);
-    }
-}
-
 void InjectedBundlePage::dumpAllFramesText(StringBuilder& stringBuilder)
 {
-    WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
-    dumpFrameText(frame, stringBuilder);
-    dumpDescendantFramesText(frame, stringBuilder);
+    constexpr bool includeSubframes { true };
+    stringBuilder.append(toWTFString(adoptWK(WKBundlePageCopyFrameTextForTesting(m_page, includeSubframes))));
 }
-
 
 void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
@@ -787,9 +738,11 @@ void InjectedBundlePage::dump(bool forceRepaint)
             stringBuilder.append(adoptWK(WKBundlePageCopyRenderTreeExternalRepresentation(m_page, injectedBundle.testRunner()->renderTreeDumpOptions())).get());
         break;
     }
-    case WhatToDump::MainFrameText:
-        dumpFrameText(WKBundlePageGetMainFrame(m_page), stringBuilder);
+    case WhatToDump::MainFrameText: {
+        constexpr bool includeSubframes { false };
+        stringBuilder.append(toWTFString(adoptWK(WKBundlePageCopyFrameTextForTesting(m_page, includeSubframes))));
         break;
+    }
     case WhatToDump::AllFramesText:
         dumpAllFramesText(stringBuilder);
         break;

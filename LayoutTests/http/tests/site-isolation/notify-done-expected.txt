@@ -1,3 +1,4 @@
 This test passes if it doesn't time out.
 
 
+I am a simple document that calls notifyDone when done loading.

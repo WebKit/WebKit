@@ -238,6 +238,8 @@ public:
     bool handleKeyEvent(const WebKeyboardEvent&);
 
     bool isFocused() const;
+
+    String frameTextForTesting(bool);
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 

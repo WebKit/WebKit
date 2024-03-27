@@ -913,3 +913,8 @@ void WKBundlePageSetSkipDecidePolicyForResponseIfPossible(WKBundlePageRef page, 
 {
     WebKit::toImpl(page)->setSkipDecidePolicyForResponseIfPossible(skip);
 }
+
+WKStringRef WKBundlePageCopyFrameTextForTesting(WKBundlePageRef page, bool includeSubframes)
+{
+    return WebKit::toAPI(&API::String::create(WebKit::toImpl(page)->frameTextForTestingIncludingSubframes(includeSubframes)).leakRef());
+}

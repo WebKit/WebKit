@@ -136,11 +136,6 @@ WKStringRef WKBundleFrameCopyCounterValue(WKBundleFrameRef frameRef, JSObjectRef
     return WebKit::toCopiedAPI(WebKit::toImpl(frameRef)->counterValue(element));
 }
 
-WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frameRef)
-{
-    return WebKit::toCopiedAPI(WebKit::toImpl(frameRef)->innerText());
-}
-
 unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frameRef)
 {
     return WebKit::toImpl(frameRef)->pendingUnloadCount();

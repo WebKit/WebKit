@@ -1318,4 +1318,38 @@ bool WebFrame::isFocused() const
     return m_coreFrame->page()->focusController().focusedFrame() == coreFrame();
 }
 
+String WebFrame::frameTextForTesting(bool includeSubframes)
+{
+    if (!m_coreFrame)
+        return { };
+
+    StringBuilder builder;
+
+    String text = innerText();
+    if (text.isNull())
+        return { };
+
+    // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
+    // Breaking the string up into lines lets us efficiently strip and has a side effect of adding a newline after the last line.
+    for (auto line : StringView(text).splitAllowingEmptyEntries('\n')) {
+        while (line.endsWith(' '))
+            line = line.left(line.length() - 1);
+        builder.append(line, '\n');
+    }
+
+    if (!includeSubframes)
+        return builder.toString();
+
+    for (auto* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (is<RemoteFrame>(*child)) {
+            builder.append(m_page->sendSync(Messages::WebPageProxy::FrameTextForTesting(child->frameID())).takeReplyOr("Sending WebPageProxy::FrameTextForTesting failed"_s));
+        } else if (RefPtr childWebFrame = fromCoreFrame(*child); childWebFrame && !childWebFrame->innerText().isNull()) {
+            builder.append("\n--------\nFrame: '"_s, childWebFrame->name(), "'\n--------\n"_s);
+            builder.append(childWebFrame->frameTextForTesting(includeSubframes));
+        }
+    }
+
+    return builder.toString();
+}
+
 } // namespace WebKit
