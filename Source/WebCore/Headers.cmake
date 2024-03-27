@@ -1266,6 +1266,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/PermissionsPolicy.h
     html/PluginDocument.h
     html/StepRange.h
+    html/SwitchTrigger.h
     html/TimeRanges.h
     html/TypeAhead.h
     html/URLDecomposition.h

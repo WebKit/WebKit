@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -218,7 +218,7 @@ void CheckboxInputType::willDispatchClick(InputElementClickState& state)
     element()->setChecked(!state.checked, state.trusted ? WasSetByJavaScript::No : WasSetByJavaScript::Yes);
 
     if (isSwitch() && state.trusted && !(isSwitchPointerTracking() && m_hasSwitchVisuallyOnChanged && m_isSwitchVisuallyOn == !state.checked))
-        performSwitchAnimation(SwitchAnimationType::VisuallyOn);
+        performSwitchVisuallyOnAnimation(SwitchTrigger::Click);
 
     stopSwitchPointerTracking();
 }
@@ -303,7 +303,7 @@ void CheckboxInputType::willUpdateCheckedness(bool, WasSetByJavaScript wasChecke
 // ask a more knowledgable system for a refresh callback (perhaps passing a desired FPS).
 static Seconds switchAnimationUpdateInterval(HTMLInputElement* element)
 {
-    if (auto* page = element->document().page())
+    if (RefPtr page = element->document().page())
         return page->preferredRenderingUpdateInterval();
     return 0_s;
 }
@@ -362,6 +362,15 @@ void CheckboxInputType::performSwitchAnimation(SwitchAnimationType type)
 
     setSwitchAnimationStartTime(type, MonotonicTime::now().secondsSinceEpoch() - startTimeOffset);
     m_switchAnimationTimer->startOneShot(updateInterval);
+}
+
+void CheckboxInputType::performSwitchVisuallyOnAnimation(SwitchTrigger trigger)
+{
+    performSwitchAnimation(SwitchAnimationType::VisuallyOn);
+    if (!RenderTheme::singleton().hasSwitchHapticFeedback(trigger))
+        return;
+    if (RefPtr page = element()->document().page())
+        page->chrome().client().performSwitchHapticFeedback();
 }
 
 void CheckboxInputType::stopSwitchAnimation(SwitchAnimationType type)
@@ -424,9 +433,7 @@ void CheckboxInputType::updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint
     if (switchThumbIsLogicallyLeftNow != switchThumbIsLogicallyLeft) {
         m_hasSwitchVisuallyOnChanged = true;
         m_isSwitchVisuallyOn = !m_isSwitchVisuallyOn;
-        performSwitchAnimation(SwitchAnimationType::VisuallyOn);
-        if (auto* page = element()->document().page())
-            page->chrome().client().performSwitchHapticFeedback();
+        performSwitchVisuallyOnAnimation(SwitchTrigger::PointerTracking);
     }
 }
 

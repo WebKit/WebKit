@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -121,6 +121,7 @@ private:
     void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
 
     Seconds switchAnimationVisuallyOnDuration() const final { return 300_ms; }
+    bool hasSwitchHapticFeedback(SwitchTrigger trigger) const final { return trigger == SwitchTrigger::PointerTracking; }
 
 #if ENABLE(DATALIST_ELEMENT)
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;

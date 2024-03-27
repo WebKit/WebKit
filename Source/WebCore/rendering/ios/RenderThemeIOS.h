@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,11 +101,14 @@ private:
 
     void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
 
-    void adjustSwitchStyle(RenderStyle&, const Element*) const override;
-    bool paintSwitchThumb(const RenderObject&, const PaintInfo&, const FloatRect&) override;
-    bool paintSwitchTrack(const RenderObject&, const PaintInfo&, const FloatRect&) override;
+    void adjustSwitchStyle(RenderStyle&, const Element*) const final;
+    bool paintSwitchThumb(const RenderObject&, const PaintInfo&, const FloatRect&) final;
+    bool paintSwitchTrack(const RenderObject&, const PaintInfo&, const FloatRect&) final;
     Seconds switchAnimationVisuallyOnDuration() const final { return 300_ms; }
     Seconds switchAnimationPressedDuration() const final { return 300_ms; }
+#if HAVE(UI_IMPACT_FEEDBACK_GENERATOR)
+    bool hasSwitchHapticFeedback(SwitchTrigger) const final { return true; }
+#endif
 
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
