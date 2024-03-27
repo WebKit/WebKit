@@ -2774,3 +2774,8 @@ webkit.org/b/271682 imported/w3c/web-platform-tests/css/css-content/quotes-007.h
 webkit.org/b/271712 [ Debug ] fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Timeout ]
 
 webkit.org/b/266010 fast/scrolling/ios/scroll-anchoring-momentum-scroll.html [ Pass Failure ]
+
+# webkit.org/b/271772 REGRESSION (276683@main): [ iOS ] 3X imported/w3c/web-platform-tests/svg/import/animate tests are consistent failures
+imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual.svg [ Failure ]
