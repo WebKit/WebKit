@@ -56,6 +56,7 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/FullscreenManager.h>
+#include <WebCore/HitTestSource.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
 #include <WebCore/JSExecState.h>
 #include <WebCore/SecurityOrigin.h>
@@ -1265,7 +1266,7 @@ WebKitDOMElement* webkit_dom_document_element_from_point(WebKitDOMDocument* self
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
-    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->elementFromPoint(x, y));
+    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->elementFromPoint(x, y, WebCore::HitTestSource::User));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -1274,7 +1275,7 @@ WebKitDOMRange* webkit_dom_document_caret_range_from_point(WebKitDOMDocument* se
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
-    RefPtr<WebCore::Range> gobjectResult = WTF::getPtr(item->caretRangeFromPoint(x, y));
+    RefPtr<WebCore::Range> gobjectResult = WTF::getPtr(item->caretRangeFromPoint(x, y, WebCore::HitTestSource::User));
     return WebKit::kit(gobjectResult.get());
 }
 

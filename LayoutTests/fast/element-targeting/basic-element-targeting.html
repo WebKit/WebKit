@@ -45,6 +45,10 @@ body, html {
 <script>
 testRunner.waitUntilDone();
 
+function debugDescription(element) {
+    return `<${element.tagName} id='${element.id || ""}' class='${element.className || ""}'>`;
+}
+
 addEventListener("load", async () => {
     const content = document.querySelector(".content");
     const point = UIHelper.midPointOfRect(content.getBoundingClientRect());
@@ -53,12 +57,38 @@ addEventListener("load", async () => {
 
     const absoluteContainer = document.querySelector("#absolute");
     if (document.querySelector(firstSelector) !== absoluteContainer)
-        content.textContent = `FAIL: (1) Unexpected selector ${firstSelector}`;
+        content.textContent += `\nFAIL: (1) Unexpected selector ${firstSelector}`;
 
     const fixedContainer = document.querySelector(".fixed");
     if (document.querySelector(secondSelector) !== fixedContainer)
-        content.textContent = `FAIL: (2) Unexpected selector ${secondSelector}`;
+        content.textContent += `\nFAIL: (2) Unexpected selector ${secondSelector}`;
 
+    if (!document.elementsFromPoint(point.x, point.y).includes(absoluteContainer))
+        content.textContent += `\nFAIL: (4) elementsFromPoint() did not contain ${debugDescription(absoluteContainer)}`;
+
+    let elementFromPoint = document.elementFromPoint(point.x, point.y);
+    if (elementFromPoint !== absoluteContainer)
+        content.textContent += `\nFAIL: (5) elementFromPoint() found ${debugDescription(elementFromPoint)}`;
+
+    let containerFromCaretRange = document.caretRangeFromPoint(point.x, point.y).commonAncestorContainer;
+    if (containerFromCaretRange !== absoluteContainer)
+        content.textContent += `\nFAIL: (6) caretRangeFromPoint() was in ${debugDescription(containerFromCaretRange)}`;
+
+    if (!absoluteContainer.checkVisibility())
+        content.textContent += `\nFAIL: (7) checkVisibility() was false for ${debugDescription(absoluteContainer)}`;
+
+    let computedVisibility = getComputedStyle(absoluteContainer).visibility;
+    if (computedVisibility !== "visible")
+        content.textContent += `\nFAIL: (8) computed visibility was ${computedVisibility} for ${debugDescription(absoluteContainer)}`;
+
+    if (!fixedContainer.checkVisibility())
+        content.textContent += `\nFAIL: (9) checkVisibility() was false for ${debugDescription(fixedContainer)}`;
+
+    computedVisibility = getComputedStyle(fixedContainer).visibility;
+    if (computedVisibility !== "visible")
+        content.textContent += `\nFAIL: (10) computed visibility was ${computedVisibility} for ${debugDescription(fixedContainer)}`;
+
+    await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.activateAt(point.x, point.y), content, "click");
     testRunner.notifyDone();
 });
 </script>

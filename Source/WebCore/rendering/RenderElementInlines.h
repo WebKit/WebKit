@@ -121,7 +121,8 @@ inline bool RenderElement::shouldApplyStyleContainment() const
 
 inline bool RenderElement::visibleToHitTesting(const std::optional<HitTestRequest>& request) const
 {
-    return style().usedVisibility() == Visibility::Visible
+    auto visibility = !request || request->userTriggered() ? style().usedVisibility() : style().visibility();
+    return visibility == Visibility::Visible
         && !isSkippedContent()
         && ((request && request->ignoreCSSPointerEventsProperty()) || style().usedPointerEvents() != PointerEvents::None);
 }

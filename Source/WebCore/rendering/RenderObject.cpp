@@ -1827,13 +1827,13 @@ void RenderObject::destroy()
     delete this;
 }
 
-Position RenderObject::positionForPoint(const LayoutPoint& point)
+Position RenderObject::positionForPoint(const LayoutPoint& point, HitTestSource source)
 {
     // FIXME: This should just create a Position object instead (webkit.org/b/168566). 
-    return positionForPoint(point, nullptr).deepEquivalent();
+    return positionForPoint(point, source, nullptr).deepEquivalent();
 }
 
-VisiblePosition RenderObject::positionForPoint(const LayoutPoint&, const RenderFragmentContainer*)
+VisiblePosition RenderObject::positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*)
 {
     return createVisiblePosition(caretMinOffset(), Affinity::Downstream);
 }

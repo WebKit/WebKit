@@ -43,6 +43,7 @@
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
+#import "HitTestSource.h"
 #import "ImageOverlay.h"
 #import "LocalFrameView.h"
 #import "NodeList.h"
@@ -142,7 +143,7 @@ std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const H
     std::optional<SimpleRange> contextRange;
 
     if (!is<HTMLTextFormControlElement>(*node)) {
-        position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);
+        position = renderer->positionForPoint(hitTestResult.localPoint(), HitTestSource::User, nullptr);
         if (position.isNull())
             position = firstPositionInOrBeforeNode(node);
 

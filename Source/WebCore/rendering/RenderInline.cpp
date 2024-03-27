@@ -426,7 +426,7 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
-VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
+VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
 {
     auto& containingBlock = *this->containingBlock();
 
@@ -436,13 +436,13 @@ VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const R
         while (continuation) {
             RenderBlock* currentBlock = continuation->isInline() ? continuation->containingBlock() : downcast<RenderBlock>(continuation);
             if (continuation->isInline() || continuation->firstChild())
-                return continuation->positionForPoint(parentBlockPoint - currentBlock->locationOffset(), fragment);
+                return continuation->positionForPoint(parentBlockPoint - currentBlock->locationOffset(), source, fragment);
             continuation = continuation->inlineContinuation();
         }
-        return RenderBoxModelObject::positionForPoint(point, fragment);
+        return RenderBoxModelObject::positionForPoint(point, source, fragment);
     }
 
-    return containingBlock.positionForPoint(point, fragment);
+    return containingBlock.positionForPoint(point, source, fragment);
 }
 
 class LinesBoundingBoxGeneratorContext {

@@ -55,6 +55,7 @@ class FontSelectionValue;
 class GapLength;
 class GridPosition;
 class GridTrackSize;
+class HitTestRequest;
 class IntPoint;
 class IntSize;
 class LayoutRect;
@@ -2328,5 +2329,7 @@ inline bool generatesBox(const RenderStyle&);
 inline bool isNonVisibleOverflow(Overflow);
 
 inline bool isSkippedContentRoot(const RenderStyle&, const Element*);
+
+inline bool isVisibleToHitTesting(const RenderStyle&, const HitTestRequest&);
 
 } // namespace WebCore

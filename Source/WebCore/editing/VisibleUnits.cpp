@@ -33,6 +33,7 @@
 #include "HTMLBRElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HitTestSource.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLineBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
@@ -1001,7 +1002,9 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
         RefPtr node = renderer->node();
         if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(node.get());
-        return const_cast<RenderObject&>(renderer.get()).positionForPoint(pointInLine, nullptr);
+        // FIXME: The HitTestSource state should be propagated down from calls into JavaScript bindings.
+        // For the time being, just err on the side of passing in `Bindings`.
+        return const_cast<RenderObject&>(renderer.get()).positionForPoint(pointInLine, HitTestSource::Script, nullptr);
     }
     
     // Could not find a previous line. This means we must already be on the first line.
@@ -1059,7 +1062,9 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
         RefPtr node = renderer->node();
         if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(node.get());
-        return const_cast<RenderObject&>(renderer.get()).positionForPoint(pointInLine, nullptr);
+        // FIXME: The HitTestSource state should be propagated down from calls into JavaScript bindings.
+        // For the time being, just err on the side of passing in `Bindings`.
+        return const_cast<RenderObject&>(renderer.get()).positionForPoint(pointInLine, HitTestSource::Script, nullptr);
     }
 
     // Could not find a next line. This means we must already be on the last line.

@@ -34,6 +34,7 @@
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
 #include "FrameIdentifier.h"
+#include "HitTestSource.h"
 #include "IntDegrees.h"
 #include "PageIdentifier.h"
 #include "PlaybackTargetClientContextIdentifier.h"
@@ -367,7 +368,7 @@ enum class LayoutOptions : uint8_t {
     DoNotLayoutAncestorDocuments = 1 << 4,
 };
 
-enum class HttpEquivPolicy {
+enum class HttpEquivPolicy : uint8_t {
     Enabled,
     DisabledBySettings,
     DisabledByContentDispositionAttachmentSandbox
@@ -516,8 +517,8 @@ public:
 
     static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
 
-    WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y);
-    std::optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint);
+    WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y, HitTestSource = HitTestSource::Script);
+    std::optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint, HitTestSource);
 
     WEBCORE_EXPORT Element* scrollingElementForAPI();
     WEBCORE_EXPORT Element* scrollingElement();

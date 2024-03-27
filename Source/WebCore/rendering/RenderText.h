@@ -86,7 +86,7 @@ public:
 
     Vector<FloatQuad> absoluteQuadsClippedToEllipsis() const;
 
-    Position positionForPoint(const LayoutPoint&) final;
+    Position positionForPoint(const LayoutPoint&, HitTestSource) final;
 
     UChar characterAt(unsigned) const;
     unsigned length() const final { return text().length(); }
@@ -210,7 +210,7 @@ private:
 
     bool canHaveChildren() const final { return false; }
 
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     void setSelectionState(HighlightState) final;
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;

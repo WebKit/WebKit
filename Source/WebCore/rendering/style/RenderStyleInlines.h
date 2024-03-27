@@ -30,6 +30,7 @@
 #include "FontCascadeDescription.h"
 #include "GraphicsTypes.h"
 #include "GridPositionsResolver.h"
+#include "HitTestRequest.h"
 #include "ImageOrientation.h"
 #include "RenderStyle.h"
 #include "ScrollTypes.h"
@@ -1023,6 +1024,11 @@ inline bool isNonVisibleOverflow(Overflow overflow)
 inline bool pseudoElementRendererIsNeeded(const RenderStyle* style)
 {
     return style && style->display() != DisplayType::None && style->contentData();
+}
+
+inline bool isVisibleToHitTesting(const RenderStyle& style, const HitTestRequest& request)
+{
+    return (request.userTriggered() ? style.usedVisibility() : style.visibility()) == Visibility::Visible;
 }
 
 } // namespace WebCore

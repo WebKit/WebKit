@@ -65,6 +65,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "HTMLVideoElement.h"
+#include "HitTestSource.h"
 #include "KeyboardEvent.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
@@ -1544,7 +1545,7 @@ VisiblePositionRange AccessibilityNodeObject::visiblePositionRangeForLine(unsign
 
     // iterate over the lines
     // FIXME: This is wrong when lineNumber is lineCount+1, because nextLinePosition takes you to the last offset of the last line.
-    VisiblePosition position = renderView->positionForPoint(IntPoint(), nullptr);
+    VisiblePosition position = renderView->positionForPoint(IntPoint(), HitTestSource::User, nullptr);
     while (--lineCount) {
         auto previousLinePosition = position;
         position = nextLinePosition(position, 0);

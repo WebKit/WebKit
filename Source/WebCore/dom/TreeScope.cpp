@@ -413,7 +413,7 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
     return std::nullopt;
 }
 
-RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)
+RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint, HitTestSource source)
 {
     Ref document = protectedDocumentScope();
     auto absolutePoint = absolutePointIfNotClipped(document, clientPoint);
@@ -421,18 +421,18 @@ RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoin
         return nullptr;
 
     HitTestResult result(absolutePoint.value());
-    document->hitTest(HitTestRequest(), result);
+    document->hitTest({ source, HitTestRequest::defaultTypes }, result);
     if (localPoint)
         *localPoint = result.localPoint();
     return result.innerNode();
 }
 
-RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY)
+RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY, HitTestSource source)
 {
     if (!protectedDocumentScope()->hasLivingRenderTree())
         return nullptr;
 
-    auto node = nodeFromPoint(LayoutPoint { clientX, clientY }, nullptr);
+    auto node = nodeFromPoint(LayoutPoint { clientX, clientY }, nullptr, source);
     if (!node)
         return nullptr;
 
@@ -447,7 +447,7 @@ RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY)
     return static_pointer_cast<Element>(WTFMove(node));
 }
 
-Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clientY)
+Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clientY, HitTestSource source)
 {
     Vector<RefPtr<Element>> elements;
 
@@ -459,9 +459,16 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
     if (!absolutePoint)
         return elements;
 
-    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::CollectMultipleElements, HitTestRequest::Type::IncludeAllElementsUnderPoint };
+    static constexpr OptionSet hitTypes {
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::Active,
+        HitTestRequest::Type::DisallowUserAgentShadowContent,
+        HitTestRequest::Type::CollectMultipleElements,
+        HitTestRequest::Type::IncludeAllElementsUnderPoint
+    };
+
     HitTestResult result { absolutePoint.value() };
-    document->hitTest(hitType, result);
+    document->hitTest({ source, hitTypes }, result);
 
     RefPtr<Node> lastNode;
     auto& nodeSet = result.listBasedTestResult();
@@ -498,11 +505,6 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
     }
 
     return elements;
-}
-
-Vector<RefPtr<Element>> TreeScope::elementsFromPoint(const FloatPoint& p)
-{
-    return elementsFromPoint(p.x(), p.y());
 }
 
 // FIXME: Would be nice to change this to take a StringView, since that's what callers have

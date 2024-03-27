@@ -984,7 +984,8 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     LayerPaintScope layerPaintScope(m_boxTree, layerRenderer);
 
     for (auto& box : makeReversedRange(boxRange)) {
-        if (!box.isVisible())
+        bool visibleForHitTesting = request.userTriggered() ? box.isVisible() : box.isVisibleIgnoringUsedVisibility();
+        if (!visibleForHitTesting)
             continue;
 
         auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox());
