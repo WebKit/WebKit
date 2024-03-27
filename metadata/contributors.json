@@ -1462,13 +1462,14 @@
    },
    {
       "emails" : [
+         "cadubentzen@igalia.com",
          "cadubentzen@gmail.com",
          "cramalho@igalia.com"
       ],
-      "name" : "Carlos Eduardo Ramalho",
+      "github" : "cadubentzen",
+      "name" : "Carlos Bentzen",
       "nicks" : [
-         "cadubentzen",
-         "cramalho"
+         "cadubentzen"
       ]
    },
    {
