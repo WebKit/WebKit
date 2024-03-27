@@ -2779,3 +2779,5 @@ webkit.org/b/266010 fast/scrolling/ios/scroll-anchoring-momentum-scroll.html [ P
 imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual.svg [ Failure ]
+
+webkit.org/b/271770 imported/w3c/web-platform-tests/xhr/setrequestheader-case-insensitive.htm [ Pass Failure ]
