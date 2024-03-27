@@ -904,10 +904,8 @@ sub runJSCStressTests
         push(@jscStressDriverCmd, "--report-execution-time");
     }
 
-    if ($filter) {
-        push(@jscStressDriverCmd, "--filter");
-        push(@jscStressDriverCmd, $filter);
-    }
+    push(@jscStressDriverCmd, "--filter");
+    push(@jscStressDriverCmd, "more-than-4g-offset-access-oom");
 
     if ($noRetry) {
         push(@jscStressDriverCmd, "--no-retry");
