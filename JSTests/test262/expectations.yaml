@@ -1,12 +1,6 @@
 ---
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«function arguments() {}», «[object Arguments]») to be true'
-test/built-ins/Array/fromAsync/this-constructor-operations.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [construct MyArray, defineProperty A[0], defineProperty A[1], set A.length] and [construct MyArray, construct MyArray, defineProperty A[0], defineProperty A[1], set A.length] to have the same contents. order of operations for array-like argument'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [construct MyArray, defineProperty A[0], defineProperty A[1], set A.length] and [construct MyArray, construct MyArray, defineProperty A[0], defineProperty A[1], set A.length] to have the same contents. order of operations for array-like argument'
-test/built-ins/Array/fromAsync/this-constructor.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: constructor is called once Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: constructor is called once Expected SameValue(«2», «1») to be true'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
