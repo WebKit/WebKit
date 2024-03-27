@@ -186,6 +186,18 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, getter=isInspectable) BOOL inspectable;
 
 /*!
+ @abstract Specifies unsupported APIs for this extension, making them `undefined` in JavaScript.
+ @discussion This property allows the app to specify a subset of web extension APIs that it chooses not to support, effectively making
+ these APIs `undefined` within the extension's JavaScript contexts. This enables extensions to employ feature detection techniques
+ for unsupported APIs, allowing them to adapt their behavior based on the APIs actually supported by the app. Setting is only allowed when
+ the context is not loaded. Only certain APIs can be specified here, particularly those within the `browser` namespace and other dynamic
+ functions and properties, anything else will be silently ignored.
+ @note For example, specifying `"browser.windows.create"` and `"browser.storage"` in this set will result in the
+ `browser.windows.create()` function and `browser.storage` property being `undefined`.
+ */
+@property (nonatomic, null_resettable, copy) NSSet<NSString *> *unsupportedAPIs;
+
+/*!
  @abstract The web view configuration to use for web views that load pages from this extension.
  @discussion Returns a customized copy of the configuration, originally set in the web extension controller configuration, for this extension.
  The app must use this configuration when initializing web views intended to navigate to a URL originating from this extension's base URL.

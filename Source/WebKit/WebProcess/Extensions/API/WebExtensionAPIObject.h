@@ -74,19 +74,31 @@ public:
     WebExtensionContentWorldType contentWorldType() const { return m_contentWorldType; }
 
     virtual WebExtensionAPIRuntimeBase& runtime() const { return *m_runtime; }
-    WebExtensionContextProxy& extensionContext() const { return *m_extensionContext; }
 
+    WebExtensionContextProxy& extensionContext() const { return *m_extensionContext; }
     bool hasExtensionContext() const { return !!m_extensionContext; }
+
+    const String& propertyPath() const { return m_propertyPath; }
+    void setPropertyPath(const String& propertyName, const WebExtensionAPIObject* parentObject = nullptr)
+    {
+        ASSERT(!propertyName.isEmpty());
+
+        if (parentObject && !parentObject->propertyPath().isEmpty())
+            m_propertyPath = makeString(parentObject->propertyPath(), '.', propertyName);
+        else
+            m_propertyPath = propertyName;
+    }
 
 private:
     WebExtensionContentWorldType m_contentWorldType { WebExtensionContentWorldType::Main };
     RefPtr<WebExtensionAPIRuntimeBase> m_runtime;
     RefPtr<WebExtensionContextProxy> m_extensionContext;
+    String m_propertyPath;
 };
 
 } // namespace WebKit
 
-#define WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(ImplClass, ScriptClass) \
+#define WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(ImplClass, ScriptClass, PropertyName) \
 public: \
     template<typename... Args> \
     static Ref<ImplClass> create(Args&&... args) \
@@ -98,21 +110,25 @@ private: \
     explicit ImplClass(WebExtensionContentWorldType contentWorldType) \
         : WebExtensionAPIObject(contentWorldType) \
     { \
+        setPropertyPath(#PropertyName##_s); \
     } \
 \
     explicit ImplClass(WebExtensionContentWorldType contentWorldType, WebExtensionContextProxy& context) \
         : WebExtensionAPIObject(contentWorldType, context) \
     { \
+        setPropertyPath(#PropertyName##_s); \
     } \
 \
     explicit ImplClass(WebExtensionContentWorldType contentWorldType, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context) \
         : WebExtensionAPIObject(contentWorldType, runtime, context) \
     { \
+        setPropertyPath(#PropertyName##_s); \
     } \
 \
     explicit ImplClass(const WebExtensionAPIObject& parentObject) \
         : WebExtensionAPIObject(parentObject) \
     { \
+        setPropertyPath(#PropertyName##_s, &parentObject); \
     } \
 \
     JSClassRef wrapperClass() final { return JS##ImplClass::ScriptClass##Class(); } \

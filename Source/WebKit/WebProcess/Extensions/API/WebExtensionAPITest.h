@@ -39,7 +39,7 @@ namespace WebKit {
 class WebPage;
 
 class WebExtensionAPITest : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITest, test);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITest, test, test);
 
 public:
 #if PLATFORM(COCOA)

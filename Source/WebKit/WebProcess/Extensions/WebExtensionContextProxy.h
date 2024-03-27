@@ -104,6 +104,8 @@ public:
     RefPtr<WebPage> backgroundPage() const;
     void setBackgroundPage(WebPage&);
 
+    bool isUnsupportedAPI(const String& propertyPath, const ASCIILiteral& propertyName) const;
+
     bool hasPermission(const String& permission) const;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -215,6 +217,7 @@ private:
     WeakPtr<WebExtensionControllerProxy> m_extensionControllerProxy;
     URL m_baseURL;
     String m_uniqueIdentifier;
+    HashSet<String> m_unsupportedAPIs;
     RetainPtr<_WKWebExtensionLocalization> m_localization;
     RetainPtr<NSDictionary> m_manifest;
     double m_manifestVersion { 0 };

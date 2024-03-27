@@ -127,6 +127,32 @@ TEST(WKWebExtensionAPINamespace, NotificationsObjectWithPermission)
     Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPINamespace, NotificationsUnsupported)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"notifications" ],
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.notifications, undefined)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.unsupportedAPIs = [NSSet setWithObject:@"browser.notifications"];
+
+    [manager loadAndRun];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

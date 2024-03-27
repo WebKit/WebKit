@@ -38,7 +38,7 @@ class WebExtensionAPIWebPageRuntime;
 class WebPage;
 
 class WebExtensionAPIWebPageNamespace : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageNamespace, webPageNamespace);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageNamespace, webPageNamespace, browser);
 
 public:
 #if PLATFORM(COCOA)

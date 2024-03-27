@@ -41,7 +41,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 class WebExtensionAPIPort : public WebExtensionAPIObject, public JSWebExtensionWrappable, public CanMakeWeakPtr<WebExtensionAPIPort> {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIPort, port);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIPort, port, port);
 
 public:
 #if PLATFORM(COCOA)

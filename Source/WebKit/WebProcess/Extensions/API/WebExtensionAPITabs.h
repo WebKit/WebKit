@@ -44,7 +44,7 @@ struct WebExtensionTabParameters;
 struct WebExtensionTabQueryParameters;
 
 class WebExtensionAPITabs : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITabs, tabs);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITabs, tabs, tabs);
 
 public:
 #if PLATFORM(COCOA)

@@ -33,7 +33,7 @@
 namespace WebKit {
 
 class WebExtensionAPILocalization : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPILocalization, localization);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPILocalization, localization, i18n);
 
 public:
     NSString *getMessage(NSString* messageName, id substitutions);

@@ -38,7 +38,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 class WebExtensionAPIMenus : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIMenus, menus);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIMenus, menus, menus);
 
 public:
 #if PLATFORM(COCOA)

@@ -144,6 +144,18 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionContext, WebExtensionContex
     _webExtensionContext->setInspectable(inspectable);
 }
 
+- (NSSet<NSString *> *)unsupportedAPIs
+{
+    return WebKit::toAPI(_webExtensionContext->unsupportedAPIs());
+}
+
+- (void)setUnsupportedAPIs:(NSSet<NSString *> *)unsupportedAPIs
+{
+    NSParameterAssert(!unsupportedAPIs || [unsupportedAPIs isKindOfClass:NSSet.class]);
+
+    _webExtensionContext->setUnsupportedAPIs(WebKit::toImpl(unsupportedAPIs));
+}
+
 - (WKWebViewConfiguration *)webViewConfiguration
 {
     return _webExtensionContext->webViewConfiguration(WebKit::WebExtensionContext::WebViewPurpose::Tab);
@@ -865,6 +877,15 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (void)setInspectable:(BOOL)inspectable
+{
+}
+
+- (NSSet<NSString *> *)unsupportedAPIs
+{
+    return nil;
+}
+
+- (void)setUnsupportedAPIs:(NSSet<NSString *> *)unsupportedAPIs
 {
 }
 

@@ -34,7 +34,7 @@
 namespace WebKit {
 
 class WebExtensionAPICommands : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPICommands, commands);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPICommands, commands, commands);
 
 public:
 #if PLATFORM(COCOA)

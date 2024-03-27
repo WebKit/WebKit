@@ -40,6 +40,9 @@ namespace WebKit {
 
 bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage& page)
 {
+    if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
+        return false;
+
     if (name == "action"_s)
         return extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"action", false);
 
@@ -199,8 +202,10 @@ WebExtensionAPIRuntime& WebExtensionAPINamespace::runtime() const
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
 
-    if (!m_runtime)
+    if (!m_runtime) {
         m_runtime = WebExtensionAPIRuntime::create(contentWorldType(), extensionContext());
+        m_runtime->setPropertyPath("runtime"_s, this);
+    }
 
     return *m_runtime;
 }

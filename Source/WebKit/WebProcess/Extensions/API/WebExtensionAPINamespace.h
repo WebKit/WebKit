@@ -55,7 +55,7 @@ class WebExtensionAPIExtension;
 class WebExtensionAPIRuntime;
 
 class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINamespace, namespace);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINamespace, namespace, browser);
 
 public:
 #if PLATFORM(COCOA)

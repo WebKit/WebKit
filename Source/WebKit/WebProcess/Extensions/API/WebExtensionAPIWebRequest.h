@@ -36,7 +36,7 @@ namespace WebKit {
 class WebPage;
 
 class WebExtensionAPIWebRequest : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebRequest, webRequest);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebRequest, webRequest, webRequest);
 
 public:
 #if PLATFORM(COCOA)

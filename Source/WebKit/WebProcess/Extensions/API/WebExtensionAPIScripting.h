@@ -41,7 +41,7 @@ using FirstTimeRegistration = WebExtensionDynamicScripts::WebExtensionRegistered
 class WebExtension;
 
 class WebExtensionAPIScripting : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIScripting, scripting);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIScripting, scripting, scripting);
 
 public:
 #if PLATFORM(COCOA)

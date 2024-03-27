@@ -654,6 +654,22 @@ TEST(WKWebExtensionAPIWindows, Remove)
     Util::loadAndRunExtension(windowsManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIWindows, RemoveUnsupported)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.windows.remove, undefined)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.unsupportedAPIs = [NSSet setWithObject:@"browser.windows.remove"];
+
+    [manager loadAndRun];
+}
+
 #endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

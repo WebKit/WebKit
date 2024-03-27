@@ -546,6 +546,9 @@ bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSString **out
 
 bool WebExtensionAPITabs::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
+    if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
+        return false;
+
     static NeverDestroyed<HashSet<AtomString>> removedInManifestVersion3 { HashSet { AtomString("executeScript"_s), AtomString("getSelected"_s), AtomString("insertCSS"_s), AtomString("removeCSS"_s) } };
     if (removedInManifestVersion3.get().contains(name))
         return !extensionContext().supportsManifestVersion(3);

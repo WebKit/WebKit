@@ -56,8 +56,10 @@ WebExtensionAPIWebPageRuntime& WebExtensionAPIWebPageNamespace::runtime() const
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
 
-    if (!m_runtime)
+    if (!m_runtime) {
         m_runtime = WebExtensionAPIWebPageRuntime::create(contentWorldType());
+        m_runtime->setPropertyPath("runtime"_s, this);
+    }
 
     return *m_runtime;
 }
@@ -67,7 +69,7 @@ WebExtensionAPITest& WebExtensionAPIWebPageNamespace::test()
     // Documentation: None (Testing Only)
 
     if (!m_test)
-        m_test = WebExtensionAPITest::create(contentWorldType());
+        m_test = WebExtensionAPITest::create(*this);
 
     return *m_test;
 }

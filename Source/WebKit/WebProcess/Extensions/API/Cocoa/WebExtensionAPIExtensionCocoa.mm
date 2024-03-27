@@ -88,6 +88,9 @@ bool WebExtensionAPIExtension::parseViewFilters(NSDictionary *filter, std::optio
 
 bool WebExtensionAPIExtension::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
+    if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
+        return false;
+
     // This method was removed in manifest version 3.
     if (name == "getURL"_s)
         return !extensionContext().supportsManifestVersion(3);

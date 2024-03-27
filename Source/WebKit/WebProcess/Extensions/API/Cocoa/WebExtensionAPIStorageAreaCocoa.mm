@@ -51,6 +51,9 @@ namespace WebKit {
 
 bool WebExtensionAPIStorageArea::isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&)
 {
+    if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), propertyName)))
+        return false;
+
     static NeverDestroyed<HashSet<AtomString>> syncStorageProperties { HashSet { AtomString("QUOTA_BYTES_PER_ITEM"_s), AtomString("MAX_ITEMS"_s), AtomString("MAX_WRITE_OPERATIONS_PER_HOUR"_s), AtomString("MAX_WRITE_OPERATIONS_PER_MINUTE"_s) } };
 
     if (syncStorageProperties.get().contains(propertyName))
@@ -103,7 +106,7 @@ void WebExtensionAPIStorageArea::get(WebPage& page, id items, Ref<WebExtensionCa
         keysVector = { key };
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(page.webPageProxyIdentifier(), m_type, keysVector), [&, keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(page.webPageProxyIdentifier(), m_type, keysVector), [keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;

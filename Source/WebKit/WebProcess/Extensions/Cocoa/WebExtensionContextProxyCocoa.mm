@@ -77,6 +77,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
         context.m_extensionControllerProxy = extensionControllerProxy;
         context.m_baseURL = parameters.baseURL;
         context.m_uniqueIdentifier = parameters.uniqueIdentifier;
+        context.m_unsupportedAPIs = parameters.unsupportedAPIs;
         context.m_grantedPermissions = parameters.grantedPermissions;
         context.m_localization = parseLocalization(parameters.localizationJSON.get(), parameters.baseURL);
         context.m_manifest = parseJSON(parameters.manifestJSON.get());
@@ -126,6 +127,12 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
     Ref result = adoptRef(*new WebExtensionContextProxy(parameters));
     updateProperties(result);
     return result;
+}
+
+bool WebExtensionContextProxy::isUnsupportedAPI(const String& propertyPath, const ASCIILiteral& propertyName) const
+{
+    auto fullPropertyPath = !propertyPath.isEmpty() ? makeString(propertyPath, '.', propertyName) : propertyName;
+    return m_unsupportedAPIs.contains(fullPropertyPath);
 }
 
 bool WebExtensionContextProxy::hasPermission(const String& permission) const

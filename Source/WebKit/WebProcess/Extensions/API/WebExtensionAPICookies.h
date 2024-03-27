@@ -37,7 +37,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 class WebExtensionAPICookies : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPICookies, cookies);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPICookies, cookies, cookies);
 
 public:
 #if PLATFORM(COCOA)

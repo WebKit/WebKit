@@ -34,7 +34,7 @@
 namespace WebKit {
 
 class WebExtensionAPIDevToolsExtensionPanel : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIDevToolsExtensionPanel, devToolsExtensionPanel);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIDevToolsExtensionPanel, devToolsExtensionPanel, devtools.panels.extension);
 
 public:
 #if PLATFORM(COCOA)

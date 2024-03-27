@@ -52,7 +52,7 @@ bool WebExtensionContext::isStorageMessageAllowed()
 
 void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
-    static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.get()", (NSString *)toAPIPrefixString(dataType)];
+    auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".get()"_s);
 
     if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
         completionHandler(toWebExtensionError(callingAPIName, nil, @"access not allowed"));
@@ -60,7 +60,7 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
     }
 
     auto storage = storageForType(dataType);
-    [storage getValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([&, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *values, NSString *errorMessage) mutable {
+    [storage getValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([callingAPIName, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *values, NSString *errorMessage) mutable {
         if (errorMessage)
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
         else
@@ -70,7 +70,7 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
 
 void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&& completionHandler)
 {
-    static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.getBytesInUse()", (NSString *)toAPIPrefixString(dataType)];
+    auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".getBytesInUse()"_s);
 
     if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
         completionHandler(toWebExtensionError(callingAPIName, nil, @"access not allowed"));
@@ -78,7 +78,7 @@ void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPagePro
     }
 
     auto storage = storageForType(dataType);
-    [storage getStorageSizeForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([&, completionHandler = WTFMove(completionHandler)](size_t size, NSString *errorMessage) mutable {
+    [storage getStorageSizeForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([callingAPIName, completionHandler = WTFMove(completionHandler)](size_t size, NSString *errorMessage) mutable {
         if (errorMessage)
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
         else
@@ -88,7 +88,7 @@ void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPagePro
 
 void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const String& dataJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.set()", (NSString *)toAPIPrefixString(dataType)];
+    auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".set()"_s);
 
     if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
         completionHandler(toWebExtensionError(callingAPIName, nil, @"access not allowed"));
@@ -97,7 +97,7 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
 
     NSDictionary *data = parseJSON(dataJSON);
 
-    [storageForType(dataType) getStorageSizeForAllKeysIncludingKeyedData:data withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, dataType, retainData = RetainPtr { data }, completionHandler = WTFMove(completionHandler)](size_t size, NSUInteger numberOfKeys, NSDictionary<NSString *, NSString *> *existingKeysAndValues, NSString *errorMessage) mutable {
+    [storageForType(dataType) getStorageSizeForAllKeysIncludingKeyedData:data withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callingAPIName, dataType, retainData = RetainPtr { data }, completionHandler = WTFMove(completionHandler)](size_t size, NSUInteger numberOfKeys, NSDictionary<NSString *, NSString *> *existingKeysAndValues, NSString *errorMessage) mutable {
         if (errorMessage) {
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
             return;
@@ -113,7 +113,7 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
             return;
         }
 
-        [storageForType(dataType) setKeyedData:retainData.get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, retainData, dataType, existingKeysAndValues = RetainPtr { existingKeysAndValues }, completionHandler = WTFMove(completionHandler)](NSArray *keysSuccessfullySet, NSString *errorMessage) mutable {
+        [storageForType(dataType) setKeyedData:retainData.get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callingAPIName, retainData, dataType, existingKeysAndValues = RetainPtr { existingKeysAndValues }, completionHandler = WTFMove(completionHandler)](NSArray *keysSuccessfullySet, NSString *errorMessage) mutable {
             if (errorMessage)
                 completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
             else
@@ -134,20 +134,20 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
 
 void WebExtensionContext::storageRemove(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.remove()", (NSString *)toAPIPrefixString(dataType)];
+    auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".remove()"_s);
 
     if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
         completionHandler(toWebExtensionError(callingAPIName, nil, @"access not allowed"));
         return;
     }
 
-    [storageForType(dataType) getValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, keys, dataType, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *oldValuesAndKeys, NSString *errorMessage) mutable {
+    [storageForType(dataType) getValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callingAPIName, keys, dataType, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *oldValuesAndKeys, NSString *errorMessage) mutable {
         if (errorMessage) {
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
             return;
         }
 
-        [storageForType(dataType) deleteValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, dataType, oldValuesAndKeys = RetainPtr { oldValuesAndKeys }, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+        [storageForType(dataType) deleteValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callingAPIName, dataType, oldValuesAndKeys = RetainPtr { oldValuesAndKeys }, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
             if (errorMessage) {
                 completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
                 return;
@@ -162,20 +162,20 @@ void WebExtensionContext::storageRemove(WebPageProxyIdentifier webPageProxyIdent
 
 void WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    static NSString * const callingAPIName = [NSString stringWithFormat:@"%@.clear()", (NSString *)toAPIPrefixString(dataType)];
+    auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".clear()"_s);
 
     if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
         completionHandler(toWebExtensionError(callingAPIName, nil, @"access not allowed"));
         return;
     }
 
-    [storageForType(dataType) getValuesForKeys:@[ ] completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, dataType, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *oldValuesAndKeys, NSString *errorMessage) mutable {
+    [storageForType(dataType) getValuesForKeys:@[ ] completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callingAPIName, dataType, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *oldValuesAndKeys, NSString *errorMessage) mutable {
         if (errorMessage) {
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
             return;
         }
 
-        [storageForType(dataType) deleteDatabaseWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, oldValuesAndKeys = RetainPtr { oldValuesAndKeys }, dataType, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+        [storageForType(dataType) deleteDatabaseWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callingAPIName, oldValuesAndKeys = RetainPtr { oldValuesAndKeys }, dataType, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
             if (errorMessage) {
                 completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
                 return;
@@ -190,7 +190,7 @@ void WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdenti
 
 void WebExtensionContext::storageSetAccessLevel(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const WebExtensionStorageAccessLevel accessLevel, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    static NSString * const callingAPIName = @"browser.session.setAccessLevel()";
+    static NSString * const callingAPIName = @"browser.storage.session.setAccessLevel()";
 
     if (!extensionCanAccessWebPage(webPageProxyIdentifier)) {
         completionHandler(toWebExtensionError(callingAPIName, nil, @"access not allowed"));

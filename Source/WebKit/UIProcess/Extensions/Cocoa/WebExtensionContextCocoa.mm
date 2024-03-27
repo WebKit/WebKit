@@ -516,6 +516,15 @@ void WebExtensionContext::setInspectable(bool inspectable)
         entry.key.cocoaView().get().inspectable = inspectable;
 }
 
+void WebExtensionContext::setUnsupportedAPIs(HashSet<String>&& unsupported)
+{
+    ASSERT(!isLoaded());
+    if (isLoaded())
+        return;
+
+    m_unsupportedAPIs = WTFMove(unsupported);
+}
+
 const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedContents()
 {
     return m_extension->staticInjectedContents();

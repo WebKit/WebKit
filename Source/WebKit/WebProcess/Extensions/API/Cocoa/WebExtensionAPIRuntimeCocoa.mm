@@ -153,6 +153,9 @@ bool WebExtensionAPIRuntime::parseConnectOptions(NSDictionary *options, std::opt
 
 bool WebExtensionAPIRuntime::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
+    if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
+        return false;
+
     if (name == "connectNative"_s || name == "sendNativeMessage"_s)
         return extensionContext().hasPermission("nativeMessaging"_s);
 

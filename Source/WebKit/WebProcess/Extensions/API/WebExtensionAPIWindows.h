@@ -41,7 +41,7 @@ namespace WebKit {
 class WebPage;
 
 class WebExtensionAPIWindows : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWindows, windows);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWindows, windows, windows);
 
 public:
 #if PLATFORM(COCOA)

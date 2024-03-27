@@ -36,7 +36,7 @@
 namespace WebKit {
 
 class WebExtensionAPIStorageArea : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorageArea, storageArea);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIStorageArea, storageArea, storageArea);
 
 public:
 #if PLATFORM(COCOA)
@@ -66,6 +66,7 @@ private:
         : WebExtensionAPIObject(parentObject)
         , m_type(type)
     {
+        setPropertyPath(toAPIString(type), &parentObject);
     }
 
     WebExtensionDataType m_type { WebExtensionDataType::Local };

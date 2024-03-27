@@ -57,7 +57,7 @@ private:
 };
 
 class WebExtensionAPIRuntime : public WebExtensionAPIObject, public WebExtensionAPIRuntimeBase {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIRuntime, runtime);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIRuntime, runtime, runtime);
 
 public:
     WebExtensionAPIRuntime& runtime() const final { return const_cast<WebExtensionAPIRuntime&>(*this); }
@@ -108,7 +108,7 @@ private:
 };
 
 class WebExtensionAPIWebPageRuntime : public WebExtensionAPIObject, public WebExtensionAPIRuntimeBase {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageRuntime, webPageRuntime);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageRuntime, webPageRuntime, webPageRuntime);
 
 public:
     WebExtensionAPIWebPageRuntime& runtime() const final { return const_cast<WebExtensionAPIWebPageRuntime&>(*this); }

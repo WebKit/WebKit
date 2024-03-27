@@ -39,15 +39,15 @@ enum class WebExtensionDataType : uint8_t {
     Sync    = 1 << 2,
 };
 
-inline String toAPIPrefixString(WebExtensionDataType dataType)
+inline String toAPIString(WebExtensionDataType dataType)
 {
     switch (dataType) {
     case WebExtensionDataType::Local:
-        return "browser.local"_s;
+        return "local"_s;
     case WebExtensionDataType::Session:
-        return "browser.session"_s;
+        return "session"_s;
     case WebExtensionDataType::Sync:
-        return "browser.sync"_s;
+        return "sync"_s;
     }
 }
 
