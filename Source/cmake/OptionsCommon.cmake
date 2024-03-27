@@ -94,11 +94,15 @@ unset(LD_VERSION)
 
 set(LD_SUPPORTS_GDB_INDEX FALSE)
 set(LD_SUPPORTS_DISABLE_NEW_DTAGS FALSE)
+set(LD_SUPPORTS_GC_SECTIONS FALSE)
 if (LD_USAGE MATCHES "--gdb-index")
     set(LD_SUPPORTS_GDB_INDEX TRUE)
 endif ()
 if (LD_USAGE MATCHES "--disable-new-dtags")
     set(LD_SUPPORTS_DISABLE_NEW_DTAGS TRUE)
+endif ()
+if (LD_USAGE MATCHES "--gc-sections")
+    set(LD_SUPPORTS_GC_SECTIONS TRUE)
 endif ()
 unset(LD_USAGE)
 
@@ -107,6 +111,7 @@ message(STATUS "  Linker supports thin archives - ${LD_SUPPORTS_THIN_ARCHIVES}")
 message(STATUS "  Linker supports split debug info - ${LD_SUPPORTS_SPLIT_DEBUG}")
 message(STATUS "  Linker supports --gdb-index - ${LD_SUPPORTS_GDB_INDEX}")
 message(STATUS "  Linker supports --disable-new-dtags - ${LD_SUPPORTS_DISABLE_NEW_DTAGS}")
+message(STATUS "  Linker supports --gc-sections - ${LD_SUPPORTS_GC_SECTIONS}")
 
 # Determine whether the archiver in use supports thin archives.
 separate_arguments(AR_VERSION_COMMAND UNIX_COMMAND "${CMAKE_AR} -V")
@@ -134,6 +139,14 @@ unset(AR_VERSION)
 unset(AR_STATUS)
 message(STATUS "Archiver variant in use: ${AR_VARIANT}")
 message(STATUS "  Archiver supports thin archives - ${AR_SUPPORTS_THIN_ARCHIVES}")
+
+# Remove unused sections to reduce the binary size when supported.
+if (LD_SUPPORTS_GC_SECTIONS)
+    WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-ffunction-sections -fdata-sections)
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -Wl,--gc-sections")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -Wl,--gc-sections")
+    string(APPEND CMAKE_MODULE_LINKER_FLAGS " -Wl,--gc-sections")
+endif ()
 
 # Use --disable-new-dtags to ensure that the rpath set by CMake when building
 # will use a DT_RPATH entry in the ELF headers, to ensure that the build
