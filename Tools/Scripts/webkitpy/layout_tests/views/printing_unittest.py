@@ -121,6 +121,9 @@ class  Testprinter(unittest.TestCase):
         self.assertIn('Verbose baseline search path: platform/test-mac-leopard -> platform/test-mac-snowleopard -> generic', err.getvalue())
         self.assertIn('Baseline search path: platform/test-mac-leopard -> generic', err.getvalue())
 
+        self.assertIn('Verbose test expectations: platform/test-mac-leopard/TestExpectations -> platform/test/TestExpectations -> TestExpectations', err.getvalue())
+        self.assertIn('Test expectations: platform/test/TestExpectations', err.getvalue())
+
         self.reset(err)
         printer._options.quiet = True
         printer.print_baseline_search_path()
