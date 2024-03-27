@@ -112,10 +112,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
             return JSValue::encode(throwException(globalObject, scope, createStackOverflowError(globalObject)));
     }
     ASSERT(wasmFunction->instance());
-    dataLogLn("ENTERING");
     EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->jsEntrypoint(MustCheckArity).taggedPtr(), &vm, &protoCallFrame);
-    dataLogLn("RETURNED");
-    WTFReportBacktrace();
     RETURN_IF_EXCEPTION(scope, { });
 
     // We need to make sure this is in a register or on the stack since it's stored in Vector<JSValue>.
