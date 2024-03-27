@@ -28,7 +28,7 @@
 
 #include "BitmapImage.h"
 #include "GdkCairoUtilities.h"
-#include "NotImplemented.h"
+#include "GdkSkiaUtilities.h"
 #include "SharedBuffer.h"
 #include <cairo.h>
 #include <gdk/gdk.h>
@@ -61,12 +61,11 @@ GRefPtr<GdkPixbuf> ImageAdapter::gdkPixbuf()
     if (!nativeImage)
         return nullptr;
 
-#if USE(CAIRO)
     auto& surface = nativeImage->platformImage();
+#if USE(CAIRO)
     return cairoSurfaceToGdkPixbuf(surface.get());
 #elif USE(SKIA)
-    notImplemented();
-    return nullptr;
+    return skiaImageToGdkPixbuf(*surface.get());
 #endif
 }
 
@@ -77,12 +76,11 @@ GRefPtr<GdkTexture> ImageAdapter::gdkTexture()
     if (!nativeImage)
         return nullptr;
 
-#if USE(CAIRO)
     auto& surface = nativeImage->platformImage();
+#if USE(CAIRO)
     return cairoSurfaceToGdkTexture(surface.get());
 #elif USE(SKIA)
-    notImplemented();
-    return nullptr;
+    return skiaImageToGdkTexture(*surface.get());
 #endif
 }
 #endif

@@ -27,12 +27,11 @@
 
 #if USE(SKIA)
 
+#include <gdk/gdk.h>
 #include <skia/core/SkImage.h>
 #include <wtf/glib/GRefPtr.h>
 
-#if USE(GTK4)
-#include <gdk/gdk.h>
-#else
+#if !USE(GTK4)
 #include <cairo.h>
 #endif
 
@@ -43,6 +42,8 @@ GRefPtr<GdkTexture> skiaImageToGdkTexture(SkImage&);
 #else
 RefPtr<cairo_surface_t> skiaImageToCairoSurface(SkImage&);
 #endif
+
+GRefPtr<GdkPixbuf> skiaImageToGdkPixbuf(SkImage&);
 
 }
 

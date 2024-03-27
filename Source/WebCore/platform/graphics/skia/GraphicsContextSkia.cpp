@@ -63,8 +63,11 @@ GraphicsContextSkia::GraphicsContextSkia(SkCanvas& canvas, RenderingMode renderi
 {
 }
 
-GraphicsContextSkia::~GraphicsContextSkia() = default;
-
+GraphicsContextSkia::~GraphicsContextSkia()
+{
+    if (m_destroyNotify)
+        m_destroyNotify();
+}
 
 bool GraphicsContextSkia::hasPlatformContext() const
 {

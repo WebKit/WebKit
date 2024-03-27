@@ -73,6 +73,23 @@ RefPtr<cairo_surface_t> skiaImageToCairoSurface(SkImage& image)
 }
 #endif
 
+GRefPtr<GdkPixbuf> skiaImageToGdkPixbuf(SkImage& image)
+{
+#if USE(GTK4)
+    auto texture = skiaImageToGdkTexture(image);
+    if (!texture)
+        return { };
+
+    return adoptGRef(gdk_pixbuf_get_from_texture(texture.get()));
+#else
+    RefPtr surface = skiaImageToCairoSurface(image);
+    if (!surface)
+        return { };
+
+    return adoptGRef(gdk_pixbuf_get_from_surface(surface.get(), 0, 0, cairo_image_surface_get_width(surface.get()), cairo_image_surface_get_height(surface.get())));
+#endif
+}
+
 } // namespace WebCore
 
 #endif // #if USE(SKIA)
