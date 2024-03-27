@@ -837,6 +837,7 @@ sub get_function_line_ranges_for_cpp($$)
     my $in_macro = 0;
     my $in_method_declaration = 0;
     my $in_parentheses = 0;
+    my $in_test_declaration = 0;
     my $quotation_mark;
     my $in_braces = 0;
     my $in_toplevel_array_brace = 0;
@@ -989,7 +990,7 @@ sub get_function_line_ranges_for_cpp($$)
 
 
         # Find function, interface and method names.
-        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]<>:~]+|[(){}:;=])|\@(?:implementation|interface|protocol)\s+(\w+)[^{]*&g) {
+        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]<>:~]+|[(){}:;=,])|\@(?:implementation|interface|protocol)\s+(\w+)[^{]*&g) {
             # Skip an array definition at the top level.
             # e.g. static int arr[] = { 1, 2, 3 };
             if ($1) {
@@ -1015,12 +1016,22 @@ sub get_function_line_ranges_for_cpp($$)
             # Open parenthesis.
             if ($1 eq "(") {
                 $potential_name = $word unless $in_parentheses || $skip_til_brace_or_semicolon || grep { $word eq $_ } ("CF_ENUM", "CF_OPTIONS", "NS_ENUM", "NS_OPTIONS");
+                $in_test_declaration = 1 if $word eq "TEST";
+                $potential_name .= "(" if $in_test_declaration;
                 $in_parentheses++;
+                next;
+            }
+
+            # Comma.
+            if ($1 eq ",") {
+                $potential_name .= ", " if $in_test_declaration;
                 next;
             }
 
             # Close parenthesis.
             if ($1 eq ")") {
+                $potential_name .= ")" if $in_test_declaration;
+                $in_test_declaration = 0;
                 $in_parentheses--;
                 next;
             }
@@ -1148,6 +1159,7 @@ sub get_function_line_ranges_for_cpp($$)
 
             # Word.
             $word = $1;
+
             if (!$skip_til_brace_or_semicolon) {
                 if ($next_word_could_be_namespace) {
                     $potential_namespace = $word;
@@ -1160,10 +1172,13 @@ sub get_function_line_ranges_for_cpp($$)
                     $potential_start = 0;
                     $potential_name = "";
                 }
+
                 if (!$potential_start) {
                     $potential_start = $.;
                     $potential_name = "";
                 }
+
+                $potential_name .= $word if $in_test_declaration;
             }
         }
     }
