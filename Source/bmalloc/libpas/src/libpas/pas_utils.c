@@ -36,6 +36,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <execinfo.h>
+#include <stdio.h>
 
 #if PAS_X86_64
 
@@ -200,6 +202,14 @@ PAS_NO_RETURN PAS_NEVER_INLINE void pas_deallocation_did_fail(const char *reason
 {
     if (deallocation_did_fail_callback)
         deallocation_did_fail_callback(reason, (void*)begin);
+
+    void* stack[128];
+    int count = backtrace(stack, 128);
+    char** symbols = backtrace_symbols(stack, count);
+    fprintf(stderr, "\nStack trace:\n");
+    for (int i = 0; i < count; i++)
+        fprintf(stderr, "    %s\n", symbols[i]);
+    fflush(stderr);
     pas_panic("deallocation did fail at %p: %s\n", (void*)begin, reason);
 }
 
