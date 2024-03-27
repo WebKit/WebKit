@@ -7066,20 +7066,6 @@ ViewTransitionsEnabled:
     WebCore:
       default: true
 
-ViewTransitionsUAStylesEnabled:
-  type: bool
-  category: animation
-  status: testable
-  humanReadableName: "View Transitions user-agent styles"
-  humanReadableDescription: "Enable the View Transitions API user-agent styles"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 VisibleDebugOverlayRegions:
   type: uint32_t
   status: embedder
