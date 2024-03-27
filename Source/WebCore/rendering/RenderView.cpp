@@ -678,8 +678,11 @@ bool RenderView::rootElementShouldPaintBaseBackground() const
     if (RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr) {
         // The document element's renderer is currently forced to be a block, but may not always be.
         auto* rootBox = dynamicDowncast<RenderBox>(*rootRenderer);
-        if (rootBox && rootBox->hasLayer() && rootBox->layer()->isolatesBlending())
-            return false;
+        if (rootBox && rootBox->hasLayer()) {
+            RenderLayer* layer = rootBox->layer();
+            if (layer->isolatesBlending() || layer->isBackdropRoot())
+                return false;
+        }
     }
     return shouldPaintBaseBackground();
 }

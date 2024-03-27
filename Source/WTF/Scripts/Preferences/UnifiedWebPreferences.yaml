@@ -1335,7 +1335,6 @@ CSSUnprefixedBackdropFilterEnabled:
   humanReadableDescription: "Enable unprefixed backdrop-filter CSS property"
   defaultValue:
     WebKitLegacy:
-      "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
       default: false
     WebKit:
       "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true

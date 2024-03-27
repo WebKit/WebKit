@@ -605,14 +605,18 @@ bool RenderLayer::computeCanBeBackdropRoot() const
     if (!renderer().settings().cssUnprefixedBackdropFilterEnabled())
         return false;
 
-    return renderer().isTransparent()
+    // In order to match other impls and not the spec, the document element should
+    // only be a backdrop root (and be isolated from the base background color) if
+    // another group rendering effect is present.
+    // https://github.com/w3c/fxtf-drafts/issues/557
+    return isRenderViewLayer()
+        || renderer().isTransparent()
         || renderer().hasBackdropFilter()
         || renderer().hasClipPath()
         || renderer().hasFilter()
         || renderer().hasBlendMode()
         || renderer().hasMask()
-        || renderer().hasViewTransitionName()
-        || renderer().isDocumentElementRenderer()
+        || (renderer().hasViewTransitionName() && !renderer().isDocumentElementRenderer())
         || (renderer().style().willChange() && renderer().style().willChange()->canBeBackdropRoot());
 }
 
