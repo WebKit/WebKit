@@ -187,7 +187,9 @@ function consoleWrite(text)
 {
     if (testEnded)
         return;
-    logConsole().innerHTML += text + "<br>";
+    var span = document.createElement("span");
+    logConsole().appendChild(span);
+    span.innerHTML = text + '<br>';
 }
 
 
