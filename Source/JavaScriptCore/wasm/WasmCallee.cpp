@@ -418,28 +418,18 @@ CodePtr<WasmEntryPtrTag> JSEntrypointInterpreterCallee::entrypointImpl() const
 
 RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
 {
-    // FIXME THIS HAS A BUG. We cannot swap replacement since it is recording callee save register's locations.
+    // Keep in mind that JIT JSEntrypointCallee is also having wasmPinnedRegisters.
     static LazyNeverDestroyed<RegisterAtOffsetList> calleeSaveRegisters;
     static std::once_flag initializeFlag;
     std::call_once(initializeFlag, [] {
-        RegisterSet registers;
-        registers.add(GPRInfo::regCS0, IgnoreVectors); // Wasm::Instance
+        RegisterSet registers = RegisterSetBuilder::wasmPinnedRegisters();
 #if CPU(X86_64)
-        registers.add(GPRInfo::regCS1, IgnoreVectors); // PM (pointer to metadata)
-        registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
 #elif CPU(ARM64) || CPU(RISCV64)
-        registers.add(GPRInfo::regCS1, IgnoreVectors); // MP
-        registers.add(GPRInfo::regCS3, IgnoreVectors); // PB
-        registers.add(GPRInfo::regCS4, IgnoreVectors); // PM
-        registers.add(GPRInfo::regCS6, IgnoreVectors); // PM
-        registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
+        ASSERT(registers.numberOfSetRegisters() == 4);
 #elif CPU(ARM)
-        registers.add(GPRInfo::regCS0, IgnoreVectors); // PM
-        registers.add(GPRInfo::regCS1, IgnoreVectors); // PB
 #else
 #error Unsupported architecture.
 #endif
-        ASSERT(registers.numberOfSetRegisters() == 6);
         calleeSaveRegisters.construct(WTFMove(registers));
     });
     dataLogLn("CALLEE ", calleeSaveRegisters.get());

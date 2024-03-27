@@ -602,7 +602,6 @@ op(js_to_wasm_wrapper_entry, macro ()
         error
     end
 
-    const MP = csr1 # Metadata / bytecode pointer
     const AccumulatorTag = invalidGPR # Only used for JSVALUE32_64
 
 if ARM64 or ARM64E
@@ -617,14 +616,13 @@ else
     const Scratch2 = csr2
 end
 
-    const JSEntrypointInterpreterCalleeSaveSpaceStackAligned = (6 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
+    const JSEntrypointInterpreterCalleeSaveSpaceStackAligned = (4 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
 
     macro saveJSEntrypointInterpreterRegisters()
         subp JSEntrypointInterpreterCalleeSaveSpaceStackAligned, sp
         if ARM64 or ARM64E
-            storepairq metadataTable, PB, -16[cfr]
-            storepairq memoryBase, boundsCheckingSize, -32[cfr]
-            storepairq wasmInstance, MP, -48[cfr]
+            storepairq boundsCheckingSize, metadataTable, -16[cfr]
+            storepairq wasmInstance, memoryBase, -32[cfr]
         elsif X86_64 or RISCV64
             storep PB, -0x8[cfr]
             storep PM, -0x10[cfr]
@@ -639,9 +637,8 @@ end
 
     macro restoreJSEntrypointInterpreterRegisters()
         if ARM64 or ARM64E
-            loadpairq -16[cfr], metadataTable, PB
-            loadpairq -32[cfr], memoryBase, boundsCheckingSize
-            loadpairq -48[cfr], wasmInstance, MP
+            loadpairq -16[cfr], boundsCheckingSize, metadataTable
+            loadpairq -32[cfr], wasmInstance, memoryBase
         elsif X86_64 or RISCV64
             loadp -0x8[cfr], PB
             loadp -0x10[cfr], PM
@@ -728,7 +725,7 @@ end
 
     # Callee saves are saved, so now we can use our prefered registers
     # and free up the argument registers (t* and wa* overlap on some platforms)
-    move t1, MP
+    move t1, metadataTable
     move t2, CP
 
 if JSVALUE64
@@ -744,13 +741,13 @@ end
     const OpcodeSizeShift = 5 # 8 instructions * 4 bytes per instruction
 
     macro advance()
-        loadb [MP], Scratch
-        addp 1, MP
+        loadb [metadataTable], Scratch
+        addp 1, metadataTable
     end
 
     macro advanceSigned()
-        loadbsq [MP], Scratch
-        addp 1, MP
+        loadbsq [metadataTable], Scratch
+        addp 1, metadataTable
     end
 
     macro idispatch()
