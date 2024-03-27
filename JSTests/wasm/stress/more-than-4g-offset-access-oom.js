@@ -12,18 +12,11 @@ let wat = `
 async function test() {
     const instance = await instantiate(wat, {}, {reference_types: true});
     const {test} = instance.exports;
-
-    print("ACCESSIBLE");
-    test(0x00);
-    print("ACCESSIBLE DONE");
-
     // In fast-memory configuration, this pass bound-checking (expected).
     // And then, accessing to redzone, and this causes fault. And signal handler throws an error correctly.
-    print("ERROR THROWING");
     assert.throws(() => {
-        test(0x00);
+        test(0xffffffff);
     }, WebAssembly.RuntimeError, `Out of bounds memory access`);
-    print("ERROR THROWING DONE");
 }
 
 assert.asyncTest(test());
