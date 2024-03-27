@@ -87,7 +87,9 @@
 
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore openWindow:(NSURL *)url fromServiceWorkerOrigin:(WKSecurityOrigin *)serviceWorkerOrigin completionHandler:(void (^)(WKWebView *newWebView))completionHandler
 {
-    auto* newView = WTR::TestController::singleton().createOtherPlatformWebView(nullptr, nullptr, nullptr, nullptr);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore];
+    auto* newView = WTR::TestController::singleton().createOtherPlatformWebView(nullptr, (__bridge WKPageConfigurationRef)configuration.get(), nullptr, nullptr);
     WKWebView *webView = newView->platformView();
     
     ASSERT(webView.configuration.websiteDataStore == dataStore);

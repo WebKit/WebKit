@@ -2006,5 +2006,3 @@ webkit.org/b/270235 [ Ventura+ Debug x86_64 ] webgl/pending/conformance/glsl/mis
 webkit.org/b/271063 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Timeout ]
 
 webkit.org/b/271318 [ Debug ] http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html [ Skip ]
-
-webkit.org/b/271725 [ Ventura+ ] http/tests/workers/service/openwindow-from-notification-click.html [ Skip ]
