@@ -146,7 +146,7 @@ static int32_t releaseVideoDecoder(webrtc::WebKitVideoDecoder::Value decoder)
 
 static int32_t decodeVideoFrame(webrtc::WebKitVideoDecoder::Value decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width,  uint16_t height)
 {
-    return WebProcess::singleton().libWebRTCCodecs().decodeFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, data, size, width, height);
+    return WebProcess::singleton().libWebRTCCodecs().decodeFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, { data, size }, width, height);
 }
 
 static int32_t registerDecodeCompleteCallback(webrtc::WebKitVideoDecoder::Value decoder, void* decodedImageCallback)
@@ -405,25 +405,25 @@ void LibWebRTCCodecs::flushDecoder(Decoder& decoder, Function<void()>&& callback
     decoder.flushCallbacks.append(WTFMove(callback));
 }
 
-void LibWebRTCCodecs::setDecoderFormatDescription(Decoder& decoder, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
+void LibWebRTCCodecs::setDecoderFormatDescription(Decoder& decoder, std::span<const uint8_t> data, uint16_t width, uint16_t height)
 {
     Locker locker { m_connectionLock };
     ASSERT(decoder.connection);
     if (!decoder.connection)
         return;
 
-    decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetDecoderFormatDescription { decoder.identifier, std::span { data, size }, width, height }, 0);
+    decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetDecoderFormatDescription { decoder.identifier, data, width, height }, 0);
 }
 
-static void sendFrameToDecode(LibWebRTCCodecs::Decoder& decoder, int64_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
+static void sendFrameToDecode(LibWebRTCCodecs::Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data, uint16_t width, uint16_t height)
 {
     if (decoder.type == VideoCodecType::VP9 && (width || height))
         decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetFrameSize { decoder.identifier, width, height }, 0);
 
-    decoder.connection->send(Messages::LibWebRTCCodecsProxy::DecodeFrame { decoder.identifier, timeStamp, std::span { data, size } }, 0);
+    decoder.connection->send(Messages::LibWebRTCCodecsProxy::DecodeFrame { decoder.identifier, timeStamp, data }, 0);
 }
 
-int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, const uint8_t* data, size_t size, uint16_t width, uint16_t height)
+int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data, uint16_t width, uint16_t height)
 {
     Locker locker { m_connectionLock };
     if (decoder.hasError) {
@@ -432,11 +432,11 @@ int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, const 
     }
 
     if (!decoder.connection) {
-        decoder.pendingFrames.append({ timeStamp, std::span { data, size }, width, height });
+        decoder.pendingFrames.append({ timeStamp, data, width, height });
         return WEBRTC_VIDEO_CODEC_OK;
     }
 
-    sendFrameToDecode(decoder, timeStamp, data, size, width, height);
+    sendFrameToDecode(decoder, timeStamp, data, width, height);
     return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -892,7 +892,7 @@ void LibWebRTCCodecs::setDecoderConnection(Decoder& decoder, RefPtr<IPC::Connect
     decoder.connection = WTFMove(connection);
     auto frames = std::exchange(decoder.pendingFrames, { });
     for (auto& frame : frames)
-        sendFrameToDecode(decoder, frame.timeStamp, frame.data.data(), frame.data.size(), frame.width, frame.height);
+        sendFrameToDecode(decoder, frame.timeStamp, frame.data.span(), frame.width, frame.height);
 }
 
 inline RefPtr<RemoteVideoFrameObjectHeapProxy> LibWebRTCCodecs::protectedVideoFrameObjectHeapProxy() const

@@ -267,7 +267,7 @@ private:
     // Returns the number of bytes copied.
     size_t copyDataAtPosition(void* buffer, uint64_t sourcePosition, size_t count) const;
     // FIXME: It would be nice to avoid having both the "copy into a buffer" and "return a pointer" ways of getting data.
-    const uint8_t* dataPtrForRange(uint64_t sourcePosition, size_t count, CheckValidRanges) const;
+    std::span<const uint8_t> dataPtrForRange(uint64_t sourcePosition, size_t count, CheckValidRanges) const;
     // Returns true only if we can satisfy all of the requests.
     bool getByteRanges(CFMutableArrayRef, const CFRange*, size_t count) const;
 

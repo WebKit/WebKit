@@ -1473,12 +1473,7 @@ JSValueRef JSSharedMemory::readBytes(JSContextRef context, JSObjectRef, JSObject
     return toRef(jsArrayBuffer);
 }
 
-struct ArrayBufferData {
-    void* buffer { nullptr };
-    size_t length { 0 };
-};
-
-static ArrayBufferData arrayBufferDataFromValueRef(JSContextRef context, JSTypedArrayType type, JSValueRef valueRef, JSValueRef* exception)
+static std::span<const uint8_t> arrayBufferSpanFromValueRef(JSContextRef context, JSTypedArrayType type, JSValueRef valueRef, JSValueRef* exception)
 {
     auto objectRef = JSValueToObject(context, valueRef, exception);
     if (!objectRef)
@@ -1499,7 +1494,7 @@ static ArrayBufferData arrayBufferDataFromValueRef(JSContextRef context, JSTyped
     else
         length = JSObjectGetTypedArrayByteLength(context, objectRef, exception);
 
-    return { buffer, length };
+    return { static_cast<const uint8_t*>(buffer), length };
 }
 
 JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1516,14 +1511,14 @@ JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjec
         return JSValueMakeUndefined(context);
     }
 
-    auto data = arrayBufferDataFromValueRef(context, type, arguments[0], exception);
-    if (!data.buffer) {
+    auto span = arrayBufferSpanFromValueRef(context, type, arguments[0], exception);
+    if (!span.data()) {
         *exception = createTypeError(context, "Could not read the buffer"_s);
         return JSValueMakeUndefined(context);
     }
 
     size_t offset = 0;
-    size_t length = data.length;
+    size_t length = span.size();
     size_t sharedMemorySize = jsSharedMemory->m_sharedMemory->size();
 
     auto* globalObject = toJS(context);
@@ -1556,7 +1551,7 @@ JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjec
         length = *lengthValue;
     }
 
-    memcpy(static_cast<uint8_t*>(jsSharedMemory->m_sharedMemory->data()) + offset, data.buffer, length);
+    memcpy(static_cast<uint8_t*>(jsSharedMemory->m_sharedMemory->data()) + offset, span.data(), length);
 
     return JSValueMakeUndefined(context);
 }
@@ -1688,14 +1683,14 @@ JSValueRef JSIPCStreamConnectionBuffer::writeBytes(JSContextRef context, JSObjec
         return JSValueMakeUndefined(context);
     }
 
-    auto data = arrayBufferDataFromValueRef(context, type, arguments[0], exception);
-    if (!data.buffer) {
+    auto data = arrayBufferSpanFromValueRef(context, type, arguments[0], exception);
+    if (!data.data()) {
         *exception = createTypeError(context, "Could not read the buffer"_s);
         return JSValueMakeUndefined(context);
     }
 
     size_t offset = 0;
-    size_t length = data.length;
+    size_t length = data.size();
 
     size_t sharedMemorySize = span.size();
     uint8_t* destinationData = span.data();
@@ -1730,7 +1725,7 @@ JSValueRef JSIPCStreamConnectionBuffer::writeBytes(JSContextRef context, JSObjec
         length = *lengthValue;
     }
 
-    memcpy(destinationData + offset, data.buffer, length);
+    memcpy(destinationData + offset, data.data(), length);
     return JSValueMakeUndefined(context);
 }
 
@@ -1899,11 +1894,11 @@ static bool encodeTypedArray(IPC::Encoder& encoder, JSContextRef context, JSValu
 {
     ASSERT(type != kJSTypedArrayTypeNone);
 
-    auto data = arrayBufferDataFromValueRef(context, type, valueRef, exception);
-    if (!data.buffer)
+    auto span = arrayBufferSpanFromValueRef(context, type, valueRef, exception);
+    if (!span.data())
         return false;
 
-    encoder.encodeSpan(std::span(reinterpret_cast<const uint8_t*>(data.buffer), data.length));
+    encoder.encodeSpan(span);
     return true;
 }
 

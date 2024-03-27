@@ -70,7 +70,7 @@ private:
     bool willSend(size_t);
 
     friend class LibWebRTCNetwork;
-    void signalReadPacket(const uint8_t*, size_t, rtc::SocketAddress&&, int64_t);
+    void signalReadPacket(std::span<const uint8_t>, rtc::SocketAddress&&, int64_t);
     void signalSentPacket(int, int64_t);
     void signalAddressReady(const rtc::SocketAddress&);
     void signalConnect();

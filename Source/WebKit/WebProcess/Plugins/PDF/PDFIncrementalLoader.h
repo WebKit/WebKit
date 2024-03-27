@@ -48,7 +48,7 @@ class PDFPluginStreamLoaderClient;
 
 enum class ByteRangeRequestIdentifierType { };
 using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
-using DataRequestCompletionHandler = Function<void(const uint8_t*, size_t count)>;
+using DataRequestCompletionHandler = Function<void(std::span<const uint8_t>)>;
 
 enum class CheckValidRanges : bool;
 
@@ -90,7 +90,7 @@ private:
 
     void appendAccumulatedDataToDataBuffer(ByteRangeRequest&);
 
-    const uint8_t* dataPtrForRange(uint64_t position, size_t count, CheckValidRanges) const;
+    std::span<const uint8_t> dataPtrForRange(uint64_t position, size_t count, CheckValidRanges) const;
     uint64_t availableDataSize() const;
 
     void getResourceBytesAtPosition(size_t count, off_t position, DataRequestCompletionHandler&&);
