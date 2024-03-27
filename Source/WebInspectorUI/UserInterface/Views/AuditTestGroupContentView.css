@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +56,13 @@
 
 .content-view.audit-test-group > section > .audit-test-group.contains-test-case > header {
     top: -1px;
+}
+
+.content-view.audit-test-group {
+    /* FIXME: Use CSS4 color blend functions once they're available. */
+    --percentage-pass-color: hsla(0, 0%, 88%, 0.5);
+    /* FIXME: Use CSS4 color blend functions once they're available. */
+    --percentage-pass-color-span: hsla(0, 0%, 88%, 0.65);
 }
 
 .content-view.audit-test-group.contains-test-case + .audit-test-group.contains-test-case,
@@ -133,14 +141,12 @@
     font-size: 16px;
     text-align: end;
     font-weight: bold;
-    /* FIXME: Use CSS4 color blend functions once they're available. */
-    color: hsla(0, 0%, 0%, 0.5);
+    color: var(--percentage-pass-color);
 }
 
 .content-view.audit-test-group > header > .percentage-pass > span {
     font-size: 24px;
-    /* FIXME: Use CSS4 color blend functions once they're available. */
-    color: hsla(0, 0%, 0%, 0.65);
+    color: var(--percentage-pass-color-span);
 }
 
 .content-view.audit-test-group > section > .audit-test-case:first-child,
@@ -159,13 +165,45 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .content-view.audit-test-group > header > .percentage-pass {
+    .content-view.audit-test-group {
         /* FIXME: Use CSS4 color blend functions once they're available. */
-        color: hsla(0, 0%, 88%, 0.5);
+        --percentage-pass-color: hsla(0, 0%, 88%, 0.5);
+        /* FIXME: Use CSS4 color blend functions once they're available. */
+        --percentage-pass-color-span: hsla(0, 0%, 88%, 0.65);
+    }
+
+    .content-view.audit-test-group > header > .percentage-pass {
+        color: var(--percentage-pass-color);
     }
 
     .content-view.audit-test-group > header > .percentage-pass > span {
-        /* FIXME: Use CSS4 color blend functions once they're available. */
-        color: hsla(0, 0%, 88%, 0.65);
+        color: var(--percentage-pass-color-span);
+    }
+
+    @media (prefers-contrast: more) {
+        .content-view.audit-test-group {
+            /* FIXME: Use CSS4 color blend functions once they're available. */
+            --percentage-pass-color: hsla(0, 0%, 95%, .8);
+            /* FIXME: Use CSS4 color blend functions once they're available. */
+            --percentage-pass-color-span: hsla(0, 0%, 95%, .9);
+        }
+
+        .content-view.audit-test-group > header > .percentage-pass {
+            color: var(--percentage-pass-color);
+        }
+
+        .content-view.audit-test-group > header > .percentage-pass > span {
+            color: var(--percentage-pass-color-span);
+        }
+
+        .content-view-container > .content-view.audit-test-group > header {
+            background-color: hsla(0, 0%, 7%);
+        }
+
+        .content-view.audit-test-group.contains-test-case:not(.contains-test-group) > section,
+        .content-view.audit-test-group.contains-test-case.contains-test-group > section > .audit-test-case  {
+            --audit-test-header-background-color: hsla(0, 0%, 13%);
+            background-color: var(--audit-test-header-background-color);
+        }
     }
 }
