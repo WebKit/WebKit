@@ -461,10 +461,10 @@
     (allow sysctl-read sysctl-write
            (sysctl-name "vm.footprint_suspend")))
 
+(deny network-outbound)
 (with-filter (system-attribute apple-internal)
     (allow network-outbound
-        (literal "/private/var/run/syslog"))
-)
+        (literal "/private/var/run/syslog")))
 
 (define (notifyd-message-numbers) (message-number 1002 1011 1012 1016 1017 1018 1021 1025 1026 1028 1029 1030 1031 1032))
 
