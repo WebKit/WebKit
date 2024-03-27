@@ -1176,15 +1176,15 @@ void VM::addRegExpToTrace(RegExp* regExp)
 
 void VM::dumpRegExpTrace()
 {
+    if (m_rtTraceList.size() <= 1)
+        return;
+
     // The first RegExp object is ignored. It is created by the RegExpPrototype ctor and not used.
     RTTraceList::iterator iter = ++m_rtTraceList.begin();
     
     if (iter != m_rtTraceList.end()) {
-        dataLogF("\nRegExp Tracing\n");
-        dataLogF("Regular Expression                              8 Bit          16 Bit        match()    Matches    Average\n");
-        dataLogF(" <Match only / Match>                         JIT Addr      JIT Address       calls      found   String len\n");
-        dataLogF("----------------------------------------+----------------+----------------+----------+----------+-----------\n");
-    
+        RegExp::printTraceHeader();
+
         unsigned reCount = 0;
     
         for (; iter != m_rtTraceList.end(); ++iter, ++reCount) {

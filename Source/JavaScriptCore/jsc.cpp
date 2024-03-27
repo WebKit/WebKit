@@ -4215,6 +4215,14 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
                 fprintf(stderr, "could not save profiler output.\n");
         }
 
+
+#if ENABLE(REGEXP_TRACING)
+        {
+            JSLockHolder locker(vm);
+            vm.dumpRegExpTrace();
+        }
+#endif
+
 #if ENABLE(JIT)
         {
             JSLockHolder locker(vm);

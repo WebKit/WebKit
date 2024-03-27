@@ -860,7 +860,8 @@ public:
     JS_EXPORT_PRIVATE void invalidateStructureChainIntegrity(StructureChainIntegrityEvent);
 
 #if ENABLE(REGEXP_TRACING)
-    ListHashSet<RegExp*> m_rtTraceList;
+    using RTTraceList = ListHashSet<RegExp*>;
+    RTTraceList m_rtTraceList;
     void addRegExpToTrace(RegExp*);
     JS_EXPORT_PRIVATE void dumpRegExpTrace();
 #endif
