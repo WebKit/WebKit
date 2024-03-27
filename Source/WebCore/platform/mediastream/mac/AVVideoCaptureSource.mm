@@ -791,6 +791,15 @@ static bool isSameFrameRateRange(AVFrameRateRange* a, AVFrameRateRange* b)
     return a.minFrameRate == b.minFrameRate && a.maxFrameRate == b.maxFrameRate && !PAL::CMTimeCompare(a.minFrameDuration, b.minFrameDuration) && !PAL::CMTimeCompare(a.maxFrameDuration, b.maxFrameDuration);
 }
 
+bool AVVideoCaptureSource::areSettingsMatching(AVFrameRateRange* frameRateRange) const
+{
+    return m_appliedPreset && m_appliedPreset->format() == m_currentPreset->format() &&
+#if PLATFORM(IOS_FAMILY)
+        device().videoZoomFactor == m_currentZoom &&
+#endif
+        isSameFrameRateRange(m_appliedFrameRateRange.get(), frameRateRange);
+}
+
 void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 {
     ASSERT(m_beginConfigurationCount);
@@ -805,7 +814,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
     auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
     ASSERT(frameRateRange);
 
-    if (m_appliedPreset && m_appliedPreset->format() == m_currentPreset->format() && isSameFrameRateRange(m_appliedFrameRateRange.get(), frameRateRange) && m_appliedZoom == m_currentZoom) {
+    if (areSettingsMatching(frameRateRange)) {
         ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, " settings already match");
         return;
     }
@@ -846,10 +855,9 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
             ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "cannot find proper frame rate range for the selected preset\n");
 
 #if PLATFORM(IOS_FAMILY)
-        if (m_currentZoom != m_appliedZoom) {
+        if (m_currentZoom != device().videoZoomFactor) {
             ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting zoom to ", m_currentZoom);
             [device() setVideoZoomFactor:m_currentZoom];
-            m_appliedZoom = m_currentZoom;
         }
 #endif
 

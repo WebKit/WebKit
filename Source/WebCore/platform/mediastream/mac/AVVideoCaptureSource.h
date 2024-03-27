@@ -119,6 +119,7 @@ private:
     void orientationChanged(IntDegrees orientation) final;
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
+    bool areSettingsMatching(AVFrameRateRange*) const;
 
     IntSize sizeForPreset(NSString*);
 
@@ -171,7 +172,6 @@ private:
     std::optional<VideoPreset> m_currentPreset;
     std::optional<VideoPreset> m_appliedPreset;
     RetainPtr<AVFrameRateRange> m_appliedFrameRateRange;
-    double m_appliedZoom { 1 };
 
     double m_currentFrameRate;
     double m_currentZoom { 1 };
