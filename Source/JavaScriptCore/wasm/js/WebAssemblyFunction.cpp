@@ -160,8 +160,8 @@ static size_t trampolineReservedStackSize()
 
 CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 {
-    // if (Options::forceICFailure())
-    return nullptr;
+    if (Options::forceICFailure())
+        return nullptr;
 
     VM& vm = this->vm();
     CCallHelpers jit;

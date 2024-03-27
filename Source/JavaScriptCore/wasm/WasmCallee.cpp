@@ -418,7 +418,9 @@ CodePtr<WasmEntryPtrTag> JSEntrypointInterpreterCallee::entrypointImpl() const
 
 RegisterAtOffsetList* JSEntrypointInterpreterCallee::calleeSaveRegistersImpl()
 {
-    // Keep in mind that JIT JSEntrypointCallee is also having wasmPinnedRegisters.
+    // This must be the same to JSToWasm's callee save registers.
+    // The reason is that we may use m_replacementCallee which can be set at any time.
+    // So, we must store the same callee save registers at the same location to the JIT version.
     static LazyNeverDestroyed<RegisterAtOffsetList> calleeSaveRegisters;
     static std::once_flag initializeFlag;
     std::call_once(initializeFlag, [] {
