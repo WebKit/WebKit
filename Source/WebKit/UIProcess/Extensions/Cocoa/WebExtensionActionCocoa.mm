@@ -592,8 +592,12 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
     if (!extensionContext())
         return nil;
 
-    if (m_customIcons)
-        return extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize.width > idealSize.height ? idealSize.width : idealSize.height);
+    if (m_customIcons) {
+        if (CocoaImage *result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize.width > idealSize.height ? idealSize.width : idealSize.height))
+            return result;
+
+        // If custom icons fail, fallback to the default icons.
+    }
 
     if (RefPtr fallback = fallbackAction())
         return fallback->icon(idealSize);

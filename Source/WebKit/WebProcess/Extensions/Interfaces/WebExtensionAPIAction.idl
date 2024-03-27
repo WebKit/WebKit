@@ -42,7 +42,7 @@
     [RaisesException] void disable([Optional] double tabId, [Optional, CallbackHandler] function callback);
     [RaisesException] void isEnabled([Optional, NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
 
-    [RaisesException, NeedsScriptContext] void setIcon([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
+    [RaisesException, NeedsFrame] void setIcon([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void setPopup([NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
     [RaisesException] void getPopup([Optional, NSDictionary=NullAllowed] any details, [Optional, CallbackHandler] function callback);
