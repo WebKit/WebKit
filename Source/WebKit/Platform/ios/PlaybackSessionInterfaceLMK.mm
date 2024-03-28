@@ -241,10 +241,9 @@ void PlaybackSessionInterfaceLMK::currentTimeChanged(double currentTime, double)
 
 void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double)
 {
-    if (playbackState.contains(PlaybackSessionModel::PlaybackState::Stalled))
-        return;
-
-    [m_player setPlaybackRate:playbackState.contains(PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0];
+    [m_player setSelectedPlaybackRate:playbackRate];
+    if (!playbackState.contains(PlaybackSessionModel::PlaybackState::Stalled))
+        [m_player setPlaybackRate:playbackState.contains(PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0];
 }
 
 void PlaybackSessionInterfaceLMK::seekableRangesChanged(const TimeRanges& timeRanges, double, double)
