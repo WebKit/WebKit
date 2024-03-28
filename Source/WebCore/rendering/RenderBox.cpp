@@ -3669,7 +3669,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
         if (container->isOutOfFlowPositioned()
             && container->style().height().isAuto()
             && !(container->style().top().isAuto() || container->style().bottom().isAuto())) {
-            auto& block = checkedDowncast<RenderBlock>(*container);
+            auto& block = downcast<RenderBlock>(*container);
             auto computedValues = block.computeLogicalHeight(block.logicalHeight(), 0);
             LayoutUnit newContentHeight = computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
             return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, newContentHeight));

@@ -262,7 +262,7 @@ void DataTransfer::setDataFromItemList(Document& document, const String& type, c
 {
     ASSERT(canWriteData());
 
-    auto& pasteboard = checkedDowncast<StaticPasteboard>(*m_pasteboard);
+    auto& pasteboard = downcast<StaticPasteboard>(*m_pasteboard);
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         pasteboard.writeString(type, data);
         return;

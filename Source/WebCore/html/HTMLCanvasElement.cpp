@@ -250,7 +250,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
                 return std::optional<RenderingContext> { std::nullopt };
             if (auto* context = dynamicDowncast<WebGLRenderingContext>(*m_context))
                 return std::optional<RenderingContext> { RefPtr { context } };
-            return std::optional<RenderingContext> { RefPtr { &checkedDowncast<WebGL2RenderingContext>(*m_context) } };
+            return std::optional<RenderingContext> { RefPtr { &downcast<WebGL2RenderingContext>(*m_context) } };
         }
 #endif
 

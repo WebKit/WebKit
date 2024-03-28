@@ -4871,7 +4871,7 @@ void WebPage::removeTextPlaceholder(const ElementContext& placeholder, Completio
 {
     if (auto element = elementForContext(placeholder)) {
         if (RefPtr frame = element->document().frame())
-            frame->editor().removeTextPlaceholder(checkedDowncast<TextPlaceholderElement>(*element));
+            frame->editor().removeTextPlaceholder(downcast<TextPlaceholderElement>(*element));
     }
     completionHandler();
 }

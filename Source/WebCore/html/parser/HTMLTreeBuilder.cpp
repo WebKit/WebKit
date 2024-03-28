@@ -970,7 +970,7 @@ bool HTMLTreeBuilder::processTemplateEndTag(AtomHTMLToken&& token)
     if (m_tree.currentStackItem().elementName() != HTML::template_)
         parseError(token);
     m_tree.openElements().popUntil(HTML::template_);
-    Ref templateElement = checkedDowncast<HTMLTemplateElement>(m_tree.openElements().top());
+    Ref templateElement = downcast<HTMLTemplateElement>(m_tree.openElements().top());
     m_tree.openElements().pop();
 
     m_tree.activeFormattingElements().clearToLastMarker();

@@ -196,7 +196,7 @@ LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const 
     LegacyInlineFlowBox* parentBox = nullptr;
     LegacyInlineFlowBox* result = nullptr;
     do {
-        RenderInline* inlineFlow = obj != &m_flow ? &checkedDowncast<RenderInline>(*obj) : nullptr;
+        RenderInline* inlineFlow = obj != &m_flow ? &downcast<RenderInline>(*obj) : nullptr;
 
         // Get the last box we made for this render object.
         parentBox = inlineFlow ? inlineFlow->lastLineBox() : downcast<RenderBlockFlow>(*obj).lastRootBox();

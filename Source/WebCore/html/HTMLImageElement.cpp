@@ -961,7 +961,7 @@ bool HTMLImageElement::isMultiRepresentationHEIC() const
 void HTMLImageElement::copyNonAttributePropertiesFromElement(const Element& source)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    auto& sourceImage = checkedDowncast<HTMLImageElement>(source);
+    auto& sourceImage = downcast<HTMLImageElement>(source);
     copyAttachmentAssociatedPropertiesFromElement(sourceImage);
 #endif
     Element::copyNonAttributePropertiesFromElement(source);

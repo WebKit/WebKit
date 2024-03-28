@@ -770,7 +770,7 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
     auto updateLabeledObjects = [this] (const AccessibilityObject& label) {
         auto labeledObjects = label.labelForObjects();
         for (const auto& labeledObject : labeledObjects) {
-            if (RefPtr axObject = checkedDowncast<AccessibilityObject>(labeledObject.get()))
+            if (RefPtr axObject = downcast<AccessibilityObject>(labeledObject.get()))
                 queueNodeUpdate(axObject->objectID(), NodeUpdateOptions::nodeUpdate());
         }
     };

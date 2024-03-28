@@ -1630,7 +1630,7 @@ T* findChild(T& object, F&& matches)
 {
     for (auto child : object.children()) {
         if (matches(child))
-            return checkedDowncast<T>(child.get());
+            return downcast<T>(child.get());
     }
     return nullptr;
 }

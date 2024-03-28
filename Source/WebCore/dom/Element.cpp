@@ -599,7 +599,7 @@ void Element::cloneShadowTreeIfPossible(Element& newHost)
 
     Ref clonedShadowRoot = [&] {
         Ref clone = oldShadowRoot->cloneNodeInternal(newHost.document(), Node::CloningOperation::SelfWithTemplateContent);
-        return checkedDowncast<ShadowRoot>(WTFMove(clone));
+        return downcast<ShadowRoot>(WTFMove(clone));
     }();
     newHost.addShadowRoot(clonedShadowRoot.copyRef());
     oldShadowRoot->cloneChildNodes(clonedShadowRoot);
@@ -3025,7 +3025,7 @@ ShadowRoot& Element::createUserAgentShadowRoot()
 
 inline void Node::setCustomElementState(CustomElementState state)
 {
-    Style::PseudoClassChangeInvalidation styleInvalidation(checkedDowncast<Element>(*this),
+    Style::PseudoClassChangeInvalidation styleInvalidation(downcast<Element>(*this),
         CSSSelector::PseudoClass::Defined,
         state == CustomElementState::Custom || state == CustomElementState::Uncustomized
     );
@@ -5498,7 +5498,7 @@ void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 
 void Element::ensureFormAssociatedCustomElement()
 {
-    auto& customElement = checkedDowncast<HTMLMaybeFormAssociatedCustomElement>(*this);
+    auto& customElement = downcast<HTMLMaybeFormAssociatedCustomElement>(*this);
     auto& data = ensureElementRareData();
     if (!data.formAssociatedCustomElement())
         data.setFormAssociatedCustomElement(makeUniqueWithoutRefCountedCheck<FormAssociatedCustomElement>(customElement));

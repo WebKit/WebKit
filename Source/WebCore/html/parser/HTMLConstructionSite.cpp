@@ -571,7 +571,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
             if (!exceptionOrShadowRoot.hasException()) {
                 Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
                 auto element = createHTMLElement(token);
-                checkedDowncast<HTMLTemplateElement>(element.get()).setDeclarativeShadowRoot(shadowRoot);
+                downcast<HTMLTemplateElement>(element.get()).setDeclarativeShadowRoot(shadowRoot);
                 m_openElements.push(HTMLStackItem(WTFMove(element), WTFMove(token)));
                 return;
             }

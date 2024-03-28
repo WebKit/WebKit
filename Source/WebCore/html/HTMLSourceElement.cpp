@@ -243,7 +243,7 @@ Ref<Element> HTMLSourceElement::cloneElementWithoutAttributesAndChildren(Documen
 void HTMLSourceElement::copyNonAttributePropertiesFromElement(const Element& source)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    auto& sourceElement = checkedDowncast<HTMLSourceElement>(source);
+    auto& sourceElement = downcast<HTMLSourceElement>(source);
     copyAttachmentAssociatedPropertiesFromElement(sourceElement);
 #endif
     Element::copyNonAttributePropertiesFromElement(source);

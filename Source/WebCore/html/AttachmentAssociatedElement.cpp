@@ -78,7 +78,7 @@ void AttachmentAssociatedElement::cloneAttachmentAssociatedElementWithoutAttribu
 {
     if (auto attachment = attachmentElement()) {
         auto attachmentClone = attachment->cloneElementWithoutChildren(targetDocument);
-        clone.setAttachmentElement(checkedDowncast<HTMLAttachmentElement>(attachmentClone.get()));
+        clone.setAttachmentElement(downcast<HTMLAttachmentElement>(attachmentClone.get()));
     }
 }
 

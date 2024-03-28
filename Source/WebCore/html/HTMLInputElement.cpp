@@ -2358,19 +2358,19 @@ bool HTMLInputElement::dirAutoUsesValue() const
 float HTMLInputElement::switchAnimationVisuallyOnProgress() const
 {
     ASSERT(isSwitch());
-    return checkedDowncast<CheckboxInputType>(*m_inputType).switchAnimationVisuallyOnProgress();
+    return downcast<CheckboxInputType>(*m_inputType).switchAnimationVisuallyOnProgress();
 }
 
 bool HTMLInputElement::isSwitchVisuallyOn() const
 {
     ASSERT(isSwitch());
-    return checkedDowncast<CheckboxInputType>(*m_inputType).isSwitchVisuallyOn();
+    return downcast<CheckboxInputType>(*m_inputType).isSwitchVisuallyOn();
 }
 
 float HTMLInputElement::switchAnimationPressedProgress() const
 {
     ASSERT(isSwitch());
-    return checkedDowncast<CheckboxInputType>(*m_inputType).switchAnimationPressedProgress();
+    return downcast<CheckboxInputType>(*m_inputType).switchAnimationPressedProgress();
 }
 
 } // namespace

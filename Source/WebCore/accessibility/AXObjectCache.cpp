@@ -1247,7 +1247,7 @@ void AXObjectCache::handleTextChanged(AccessibilityObject* object)
             // Any objects this ancestor labeled now also need new AccessibilityText.
             auto labeledObjects = ancestor->labelForObjects();
             for (const auto& labeledObject : labeledObjects)
-                postNotification(checkedDowncast<AccessibilityObject>(labeledObject.get()), nullptr, AXTextChanged);
+                postNotification(downcast<AccessibilityObject>(labeledObject.get()), nullptr, AXTextChanged);
         }
     }
 

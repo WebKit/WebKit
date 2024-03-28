@@ -331,7 +331,7 @@ Element* FocusNavigationScope::owner() const
     if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(*m_treeScopeRootNode))
         return shadowRoot->host();
     if (isOpenPopoverWithInvoker(m_treeScopeRootNode.get()))
-        return checkedDowncast<HTMLElement>(*m_treeScopeRootNode).popoverData()->invoker();
+        return downcast<HTMLElement>(*m_treeScopeRootNode).popoverData()->invoker();
     if (auto* frame = m_treeScopeRootNode->document().frame())
         return frame->ownerElement();
     return nullptr;
