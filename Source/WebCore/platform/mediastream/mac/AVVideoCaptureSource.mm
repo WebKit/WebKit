@@ -208,7 +208,7 @@ std::optional<double> AVVideoCaptureSource::computeMaxZoom(AVCaptureDeviceFormat
 {
 #if PLATFORM(IOS_FAMILY)
     // We restrict zoom for now as it might require elevated permissions.
-    return std::min([format videoMaxZoomFactor], 4.0) / m_zoomScaleFactor;
+    return std::min([format videoMaxZoomFactor] / m_zoomScaleFactor, 10.0);
 #else
     UNUSED_PARAM(format);
     return { };
