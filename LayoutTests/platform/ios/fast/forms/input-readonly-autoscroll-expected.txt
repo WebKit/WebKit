@@ -25,4 +25,4 @@ layer at (17,85) size 122x14 scrollWidth 140
   RenderBlock {DIV} at (6,3) size 123x15
     RenderText {#text} at (0,0) size 141x14
       text run at (0,0) width 141: "abcdefghijklmnopqrstuvwxyz"
-caret: position 1 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 5 {INPUT} of body
+scrolled to 0,82

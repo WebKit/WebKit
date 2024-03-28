@@ -23,14 +23,14 @@ PASS stepUp on step value hour
 PASS stepDown on step value hour
 PASS stepUp on step value second
 PASS stepDown on step value second
-PASS stepUp on step value miri second
-PASS stepDown on step value miri second
-PASS stepUp argment 2 times
-PASS stepDown argment 2 times
-FAIL stepUp stop because it exceeds the maximum value The object is in an invalid state.
-FAIL stepDown Stop so lower than the minimum value The object is in an invalid state.
-FAIL stop at border on stepUp The object is in an invalid state.
-FAIL stop at border on stepDown The object is in an invalid state.
-FAIL  empty value of stepUp The object is in an invalid state.
+PASS stepUp on step value with fractional seconds
+PASS stepDown on step value with fractional seconds
+PASS stepUp argument 2 times
+PASS stepDown argument 2 times
+PASS stepUp stop because it exceeds the maximum value
+PASS stepDown stop so lower than the minimum value
+PASS stop at border on stepUp
+PASS stop at border on stepDown
+PASS  empty value of stepUp
 PASS set value on not time format value
 
