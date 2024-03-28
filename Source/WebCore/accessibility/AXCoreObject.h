@@ -1599,9 +1599,9 @@ template<typename T>
 T* findRelatedObjectInAncestry(const T& object, AXRelationType relationType, const T& descendant)
 {
     auto relatedObjects = object.relatedObjects(relationType);
-    for (const auto& object : relatedObjects) {
-        auto* ancestor = findAncestor(descendant, false, [&object] (const auto& ancestor) {
-            return object.get() == &ancestor;
+    for (const auto& relatedObject : relatedObjects) {
+        auto* ancestor = findAncestor(descendant, false, [&relatedObject] (const auto& ancestor) {
+            return relatedObject.get() == &ancestor;
         });
         if (ancestor)
             return ancestor;

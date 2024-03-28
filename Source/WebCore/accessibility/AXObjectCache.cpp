@@ -2410,7 +2410,7 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
     }
 
     // Handle active-descendant changes when the target allows for it, or the controlled object allows for it.
-    RefPtr<AccessibilityObject> target { nullptr };
+    RefPtr<AccessibilityObject> target;
     if (object->shouldFocusActiveDescendant()) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         setIsolatedTreeFocusedObject(activeDescendant.get());
@@ -2441,6 +2441,14 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (target != object)
             updateIsolatedTree(target.get(), AXNotification::AXActiveDescendantChanged);
+        else if (target->isComboBox() && activeDescendant->isListItem()) {
+            // The combobox does not own or control the list to which activeDescendant belongs.
+            // We still need to update the selected children of that list.
+            RefPtr list = Accessibility::findAncestor(*activeDescendant, false, [] (const auto& ancestor) {
+                return ancestor.isList() || ancestor.isListBox();
+            });
+            updateIsolatedTree(list.get(), AXNotification::AXSelectedChildrenChanged);
+        }
 #endif
 
         postPlatformNotification(target.get(), AXNotification::AXActiveDescendantChanged);
