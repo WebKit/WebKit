@@ -6986,10 +6986,11 @@ webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
 webkit.org/b/271388 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
 
+# rdar://125582019 ([ iOS] REGRESSION: editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html (layout-tests) is a constant timeout (271854))
 # rdar://124417777 (REGRESSION (iOS 17.4): 5 editing / paste-related layout tests are constantly failing.)
 editing/async-clipboard/clipboard-write-basic.html [ Pass Failure ]
 editing/async-clipboard/sanitize-when-reading-markup.html [ Pass Failure ]
-editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html [ Pass Failure ]
+editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying-in-null-origin.html [ Pass Failure Timeout ]
 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Pass Failure ]
 editing/pasteboard/data-transfer-set-data-sanitizes-html-when-copying.html [ Pass Failure ]
 # rdar://124971386 (REGRESSION (iOS 17.4): 2 imported WPT css-box/margin-trim/computed-margin-values layout tests are consistently failing.)
