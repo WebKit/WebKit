@@ -3565,7 +3565,7 @@ public:
         m_assembler.ebreakInsn();
     }
 
-    void breakpoint(uint16_t = 0xc471)
+    void breakpoint(uint16_t = 0)
     {
         m_assembler.ebreakInsn();
     }

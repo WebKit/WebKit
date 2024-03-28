@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -250,7 +250,7 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
 #if CPU(X86_64)
 
-#define CRASH_INST "int3"
+#define WTF_FATAL_CRASH_INST "int3"
 
 // This ordering was chosen to be consistent with JSC's JIT asserts. We probably shouldn't change this ordering
 // since it would make tooling crash reports much harder. If, for whatever reason, we decide to change the ordering
@@ -268,9 +268,23 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #define CRASH_GPR5 "r14"
 #define CRASH_GPR6 "r13"
 
-#elif CPU(ARM64) // CPU(X86_64)
+#elif CPU(ARM64)
 
-#define CRASH_INST "brk #0xc471"
+#if !defined(WTF_FATAL_CRASH_CODE)
+#if ASAN_ENABLED
+#define WTF_FATAL_CRASH_CODE 0x0
+#else
+#define WTF_FATAL_CRASH_CODE 0xc471
+#endif
+#endif
+
+#if !defined(WTF_FATAL_CRASH_INST)
+#if ASAN_ENABLED
+#define WTF_FATAL_CRASH_INST "brk #0x0"
+#else
+#define WTF_FATAL_CRASH_INST "brk #0xc471"
+#endif
+#endif
 
 // See comment above on the ordering.
 #define CRASH_ARG_GPR0 "x0"
@@ -293,11 +307,11 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #elif ASAN_ENABLED
 #define WTFBreakpointTrap()  __builtin_trap()
 #elif CPU(X86_64) || CPU(X86)
-#define WTFBreakpointTrap()  asm volatile (CRASH_INST)
+#define WTFBreakpointTrap()  asm volatile (WTF_FATAL_CRASH_INST)
 #elif CPU(ARM_THUMB2)
 #define WTFBreakpointTrap()  asm volatile ("bkpt #0")
 #elif CPU(ARM64)
-#define WTFBreakpointTrap()  asm volatile (CRASH_INST)
+#define WTFBreakpointTrap()  asm volatile (WTF_FATAL_CRASH_INST)
 #else
 #define WTFBreakpointTrap() WTFCrash() // Not implemented.
 #endif
@@ -834,7 +848,7 @@ NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void WTFCrashWithInfo(int line, const char*
     register uint64_t x1GPR asm(CRASH_ARG_GPR1) = x1Value;
     register uint64_t x2GPR asm(CRASH_ARG_GPR2) = x2Value;
     register uint64_t x3GPR asm(CRASH_ARG_GPR3) = x3Value;
-    __asm__ volatile (CRASH_INST : : "r"(x0GPR), "r"(x1GPR), "r"(x2GPR), "r"(x3GPR));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(x0GPR), "r"(x1GPR), "r"(x2GPR), "r"(x3GPR));
     __builtin_trap();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@
 
 #if PAS_X86_64
 
-#define CRASH_INST "int3"
+#define PAS_FATAL_CRASH_INST "int3"
 
 #define CRASH_GPR0 "r11"
 #define CRASH_GPR1 "r10"
@@ -51,7 +51,13 @@
 
 #elif PAS_ARM64
 
-#define CRASH_INST "brk #0xc471"
+#if !defined(PAS_FATAL_CRASH_CODE)
+#if BASAN_ENABLED
+#define PAS_FATAL_CRASH_INST "brk #0x0"
+#else
+#define PAS_FATAL_CRASH_INST "brk #0xc471"
+#endif
+#endif
 
 #define CRASH_GPR0 "x16"
 #define CRASH_GPR1 "x17"
@@ -71,7 +77,7 @@ PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl1(uint64_t reason, u
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR));
+    __asm__ volatile (PAS_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR));
     __builtin_unreachable();
 }
 
@@ -80,7 +86,7 @@ PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl2(uint64_t reason, u
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
     register uint64_t misc2GPR asm(CRASH_GPR2) = misc2;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR));
+    __asm__ volatile (PAS_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR));
     __builtin_unreachable();
 }
 
@@ -90,7 +96,7 @@ PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl3(uint64_t reason, u
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
     register uint64_t misc2GPR asm(CRASH_GPR2) = misc2;
     register uint64_t misc3GPR asm(CRASH_GPR3) = misc3;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR));
+    __asm__ volatile (PAS_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR));
     __builtin_unreachable();
 }
 
@@ -101,7 +107,7 @@ PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl4(uint64_t reason, u
     register uint64_t misc2GPR asm(CRASH_GPR2) = misc2;
     register uint64_t misc3GPR asm(CRASH_GPR3) = misc3;
     register uint64_t misc4GPR asm(CRASH_GPR4) = misc4;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR));
+    __asm__ volatile (PAS_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR));
     __builtin_unreachable();
 }
 
@@ -113,7 +119,7 @@ PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl5(uint64_t reason, u
     register uint64_t misc3GPR asm(CRASH_GPR3) = misc3;
     register uint64_t misc4GPR asm(CRASH_GPR4) = misc4;
     register uint64_t misc5GPR asm(CRASH_GPR5) = misc5;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR));
+    __asm__ volatile (PAS_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR));
     __builtin_unreachable();
 }
 
@@ -126,7 +132,7 @@ PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl6(uint64_t reason, u
     register uint64_t misc4GPR asm(CRASH_GPR4) = misc4;
     register uint64_t misc5GPR asm(CRASH_GPR5) = misc5;
     register uint64_t misc6GPR asm(CRASH_GPR6) = misc6;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR), "r"(misc6GPR));
+    __asm__ volatile (PAS_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR), "r"(misc6GPR));
     __builtin_unreachable();
 }
 
@@ -141,7 +147,7 @@ PAS_NEVER_INLINE PAS_NO_RETURN static void pas_crash_with_info_impl(uint64_t rea
     register uint64_t misc4GPR asm(CRASH_GPR4) = misc4;
     register uint64_t misc5GPR asm(CRASH_GPR5) = misc5;
     register uint64_t misc6GPR asm(CRASH_GPR6) = misc6;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR), "r"(misc6GPR));
+    __asm__ volatile (PAS_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR), "r"(misc6GPR));
     __builtin_trap();
 }
 
