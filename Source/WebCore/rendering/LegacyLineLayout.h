@@ -29,7 +29,6 @@
 #include "LineWidth.h"
 #include "RenderLineBoxList.h"
 #include "RenderStyleConstants.h"
-#include "TrailingObjects.h"
 
 namespace WebCore {
 
@@ -43,11 +42,19 @@ class LocalFrameViewLayoutContext;
 class RenderBlockFlow;
 class RenderObject;
 class LegacyRootInlineBox;
+struct BidiRun;
+struct BidiIsolatedRun;
 struct BidiStatus;
 struct WordMeasurement;
 
 template <class Run> class BidiRunList;
 typedef Vector<WordMeasurement, 64> WordMeasurements;
+
+template <class Iterator, class Run> class BidiResolver;
+template <class Iterator, class Run, class IsolateRun> class BidiResolverWithIsolate;
+template <class Iterator> class WhitespaceCollapsingState;
+typedef BidiResolverWithIsolate<LegacyInlineIterator, BidiRun, BidiIsolatedRun> InlineBidiResolver;
+typedef WhitespaceCollapsingState<LegacyInlineIterator> LineWhitespaceCollapsingState;
 
 class LegacyLineLayout {
     WTF_MAKE_FAST_ALLOCATED;

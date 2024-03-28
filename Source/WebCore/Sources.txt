@@ -2711,7 +2711,6 @@ rendering/TransformOperationData.cpp
 rendering/line/LineBreaker.cpp
 rendering/line/LineInfo.cpp
 rendering/line/LineWidth.cpp
-rendering/line/TrailingObjects.cpp
 rendering/mathml/MathMLStyle.cpp
 rendering/mathml/MathOperator.cpp
 rendering/mathml/RenderMathMLBlock.cpp

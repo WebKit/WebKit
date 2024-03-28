@@ -60,9 +60,7 @@ LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, Li
 
     while (context.currentObject()) {
         context.initializeForCurrentObject();
-        if (context.currentObject()->isRenderInline()) {
-            context.handleEmptyInline();
-        } else if (context.currentObject()->isRenderText()) {
+        if (context.currentObject()->isRenderText()) {
             if (context.handleText(wordMeasurements)) {
                 // We've hit a hard text line break. Our line break iterator is updated, so early return.
                 return context.lineBreak();

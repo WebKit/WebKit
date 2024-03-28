@@ -39,7 +39,6 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGInlineText.h"
 #include "RenderTextInlines.h"
-#include "TrailingObjects.h"
 #include "WordTrailingSpace.h"
 #include <wtf/Function.h>
 #include <wtf/WeakHashSet.h>
@@ -111,7 +110,6 @@ public:
 
     void increment();
 
-    void handleEmptyInline();
     bool handleText(WordMeasurements&);
     void trailingSpacesHang(LegacyInlineIterator&, RenderObject&, bool canBreakMidWord, bool previousCharacterIsSpace);
     bool canBreakAtThisPosition();
@@ -198,7 +196,7 @@ private:
 
     LineWhitespaceCollapsingState& m_lineWhitespaceCollapsingState;
 
-    TrailingObjects m_trailingObjects;
+    RenderText* m_trailingWhitespaceRenderer { nullptr };
 };
 
 inline void BreakingContext::initializeForCurrentObject()
@@ -291,57 +289,6 @@ inline LayoutUnit inlineLogicalWidth(const RenderObject& renderer, bool checkSta
     return extraWidth;
 }
 
-// This is currently just used for list markers and inline flows that have line boxes. Neither should
-// have an effect on whitespace at the start of the line.
-inline bool shouldSkipWhitespaceAfterStartObject(RenderBlockFlow& block, RenderObject* o, LineWhitespaceCollapsingState& lineWhitespaceCollapsingState)
-{
-    RenderObject* next = nextInlineRendererSkippingEmpty(block, o);
-    auto* nextText = dynamicDowncast<RenderText>(next);
-    if (nextText && nextText->text().length() > 0) {
-        UChar nextChar = nextText->characterAt(0);
-        if (nextText->style().isCollapsibleWhiteSpace(nextChar)) {
-            lineWhitespaceCollapsingState.startIgnoringSpaces(LegacyInlineIterator(nullptr, o, 0));
-            return true;
-        }
-    }
-
-    return false;
-}
-
-inline void BreakingContext::handleEmptyInline()
-{
-    RenderInline& flowBox = downcast<RenderInline>(*m_current.renderer());
-
-    // This should only end up being called on empty inlines
-    ASSERT(isEmptyInline(flowBox));
-
-    // Now that some inline flows have line boxes, if we are already ignoring spaces, we need
-    // to make sure that we stop to include this object and then start ignoring spaces again.
-    // If this object is at the start of the line, we need to behave like list markers and
-    // start ignoring spaces.
-    if (requiresLineBoxForContent(flowBox, m_lineInfo)) {
-        // An empty inline that only has line-height, vertical-align or font-metrics will only get a
-        // line box to affect the height of the line if the rest of the line is not empty.
-        if (m_ignoringSpaces) {
-            m_trailingObjects.clear();
-            m_lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(*m_current.renderer());
-        } else if (m_blockStyle.collapseWhiteSpace() && m_resolver.position().renderer() == m_current.renderer()
-            && shouldSkipWhitespaceAfterStartObject(m_block, m_current.renderer(), m_lineWhitespaceCollapsingState)) {
-            // Like with list markers, we start ignoring spaces to make sure that any
-            // additional spaces we see will be discarded.
-            m_currentCharacterIsSpace = true;
-            m_currentCharacterIsWS = true;
-            m_ignoringSpaces = true;
-        } else
-            m_trailingObjects.appendBoxIfNeeded(flowBox);
-    }
-    
-    float inlineWidth = inlineLogicalWidth(*m_current.renderer()) + borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox);
-    m_width.addUncommittedWidth(inlineWidth);
-    if (m_hangsAtEnd && inlineWidth)
-        m_hangsAtEnd = false;
-}
-
 inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
 {
     for (size_t i = 0; i < wordMeasurements.size(); ++i) {
@@ -409,6 +356,31 @@ inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& ren
     wordMeasurement.width = additionalTempWidth + wordSpacingForWordMeasurement;
     additionalTempWidth += lastSpaceWordSpacing;
     return additionalTempWidth;
+}
+
+enum class CollapseFirstSpace : bool { No, Yes };
+static void updateWhitespaceCollapsingTransitionsForTrailingWhitespace(RenderText* trailingWhitespaceRenderer, LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const LegacyInlineIterator& lBreak, CollapseFirstSpace collapseFirstSpace)
+{
+    if (!trailingWhitespaceRenderer)
+        return;
+
+    // This object is either going to be part of the last transition, or it is going to be the actual endpoint.
+    // In both cases we just decrease our pos by 1 level to exclude the space, allowing it to - in effect - collapse into the newline.
+    if (lineWhitespaceCollapsingState.numTransitions() % 2) {
+        // Find the trailing space object's transition.
+        int trailingSpaceTransition = lineWhitespaceCollapsingState.numTransitions() - 1;
+        for ( ; trailingSpaceTransition > 0 && lineWhitespaceCollapsingState.transitions()[trailingSpaceTransition].renderer() != trailingWhitespaceRenderer; --trailingSpaceTransition) { }
+        ASSERT(trailingSpaceTransition >= 0);
+        if (collapseFirstSpace == CollapseFirstSpace::Yes)
+            lineWhitespaceCollapsingState.decrementTransitionAt(trailingSpaceTransition);
+    } else if (!lBreak.renderer()) {
+        ASSERT(collapseFirstSpace == CollapseFirstSpace::Yes);
+        // Add a new end transition that stops right at the very end.
+        unsigned length = trailingWhitespaceRenderer->text().length();
+        unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
+        LegacyInlineIterator endMid(0, trailingWhitespaceRenderer, pos);
+        lineWhitespaceCollapsingState.startIgnoringSpaces(endMid);
+    }
 }
 
 inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements)
@@ -664,7 +636,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements)
                     // spaces. Create a transition to terminate the run
                     // before the second space.
                     m_lineWhitespaceCollapsingState.startIgnoringSpaces(m_startOfIgnoredSpaces);
-                    m_trailingObjects.updateWhitespaceCollapsingTransitionsForTrailingBoxes(m_lineWhitespaceCollapsingState, LegacyInlineIterator(), TrailingObjects::CollapseFirstSpace::No);
+                    updateWhitespaceCollapsingTransitionsForTrailingWhitespace(m_trailingWhitespaceRenderer, m_lineWhitespaceCollapsingState, LegacyInlineIterator(), CollapseFirstSpace::No);
                 }
             }
             // Measuring the width of complex text character-by-character, rather than measuring it all together,
@@ -712,9 +684,9 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements)
         }
 
         if (m_collapseWhiteSpace && m_currentCharacterIsSpace && !m_ignoringSpaces)
-            m_trailingObjects.setTrailingWhitespace(renderer);
+            m_trailingWhitespaceRenderer = &renderer;
         else if (!style.collapseWhiteSpace() || !m_currentCharacterIsSpace)
-            m_trailingObjects.clear();
+            m_trailingWhitespaceRenderer = nullptr;
 
         m_atStart = false;
         nextCharacter(c, lastCharacter, secondToLastCharacter);
@@ -832,7 +804,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
     if (checkForBreak && !m_width.fitsOnLine(m_ignoringSpaces) && !m_hangsAtEnd) {
         // if we have floats, try to get below them.
         if (m_currentCharacterIsSpace && !m_ignoringSpaces && m_collapseWhiteSpace)
-            m_trailingObjects.clear();
+            m_trailingWhitespaceRenderer = nullptr;
 
         if (m_width.committedWidth()) {
             m_atEnd = true;
@@ -869,30 +841,6 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
     }
 }
 
-inline TrailingObjects::CollapseFirstSpace checkWhitespaceCollapsingTransitions(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const LegacyInlineIterator& lBreak)
-{
-    // Check to see if our last transition is a start point beyond the line break. If so,
-    // shave it off the list, and shave off a trailing space if the previous end point doesn't
-    // preserve whitespace.
-    if (lBreak.renderer() && lineWhitespaceCollapsingState.numTransitions() && !(lineWhitespaceCollapsingState.numTransitions() % 2)) {
-        const LegacyInlineIterator* transitions = lineWhitespaceCollapsingState.transitions().data();
-        const LegacyInlineIterator& endpoint = transitions[lineWhitespaceCollapsingState.numTransitions() - 2];
-        const LegacyInlineIterator& startpoint = transitions[lineWhitespaceCollapsingState.numTransitions() - 1];
-        LegacyInlineIterator currpoint = endpoint;
-        while (!currpoint.atEnd() && currpoint != startpoint && currpoint != lBreak)
-            currpoint.increment();
-        if (currpoint == lBreak) {
-            // We hit the line break before the start point. Shave off the start point.
-            lineWhitespaceCollapsingState.decrementNumTransitions();
-            if (endpoint.renderer()->style().collapseWhiteSpace() && endpoint.renderer()->isRenderText()) {
-                lineWhitespaceCollapsingState.decrementTransitionAt(lineWhitespaceCollapsingState.numTransitions() - 1);
-                return TrailingObjects::CollapseFirstSpace::No;
-            }
-        }
-    }
-    return TrailingObjects::CollapseFirstSpace::Yes;
-}
-
 inline LegacyInlineIterator BreakingContext::handleEndOfLine()
 {
     if (m_lineBreak == m_resolver.position()) {
@@ -926,9 +874,7 @@ inline LegacyInlineIterator BreakingContext::handleEndOfLine()
             m_lineBreak.increment();
     }
 
-    // Sanity check our whitespace collapsing transitions.
-    auto collapsed = checkWhitespaceCollapsingTransitions(m_lineWhitespaceCollapsingState, m_lineBreak);
-    m_trailingObjects.updateWhitespaceCollapsingTransitionsForTrailingBoxes(m_lineWhitespaceCollapsingState, m_lineBreak, collapsed);
+    updateWhitespaceCollapsingTransitionsForTrailingWhitespace(m_trailingWhitespaceRenderer, m_lineWhitespaceCollapsingState, m_lineBreak, CollapseFirstSpace::Yes);
 
     // We might have made lineBreak an iterator that points past the end
     // of the object. Do this adjustment to make it point to the start

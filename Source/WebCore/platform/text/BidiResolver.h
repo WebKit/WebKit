@@ -52,15 +52,6 @@ public:
         m_transitions.append(transition);
     }
 
-    // When ignoring spaces, this needs to be called for objects that need line boxes such as RenderInlines or
-    // hard line breaks to ensure that they're not ignored.
-    void ensureLineBoxInsideIgnoredSpaces(RenderObject& renderer)
-    {
-        Iterator transition(0, &renderer, 0);
-        stopIgnoringSpaces(transition);
-        startIgnoringSpaces(transition);
-    }
-
     void decrementTransitionAt(size_t index)
     {
         m_transitions[index].fastDecrement();
