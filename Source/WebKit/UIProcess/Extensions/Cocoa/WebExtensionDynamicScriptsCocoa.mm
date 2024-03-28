@@ -211,13 +211,6 @@ WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resul
     return parameters;
 }
 
-WebExtensionRegisteredScript::WebExtensionRegisteredScript(WebExtensionContext& extensionContext, const WebExtensionRegisteredScriptParameters& parameters)
-    : m_extensionContext(extensionContext)
-    , m_parameters(parameters)
-{
-
-}
-
 void WebExtensionRegisteredScript::updateParameters(const WebExtensionRegisteredScriptParameters& parameters)
 {
     m_parameters = parameters;

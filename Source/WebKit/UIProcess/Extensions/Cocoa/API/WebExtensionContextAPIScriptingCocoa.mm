@@ -160,21 +160,25 @@ void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtens
 {
     static NSString * const apiName= @"scripting.registerContentScripts()";
 
-    InjectedContentVector injectedContents;
+    DynamicInjectedContentsMap injectedContentsMap;
     NSString *errorMessage;
-    if (!createInjectedContentForScripts(scripts, WebExtensionRegisteredScript::FirstTimeRegistration::Yes, injectedContents, apiName, &errorMessage)) {
+    if (!createInjectedContentForScripts(scripts, FirstTimeRegistration::Yes, injectedContentsMap, apiName, &errorMessage)) {
         completionHandler(toWebExtensionError(apiName, nil, errorMessage));
         return;
     }
 
-    [registeredContentScriptsStore() addScripts:toWebAPI(scripts) completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, injectedContents, scripts, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+    [registeredContentScriptsStore() addScripts:toWebAPI(scripts) completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, scripts, injectedContentsMap = WTFMove(injectedContentsMap), completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
         if (errorMessage) {
             completionHandler(toWebExtensionError(apiName, nil, errorMessage));
             return;
         }
 
-        for (auto& parameters : scripts)
-            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters));
+        InjectedContentVector injectedContents;
+        for (auto& parameters : scripts) {
+            auto injectedContent = injectedContentsMap.get(parameters.identifier);
+            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters, injectedContent));
+            injectedContents.append(WTFMove(injectedContent));
+        }
 
         addInjectedContent(injectedContents);
 
@@ -201,19 +205,21 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
     }
 
     NSString *errorMessage;
-    InjectedContentVector injectedContents;
-    if (!createInjectedContentForScripts(updatedParameters, WebExtensionRegisteredScript::FirstTimeRegistration::No, injectedContents, apiName, &errorMessage)) {
+    DynamicInjectedContentsMap injectedContentsMap;
+    if (!createInjectedContentForScripts(updatedParameters, FirstTimeRegistration::No, injectedContentsMap, apiName, &errorMessage)) {
         completionHandler(toWebExtensionError(apiName, nil, errorMessage));
         return;
     }
 
-    [registeredContentScriptsStore() updateScripts:toWebAPI(updatedParameters) completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, updatedParameters, injectedContents, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+    auto *scriptsArray = toWebAPI(updatedParameters);
+    [registeredContentScriptsStore() updateScripts:scriptsArray completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, scripts = WTFMove(updatedParameters), injectedContentsMap = WTFMove(injectedContentsMap), completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
         if (errorMessage) {
             completionHandler(toWebExtensionError(apiName, nil, errorMessage));
             return;
         }
 
-        for (auto& parameters : updatedParameters) {
+        InjectedContentVector injectedContents;
+        for (auto& parameters : scripts) {
             auto scriptID = parameters.identifier;
             RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
             ASSERT(registeredScript);
@@ -223,6 +229,10 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
 
             registeredScript->updateParameters(parameters);
             registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+
+            auto injectedContent = injectedContentsMap.get(scriptID);
+            registeredScript->updateInjectedContent(injectedContent);
+            injectedContents.append(WTFMove(injectedContent));
         }
 
         addInjectedContent(injectedContents);
@@ -298,29 +308,32 @@ void WebExtensionContext::loadRegisteredContentScripts()
         Vector<WebExtensionRegisteredScriptParameters> parametersVector;
         WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector);
 
-        WebExtension::InjectedContentVector injectedContents;
-        createInjectedContentForScripts(parametersVector, FirstTimeRegistration::Yes, injectedContents, nil, &errorMessage);
-
+        DynamicInjectedContentsMap injectedContentsMap;
+        createInjectedContentForScripts(parametersVector, FirstTimeRegistration::Yes, injectedContentsMap, nil, &errorMessage);
         if (errorMessage) {
             RELEASE_LOG_ERROR(Extensions, "Failed to create injected content data for extension %{private}@. Error: %{public}@", (NSString *)m_uniqueIdentifier, errorMessage);
             return;
         }
 
-        for (auto& parameters : parametersVector)
-            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters));
+        InjectedContentVector injectedContents;
+        for (auto& parameters : parametersVector) {
+            auto injectedContent = injectedContentsMap.get(parameters.identifier);
+            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters, injectedContent));
+            injectedContents.append(WTFMove(injectedContent));
+        }
 
         addInjectedContent(injectedContents);
     }).get()];
 }
 
-bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, WebExtensionRegisteredScript::FirstTimeRegistration firstTimeRegistration, InjectedContentVector& injectedConents, NSString *callingAPIName, NSString **errorMessage)
+bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, FirstTimeRegistration firstTimeRegistration, DynamicInjectedContentsMap& injectedContentsMap, NSString *callingAPIName, NSString **errorMessage)
 {
     Vector<String> idsToAdd;
 
     for (auto& parameters : scripts) {
         auto scriptID = parameters.identifier;
 
-        if (firstTimeRegistration == WebExtensionRegisteredScript::FirstTimeRegistration::Yes && (m_registeredScriptsMap.contains(scriptID) || idsToAdd.contains(scriptID))) {
+        if (firstTimeRegistration == FirstTimeRegistration::Yes && (m_registeredScriptsMap.contains(scriptID) || idsToAdd.contains(scriptID))) {
             *errorMessage = toErrorString(callingAPIName, nil, @"duplicate ID '%@'", (NSString *)scriptID);
             return false;
         }
@@ -398,7 +411,7 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.scriptPaths = scriptPaths;
         injectedContentData.styleSheetPaths = styleSheetPaths;
 
-        injectedConents.append(WTFMove(injectedContentData));
+        injectedContentsMap.add(scriptID, WTFMove(injectedContentData));
     }
 
     return true;

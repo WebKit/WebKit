@@ -300,7 +300,9 @@ bool WebExtensionContext::unload(NSError **outError)
     writeStateToStorage();
 
     unloadBackgroundWebView();
+
     removeInjectedContent();
+    m_registeredScriptsMap.clear();
 
     invalidateStorage();
     unloadDeclarativeNetRequestState();
@@ -525,9 +527,14 @@ void WebExtensionContext::setUnsupportedAPIs(HashSet<String>&& unsupported)
     m_unsupportedAPIs = WTFMove(unsupported);
 }
 
-const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedContents()
+WebExtensionContext::InjectedContentVector WebExtensionContext::injectedContents() const
 {
-    return m_extension->staticInjectedContents();
+    InjectedContentVector result = m_extension->staticInjectedContents();
+
+    for (auto& entry : m_registeredScriptsMap)
+        result.append(entry.value->injectedContent());
+
+    return result;
 }
 
 bool WebExtensionContext::hasInjectedContentForURL(const URL& url)

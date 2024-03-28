@@ -54,6 +54,7 @@ using SourcePair = std::pair<String, std::optional<URL>>;
 using SourcePairs = Vector<std::optional<SourcePair>>;
 
 using InjectionTime = WebExtension::InjectionTime;
+using InjectedContentData = WebExtension::InjectedContentData;
 
 using UserScriptVector = Vector<Ref<API::UserScript>>;
 using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
@@ -77,16 +78,24 @@ public:
 
     void addUserScript(const String& identifier, API::UserScript&);
     void addUserStyleSheet(const String& identifier, API::UserStyleSheet&);
-
     void removeUserScriptsAndStyleSheets(const String& identifier);
+
+    void updateInjectedContent(InjectedContentData& injectedContent) { m_injectedContent = injectedContent; }
+    const InjectedContentData& injectedContent() const { return m_injectedContent; }
 
     WebExtensionRegisteredScriptParameters parameters() const { return m_parameters; };
 
 private:
-    explicit WebExtensionRegisteredScript(WebExtensionContext&, const WebExtensionRegisteredScriptParameters&);
+    explicit WebExtensionRegisteredScript(WebExtensionContext& extensionContext, const WebExtensionRegisteredScriptParameters& parameters, const InjectedContentData& injectedContent)
+        : m_extensionContext(extensionContext)
+        , m_parameters(parameters)
+        , m_injectedContent(injectedContent)
+    {
+    }
 
     WeakPtr<WebExtensionContext> m_extensionContext;
     WebExtensionRegisteredScriptParameters m_parameters;
+    InjectedContentData m_injectedContent;
 
     HashMap<String, UserScriptVector> m_userScriptsMap;
     HashMap<String, UserStyleSheetVector> m_userStyleSheetsMap;

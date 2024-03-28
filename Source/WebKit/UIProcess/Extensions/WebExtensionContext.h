@@ -155,6 +155,8 @@ public:
 
     using AlarmInfoMap = HashMap<String, double>;
 
+    using DynamicInjectedContentsMap = HashMap<String, WebExtension::InjectedContentData>;
+
     using PermissionsSet = WebExtension::PermissionsSet;
     using MatchPatternSet = WebExtension::MatchPatternSet;
     using InjectedContentData = WebExtension::InjectedContentData;
@@ -172,7 +174,6 @@ public:
     using WindowIdentifierMap = HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
     using WindowIdentifierVector = Vector<WebExtensionWindowIdentifier>;
     using TabIdentifierMap = HashMap<WebExtensionTabIdentifier, Ref<WebExtensionTab>>;
-    using TabMapValueIterator = TabIdentifierMap::ValuesIteratorRange;
     using PageTabIdentifierMap = WeakHashMap<WebPageProxy, WebExtensionTabIdentifier>;
     using PopupPageActionMap = WeakHashMap<WebPageProxy, Ref<WebExtensionAction>>;
 
@@ -293,7 +294,7 @@ public:
     HashSet<String> unsupportedAPIs() const { return m_unsupportedAPIs; }
     void setUnsupportedAPIs(HashSet<String>&&);
 
-    const InjectedContentVector& injectedContents();
+    InjectedContentVector injectedContents() const;
     bool hasInjectedContentForURL(const URL&);
     bool hasInjectedContent();
 
@@ -773,7 +774,7 @@ private:
     void scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void scriptingGetRegisteredScripts(const Vector<String>&, CompletionHandler<void(Expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&&)>&&);
     void scriptingUnregisterContentScripts(const Vector<String>&, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    bool createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>&, WebExtensionDynamicScripts::WebExtensionRegisteredScript::FirstTimeRegistration, InjectedContentVector&, NSString *callingAPIName, NSString **errorMessage);
+    bool createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>&, WebExtensionDynamicScripts::WebExtensionRegisteredScript::FirstTimeRegistration, DynamicInjectedContentsMap&, NSString *callingAPIName, NSString **errorMessage);
 
     // Storage APIs
     bool isStorageMessageAllowed();

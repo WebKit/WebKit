@@ -49,6 +49,9 @@ static auto *scriptingManifest = @{
     },
 };
 
+static auto *changeBackgroundColorScript = @"document.body.style.background = 'pink'";
+static auto *changeBackgroundFontScript = @"document.body.style.fontSize = '555px'";
+
 TEST(WKWebExtensionAPIScripting, ErrorsExecuteScript)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -605,9 +608,6 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
         @"browser.test.yield('Load Tab')",
     ]);
 
-    static auto *changeBackgroundColorScript = @"document.body.style.background = 'pink'";
-    static auto *changeBackgroundFontScript = @"document.body.style.fontSize = '555px'";
-
     static auto *resources = @{
         @"background.js": backgroundScript,
         @"changeBackgroundColorScript.js": changeBackgroundColorScript,
@@ -697,9 +697,6 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"browser.test.yield('Load Tab')",
     ]);
 
-    static auto *changeBackgroundColorScript = @"document.body.style.background = 'pink'";
-    static auto *changeBackgroundFontScript = @"document.body.style.fontSize = '555px'";
-
     static auto *resources = @{
         @"background.js": backgroundScript,
         @"changeBackgroundColorScript.js": changeBackgroundColorScript,
@@ -771,9 +768,6 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
 
         @"browser.test.yield('Load Tab')",
     ]);
-
-    static auto *changeBackgroundColorScript = @"document.body.style.background = 'pink'";
-    static auto *changeBackgroundFontScript = @"document.body.style.fontSize = '555px'";
 
     static auto *resources = @{
         @"background.js": backgroundScript,
@@ -850,9 +844,6 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
         @"browser.test.yield('Load Tab')",
     ]);
 
-    static auto *changeBackgroundColorScript = @"document.body.style.background = 'pink'";
-    static auto *changeBackgroundFontScript = @"document.body.style.fontSize = '555px'";
-
     static auto *resources = @{
         @"background.js": backgroundScript,
         @"changeBackgroundColorScript.js": changeBackgroundColorScript,
@@ -873,6 +864,74 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, RegisteredScriptIsInjectedAfterContextReloads)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webNavigation.onCompleted.addListener(async (details) => {",
+        @"  const pinkValue = 'rgb(255, 192, 203)'",
+        @"  function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
+
+        @"  let results = await browser.scripting.executeScript({ target: { tabId: details.tabId, allFrames: false }, func: getBackgroundColor })",
+        @"  browser.test.assertEq(results?.[0]?.result, pinkValue)",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"let registeredScripts = await browser.scripting.getRegisteredContentScripts()",
+        @"if (!registeredScripts.length) {",
+        @"  await browser.scripting.registerContentScripts([{ id: '1', matches: [ '*://localhost/*' ], js: [ 'changeBackgroundColorScript.js' ] }])",
+
+        @"  registeredScripts = await browser.scripting.getRegisteredContentScripts()",
+        @"  browser.test.assertEq(registeredScripts.length, 1)",
+
+        @"  browser.test.yield('Unload extension')",
+        @"} else {",
+        @"  browser.test.assertEq(registeredScripts.length, 1)",
+
+        @"  browser.test.yield('Load Tab')",
+        @"}"
+    ]);
+
+    static auto *resources = @{
+        @"background.js": backgroundScript,
+        @"changeBackgroundColorScript.js": changeBackgroundColorScript,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration]);
+
+    // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
+    manager.get().context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
+
+    EXPECT_FALSE(manager.get().context.hasInjectedContent);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Unload extension");
+
+    EXPECT_TRUE(manager.get().context.hasInjectedContent);
+
+    [manager.get().controller unloadExtensionContext:manager.get().context error:nullptr];
+
+    EXPECT_FALSE(manager.get().context.hasInjectedContent);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    EXPECT_TRUE(manager.get().context.hasInjectedContent);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager run];
