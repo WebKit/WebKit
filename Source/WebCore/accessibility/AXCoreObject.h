@@ -1383,7 +1383,7 @@ public:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    virtual int accessibilitySecureFieldLength() = 0;
+    virtual unsigned accessibilitySecureFieldLength() = 0;
     virtual bool hasTouchEventListener() const = 0;
     virtual bool isInputTypePopupButton() const = 0;
 #endif
