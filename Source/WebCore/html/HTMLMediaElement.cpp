@@ -9075,7 +9075,7 @@ bool HTMLMediaElement::isVisibleInViewport() const
 
 void HTMLMediaElement::schedulePlaybackControlsManagerUpdate()
 {
-    if (RefPtr page = document().page())
+    if (RefPtrAllowingPartiallyDestroyed<Page> page = document().page())
         page->schedulePlaybackControlsManagerUpdate();
 }
 
