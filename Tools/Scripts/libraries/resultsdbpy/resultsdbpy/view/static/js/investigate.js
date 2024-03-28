@@ -114,8 +114,6 @@ function prioritizedFailures(failures, max = 0, willFilterExpected = false)
         failuresToDisplay[max - 1] = null;
     }
 
-
-
     return `<div>${failuresToDisplay.map(failure => {
         if (failure === null) {
             const params = failures.toParams();
@@ -367,7 +365,11 @@ class _InvestigateDrawer {
             this.data.forEach(datum => {
                 datum.failures = new Failures(this.suite, datum.configuration);
                 failures.forEach(failure => {
-                    if (datum.configuration.compare(failure.configuration) === 0)
+                    if (
+                        datum.configuration.compare(failure.configuration) === 0 &&
+                        failure.uuid_range[0] <= datum.uuid && datum.uuid <= failure.uuid_range[1] &&
+                        failure.start_time_range[0] <= datum.start_time && datum.start_time <= failure.start_time_range[1]
+                    )
                         datum.failures = Failures.combine(datum.failures, failure);
                 });
             });
