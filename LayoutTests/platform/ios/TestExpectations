@@ -4790,7 +4790,6 @@ webkit.org/b/271207 http/wpt/webauthn/public-key-credential-create-success-local
 webkit.org/b/271207 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Failure ]
 webkit.org/b/271207 http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Failure ]
 
-
 # --- imported from ios-wk2 ---
 
 # Animation tests with issues
@@ -7355,3 +7354,5 @@ tables/mozilla/bugs/bug2479-2.html [ Failure Pass ]
 # webkit.org/b/271792 [ MacOS iOS ] 2x fast/url/* (layout-tests) are constant text failures
 fast/url/idna2008.html [ Failure ]
 fast/url/url-hostname-encoding.html [ Failure ]
+
+webkit.org/b/271764 fast/scrolling/ios/video-atop-overflow-scroll.html [ Pass Failure ]
