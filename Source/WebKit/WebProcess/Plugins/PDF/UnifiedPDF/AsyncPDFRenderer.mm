@@ -535,7 +535,7 @@ void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, con
     });
 }
 
-void AsyncPDFRenderer::updateTilesForPaintingRect(float pageScaleFactor, const FloatRect& paintingRect)
+void AsyncPDFRenderer::pdfContentChangedInRect(float pageScaleFactor, const FloatRect& paintingRect)
 {
     // FIXME: If our platform does not support partial updates (supportsPartialRepaint() is false) then this should behave
     // identically to invalidateTilesForPaintingRect().
@@ -583,9 +583,11 @@ void AsyncPDFRenderer::updateTilesForPaintingRect(float pageScaleFactor, const F
         m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument, tileInfo, tileRenderInfo]() mutable {
             protectedThis->paintTileOnWorkQueue(WTFMove(pdfDocument), tileInfo, tileRenderInfo, TileRenderRequestType::TileUpdate);
         });
-
-        // FIXME: We also need to update the page previews, but probably after a slight delay so they don't compete with tile rendering. webkit.org/b/270040
     }
+
+    auto pagePreviewScale = plugin->scaleForPagePreviews();
+    for (auto& pageInfo : pageCoverage.pages)
+        generatePreviewImageForPage(pageInfo.pageIndex, pagePreviewScale);
 }
 
 TextStream& operator<<(TextStream& ts, const TileForGrid& tileInfo)
