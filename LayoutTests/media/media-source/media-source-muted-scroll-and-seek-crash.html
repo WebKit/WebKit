@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>Test scrolling and seeking in an initially hidden an muted MSE video - it should not crash</title>
+    <style>
+        .fullheight {
+            height: 100vh;
+        }
+    </style>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    function createObserver() {
+        let handleIntersect = (entries, observer) => {
+            entries.forEach((entry) => {
+                video.currentTime = 0;
+                video.play();
+            });
+        }
+        let options = {
+            root: null,
+            rootMargin: "0px",
+            threshold: [0],
+        };
+        let observer = new IntersectionObserver(handleIntersect, options);
+        observer.observe(video);
+    }
+
+    async function runTest() {
+        findMediaElement();
+        createObserver();
+
+        let source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen', true);
+
+        let loader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+        await loader.load();
+        await loader.loadMediaData();
+
+        let sourceBuffer = source.addSourceBuffer(loader.type());
+        sourceBuffer.appendBuffer(loader.initSegment());
+        await waitFor(sourceBuffer, 'update', true);
+        sourceBuffer.appendBuffer(loader.mediaSegment(0));
+        await waitFor(sourceBuffer, 'update', true);
+        source.endOfStream();
+        video.play();
+
+        for (let numScrolled = 0; numScrolled < 10; ++numScrolled) {
+            await sleepFor(50);
+            const isVideoVisible = (numScrolled % 2 != 0);
+            const scrollTargetY = isVideoVisible ? 0 : window.innerHeight;
+            window.scrollTo(0, scrollTargetY);
+        }
+        source.removeSourceBuffer(sourceBuffer);
+        logResult(Success, 'No crash');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div class="fullheight"></div>
+    <video muted></video>
+</body>
+</html>
