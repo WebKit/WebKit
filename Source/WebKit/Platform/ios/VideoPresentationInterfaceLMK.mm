@@ -68,10 +68,9 @@ void VideoPresentationInterfaceLMK::setupPlayerViewController()
         return;
 
     linearMediaPlayer().allowFullScreenFromInline = YES;
+    linearMediaPlayer().captionLayer = captionsLayer();
     linearMediaPlayer().contentType = WKSLinearMediaContentTypePlanar;
     linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
-    // FIXME: pass a valid caption layer (rdar://124223292)
-    linearMediaPlayer().captionLayer = CALayer.layer;
 
     m_playerViewController = [linearMediaPlayer() makeViewController];
 }
@@ -108,6 +107,16 @@ void VideoPresentationInterfaceLMK::setContentDimensions(const FloatSize& conten
 void VideoPresentationInterfaceLMK::setShowsPlaybackControls(bool showsPlaybackControls)
 {
     linearMediaPlayer().showsPlaybackControls = showsPlaybackControls;
+}
+
+void VideoPresentationInterfaceLMK::setupCaptionsLayer(CALayer *, const FloatSize& initialSize)
+{
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [captionsLayer() removeFromSuperlayer];
+    [captionsLayer() setAnchorPoint:CGPointZero];
+    [captionsLayer() setBounds:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
+    [CATransaction commit];
 }
 
 } // namespace WebKit

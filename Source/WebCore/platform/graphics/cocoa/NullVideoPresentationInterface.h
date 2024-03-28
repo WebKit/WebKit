@@ -44,7 +44,7 @@ public:
         return adoptRef(*new NullVideoPresentationInterface(playbackSessionInterface));
     }
 
-    virtual ~NullVideoPresentationInterface() = default;
+    ~NullVideoPresentationInterface() = default;
     NullPlaybackSessionInterface& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 

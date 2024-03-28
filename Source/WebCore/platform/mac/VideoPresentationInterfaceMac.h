@@ -58,7 +58,7 @@ public:
     {
         return adoptRef(*new VideoPresentationInterfaceMac(playbackSessionInterface));
     }
-    virtual ~VideoPresentationInterfaceMac();
+    ~VideoPresentationInterfaceMac();
     PlaybackSessionInterfaceMac& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     RefPtr<VideoPresentationModel> videoPresentationModel() const { return m_videoPresentationModel.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
