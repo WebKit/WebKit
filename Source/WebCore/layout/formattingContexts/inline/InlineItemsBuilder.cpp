@@ -149,29 +149,46 @@ static bool requiresVisualReordering(const Box& layoutBox)
     return false;
 }
 
-bool InlineItemsBuilder::traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& subtreeRoot, const Box& firstDamagedLayoutBox)
+InlineItemsBuilder::LayoutQueue InlineItemsBuilder::traverseUntilDamaged(const Box& firstDamagedLayoutBox)
 {
-    if (&subtreeRoot == &firstDamagedLayoutBox)
-        return true;
+    LayoutQueue queue;
 
-    m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(subtreeRoot);
-    m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering && isTextOrLineBreak(subtreeRoot);
+    auto appendAndCheckForDamage = [&] (auto& layoutBox) {
+        queue.append(layoutBox);
 
-    auto shouldSkipSubtree = subtreeRoot.establishesFormattingContext();
-    if (!shouldSkipSubtree && is<ElementBox>(subtreeRoot) && downcast<ElementBox>(subtreeRoot).hasChild()) {
-        auto& firstChild = *downcast<ElementBox>(subtreeRoot).firstChild();
-        layoutQueue.append(firstChild);
-        if (traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox))
-            return true;
-        layoutQueue.takeLast();
+        m_contentRequiresVisualReordering = m_contentRequiresVisualReordering || requiresVisualReordering(layoutBox);
+        m_isNonBidiTextAndForcedLineBreakOnlyContent = m_isNonBidiTextAndForcedLineBreakOnlyContent && !m_contentRequiresVisualReordering && isTextOrLineBreak(layoutBox);
+        return &layoutBox == &firstDamagedLayoutBox;
+    };
+
+    if (appendAndCheckForDamage(*root().firstChild()))
+        return queue;
+
+    while (!queue.isEmpty()) {
+        while (true) {
+            auto layoutBox = queue.last();
+            auto isInlineBoxWithInlineContent = layoutBox->isInlineBox() && !layoutBox->isInlineTextBox() && !layoutBox->isLineBreakBox() && !layoutBox->isOutOfFlowPositioned();
+            if (!isInlineBoxWithInlineContent)
+                break;
+            auto* firstChild = downcast<ElementBox>(layoutBox).firstChild();
+            if (!firstChild)
+                break;
+            if (appendAndCheckForDamage(*firstChild))
+                return queue;
+        }
+
+        while (!queue.isEmpty()) {
+            if (auto* nextSibling = queue.takeLast()->nextSibling()) {
+                if (appendAndCheckForDamage(*nextSibling))
+                    return queue;
+                break;
+            }
+        }
     }
-    if (auto* nextSibling = subtreeRoot.nextSibling()) {
-        layoutQueue.takeLast();
-        layoutQueue.append(*nextSibling);
-        if (traverseUntilDamaged(layoutQueue, *nextSibling, firstDamagedLayoutBox))
-            return true;
-    }
-    return false;
+    // How did we miss the damaged box?
+    ASSERT_NOT_REACHED();
+    queue.append(*root().firstChild());
+    return queue;
 }
 
 InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(InlineItemPosition startPosition)
@@ -201,16 +218,7 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(Inline
     }
 
     auto& firstDamagedLayoutBox = existingInlineItems[startPosition.index].layoutBox();
-    auto& firstChild = *root.firstChild();
-    LayoutQueue layoutQueue;
-    layoutQueue.append(firstChild);
-    traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox);
-
-    if (layoutQueue.isEmpty()) {
-        ASSERT_NOT_REACHED();
-        layoutQueue.append(*root.firstChild());
-    }
-    return layoutQueue;
+    return traverseUntilDamaged(firstDamagedLayoutBox);
 }
 
 void InlineItemsBuilder::collectInlineItems(InlineItemList& inlineItemList, InlineItemPosition startPosition)
