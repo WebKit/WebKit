@@ -158,13 +158,13 @@ ALWAYS_INLINE Int toIntImpl(double number)
             // As a result, the exp of the double is always >= 31. We can take advantage
             // of this by specifically checking for (exp == 31) and give the compiler a
             // chance to constant fold the operations below.
-            const constexpr UInt missingOne = 1U << intBitsMinusOne;
+            const constexpr UInt missingOne = static_cast<UInt>(1U) << intBitsMinusOne;
             result &= missingOne - 1;
             result += missingOne;
         }
     } else {
         if (exp < static_cast<int32_t>(intBits)) {
-            const UInt missingOne = 1U << exp;
+            const UInt missingOne = static_cast<UInt>(1U) << exp;
             result &= missingOne - 1;
             result += missingOne;
         }
