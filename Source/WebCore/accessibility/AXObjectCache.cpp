@@ -1428,8 +1428,20 @@ void AXObjectCache::childrenChanged(AccessibilityObject* object)
 
 void AXObjectCache::valueChanged(Element* element)
 {
-    postNotification(element, AXNotification::AXValueChanged);
+    postNotification(element, AXValueChanged);
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AXObjectCache::columnIndexChanged(AccessibilityTableCell& cell)
+{
+    postNotification(cell, AXColumnIndexChanged);
+}
+
+void AXObjectCache::rowIndexChanged(AccessibilityTableCell& cell)
+{
+    postNotification(cell, AXRowIndexChanged);
+}
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 void AXObjectCache::notificationPostTimerFired()
 {
@@ -1558,6 +1570,19 @@ void AXObjectCache::postNotification(AccessibilityObject* object, Document* docu
         return;
 
     m_notificationsToPost.append(std::make_pair(object, notification));
+    if (!m_notificationPostTimer.isActive())
+        m_notificationPostTimer.startOneShot(0_s);
+}
+
+void AXObjectCache::postNotification(AccessibilityObject& object, AXNotification notification)
+{
+    AXTRACE(makeString("AXObjectCache::postNotification 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+    AXLOG(std::make_pair(&object, notification));
+    ASSERT(isMainThread());
+
+    stopCachingComputedObjectAttributes();
+
+    m_notificationsToPost.append(std::make_pair(&object, notification));
     if (!m_notificationPostTimer.isActive())
         m_notificationPostTimer.startOneShot(0_s);
 }
@@ -1763,7 +1788,7 @@ void AXObjectCache::onSelectedChanged(Node* node)
 void AXObjectCache::onTextSecurityChanged(HTMLInputElement& inputElement)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    postNotification(get(&inputElement), nullptr, AXTextSecurityChanged);
+    postNotification(get(&inputElement), AXTextSecurityChanged);
 #else
     UNUSED_PARAM(inputElement);
 #endif
@@ -1771,12 +1796,12 @@ void AXObjectCache::onTextSecurityChanged(HTMLInputElement& inputElement)
 
 void AXObjectCache::onTitleChange(Document& document)
 {
-    postNotification(get(&document), nullptr, AXTextChanged);
+    postNotification(get(&document), AXTextChanged);
 }
 
 void AXObjectCache::onValidityChange(Element& element)
 {
-    postNotification(get(&element), nullptr, AXInvalidStatusChanged);
+    postNotification(get(&element), AXInvalidStatusChanged);
 }
 
 void AXObjectCache::onTextCompositionChange(Node& node, CompositionState compositionState, bool valueChanged, const String& text, size_t position, bool handlingAcceptedCandidate)
@@ -2371,13 +2396,13 @@ void AXObjectCache::handleRoleChanged(Element* element, const AtomString& oldVal
     object->updateRole();
 }
 
-void AXObjectCache::handleRoleChanged(AccessibilityObject* axObject)
+void AXObjectCache::handleRoleChanged(AccessibilityObject& axObject)
 {
     stopCachingComputedObjectAttributes();
-    axObject->recomputeIsIgnored();
+    axObject.recomputeIsIgnored();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    postNotification(axObject, nullptr, AXRoleChanged);
+    postNotification(axObject, AXRoleChanged);
 #endif
 }
 
@@ -2485,7 +2510,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == langAttr)
         updateIsolatedTree(get(element), AXLanguageChanged);
     else if (attrName == nameAttr)
-        postNotification(get(element), nullptr, AXNameChanged);
+        postNotification(get(element), AXNameChanged);
     else if (attrName == placeholderAttr)
         postNotification(element, AXPlaceholderChanged);
     else if (attrName == hrefAttr || attrName == srcAttr)
@@ -2546,7 +2571,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXColumnCountChanged);
         deferRecomputeTableIsExposed(dynamicDowncast<HTMLTableElement>(element));
     } else if (attrName == aria_colindexAttr) {
-        postNotification(element, AXColumnIndexChanged);
+        postNotification(element, AXARIAColumnIndexChanged);
         recomputeParentTableProperties(element, TableProperty::Exposed);
     } else if (attrName == aria_colspanAttr) {
         postNotification(element, AXColumnSpanChanged);
@@ -2571,7 +2596,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == aria_placeholderAttr)
         postNotification(element, AXPlaceholderChanged);
     else if (attrName == aria_rowindexAttr) {
-        postNotification(element, AXRowIndexChanged);
+        postNotification(element, AXARIARowIndexChanged);
         recomputeParentTableProperties(element, { TableProperty::CellSlots, TableProperty::Exposed });
     }
     else if (attrName == aria_valuemaxAttr)
@@ -4189,6 +4214,12 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXAutofillTypeChanged:
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::ValueAutofillButtonType });
             break;
+        case AXARIAColumnIndexChanged:
+            tree->queueNodeUpdate(*notification.first, { AXPropertyName::AXColumnIndex });
+            break;
+        case AXARIARowIndexChanged:
+            tree->queueNodeUpdate(*notification.first, { AXPropertyName::AXRowIndex });
+            break;
         case AXCellSlotsChanged:
             ASSERT(notification.first->isTable());
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::CellSlots });
@@ -4203,8 +4234,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::AXColumnCount });
             break;
         case AXColumnIndexChanged:
-            tree->queueNodeUpdate(*notification.first, { AXPropertyName::AXColumnIndex });
-            break;
         case AXColumnSpanChanged:
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::ColumnIndexRange });
             break;
@@ -4273,8 +4302,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::RoleDescription });
             break;
         case AXRowIndexChanged:
-            tree->queueNodeUpdate(*notification.first, { AXPropertyName::AXRowIndex });
-            break;
         case AXRowSpanChanged:
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::RowIndexRange });
             break;
@@ -4971,7 +4998,7 @@ void AXObjectCache::selectedTextRangeTimerFired()
     if (m_lastDebouncedTextRangeObject.isValid()) {
         for (auto* axObject = objectForID(m_lastDebouncedTextRangeObject); axObject; axObject = axObject->parentObject()) {
             if (axObject->isTextControl())
-                postNotification(axObject, nullptr, AXSelectedTextChanged);
+                postNotification(*axObject, AXSelectedTextChanged);
         }
     }
 
@@ -4994,8 +5021,7 @@ void AXObjectCache::processQueuedIsolatedNodeUpdates()
 void AXObjectCache::onWidgetVisibilityChanged(RenderWidget* widget)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (auto* axWidget = get(widget))
-        postNotification(axWidget, nullptr, AXVisibilityChanged);
+    postNotification(get(widget), AXVisibilityChanged);
 #else
     UNUSED_PARAM(widget);
 #endif
