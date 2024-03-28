@@ -434,6 +434,9 @@ TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(WordBreak wordBreak
 
 bool TextUtil::isStrongDirectionalityCharacter(char32_t character)
 {
+    if (isLatin1(character))
+        return false;
+
     auto bidiCategory = u_charDirection(character);
     return bidiCategory == U_RIGHT_TO_LEFT
         || bidiCategory == U_RIGHT_TO_LEFT_ARABIC
