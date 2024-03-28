@@ -5763,7 +5763,7 @@ struct WebCore::InteractionRegion {
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::Region {
     WebCore::IntRect bounds();
-    std::unique_ptr<WebCore::Region::Shape> copyShape();
+    [Validator='!*copyShape || (*copyShape)->isValid()'] std::unique_ptr<WebCore::Region::Shape> copyShape();
 }
 
 header: <WebCore/ISOVTTCue.h>
