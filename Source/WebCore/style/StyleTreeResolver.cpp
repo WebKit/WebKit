@@ -595,15 +595,22 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 {
     auto& element = styleable.element;
     auto& document = element.document();
-    auto* oldStyle = element.renderOrDisplayContentsStyle(styleable.pseudoId);
+    auto* currentStyle = element.renderOrDisplayContentsStyle(styleable.pseudoId);
 
     std::unique_ptr<RenderStyle> startingStyle;
-    if (!oldStyle && resolvedStyle.style->hasTransitions()) {
-        // https://drafts.csswg.org/css-transitions-2/#at-ruledef-starting-style
-        // "If an element does not have a before-change style for a given style change event, the starting style is used instead."
-        startingStyle = resolveStartingStyle(resolvedStyle, styleable, resolutionContext);
-        oldStyle = startingStyle.get();
-    }
+
+    auto* oldStyle = [&]() -> const RenderStyle* {
+        if (currentStyle)
+            return currentStyle;
+
+        if (resolvedStyle.style->hasTransitions()) {
+            // https://drafts.csswg.org/css-transitions-2/#at-ruledef-starting-style
+            // "If an element does not have a before-change style for a given style change event, the starting style is used instead."
+            startingStyle = resolveStartingStyle(resolvedStyle, styleable, resolutionContext);
+            return startingStyle.get();
+        }
+        return nullptr;
+    }();
 
     auto updateAnimations = [&] {
         if (document.backForwardCacheState() != Document::NotInBackForwardCache || document.printing())
@@ -656,7 +663,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
     };
 
     // FIXME: Something like this is also needed for viewport units.
-    if (oldStyle && parent().needsUpdateQueryContainerDependentStyle)
+    if (currentStyle && parent().needsUpdateQueryContainerDependentStyle)
         styleable.queryContainerDidChange();
 
     // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
@@ -669,10 +676,10 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
     // Deduplication speeds up equality comparisons as the properties inherit to descendants.
     // FIXME: There should be a more general mechanism for this.
-    if (oldStyle)
-        newStyle->deduplicateCustomProperties(*oldStyle);
+    if (currentStyle)
+        newStyle->deduplicateCustomProperties(*currentStyle);
 
-    auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Change::Renderer;
+    auto change = currentStyle ? determineChange(*currentStyle, *newStyle) : Change::Renderer;
 
     if (element.hasInvalidRenderer() || parentChange == Change::Renderer)
         change = Change::Renderer;
