@@ -105,7 +105,7 @@ void RemoteFrame::unbindRemoteAccessibilityFrames(int processIdentifier)
     m_client->unbindRemoteAccessibilityFrames(processIdentifier);
 }
 
-void RemoteFrame::bindRemoteAccessibilityFrames(int processIdentifier, std::span<const uint8_t> dataToken, CompletionHandler<void(const std::span<const uint8_t>, int)>&& completionHandler)
+void RemoteFrame::bindRemoteAccessibilityFrames(int processIdentifier, std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&& completionHandler)
 {
     return m_client->bindRemoteAccessibilityFrames(processIdentifier, frameID(), dataToken, WTFMove(completionHandler));
 }
