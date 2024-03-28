@@ -2724,6 +2724,8 @@ fast/visual-viewport/client-rects-relative-to-layout-viewport-zoomed.html [ Skip
 fast/selectors/040.html
 
 webkit.org/b/165691 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
+# Test is using eventSender
+http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-ping-in-iframe.https.html [ Skip ]
 
 webkit.org/b/245610 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Failure ]
 
