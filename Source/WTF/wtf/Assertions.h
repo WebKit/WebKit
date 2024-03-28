@@ -248,7 +248,7 @@ WTF_EXPORT_PRIVATE void WTFReleaseLogStackTrace(WTFLogChannel*);
 
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(X86)
 
 #define WTF_FATAL_CRASH_INST "int3"
 
