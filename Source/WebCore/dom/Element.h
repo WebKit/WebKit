@@ -721,8 +721,8 @@ public:
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value);
 
-    IntersectionObserverData& ensureIntersectionObserverData();
-    IntersectionObserverData* intersectionObserverDataIfExists();
+    virtual IntersectionObserverData& ensureIntersectionObserverData();
+    virtual IntersectionObserverData* intersectionObserverDataIfExists();
 
     ResizeObserverData& ensureResizeObserverData();
     ResizeObserverData* resizeObserverDataIfExists();
@@ -790,6 +790,7 @@ protected:
 
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
+    void disconnectFromIntersectionObservers();
     static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
 
 private:
@@ -851,7 +852,6 @@ private:
     LayoutRect absoluteEventBounds(bool& boundsIncludeAllDescendantElements, bool& includesFixedPositionElements);
     LayoutRect absoluteEventBoundsOfElementAndDescendants(bool& includesFixedPositionElements);
 
-    void disconnectFromIntersectionObservers();
     void disconnectFromIntersectionObserversSlow(IntersectionObserverData&);
 
     void disconnectFromResizeObservers();
