@@ -250,7 +250,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyColumns:
     case CSSPropertyContainer:
     case CSSPropertyFontSynthesis:
-    case CSSPropertyGap:
     case CSSPropertyGridArea:
     case CSSPropertyGridColumn:
     case CSSPropertyGridRow:

@@ -130,6 +130,7 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
 
     auto canUseShorthandSerializerForPropertyValue = [&]() {
         switch (propertyID) {
+        case CSSPropertyGap:
         case CSSPropertyGridArea:
         case CSSPropertyGridColumn:
         case CSSPropertyGridRow:
