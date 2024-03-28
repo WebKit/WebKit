@@ -5,4 +5,3 @@ from .commitmessage import CommitMessage
 from .detection import SCMDetector
 from .git import Git, AmbiguousCommitError
 from .scm import SCM, AuthenticationError, CheckoutNeedsUpdate
-from .svn import SVN
