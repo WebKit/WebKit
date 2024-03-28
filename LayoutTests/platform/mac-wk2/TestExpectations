@@ -1342,9 +1342,6 @@ webkit.org/b/225664 editing/selection/move-by-character-brute-force.html [ Slow 
 
 webkit.org/b/225669 imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
 
-# rdar://82047046 ([ Mac wk2 ] http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html is a flaky timeout)
-http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html [ Pass Timeout ]
-
 webkit.org/b/225521 [ Release ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Failure ]
 
 webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr Failure ]
