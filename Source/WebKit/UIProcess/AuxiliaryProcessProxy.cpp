@@ -29,6 +29,7 @@
 #include "AuxiliaryProcessCreationParameters.h"
 #include "AuxiliaryProcessMessages.h"
 #include "Logging.h"
+#include "MessageNames.h"
 #include "OverrideLanguages.h"
 #include "UIProcessLogInitialization.h"
 #include "WebPageProxy.h"
@@ -251,7 +252,7 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     if (asyncReplyHandler && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
         auto completionHandler = WTFMove(asyncReplyHandler->completionHandler);
-        asyncReplyHandler->completionHandler = [activity = throttler().backgroundActivity({ }), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
+        asyncReplyHandler->completionHandler = [activity = throttler().quietBackgroundActivity(descriptionLiteral(encoder->messageName())), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
             completionHandler(decoder);
         };
     }

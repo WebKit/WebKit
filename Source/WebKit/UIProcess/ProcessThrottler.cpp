@@ -175,9 +175,9 @@ void ProcessThrottler::invalidateAllActivities()
     ASSERT(isMainRunLoop());
     PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: BEGIN (foregroundActivityCount: %u, backgroundActivityCount: %u)", m_foregroundActivities.computeSize(), m_backgroundActivities.computeSize());
     while (!m_foregroundActivities.isEmptyIgnoringNullReferences())
-        m_foregroundActivities.begin()->invalidate();
+        m_foregroundActivities.begin()->invalidate(ProcessThrottlerActivity::ForceEnableActivityLogging::Yes);
     while (!m_backgroundActivities.isEmptyIgnoringNullReferences())
-        m_backgroundActivities.begin()->invalidate();
+        m_backgroundActivities.begin()->invalidate(ProcessThrottlerActivity::ForceEnableActivityLogging::Yes);
     PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: END");
 }
 
@@ -558,10 +558,11 @@ void ProcessThrottlerTimedActivity::updateTimer()
 
 #define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler ? m_throttler->m_process->processID() : 0, m_throttler.get(), ##__VA_ARGS__)
 
-ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, ASCIILiteral name, ProcessThrottlerActivityType type)
+ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, ASCIILiteral name, ProcessThrottlerActivityType type, IsQuietActivity isQuiet)
     : m_throttler(&throttler)
     , m_name(name)
     , m_type(type)
+    , m_isQuietActivity(isQuiet)
 {
     ASSERT(isMainRunLoop());
     if (!throttler.addActivity(*this)) {
@@ -574,10 +575,10 @@ ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, 
     }
 }
 
-void ProcessThrottlerActivity::invalidate()
+void ProcessThrottlerActivity::invalidate(ForceEnableActivityLogging forceEnableActivityLogging)
 {
     ASSERT(isValid());
-    if (!isQuietActivity()) {
+    if (!isQuietActivity() || forceEnableActivityLogging == ForceEnableActivityLogging::Yes) {
         PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("invalidate: Ending %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
             m_type == ProcessThrottlerActivityType::Foreground ? "foreground" : "background", m_name.characters());
     }
