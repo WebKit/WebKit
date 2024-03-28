@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,5 +87,11 @@
 
     .network-detail .item.close > .glyph {
         background-color: hsla(0, 0%, 100%, 0.2);
+    }
+
+    @media (prefers-contrast: more) {
+        .network-detail {
+            background-color: hsl(0, 0%, 15%);
+        }
     }
 }

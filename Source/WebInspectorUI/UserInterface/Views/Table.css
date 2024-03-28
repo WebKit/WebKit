@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,14 +124,14 @@
 }
 
 .table > .data-container > .data-list > li.selected {
-    background-color: var(--selected-background-color-unfocused) !important;
-    color: inherit !important;
+    background-color: var(--selected-background-color-unfocused);
+    color: inherit;
     background-clip: padding-box;
 }
 
 .table:focus > .data-container > .data-list li.selected {
-    background-color: var(--selected-background-color) !important;
-    color: var(--selected-foreground-color) !important;
+    background-color: var(--selected-background-color);
+    color: var(--selected-foreground-color);
 }
 
 .table .cell {
@@ -181,5 +182,12 @@
 @media (prefers-color-scheme: dark) {
     .table > .header > :is(.sort-ascending, .sort-descending)::after {
         filter: invert();
+    }
+
+    @media (prefers-contrast: more) {
+        .table > .data-container > .data-list.even-first-zebra-stripe,
+        .table > .data-container > .data-list {
+            --even-zebra-stripe-row-background-color: hsl(0, 0%, 20%);
+            --odd-zebra-stripe-row-background-color: hsl(0, 0%, 17%);}
     }
 }
