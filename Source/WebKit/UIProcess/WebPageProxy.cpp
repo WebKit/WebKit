@@ -13718,6 +13718,12 @@ void WebPageProxy::sendToProcessContainingFrame(std::optional<FrameIdentifier> f
     );
 }
 
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+template void WebPageProxy::sendToProcessContainingFrame<Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange>(std::optional<WebCore::FrameIdentifier>, Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange&&);
+
+template void WebPageProxy::sendToProcessContainingFrame<Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange>(std::optional<WebCore::FrameIdentifier>, Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange&&);
+#endif
+
 template<typename M>
 IPC::ConnectionSendSyncResult<M> WebPageProxy::sendSyncToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message)
 {
