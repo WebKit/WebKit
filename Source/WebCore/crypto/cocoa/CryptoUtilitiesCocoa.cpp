@@ -28,6 +28,7 @@
 
 #include "CryptoAlgorithmAESCTR.h"
 #include <CommonCrypto/CommonCrypto.h>
+#include <pal/spi/cocoa/CommonCryptoSPI.h>
 
 namespace WebCore {
 
