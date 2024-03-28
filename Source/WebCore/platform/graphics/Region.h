@@ -114,6 +114,8 @@ public:
         template<typename CompareOperation>
         static bool compareShapes(const Shape& shape1, const Shape& shape2);
 
+        WEBCORE_EXPORT bool isValid() const;
+
 #ifndef NDEBUG
         void dump() const;
 #endif
