@@ -603,6 +603,9 @@ public:
 
     bool deletionHasBegun() const { return hasStateFlag(StateFlag::HasStartedDeletion); }
 
+    bool containsSelectionEndPoint() const { return hasStateFlag(StateFlag::ContainsSelectionEndPoint); }
+    void setContainsSelectionEndPoint(bool value) { setStateFlag(StateFlag::ContainsSelectionEndPoint, value); }
+
 protected:
     enum class TypeFlag : uint16_t {
         IsCharacterData = 1 << 0,
@@ -636,7 +639,8 @@ protected:
         ContainsOnlyASCIIWhitespaceIsValid = 1 << 7, // Only used on CharacterData.
         HasHeldBackChildrenChanged = 1 << 8,
         HasStartedDeletion = 1 << 9,
-        // 6-bits free.
+        ContainsSelectionEndPoint = 1 << 10,
+        // 5-bits free.
     };
 
     enum class ElementStateFlag : uint16_t {
