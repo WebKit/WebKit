@@ -25,7 +25,6 @@
 #include "CSSPropertyParser.h"
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
-#include "CustomElementReactionQueue.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "HTMLNames.h"
@@ -34,9 +33,8 @@
 #include "JSDOMWindowBase.h"
 #include "LocalDOMWindow.h"
 #include "MutableStyleProperties.h"
-#include "MutationObserverInterestGroup.h"
-#include "MutationRecord.h"
 #include "Quirks.h"
+#include "StyleAttributeMutationScope.h"
 #include "StyleProperties.h"
 #include "StyleSheetContents.h"
 #include "StyledElement.h"
@@ -47,100 +45,6 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(PropertySetCSSStyleDeclaration);
 WTF_MAKE_ISO_ALLOCATED_IMPL(StyleRuleCSSStyleDeclaration);
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineCSSStyleDeclaration);
-
-class StyleAttributeMutationScope {
-    WTF_MAKE_NONCOPYABLE(StyleAttributeMutationScope);
-public:
-    StyleAttributeMutationScope(PropertySetCSSStyleDeclaration* decl)
-    {
-        ++s_scopeCount;
-
-        if (s_scopeCount != 1) {
-            ASSERT(s_currentDecl == decl);
-            return;
-        }
-
-        ASSERT(!s_currentDecl);
-        s_currentDecl = decl;
-
-        auto* element = s_currentDecl->parentElement();
-        if (!element)
-            return;
-
-        bool shouldReadOldValue = false;
-
-        m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(*s_currentDecl->parentElement(), HTMLNames::styleAttr);
-        if (m_mutationRecipients && m_mutationRecipients->isOldValueRequested())
-            shouldReadOldValue = true;
-
-        if (UNLIKELY(element->isDefinedCustomElement())) {
-            auto* reactionQueue = element->reactionQueue();
-            if (reactionQueue && reactionQueue->observesStyleAttribute()) {
-                m_customElement = element;
-                shouldReadOldValue = true;
-            }
-        }
-
-        if (shouldReadOldValue)
-            m_oldValue = s_currentDecl->parentElement()->getAttribute(HTMLNames::styleAttr);
-    }
-
-    ~StyleAttributeMutationScope()
-    {
-        --s_scopeCount;
-        if (s_scopeCount)
-            return;
-
-        if (s_shouldDeliver) {
-            if (m_mutationRecipients) {
-                auto mutation = MutationRecord::createAttributes(*s_currentDecl->parentElement(), HTMLNames::styleAttr, m_oldValue);
-                m_mutationRecipients->enqueueMutationRecord(WTFMove(mutation));
-            }
-            if (m_customElement) {
-                auto& newValue = m_customElement->getAttribute(HTMLNames::styleAttr);
-                CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*m_customElement, HTMLNames::styleAttr, m_oldValue, newValue);
-            }
-        }
-
-        s_shouldDeliver = false;
-        if (!s_shouldNotifyInspector) {
-            s_currentDecl = nullptr;
-            return;
-        }
-        // We have to clear internal state before calling Inspector's code.
-        PropertySetCSSStyleDeclaration* localCopyStyleDecl = s_currentDecl;
-        s_currentDecl = nullptr;
-        s_shouldNotifyInspector = false;
-
-        if (auto* parentElement = localCopyStyleDecl->parentElement())
-            InspectorInstrumentation::didInvalidateStyleAttr(*parentElement);
-    }
-
-    void enqueueMutationRecord()
-    {
-        s_shouldDeliver = true;
-    }
-
-    void didInvalidateStyleAttr()
-    {
-        s_shouldNotifyInspector = true;
-    }
-
-private:
-    static unsigned s_scopeCount;
-    static PropertySetCSSStyleDeclaration* s_currentDecl;
-    static bool s_shouldNotifyInspector;
-    static bool s_shouldDeliver;
-
-    std::unique_ptr<MutationObserverInterestGroup> m_mutationRecipients;
-    AtomString m_oldValue;
-    RefPtr<Element> m_customElement;
-};
-
-unsigned StyleAttributeMutationScope::s_scopeCount = 0;
-PropertySetCSSStyleDeclaration* StyleAttributeMutationScope::s_currentDecl = nullptr;
-bool StyleAttributeMutationScope::s_shouldNotifyInspector = false;
-bool StyleAttributeMutationScope::s_shouldDeliver = false;
 
 void PropertySetCSSStyleDeclaration::ref()
 { 
@@ -182,7 +86,7 @@ String PropertySetCSSStyleDeclaration::cssText() const
 
 ExceptionOr<void> PropertySetCSSStyleDeclaration::setCssText(const String& text)
 {
-    StyleAttributeMutationScope mutationScope(this);
+    StyleAttributeMutationScope mutationScope { parentElement() };
     if (!willMutate())
         return { };
 
@@ -245,7 +149,7 @@ bool PropertySetCSSStyleDeclaration::isPropertyImplicit(const String& propertyNa
 
 ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority)
 {
-    StyleAttributeMutationScope mutationScope(this);
+    StyleAttributeMutationScope mutationScope { parentElement() };
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (isCustomPropertyName(propertyName))
@@ -280,7 +184,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
 
 ExceptionOr<String> PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName)
 {
-    StyleAttributeMutationScope mutationScope(this);
+    StyleAttributeMutationScope mutationScope { parentElement() };
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (isCustomPropertyName(propertyName))
         propertyID = CSSPropertyCustom;
@@ -314,8 +218,8 @@ String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID pr
 }
 
 ExceptionOr<void> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyID, const String& value, bool important)
-{ 
-    StyleAttributeMutationScope mutationScope { this };
+{
+    StyleAttributeMutationScope mutationScope { parentElement() };
     if (!willMutate())
         return { };
 
@@ -455,7 +359,7 @@ void InlineCSSStyleDeclaration::didMutate(MutationType type)
         return;
 
     m_parentElement->invalidateStyleAttribute();
-    StyleAttributeMutationScope(this).didInvalidateStyleAttr();
+    InspectorInstrumentation::didInvalidateStyleAttr(*m_parentElement);
 }
 
 CSSStyleSheet* InlineCSSStyleDeclaration::parentStyleSheet() const
