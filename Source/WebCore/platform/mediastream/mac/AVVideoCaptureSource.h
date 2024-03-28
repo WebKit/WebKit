@@ -145,6 +145,8 @@ private:
     void updateWhiteBalanceMode();
     void updateTorch();
 
+    void reconfigureIfNeeded();
+
     void rejectPendingPhotoRequest(const String&);
     void resolvePendingPhotoRequest(Vector<uint8_t>&&, const String&);
     RetainPtr<AVCapturePhotoSettings> photoConfiguration(const PhotoSettings&);
@@ -180,6 +182,9 @@ private:
     bool m_interrupted { false };
     bool m_isRunning { false };
     bool m_hasBegunConfigurationForConstraints { false };
+    bool m_needsResolutionReconfiguration { false };
+    bool m_needsTorchReconfiguration { false };
+    bool m_needsWhiteBalanceReconfiguration { false };
 
     static constexpr Seconds verifyCaptureInterval = 30_s;
     static const uint64_t framesToDropWhenStarting = 4;
