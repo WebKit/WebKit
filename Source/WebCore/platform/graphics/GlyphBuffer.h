@@ -136,11 +136,11 @@ public:
     {
         ASSERT(location <= size());
 
-        m_fonts.insertVector(location, Vector<const Font*>(length, font));
-        m_glyphs.insertVector(location, Vector<GlyphBufferGlyph>(length, std::numeric_limits<GlyphBufferGlyph>::max()));
-        m_advances.insertVector(location, Vector<GlyphBufferAdvance>(length, makeGlyphBufferAdvance()));
-        m_origins.insertVector(location, Vector<GlyphBufferOrigin>(length, makeGlyphBufferOrigin()));
-        m_offsetsInString.insertVector(location, Vector<GlyphBufferStringOffset>(length, 0));
+        m_fonts.insertFill(location, font, length);
+        m_glyphs.insertFill(location, std::numeric_limits<GlyphBufferGlyph>::max(), length);
+        m_advances.insertFill(location, makeGlyphBufferAdvance(), length);
+        m_origins.insertFill(location, makeGlyphBufferOrigin(), length);
+        m_offsetsInString.insertFill(location, 0, length);
     }
 
     void reverse(unsigned from, unsigned length)

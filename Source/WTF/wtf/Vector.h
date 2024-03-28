@@ -881,6 +881,7 @@ public:
     void appendUsingFunctor(size_t, const Functor&);
 
     void insert(size_t position, ValueType&& value) { insert<ValueType>(position, std::forward<ValueType>(value)); }
+    void insertFill(size_t position, const T& value, size_t dataSize);
     template<typename U> void insert(size_t position, const U*, size_t);
     template<typename U> void insert(size_t position, U&&);
     template<typename U, size_t c, typename OH, size_t m, typename M> void insertVector(size_t position, const Vector<U, c, OH, m, M>&);
@@ -1604,7 +1605,7 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::insert(siz
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, std::addressof(data[dataSize]), spot);
     m_size = newSize;
 }
- 
+
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<typename U>
 inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::insert(size_t position, U&& value)
@@ -1623,6 +1624,24 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::ins
     TypeOperations::moveOverlapping(spot, end(), spot + 1);
     new (NotNull, spot) T(std::forward<U>(*ptr));
     ++m_size;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::insertFill(size_t position, const T& data, size_t dataSize)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
+    size_t newSize = m_size + dataSize;
+    if (newSize > capacity()) {
+        expandCapacity<FailureAction::Crash>(newSize);
+        ASSERT(begin());
+    }
+    if (newSize < m_size)
+        CRASH();
+    asanBufferSizeWillChangeTo(newSize);
+    T* spot = begin() + position;
+    TypeOperations::moveOverlapping(spot, end(), spot + dataSize);
+    TypeOperations::uninitializedFill(spot, spot + dataSize, data);
+    m_size = newSize;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
