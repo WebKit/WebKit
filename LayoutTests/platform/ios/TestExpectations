@@ -435,9 +435,6 @@ inspector/ [ Skip ]
 http/tests/inspector/ [ Skip ]
 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
-# Unsupported on certain OS versions
-webkit.org/b/152491 fast/text/woff2.html [ Skip ]
-
 webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
 
 # FIXME: Unskip the following test once we have the fix for <rdar://problem/63253983>.
