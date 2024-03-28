@@ -23,7 +23,6 @@
 
 #include "BitmapTexture.h"
 #include "FloatQuad.h"
-#include "NicosiaBufferDamage.h"
 #include "Region.h"
 #include "TextureMapper.h"
 #include <wtf/MathExtras.h>
@@ -1106,7 +1105,7 @@ void TextureMapperLayer::markDamaged(std::optional<FloatRect> target)
         return;
     }
 
-    if (Nicosia::bufDamageUnifiedRegion()) {
+    if (m_settings.unifyDamagedRegions()) {
         if (m_damaged.isEmpty())
             m_damaged.append(newRegion);
         else

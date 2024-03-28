@@ -27,7 +27,6 @@
 #include <WebCore/CoordinatedBackingStore.h>
 #include <WebCore/NicosiaBackingStore.h>
 #include <WebCore/NicosiaBuffer.h>
-#include <WebCore/NicosiaBufferDamage.h>
 #include <WebCore/NicosiaCompositionLayer.h>
 #include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/NicosiaImageBacking.h>
@@ -38,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-    CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient* client, const WebCore::Settings& settings)
+CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient* client, const WebCore::Settings& settings)
     : m_settings(settings)
     , m_client(client)
 {
@@ -307,7 +306,9 @@ void CoordinatedGraphicsScene::updateSceneState()
 
                         if (layerState.delta.childrenChanged) {
                             layer.setChildren(WTF::map(layerState.children,
-                                                       [this](auto& child) { return &texmapLayer(*child, m_settings); }));
+                                [this](auto& child) {
+                                    return &texmapLayer(*child, m_settings);
+                                }));
                         }
 
                         if (layerState.delta.maskChanged)
@@ -482,6 +483,12 @@ void CoordinatedGraphicsScene::detach()
     m_client = nullptr;
 }
 
+const Vector<WebCore::IntRect>& CoordinatedGraphicsScene::lastDamagedRects() const
+{
+    static const Vector<WebCore::IntRect> noRects;
+    return m_lastDamagedRectsAreUnreliable ? noRects : m_lastDamagedRects;
+}
+
 void CoordinatedGraphicsScene::recordDamage(FloatRect damagedRect)
 {
     if (damagedRect.isEmpty()) {
@@ -490,7 +497,7 @@ void CoordinatedGraphicsScene::recordDamage(FloatRect damagedRect)
     }
 
     auto adjustedRect = enclosingIntRect(damagedRect);
-    if (Nicosia::bufDamageUnifiedRegion()) {
+    if (m_settings.unifyDamagedRegions()) {
         if (m_lastDamagedRects.isEmpty()) {
             m_lastDamagedRects.append(adjustedRect);
             return;

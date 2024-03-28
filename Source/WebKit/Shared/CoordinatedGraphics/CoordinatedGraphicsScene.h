@@ -71,7 +71,7 @@ public:
     bool isActive() const { return m_isActive; }
     void setActive(bool active) { m_isActive = active; }
 
-    const Vector<WebCore::IntRect>& lastDamagedRects() const { return m_lastDamagedRectsAreUnreliable ? m_noDamagedRects : m_lastDamagedRects; }
+    const Vector<WebCore::IntRect>& lastDamagedRects() const;
 
     void recordDamage(WebCore::FloatRect) override;
 
@@ -100,7 +100,6 @@ private:
     CoordinatedGraphicsSceneClient* m_client;
     bool m_isActive { false };
     Vector<WebCore::IntRect> m_lastDamagedRects { };
-    const Vector<WebCore::IntRect> m_noDamagedRects { };
     bool m_lastDamagedRectsAreUnreliable { false };
 
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
