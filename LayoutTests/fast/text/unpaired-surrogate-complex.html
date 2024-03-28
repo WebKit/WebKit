@@ -5,16 +5,15 @@
       background: lightblue;
       display: inline-block;
       font-size: 100px;
-      text-rendering: optimizeSpeed; // To take the simple text code path
   }
 </style>
 <body>
   <span id="target"></span><br>
   <span id="ref"></span><br>
   <script>
-    description('An unpaired surrogate should show a glyph. "a\\uD800b" should be longer than "ab"');
-    document.getElementById("target").textContent = 'a\uD800b';
-    document.getElementById("ref").textContent = 'ab';
+    description('An unpaired surrogate should show a glyph. "\u0A05\\uD800\u0A06" should be longer than "\u0A05\u0A06"');
+    document.getElementById("target").textContent = '\u0A05\uD800\u0A06';
+    document.getElementById("ref").textContent = '\u0A05\u0A06';
     shouldBeGreaterThan("target.clientWidth", "ref.clientWidth");
   </script>
 </body>

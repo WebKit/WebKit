@@ -262,7 +262,7 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
     return 0;
 }
 
-bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedTextBreakIterator& graphemeClusterIterator, unsigned& currentIndex, char32_t& baseCharacter)
+void ComplexTextController::advanceByCombiningCharacterSequence(const CachedTextBreakIterator& graphemeClusterIterator, unsigned& currentIndex, char32_t& baseCharacter)
 {
     unsigned remainingCharacters = m_end - currentIndex;
     ASSERT(remainingCharacters);
@@ -280,7 +280,7 @@ bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedText
     U16_NEXT(buffer, i, bufferLength, baseCharacter);
     if (U_IS_SURROGATE(baseCharacter)) {
         currentIndex += i;
-        return false;
+        return;
     }
 
     int delta = remainingCharacters;
@@ -288,8 +288,6 @@ bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedText
         delta = *following - currentIndex;
 
     currentIndex += delta;
-
-    return true;
 }
 
 void ComplexTextController::collectComplexTextRuns()
@@ -329,8 +327,7 @@ void ComplexTextController::collectComplexTextRuns()
     CachedTextBreakIterator graphemeClusterIterator(m_run.text(), { }, TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
 
     char32_t baseCharacter;
-    if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter))
-        return;
+    advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter);
 
     // We don't perform font fallback on the capitalized characters when small caps is synthesized.
     // We may want to change this code to do so in the future; if we do, then the logic in initiateFontLoadingByAccessingGlyphDataIfApplicable()
@@ -357,8 +354,7 @@ void ComplexTextController::collectComplexTextRuns()
         isSmallCaps = nextIsSmallCaps;
         auto previousIndex = currentIndex;
 
-        if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter))
-            return;
+        advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter);
 
         if (synthesizedFont) {
             if (auto capitalizedBase = capitalized(baseCharacter)) {
