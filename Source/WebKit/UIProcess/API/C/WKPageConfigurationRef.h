@@ -62,6 +62,8 @@ WK_EXPORT void WKPageConfigurationSetAllowTestOnlyIPC(WKPageConfigurationRef con
 
 WK_EXPORT void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfigurationRef configuration, uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort);
 
+WK_EXPORT void WKPageConfigurationSetImageInterpolationDisabledForTesting(WKPageConfigurationRef configuration, bool imageInterpolationDisabledForTesting);
+
 #ifdef __cplusplus
 }
 #endif

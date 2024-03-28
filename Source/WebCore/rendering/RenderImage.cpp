@@ -736,14 +736,17 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
 
     auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
 
+    InterpolationQuality interpolationQuality = InterpolationQuality::Default;
     // FIXME: Document when image != img.get().
     auto* image = imageResource().image().get();
+    if (image)
+        interpolationQuality = chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size()));
 
     ImagePaintingOptions options = {
         imageElement ? imageElement->compositeOperator() : CompositeOperator::SourceOver,
         decodingModeForImageDraw(*image, paintInfo),
         imageOrientation(),
-        image ? chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size())) : InterpolationQuality::Default,
+        page().imageInterpolationDisabledForTesting() ? InterpolationQuality::DoNotInterpolate : interpolationQuality,
         settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No
     };

@@ -189,6 +189,7 @@ public:
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool httpsUpgradeEnabled { true };
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
+    bool imageInterpolationDisabledForTesting { false };
 
     UniqueRef<StorageProvider> storageProvider;
 

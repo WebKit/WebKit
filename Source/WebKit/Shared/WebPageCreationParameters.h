@@ -266,6 +266,7 @@ struct WebPageCreationParameters {
     bool loadsSubresources { true };
     std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts;
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
+    bool imageInterpolationDisabledForTesting { true };
 
     bool crossOriginAccessControlCheckEnabled { true };
     String processDisplayName;

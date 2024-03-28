@@ -10094,6 +10094,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.crossOriginAccessControlCheckEnabled = m_configuration->crossOriginAccessControlCheckEnabled();
     parameters.hasResourceLoadClient = !!m_resourceLoadClient;
     parameters.portsForUpgradingInsecureSchemeForTesting = m_configuration->portsForUpgradingInsecureSchemeForTesting();
+    parameters.imageInterpolationDisabledForTesting = m_configuration->imageInterpolationDisabledForTesting();
 
     std::reference_wrapper<WebUserContentControllerProxy> userContentController(m_userContentController.get());
     if (auto* userContentControllerFromWebsitePolicies = websitePolicies ? websitePolicies->userContentController() : nullptr)

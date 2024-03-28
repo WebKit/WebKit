@@ -395,6 +395,9 @@ public:
     void setPortsForUpgradingInsecureSchemeForTesting(uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort) { m_data.portsForUpgradingInsecureSchemeForTesting = { upgradeFromInsecurePort, upgradeToSecurePort }; }
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting() const { return m_data.portsForUpgradingInsecureSchemeForTesting; }
 
+    bool setImageInterpolationDisabledForTesting(bool disabled) { return m_data.imageInterpolationDisabledForTesting = disabled; }
+    bool imageInterpolationDisabledForTesting() { return m_data.imageInterpolationDisabledForTesting; }
+
     void setDelaysWebProcessLaunchUntilFirstLoad(bool);
     bool delaysWebProcessLaunchUntilFirstLoad() const;
 
@@ -491,6 +494,7 @@ private:
         std::optional<bool> delaysWebProcessLaunchUntilFirstLoad;
         std::optional<double> cpuLimit;
         std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
+        bool imageInterpolationDisabledForTesting { false };
 
         WTF::String overrideContentSecurityPolicy;
 

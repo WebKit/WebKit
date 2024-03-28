@@ -124,3 +124,8 @@ void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfi
 {
     toImpl(configuration)->setPortsForUpgradingInsecureSchemeForTesting(upgradeFromInsecurePort, upgradeToSecurePort);
 }
+
+void WKPageConfigurationSetImageInterpolationDisabledForTesting(WKPageConfigurationRef configuration, bool imageInterpolationDisabledForTesting)
+{
+    toImpl(configuration)->setImageInterpolationDisabledForTesting(imageInterpolationDisabledForTesting);
+}
