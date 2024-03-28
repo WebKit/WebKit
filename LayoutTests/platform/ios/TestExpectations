@@ -33,18 +33,6 @@ fast/forms/ios [ Pass ]
 fast/forms/ios/ipad [ Skip ]
 fast/forms/switch [ Pass ]
 
-# These require painting code to pass
-fast/forms/switch/click-animation-disabled.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation-interrupted-document-removed.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation-interrupted-type-change.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation-interrupted.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation-preventdefault.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation-redundant-checked.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation-twice-fast.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation-twice.html [ ImageOnlyFailure ]
-fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
-
 # These tests fail or are flaky in non-internal iOS 14 simulator
 fast/forms/ios/inputmode-none-with-hardware-keyboard.html [ Pass Failure ]
 
