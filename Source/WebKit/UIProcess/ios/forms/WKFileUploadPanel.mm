@@ -34,6 +34,7 @@
 #import "APIString.h"
 #import "CompactContextMenuPresenter.h"
 #import "PhotosUISPI.h"
+#import "PickerDismissalReason.h"
 #import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
@@ -550,6 +551,28 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _presentationViewController = nil;
 
     [self _cancel];
+}
+
+- (BOOL)dismissIfNeededWithReason:(WebKit::PickerDismissalReason)reason
+{
+    if (reason == WebKit::PickerDismissalReason::ViewRemoved) {
+        if ([_documentPickerController _wk_isInFullscreenPresentation])
+            return NO;
+
+#if HAVE(PHOTOS_UI)
+        if ([_photoPicker _wk_isInFullscreenPresentation])
+            return NO;
+#endif
+
+        if ([_cameraPicker _wk_isInFullscreenPresentation])
+            return NO;
+    }
+
+    if (reason == WebKit::PickerDismissalReason::ProcessExited || reason == WebKit::PickerDismissalReason::ViewRemoved)
+        [self setDelegate:nil];
+
+    [self dismiss];
+    return YES;
 }
 
 - (void)_dismissDisplayAnimated:(BOOL)animated

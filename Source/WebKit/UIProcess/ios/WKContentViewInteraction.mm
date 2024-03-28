@@ -38,6 +38,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
 #import "PageClient.h"
+#import "PickerDismissalReason.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxyIOS.h"
@@ -1554,7 +1555,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _unregisterPreview];
 #endif
 
-    [self dismissPickers];
+    [self dismissPickersIfNeededWithReason:WebKit::PickerDismissalReason::ProcessExited];
 
     [self stopDeferringInputViewUpdatesForAllSources];
     _focusedElementInformation = { };
@@ -7309,7 +7310,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (void)dismissFilePicker
 {
-    [_fileUploadPanel dismiss];
+    [_fileUploadPanel dismissIfNeededWithReason:WebKit::PickerDismissalReason::Testing];
 }
 
 - (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator
@@ -9002,8 +9003,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if (_shareSheet)
-        [_shareSheet dismiss];
-    
+        [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ResetState];
+
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:self.webView]);
     [_shareSheet setDelegate:self];
 
@@ -9070,28 +9071,19 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 }
 #endif
 
-- (void)dismissPickers
+- (void)dismissPickersIfNeededWithReason:(WebKit::PickerDismissalReason)reason
 {
-    if (_fileUploadPanel) {
-        [_fileUploadPanel setDelegate:nil];
-        [_fileUploadPanel dismiss];
+    if ([_fileUploadPanel dismissIfNeededWithReason:reason])
         _fileUploadPanel = nil;
-    }
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-    if (_shareSheet) {
-        [_shareSheet setDelegate:nil];
-        [_shareSheet dismiss];
+    if ([_shareSheet dismissIfNeededWithReason:reason])
         _shareSheet = nil;
-    }
 #endif
 
 #if HAVE(CONTACTSUI)
-    if (_contactPicker) {
-        [_contactPicker setDelegate:nil];
-        [_contactPicker dismiss];
+    if ([_contactPicker dismissIfNeededWithReason:reason])
         _contactPicker = nil;
-    }
 #endif
 }
 

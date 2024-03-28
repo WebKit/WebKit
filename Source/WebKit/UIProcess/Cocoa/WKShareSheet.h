@@ -34,12 +34,17 @@ namespace WebCore {
 struct ShareDataWithParsedURL;
 }
 
+namespace WebKit {
+enum class PickerDismissalReason : uint8_t;
+}
+
 @interface WKShareSheet : NSObject
 
 - (instancetype)initWithView:(WKWebView *)view;
 
 - (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL&)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
-- (void)dismiss;
+
+- (BOOL)dismissIfNeededWithReason:(WebKit::PickerDismissalReason)reason;
 
 @property (nonatomic, weak) id <WKShareSheetDelegate> delegate;
 @end
