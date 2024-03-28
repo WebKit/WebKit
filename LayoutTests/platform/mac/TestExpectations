@@ -2668,3 +2668,7 @@ webkit.org/b/270939 [ Ventura ] tables/mozilla/bugs/bug12384.html [ Failure ]
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
 webkit.org/b/271194 accessibility/mac/custom-text-editor.html [ Pass Timeout ]
+
+# webkit.org/b/271792 [ MacOS iOS ] 2x fast/url/* (layout-tests) are constant text failures
+[ Sonoma+ ] fast/url/idna2008.html [ Failure ]
+[ Sonoma+ ] fast/url/url-hostname-encoding.html [ Failure ]

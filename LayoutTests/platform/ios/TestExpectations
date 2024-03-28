@@ -7363,3 +7363,7 @@ webkit.org/b/254872 webrtc/video-rotation.html [ Pass Timeout ]
 
 fast/overflow/infiniteRecursion.html [ Failure Pass ]
 tables/mozilla/bugs/bug2479-2.html [ Failure Pass ]
+
+# webkit.org/b/271792 [ MacOS iOS ] 2x fast/url/* (layout-tests) are constant text failures
+fast/url/idna2008.html [ Failure ]
+fast/url/url-hostname-encoding.html [ Failure ]
