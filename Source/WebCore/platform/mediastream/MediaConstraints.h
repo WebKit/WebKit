@@ -583,7 +583,7 @@ private:
 class MediaTrackConstraintSetMap {
 public:
     MediaTrackConstraintSetMap() = default;
-    MediaTrackConstraintSetMap(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<IntConstraint> sampleRate, std::optional<IntConstraint> sampleSize, std::optional<DoubleConstraint> aspectRatio, std::optional<DoubleConstraint> frameRate, std::optional<DoubleConstraint> volume, std::optional<BooleanConstraint> echoCancellation, std::optional<BooleanConstraint> displaySurface, std::optional<BooleanConstraint> logicalSurface, std::optional<StringConstraint>&& facingMode, std::optional<StringConstraint>&& deviceId, std::optional<StringConstraint>&& groupId, std::optional<StringConstraint>&& whiteBalanceMode, std::optional<DoubleConstraint> zoom, std::optional<BooleanConstraint> torch)
+    MediaTrackConstraintSetMap(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<IntConstraint> sampleRate, std::optional<IntConstraint> sampleSize, std::optional<DoubleConstraint> aspectRatio, std::optional<DoubleConstraint> frameRate, std::optional<DoubleConstraint> volume, std::optional<BooleanConstraint> echoCancellation, std::optional<BooleanConstraint> displaySurface, std::optional<BooleanConstraint> logicalSurface, std::optional<StringConstraint>&& facingMode, std::optional<StringConstraint>&& deviceId, std::optional<StringConstraint>&& groupId, std::optional<StringConstraint>&& whiteBalanceMode, std::optional<DoubleConstraint> zoom, std::optional<BooleanConstraint> torch, std::optional<BooleanConstraint> backgroundBlur)
         : m_width(width)
         , m_height(height)
         , m_sampleRate(sampleRate)
@@ -600,6 +600,7 @@ public:
         , m_whiteBalanceMode(WTFMove(whiteBalanceMode))
         , m_zoom(zoom)
         , m_torch(torch)
+        , m_backgroundBlur(backgroundBlur)
     {
     }
 
@@ -640,6 +641,7 @@ public:
     const std::optional<StringConstraint>& whiteBalanceMode() const { return m_whiteBalanceMode; }
     const std::optional<DoubleConstraint>& zoom() const { return m_zoom; }
     const std::optional<BooleanConstraint>& torch() const { return m_torch; }
+    const std::optional<BooleanConstraint>& backgroundBlur() const { return m_backgroundBlur; }
 
     MediaTrackConstraintSetMap isolatedCopy() const;
 
@@ -665,6 +667,8 @@ private:
     std::optional<StringConstraint> m_whiteBalanceMode;
     std::optional<DoubleConstraint> m_zoom;
     std::optional<BooleanConstraint> m_torch;
+
+    std::optional<BooleanConstraint> m_backgroundBlur;
 };
 
 struct MediaConstraints {

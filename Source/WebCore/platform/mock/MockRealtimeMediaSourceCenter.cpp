@@ -82,6 +82,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 Color::black,
                 { }, // whiteBalanceModes
                 false, // supportsTorch
+                false, // background blur enabled
             } },
 
         MockMediaDevice { "239c24b3-2b15-11e3-8224-0800200c9a66"_s, "Mock video device 2"_s, { },
@@ -100,6 +101,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 Color::darkGray,
                 { MeteringMode::Manual, MeteringMode::SingleShot, MeteringMode::Continuous },
                 true,
+                true, // background blur enabled
             } },
 
         MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, { }, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },

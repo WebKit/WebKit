@@ -77,6 +77,25 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Ech
     return result;
 }
 
+static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::BackgroundBlur backgroundBlur)
+{
+    Vector<bool> result;
+    result.reserveInitialCapacity(2);
+    switch (backgroundBlur) {
+    case RealtimeMediaSourceCapabilities::BackgroundBlur::On:
+        result.append(true);
+        break;
+    case RealtimeMediaSourceCapabilities::BackgroundBlur::Off:
+        result.append(false);
+        break;
+    case RealtimeMediaSourceCapabilities::BackgroundBlur::OnOff:
+        result.append(false);
+        result.append(true);
+        break;
+    }
+    return result;
+}
+
 MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities& capabilities, const String& groupId)
 {
     MediaTrackCapabilities result;
@@ -110,6 +129,8 @@ MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabil
         result.zoom = capabilityDoubleRange(capabilities.zoom());
     if (capabilities.supportsTorch())
         result.torch = capabilities.torch();
+    if (capabilities.supportsBackgroundBlur())
+        result.backgroundBlur = capabilityBooleanVector(capabilities.backgroundBlur());
 
     return result;
 }

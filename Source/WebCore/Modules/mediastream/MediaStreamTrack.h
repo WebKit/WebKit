@@ -122,6 +122,7 @@ public:
         String whiteBalanceMode;
         std::optional<double> zoom;
         std::optional<bool> torch;
+        std::optional<bool> backgroundBlur;
     };
     TrackSettings getSettings() const;
 

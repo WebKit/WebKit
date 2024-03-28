@@ -62,4 +62,6 @@
     DoubleRange zoom;
 
     boolean torch;
+
+    sequence<boolean> backgroundBlur;
 };

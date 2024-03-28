@@ -2248,6 +2248,7 @@ struct WebCore::MediaStreamRequest {
     std::optional<WebCore::StringConstraint> m_whiteBalanceMode;
     std::optional<WebCore::DoubleConstraint> m_zoom;
     std::optional<WebCore::BooleanConstraint> m_torch;
+    std::optional<WebCore::BooleanConstraint> m_backgroundBlur;
 }
 #endif
 
@@ -5233,6 +5234,7 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsWhiteBalanceMode();
     bool supportsZoom();
     bool supportsTorch();
+    bool supportsBackgroundBlur();
 };
 
 [Nested] class WebCore::RealtimeMediaSource::Type : uint8_t {
@@ -5281,6 +5283,7 @@ class WebCore::RealtimeMediaSourceSettings {
     WebCore::MeteringMode whiteBalanceMode();
     double zoom();
     bool torch();
+    bool backgroundBlur();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
@@ -5311,6 +5314,11 @@ struct WebCore::CaptureDeviceWithCapabilities {
 };
 
 [Nested] enum class WebCore::RealtimeMediaSourceCapabilities::EchoCancellation : bool
+[Nested] enum class WebCore::RealtimeMediaSourceCapabilities::BackgroundBlur : uint8_t {
+    Off,
+    On,
+    OnOff
+}
 
 header: <WebCore/RealtimeMediaSourceCapabilities.h>
 [CustomHeader] class WebCore::DoubleCapabilityRange {
@@ -5340,6 +5348,7 @@ class WebCore::RealtimeMediaSourceCapabilities {
     Vector<WebCore::MeteringMode> whiteBalanceModes();
     WebCore::DoubleCapabilityRange zoom();
     bool torch();
+    WebCore::RealtimeMediaSourceCapabilities::BackgroundBlur backgroundBlur();
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 

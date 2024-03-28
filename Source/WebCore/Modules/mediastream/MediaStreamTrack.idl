@@ -94,4 +94,5 @@ enum MediaStreamTrackState { "live", "ended" };
 
     boolean torch;
 
+    boolean backgroundBlur;
 };

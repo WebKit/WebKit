@@ -86,8 +86,13 @@ public:
         ReadOnly = 0,
         ReadWrite = 1,
     };
-    
-    RealtimeMediaSourceCapabilities(LongCapabilityRange width, LongCapabilityRange height, DoubleCapabilityRange aspectRatio, DoubleCapabilityRange frameRate, Vector<VideoFacingMode>&& facingMode, DoubleCapabilityRange volume, LongCapabilityRange sampleRate, LongCapabilityRange sampleSize, EchoCancellation echoCancellation, String&& deviceId, String&& groupId, DoubleCapabilityRange focusDistance, Vector<MeteringMode>&& whiteBalanceModes, DoubleCapabilityRange zoom, bool torch, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    enum class BackgroundBlur : uint8_t {
+        Off,
+        On,
+        OnOff,
+    };
+
+    RealtimeMediaSourceCapabilities(LongCapabilityRange width, LongCapabilityRange height, DoubleCapabilityRange aspectRatio, DoubleCapabilityRange frameRate, Vector<VideoFacingMode>&& facingMode, DoubleCapabilityRange volume, LongCapabilityRange sampleRate, LongCapabilityRange sampleSize, EchoCancellation echoCancellation, String&& deviceId, String&& groupId, DoubleCapabilityRange focusDistance, Vector<MeteringMode>&& whiteBalanceModes, DoubleCapabilityRange zoom, bool torch, BackgroundBlur backgroundBlur, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(WTFMove(width))
         , m_height(WTFMove(height))
         , m_aspectRatio(WTFMove(aspectRatio))
@@ -103,6 +108,7 @@ public:
         , m_whiteBalanceModes(whiteBalanceModes)
         , m_zoom(WTFMove(zoom))
         , m_torch(torch)
+        , m_backgroundBlur(backgroundBlur)
         , m_supportedConstraints(WTFMove(supportedConstraints))
     {
     }
@@ -175,10 +181,14 @@ public:
     bool torch() const { return m_torch; }
     void setTorch(bool torch) { m_torch = torch; }
 
+    bool supportsBackgroundBlur() const { return m_supportedConstraints.supportsBackgroundBlur(); }
+    BackgroundBlur backgroundBlur() const { return m_backgroundBlur; }
+    void setBackgroundBlur(BackgroundBlur backgroundBlur) { m_backgroundBlur = backgroundBlur; }
+
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
-    RealtimeMediaSourceCapabilities isolatedCopy() const { return { m_width, m_height, m_aspectRatio, m_frameRate, Vector<VideoFacingMode> { m_facingMode }, m_volume, m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_focusDistance, Vector<MeteringMode> { m_whiteBalanceModes }, m_zoom, m_torch, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } }; }
+    RealtimeMediaSourceCapabilities isolatedCopy() const { return { m_width, m_height, m_aspectRatio, m_frameRate, Vector<VideoFacingMode> { m_facingMode }, m_volume, m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_focusDistance, Vector<MeteringMode> { m_whiteBalanceModes }, m_zoom, m_torch, m_backgroundBlur, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } }; }
 
 private:
     LongCapabilityRange m_width;
@@ -197,6 +207,8 @@ private:
     Vector<MeteringMode> m_whiteBalanceModes;
     DoubleCapabilityRange m_zoom;
     bool m_torch { false };
+
+    BackgroundBlur m_backgroundBlur { BackgroundBlur::Off };
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };

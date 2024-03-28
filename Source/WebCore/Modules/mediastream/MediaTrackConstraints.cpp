@@ -178,6 +178,7 @@ static MediaTrackConstraintSetMap convertToInternalForm(ConstraintSetType setTyp
     set(result, setType, MediaConstraintType::Zoom, constraintSet.zoom);
     set(result, setType, MediaConstraintType::Torch, constraintSet.torch);
 
+    set(result, setType, MediaConstraintType::BackgroundBlur, constraintSet.backgroundBlur);
     return result;
 }
 

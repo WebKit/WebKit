@@ -192,6 +192,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Zoom:
     case MediaConstraintType::Torch:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -227,6 +228,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Torch:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -249,7 +251,9 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::Torch:
         m_torch = WTFMove(constraint);
         break;
-
+    case MediaConstraintType::BackgroundBlur:
+        m_backgroundBlur = WTFMove(constraint);
+        break;
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
     case MediaConstraintType::SampleRate:
@@ -300,6 +304,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Zoom:
     case MediaConstraintType::Torch:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -364,6 +369,7 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::Torch:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -410,6 +416,7 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::Torch:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -456,6 +463,7 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::Torch:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -489,6 +497,13 @@ void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const
         else
             m_torch->merge(constraint);
         break;
+    case MediaConstraintType::BackgroundBlur:
+        if (!m_backgroundBlur)
+            m_backgroundBlur = constraint;
+        else
+            m_backgroundBlur->merge(constraint);
+        break;
+
     case MediaConstraintType::FacingMode:
     case MediaConstraintType::DeviceId:
     case MediaConstraintType::GroupId:
@@ -642,7 +657,7 @@ StringConstraint StringConstraint::isolatedCopy() const
 
 MediaTrackConstraintSetMap MediaTrackConstraintSetMap::isolatedCopy() const
 {
-    return { m_width, m_height, m_sampleRate, m_sampleSize, m_aspectRatio, m_frameRate, m_volume, m_echoCancellation, m_displaySurface, m_logicalSurface, crossThreadCopy(m_facingMode), crossThreadCopy(m_deviceId), crossThreadCopy(m_groupId), crossThreadCopy(m_whiteBalanceMode), m_zoom, m_torch };
+    return { m_width, m_height, m_sampleRate, m_sampleSize, m_aspectRatio, m_frameRate, m_volume, m_echoCancellation, m_displaySurface, m_logicalSurface, crossThreadCopy(m_facingMode), crossThreadCopy(m_deviceId), crossThreadCopy(m_groupId), crossThreadCopy(m_whiteBalanceMode), m_zoom, m_torch, m_backgroundBlur };
 }
 
 MediaConstraints MediaConstraints::isolatedCopy() const

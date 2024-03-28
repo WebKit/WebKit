@@ -50,6 +50,7 @@ struct MediaTrackSupportedConstraints {
     bool whiteBalanceMode { true };
     bool zoom { true };
     bool torch { true };
+    bool backgroundBlur { true };
 };
 
 } // namespace WebCore

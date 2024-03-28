@@ -291,6 +291,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
     if (settings.supportsTorch())
         result.torch = settings.torch();
 
+    if (settings.supportsBackgroundBlur())
+        result.backgroundBlur = settings.backgroundBlur();
+
     return result;
 }
 

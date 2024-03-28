@@ -22,6 +22,7 @@ PASS supportedConstraints.width is true
 PASS supportedConstraints.zoom is true
 
 PASS supportedConstraints["aspectRatio"] is true
+PASS supportedConstraints["backgroundBlur"] is true
 PASS supportedConstraints["deviceId"] is true
 PASS supportedConstraints["displaySurface"] is true
 PASS supportedConstraints["echoCancellation"] is true

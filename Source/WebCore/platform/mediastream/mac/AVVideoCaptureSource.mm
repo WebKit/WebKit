@@ -444,6 +444,7 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     settings.setHeight(size.height());
     settings.setDeviceId(hashedId());
     settings.setGroupId(captureDevice().groupId());
+    settings.setBackgroundBlur(!!device().portraitEffectActive);
 
     RealtimeMediaSourceSupportedConstraints supportedConstraints;
     supportedConstraints.setSupportsDeviceId(true);
@@ -453,6 +454,7 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     supportedConstraints.setSupportsHeight(true);
     supportedConstraints.setSupportsAspectRatio(true);
     supportedConstraints.setSupportsFrameRate(true);
+    supportedConstraints.setSupportsBackgroundBlur(true);
 
     if (isZoomSupported(presets())) {
         supportedConstraints.setSupportsZoom(true);
@@ -511,6 +513,9 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
         supportedConstraints.setSupportsTorch(true);
         capabilities.setTorch(true);
     }
+
+    capabilities.setBackgroundBlur(device().portraitEffectActive ? RealtimeMediaSourceCapabilities::BackgroundBlur::On : RealtimeMediaSourceCapabilities::BackgroundBlur::Off);
+    supportedConstraints.setSupportsBackgroundBlur(true);
 
     capabilities.setSupportedConstraints(supportedConstraints);
     updateCapabilities(capabilities);

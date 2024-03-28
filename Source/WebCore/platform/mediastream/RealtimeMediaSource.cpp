@@ -601,6 +601,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -646,6 +647,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -694,6 +696,7 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         break;
     }
@@ -719,6 +722,8 @@ double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, 
             return 0;
 
         return constraint.fitnessDistance(capabilities.torch());
+    case MediaConstraintType::BackgroundBlur:
+        return 0;
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
     case MediaConstraintType::FrameRate:
@@ -920,6 +925,11 @@ void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, co
             setTorch(setting);
         break;
     }
+    case MediaConstraintType::BackgroundBlur: {
+        ASSERT(constraint.isBoolean());
+        // FIXME: Add support
+        break;
+    }
 
     case MediaConstraintType::DeviceId:
     case MediaConstraintType::GroupId:
@@ -1087,6 +1097,8 @@ bool RealtimeMediaSource::supportsConstraint(MediaConstraintType constraintType)
         return capabilities.supportsZoom();
     case MediaConstraintType::Torch:
         return capabilities.supportsTorch();
+    case MediaConstraintType::BackgroundBlur:
+        return capabilities.supportsBackgroundBlur();
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
         // https://www.w3.org/TR/screen-capture/#new-constraints-for-captured-display-surfaces
@@ -1138,6 +1150,7 @@ std::optional<MediaConstraintType> RealtimeMediaSource::hasAnyInvalidConstraint(
         case MediaConstraintType::WhiteBalanceMode:
         case MediaConstraintType::Zoom:
         case MediaConstraintType::Torch:
+        case MediaConstraintType::BackgroundBlur:
         case MediaConstraintType::Unknown:
             m_fitnessScore += distance ? 1 : 2;
             break;
