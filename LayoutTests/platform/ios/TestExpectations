@@ -7314,6 +7314,11 @@ webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-pushsubscri
 
 webkit.org/b/217759 media/now-playing-status-without-media.html [ Pass Failure ]
 
+# rdar://125585822 ([ iOS ] 3x editing/spelling/* (layout-tests) are constant failures (271864))
+editing/spelling/document-markers-remain-after-removing-text.html [ Failure ]
+editing/spelling/grammar-and-spelling-error-styling.html [ ImageOnlyFailure ]
+editing/spelling/spellcheck-attribute-toggle.html [ ImageOnlyFailure ]
+
 # webkit.org/b/209139 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 
 webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
