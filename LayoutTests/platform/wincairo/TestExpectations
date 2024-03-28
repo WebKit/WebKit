@@ -2731,6 +2731,7 @@ compositing/contents-scale/rounded-contents-scale.html [ Skip ]
 compositing/contents-scale/scaled-ancestor.html [ Skip ]
 compositing/contents-scale/simple-scale.html [ Skip ]
 compositing/contents-scale/z-translate.html [ Skip ]
+compositing/filters/backdrop-filter-root-element-no-backdrop-root.html [ Skip ]
 compositing/filters/sw-layer-overlaps-hw-shadow.html [ Skip ]
 compositing/filters/sw-nested-shadow-overlaps-hw-nested-shadow.html [ Skip ]
 compositing/filters/sw-shadow-overlaps-hw-layer.html [ Skip ]
@@ -3275,7 +3276,6 @@ fast/text/justify-ideograph-leading-expansion.html [ Pass Failure ]
 fast/text/tatechuyoko.html [ Pass Failure ]
 
 webkit.org/b/271132 [ Debug ] fast/text/crash-grapheme-cluster-spanning-adjacent-textitems.html [ Skip ] # Crash
-webkit.org/b/271132 [ Debug ] fast/text/minimum-width-break-on-empty-content-crash.html [ Skip ] # Crash
 
 http/tests/workers/service/indexeddb-cryptokey-put-get.https.html [ Failure ]
 
