@@ -73,7 +73,7 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
     // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
     auto* renderTableCell = dynamicDowncast<RenderTableCell>(renderer());
     auto* renderTable = renderTableCell ? renderTableCell->table() : nullptr;
-    bool inTable = renderTable && renderTable->element() && (renderTable->element()->hasTagName(tableTag) || nodeHasGridRole(renderTable->element()));
+    bool inTable = renderTable && renderTable->element() && (renderTable->element()->hasTagName(tableTag) || nodeHasTableRole(renderTable->element()));
     if (!element() && !inTable)
         return true;
 
@@ -142,14 +142,18 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
     if (defaultRole == AccessibilityRole::ColumnHeader || defaultRole == AccessibilityRole::RowHeader || defaultRole == AccessibilityRole::Cell || defaultRole == AccessibilityRole::GridCell)
         return defaultRole;
 
-    if (!isExposedTableCell())
+    // This matches the logic of `isExposedTableCell()`, but allows us to keep the pointer to the parentTable
+    // for use at the bottom of this method.
+    auto* parentTable = this->parentTable();
+    if (!parentTable || !parentTable->isExposable())
         return defaultRole;
+
     if (isColumnHeader())
         return AccessibilityRole::ColumnHeader;
     if (isRowHeader())
         return AccessibilityRole::RowHeader;
 
-    return AccessibilityRole::Cell;
+    return parentTable->hasGridAriaRole() ? AccessibilityRole::GridCell : AccessibilityRole::Cell;
 }
     
 bool AccessibilityTableCell::isTableHeaderCell() const

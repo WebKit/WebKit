@@ -36,9 +36,9 @@
 #include "AXLogger.h"
 #include "AXRemoteFrame.h"
 #include "AXTextMarker.h"
-#include "AccessibilityARIAGrid.h"
 #include "AccessibilityARIAGridCell.h"
 #include "AccessibilityARIAGridRow.h"
+#include "AccessibilityARIATable.h"
 #include "AccessibilityAttachment.h"
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityLabel.h"
@@ -637,7 +637,7 @@ bool nodeHasRole(Node* node, StringView role)
     return SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes);
 }
 
-bool nodeHasGridRole(Node* node)
+bool nodeHasTableRole(Node* node)
 {
     return nodeHasRole(node, "grid"_s) || nodeHasRole(node, "table"_s) || nodeHasRole(node, "treegrid"_s);
 }
@@ -707,9 +707,9 @@ static bool isAccessibilityTableCell(Node* node)
     return is<HTMLTableCellElement>(node);
 }
 
-static bool isAccessibilityARIAGrid(Node* node)
+static bool isAccessibilityARIATable(Node* node)
 {
-    return nodeHasGridRole(node);
+    return nodeHasTableRole(node);
 }
 
 static bool isAccessibilityARIAGridRow(Node* node)
@@ -730,9 +730,8 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
     if (isAccessibilityList(node))
         return AccessibilityList::create(renderer);
 
-    // aria tables
-    if (isAccessibilityARIAGrid(node))
-        return AccessibilityARIAGrid::create(renderer);
+    if (isAccessibilityARIATable(node))
+        return AccessibilityARIATable::create(renderer);
     if (isAccessibilityARIAGridRow(node))
         return AccessibilityARIAGridRow::create(renderer);
     if (isAccessibilityARIAGridCell(node))
@@ -814,8 +813,8 @@ static Ref<AccessibilityObject> createFromNode(Node& node)
         return AccessibilityTree::create(node);
     if (isAccessibilityTreeItem(&node))
         return AccessibilityTreeItem::create(node);
-    if (isAccessibilityARIAGrid(&node))
-        return AccessibilityARIAGrid::create(node);
+    if (isAccessibilityARIATable(&node))
+        return AccessibilityARIATable::create(node);
     if (isAccessibilityARIAGridRow(&node))
         return AccessibilityARIAGridRow::create(node);
     if (isAccessibilityARIAGridCell(&node))

@@ -829,8 +829,8 @@ private:
 };
 
 bool nodeHasRole(Node*, StringView role);
-bool nodeHasGridRole(Node*);
 bool nodeHasCellRole(Node*);
+bool nodeHasTableRole(Node*);
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node*);
 

@@ -171,7 +171,7 @@ PASS Role: td as child of tr with display: contents, within table with display: 
 PASS Role: th as child of tr with display: contents, within table with role=table with display: flex, has columnheader role
 PASS Role: td as child of tr with display: contents, within table with role=table with display: flex, has cell role
 PASS Role: th as child of tr with display: contents, within table with role=grid with display: flex, has columnheader role
-FAIL Role: td (no explicit role) as child of tr with display: contents, within table with role=grid with display: flex, has gridcell role assert_equals: <td data-expectedrole="gridcell" data-expectedlabel="x" data-testname="td (no explicit role) as child of tr with display: contents, within table with role=grid with display: flex, has gridcell role" class="ex-role-and-label ex-label-only ex-role-only">x</td> expected "gridcell" but got "cell"
+PASS Role: td (no explicit role) as child of tr with display: contents, within table with role=grid with display: flex, has gridcell role
 PASS Role: listitem within ul with display: contents, as child of div with display: grid, has listitem role
 PASS Role: h3 with display: contents has heading role
 PASS Role: div with heading role, aria-level=3 and display: contents has heading role
@@ -202,7 +202,7 @@ PASS Role: td within tr both with display: contents, in table with role table an
 PASS Role: td within tr in table with role table, all with display: contents, has cell role
 PASS Role: div with role columnheader with display: contents, in div with role rowgroup within div with table role both with display: contents, has columnheader role
 PASS Role: th within table with role grid, both with display: contents, has columnheader role
-FAIL Role: td within table with role grid, both with display: contents, has gridcell role assert_equals: <td style="display: contents;" data-expectedrole="gridcell" data-expectedlabel="x" data-testname="td within table with role grid, both with display: contents, has gridcell role" class="ex-role-and-label ex-label-only ex-role-only">x</td> expected "gridcell" but got "cell"
+PASS Role: td within table with role grid, both with display: contents, has gridcell role
 PASS Role: div with role columnheader with display: contents, in div with role rowgroup within div with grid role both with display: contents, has rowgroup role
 PASS Role: div with gridcell role and display: contents, within div with role row contained in a div with role grid both with display: contents, has gridcell role
 PASS Role: li with role treeitem and display: contents, within ul with role tree and display: contents, has treeitem role
