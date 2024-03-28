@@ -1490,16 +1490,6 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
     return succeeded;
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&& highlight) const
-{
-    auto page = protectedPage();
-    highlight.isNewGroup = page->highlightIsNewGroup();
-    highlight.requestOriginatedInApp = page->highlightRequestOriginatedInApp();
-    page->send(Messages::WebPageProxy::StoreAppHighlight(highlight));
-}
-#endif
-
 void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicatorData) const
 {
     protectedPage()->setTextIndicator(indicatorData);

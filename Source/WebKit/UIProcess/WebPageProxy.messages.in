@@ -517,10 +517,6 @@ messages -> WebPageProxy {
     [EnabledIf='attachmentElementEnabled()'] RequestAttachmentIcon(String identifier, String contentType, String path, String title, WebCore::FloatSize size)
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-    StoreAppHighlight(struct WebCore::AppHighlight info)
-#endif
-
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisVoiceList() -> (Vector<WebKit::WebSpeechSynthesisVoice> voiceList) Synchronous
     SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> ()

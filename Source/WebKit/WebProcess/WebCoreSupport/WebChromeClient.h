@@ -382,10 +382,6 @@ private:
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags) final;
     void handleAutoplayEvent(WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
 
-#if ENABLE(APP_HIGHLIGHTS)
-    void storeAppHighlight(WebCore::AppHighlight&&) const final;
-#endif
-
     void setTextIndicator(const WebCore::TextIndicatorData&) const final;
 
     bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;

@@ -12166,16 +12166,6 @@ void WebPageProxy::getTextFragmentMatch(CompletionHandler<void(const String&)>&&
     sendWithAsyncReply(Messages::WebPage::GetTextFragmentMatch(), WTFMove(callback));
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-void WebPageProxy::storeAppHighlight(const WebCore::AppHighlight& highlight)
-{
-    MESSAGE_CHECK(m_process, !highlight.highlight->isEmpty());
-
-    pageClient().storeAppHighlight(highlight);
-
-}
-#endif
-
 namespace {
 enum class CompletionCondition {
     Cancellation,

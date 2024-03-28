@@ -54,7 +54,7 @@ public:
     AppHighlightStorage(Document&);
     ~AppHighlightStorage();
 
-    WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&);
+    WEBCORE_EXPORT void storeAppHighlight(Ref<StaticRange>&&, CompletionHandler<void(AppHighlight&&)>&&);
     WEBCORE_EXPORT void restoreAndScrollToAppHighlight(Ref<FragmentedSharedBuffer>&&, ScrollToHighlight);
     void restoreUnrestoredAppHighlights();
     MonotonicTime lastRangeSearchTime() const { return m_timeAtLastRangeSearch; }
