@@ -23,4 +23,5 @@ PASS OBJECT[codebase] is defined
 PASS OBJECT.codebase is maybe defined
 PASS oBjEcT[codebase] is defined
 PASS oBjEcT.codebase is maybe defined
+PASS getPropertyType vs getAttributeType for event handler.
 

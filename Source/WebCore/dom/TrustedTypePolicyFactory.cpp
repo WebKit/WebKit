@@ -134,9 +134,6 @@ String TrustedTypePolicyFactory::getPropertyType(const String& tagName, const St
     auto localName = tagName.convertToASCIILowercase();
     AtomString elementNS = elementNamespace.isEmpty() ? HTMLNames::xhtmlNamespaceURI : AtomString(elementNamespace);
 
-    if (property.startsWith("on"_s))
-        return trustedTypeToString(TrustedType::TrustedScript);
-
     if (property == "innerHTML"_s || property == "outerHTML"_s)
         return trustedTypeToString(TrustedType::TrustedHTML);
 
