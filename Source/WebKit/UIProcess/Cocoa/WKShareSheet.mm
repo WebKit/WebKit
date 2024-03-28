@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
+#import "PickerDismissalReason.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/NSURLUtilities.h>
@@ -423,6 +424,22 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
         _presentationViewController = nil;
     }];
 #endif
+}
+
+- (BOOL)dismissIfNeededWithReason:(WebKit::PickerDismissalReason)reason
+{
+#if PLATFORM(IOS_FAMILY)
+    if (reason == WebKit::PickerDismissalReason::ViewRemoved) {
+        if ([_shareSheetViewController _wk_isInFullscreenPresentation])
+            return NO;
+    }
+#endif
+
+    if (reason == WebKit::PickerDismissalReason::ProcessExited || reason == WebKit::PickerDismissalReason::ViewRemoved)
+        [self setDelegate:nil];
+
+    [self dismiss];
+    return YES;
 }
 
 #if PLATFORM(MAC)

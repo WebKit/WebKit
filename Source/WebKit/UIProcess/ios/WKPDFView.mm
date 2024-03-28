@@ -31,6 +31,7 @@
 #import "APIUIClient.h"
 #import "FindClient.h"
 #import "PDFKitSPI.h"
+#import "PickerDismissalReason.h"
 #import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKKeyboardScrollingAnimator.h"
@@ -145,8 +146,7 @@
 - (void)dealloc
 {
     if (_shareSheet) {
-        [_shareSheet setDelegate:nil];
-        [_shareSheet dismiss];
+        [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ProcessExited];
         _shareSheet = nil;
     }
     [_actionSheetAssistant cleanupSheet];
@@ -671,7 +671,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     shareData.url = { url };
     shareData.originator = WebCore::ShareDataOriginator::User;
     
-    [_shareSheet dismiss];
+    [_shareSheet dismissIfNeededWithReason:WebKit::PickerDismissalReason::ResetState];
 
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:webView]);
     [_shareSheet setDelegate:self];
