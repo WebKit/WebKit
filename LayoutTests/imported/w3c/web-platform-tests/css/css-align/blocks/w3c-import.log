@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-010-aligned-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-010-unaligned-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-020-aligned-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-020-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-020-unaligned-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-content-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-display-coverage.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-overflow-000-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-overflow-000-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-overflow-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-simple-height-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/blocks/align-content-table-cell.html

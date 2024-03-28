@@ -1,0 +1,64 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-htb-ltr-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-htb-ltr-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-htb-ltr-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-htb-rtl-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-htb-rtl-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-htb-rtl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vlr-ltr-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vlr-ltr-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vlr-ltr-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vlr-rtl-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vlr-rtl-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vlr-rtl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vrl-ltr-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vrl-ltr-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vrl-ltr-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vrl-rtl-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vrl-rtl-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/align-self-vrl-rtl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-ltr-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-ltr-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-ltr-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-rtl-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-rtl-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-htb-rtl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vlr-ltr-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vlr-ltr-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vlr-ltr-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vlr-rtl-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vlr-rtl-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vlr-rtl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vrl-ltr-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vrl-ltr-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vrl-ltr-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vrl-rtl-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vrl-rtl-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/justify-self-vrl-rtl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/safe-align-self-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/safe-align-self-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/safe-align-self-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/safe-justify-self-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/safe-justify-self-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/safe-justify-self-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/stretch-intrinsic-size-htb-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/stretch-intrinsic-size-htb-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/stretch-intrinsic-size-vrl-htb.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/stretch-intrinsic-size-vrl-vrl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/table-align-self-stretch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/abspos/table-justify-self-stretch.html

@@ -1,0 +1,18 @@
+
+PASS e.style['gap'] = "normal" should set the property value
+PASS e.style['gap'] = "10px" should set the property value
+PASS e.style['gap'] = "normal normal" should set the property value
+PASS e.style['gap'] = "10px 10px" should set the property value
+PASS e.style['column-gap'] = "normal" should set the property value
+PASS e.style['column-gap'] = "10px" should set the property value
+PASS e.style['row-gap'] = "normal" should set the property value
+PASS e.style['row-gap'] = "10px" should set the property value
+FAIL 'row-gap: normal; column-gap: normal;' is serialized to 'gap: normal;' assert_equals: expected "gap: normal;" but got "row-gap: normal; column-gap: normal;"
+PASS getPropertyValue for 'row-gap: normal; column-gap: normal;' returns 'normal'
+FAIL 'row-gap: 10px; column-gap: 10px;' is serialized to 'gap: 10px;' assert_equals: expected "gap: 10px;" but got "row-gap: 10px; column-gap: 10px;"
+PASS getPropertyValue for 'row-gap: 10px; column-gap: 10px;' returns '10px'
+FAIL 'row-gap: 10px; column-gap: normal;' is serialized to 'gap: 10px normal;' assert_equals: expected "gap: 10px normal;" but got "row-gap: 10px; column-gap: normal;"
+PASS getPropertyValue for 'row-gap: 10px; column-gap: normal;' returns '10px normal'
+FAIL 'column-gap: normal; row-gap: 10px;' is serialized to 'gap: 10px normal;' assert_equals: expected "gap: 10px normal;" but got "column-gap: normal; row-gap: 10px;"
+PASS getPropertyValue for 'column-gap: normal; row-gap: 10px;' returns '10px normal'
+
