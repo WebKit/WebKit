@@ -686,8 +686,9 @@ angle::Result WindowSurfaceMtl::obtainNextDrawable(const gl::Context *context)
             mColorTexture->set(mCurrentDrawable.get().texture);
         }
 
-        ANGLE_MTL_LOG("Current metal drawable size=%d,%d", mColorTexture->width(),
-                      mColorTexture->height());
+        ANGLE_MTL_LOG("Current metal drawable size=%d,%d",
+                      mColorTexture->width(mtl::MipmapNativeLevel(0)),
+                      mColorTexture->height(mtl::MipmapNativeLevel(0)));
 
         // Now we have to resize depth stencil buffers if required.
         ANGLE_TRY(ensureCompanionTexturesSizeCorrect(context));

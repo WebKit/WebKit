@@ -222,6 +222,7 @@ angle_end2end_tests_mac_sources = [
   "egl_tests/EGLSyncTestMetalSharedEvent.mm",
   "egl_tests/EGLWaitUntilWorkScheduledTest.cpp",
   "gl_tests/ImageTestMetal.mm",
+  "gl_tests/RasterizationRateMapTestMetal.mm",
 ]
 angle_end2end_tests_win_sources = [
   "egl_tests/EGLDeviceTest.cpp",

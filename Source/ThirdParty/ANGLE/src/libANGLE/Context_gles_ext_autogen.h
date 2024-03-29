@@ -434,6 +434,9 @@
     /* GL_ANGLE_program_binary */                                                                  \
     /* GL_ANGLE_program_cache_control */                                                           \
     /* GL_ANGLE_provoking_vertex */                                                                \
+    /* GL_ANGLE_rasterization_rate_map_metal */                                                    \
+    void framebufferMTLRasterizationRateMap(GLenum target, GLMTLRasterizationRateMapANGLE map);    \
+    GLMTLRasterizationRateMapANGLE getFramebufferMTLRasterizationRateMap(GLenum target);           \
     /* GL_ANGLE_read_only_depth_stencil_feedback_loops */                                          \
     /* GL_ANGLE_relaxed_vertex_attribute_type */                                                   \
     /* GL_ANGLE_renderability_validation */                                                        \

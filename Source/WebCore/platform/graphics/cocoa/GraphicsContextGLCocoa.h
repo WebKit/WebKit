@@ -41,6 +41,9 @@
 #endif
 
 OBJC_CLASS MTLSharedEventListener;
+#if ENABLE(WEBXR)
+OBJC_PROTOCOL(MTLRasterizationRateMap);
+#endif
 
 namespace WebCore {
 
@@ -68,7 +71,13 @@ public:
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
 
-    GCEGLImage createAndBindEGLImage(GCGLenum, EGLImageSource, GCGLint) final;
+    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) final;
+
+#if ENABLE(WEBXR)
+    PlatformGLObject createRasterizationRateMapForFixedFoveation(PlatformXR::Layout, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
+    void deleteRasterizationRateMap(PlatformGLObject) final;
+    void framebufferMTLRasterizationRateMapANGLE(GCGLenum, PlatformGLObject) final;
+#endif
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
@@ -151,6 +160,10 @@ protected:
 #endif
     RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
     RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
+#if ENABLE(WEBXR)
+    using RasterizationRateMapHash = HashMap<PlatformGLObject, RetainPtr<MTLRasterizationRateMap>>;
+    RasterizationRateMapHash m_rasterizationRateMaps;
+#endif
 
     static constexpr size_t maxReusedDrawingBuffers { 3 };
     size_t m_currentDrawingBufferIndex { 0 };

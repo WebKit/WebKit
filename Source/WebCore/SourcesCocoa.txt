@@ -425,6 +425,7 @@ platform/graphics/cocoa/AV1UtilitiesCocoa.mm @no-unify
 platform/graphics/cocoa/AudioTrackPrivateWebM.cpp
 platform/graphics/cocoa/CMUtilities.mm @no-unify
 platform/graphics/cocoa/ColorCocoa.mm
+platform/graphics/cocoa/CompositorServicesUtilities.mm
 platform/graphics/cocoa/FloatRectCocoa.mm
 platform/graphics/cocoa/FontCacheCocoa.mm
 platform/graphics/cocoa/FontCacheCoreText.cpp

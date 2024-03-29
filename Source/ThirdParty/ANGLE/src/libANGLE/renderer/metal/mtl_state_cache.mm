@@ -835,6 +835,11 @@ bool RenderPassDesc::equalIgnoreLoadStoreOptions(const RenderPassDesc &other) co
         return false;
     }
 
+    if (rasterizationRateMap != other.rasterizationRateMap)
+    {
+        return false;
+    }
+
     return depthAttachment.equalIgnoreLoadStoreOptions(other.depthAttachment) &&
            stencilAttachment.equalIgnoreLoadStoreOptions(other.stencilAttachment);
 }
@@ -862,6 +867,12 @@ bool RenderPassDesc::operator==(const RenderPassDesc &other) const
     }
 
     return depthAttachment == other.depthAttachment && stencilAttachment == other.stencilAttachment;
+}
+
+id<MTLRasterizationRateMap> ToObjC(const RasterizationRateMapRef &map)
+{
+    auto mapRef = map;
+    return mapRef ? mapRef->get() : nil;
 }
 
 // Convert to Metal object
@@ -894,6 +905,8 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
         objCDesc.renderTargetHeight       = defaultHeight;
         objCDesc.defaultRasterSampleCount = 1;
     }
+
+    objCDesc.rasterizationRateMap = ToObjC(rasterizationRateMap);
 }
 
 // ProvokingVertexPipelineDesc

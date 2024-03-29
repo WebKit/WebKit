@@ -145,6 +145,8 @@ class FramebufferState final : angle::NonCopyable
 
     const FoveationState &getFoveationState() const { return mFoveationState; }
 
+    GLMTLRasterizationRateMapANGLE getRasterizationRateMap() const { return mRasterizationRateMap; }
+
   private:
     const FramebufferAttachment *getWebGLDepthStencilAttachment() const;
     const FramebufferAttachment *getWebGLDepthAttachment() const;
@@ -197,6 +199,9 @@ class FramebufferState final : angle::NonCopyable
 
     // GL_QCOM_framebuffer_foveated
     FoveationState mFoveationState;
+
+    // ANGLE_rasterization_rate_map_metal
+    GLMTLRasterizationRateMapANGLE mRasterizationRateMap;
 };
 
 class Framebuffer final : public angle::ObserverInterface,
@@ -424,6 +429,7 @@ class Framebuffer final : public angle::ObserverInterface,
         DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE,
         DIRTY_BIT_FLIP_Y,
         DIRTY_BIT_FOVEATION,
+        DIRTY_BIT_RASTERIZATION_RATE_MAP,
         DIRTY_BIT_UNKNOWN,
         DIRTY_BIT_MAX = DIRTY_BIT_UNKNOWN
     };
@@ -474,6 +480,10 @@ class Framebuffer final : public angle::ObserverInterface,
     PixelLocalStorage *peekPixelLocalStorage() const { return mPixelLocalStorage.get(); }
     // Detaches the the pixel local storage object so the Context can call deleteContextObjects().
     std::unique_ptr<PixelLocalStorage> detachPixelLocalStorage();
+
+    // ANGLE_rasterization_rate_map_metal
+    GLMTLRasterizationRateMapANGLE getRasterizationRateMap() const;
+    void setRasterizationRateMap(GLMTLRasterizationRateMapANGLE map);
 
     static const FramebufferID kDefaultDrawFramebufferHandle;
 

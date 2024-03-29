@@ -274,6 +274,12 @@ ANGLE_EXPORT void GL_APIENTRY GL_PolygonModeANGLE(GLenum face, GLenum mode);
 // GL_ANGLE_provoking_vertex
 ANGLE_EXPORT void GL_APIENTRY GL_ProvokingVertexANGLE(GLenum provokeMode);
 
+// GL_ANGLE_rasterization_rate_map_metal
+ANGLE_EXPORT void GL_APIENTRY
+GL_FramebufferMTLRasterizationRateMapANGLE(GLenum target, GLMTLRasterizationRateMapANGLE map);
+ANGLE_EXPORT GLMTLRasterizationRateMapANGLE GL_APIENTRY
+GL_GetFramebufferMTLRasterizationRateMapANGLE(GLenum target);
+
 // GL_ANGLE_renderability_validation
 
 // GL_ANGLE_request_extension

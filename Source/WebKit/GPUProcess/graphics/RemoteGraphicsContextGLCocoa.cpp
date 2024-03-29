@@ -84,6 +84,29 @@ void RemoteGraphicsContextGL::setSharedVideoFrameMemory(SharedMemory::Handle&& h
 }
 #endif
 
+#if ENABLE(WEBXR)
+void RemoteGraphicsContextGL::createRasterizationRateMapForFixedFoveation(PlatformGLObject map, PlatformXR::Layout layout, IntSize physicalSize, IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight, std::span<const GCGLfloat> verticalSamples)
+{
+    assertIsCurrent(workQueue());
+    auto result = m_context->createRasterizationRateMapForFixedFoveation(layout, physicalSize, screenSize, horizontalSamplesLeft, horizontalSamplesRight, verticalSamples);
+    m_objectNames.add(map, result);
+}
+
+void RemoteGraphicsContextGL::deleteRasterizationRateMap(PlatformGLObject map)
+{
+    assertIsCurrent(workQueue());
+    map = m_objectNames.take(map);
+    m_context->deleteRasterizationRateMap(map);
+}
+
+void RemoteGraphicsContextGL::framebufferMTLRasterizationRateMapANGLE(GCGLenum target, PlatformGLObject map)
+{
+    assertIsCurrent(workQueue());
+    map = m_objectNames.get(map);
+    m_context->framebufferMTLRasterizationRateMapANGLE(target, map);
+}
+#endif
+
 namespace {
 
 class RemoteGraphicsContextGLCocoa final : public RemoteGraphicsContextGL {

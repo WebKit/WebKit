@@ -193,6 +193,7 @@ enum class Feature
     HasEvents,
     HasExplicitMemBarrier,
     HasNonUniformDispatch,
+    HasRasterizationRateMap,
     HasShaderStencilOutput,
     HasStencilAutoResolve,
     HasTextureSwizzle,

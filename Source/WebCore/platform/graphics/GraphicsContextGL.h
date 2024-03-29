@@ -56,6 +56,10 @@
 template<typename... Types>
 struct GCGLSpanTuple;
 
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+namespace PlatformXR { enum class Layout : uint8_t; }
+#endif
+
 namespace WebCore {
 class ImageBuffer;
 class PixelBuffer;
@@ -1508,7 +1512,7 @@ public:
 #else
     using EGLImageSource = int;
 #endif
-    virtual GCEGLImage createAndBindEGLImage(GCGLenum, EGLImageSource, GCGLint) = 0;
+    virtual GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) = 0;
     virtual void destroyEGLImage(GCEGLImage) = 0;
 
 #if PLATFORM(COCOA)
@@ -1582,6 +1586,11 @@ public:
     // GL_ANGLE_polygon_mode
     virtual void polygonModeANGLE(GCGLenum face, GCGLenum mode) = 0;
 
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    // GL_ANGLE_rasterization_rate_map_metal
+    virtual void framebufferMTLRasterizationRateMapANGLE(GCGLenum target, PlatformGLObject map) = 0;
+#endif
+
     // GL_EXT_polygon_offset_clamp
     virtual void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) = 0;
 
@@ -1589,6 +1598,11 @@ public:
     virtual void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
     virtual void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
 
+    // ========== Internal use for WebXR foveation support.
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    virtual PlatformGLObject createRasterizationRateMapForFixedFoveation(PlatformXR::Layout, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) = 0;
+    virtual void deleteRasterizationRateMap(PlatformGLObject) = 0;
+#endif
 
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);
@@ -1697,7 +1711,7 @@ private:
 
 WEBCORE_EXPORT RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes&, SerialFunctionDispatcher* = nullptr);
 
-template<void(GraphicsContextGL::*destroyFunc)(PlatformGLObject)>
+template<typename Object, void(GraphicsContextGL::*destroyFunc)(Object)>
 class GCGLOwned {
     WTF_MAKE_NONCOPYABLE(GCGLOwned);
 
@@ -1714,25 +1728,26 @@ public:
         ASSERT(!m_object); // Clients should call release() explicitly.
     }
 
-    operator PlatformGLObject() const { return m_object; }
+    operator Object() const { return m_object; }
 
-    PlatformGLObject leakObject() { return std::exchange(m_object, 0); }
+    Object leakObject() { return std::exchange(m_object, { }); }
 
-    void adopt(GraphicsContextGL& gl, PlatformGLObject object)
+    void adopt(GraphicsContextGL& gl, Object object)
     {
         if (m_object)
             (gl.*destroyFunc)(m_object);
         m_object = object;
     }
 
-    void release(GraphicsContextGL& gl) { adopt(gl, 0); }
+    void release(GraphicsContextGL& gl) { adopt(gl, { }); }
 private:
-    PlatformGLObject m_object { 0 };
+    Object m_object { };
 };
 
-using GCGLOwnedFramebuffer = GCGLOwned<&GraphicsContextGL::deleteFramebuffer>;
-using GCGLOwnedRenderbuffer = GCGLOwned<&GraphicsContextGL::deleteRenderbuffer>;
-using GCGLOwnedTexture = GCGLOwned<&GraphicsContextGL::deleteTexture>;
+using GCGLOwnedFramebuffer = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteFramebuffer>;
+using GCGLOwnedRenderbuffer = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteRenderbuffer>;
+using GCGLOwnedTexture = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteTexture>;
+using GCEGLOwnedImage = GCGLOwned<GCEGLImage, &GraphicsContextGL::destroyEGLImage>;
 
 } // namespace WebCore
 

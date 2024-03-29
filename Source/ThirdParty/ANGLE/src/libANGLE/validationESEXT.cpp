@@ -958,6 +958,45 @@ bool ValidateProvokingVertexANGLE(const PrivateState &state,
     return true;
 }
 
+bool ValidateFramebufferMTLRasterizationRateMapANGLE(const Context *context,
+                                                     angle::EntryPoint entryPoint,
+                                                     GLenum target,
+                                                     GLMTLRasterizationRateMapANGLE map)
+{
+    if (!context->getExtensions().rasterizationRateMapMetalANGLE)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (!ValidFramebufferTarget(context, target))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidFramebufferTarget);
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidateGetFramebufferMTLRasterizationRateMapANGLE(const Context *context,
+                                                        angle::EntryPoint entryPoint,
+                                                        GLenum target)
+{
+    if (!context->getExtensions().rasterizationRateMapMetalANGLE)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (!ValidFramebufferTarget(context, target))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidFramebufferTarget);
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateGetInteger64vEXT(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLenum pname,

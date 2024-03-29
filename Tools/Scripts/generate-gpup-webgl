@@ -121,8 +121,13 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
 #if PLATFORM(COCOA)
-    void CreateAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer) -> (uint64_t handle) Synchronous NotStreamEncodable NotStreamEncodableReply
+    void CreateAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer) -> (uint64_t handle) Synchronous NotStreamEncodable NotStreamEncodableReply
     void CreateEGLSync(MachSendRight syncEvent, uint64_t signalValue) -> (uint64_t sync) Synchronous NotStreamEncodable NotStreamEncodableReply
+#endif
+#if ENABLE(WEBXR)
+    void CreateRasterizationRateMapForFixedFoveation(uint32_t rasterizationRateMapForFixedFoveation, PlatformXR::Layout layout, WebCore::IntSize physicalSize, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> horizontalSamplesRight, std::span<const float> verticalSamples)
+    void DeleteRasterizationRateMap(uint32_t map)
+    void FramebufferMTLRasterizationRateMapANGLE(uint32_t target, uint32_t map)
 #endif
 {}
 }}

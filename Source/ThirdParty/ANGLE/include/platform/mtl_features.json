@@ -71,6 +71,13 @@
             ]
         },
         {
+            "name": "has_rasterization_rate_map",
+            "category": "Features",
+            "description": [
+                "The renderer supports binding rasterization rate maps to framebuffer objects"
+            ]
+        },
+        {
             "name": "allow_inline_const_vertex_data",
             "category": "Features",
             "description": [

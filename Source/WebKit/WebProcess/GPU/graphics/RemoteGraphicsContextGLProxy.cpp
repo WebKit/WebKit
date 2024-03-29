@@ -165,7 +165,7 @@ void RemoteGraphicsContextGLProxy::initialize(const RemoteGraphicsContextGLIniti
     m_externalImageBindingQuery = initializationState.externalImageBindingQuery;
 }
 
-GCEGLImage RemoteGraphicsContextGLProxy::createAndBindEGLImage(GCGLenum, GraphicsContextGL::EGLImageSource, GCGLint)
+GCEGLImage RemoteGraphicsContextGLProxy::createAndBindEGLImage(GCGLenum, GCGLenum, GraphicsContextGL::EGLImageSource, GCGLint)
 {
     notImplemented();
     return { };
@@ -432,6 +432,43 @@ void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedBaseVertexBaseInsta
             markContextLost();
     }
 }
+
+#if ENABLE(WEBXR)
+PlatformGLObject RemoteGraphicsContextGLProxy::createRasterizationRateMapForFixedFoveation(PlatformXR::Layout layout, WebCore::IntSize physicalSize, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight, std::span<const GCGLfloat> verticalSamples)
+{
+    if (isContextLost())
+        return { };
+    auto map = createObjectName();
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::CreateRasterizationRateMapForFixedFoveation(map, layout, physicalSize, screenSize, horizontalSamplesLeft, horizontalSamplesRight, verticalSamples));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return { };
+    }
+    return map;
+}
+
+void RemoteGraphicsContextGLProxy::deleteRasterizationRateMap(PlatformGLObject map)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DeleteRasterizationRateMap(map));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::framebufferMTLRasterizationRateMapANGLE(GCGLenum target, PlatformGLObject map)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::FramebufferMTLRasterizationRateMapANGLE(target, map));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+#endif
 
 void RemoteGraphicsContextGLProxy::wasCreated(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore, std::optional<RemoteGraphicsContextGLInitializationState>&& initializationState)
 {

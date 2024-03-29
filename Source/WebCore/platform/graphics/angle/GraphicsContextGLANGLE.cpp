@@ -2859,7 +2859,7 @@ void GraphicsContextGLANGLE::getActiveUniformBlockiv(PlatformGLObject program, G
     GL_GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.size(), nullptr, params.data());
 }
 
-GCEGLImage GraphicsContextGLANGLE::createAndBindEGLImage(GCGLenum, EGLImageSource, GCGLint)
+GCEGLImage GraphicsContextGLANGLE::createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint)
 {
     notImplemented();
     return nullptr;

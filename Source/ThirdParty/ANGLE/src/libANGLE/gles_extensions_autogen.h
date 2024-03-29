@@ -689,6 +689,9 @@ struct Extensions
     // GL_ANGLE_provoking_vertex
     bool provokingVertexANGLE = false;
 
+    // GL_ANGLE_rasterization_rate_map_metal
+    bool rasterizationRateMapMetalANGLE = false;
+
     // GL_ANGLE_read_only_depth_stencil_feedback_loops
     bool readOnlyDepthStencilFeedbackLoopsANGLE = false;
 

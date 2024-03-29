@@ -35,6 +35,7 @@
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef struct __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 

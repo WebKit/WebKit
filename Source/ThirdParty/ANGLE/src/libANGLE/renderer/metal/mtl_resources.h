@@ -31,18 +31,20 @@ class ContextMtl;
 namespace mtl
 {
 
-class ContextDevice;
-class CommandQueue;
 class BlitCommandEncoder;
+class Buffer;
+class CommandQueue;
+class ContextDevice;
+class RasterizationRateMap;
 class Resource;
 class Texture;
-class Buffer;
 
-using ResourceRef    = std::shared_ptr<Resource>;
-using TextureRef     = std::shared_ptr<Texture>;
-using TextureWeakRef = std::weak_ptr<Texture>;
-using BufferRef      = std::shared_ptr<Buffer>;
-using BufferWeakRef  = std::weak_ptr<Buffer>;
+using BufferRef               = std::shared_ptr<Buffer>;
+using BufferWeakRef           = std::weak_ptr<Buffer>;
+using RasterizationRateMapRef = std::shared_ptr<RasterizationRateMap>;
+using ResourceRef             = std::shared_ptr<Resource>;
+using TextureRef              = std::shared_ptr<Texture>;
+using TextureWeakRef          = std::weak_ptr<Texture>;
 
 class Resource : angle::NonCopyable
 {
@@ -419,6 +421,18 @@ class Buffer final : public Resource, public WrappedObject<id<MTLBuffer>>
     // For garbage collecting shadow buffers in BufferManager.
     size_t mContextSwitchesAtLastUse      = 0;
     size_t mCommandBufferCommitsAtLastUse = 0;
+};
+
+class RasterizationRateMap : public WrappedObject<id<MTLRasterizationRateMap>>
+{
+  public:
+    static RasterizationRateMapRef MakeFromMetal(
+        id<MTLRasterizationRateMap> metalRasterizationRateMap);
+
+  private:
+    using ParentClass = WrappedObject<id<MTLTexture>>;
+
+    RasterizationRateMap(id<MTLRasterizationRateMap> metalRasterizationRateMap);
 };
 
 class NativeTexLevelArray

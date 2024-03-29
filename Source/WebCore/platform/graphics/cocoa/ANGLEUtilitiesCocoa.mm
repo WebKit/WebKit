@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include <Metal/Metal.h>
 #include <pal/spi/cocoa/MetalSPI.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/darwin/WeakLinking.h>
 
 WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);

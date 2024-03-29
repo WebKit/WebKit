@@ -547,6 +547,10 @@ EXPORTS
     ; GL_ANGLE_provoking_vertex
     glProvokingVertexANGLE
 
+    ; GL_ANGLE_rasterization_rate_map_metal
+    glFramebufferMTLRasterizationRateMapANGLE
+    glGetFramebufferMTLRasterizationRateMapANGLE
+
     ; GL_ANGLE_renderability_validation
 
     ; GL_ANGLE_request_extension

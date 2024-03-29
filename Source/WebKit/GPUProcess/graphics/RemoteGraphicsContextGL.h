@@ -109,7 +109,7 @@ protected:
 
     // Messages to be received.
     void ensureExtensionEnabled(String&&);
-    void createAndBindEGLImage(GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint, CompletionHandler<void(uint64_t)>&&);
+    void createAndBindEGLImage(GCGLenum, GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint, CompletionHandler<void(uint64_t)>&&);
     void reshape(int32_t width, int32_t height);
 #if PLATFORM(COCOA)
     virtual void prepareForDisplay(IPC::Semaphore&&, CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
@@ -142,6 +142,11 @@ protected:
     void multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type);
     void multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances);
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type);
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    void createRasterizationRateMapForFixedFoveation(PlatformGLObject, PlatformXR::Layout, WebCore::IntSize, WebCore::IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>);
+    void deleteRasterizationRateMap(PlatformGLObject);
+    void framebufferMTLRasterizationRateMapANGLE(GCGLenum, PlatformGLObject);
+#endif
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 

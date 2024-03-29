@@ -60,10 +60,17 @@
 #import "ImageRotationSessionVT.h"
 #endif
 
+#if ENABLE(WEBXR)
+#import "CompositorServicesUtilities.h"
+#import "PlatformXR.h"
+#endif
+
 // FIXME: Checking for EGL_Initialize does not seem to be robust in recovery OS.
 WTF_WEAK_LINK_FORCE_IMPORT(EGL_GetPlatformDisplayEXT);
 
 namespace WebCore {
+
+using GL = GraphicsContextGL;
 
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
@@ -616,7 +623,7 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
     WebCore::destroyPbufferAndDetachIOSurface(m_displayObj, handle);
 }
 
-GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source, GCGLint layer)
+GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, EGLImageSource source, GCGLint layer)
 {
     EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(platformDisplay(), EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
@@ -665,7 +672,16 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLIma
         return nullptr;
 
     // Create an EGLImage out of the MTLTexture
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    UNUSED_VARIABLE(internalFormat);
     const EGLint attributes[] = { EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer, EGL_NONE };
+#else
+    const EGLint attributes[] = {
+        EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer,
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
+        EGL_NONE
+    };
+#endif
     auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), attributes);
     if (!eglImage)
         return nullptr;
@@ -678,6 +694,33 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLIma
 
     return eglImage;
 }
+
+#if ENABLE(WEBXR)
+PlatformGLObject GraphicsContextGLCocoa::createRasterizationRateMapForFixedFoveation(PlatformXR::Layout layout, IntSize physicalSize, IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight, std::span<const GCGLfloat> verticalSamples)
+{
+    ASSERT(layout == PlatformXR::Layout::Shared);
+    if (layout != PlatformXR::Layout::Shared)
+        return 0;
+
+    RetainPtr map = newRasterizationRateMapForSharedFixedFoveation(m_displayObj, physicalSize, screenSize, horizontalSamplesLeft, horizontalSamplesRight, verticalSamples);
+    PlatformGLObject object = m_rasterizationRateMaps.size() + 1; // Next object is one more than current count. size 0 -> 1, size 3 -> 4, etc since 0 is invalid.
+    m_rasterizationRateMaps.add(object, map);
+    return object;
+}
+
+void GraphicsContextGLCocoa::deleteRasterizationRateMap(PlatformGLObject object)
+{
+    m_rasterizationRateMaps.remove(object);
+}
+
+void GraphicsContextGLCocoa::framebufferMTLRasterizationRateMapANGLE(GCGLenum target, PlatformGLObject object)
+{
+    if (object)
+        GL_FramebufferMTLRasterizationRateMapANGLE(target, m_rasterizationRateMaps.get(object).get());
+    else
+        GL_FramebufferMTLRasterizationRateMapANGLE(target, nullptr);
+}
+#endif
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
 {
@@ -712,9 +755,14 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
 {
     return enableExtension("GL_ANGLE_framebuffer_multisample"_s)
         && enableExtension("GL_ANGLE_framebuffer_blit"_s)
+        && enableExtension("GL_ANGLE_rasterization_rate_map_metal"_s)
         && enableExtension("GL_EXT_sRGB"_s)
         && enableExtension("GL_OES_EGL_image"_s)
-        && enableExtension("GL_OES_rgb8_rgba8"_s);
+        && enableExtension("GL_OES_rgb8_rgba8"_s)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+        && enableExtension("GL_ANGLE_variable_rasterization_rate_metal"_s)
+#endif
+        && enableExtension("GL_NV_framebuffer_blit"_s);
 }
 #endif
 

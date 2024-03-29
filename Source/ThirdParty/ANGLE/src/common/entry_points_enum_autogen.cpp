@@ -1188,6 +1188,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glFramebufferFoveationConfigQCOM";
         case EntryPoint::GLFramebufferFoveationParametersQCOM:
             return "glFramebufferFoveationParametersQCOM";
+        case EntryPoint::GLFramebufferMTLRasterizationRateMapANGLE:
+            return "glFramebufferMTLRasterizationRateMapANGLE";
         case EntryPoint::GLFramebufferMemorylessPixelLocalStorageANGLE:
             return "glFramebufferMemorylessPixelLocalStorageANGLE";
         case EntryPoint::GLFramebufferParameteri:
@@ -1378,6 +1380,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glGetFramebufferAttachmentParameterivOES";
         case EntryPoint::GLGetFramebufferAttachmentParameterivRobustANGLE:
             return "glGetFramebufferAttachmentParameterivRobustANGLE";
+        case EntryPoint::GLGetFramebufferMTLRasterizationRateMapANGLE:
+            return "glGetFramebufferMTLRasterizationRateMapANGLE";
         case EntryPoint::GLGetFramebufferParameteriv:
             return "glGetFramebufferParameteriv";
         case EntryPoint::GLGetFramebufferParameterivMESA:

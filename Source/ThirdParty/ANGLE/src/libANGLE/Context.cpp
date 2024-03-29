@@ -9018,6 +9018,22 @@ void Context::getFramebufferPixelLocalStorageParameterivRobust(GLint plane,
     }
 }
 
+void Context::framebufferMTLRasterizationRateMap(GLenum target, GLMTLRasterizationRateMapANGLE map)
+{
+    Framebuffer *framebuffer = mState.getTargetFramebuffer(target);
+    ASSERT(framebuffer);
+
+    framebuffer->setRasterizationRateMap(map);
+}
+
+GLMTLRasterizationRateMapANGLE Context::getFramebufferMTLRasterizationRateMap(GLenum target)
+{
+    const Framebuffer *framebuffer = mState.getTargetFramebuffer(target);
+    ASSERT(framebuffer);
+
+    return framebuffer->getRasterizationRateMap();
+}
+
 void Context::eGLImageTargetTexStorage(GLenum target, egl::ImageID image, const GLint *attrib_list)
 {
     Texture *texture        = getTextureByType(FromGLenum<TextureType>(target));

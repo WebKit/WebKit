@@ -83,6 +83,13 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo hasRasterizationRateMap = {
+        "hasRasterizationRateMap",
+        FeatureCategory::MetalFeatures,
+        "The renderer supports binding rasterization rate maps to framebuffer objects",
+        &members,
+    };
+
     FeatureInfo allowInlineConstVertexData = {
         "allowInlineConstVertexData",
         FeatureCategory::MetalFeatures,
