@@ -895,10 +895,10 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 #if PLATFORM(MAC)
 bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 {
-    if (!fileURLString.endsWithIgnoringASCIICase(".webarchive"_s))
+    NSURL *fileURL = [NSURL URLWithString:fileURLString];
+    if ([fileURL.pathExtension caseInsensitiveCompare:@"webarchive"] != NSOrderedSame)
         return false;
 
-    NSURL *fileURL = [NSURL URLWithString:fileURLString];
     qtn_file_t qf = qtn_file_alloc();
 
     int quarantineError = qtn_file_init_with_path(qf, fileURL.path.fileSystemRepresentation);
