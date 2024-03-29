@@ -211,6 +211,7 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
     // FIXME: This is where we need to switch between minimum and maximum box geometries.
     auto minimumContentSize = inlineFormattingContext.minimumContentSize(m_lineDamage.get());
     auto maximumContentSize = inlineFormattingContext.maximumContentSize();
+    minimumContentSize = std::min(minimumContentSize, maximumContentSize);
     return { minimumContentSize, maximumContentSize };
 }
 
