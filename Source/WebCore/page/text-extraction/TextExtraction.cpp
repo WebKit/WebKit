@@ -546,23 +546,6 @@ static void extractRenderedText(Vector<StringsAndBlockOffset>& stringsAndOffsets
     }
 }
 
-Expected<String, ExceptionCode> extractRenderedText(LocalFrame& frame, String&& selector)
-{
-    RefPtr document = frame.document();
-    if (!document)
-        return makeUnexpected(ExceptionCode::NotAllowedError);
-
-    auto result = document->querySelector(WTFMove(selector));
-    if (result.hasException())
-        return makeUnexpected(result.releaseException().code());
-
-    RefPtr element = result.releaseReturnValue();
-    if (!element)
-        return makeUnexpected(ExceptionCode::NotFoundError);
-
-    return extractRenderedText(*element);
-}
-
 String extractRenderedText(Element& element)
 {
     if (!element.renderer())

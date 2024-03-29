@@ -13794,13 +13794,6 @@ void WebPageProxy::requestTextExtraction(std::optional<FloatRect>&& collectionRe
     sendWithAsyncReply(Messages::WebPage::RequestTextExtraction(WTFMove(collectionRectInRootView)), WTFMove(completion));
 }
 
-void WebPageProxy::requestRenderedTextForElementSelector(String&& selector, CompletionHandler<void(Expected<String, WebCore::ExceptionCode>&&)>&& completion)
-{
-    if (!hasRunningProcess())
-        return completion(makeUnexpected(WebCore::ExceptionCode::NotAllowedError));
-    sendWithAsyncReply(Messages::WebPage::RequestRenderedTextForElementSelector(WTFMove(selector)), WTFMove(completion));
-}
-
 void WebPageProxy::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSource, MessageLevel messageLevel, const String& message, std::optional<ResourceLoaderIdentifier> coreIdentifier)
 {
     send(Messages::WebPage::AddConsoleMessage { frameID, messageSource, messageLevel, message, coreIdentifier });

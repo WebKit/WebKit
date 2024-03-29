@@ -66,12 +66,22 @@ ElementTargetingController::ElementTargetingController(Page& page)
 {
 }
 
-static inline bool elementAndAncestorsAreOnlyChildren(const Element& element)
+static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Element& element)
 {
-    for (auto& ancestor : ancestorsOfType<Element>(element)) {
-        if (!ancestor.hasOneChild())
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return false;
+
+    for (auto& ancestor : ancestorsOfType<RenderElement>(*renderer)) {
+        unsigned numberOfRenderedChildren = 0;
+        for (auto& child : childrenOfType<RenderElement>(ancestor)) {
+            if (RefPtr childElement = child.element(); childElement && !childElement->visibilityAdjustment().contains(VisibilityAdjustment::Subtree))
+                numberOfRenderedChildren++;
+        }
+        if (numberOfRenderedChildren >= 2)
             return false;
     }
+
     return true;
 }
 
@@ -289,7 +299,7 @@ static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainEleme
     if (onlyMainElement && (onlyMainElement == &element || element.contains(*onlyMainElement)))
         return false;
 
-    if (elementAndAncestorsAreOnlyChildren(element))
+    if (elementAndAncestorsAreOnlyRenderedChildren(element))
         return false;
 
     return true;

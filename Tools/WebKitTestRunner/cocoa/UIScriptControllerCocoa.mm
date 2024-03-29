@@ -343,14 +343,16 @@ void UIScriptControllerCocoa::requestTextExtraction(JSValueRef callback, TextExt
     }];
 }
 
-void UIScriptControllerCocoa::requestRenderedTextForSelector(JSStringRef selectorRef, JSValueRef callback)
+void UIScriptControllerCocoa::requestRenderedTextForFrontmostTarget(int x, int y, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView() _requestRenderedTextForElementSelector:toWTFString(selectorRef) completionHandler:^(NSString *text, NSError *error) {
+    auto request = adoptNS([_WKTargetedElementRequest new]);
+    [request setPoint:CGPointMake(x, y)];
+    [webView() _requestTargetedElementInfo:request.get() completionHandler:^(NSArray<_WKTargetedElementInfo *> *elements) {
         if (!m_context)
             return;
 
-        JSRetainPtr result = adopt(JSStringCreateWithCFString((__bridge CFStringRef)(error.description ?: text)));
+        JSRetainPtr result = adopt(JSStringCreateWithCFString((__bridge CFStringRef)(elements.firstObject.renderedText ?: @"")));
         m_context->asyncTaskComplete(callbackID, { JSValueMakeString(m_context->jsContext(), result.get()) });
     }];
 }

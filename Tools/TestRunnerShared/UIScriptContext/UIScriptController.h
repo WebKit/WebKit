@@ -415,9 +415,9 @@ public:
 
     // Text Extraction
     virtual void requestTextExtraction(JSValueRef, TextExtractionOptions*) { notImplemented(); }
-    virtual void requestRenderedTextForSelector(JSStringRef, JSValueRef) { notImplemented(); }
 
     // Element Targeting
+    virtual void requestRenderedTextForFrontmostTarget(int, int, JSValueRef) { notImplemented(); }
     virtual void adjustVisibilityForFrontmostTarget(int, int, JSValueRef) { notImplemented(); }
 
 protected:

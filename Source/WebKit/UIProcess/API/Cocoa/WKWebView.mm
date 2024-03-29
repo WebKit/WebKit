@@ -2742,19 +2742,6 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #endif
 }
 
-- (void)_requestRenderedTextForElementSelector:(NSString *)selector completionHandler:(void(^)(NSString *, NSError *))completion
-{
-    _page->requestRenderedTextForElementSelector(selector, [completion = makeBlockPtr(completion)](Expected<String, WebCore::ExceptionCode>&& result) {
-        if (result)
-            return completion(result.value(), nil);
-
-        RetainPtr exceptionName = WebCore::DOMException::name(result.error()).createNSString();
-        return completion(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{
-            NSLocalizedDescriptionKey: exceptionName.get() ?: @""
-        }]);
-    });
-}
-
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completion
 {
     WebCore::TargetedElementRequest coreRequest {

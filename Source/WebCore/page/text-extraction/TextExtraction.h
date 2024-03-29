@@ -39,7 +39,6 @@ namespace TextExtraction {
 
 WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
 
-WEBCORE_EXPORT Expected<String, ExceptionCode> extractRenderedText(LocalFrame&, String&& selector);
 String extractRenderedText(Element&);
 
 } // namespace TextExtraction

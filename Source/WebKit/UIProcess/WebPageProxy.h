@@ -2376,7 +2376,6 @@ public:
     void requestTargetedElement(WebCore::TargetedElementRequest&&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
 
     void requestTextExtraction(std::optional<WebCore::FloatRect>&& collectionRectInRootView, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
-    void requestRenderedTextForElementSelector(String&& selector, CompletionHandler<void(Expected<String, WebCore::ExceptionCode>&&)>&&);
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     void willBeginTextReplacementSession(const WTF::UUID&, WebUnifiedTextReplacementType, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);

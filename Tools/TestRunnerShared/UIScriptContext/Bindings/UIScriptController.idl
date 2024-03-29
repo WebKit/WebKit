@@ -417,7 +417,7 @@ interface UIScriptController {
     undefined acceptInlinePrediction();
 
     undefined requestTextExtraction(object callback, TextExtractionOptions options);
-    undefined requestRenderedTextForSelector(DOMString selector, object callback);
 
+    undefined requestRenderedTextForFrontmostTarget(long x, long y, object callback);
     undefined adjustVisibilityForFrontmostTarget(long x, long y, object callback);
 };

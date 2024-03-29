@@ -9397,15 +9397,6 @@ void WebPage::requestTextExtraction(std::optional<FloatRect>&& collectionRectInR
     completion(TextExtraction::extractItem(WTFMove(collectionRectInRootView), Ref { *corePage() }));
 }
 
-void WebPage::requestRenderedTextForElementSelector(String&& selector, CompletionHandler<void(Expected<String, WebCore::ExceptionCode>&&)>&& completion)
-{
-    RefPtr mainFrame = dynamicDowncast<LocalFrame>(corePage()->protectedMainFrame());
-    if (!mainFrame)
-        return completion(makeUnexpected(ExceptionCode::NotAllowedError));
-
-    completion(TextExtraction::extractRenderedText(mainFrame.releaseNonNull(), WTFMove(selector)));
-}
-
 template<typename T> void WebPage::remoteViewToRootView(WebCore::FrameIdentifier frameID, T geometry, CompletionHandler<void(T)>&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
