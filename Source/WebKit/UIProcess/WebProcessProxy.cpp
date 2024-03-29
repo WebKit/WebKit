@@ -1860,6 +1860,11 @@ String WebProcessProxy::environmentIdentifier() const
 
 void WebProcessProxy::updateAudibleMediaAssertions()
 {
+#if ENABLE(EXTENSION_CAPABILITIES)
+    if (PlatformMediaSessionManager::mediaCapabilityGrantsEnabled())
+        return;
+#endif
+
     bool hasAudibleWebPage = WTF::anyOf(pages(), [] (auto& page) {
         return page->isPlayingAudio();
     });
