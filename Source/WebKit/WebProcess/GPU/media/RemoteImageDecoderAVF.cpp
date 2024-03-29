@@ -126,11 +126,6 @@ bool RemoteImageDecoderAVF::frameIsCompleteAtIndex(size_t index) const
     return index < m_frameCount;
 }
 
-ImageDecoder::FrameMetadata RemoteImageDecoderAVF::frameMetadataAtIndex(size_t) const
-{
-    return { };
-}
-
 Seconds RemoteImageDecoderAVF::frameDurationAtIndex(size_t index) const
 {
     if (m_frameInfos.isEmpty() || index >= m_frameInfos.size())
@@ -145,11 +140,6 @@ bool RemoteImageDecoderAVF::frameHasAlphaAtIndex(size_t index) const
         return false;
 
     return m_frameInfos[index].hasAlpha;
-}
-
-bool RemoteImageDecoderAVF::frameAllowSubsamplingAtIndex(size_t index) const
-{
-    return index < m_frameCount;
 }
 
 unsigned RemoteImageDecoderAVF::frameBytesAtIndex(size_t, SubsamplingLevel) const

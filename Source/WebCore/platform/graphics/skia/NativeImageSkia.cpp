@@ -65,29 +65,29 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
     return DestinationColorSpace::SRGB();
 }
 
-Color NativeImage::singlePixelSolidColor() const
+std::optional<Color> NativeImage::singlePixelSolidColor() const
 {
     if (size() != IntSize(1, 1))
-        return Color();
+        return std::nullopt;
 
     auto platformImage = this->platformImage();
     if (platformImage->isTextureBacked()) {
         if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
-            return Color();
+            return std::nullopt;
 
         GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
         const auto& imageInfo = platformImage->imageInfo();
         uint32_t pixel;
         SkPixmap pixmap(imageInfo, &pixel, imageInfo.minRowBytes());
         if (!platformImage->readPixels(grContext, pixmap, 0, 0))
-            return Color();
+            return std::nullopt;
 
         return pixmap.getColor(0, 0);
     }
 
     SkPixmap pixmap;
     if (!platformImage->peekPixels(&pixmap))
-        return Color();
+        return std::nullopt;
 
     return pixmap.getColor(0, 0);
 }

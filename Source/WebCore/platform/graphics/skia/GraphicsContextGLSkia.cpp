@@ -27,10 +27,9 @@
 #include "GraphicsContextGL.h"
 
 #if ENABLE(WEBGL) && USE(SKIA)
+#include "BitmapImage.h"
 #include "GLContext.h"
 #include "GraphicsContextGLImageExtractor.h"
-#include "Image.h"
-#include "ImageSource.h"
 #include "NotImplemented.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
@@ -50,30 +49,29 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     if (!m_image)
         return false;
 
-    RefPtr<NativeImage> decodedImage;
+    PlatformImagePtr platformImage;
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
     if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
-        auto source = ImageSource::create(nullptr, AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
-        source->setData(m_image->data(), true);
-        if (!source->frameCount())
+        auto image = BitmapImage::create(nullptr,  AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
+        image->setData(m_image->data(), true);
+        if (!image->frameCount())
             return false;
 
-        decodedImage = source->createFrameImageAtIndex(0);
+        platformImage = image->currentNativeImage()->platformImage();
     } else
-        decodedImage = m_image->nativeImageForCurrentFrame();
+        platformImage = m_image->currentNativeImage()->platformImage();
 
-    if (!decodedImage)
+    if (!platformImage)
         return false;
 
-    auto image = decodedImage->platformImage();
-    m_imageWidth = image->width();
-    m_imageHeight = image->height();
+    m_imageWidth = platformImage->width();
+    m_imageHeight = platformImage->height();
     if (!m_imageWidth || !m_imageHeight)
         return false;
 
     m_alphaOp = AlphaOp::DoNothing;
 
-    const auto& imageInfo = image->imageInfo();
+    const auto& imageInfo = platformImage->imageInfo();
     unsigned srcUnpackAlignment = 1;
     size_t bytesPerRow = imageInfo.minRowBytes();
     size_t bytesPerPixel = imageInfo.bytesPerPixel();
@@ -84,23 +82,23 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
             ++srcUnpackAlignment;
     }
 
-    if (image->isTextureBacked()) {
+    if (platformImage->isTextureBacked()) {
         auto data = SkData::MakeUninitialized(imageInfo.computeMinByteSize());
         if (!PlatformDisplay::sharedDisplayForCompositing().skiaGLContext()->makeContextCurrent())
             return false;
 
         GrDirectContext* grContext = PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
-        if (!image->readPixels(grContext, imageInfo, static_cast<uint8_t*>(data->writable_data()), bytesPerRow, 0, 0))
+        if (!platformImage->readPixels(grContext, imageInfo, static_cast<uint8_t*>(data->writable_data()), bytesPerRow, 0, 0))
             return false;
 
         m_pixelData = WTFMove(data);
         m_imagePixelData = m_pixelData->data();
     } else {
         SkPixmap pixmap;
-        if (!image->peekPixels(&pixmap))
+        if (!platformImage->peekPixels(&pixmap))
             return false;
 
-        m_skImage = WTFMove(image);
+        m_skImage = WTFMove(platformImage);
         m_imagePixelData = pixmap.addr();
     }
 

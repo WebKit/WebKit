@@ -96,7 +96,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
 {
     if (auto* bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         if (orientation == ImageOrientation::Orientation::FromImage)
-            orientation = bitmapImage->orientationForCurrentFrame();
+            orientation = bitmapImage->currentFrameOrientation();
 
         if (orientation != ImageOrientation::Orientation::None) {
             // Construct a correctly-rotated copy of the image to use as the drag image.

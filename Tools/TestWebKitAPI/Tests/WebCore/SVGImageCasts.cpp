@@ -67,11 +67,6 @@ private:
     {
     }
 
-    bool canDestroyDecodedData(const Image&) final
-    {
-        return true;
-    }
-
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) final
     {
     }

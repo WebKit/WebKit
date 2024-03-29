@@ -58,9 +58,9 @@ void SVGImageForContainer::drawPattern(GraphicsContext& context, const FloatRect
     protectedImage()->drawPatternForContainer(context, m_containerSize, m_containerZoom, m_initialFragmentURL, srcRect, patternTransform, phase, spacing, dstRect, options);
 }
 
-RefPtr<NativeImage> SVGImageForContainer::nativeImageForCurrentFrame()
+RefPtr<NativeImage> SVGImageForContainer::currentNativeImage()
 {
-    return protectedImage()->nativeImageForCurrentFrame();
+    return protectedImage()->currentNativeImage();
 }
 
 } // namespace WebCore

@@ -189,10 +189,12 @@ void CachedImage::removeAllClientsWaitingForAsyncDecoding()
 {
     if (m_clientsWaitingForAsyncDecoding.isEmptyIgnoringNullReferences() || !hasImage())
         return;
+
     RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image());
     if (!bitmapImage)
         return;
-    bitmapImage->stopAsyncDecodingQueue();
+    bitmapImage->stopDecodingWorkQueue();
+
     for (auto& client : m_clientsWaitingForAsyncDecoding)
         client.imageChanged(this);
     m_clientsWaitingForAsyncDecoding.clear();
@@ -438,7 +440,7 @@ void CachedImage::CachedImageObserver::didDraw(const Image& image)
         cachedImage->didDraw(image);
 }
 
-bool CachedImage::CachedImageObserver::canDestroyDecodedData(const Image& image)
+bool CachedImage::CachedImageObserver::canDestroyDecodedData(const Image& image) const
 {
     for (CachedResourceHandle cachedImage : m_cachedImages) {
         if (&image != cachedImage->image())
@@ -680,7 +682,7 @@ void CachedImage::didDraw(const Image& image)
     CachedResource::didAccessDecodedData(timeStamp);
 }
 
-bool CachedImage::canDestroyDecodedData(const Image& image)
+bool CachedImage::canDestroyDecodedData(const Image& image) const
 {
     if (&image != m_image)
         return false;

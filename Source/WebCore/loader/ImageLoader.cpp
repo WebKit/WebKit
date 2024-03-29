@@ -557,8 +557,13 @@ void ImageLoader::decode()
         resolveDecodePromises();
         return;
     }
-    bitmapImage->decode([promises = WTFMove(m_decodingPromises)]() mutable {
-        resolvePromises(promises);
+
+    bitmapImage->decode([promises = WTFMove(m_decodingPromises)](DecodingStatus decodingStatus) mutable {
+        ASSERT(decodingStatus != DecodingStatus::Decoding);
+        if (decodingStatus == DecodingStatus::Invalid)
+            rejectPromises(promises, "Decoding error."_s);
+        else
+            resolvePromises(promises);
     });
 }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,183 +22,107 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #include "Image.h"
-#include "Color.h"
-#include "ImageObserver.h"
-#include "ImageOrientation.h"
 #include "ImageSource.h"
-#include "IntSize.h"
+#include <wtf/Function.h>
 
 namespace WebCore {
 
-class Timer;
+class ImageObserver;
+class ImageSource;
+class NativeImage;
 
 class BitmapImage final : public Image {
 public:
-    static RefPtr<BitmapImage> create(PlatformImagePtr&& platformImage)
-    {
-        return create(NativeImage::create(WTFMove(platformImage)));
-    }
-    static RefPtr<BitmapImage> create(RefPtr<NativeImage>&& nativeImage)
-    {
-        if (!nativeImage)
-            return nullptr;
-        return create(nativeImage.releaseNonNull());
-    }
-    static Ref<BitmapImage> create(Ref<NativeImage>&& nativeImage)
-    {
-        return adoptRef(*new BitmapImage(WTFMove(nativeImage)));
-    }
-    static Ref<BitmapImage> create(ImageObserver* observer = nullptr)
-    {
-        return adoptRef(*new BitmapImage(observer));
-    }
+    WEBCORE_EXPORT static Ref<BitmapImage> create(ImageObserver* = nullptr, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
+    WEBCORE_EXPORT static Ref<BitmapImage> create(Ref<NativeImage>&&);
+    WEBCORE_EXPORT static RefPtr<BitmapImage> create(RefPtr<NativeImage>&&);
+    WEBCORE_EXPORT static RefPtr<BitmapImage> create(PlatformImagePtr&&);
 
-    virtual ~BitmapImage();
+    // Animation
+    void startAnimation() final { m_source->startAnimation(); }
+    void stopAnimation() final { m_source->stopAnimation(); }
+    void resetAnimation() final { m_source->resetAnimation(); }
+    bool isAnimated() const final { return m_source->isAnimated(); }
+    bool hasEverAnimated() const { return m_source->hasEverAnimated(); }
 
-    EncodedDataStatus dataChanged(bool allDataReceived) override;
-    unsigned decodedSize() const { return m_source->decodedSize(); }
+    // Decoding
+    bool isLargeForDecoding() const { return m_source->isLargeForDecoding(); }
+    void stopDecodingWorkQueue() { m_source->stopDecodingWorkQueue(); }
+    void decode(Function<void(DecodingStatus)>&& decodeCallback) { m_source->decode(WTFMove(decodeCallback)); }
 
-    EncodedDataStatus encodedDataStatus() const { return m_source->encodedDataStatus(); }
-    size_t frameCount() const final { return m_source->frameCount(); }
-    size_t primaryFrameIndex() const { return m_source->primaryFrameIndex(); }
-    RepetitionCount repetitionCount() const { return m_source->repetitionCount(); }
-    String uti() const override { return m_source->uti(); }
-    String filenameExtension() const override { return m_source->filenameExtension(); }
-    String accessibilityDescription() const override { return m_source->accessibilityDescription(); }
-    std::optional<IntPoint> hotSpot() const override { return m_source->hotSpot(); }
+    // Current ImageFrame
+    unsigned currentFrameIndex() const { return m_source->currentFrameIndex(); }
+    bool currentFrameHasAlpha() const { return m_source->currentImageFrame().hasAlpha(); }
+    ImageOrientation currentFrameOrientation() const { return m_source->currentImageFrame().orientation(); }
+    DecodingOptions currentFrameDecodingOptions() const { return m_source->currentImageFrame().decodingOptions(); }
 
-    // FloatSize due to override.
-    FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const override { return m_source->size(orientation); }
-    ImageOrientation orientation() const override { return m_source->orientation(); }
-    Color singlePixelSolidColor() const override { return m_source->singlePixelSolidColor(); }
-    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) const { return m_source->frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
-    DecodingStatus frameDecodingStatusAtIndex(size_t index) const { return m_source->frameDecodingStatusAtIndex(index); }
-    bool frameIsCompleteAtIndex(size_t index) const { return frameDecodingStatusAtIndex(index) == DecodingStatus::Complete; }
-    bool frameHasAlphaAtIndex(size_t index) const { return m_source->frameHasAlphaAtIndex(index); }
+    // Primary & current NativeImage
+    RefPtr<NativeImage> primaryNativeImage() { return m_source->primaryNativeImage(); }
+    RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) final { return primaryNativeImage(); }
+    RefPtr<NativeImage> currentNativeImage() final { return m_source->currentNativeImage(); }
 
-    bool frameHasFullSizeNativeImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) { return m_source->frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel); }
-    bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) { return m_source->frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(index, subsamplingLevel, decodingOptions); }
+    // Image Metadata
+    FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_source->size(orientation); }
+    FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->sourceSize(orientation); }
+    DestinationColorSpace colorSpace() final { return m_source->colorSpace(); }
+    ImageOrientation orientation() const final { return m_source->orientation(); }
+    unsigned frameCount() const final { return m_source->frameCount(); }
+#if ASSERT_ENABLED
+    bool hasSolidColor() final { return m_source->hasSolidColor(); }
+#endif
 
-    SubsamplingLevel frameSubsamplingLevelAtIndex(size_t index) const { return m_source->frameSubsamplingLevelAtIndex(index); }
+    // ImageFrame
+    Seconds frameDurationAtIndex(unsigned index) const { return m_source->frameDurationAtIndex(index); }
 
-    Seconds frameDurationAtIndex(size_t index) const { return m_source->frameDurationAtIndex(index); }
-    ImageOrientation frameOrientationAtIndex(size_t index) const { return m_source->frameOrientationAtIndex(index); }
+    // NativeImage
+    RefPtr<NativeImage> nativeImageAtIndex(unsigned index) final { return m_source->nativeImageAtIndex(index); }
 
-    size_t currentFrameIndex() const { return m_currentFrame; }
-    bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrameIndex()); }
-    ImageOrientation orientationForCurrentFrame() const { return frameOrientationAtIndex(currentFrameIndex()); }
-    bool canAnimate() const;
-
-    bool shouldUseAsyncDecodingForTesting() const { return m_source->frameDecodingDurationForTesting() > 0_s; }
-    void setFrameDecodingDurationForTesting(Seconds duration) { m_source->setFrameDecodingDurationForTesting(duration); }
-    bool canUseAsyncDecodingForLargeImages() const;
-    bool shouldUseAsyncDecodingForAnimatedImages() const;
-    void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
-    void setAsyncDecodingEnabledForTesting(bool enabled) { m_asyncDecodingEnabledForTesting = enabled; }
-    bool isAsyncDecodingEnabledForTesting() const { return m_asyncDecodingEnabledForTesting; }
-    void stopAsyncDecodingQueue() { m_source->stopAsyncDecodingQueue(); }
-
-    DestinationColorSpace colorSpace() final;
-
-    WEBCORE_EXPORT unsigned decodeCountForTesting() const;
-
-    WEBCORE_EXPORT RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) override;
-    RefPtr<NativeImage> nativeImageForCurrentFrame() override;
-    RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool respectOrientation) override;
-
-    void imageFrameAvailableAtIndex(size_t);
-    void decode(Function<void()>&&);
-    WEBCORE_EXPORT DecodingOptions lastDecodingOptions() const;
+    // Testing support.
+    const char* sourceUTF8() const { return sourceURL().string().utf8().data(); }
+    void setAsyncDecodingEnabledForTesting(bool enabled) { m_source->setAsyncDecodingEnabledForTesting(enabled); }
+    bool isAsyncDecodingEnabledForTesting() const { return m_source->isAsyncDecodingEnabledForTesting(); }
+    void setMinimumDecodingDurationForTesting(Seconds duration) { m_source->setMinimumDecodingDurationForTesting(duration); }
+    void setClearDecoderAfterAsyncFrameRequestForTesting(bool enabled) { m_source->setClearDecoderAfterAsyncFrameRequestForTesting(enabled); }
+    unsigned decodeCountForTesting() const { return m_source->decodeCountForTesting(); }
 
 private:
-    WEBCORE_EXPORT BitmapImage(Ref<NativeImage>&&);
-    WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
+    BitmapImage(ImageObserver*, AlphaOption, GammaAndColorProfileOption);
+    BitmapImage(Ref<NativeImage>&&);
 
-    RefPtr<NativeImage> nativeImageAtIndex(size_t index) final { return m_source->frameImageAtIndex(index); }
-    RefPtr<NativeImage> nativeImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { }) final;
+    // Encoded and decoded data
+    EncodedDataStatus dataChanged(bool allDataReceived) final;
+    void destroyDecodedData(bool destroyAll = true) final;
 
-    // Called to invalidate cached data. When |destroyAll| is true, we wipe out
-    // the entire frame buffer cache and tell the image source to destroy
-    // everything; this is used when e.g. we want to free some room in the image
-    // cache. If |destroyAll| is false, we only delete frames up to the current
-    // one; this is used while animating large images to keep memory footprint
-    // low without redecoding the whole image on every frame.
-    void destroyDecodedData(bool destroyAll = true) override;
+    // Current ImageFrame
+    bool currentFrameKnownToBeOpaque() const final { return !currentFrameHasAlpha(); }
 
-    // If the image is large enough, calls destroyDecodedData() and passes
-    // |destroyAll| along.
-    void destroyDecodedDataIfNecessary(bool destroyAll = true);
+    // Current NativeImage
+    RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation orientation) final { return m_source->currentPreTransformedNativeImage(orientation); }
 
-    FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_source->sourceSize(orientation); }
-    bool hasDensityCorrectedSize() const override { return m_source->hasDensityCorrectedSize(); }
+    // Image Metadata
+    bool hasDensityCorrectedSize() const final { return m_source->hasDensityCorrectedSize(); }
+    String uti() const final { return m_source->uti(); }
+    String filenameExtension() const final { return m_source->filenameExtension(); }
+    String accessibilityDescription() const final { return m_source->accessibilityDescription(); }
+    std::optional<IntPoint> hotSpot() const final { return m_source->hotSpot(); }
+    std::optional<Color> singlePixelSolidColor() const final { return m_source->singlePixelSolidColor(); }
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) override;
-    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) override;
+    // Image methods
+    bool isBitmapImage() const final { return true; }
+    bool isAnimating() const final { return m_source->isAnimating(); }
 
-    // Animation.
-    enum class StartAnimationStatus { CannotStart, IncompleteData, TimerActive, DecodingActive, Started };
-    bool isAnimated() const override { return m_source->frameCount() > 1; }
-    bool shouldAnimate() const;
-    void startAnimation() override { internalStartAnimation({ }); }
-    StartAnimationStatus internalStartAnimation(ImagePaintingOptions);
-    void advanceAnimation();
-    void internalAdvanceAnimation();
-    bool isAnimating() const final;
+    ImageDrawResult draw(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }) final;
+    void drawPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
 
-    // It may look unusual that there is no start animation call as public API. This is because
-    // we start and stop animating lazily. Animation begins whenever someone draws the image. It will
-    // automatically pause once all observers no longer want to render the image anywhere.
-    void stopAnimation() override;
-    void resetAnimation() override;
+    void dump(WTF::TextStream&) const final;
 
-#if ASSERT_ENABLED
-    bool notSolidColor() override;
-#endif
-
-    void clearTimer();
-    void startTimer(Seconds delay);
-    SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize& scaleFactor, AllowImageSubsampling);
-    bool canDestroyDecodedData();
-    void setCurrentFrameDecodingStatusIfNecessary(DecodingStatus);
-    bool isBitmapImage() const override { return true; }
-    void callDecodingCallbacks();
-    void dump(WTF::TextStream&) const override;
-
-    // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.
-    static const unsigned LargeAnimationCutoff = 30 * 1024 * 1024;
-
-    mutable Ref<ImageSource> m_source;
-
-    size_t m_currentFrame { 0 }; // The index of the current frame of animation.
-    SubsamplingLevel m_currentSubsamplingLevel { SubsamplingLevel::Default };
-    DecodingStatus m_currentFrameDecodingStatus { DecodingStatus::Invalid };
-    std::unique_ptr<Timer> m_frameTimer;
-    RepetitionCount m_repetitionsComplete { RepetitionCountNone }; // How many repetitions we've finished.
-    MonotonicTime m_desiredFrameStartTime; // The system time at which we hope to see the next call to startAnimation().
-
-    std::unique_ptr<Vector<Function<void()>, 1>> m_decodingCallbacks;
-
-    bool m_animationFinished { false };
-
-    bool m_clearDecoderAfterAsyncFrameRequestForTesting { false };
-    bool m_asyncDecodingEnabledForTesting { false };
-
-#if ASSERT_ENABLED || !LOG_DISABLED
-    size_t m_lateFrameCount { 0 };
-    size_t m_earlyFrameCount { 0 };
-    size_t m_cachedFrameCount { 0 };
-#endif
-
-    unsigned m_decodeCountForTesting { 0 };
-    DecodingOptions m_lastDecodingOptions { DecodingMode::Auto };
-
-    RefPtr<NativeImage> m_cachedImage;
+    Ref<ImageSource> m_source;
 };
 
 } // namespace WebCore

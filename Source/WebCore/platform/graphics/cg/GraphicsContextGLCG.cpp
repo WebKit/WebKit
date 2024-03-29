@@ -329,14 +329,11 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     bool hasAlpha = !m_image->currentFrameKnownToBeOpaque();
 
     if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
-        auto source = ImageSource::create(nullptr, AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
-        source->setData(m_image->data(), true);
-        if (!source->frameCount())
-            return false;
-
-        decodedImage = source->createFrameImageAtIndex(0);
+        auto image = BitmapImage::create(nullptr, AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
+        image->setData(m_image->data(), true);
+        decodedImage = image->primaryNativeImage();
     } else
-        decodedImage = m_image->nativeImageForCurrentFrame();
+        decodedImage = m_image->currentNativeImage();
 
     if (!decodedImage)
         return false;

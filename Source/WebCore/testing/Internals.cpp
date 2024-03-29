@@ -1106,7 +1106,7 @@ float Internals::imageFrameDurationAtIndex(HTMLImageElement& element, unsigned i
 void Internals::setImageFrameDecodingDuration(HTMLImageElement& element, float duration)
 {
     if (auto* bitmapImage = bitmapImageFromImageElement(element))
-        bitmapImage->setFrameDecodingDurationForTesting(Seconds { duration });
+        bitmapImage->setMinimumDecodingDurationForTesting(Seconds { duration });
 }
 
 void Internals::resetImageAnimation(HTMLImageElement& element)
@@ -1181,7 +1181,7 @@ AtomString Internals::imageLastDecodingOptions(HTMLImageElement& element)
     if (!bitmapImage)
         return { };
 
-    auto options = bitmapImage->lastDecodingOptions();
+    auto options = bitmapImage->currentFrameDecodingOptions();
     StringBuilder builder;
     builder.append("{ decodingMode : ");
     builder.append(options.decodingMode() == DecodingMode::Asynchronous ? "Asynchronous" : "Synchronous");

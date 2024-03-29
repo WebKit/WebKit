@@ -582,7 +582,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                     if (image->setData(SharedBuffer::create(WTFMove(iconData)), true) < EncodedDataStatus::SizeAvailable)
                         return nullptr;
 
-                    auto nativeImage = image->nativeImageForCurrentFrame();
+                    auto nativeImage = image->currentNativeImage();
                     if (!nativeImage)
                         return nullptr;
 
@@ -619,7 +619,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint
             if (iconData.size()) {
                 RefPtr<NativeImage> nativeImage;
                 Ref image = BitmapImage::create();
-                if (image->setData(SharedBuffer::create(iconData), true) >= EncodedDataStatus::SizeAvailable && (nativeImage = image->nativeImageForCurrentFrame()))
+                if (image->setData(SharedBuffer::create(iconData), true) >= EncodedDataStatus::SizeAvailable && (nativeImage = image->currentNativeImage()))
                     addResult.iterator->value.first = nativeImage->platformImage();
                 else
                     result = false;

@@ -940,7 +940,7 @@ void View::setCursor(const WebCore::Cursor& cursor)
 #if USE(CAIRO)
     ASSERT(cursor.type() == WebCore::Cursor::Type::Custom);
     auto image = cursor.image();
-    auto nativeImage = image->nativeImageForCurrentFrame();
+    auto nativeImage = image->currentNativeImage();
     if (!nativeImage)
         return;
 
@@ -956,7 +956,7 @@ void View::setCursor(const WebCore::Cursor& cursor)
     WebCore::IntPoint hotspot = WebCore::determineHotSpot(image.get(), cursor.hotSpot());
     wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), width, height, stride, hotspot.x(), hotspot.y());
 #elif USE(SKIA)
-    auto nativeImage = cursor.image()->nativeImageForCurrentFrame();
+    auto nativeImage = cursor.image()->currentNativeImage();
     if (!nativeImage)
         return;
 

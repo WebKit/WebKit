@@ -221,7 +221,7 @@ RefPtr<FilterEffect> SVGFEImageElement::createFilterEffect(const FilterEffectVec
         if (!image || image->isNull())
             return nullptr;
 
-        RefPtr nativeImage = image->preTransformedNativeImageForCurrentFrame();
+        RefPtr nativeImage = image->currentPreTransformedNativeImage();
         if (!nativeImage)
             return nullptr;
 

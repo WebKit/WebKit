@@ -3121,7 +3121,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         if (!image)
             return false;
 
-        if (image->orientationForCurrentFrame() != ImageOrientation::Orientation::None)
+        if (image->currentFrameOrientation() != ImageOrientation::Orientation::None)
             return false;
 
 #if (PLATFORM(GTK) || PLATFORM(WPE))
@@ -3168,7 +3168,7 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
             if (!image)
                 return false;
 
-            if (image->orientationForCurrentFrame() != ImageOrientation::Orientation::None)
+            if (image->currentFrameOrientation() != ImageOrientation::Orientation::None)
                 return false;
 
             return contents.size() == image->size();
