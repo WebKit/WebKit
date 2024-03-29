@@ -316,7 +316,7 @@
     "web-platform-tests/subapps": "skip",
     "web-platform-tests/subresource-integrity": "import",
     "web-platform-tests/svg": "import",
-    "web-platform-tests/svg-aam": "skip",
+    "web-platform-tests/svg-aam": "import",
     "web-platform-tests/timing-entrytypes-registry": "skip",
     "web-platform-tests/tools": "import",
     "web-platform-tests/top-level-storage-access-api": "skip",
