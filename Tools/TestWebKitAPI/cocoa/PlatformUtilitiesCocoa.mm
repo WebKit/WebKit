@@ -92,6 +92,15 @@ void waitForConditionWithLogging(std::function<bool()>&& condition, NSTimeInterv
     }
 }
 
+RetainPtr<CGImageRef> convertToCGImage(PlatformImage *image)
+{
+#if PLATFORM(MAC)
+    return [image CGImageForProposedRect:nil context:nil hints:nil];
+#else
+    return image.CGImage;
+#endif
+}
+
 NSString * const TestPlugInClassNameParameter = @"TestPlugInPrincipalClassName";
 
 } // namespace Util

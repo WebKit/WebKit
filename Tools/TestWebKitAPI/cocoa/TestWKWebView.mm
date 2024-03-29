@@ -28,6 +28,7 @@
 
 #import "ClassMethodSwizzler.h"
 #import "InstanceMethodSwizzler.h"
+#import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
@@ -591,6 +592,20 @@ static WebEvent *unwrap(BEKeyEntry *event)
 {
     auto rect = [self elementRectFromSelector:selector];
     return CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+}
+
+- (CGImageRef)snapshotAfterScreenUpdates
+{
+    __block RetainPtr<CGImage> result;
+    __block bool done = false;
+    RetainPtr configuration = adoptNS([WKSnapshotConfiguration new]);
+    [configuration setAfterScreenUpdates:YES];
+    [self takeSnapshotWithConfiguration:configuration.get() completionHandler:^(TestWebKitAPI::Util::PlatformImage *snapshot, NSError *) {
+        result = TestWebKitAPI::Util::convertToCGImage(snapshot);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
 }
 
 @end

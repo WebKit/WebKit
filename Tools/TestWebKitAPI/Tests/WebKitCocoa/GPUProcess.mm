@@ -44,25 +44,6 @@
 
 namespace TestWebKitAPI {
 
-#if PLATFORM(MAC)
-typedef NSImage *PlatformImage;
-typedef NSWindow *PlatformWindow;
-
-static RetainPtr<CGImageRef> convertToCGImage(NSImage *image)
-{
-    return [image CGImageForProposedRect:nil context:nil hints:nil];
-}
-
-#else
-typedef UIImage *PlatformImage;
-typedef UIWindow *PlatformWindow;
-
-static RetainPtr<CGImageRef> convertToCGImage(UIImage *image)
-{
-    return image.CGImage;
-}
-#endif
-
 static NSInteger getPixelIndex(NSInteger x, NSInteger y, NSInteger width)
 {
     return (y * width + x) * 4;
@@ -508,7 +489,7 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
     NSInteger viewHeight = 400;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewWidth, viewHeight) configuration:configuration.get() addToWindow:NO]);
 
-    RetainPtr<PlatformWindow> window;
+    RetainPtr<Util::PlatformWindow> window;
     CGFloat backingScaleFactor;
 
 #if PLATFORM(MAC)
@@ -550,10 +531,10 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
 
     // Make sure a red square is painted.
     done = false;
-    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_TRUE(!error);
 
-        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
+        RetainPtr cgImage = Util::convertToCGImage(snapshotImage);
         RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
         NSInteger viewWidthInPixels = viewWidth * backingScaleFactor;
@@ -605,10 +586,10 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
 
     // Make sure a green square is painted.
     done = false;
-    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
         EXPECT_TRUE(!error);
 
-        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
+        RetainPtr cgImage = Util::convertToCGImage(snapshotImage);
         RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
         NSInteger viewWidthInPixels = viewWidth * backingScaleFactor;

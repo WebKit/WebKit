@@ -92,6 +92,7 @@ struct AutocorrectionContext {
 - (void)extendSelectionToEndOfParagraph;
 #endif // PLATFORM(IOS_FAMILY)
 
+@property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
 @property (nonatomic, readonly) NSUInteger gpuToWebProcessConnectionCount;
 @property (nonatomic, readonly) NSString *contentsAsString;
 @property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;

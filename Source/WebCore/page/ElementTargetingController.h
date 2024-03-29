@@ -25,9 +25,13 @@
 
 #pragma once
 
+#include "ElementIdentifier.h"
 #include "ElementTargetingTypes.h"
+#include "IntRect.h"
 #include "Region.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -35,7 +39,6 @@
 namespace WebCore {
 
 class Document;
-class Element;
 class Page;
 
 class ElementTargetingController : public CanMakeCheckedPtr {
@@ -45,13 +48,14 @@ public:
 
     WEBCORE_EXPORT Vector<TargetedElementInfo> findTargets(TargetedElementRequest&&);
 
-    WEBCORE_EXPORT bool adjustVisibility(const Vector<Ref<Element>>&);
+    WEBCORE_EXPORT bool adjustVisibility(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
     void adjustVisibilityInRepeatedlyTargetedRegions(Document&);
 
     void resetAdjustmentRegions();
 
 private:
     SingleThreadWeakPtr<Page> m_page;
+    HashMap<ElementIdentifier, IntRect> m_pendingAdjustmentClientRects;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;
     FloatSize m_viewportSizeForVisibilityAdjustment;

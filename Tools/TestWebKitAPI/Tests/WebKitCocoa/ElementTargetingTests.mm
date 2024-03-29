@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "CGImagePixelReader.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFrameInfoPrivate.h>
@@ -34,6 +35,7 @@
 
 @interface WKWebView (ElementTargeting)
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point;
+- (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets;
 @end
 
 @implementation WKWebView (ElementTargeting)
@@ -50,6 +52,18 @@
     }];
     TestWebKitAPI::Util::run(&done);
     return result.autorelease();
+}
+
+- (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets
+{
+    __block BOOL result = NO;
+    __block bool done = false;
+    [self _adjustVisibilityForTargetedElements:targets completionHandler:^(BOOL success) {
+        result = success;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
 }
 
 @end
@@ -151,6 +165,44 @@ TEST(ElementTargeting, NearbyOutOfFlowElements)
     EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.top-right"]);
     EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-left"]);
     EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-right"]);
+}
+
+TEST(ElementTargeting, AdjustVisibilityForUnparentedElement)
+{
+    auto webViewFrame = CGRectMake(0, 0, 800, 600);
+
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:webViewFrame configuration:configuration.get() addToWindow:NO]);
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:webViewFrame]);
+    [window addSubview:webView.get()];
+#else
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:webViewFrame]);
+#endif
+
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-2"];
+
+    auto setOverlaysParented = [&](bool visible) {
+        [webView objectByEvaluatingJavaScript:visible ? @"addOverlays()" : @"removeOverlays()"];
+    };
+
+    RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
+    setOverlaysParented(false);
+    [webView adjustVisibilityForTargets:elements.get()];
+    setOverlaysParented(true);
+
+    elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
+    setOverlaysParented(false);
+    [webView adjustVisibilityForTargets:elements.get()];
+    setOverlaysParented(true);
+
+    [webView waitForNextPresentationUpdate];
+    RetainPtr snapshot = [webView snapshotAfterScreenUpdates];
+    CGImagePixelReader pixelReader { snapshot.get() };
+
+    auto x = static_cast<unsigned>(100 * (pixelReader.width() / CGRectGetWidth(webViewFrame)));
+    auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
+    EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
 }
 
 } // namespace TestWebKitAPI
