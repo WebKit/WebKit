@@ -1185,15 +1185,19 @@ IntRect UnifiedPDFPlugin::availableContentsRect() const
 void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
 {
     auto layoutSize = availableContentsRect().size();
-    m_documentLayout.updateLayout(layoutSize, m_shouldUpdateAutoSizeScale);
+
+    auto autoSizeMode = m_didLayoutWithValidDocument ? m_shouldUpdateAutoSizeScale : ShouldUpdateAutoSizeScale::Yes;
+    m_documentLayout.updateLayout(layoutSize, autoSizeMode);
     updateScrollbars();
 
     // Do a second layout pass if the first one changed scrollbars.
     auto newLayoutSize = availableContentsRect().size();
     if (layoutSize != newLayoutSize) {
-        m_documentLayout.updateLayout(newLayoutSize, m_shouldUpdateAutoSizeScale);
+        m_documentLayout.updateLayout(newLayoutSize, autoSizeMode);
         updateScrollbars();
     }
+
+    m_didLayoutWithValidDocument = m_documentLayout.havePDFDocument();
 
     updateLayerHierarchy();
     updateLayerPositions();

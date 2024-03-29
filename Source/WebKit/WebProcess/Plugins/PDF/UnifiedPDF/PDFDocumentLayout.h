@@ -58,6 +58,7 @@ public:
     ~PDFDocumentLayout();
 
     void setPDFDocument(PDFDocument *document) { m_pdfDocument = document; }
+    bool havePDFDocument() const { return !!m_pdfDocument; }
 
     size_t pageCount() const;
 

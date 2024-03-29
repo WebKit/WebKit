@@ -509,6 +509,7 @@ private:
 
     bool m_didAttachScrollingTreeNode { false };
     bool m_didScrollToFragment { false };
+    bool m_didLayoutWithValidDocument { false };
 
     ShouldUpdateAutoSizeScale m_shouldUpdateAutoSizeScale { ShouldUpdateAutoSizeScale::Yes };
 
