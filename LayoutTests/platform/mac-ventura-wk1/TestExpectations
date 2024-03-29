@@ -3,3 +3,9 @@ webkit.org/b/267710 imported/w3c/web-platform-tests/accname/name/comp_host_langu
 # webkit.org/b/270915 [ Ventura WK1 ] 2x imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode are constant crashes
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html [ Skip ]
+
+# webkit.org/b/271916 [ Ventura WK1 Release ] 3x media/track/track and http/tests/media/hls/hls-we bvtt-flashing.html are constant timeout
+[ Release ] http/tests/media/hls/hls-webvtt-flashing.html [ Timeout ]
+[ Release ] media/track/track-in-band-cues-added-once.html [ Timeout ]
+[ Release ] media/track/track-in-band-layout.html [ Timeout ]
+[ Release ] media/track/track-paint-on-captions.html [ Timeout ]
