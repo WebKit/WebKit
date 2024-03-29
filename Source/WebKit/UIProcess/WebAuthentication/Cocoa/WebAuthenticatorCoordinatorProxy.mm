@@ -45,6 +45,7 @@
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/WebAuthenticationUtils.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/EnumTraits.h>
@@ -594,7 +595,7 @@ static inline ASPublicKeyCredentialResidentKeyPreference toASCResidentKeyPrefere
     return ASPublicKeyCredentialResidentKeyPreferenceNotPresent;
 }
 
-static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID, std::optional<WebCore::MediationRequirement> mediation)
+static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID, std::optional<WebCore::MediationRequirement> mediation, const WebCore::SecurityOriginData& callerOrigin)
 {
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyRegistration | ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration;
 
@@ -624,7 +625,10 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
 
     auto credentialCreationOptions = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
 
-    [credentialCreationOptions setChallenge:WebCore::toNSData(options.challenge).get()];
+    auto clientDataJson = WebCore::buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin.securityOrigin(), WebAuthn::Scope::SameOrigin);
+    RetainPtr nsClientDataJSON = adoptNS([[NSData alloc] initWithBytes:clientDataJson->data() length:clientDataJson->byteLength()]);
+    [credentialCreationOptions setClientDataJSON:nsClientDataJSON.get()];
+
     [credentialCreationOptions setRelyingPartyIdentifier:*options.rp.id];
     [credentialCreationOptions setUserName:options.user.name];
     [credentialCreationOptions setUserIdentifier:WebCore::toNSData(options.user.id).get()];
@@ -674,11 +678,15 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     return requestContext;
 }
 
-static inline RetainPtr<ASCPublicKeyCredentialAssertionOptions> configureAssertionOptions(const PublicKeyCredentialRequestOptions& options, ASCPublicKeyCredentialKind kind, const std::optional<SecurityOriginData>& parentOrigin, RetainPtr<NSMutableArray<ASCPublicKeyCredentialDescriptor *>> allowedCredentials, RetainPtr<NSString> userVerification)
+static inline RetainPtr<ASCPublicKeyCredentialAssertionOptions> configureAssertionOptions(const PublicKeyCredentialRequestOptions& options, ASCPublicKeyCredentialKind kind, const std::optional<SecurityOriginData>& parentOrigin, RetainPtr<NSMutableArray<ASCPublicKeyCredentialDescriptor *>> allowedCredentials, RetainPtr<NSString> userVerification, const WebCore::SecurityOriginData& callerOrigin)
 {
     auto assertionOptions = adoptNS(allocASCPublicKeyCredentialAssertionOptionsInstance());
-    RetainPtr challenge = WebCore::toNSData(options.challenge);
-    [assertionOptions initWithKind:kind relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()];
+    // AS API makes no difference between SameSite vs CrossOrigin
+    auto scope = parentOrigin ? WebAuthn::Scope::CrossOrigin : WebAuthn::Scope::SameOrigin;
+    auto topOrigin = parentOrigin ? parentOrigin->toString() : nullString();
+    auto clientDataJson = WebCore::buildClientDataJson(ClientDataType::Get, options.challenge, callerOrigin.securityOrigin(), scope, topOrigin);
+    RetainPtr nsClientDataJSON = adoptNS([[NSData alloc] initWithBytes:clientDataJson->data() length:clientDataJson->byteLength()]);
+    [assertionOptions initWithKind:kind relyingPartyIdentifier:options.rpId clientDataJSON:nsClientDataJSON.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()];
     if (options.extensions) {
         if ([assertionOptions respondsToSelector:@selector(setExtensionsCBOR:)])
             [assertionOptions setExtensionsCBOR:toNSData(options.extensions->toCBOR()).get()];
@@ -694,7 +702,7 @@ static inline RetainPtr<ASCPublicKeyCredentialAssertionOptions> configureAsserti
     return assertionOptions;
 }
 
-static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestContext(const PublicKeyCredentialRequestOptions& options, std::optional<WebCore::MediationRequirement> mediation, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID, std::optional<WebCore::SecurityOriginData>& parentOrigin)
+static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestContext(const PublicKeyCredentialRequestOptions& options, std::optional<WebCore::MediationRequirement> mediation, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID, std::optional<WebCore::SecurityOriginData>& parentOrigin, const WebCore::SecurityOriginData& callerOrigin)
 {
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyAssertion | ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion;
 
@@ -726,14 +734,14 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     setGlobalFrameIDForContext(requestContext, globalFrameID);
 
     if (requestTypes & ASCCredentialRequestTypePlatformPublicKeyAssertion) {
-        RetainPtr assertionOptions = configureAssertionOptions(options, ASCPublicKeyCredentialKindPlatform, parentOrigin, allowedCredentials, userVerification);
+        RetainPtr assertionOptions = configureAssertionOptions(options, ASCPublicKeyCredentialKindPlatform, parentOrigin, allowedCredentials, userVerification, callerOrigin);
         if (!assertionOptions)
             return nil;
         [requestContext setPlatformKeyCredentialAssertionOptions:assertionOptions.get()];
     }
 
     if (requestTypes & ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion) {
-        RetainPtr assertionOptions = configureAssertionOptions(options, ASCPublicKeyCredentialKindSecurityKey, parentOrigin, allowedCredentials, userVerification);
+        RetainPtr assertionOptions = configureAssertionOptions(options, ASCPublicKeyCredentialKindSecurityKey, parentOrigin, allowedCredentials, userVerification, callerOrigin);
         if (!assertionOptions)
             return nil;
         [requestContext setSecurityKeyCredentialAssertionOptions:assertionOptions.get()];
@@ -769,9 +777,9 @@ RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::context
 {
     RetainPtr<ASCCredentialRequestContext> result;
     WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        result = configureRegistrationRequestContext(options, requestData.globalFrameID, requestData.mediation);
+        result = configureRegistrationRequestContext(options, requestData.globalFrameID, requestData.mediation, requestData.frameInfo.securityOrigin);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
-        result = configurationAssertionRequestContext(options, requestData.mediation, requestData.globalFrameID, requestData.parentOrigin);
+        result = configurationAssertionRequestContext(options, requestData.mediation, requestData.globalFrameID, requestData.parentOrigin, requestData.frameInfo.securityOrigin);
     });
     return result;
 }
@@ -788,6 +796,7 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         ASCPlatformPublicKeyCredentialRegistration *registrationCredential = credential.get();
         response.rawId = toArrayBuffer(registrationCredential.credentialID);
         response.attestationObject = toArrayBuffer(registrationCredential.attestationObject);
+        response.clientDataJSON = toArrayBuffer(registrationCredential.rawClientDataJSON);
         rawAttachment = registrationCredential.attachment;
         if ([registrationCredential respondsToSelector:@selector(transports)])
             response.transports = toAuthenticatorTransports(registrationCredential.transports);
@@ -799,6 +808,7 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         ASCSecurityKeyPublicKeyCredentialRegistration *registrationCredential = credential.get();
         response.rawId = toArrayBuffer(registrationCredential.credentialID);
         response.attestationObject = toArrayBuffer(registrationCredential.attestationObject);
+        response.clientDataJSON = toArrayBuffer(registrationCredential.rawClientDataJSON);
         rawAttachment = registrationCredential.attachment;
         if ([registrationCredential respondsToSelector:@selector(transports)])
             response.transports = toAuthenticatorTransports(registrationCredential.transports);
@@ -812,6 +822,7 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         response.authenticatorData = toArrayBuffer(assertionCredential.authenticatorData);
         response.signature = toArrayBuffer(assertionCredential.signature);
         response.userHandle = toArrayBuffer(assertionCredential.userHandle);
+        response.clientDataJSON = toArrayBuffer(assertionCredential.rawClientDataJSON);
         rawAttachment = assertionCredential.attachment;
         if ([assertionCredential respondsToSelector:@selector(extensionOutputsCBOR)])
             response.extensionOutputs = toExtensionOutputs(assertionCredential.extensionOutputsCBOR);
@@ -823,6 +834,7 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         response.authenticatorData = toArrayBuffer(assertionCredential.authenticatorData);
         response.signature = toArrayBuffer(assertionCredential.signature);
         response.userHandle = toArrayBuffer(assertionCredential.userHandle);
+        response.clientDataJSON = toArrayBuffer(assertionCredential.rawClientDataJSON);
         rawAttachment = assertionCredential.attachment;
         if ([assertionCredential respondsToSelector:@selector(extensionOutputsCBOR)])
             response.extensionOutputs = toExtensionOutputs(assertionCredential.extensionOutputsCBOR);
