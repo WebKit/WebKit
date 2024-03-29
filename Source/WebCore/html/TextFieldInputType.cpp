@@ -500,9 +500,10 @@ void TextFieldInputType::createDataListDropdownIndicator()
 
 static String limitLength(const String& string, unsigned maxLength)
 {
-    unsigned newLength = std::min(maxLength, string.length());
-    if (newLength == string.length())
+    if (LIKELY(string.length() <= maxLength))
         return string;
+
+    unsigned newLength = maxLength;
     if (newLength > 0 && U16_IS_LEAD(string[newLength - 1]))
         --newLength;
     return string.left(newLength);
@@ -585,6 +586,9 @@ static bool isAutoFillButtonTypeChanged(const AtomString& attribute, AutoFillBut
 
 String TextFieldInputType::sanitizeValue(const String& proposedValue) const
 {
+    if (LIKELY(!containsHTMLLineBreak(proposedValue)))
+        return limitLength(proposedValue, HTMLInputElement::maxEffectiveLength);
+
     // Passing a lambda instead of a function name helps the compiler inline isHTMLLineBreak.
     auto proposedValueWithoutLineBreaks = proposedValue.removeCharacters([](auto character) {
         return isHTMLLineBreak(character);
