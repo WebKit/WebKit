@@ -5164,6 +5164,18 @@ CallCapture CaptureGetTranslatedShaderSourceANGLE(const State &glState,
     return CallCapture(angle::EntryPoint::GLGetTranslatedShaderSourceANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureBindMetalRasterizationRateMapANGLE(const State &glState,
+                                                      bool isCallValid,
+                                                      GLMTLRasterizationRateMapANGLE map)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("map", ParamType::TGLMTLRasterizationRateMapANGLE, map);
+
+    return CallCapture(angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE,
+                       std::move(paramBuffer));
+}
+
 CallCapture CaptureAcquireTexturesANGLE(const State &glState,
                                         bool isCallValid,
                                         GLuint numTextures,

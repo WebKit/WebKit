@@ -1188,6 +1188,10 @@ void DisplayMtl::initializeExtensions() const
             mNativeCaps.maxImageUnits = gl::IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES;
         }
     }
+
+    // GL_ANGLE_variable_rasterization_rate_metal
+    mNativeExtensions.variableRasterizationRateMetalANGLE = mFeatures.hasVariableRasterizationRate.enabled;
+
     // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
     // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."
     mHasFragmentMemoryBarriers = !supportsAppleGPUFamily(3);
@@ -1260,6 +1264,8 @@ void DisplayMtl::initializeFeatures()
                             supportsMetal2_1() && (isOSX || isCatalyst) && !isARM);
     ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
     ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
+    ANGLE_FEATURE_CONDITION((&mFeatures), hasVariableRasterizationRate,
+                            supportsVariableRasterizationRate());
     ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                             supportsEitherGPUFamily(3, 1));
 
@@ -1470,6 +1476,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
     return false;
 #endif
 }
+
+bool DisplayMtl::supportsVariableRasterizationRate() const
+{
+    if (@available(ios 13.0, macOS 10.15.4, macCatalyst 13.4, tvOS 16.0, *))
+    {
+        return [mMetalDevice supportsRasterizationRateMapWithLayerCount:1];
+    }
+
+    return false;
+}
+
 bool DisplayMtl::isAMD() const
 {
     return angle::IsAMD(mMetalDeviceVendorId);

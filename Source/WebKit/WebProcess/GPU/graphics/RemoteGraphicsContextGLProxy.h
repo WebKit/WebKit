@@ -71,7 +71,7 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
 
     // WebCore::GraphicsContextGL overrides.
-    GCEGLImage createAndBindEGLImage(GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint) override;
+    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint) override;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
@@ -369,6 +369,10 @@ public:
     void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t timeout) final;
 
     bool enableRequiredWebXRExtensions() final;
+    bool createFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) final;
+    void enableFoveation(GCGLuint) final;
+    void disableFoveation() final;
+
     // End of list used by generate-gpup-webgl script.
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);

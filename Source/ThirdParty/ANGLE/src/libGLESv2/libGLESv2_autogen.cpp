@@ -3940,6 +3940,12 @@ void GL_APIENTRY glGetTranslatedShaderSourceANGLE(GLuint shader,
     return GL_GetTranslatedShaderSourceANGLE(shader, bufSize, length, source);
 }
 
+// GL_ANGLE_variable_rasterization_rate_metal
+void GL_APIENTRY glBindMetalRasterizationRateMapANGLE(GLuint renderbuffer, GLMTLRasterizationRateMapANGLE map)
+{
+    return GL_BindMetalRasterizationRateMapANGLE(renderbuffer, map);
+}
+
 // GL_ANGLE_vulkan_image
 void GL_APIENTRY glAcquireTexturesANGLE(GLuint numTextures,
                                         const GLuint *textures,

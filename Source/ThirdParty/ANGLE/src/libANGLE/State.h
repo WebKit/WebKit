@@ -179,7 +179,8 @@ enum ExtendedDirtyBitType
     EXTENDED_DIRTY_BIT_SHADING_RATE,                  // QCOM_shading_rate
     EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED,              // ANGLE_logic_op
     EXTENDED_DIRTY_BIT_LOGIC_OP,                      // ANGLE_logic_op
-
+    EXTENDED_DIRTY_BIT_FOVEATED_RENDERING,            // QCOM_framebuffer_foveated/QCOM_texture_foveated
+    EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE,   // ANGLE_variable_rasterization_rate_metal
     EXTENDED_DIRTY_BIT_INVALID,
     EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,
 };
@@ -471,6 +472,15 @@ class PrivateState : angle::NonCopyable
     void setPixelLocalStorageActivePlanes(GLsizei n);
     GLsizei getPixelLocalStorageActivePlanes() const { return mPixelLocalStorageActivePlanes; }
 
+    // GL_ANGLE_variable_rasterization_rate_metal
+    void setVariableRasterizationRateEnabled(bool enabled);
+    bool isVariableRasterizationRateEnabled() const { return mVariableRasterizationRateEnabled; }
+    void setVariableRasterizationRateMap(GLMTLRasterizationRateMapANGLE map);
+    GLMTLRasterizationRateMapANGLE getVariableRasterizationRateMap() const
+    {
+        return mVariableRasterizationRateMap;
+    }
+
     // Line width state setter
     void setLineWidth(GLfloat width);
     float getLineWidth() const { return mLineWidth; }
@@ -687,6 +697,10 @@ class PrivateState : angle::NonCopyable
 
     // GL_ANGLE_shader_pixel_local_storage
     GLsizei mPixelLocalStorageActivePlanes;
+
+    // GL_ANGLE_variable_rasterization_rate_metal
+    bool mVariableRasterizationRateEnabled;
+    GLMTLRasterizationRateMapANGLE mVariableRasterizationRateMap;
 
     // GLES1 emulation: state specific to GLES1
     GLES1State mGLES1State;

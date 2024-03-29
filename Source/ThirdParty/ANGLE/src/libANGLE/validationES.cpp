@@ -1673,7 +1673,7 @@ bool ValidateBlitFramebufferParameters(const Context *context,
         return false;
     }
 
-    bool sameBounds = srcX0 == dstX0 && srcY0 == dstY0 && srcX1 == dstX1 && srcY1 == dstY1;
+    bool sameBounds = (srcX1 - srcX0) == (dstX1 - dstX0) && (srcY1 - srcY0) == (dstY1 - dstY0);
 
     if (mask & GL_COLOR_BUFFER_BIT)
     {

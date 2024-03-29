@@ -736,6 +736,10 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetTranslatedShaderSourceANGLE(GLuint shader,
                                                                 GLsizei *length,
                                                                 GLchar *source);
 
+// GL_ANGLE_variable_rasterization_rate_metal
+ANGLE_EXPORT void GL_APIENTRY
+GL_BindMetalRasterizationRateMapANGLE(GLuint framebuffer, GLMTLRasterizationRateMapANGLE map);
+
 // GL_ANGLE_vulkan_image
 ANGLE_EXPORT void GL_APIENTRY GL_AcquireTexturesANGLE(GLuint numTextures,
                                                       const GLuint *textures,

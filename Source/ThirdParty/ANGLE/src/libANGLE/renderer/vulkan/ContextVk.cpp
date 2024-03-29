@@ -5979,6 +5979,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                                 mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
                             }
                             break;
+                        case gl::state::EXTENDED_DIRTY_BIT_FOVEATED_RENDERING:
+                            // Noop until addition of backend support for QCOM foveated extensions
+                            break;
+                        case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
+                            // Noop until addition of backend support for
+                            // ANGLE_variable_rasterization_rate_metal extension
+                            break;
                         default:
                             UNREACHABLE();
                     }

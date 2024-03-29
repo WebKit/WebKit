@@ -109,7 +109,7 @@ protected:
 
     // Messages to be received.
     void ensureExtensionEnabled(String&&);
-    void createAndBindEGLImage(GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint, CompletionHandler<void(uint64_t)>&&);
+    void createAndBindEGLImage(GCGLenum, GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint, CompletionHandler<void(uint64_t)>&&);
     void reshape(int32_t width, int32_t height);
 #if PLATFORM(COCOA)
     virtual void prepareForDisplay(IPC::Semaphore&&, CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;

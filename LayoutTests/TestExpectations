@@ -7445,3 +7445,6 @@ imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html 
 
 # re-import css/css-align WPT failure
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=271874
+webkit.org/b/271874 webgl/2.0.0/conformance2/rendering/blitframebuffer-test.html [ Skip ]

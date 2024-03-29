@@ -28,6 +28,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <Metal/MTLDevice_Private.h>
+#import <Metal/MTLRasterizationRate_Private.h>
 #import <Metal/MTLTexture_Private.h>
 #import <Metal/MetalPrivate.h>
 
@@ -46,6 +47,12 @@ typedef struct __IOSurface *IOSurfaceRef;
 
 @interface _MTLDevice : NSObject
 - (void)_purgeDevice;
+@end
+
+@protocol MTLRasterizationRateMapDescriptorSPI
+@property (nonatomic) float minFactor;
+@property (nonatomic) MTLMutability mutability;
+@property (nonatomic) BOOL skipSampleValidationAndApplySampleAtTileGranularity;
 @end
 
 @interface MTLSharedEventHandle(Private)

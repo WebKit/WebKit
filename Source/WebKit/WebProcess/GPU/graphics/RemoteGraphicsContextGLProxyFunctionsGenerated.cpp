@@ -3130,6 +3130,41 @@ bool RemoteGraphicsContextGLProxy::enableRequiredWebXRExtensions()
     return returnValue;
 }
 
+bool RemoteGraphicsContextGLProxy::createFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight)
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateFoveation(physicalSizeLeft, physicalSizeRight, screenSize, std::span<const float>(reinterpret_cast<const float*>(horizontalSamplesLeft.data()), horizontalSamplesLeft.size()), std::span<const float>(reinterpret_cast<const float*>(verticalSamples.data()), verticalSamples.size()), std::span<const float>(reinterpret_cast<const float*>(horizontalSamplesRight.data()), horizontalSamplesRight.size())));
+    if (!sendResult.succeeded()) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return returnValue;
+}
+
+void RemoteGraphicsContextGLProxy::enableFoveation(GCGLuint framebuffer)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::EnableFoveation(framebuffer));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::disableFoveation()
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DisableFoveation());
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
 }
 
 #endif

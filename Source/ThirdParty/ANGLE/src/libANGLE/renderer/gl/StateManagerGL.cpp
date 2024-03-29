@@ -2467,6 +2467,12 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                         case gl::state::EXTENDED_DIRTY_BIT_SHADING_RATE:
                             // Unimplemented extensions.
                             break;
+                        case gl::state::EXTENDED_DIRTY_BIT_FOVEATED_RENDERING:
+                            // Unimplemented extensions.
+                            break;
+                        case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
+                            // Unimplemented extensions.
+                            break;
                         default:
                             UNREACHABLE();
                             break;

@@ -4639,6 +4639,36 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLE(GLuint shader,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
+// GL_ANGLE_variable_rasterization_rate_metal
+void GL_APIENTRY GL_BindMetalRasterizationRateMapANGLE(GLuint renderbuffer, GLMTLRasterizationRateMapANGLE map)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLBindMetalRasterizationRateMapANGLE, "context = %d, map = 0x%016" PRIxPTR "",
+          CID(context), (uintptr_t)map);
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(
+                  context->getPrivateState(), context->getMutableErrorSetForValidation(),
+                  angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE) &&
+              ValidateBindMetalRasterizationRateMapANGLE(
+                  context, angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE, map)));
+        if (isCallValid)
+        {
+            context->bindMetalRasterizationRateMap(renderbuffer, map);
+        }
+        ANGLE_CAPTURE_GL(BindMetalRasterizationRateMapANGLE, isCallValid, context, map);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
 // GL_ANGLE_vulkan_image
 void GL_APIENTRY GL_AcquireTexturesANGLE(GLuint numTextures,
                                          const GLuint *textures,

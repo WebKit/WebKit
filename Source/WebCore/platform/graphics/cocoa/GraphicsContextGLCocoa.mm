@@ -65,6 +65,8 @@ WTF_WEAK_LINK_FORCE_IMPORT(EGL_GetPlatformDisplayEXT);
 
 namespace WebCore {
 
+using GL = GraphicsContextGL;
+
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
 // and it always contains nullptr and nullptr is always written to it.
@@ -616,7 +618,7 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
     WebCore::destroyPbufferAndDetachIOSurface(m_displayObj, handle);
 }
 
-GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source, GCGLint layer)
+GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, EGLImageSource source, GCGLint layer)
 {
     EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(platformDisplay(), EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
@@ -665,7 +667,16 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLIma
         return nullptr;
 
     // Create an EGLImage out of the MTLTexture
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    UNUSED_VARIABLE(internalFormat);
     const EGLint attributes[] = { EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer, EGL_NONE };
+#else
+    const EGLint attributes[] = {
+        EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer,
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
+        EGL_NONE
+    };
+#endif
     auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), attributes);
     if (!eglImage)
         return nullptr;
@@ -677,6 +688,40 @@ GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLIma
         GL_EGLImageTargetTexture2DOES(target, eglImage);
 
     return eglImage;
+}
+
+bool GraphicsContextGLCocoa::createFoveation(IntSize physicalSizeLeft, IntSize physicalSizeRight, IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight)
+{
+#if ENABLE(WEBXR)
+    m_rasterizationRateMap[PlatformXR::Layout::Shared] = newRasterizationRateMap(m_displayObj, physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamplesLeft, horizontalSamplesRight);
+    return m_rasterizationRateMap[PlatformXR::Layout::Shared];
+#else
+    UNUSED_PARAM(physicalSizeLeft);
+    UNUSED_PARAM(physicalSizeRight);
+    UNUSED_PARAM(screenSize);
+    UNUSED_PARAM(horizontalSamplesLeft);
+    UNUSED_PARAM(verticalSamplesLeft);
+    UNUSED_PARAM(horizontalSamplesRight);
+    return false;
+#endif
+}
+
+void GraphicsContextGLCocoa::enableFoveation(GCGLuint fbo)
+{
+#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    GL_BindMetalRasterizationRateMapANGLE(fbo, m_rasterizationRateMap[PlatformXR::Layout::Shared].get());
+    GL_Enable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
+#else
+    UNUSED_PARAM(fbo);
+#endif
+}
+
+void GraphicsContextGLCocoa::disableFoveation()
+{
+#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    GL_Disable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
+    GL_BindMetalRasterizationRateMapANGLE(0, nullptr);
+#endif
 }
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
@@ -714,7 +759,11 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
         && enableExtension("GL_ANGLE_framebuffer_blit"_s)
         && enableExtension("GL_EXT_sRGB"_s)
         && enableExtension("GL_OES_EGL_image"_s)
-        && enableExtension("GL_OES_rgb8_rgba8"_s);
+        && enableExtension("GL_OES_rgb8_rgba8"_s)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+        && enableExtension("GL_ANGLE_variable_rasterization_rate_metal"_s)
+#endif
+        && enableExtension("GL_NV_framebuffer_blit"_s);
 }
 #endif
 

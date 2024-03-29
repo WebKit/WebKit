@@ -110,7 +110,6 @@ private:
     bool m_antialias { false };
     bool m_ignoreDepthValues { false };
     bool m_isCompositionEnabled { true };
-    bool m_viewportsDirty { true };
 };
 
 } // namespace WebCore

@@ -272,6 +272,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
     angle::Result memoryBarrier(const gl::Context *context, GLbitfield barriers) override;
     angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
 
+    angle::Result bindMetalRasterizationRateMap(gl::Context *context,
+                                                RenderbufferImpl *renderbuffer,
+                                                GLMTLRasterizationRateMapANGLE map) override;
+
     // override mtl::ErrorHandler
     void handleError(GLenum error,
                      const char *message,
@@ -555,6 +559,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
         DIRTY_BIT_RENDER_PIPELINE,
         DIRTY_BIT_UNIFORM_BUFFERS_BINDING,
         DIRTY_BIT_RASTERIZER_DISCARD,
+        DIRTY_BIT_VARIABLE_RASTERIZATION_RATE,
 
         DIRTY_BIT_INVALID,
         DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
@@ -646,6 +651,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     IncompleteTextureSet mIncompleteTextures;
     ProvokingVertexHelper mProvokingVertexHelper;
+
+    mtl::RasterizationRateMapRef mRasterizationRateMap;
+    id<MTLTexture> mRasterizationRateMapTexture;
 
     mtl::ContextDevice mContextDevice;
 };

@@ -731,4 +731,16 @@ GL_APICALL void GL_APIENTRY glLogicOpANGLE (GLenum);
 #endif
 #endif /* GL_ANGLE_logic_op */
 
+#ifndef GL_ANGLE_variable_rasterization_rate_metal
+#define GL_ANGLE_variable_rasterization_rate_metal 1
+
+#define GL_VARIABLE_RASTERIZATION_RATE_ANGLE            0x96BC
+#define GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE   0x96BD
+typedef void *GLMTLRasterizationRateMapANGLE;
+typedef void (GL_APIENTRYP PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC) (GLuint, GLMTLRasterizationRateMapANGLE);
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glBindMetalRasterizationRateMapANGLE(GLuint framebuffer, GLMTLRasterizationRateMapANGLE map);
+#endif
+#endif /* GL_ANGLE_variable_rasterization_rate_metal */
+
 #endif  // INCLUDE_GLES2_GL2EXT_ANGLE_H_

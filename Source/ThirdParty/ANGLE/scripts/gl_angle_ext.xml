@@ -9,6 +9,11 @@
         Includes data used to auto-generate ANGLE classes.
     </comment>
 
+    <!-- SECTION: GL type definitions. -->
+    <types>
+        <type>typedef void *<name>GLMTLRasterizationRateMapANGLE</name>;</type>
+    </types>
+
     <!-- SECTION: GL parameter class type definitions. -->
     <groups>
         <group name="CreateFlagMask">
@@ -1048,6 +1053,11 @@
             <param group="LogicOp"><ptype>GLenum</ptype> <name>opcode</name></param>
             <alias name="glLogicOp"/>
         </command>
+        <command>
+            <proto>void <name>glBindMetalRasterizationRateMapANGLE</name></proto>
+            <param><ptype>GLuint</ptype> <name>framebuffer</name></param>
+            <param><ptype>GLMTLRasterizationRateMapANGLE</ptype> <name>map</name></param>
+        </command>
     </commands>
 
     <!-- SECTION: ANGLE extension interface definitions -->
@@ -1444,6 +1454,11 @@
         <extension name="GL_ANGLE_shader_binary" supported='gles2'>
             <require>
                 <enum name="GL_SHADER_BINARY_ANGLE"/>
+        <extension name="GL_ANGLE_variable_rasterization_rate_metal" supported="gles2">
+            <require>
+                <enum name="GL_VARIABLE_RASTERIZATION_RATE_ANGLE"/>
+                <enum name="GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE"/>
+                <command name="glBindMetalRasterizationRateMapANGLE"/>
             </require>
         </extension>
     </extensions>
@@ -1623,5 +1638,10 @@
     </enums>
     <enums namespace="GL" start="0x0BF2" end="0x0BF2" vendor="ANGLE">
         <enum value="0x0BF2" name="GL_COLOR_LOGIC_OP_ANGLE"/>
+    </enums>
+
+    <enums namespace="GL" start="0x96BC" end="0x96BD" vendor="ANGLE">
+        <enum value="0x96BC" name="GL_VARIABLE_RASTERIZATION_RATE_ANGLE"/>
+        <enum value="0x96BD" name="GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE"/>
     </enums>
 </registry>

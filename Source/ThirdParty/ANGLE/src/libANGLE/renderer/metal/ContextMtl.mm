@@ -263,6 +263,8 @@ void ContextMtl::onDestroy(const gl::Context *context)
     mIncompleteTextures.onDestroy(context);
     mProvokingVertexHelper.onDestroy(this);
     mDummyXFBRenderTexture = nullptr;
+    mRasterizationRateMap.reset();
+    mRasterizationRateMapTexture = nil;
 
     mContextDevice.reset();
 }
@@ -1398,6 +1400,9 @@ void ContextMtl::updateExtendedState(const gl::State &glState,
             case gl::state::EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED:
                 mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
                 break;
+            case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
+                mDirtyBits.set(DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
+                break;
             default:
                 break;
         }
@@ -1646,6 +1651,36 @@ angle::Result ContextMtl::memoryBarrierByRegion(const gl::Context *context, GLbi
     // NOTE(hqle): ES 3.0
     UNIMPLEMENTED();
     return angle::Result::Stop;
+}
+
+angle::Result ContextMtl::bindMetalRasterizationRateMap(gl::Context *context,
+                                                        RenderbufferImpl *renderbuffer,
+                                                        GLMTLRasterizationRateMapANGLE map)
+{
+    id<MTLRasterizationRateMap> rateMap = (__bridge id<MTLRasterizationRateMap>)(map);
+    if (rateMap && rateMap.device != mContextDevice.get())
+    {
+        return angle::Result::Stop;
+    }
+
+    if (auto *metalRenderbuffer = static_cast<RenderbufferMtl*>(renderbuffer))
+    {
+        FramebufferAttachmentRenderTarget *rtOut = nullptr;
+        gl::ImageIndex index;
+        GLenum binding = 0;
+        if (angle::Result::Continue == metalRenderbuffer->getAttachmentRenderTarget(context, binding, index, 1, &rtOut))
+        {
+            if (auto *renderTargetMetal = static_cast<RenderTargetMtl*>(rtOut))
+            {
+                mtl::RenderPassAttachmentDesc desc;
+                renderTargetMetal->toRenderPassAttachmentDesc(&desc);
+                mRasterizationRateMapTexture = desc.hasImplicitMSTexture() ? desc.implicitMSTexture.get()->get() : desc.texture.get()->get();
+            }
+        }
+    }
+
+    mRasterizationRateMap = std::move(rateMap);
+    return angle::Result::Continue;
 }
 
 // override mtl::ErrorHandler
@@ -2622,7 +2657,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                 mRenderEncoder.setViewport(mViewport);
                 break;
             case DIRTY_BIT_SCISSOR:
-                mRenderEncoder.setScissorRect(mScissorRect);
+                mRenderEncoder.setScissorRect(mScissorRect, mRenderEncoder.rasterizationRateMapForPass(mRasterizationRateMap, mRasterizationRateMapTexture));
                 break;
             case DIRTY_BIT_DRAW_FRAMEBUFFER:
                 // Already handled.
@@ -2646,6 +2681,12 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                 break;
             case DIRTY_BIT_RASTERIZER_DISCARD:
                 // Already handled.
+                break;
+            case DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
+                if (getState().privateState().isVariableRasterizationRateEnabled())
+                {
+                    mRenderEncoder.setRasterizationRateMap(mRenderEncoder.rasterizationRateMapForPass(mRasterizationRateMap, mRasterizationRateMapTexture));
+                }
                 break;
             default:
                 UNREACHABLE();

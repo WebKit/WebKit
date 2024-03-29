@@ -377,6 +377,19 @@ bool GraphicsContextGLTextureMapperANGLE::unmakeCurrentImpl()
     return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 }
 
+bool GraphicsContextGLTextureMapperANGLE::createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
+{
+    return false;
+}
+
+void GraphicsContextGLTextureMapperANGLE::enableFoveation(GCGLuint)
+{
+}
+
+void GraphicsContextGLTextureMapperANGLE::disableFoveation()
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)

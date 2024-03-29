@@ -290,6 +290,17 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
     GL_EGLImageTargetTexture2DOES(textureTarget, result.iterator->value);
 }
 
+bool GraphicsContextGLGBM::createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
+{
+    return false;
+}
+void GraphicsContextGLGBM::enableFoveation(GCGLuint)
+{
+}
+void GraphicsContextGLGBM::disableFoveation()
+{
+}
+
 GraphicsContextGLGBM::Swapchain::Swapchain(GCGLDisplay platformDisplay)
     : platformDisplay(platformDisplay)
     , swapchain(adoptRef(new GBMBufferSwapchain(GBMBufferSwapchain::BufferSwapchainSize::Four)))

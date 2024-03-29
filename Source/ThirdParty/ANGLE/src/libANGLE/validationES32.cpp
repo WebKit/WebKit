@@ -450,6 +450,9 @@ bool ValidateGetPointerv(const Context *context,
             case GL_DEBUG_CALLBACK_FUNCTION:
             case GL_DEBUG_CALLBACK_USER_PARAM:
                 return true;
+            // GL_ANGLE_variable_rasterization_rate_metal
+            case GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE:
+                return context->getExtensions().variableRasterizationRateMetalANGLE;
             default:
                 ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidPointerQuery);
                 return false;
@@ -457,8 +460,15 @@ bool ValidateGetPointerv(const Context *context,
     }
     else
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES1or32Required);
-        return false;
+        switch (pname)
+        {
+            // GL_ANGLE_variable_rasterization_rate_metal
+            case GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE:
+                return context->getExtensions().variableRasterizationRateMetalANGLE;
+            default:
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES1or32Required);
+                return false;
+        }
     }
 }
 
