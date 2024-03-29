@@ -1,0 +1,9 @@
+
+This tests the ability of a video element with pointer-events: none to be placed atop a div with overflow: none, and that scrolling div retaining the ability to scroll.
+RUN(video.src = findMediaFile("video", "../../../media/content/test"))
+RUN(video.play())
+Promise resolved OK
+Simulate drag on video element
+EVENT(scroll)
+END OF TEST
+

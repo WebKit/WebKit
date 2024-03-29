@@ -4703,3 +4703,4 @@ webkit.org/b/259132 imported/w3c/web-platform-tests/html/semantics/disabled-elem
 webkit.org/b/266665 imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-button-event-dispatch.tentative.html [ Failure ]
 
 webkit.org/b/266669 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Pass Failure ]
+webkit.org/b/271764 fast/scrolling/ios/video-atop-overflow-scroll.html [ Pass Failure ]
