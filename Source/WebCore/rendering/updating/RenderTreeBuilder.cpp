@@ -272,12 +272,10 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(parent)) {
         svgBuilder().attach(*svgRoot, WTFMove(child), beforeChild);
         return;
     }
-#endif
 
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent)) {
         svgBuilder().attach(*svgRoot, WTFMove(child), beforeChild);
@@ -876,12 +874,10 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
         svgBuilder().updateAfterDescendants(*svgRoot);
         return; // A RenderSVGRoot cannot be a RenderBlock, RenderListItem or RenderBlockFlow: early return.
     }
-#endif
 
     // Do not early return here in any case. For example, RenderListItem derives
     // from RenderBlockFlow and indirectly from RenderBlock thus fulfilling all

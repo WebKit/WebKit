@@ -29,7 +29,6 @@
 #include "config.h"
 #include "RenderSVGRect.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGShapeInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGRectElement.h"
@@ -205,5 +204,3 @@ bool RenderSVGRect::isRenderingDisabled() const
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

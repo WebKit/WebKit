@@ -537,10 +537,8 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (!object->hasNonVisibleOverflow())
         return false;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (object->document().settings().layerBasedSVGEngineEnabled() && object->isSVGLayerAwareRenderer())
         return false;
-#endif
 
     if (object->style().width().isIntrinsicOrAuto() || object->style().height().isIntrinsicOrAuto() || object->style().height().isPercentOrCalculated())
         return false;
@@ -1370,11 +1368,9 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         if (renderBox->isInFlowPositioned())
             boxRect.move(renderBox->offsetForInFlowPosition());
         stream << " " << boxRect;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     } else if (auto* renderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(*this)) {
         ASSERT(!renderSVGModelObject->isInFlowPositioned());
         stream << " " << renderSVGModelObject->frameRectEquivalent();
-#endif
     } else if (auto* renderInline = dynamicDowncast<RenderInline>(*this); renderInline && isInFlowPositioned()) {
         FloatSize inlineOffset = renderInline->offsetForInFlowPosition();
         stream << "  (" << inlineOffset.width() << ", " << inlineOffset.height() << ")";
@@ -1416,14 +1412,12 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         }
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* renderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(*this)) {
         if (renderSVGModelObject->hasVisualOverflow()) {
             auto visualOverflow = renderSVGModelObject->visualOverflowRectEquivalent();
             stream << " (visual overflow " << visualOverflow.x() << "," << visualOverflow.y() << " " << visualOverflow.width() << "x" << visualOverflow.height() << ")";
         }
     }
-#endif
 
     if (auto* multicolSet = dynamicDowncast<RenderMultiColumnSet>(*this))
         stream << " (column count " << multicolSet->computedColumnCount() << ", size " << multicolSet->computedColumnWidth() << "x" << multicolSet->computedColumnHeight() << ", gap " << multicolSet->columnGap() << ")";

@@ -50,12 +50,10 @@ private:
     FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     LayoutPoint currentSVGLayoutLocation() const final { return { }; }
     void setCurrentSVGLayoutLocation(const LayoutPoint&) final { ASSERT_NOT_REACHED(); }
 
     bool needsHasSVGTransformFlags() const final;
-#endif
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const final;

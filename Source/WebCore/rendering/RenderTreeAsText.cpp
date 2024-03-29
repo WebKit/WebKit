@@ -217,15 +217,10 @@ static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
 
 inline bool shouldEnableSubpixelPrecisionForTextDump(const Document& document)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // If LBSE is activated and the document contains outermost <svg> elements, generate the text
     // representation with subpixel precision. It would be awkward to only see the SVG part of a
     // compound document with subpixel precision in the render tree dumps, and not the surrounding content.
     return document.settings().layerBasedSVGEngineEnabled() && document.mayHaveRenderedSVGRootElements();
-#else
-    UNUSED_PARAM(document);
-    return false;
-#endif
 }
 
 void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
@@ -267,12 +262,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         r = LayoutRect(cell->x(), cell->y() + cell->intrinsicPaddingBefore(), cell->width(), cell->height() - cell->intrinsicPaddingBefore() - cell->intrinsicPaddingAfter());
     } else if (auto* box = dynamicDowncast<RenderBox>(o))
         r = box->frameRect();
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     else if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(o)) {
         r = svgModelObject->frameRectEquivalent();
         ASSERT(r.location() == svgModelObject->currentSVGLayoutLocation());
     }
-#endif
     // FIXME: Convert layout test results to report sub-pixel values, in the meantime using enclosingIntRect
     // for consistency with old results.
     if (enableSubpixelPrecisionForTextDump)
@@ -280,7 +273,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     else
         ts << " " << enclosingIntRect(r);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(o)) {
         writeSVGPaintingFeatures(ts, *svgModelObject, behavior);
 
@@ -290,7 +282,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         writeDebugInfo(ts, o, behavior);
         return;
     }
-#endif
 
     if (!is<RenderText>(o)) {
         if (auto* control = dynamicDowncast<RenderFileUploadControl>(o))
@@ -510,15 +501,12 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
             }
         }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (auto* renderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(object)) {
             if (renderSVGModelObject->hasVisualOverflow()) {
                 auto visualOverflow = renderSVGModelObject->visualOverflowRectEquivalent();
                 ts << " (visual overflow " << visualOverflow.x() << "," << visualOverflow.y() << " " << visualOverflow.width() << "x" << visualOverflow.height() << ")";
             }
         }
-#endif
-
     }
 }
 
@@ -605,10 +593,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         }
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGModelObject>(o) || is<RenderSVGRoot>(o))
         writeResources(ts, o, behavior);
-#endif
 }
 
 enum LayerPaintPhase {

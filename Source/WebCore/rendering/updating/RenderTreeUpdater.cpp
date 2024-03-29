@@ -386,12 +386,10 @@ void RenderTreeUpdater::updateSVGRenderer(Element& element)
     if (!renderer)
         return;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (element.document().settings().layerBasedSVGEngineEnabled()) {
         renderer->setNeedsLayout();
         return;
     }
-#endif
 
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }

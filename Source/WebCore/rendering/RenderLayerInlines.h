@@ -59,23 +59,19 @@ inline bool RenderLayer::hasNonOpacityTransparency() const
     if (hasBlendMode() || isolatesBlending())
         return true;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (!renderer().document().settings().layerBasedSVGEngineEnabled())
         return false;
 
     // SVG clip-paths may use clipping masks, if so, flag this layer as transparent.
     if (auto* svgClipper = renderer().svgClipperResourceFromStyle(); svgClipper && !svgClipper->shouldApplyPathClipping())
         return true;
-#endif
 
     return false;
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 inline RenderSVGHiddenContainer* RenderLayer::enclosingSVGHiddenOrResourceContainer() const
 {
     return m_enclosingSVGHiddenOrResourceContainer.get();
 }
-#endif
 
 } // namespace WebCore

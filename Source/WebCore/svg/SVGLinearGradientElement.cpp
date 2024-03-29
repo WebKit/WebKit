@@ -101,10 +101,8 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
 RenderPtr<RenderElement> SVGLinearGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceLinearGradient>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGResourceLinearGradient>(*this, WTFMove(style));
 }
 

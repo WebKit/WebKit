@@ -23,8 +23,6 @@
 #include "RenderSVGResourceContainer.h"
 #include "SVGMarkerTypes.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 namespace WebCore {
 
 class GraphicsContext;
@@ -78,5 +76,3 @@ private:
 }
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceMarker, isRenderSVGResourceMarker())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

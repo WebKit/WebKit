@@ -32,7 +32,6 @@
 #include "config.h"
 #include "RenderSVGModelObject.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderElementInlines.h"
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
@@ -293,5 +292,3 @@ void RenderSVGModelObject::paintSVGOutline(PaintInfo& paintInfo, const LayoutPoi
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

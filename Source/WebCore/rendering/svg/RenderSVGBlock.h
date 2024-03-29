@@ -38,9 +38,7 @@ protected:
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;
 
     void updateFromStyle() override;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     bool needsHasSVGTransformFlags() const override;
-#endif
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
@@ -49,12 +47,10 @@ private:
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     LayoutPoint currentSVGLayoutLocation() const final { return location(); }
     void setCurrentSVGLayoutLocation(const LayoutPoint& location) final { setLocation(location); }
 
     FloatRect referenceBoxRect(CSSBoxType) const final;
-#endif
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const final;
@@ -64,9 +60,7 @@ private:
 
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const final;
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const final;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
-#endif
 };
 
 } // namespace WebCore

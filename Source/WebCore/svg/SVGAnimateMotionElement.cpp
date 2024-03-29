@@ -253,7 +253,6 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         return;
 
     auto updateTargetElement = [](SVGElement& element) {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (element.document().settings().layerBasedSVGEngineEnabled()) {
             if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(element.renderer()))
                 layerRenderer->updateHasSVGTransformFlags();
@@ -261,7 +260,6 @@ void SVGAnimateMotionElement::applyResultsToTarget()
             element.updateSVGRendererForElementChange();
             return;
         }
-#endif
         if (CheckedPtr renderer = element.renderer())
             renderer->setNeedsTransformUpdate();
         element.updateSVGRendererForElementChange();

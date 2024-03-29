@@ -21,8 +21,6 @@
 #include "config.h"
 #include "RenderSVGResourceMasker.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "Element.h"
 #include "ElementIterator.h"
 #include "FloatPoint.h"
@@ -177,5 +175,3 @@ FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& objec
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

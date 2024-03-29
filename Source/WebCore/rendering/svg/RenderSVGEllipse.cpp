@@ -28,7 +28,6 @@
 #include "config.h"
 #include "RenderSVGEllipse.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGShapeInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -172,5 +171,3 @@ bool RenderSVGEllipse::isRenderingDisabled() const
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

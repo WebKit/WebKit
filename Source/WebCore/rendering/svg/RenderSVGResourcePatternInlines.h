@@ -25,7 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGResourcePattern.h"
 #include "SVGPatternElement.h"
 
@@ -47,5 +46,3 @@ static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attr
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

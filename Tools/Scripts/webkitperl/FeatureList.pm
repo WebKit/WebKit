@@ -99,7 +99,6 @@ my (
     $iosTouchEventsSupport,
     $jitSupport,
     $jpegXLSupport,
-    $layerBasedSVGEngineSupport,
     $llvmProfileGenerationSupport,
     $legacyCustomProtocolManagerSupport,
     $legacyEncryptedMediaSupport,
@@ -292,9 +291,6 @@ my @features = (
 
     { option => "jit", desc => "Toggle JustInTime JavaScript support",
       define => "ENABLE_JIT", value => \$jitSupport },
-
-    { option => "layer-based-svg-engine", desc => "Toggle Layer Based SVG Engine support",
-      define => "ENABLE_LAYER_BASED_SVG_ENGINE", value => \$layerBasedSVGEngineSupport },
 
     { option => "llvm-profile-generation", desc => "Include LLVM's instrumentation to generate profiles for PGO",
       define => "ENABLE_LLVM_PROFILE_GENERATION", value => \$llvmProfileGenerationSupport },

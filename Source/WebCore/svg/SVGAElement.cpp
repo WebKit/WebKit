@@ -109,10 +109,9 @@ RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style,
     if (svgParent && svgParent->isTextContent())
         return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTFMove(style));
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
-#endif
+
     return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 

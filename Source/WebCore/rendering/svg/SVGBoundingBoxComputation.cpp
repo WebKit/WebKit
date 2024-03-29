@@ -20,7 +20,6 @@
 #include "config.h"
 #include "SVGBoundingBoxComputation.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 
 #include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
@@ -279,5 +278,3 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
 }
 
 }
-
-#endif

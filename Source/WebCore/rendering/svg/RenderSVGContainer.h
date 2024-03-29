@@ -23,7 +23,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGModelObject.h"
 #include "SVGBoundingBoxComputation.h"
 
@@ -74,4 +73,3 @@ protected:
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGContainer, isRenderSVGContainer())
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

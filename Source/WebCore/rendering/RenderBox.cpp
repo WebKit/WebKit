@@ -1549,10 +1549,8 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
     auto hitTestLocationInLocalCoordinates = hitTestLocation.point() - offsetFromHitTestRoot;
 
     auto hitsClipContent = [&](Element& element) -> bool {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (CheckedPtr clipper = dynamicDowncast<RenderSVGResourceClipper>(element.renderer()))
             return clipper->hitTestClipContent( FloatRect { borderBoxRect() }, hitTestLocationInLocalCoordinates);
-#endif
         CheckedRef clipper = downcast<LegacyRenderSVGResourceClipper>(*element.renderer());
         return clipper->hitTestClipContent( FloatRect { borderBoxRect() }, FloatPoint { hitTestLocationInLocalCoordinates });
     };
@@ -1959,12 +1957,10 @@ void RenderBox::paintClippingMask(PaintInfo& paintInfo, const LayoutPoint& paint
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled() && style().clipPath() && style().clipPath()->type() == PathOperation::Reference) {
         paintSVGClippingMask(paintInfo, paintRect);
         return;
     }
-#endif
 
     paintInfo.context().fillRect(snappedIntRect(paintRect), Color::black);
 }

@@ -421,8 +421,6 @@ void SettingsBase::mockCaptureDevicesEnabledChanged()
 
 #endif
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 void SettingsBase::layerBasedSVGEngineEnabledChanged()
 {
     if (!m_page)
@@ -444,8 +442,6 @@ void SettingsBase::layerBasedSVGEngineEnabledChanged()
         document->scheduleFullStyleRebuild();
     }
 }
-
-#endif
 
 void SettingsBase::userStyleSheetLocationChanged()
 {

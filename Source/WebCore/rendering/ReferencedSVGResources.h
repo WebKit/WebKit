@@ -70,13 +70,11 @@ public:
 
     static LegacyRenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // LBSE: All element based.
     static RefPtr<SVGClipPathElement> referencedClipPathElement(TreeScope&, const ReferencePathOperation&);
     static RefPtr<SVGMarkerElement> referencedMarkerElement(TreeScope&, const String&);
     static RefPtr<SVGMaskElement> referencedMaskElement(TreeScope&, const StyleImage&);
     static RefPtr<SVGElement> referencedPaintServerElement(TreeScope&, const String&);
-#endif
 
 private:
     static RefPtr<SVGElement> elementForResourceID(TreeScope&, const AtomString& resourceID, const SVGQualifiedName& tagName);

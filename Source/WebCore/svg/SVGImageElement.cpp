@@ -126,10 +126,9 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
         if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
             updateRelativeLengthsInformation();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
             if (is<RenderSVGImage>(renderer()))
                 updateSVGRendererForElementChange();
-#endif
+
             if (CheckedPtr image = dynamicDowncast<LegacyRenderSVGImage>(renderer())) {
                 if (!image->updateImageViewport())
                     return;
@@ -154,10 +153,8 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGImageElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGImage>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGImage>(*this, WTFMove(style));
 }
 
@@ -170,12 +167,10 @@ void SVGImageElement::didAttachRenderers()
 {
     SVGGraphicsElement::didAttachRenderers();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (CheckedPtr image = dynamicDowncast<RenderSVGImage>(renderer()); image && !image->imageResource().cachedImage()) {
         image->checkedImageResource()->setCachedImage(m_imageLoader.protectedImage());
         return;
     }
-#endif
 
     if (CheckedPtr image = dynamicDowncast<LegacyRenderSVGImage>(renderer()); image && !image->imageResource().cachedImage()) {
         image->checkedImageResource()->setCachedImage(m_imageLoader.protectedImage());

@@ -23,7 +23,6 @@
 #include "config.h"
 #include "RenderSVGForeignObject.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
@@ -137,5 +136,3 @@ void RenderSVGForeignObject::applyTransform(TransformationMatrix& transform, con
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

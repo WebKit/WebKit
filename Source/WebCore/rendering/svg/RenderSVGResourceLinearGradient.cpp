@@ -22,8 +22,6 @@
 #include "config.h"
 #include "RenderSVGResourceLinearGradient.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceLinearGradientInlines.h"
 #include "SVGElementTypeHelpers.h"
@@ -73,4 +71,3 @@ RefPtr<Gradient> RenderSVGResourceLinearGradient::createGradient(const RenderSty
 
 }
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

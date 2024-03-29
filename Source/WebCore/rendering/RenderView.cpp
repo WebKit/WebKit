@@ -376,10 +376,8 @@ static inline bool rendererObscuresBackground(const RenderElement& rootElement)
     if (rootElement.isComposited())
         return false;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (rootElement.hasClipPath() && rootElement.isRenderSVGRoot())
         return false;
-#endif
 
     auto* rendererForBackground = rootElement.view().rendererForRootBackground();
     if (!rendererForBackground)
@@ -932,10 +930,8 @@ static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
 {
     if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
         return svgSvgElement;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderElement))
         return &svgRoot->svgSVGElement();
-#endif
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderElement))
         return &svgRoot->svgSVGElement();
 

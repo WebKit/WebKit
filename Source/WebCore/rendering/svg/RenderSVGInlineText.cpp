@@ -211,12 +211,10 @@ void RenderSVGInlineText::updateScaledFont()
 
 float RenderSVGInlineText::computeScalingFactorForRenderer(const RenderObject& renderer)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
         if (const auto* layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
             return SVGLayerTransformComputation(*layerRenderer).calculateScreenFontSizeScalingFactor();
     }
-#endif
     return SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
 }
 

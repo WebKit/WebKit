@@ -29,8 +29,6 @@
 #include "config.h"
 #include "RenderSVGPath.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "Gradient.h"
 #include "ReferencedSVGResources.h"
 #include "RenderLayer.h"
@@ -295,5 +293,3 @@ bool RenderSVGPath::isRenderingDisabled() const
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

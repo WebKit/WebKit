@@ -25,7 +25,6 @@
 #include "config.h"
 #include "RenderSVGContainer.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -195,4 +194,3 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
 }
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

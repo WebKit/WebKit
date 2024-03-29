@@ -24,7 +24,6 @@
 #include "config.h"
 #include "RenderSVGResourceClipper.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "ElementIterator.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -261,4 +260,3 @@ void RenderSVGResourceClipper::styleDidChange(StyleDifference diff, const Render
 
 }
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

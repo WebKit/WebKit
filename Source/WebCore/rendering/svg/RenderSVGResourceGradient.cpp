@@ -20,7 +20,6 @@
 #include "config.h"
 #include "RenderSVGResourceGradient.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceGradientInlines.h"
 #include "RenderSVGShape.h"
@@ -122,5 +121,3 @@ bool RenderSVGResourceGradient::prepareStrokeOperation(GraphicsContext& context,
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

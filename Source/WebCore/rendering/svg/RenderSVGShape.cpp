@@ -30,7 +30,6 @@
 #include "config.h"
 #include "RenderSVGShape.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
@@ -429,5 +428,3 @@ void RenderSVGShape::applyTransform(TransformationMatrix& transform, const Rende
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

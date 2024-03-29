@@ -61,12 +61,10 @@ void RenderSVGGradientStop::styleDidChange(StyleDifference diff, const RenderSty
     if (!renderer)
         return;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* gradientRenderer = dynamicDowncast<RenderSVGResourceGradient>(renderer.get())) {
         gradientRenderer->invalidateGradient();
         return;
     }
-#endif
 
     downcast<LegacyRenderSVGResourceContainer>(*renderer).removeAllClientsFromCache();
 }

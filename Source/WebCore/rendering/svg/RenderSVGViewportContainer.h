@@ -23,7 +23,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGContainer.h"
 #include "RenderSVGRoot.h"
 
@@ -70,4 +69,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGViewportContainer, isRenderSVGViewportContainer())
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

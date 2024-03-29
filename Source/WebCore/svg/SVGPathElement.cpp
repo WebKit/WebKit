@@ -136,10 +136,9 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         invalidateMPathDependencies();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (CheckedPtr path = dynamicDowncast<RenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
-#endif
+
         if (CheckedPtr path = dynamicDowncast<LegacyRenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
 
@@ -201,22 +200,19 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     // FIXME: If the path is null it means we're calling getBBox() before laying out this element,
     // which is an error.
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (CheckedPtr path = dynamicDowncast<RenderSVGPath>(renderer()); path && path->hasPath())
-            return path->path().boundingRect();
-#endif
-        if (CheckedPtr path = dynamicDowncast<LegacyRenderSVGPath>(renderer()); path && path->hasPath())
-            return path->path().boundingRect();
+    if (CheckedPtr path = dynamicDowncast<RenderSVGPath>(renderer()); path && path->hasPath())
+        return path->path().boundingRect();
+
+    if (CheckedPtr path = dynamicDowncast<LegacyRenderSVGPath>(renderer()); path && path->hasPath())
+        return path->path().boundingRect();
 
     return { };
 }
 
 RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
 }
 

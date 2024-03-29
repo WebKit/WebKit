@@ -1669,10 +1669,8 @@ inline bool shouldObtainBoundsFromBoxModel(const Element* element)
     if (is<RenderBoxModelObject>(element->renderer()))
         return true;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGModelObject>(element->renderer()))
         return true;
-#endif
 
     return false;
 }

@@ -427,9 +427,7 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
 
 bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const FloatPoint& point)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     RELEASE_ASSERT(!renderer.document().settings().layerBasedSVGEngineEnabled());
-#endif
 
     RefPtr clipPathOperation = renderer.style().clipPath();
     if (is<ShapePathOperation>(clipPathOperation) || is<BoxPathOperation>(clipPathOperation))
@@ -476,10 +474,8 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
             if (float pathLength = geometryElement->pathLength()) {
                 if (auto* shape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
                     scaleFactor = shape->getTotalLength() / pathLength;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
                 else if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer))
                     scaleFactor = shape->getTotalLength() / pathLength;
-#endif
             }
         }
         
@@ -601,16 +597,11 @@ FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderEl
         return calculateApproximateScalingStrokeBoundingBox(renderer, renderer.objectBoundingBox());
     };
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* shape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
         return shape->adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Fast, calculate(*shape));
 
     const auto& shape = downcast<RenderSVGShape>(renderer);
     return shape.adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation::Fast, calculate(shape));
-#else
-    const auto& shape = downcast<LegacyRenderSVGShape>(renderer);
-    return shape.adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation::Fast, calculate(shape));
-#endif
 }
 
 }

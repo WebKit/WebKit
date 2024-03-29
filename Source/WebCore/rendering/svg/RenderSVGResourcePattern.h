@@ -19,7 +19,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "AffineTransform.h"
 #include "PatternAttributes.h"
 #include "RenderSVGResourcePaintServer.h"
@@ -62,5 +61,3 @@ protected:
 }
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourcePattern, isRenderSVGResourcePattern())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

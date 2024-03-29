@@ -57,10 +57,8 @@ float SVGGeometryElement::getTotalLength() const
     if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
         return renderSVGShape->getTotalLength();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (CheckedPtr renderSVGShape = dynamicDowncast<RenderSVGShape>(renderer))
         return renderSVGShape->getTotalLength();
-#endif
 
     ASSERT_NOT_REACHED();
     return 0;
@@ -82,10 +80,8 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
     if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
         return SVGPoint::create(renderSVGShape->getPointAtLength(distance));
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (CheckedPtr renderSVGShape = dynamicDowncast<RenderSVGShape>(renderer))
         return SVGPoint::create(renderSVGShape->getPointAtLength(distance));
-#endif
 
     ASSERT_NOT_REACHED();
     return Exception { ExceptionCode::InvalidStateError };
@@ -103,10 +99,8 @@ bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
     if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
         return renderSVGShape->isPointInFill(point);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (CheckedPtr renderSVGShape = dynamicDowncast<RenderSVGShape>(renderer))
         return renderSVGShape->isPointInFill(point);
-#endif
 
     ASSERT_NOT_REACHED();
     return false;
@@ -124,10 +118,8 @@ bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
     if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
         return renderSVGShape->isPointInStroke(point);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (CheckedPtr renderSVGShape = dynamicDowncast<RenderSVGShape>(renderer))
         return renderSVGShape->isPointInStroke(point);
-#endif
 
     ASSERT_NOT_REACHED();
     return false;

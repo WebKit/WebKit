@@ -20,7 +20,6 @@
 #include "config.h"
 #include "RenderSVGResourcePattern.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "ElementChildIteratorInlines.h"
 #include "RenderLayer.h"
 #include "RenderSVGModelObjectInlines.h"
@@ -219,5 +218,3 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttri
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

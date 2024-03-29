@@ -56,9 +56,7 @@ struct ExpectedSVGInlineTextBoxSize : public LegacyInlineTextBox {
     float float1;
     uint32_t bitfields : 5;
     void* pointer;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     SVGPaintServerOrColor paintServerOrColor;
-#endif
     Vector<SVGTextFragment> vector;
 };
 
@@ -328,7 +326,6 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     ASSERT(!m_legacyPaintingResource);
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 bool SVGInlineTextBox::acquirePaintingResource(SVGPaintServerHandling& paintServerHandling, float scalingFactor, RenderBoxModelObject& renderer, const RenderStyle& style)
 {
     ASSERT(scalingFactor);
@@ -381,7 +378,6 @@ void SVGInlineTextBox::releasePaintingResource(SVGPaintServerHandling& paintServ
 
     context.restore();
 }
-#endif
 
 bool SVGInlineTextBox::acquireLegacyPaintingResource(GraphicsContext*& context, float scalingFactor, RenderBoxModelObject& renderer, const RenderStyle& style)
 {
@@ -588,7 +584,6 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, Option
     Path path;
     path.addRect(FloatRect(decorationOrigin, FloatSize(width, thickness)));
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (decorationRenderer.document().settings().layerBasedSVGEngineEnabled()) {
         SVGPaintServerHandling paintServerHandling { context };
         if (acquirePaintingResource(paintServerHandling, scalingFactor, decorationRenderer, decorationStyle)) {
@@ -601,7 +596,6 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, Option
         }
         return;
     }
-#endif
 
     GraphicsContext* usedContext = &context;
     if (acquireLegacyPaintingResource(usedContext, scalingFactor, decorationRenderer, decorationStyle))
@@ -627,27 +621,19 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
     FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.metricsOfPrimaryFont().ascent()), textSize);
 
     GraphicsContext* usedContext = &context;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     SVGPaintServerHandling paintServerHandling { context };
-#endif
 
     auto prepareGraphicsContext = [&]() -> bool {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (renderer().document().settings().layerBasedSVGEngineEnabled())
             return acquirePaintingResource(paintServerHandling, scalingFactor, parent()->renderer(), style);
-#endif
-
         return acquireLegacyPaintingResource(usedContext, scalingFactor, parent()->renderer(), style);
     };
 
     auto restoreGraphicsContext = [&]() {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
             releasePaintingResource(paintServerHandling);
             return;
         }
-#endif
-
         releaseLegacyPaintingResource(usedContext, /* path */nullptr);
     };
 
@@ -656,7 +642,6 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
             break;
 
         {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
             // Optimized code path to support gradient/pattern fill/stroke on text without using temporary ImageBuffers / masking.
             RefPtr<Gradient> gradient;
             RefPtr<Pattern> pattern;
@@ -690,7 +675,6 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
                     usedContext->beginTransparencyLayer(1);
                 }
             }
-#endif
 
             ShadowApplier shadowApplier(style, *usedContext, shadow, nullptr, shadowRect);
 
@@ -703,10 +687,8 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
             if (!shadowApplier.didSaveContext())
                 usedContext->restore();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
             if (gradient || pattern)
                 usedContext->endTransparencyLayer();
-#endif
         }
 
         restoreGraphicsContext();

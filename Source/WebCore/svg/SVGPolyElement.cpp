@@ -59,10 +59,9 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::pointsAttr);
         InstanceInvalidationGuard guard(*this);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (CheckedPtr path = dynamicDowncast<RenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
-#endif
+
         if (CheckedPtr path = dynamicDowncast<LegacyRenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
 
@@ -77,12 +76,10 @@ size_t SVGPolyElement::approximateMemoryCost() const
 {
     size_t pointsCost = m_points->baseVal()->items().size() * sizeof(FloatPoint);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
         // We need to account for the memory which is allocated by the RenderSVGPath::m_path.
         return sizeof(*this) + (renderer() ? pointsCost * 2 + sizeof(RenderSVGPath) : pointsCost);
     }
-#endif
 
     // We need to account for the memory which is allocated by the LegacyRenderSVGPath::m_path.
     return sizeof(*this) + (renderer() ? pointsCost * 2 + sizeof(LegacyRenderSVGPath) : pointsCost);

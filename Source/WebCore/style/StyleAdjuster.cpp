@@ -504,7 +504,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (style.hasAutoSpecifiedZIndex())
             return true;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         // SVG2: Contrary to the rules in CSS 2.1, the z-index property applies to all SVG elements regardless
         // of the value of the position property, with one exception: as for boxes in CSS 2.1, outer ‘svg’ elements
         // must be positioned for z-index to apply to them.
@@ -514,9 +513,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
             return false;
         }
-#else
-        UNUSED_PARAM(element);
-#endif
 
         // Make sure our z-index value is only applied if the object is positioned.
         return style.position() == PositionType::Static && !parentBoxStyle.isDisplayFlexibleOrGridBox();
@@ -539,14 +535,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (style.hasTransformRelatedProperty())
             return true;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (element && element->document().settings().layerBasedSVGEngineEnabled()) {
             if (auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(element); graphicsElement && graphicsElement->hasTransformRelatedAttributes())
                 return true;
         }
-#else
-        UNUSED_PARAM(element);
-#endif
 
         return false;
     };
@@ -836,7 +828,6 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
     if (!svgElement.isOutermostSVGSVGElement())
         style.setPosition(RenderStyle::initialPosition());
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // SVG2: A new stacking context must be established at an SVG element for its descendants if:
     // - it is the root element
     // - the "z-index" property applies to the element and its computed value is an integer
@@ -867,7 +858,6 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
             || style.hasPositionedMask())
         style.setUsedZIndex(0);
     }
-#endif
 
     // (Legacy)RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
     // not be scaled again.

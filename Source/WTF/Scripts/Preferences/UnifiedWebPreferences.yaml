@@ -3547,7 +3547,6 @@ LayerBasedSVGEngineEnabled:
   status: unstable
   humanReadableName: "Layer-based SVG Engine (LBSE)"
   humanReadableDescription: "Enable next-generation layer-based SVG Engine (LBSE)"
-  condition: ENABLE(LAYER_BASED_SVG_ENGINE)
   webcoreOnChange: layerBasedSVGEngineEnabledChanged
   defaultValue:
     WebCore:

@@ -24,7 +24,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderImageResource.h"
 #include "RenderSVGModelObject.h"
 #include "SVGBoundingBoxComputation.h"
@@ -89,5 +88,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGImage, isRenderSVGImage())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

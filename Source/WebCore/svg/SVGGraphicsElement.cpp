@@ -84,14 +84,12 @@ Ref<const SVGTransformList> SVGGraphicsElement::protectedTransform() const
 
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (m_supplementalTransform)
             return *m_supplementalTransform * transform().concatenate();
         return protectedTransform()->concatenate();
     }
-#endif
 
     AffineTransform matrix;
 
@@ -152,13 +150,11 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::transformAttr);
         InstanceInvalidationGuard guard(*this);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (document().settings().layerBasedSVGEngineEnabled()) {
             if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()))
                 layerRenderer->repaintOrRelayoutAfterSVGTransformChange();
             return;
         }
-#endif
 
         if (CheckedPtr renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
@@ -192,30 +188,24 @@ FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 
 RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGPath>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
 }
 
 void SVGGraphicsElement::didAttachRenderers()
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (CheckedPtr svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()); svgRenderer && lineageOfType<RenderSVGHiddenContainer>(*svgRenderer).first()) {
             if (CheckedPtr layer = svgRenderer->layer())
                 layer->dirtyVisibleContentStatus();
         }
     }
-#endif
 }
 
 Path SVGGraphicsElement::toClipPath()
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     RELEASE_ASSERT(!document().settings().layerBasedSVGEngineEnabled());
-#endif
 
     Path path = pathFromGraphicsElement(*this);
     // FIXME: How do we know the element has done a layout?

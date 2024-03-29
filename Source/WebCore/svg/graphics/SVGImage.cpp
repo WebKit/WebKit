@@ -138,12 +138,10 @@ void SVGImage::setContainerSize(const FloatSize& size)
         return;
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (CheckedPtr renderer = dynamicDowncast<RenderSVGRoot>(rootElement->renderer())) {
         renderer->setContainerSize(IntSize(size));
         return;
     }
-#endif
 }
 
 IntSize SVGImage::containerSize() const
@@ -157,10 +155,8 @@ IntSize SVGImage::containerSize() const
         if (CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGRoot>(rootElement->renderer()))
             return renderer->containerSize();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (CheckedPtr renderer = dynamicDowncast<RenderSVGRoot>(rootElement->renderer()))
             return renderer->containerSize();
-#endif
 
         return { };
     };
@@ -484,10 +480,9 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         m_page->settings().setAcceleratedCompositingEnabled(false);
         m_page->settings().setShouldAllowUserInstalledFonts(false);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (RefPtr observer = imageObserver())
             m_page->settings().setLayerBasedSVGEngineEnabled(observer->layerBasedSVGEngineEnabled());
-#endif
+
         RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
         if (!localMainFrame)
             return EncodedDataStatus::Unknown;

@@ -955,7 +955,6 @@ Path AccessibilityRenderObject::elementPath() const
         return path;
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* renderSVGShape = dynamicDowncast<RenderSVGShape>(*m_renderer); renderSVGShape && renderSVGShape->hasPath()) {
         Path path = renderSVGShape->path();
 
@@ -970,7 +969,6 @@ Path AccessibilityRenderObject::elementPath() const
         }
         return path;
     }
-#endif
 
     return { };
 }

@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
@@ -161,5 +159,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGShape, isRenderSVGShape())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

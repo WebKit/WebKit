@@ -19,7 +19,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderLayerModelObject.h"
 
 #include <functional>
@@ -52,4 +51,3 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

@@ -758,7 +758,6 @@ RenderLayer* RenderElement::layerNextSibling(RenderLayer& parentLayer) const
 
 bool RenderElement::layerCreationAllowedForSubtree() const
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // In LBSE layers are always created regardless of there position in the render tree.
     // Consider the SVG document fragment: "<defs><mask><rect transform="scale(2)".../>"
     // To paint the <rect> into the mask image, the rect needs to be transformed -
@@ -771,7 +770,6 @@ bool RenderElement::layerCreationAllowedForSubtree() const
     // elements (such as LegacyRenderSVGResourceClipper, RenderSVGResourceMasker, etc.)
     if (document().settings().layerBasedSVGEngineEnabled())
         return true;
-#endif
 
     RenderElement* parentRenderer = parent();
     while (parentRenderer) {
@@ -997,10 +995,8 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
     if (diff >= StyleDifference::Repaint) {
         updateReferencedSVGResources();
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (oldStyle && diff <= StyleDifference::RepaintLayer)
             repaintClientsOfReferencedSVGResources();
-#endif
     }
 
     if (!m_parent)
@@ -1529,10 +1525,8 @@ bool RenderElement::isVisibleInDocumentRect(const IntRect& documentRect) const
 
 bool RenderElement::isInsideEntirelyHiddenLayer() const
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (isSVGLayerAwareRenderer() && document().settings().layerBasedSVGEngineEnabled() && enclosingLayer()->enclosingSVGHiddenOrResourceContainer())
         return true;
-#endif
     return style().usedVisibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent();
 }
 
@@ -2205,7 +2199,6 @@ void RenderElement::updateReferencedSVGResources()
         clearReferencedSVGResources();
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 void RenderElement::repaintRendererOrClientsOfReferencedSVGResources() const
 {
     auto* enclosingResourceContainer = lineageOfType<RenderSVGResourceContainer>(*this).first();
@@ -2257,7 +2250,6 @@ void RenderElement::repaintOldAndNewPositionsForSVGRenderer() const
 
     repaint();
 }
-#endif
 
 #if ENABLE(TEXT_AUTOSIZING)
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
@@ -2419,23 +2411,19 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
         // and at the same time alter the CTM in RenderLayer::paintLayerByApplyingTransform() by
         // including a translation to the enclosing transformed ancestor ('offsetFromAncestor').
         // Avoid that, and move by -nominalSVGLayoutLocation().
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (isSVGLayerAwareRenderer() && !isRenderSVGRoot() && document().settings().layerBasedSVGEngineEnabled())
             referenceBox.moveBy(-downcast<RenderLayerModelObject>(*this).nominalSVGLayoutLocation());
-#endif
         return referenceBox;
     };
 
     auto determineSVGViewport = [&]() {
         RefPtr viewportElement = downcast<SVGElement>(element());
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         // RenderSVGViewportContainer is the only possible anonymous renderer in the SVG tree.
         if (!viewportElement && document().settings().layerBasedSVGEngineEnabled()) {
             ASSERT(isAnonymous());
             viewportElement = &downcast<RenderSVGViewportContainer>(*this).svgSVGElement();
         }
-#endif
 
         // FIXME: [LBSE] Upstream: Cache the immutable SVGLengthContext per SVGElement, to avoid the repeated RenderSVGRoot size queries in determineViewport().
         ASSERT(viewportElement);

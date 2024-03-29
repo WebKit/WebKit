@@ -25,7 +25,6 @@
 #include "config.h"
 #include "RenderSVGRoot.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
@@ -598,5 +597,3 @@ void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) cons
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

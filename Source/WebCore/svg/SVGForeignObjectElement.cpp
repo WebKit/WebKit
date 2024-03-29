@@ -101,10 +101,8 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     protectedDocument()->setMayHaveRenderedSVGForeignObjects();
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGForeignObject>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGForeignObject>(*this, WTFMove(style));
 }
 

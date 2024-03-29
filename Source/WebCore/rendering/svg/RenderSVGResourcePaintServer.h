@@ -19,7 +19,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "Color.h"
 #include "RenderSVGResourceContainer.h"
 #include <variant>
@@ -46,5 +45,3 @@ using SVGPaintServerOrColor = std::variant<std::monostate, RenderSVGResourcePain
 }
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourcePaintServer, isRenderSVGResourcePaintServer())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

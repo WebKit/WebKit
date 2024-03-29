@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RenderSVGHiddenContainer.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderLayer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
@@ -46,5 +45,3 @@ void RenderSVGHiddenContainer::layout()
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

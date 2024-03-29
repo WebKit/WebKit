@@ -28,7 +28,6 @@
 #include "config.h"
 #include "SVGContainerLayout.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "Logging.h"
 #include "RenderAncestorIterator.h"
 #include "RenderChildIterator.h"
@@ -236,4 +235,3 @@ bool SVGContainerLayout::transformToRootChanged(const RenderObject* ancestor)
 
 }
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

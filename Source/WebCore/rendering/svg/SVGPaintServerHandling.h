@@ -19,7 +19,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGResourceGradient.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
@@ -189,5 +188,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

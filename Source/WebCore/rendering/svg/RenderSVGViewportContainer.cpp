@@ -24,7 +24,6 @@
 #include "config.h"
 #include "RenderSVGViewportContainer.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderLayer.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"
@@ -181,4 +180,3 @@ LayoutRect RenderSVGViewportContainer::overflowClipRect(const LayoutPoint& locat
 
 }
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

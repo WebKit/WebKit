@@ -114,13 +114,11 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (PropertyRegistry::isKnownAttribute(attrName)) {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (document().settings().layerBasedSVGEngineEnabled()) {
             if (CheckedPtr renderer = this->renderer())
                 renderer->repaintClientsOfReferencedSVGResources();
             return;
         }
-#endif
 
         updateSVGRendererForElementChange();
         return;
@@ -136,30 +134,25 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (CheckedPtr renderer = this->renderer())
             renderer->repaintClientsOfReferencedSVGResources();
         return;
     }
-#endif
 
     updateSVGRendererForElementChange();
 }
 
 RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceMasker>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGResourceMasker>(*this, WTFMove(style));
 }
 
 FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
     ASSERT(renderer());
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
         if (!document().settings().layerBasedSVGEngineEnabled())
             return std::nullopt;
@@ -173,7 +166,6 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
         auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
         return transform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(transform));
     };
-#endif
     FloatRect maskRepaintRect;
     for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
         CheckedPtr renderer = childNode->renderer();
@@ -183,10 +175,8 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
         if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
             continue;
         auto r = renderer->repaintRectInLocalCoordinates(repaintRectCalculation);
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (auto transform = transformationMatrixFromChild(downcast<RenderLayerModelObject>(*renderer)))
             r = transform->mapRect(r);
-#endif
         maskRepaintRect.unite(r);
     }
     return maskRepaintRect;

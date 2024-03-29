@@ -23,7 +23,6 @@
 #include "config.h"
 #include "RenderSVGTransformableContainer.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGModelObjectInlines.h"
 #include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
@@ -101,5 +100,3 @@ void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& trans
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

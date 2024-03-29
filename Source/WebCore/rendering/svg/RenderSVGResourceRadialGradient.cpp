@@ -22,8 +22,6 @@
 #include "config.h"
 #include "RenderSVGResourceRadialGradient.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceRadialGradientInlines.h"
 #include "RenderSVGShape.h"
@@ -76,5 +74,3 @@ RefPtr<Gradient> RenderSVGResourceRadialGradient::createGradient(const RenderSty
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

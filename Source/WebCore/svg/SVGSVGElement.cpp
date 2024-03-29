@@ -149,7 +149,6 @@ void SVGSVGElement::updateCurrentTranslate()
     if (!renderer)
         return;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(*renderer)) {
             ASSERT(svgRoot->viewportContainer());
@@ -160,7 +159,6 @@ void SVGSVGElement::updateCurrentTranslate()
         updateSVGRendererForElementChange();
         return;
     }
-#endif
 
     updateSVGRendererForElementChange();
     if (parentNode() == &document() && document().renderView())
@@ -241,10 +239,8 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderer))
             return svgRoot->isEmbeddedThroughFrameContainingSVGDocument();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer))
             return svgRoot->isEmbeddedThroughFrameContainingSVGDocument();
-#endif
 
         return false;
     };
@@ -265,7 +261,6 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (document().settings().layerBasedSVGEngineEnabled()) {
             if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer())) {
                 ASSERT(svgRoot->viewportContainer());
@@ -277,7 +272,6 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
             updateSVGRendererForElementChange();
             return;
         }
-#endif
 
         if (CheckedPtr renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
@@ -301,19 +295,15 @@ Ref<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(SVGRect& rect, S
 
 static bool checkIntersectionWithoutUpdatingLayout(SVGElement& element, SVGRect& rect)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (element.document().settings().layerBasedSVGEngineEnabled())
         return RenderSVGModelObject::checkIntersection(element.checkedRenderer().get(), rect.value());
-#endif
     return LegacyRenderSVGModelObject::checkIntersection(element.checkedRenderer().get(), rect.value());
 }
     
 static bool checkEnclosureWithoutUpdatingLayout(SVGElement& element, SVGRect& rect)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (element.document().settings().layerBasedSVGEngineEnabled())
         return RenderSVGModelObject::checkEnclosure(element.checkedRenderer().get(), rect.value());
-#endif
     return LegacyRenderSVGModelObject::checkEnclosure(element.checkedRenderer().get(), rect.value());
 }
 
@@ -408,7 +398,6 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
         viewBoxTransform = viewBoxToViewTransform(size.width(), size.height());
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
         // LBSE only uses this code path for operation on "detached" elements (no renderer).
         AffineTransform transform;
@@ -421,7 +410,6 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
             return transform;
         return transform.multiply(viewBoxTransform);
     }
-#endif
 
     AffineTransform transform;
     if (!isOutermostSVGSVGElement()) {
@@ -478,19 +466,15 @@ bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
 RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (isOutermostSVGSVGElement()) {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (document().settings().layerBasedSVGEngineEnabled()) {
             protectedDocument()->setMayHaveRenderedSVGRootElements();
             return createRenderer<RenderSVGRoot>(*this, WTFMove(style));
         }
-#endif
         return createRenderer<LegacyRenderSVGRoot>(*this, WTFMove(style));
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGViewportContainer>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGViewportContainer>(*this, WTFMove(style));
 }
 
@@ -604,10 +588,8 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
         if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderer))
             return svgRoot->isEmbeddedThroughSVGImage();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer))
             return svgRoot->isEmbeddedThroughSVGImage();
-#endif
 
         return false;
     };
@@ -634,12 +616,10 @@ FloatSize SVGSVGElement::currentViewportSizeExcludingZoom() const
             viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().usedZoom();
         else if (CheckedPtr svgViewportContainer = dynamicDowncast<LegacyRenderSVGViewportContainer>(renderer()))
             viewportSize = svgViewportContainer->viewport().size();
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         else if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer()))
             viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().usedZoom();
         else if (CheckedPtr svgViewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer()))
             viewportSize = svgViewportContainer->viewport().size();
-#endif
         else {
             ASSERT_NOT_REACHED();
             return { };
@@ -723,12 +703,10 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
     m_useCurrentView = false;
 
     auto invalidateView = [&](RenderElement& renderer) {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
             renderer.repaint();
             return;
         }
-#endif
 
         LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
     };
@@ -813,12 +791,10 @@ void SVGSVGElement::resetScrollAnchor()
     if (!renderer)
         return;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
         renderer->repaint();
         return;
     }
-#endif
 
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }

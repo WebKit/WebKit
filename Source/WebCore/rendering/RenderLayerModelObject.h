@@ -73,7 +73,6 @@ public:
 
     void suspendAnimations(MonotonicTime = MonotonicTime()) override;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // Single source of truth deciding if a SVG renderer should be painted. All SVG renderers
     // use this method to test if they should continue processing in the paint() function or stop.
     bool shouldPaintSVGRenderer(const PaintInfo&, const OptionSet<PaintPhase> relevantPaintPhases = OptionSet<PaintPhase>()) const;
@@ -109,7 +108,6 @@ public:
 
     void paintSVGClippingMask(PaintInfo&, const FloatRect& objectBoundingBox) const;
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
-#endif
 
     TransformationMatrix* layerTransform() const;
 
@@ -127,12 +125,9 @@ protected:
 
     virtual void updateFromStyle() { }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 private:
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const String& markerResource) const;
-#endif
 
-private:
     std::unique_ptr<RenderLayer> m_layer;
 
     // Used to store state between styleWillChange and styleDidChange

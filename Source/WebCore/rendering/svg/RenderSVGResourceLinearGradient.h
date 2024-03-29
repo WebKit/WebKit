@@ -20,7 +20,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "AffineTransform.h"
 #include "LinearGradientAttributes.h"
 #include "RenderSVGResourceGradient.h"
@@ -63,5 +62,3 @@ private:
 }
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceLinearGradient, isRenderSVGResourceLinearGradient())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

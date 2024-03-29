@@ -441,7 +441,6 @@ void SVGElement::finishParsingChildren()
     invalidateInstances();
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 static inline bool isSVGLayerAwareElement(const SVGElement& element)
 {
     using namespace ElementNames;
@@ -481,7 +480,6 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
     }
     return false;
 }
-#endif
 
 bool SVGElement::childShouldCreateRenderer(const Node& child) const
 {
@@ -489,13 +487,11 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
     if (!svgChild)
         return false;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // If the layer based SVG engine is enabled, all renderers that do not support the
     // RenderLayer aware layout / painting / hit-testing mode ('LBSE-mode') have to be skipped.
     // FIXME: [LBSE] Upstream support for all elements, and remove 'isSVGLayerAwareElement' check afterwards.
     if (document().settings().layerBasedSVGEngineEnabled() && !isSVGLayerAwareElement(*svgChild))
         return false;
-#endif
 
     switch (svgChild->elementName()) {
     case ElementNames::SVG::altGlyph:
@@ -1183,11 +1179,10 @@ bool SVGElement::hasAssociatedSVGLayoutBox() const
     if (renderer()->isLegacyRenderSVGRoot())
         return false;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // LBSE specific condition.
     if (document().settings().layerBasedSVGEngineEnabled())
         return false;
-#endif
+
     return true;
 }
 

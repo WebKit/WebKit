@@ -20,7 +20,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGContainer.h"
 
 namespace WebCore {
@@ -59,5 +58,3 @@ protected:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGHiddenContainer, isRenderSVGHiddenContainer())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

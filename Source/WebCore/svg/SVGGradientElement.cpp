@@ -80,13 +80,11 @@ void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomS
 
 void SVGGradientElement::invalidateGradientResource()
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (CheckedPtr gradientRenderer = dynamicDowncast<RenderSVGResourceGradient>(renderer()))
             gradientRenderer->invalidateGradient();
         return;
     }
-#endif
 
     updateSVGRendererForElementChange();
 }

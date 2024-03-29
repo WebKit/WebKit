@@ -53,14 +53,12 @@ Ref<SVGGElement> SVGGElement::create(Document& document)
 
 RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // FIXME: [LBSE] Support hidden containers
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (style.display() == DisplayType::None)
             return createRenderer<RenderSVGHiddenContainer>(RenderObject::Type::SVGHiddenContainer, *this, WTFMove(style));
         return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
     }
-#endif
 
     // SVG 1.1 testsuite explicitly uses constructs like <g display="none"><linearGradient>
     // We still have to create renderers for the <g> & <linearGradient> element, though the

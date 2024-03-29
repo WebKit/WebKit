@@ -83,10 +83,9 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         updateRelativeLengthsInformation();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (CheckedPtr shape = dynamicDowncast<RenderSVGShape>(renderer()))
             shape->setNeedsShapeUpdate();
-#endif
+
         if (CheckedPtr shape = dynamicDowncast<LegacyRenderSVGShape>(renderer()))
             shape->setNeedsShapeUpdate();
 

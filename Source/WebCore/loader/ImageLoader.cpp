@@ -458,10 +458,8 @@ RenderImageResource* ImageLoader::renderImageResource()
     if (auto* svgImage = dynamicDowncast<LegacyRenderSVGImage>(*renderer))
         return &svgImage->imageResource();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* svgImage = dynamicDowncast<RenderSVGImage>(*renderer))
         return &svgImage->imageResource();
-#endif
 
 #if ENABLE(VIDEO)
     if (auto* renderVideo = dynamicDowncast<RenderVideo>(*renderer))

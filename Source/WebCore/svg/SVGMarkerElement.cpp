@@ -101,13 +101,11 @@ void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomStr
 
 void SVGMarkerElement::invalidateMarkerResource()
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (CheckedPtr markerRenderer = dynamicDowncast<RenderSVGResourceMarker>(renderer()))
             markerRenderer->invalidateMarker();
         return;
     }
-#endif
 
     updateSVGRendererForElementChange();
 }
@@ -168,10 +166,8 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 
 RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceMarker>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGResourceMarker>(*this, WTFMove(style));
 }
 
