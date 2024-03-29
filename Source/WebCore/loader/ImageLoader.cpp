@@ -218,9 +218,17 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         if (m_image && attr == m_pendingURL)
             imageURL = m_image->url();
         else {
-            if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+            if (imageElement) {
+                // It is possible that attributes are bulk-set via Element::parserSetAttributes. In that case, it is possible that attribute vectors are already configured,
+                // but corresponding attributeChanged is not called yet. This causes inconsistency in HTMLImageElement. Eventually, we will get the consistent state, but
+                // if "src" attributeChanged is not called yet, imageURL can be null and it does not work well for ResourceRequest.
+                // In this case, we should behave same as attr.isNull().
                 imageURL = imageElement->currentURL();
-            else
+                if (imageURL.isNull()) {
+                    didUpdateCachedImage(relevantMutation, WTFMove(newImage));
+                    return;
+                }
+            } else
                 imageURL = document->completeURL(attr);
             m_pendingURL = attr;
         }
