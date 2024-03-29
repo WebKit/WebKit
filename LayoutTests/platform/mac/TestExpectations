@@ -1008,8 +1008,6 @@ imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ 
 webkit.org/b/150806 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Pass Failure ]
 webkit.org/b/150823 imported/w3c/web-platform-tests/xhr/getresponseheader-chunked-trailer.htm [ Pass Failure ]
 
-webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
 
 webkit.org/b/153809 transitions/clip-path-transitions.html [ Pass Failure ]
