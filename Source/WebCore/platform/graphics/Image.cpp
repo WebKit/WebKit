@@ -421,4 +421,12 @@ Ref<Image> Image::loadPlatformResource(const char* resource)
 }
 
 #endif // !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
+
+bool Image::gSystemAllowsAnimationControls = false;
+
+void Image::setSystemAllowsAnimationControls(bool allowsControls)
+{
+    gSystemAllowsAnimationControls = allowsControls;
 }
+
+} // namespace WebCore

@@ -76,6 +76,7 @@
 #import <WebCore/HistoryController.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/Image.h>
 #import <WebCore/ImageDecoderCG.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedDeviceModel.h>
@@ -1257,6 +1258,7 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
     FontCache::invalidateAllFontCaches();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     m_imageAnimationEnabled = preferences.imageAnimationEnabled;
+    Image::setSystemAllowsAnimationControls(!imageAnimationEnabled());
     for (auto& page : m_pageMap.values())
         page->updateImageAnimationEnabled();
 #endif
