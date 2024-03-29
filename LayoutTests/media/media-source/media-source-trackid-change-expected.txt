@@ -14,14 +14,14 @@ RUN(initialBufferedEnd = sourceBuffer.buffered.end(0))
 Modify an Init Segment to have a different trackID
 RUN(modifiedInitSegment = loader.initSegment().slice(0))
 RUN(initSegmentView = new DataView(modifiedInitSegment))
-EXPECTED (initSegmentView.getInt32(180) == '1') OK
-RUN(initSegmentView.setInt32(180, 3))
-EXPECTED (initSegmentView.getInt32(693) == '2') OK
-RUN(initSegmentView.setInt32(693, 4))
-EXPECTED (initSegmentView.getInt32(1109) == '1') OK
-RUN(initSegmentView.setInt32(1109, 3))
-EXPECTED (initSegmentView.getInt32(1141) == '2') OK
-RUN(initSegmentView.setInt32(1141, 4))
+EXPECTED (initSegmentView.getInt32(326) == '1') OK
+RUN(initSegmentView.setInt32(326, 3))
+EXPECTED (initSegmentView.getInt32(831) == '2') OK
+RUN(initSegmentView.setInt32(831, 4))
+EXPECTED (initSegmentView.getInt32(246) == '1') OK
+RUN(initSegmentView.setInt32(246, 3))
+EXPECTED (initSegmentView.getInt32(278) == '2') OK
+RUN(initSegmentView.setInt32(278, 4))
 Append the modified Init Segment
 RUN(sourceBuffer.appendBuffer(modifiedInitSegment))
 EVENT(update)
@@ -32,12 +32,12 @@ RUN(modifiedMediaSegment = loader.mediaSegment(0).slice(0))
 RUN(mediaSegmentView = new DataView(modifiedMediaSegment))
 EXPECTED (mediaSegmentView.getInt32(44) == '1') OK
 RUN(mediaSegmentView.setInt32(44, 3))
-EXPECTED (mediaSegmentView.getInt32(324) == '2') OK
-RUN(mediaSegmentView.setInt32(324, 4))
+EXPECTED (mediaSegmentView.getInt32(304) == '2') OK
+RUN(mediaSegmentView.setInt32(304, 4))
 RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(0))
 Append a media segment.
 RUN(sourceBuffer.appendBuffer(modifiedMediaSegment))
 EVENT(update)
-EXPECTED (sourceBuffer.buffered.end(0) > '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) > initialBufferedEnd == 'true') OK
 END OF TEST
 

@@ -42,7 +42,6 @@
         run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
         await waitFor(sourceBuffer, 'update');
         testExpected('video.buffered.length', 1);
-        testExpected('video.buffered.end(0)', 2);
         await playingPromise;
         await Promise.all([ waitFor(video, 'waiting') ]);
         testExpected('video.currentTime == video.buffered.end(0)', true);

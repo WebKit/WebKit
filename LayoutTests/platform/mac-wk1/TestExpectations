@@ -1071,10 +1071,11 @@ media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
 media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
 
 # Managed MediaSource isn't enabled on WK1
+media/media-source/media-managedmse-append.html [ Skip ]
 media/media-source/media-managedmse-multipletracks-bufferedchange.html [ Skip ]
 media/media-source/media-managedmse-poster.html [ Skip ]
-media/media-source/media-managedmse-stall-endofstream.html [ Skip ]
 media/media-source/media-managedmse-resume-after-remove.html [ Skip ]
+media/media-source/media-managedmse-stall-endofstream.html [ Skip ]
 
 # CRABS WebM isn't supported in WK1
 media/media-webm-opus-buffered.html [ Failure ]

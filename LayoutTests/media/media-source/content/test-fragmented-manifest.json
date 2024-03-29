@@ -1,18 +1,18 @@
 {
-    "url": "content/test-fragmented.mp4",
-    "type": "video/mp4; codecs=\"mp4a.40.2,avc1.4d281e\"",
-    "init": { "offset": 0, "size": 1259 },
+    "url" : "content/test-fragmented.mp4",
+    "type" : "video/mp4; codecs=\"mp4a.40.2,avc1.4d401e\"",
+    "init": {"offset":0,"size":1321},
     "duration": 10,
-    "media": [
-        { "offset": 1259,   "size": 67526, "timestamp": 0, "duration": 1 },
-        { "offset": 68785,  "size": 72683, "timestamp": 1, "duration": 1 },
-        { "offset": 141468, "size": 78499, "timestamp": 2, "duration": 1 },
-        { "offset": 219967, "size": 77358, "timestamp": 3, "duration": 1 },
-        { "offset": 297325, "size": 80748, "timestamp": 4, "duration": 1 },
-        { "offset": 378073, "size": 78038, "timestamp": 5, "duration": 1 },
-        { "offset": 456111, "size": 82223, "timestamp": 6, "duration": 1 },
-        { "offset": 538334, "size": 78331, "timestamp": 7, "duration": 1 },
-        { "offset": 616665, "size": 80736, "timestamp": 8, "duration": 1 },
-        { "offset": 697401, "size": 77752, "timestamp": 9, "duration": 1 }
+    "media":[
+        {"offset":1513,"size":67174,"timestamp":0,"duration":1},
+        {"offset":68687,"size":72583,"timestamp":1,"duration":1},
+        {"offset":141270,"size":78395,"timestamp":2,"duration":1},
+        {"offset":219665,"size":77348,"timestamp":3,"duration":1},
+        {"offset":297013,"size":80682,"timestamp":4,"duration":1},
+        {"offset":377695,"size":78004,"timestamp":5,"duration":1},
+        {"offset":455699,"size":82161,"timestamp":6,"duration":1},
+        {"offset":537860,"size":78344,"timestamp":7,"duration":1},
+        {"offset":616204,"size":80723,"timestamp":8,"duration":1},
+        {"offset":696927,"size":78032,"timestamp":9,"duration":1}
     ]
 }

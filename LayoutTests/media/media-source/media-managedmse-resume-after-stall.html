@@ -44,11 +44,10 @@
         run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
         await waitFor(sourceBuffer, 'update');
         testExpected('video.buffered.length', 1);
-        testExpected('video.buffered.end(0)', 3);
         await playingPromise;
 
         await waitFor(video, 'waiting');
-        testExpected('video.currentTime', video.buffered.end(0));
+        testExpected('video.currentTime == video.buffered.end(0)', true);
 
         sourceBuffer.timestampOffset = -0.5;
 

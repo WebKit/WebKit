@@ -10,18 +10,18 @@ let decoder;
 promise_test(async () => {
      const response = await fetch("/media-resources/media-source/content/test-fragmented.mp4");
      const buffer = await response.arrayBuffer();
-     const avcCOffset = [519, 34];
+     const avcCOffset = [701, 34];
      const frames = [
-         [41, 1995, 25120],
-         [125, 27115, 2173],
-         [83, 29288, 1348],
-         [208, 30636, 1049],
-         [166, 31685, 865],
-         [291, 32550, 930],
-         [250, 33480, 812],
-         [375, 34292, 1231],
-         [333, 35523, 803],
-         [458, 36326, 1564]
+         [41, 2193, 25120],
+         [125, 27313, 2173],
+         [83, 29486, 1348],
+         [208, 30834, 1049],
+         [166, 31883, 865],
+         [291, 32748, 930],
+         [250, 33678, 812],
+         [375, 34490, 1231],
+         [333, 35721, 803],
+         [458, 36524, 1564]
     ];
 
     let frameTimestamps = [];
