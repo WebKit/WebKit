@@ -555,6 +555,8 @@ accessibility/display-contents/tree-and-treeitems.html [ Skip ]
 
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
+accessibility/combobox/mac [ Skip ]
+
 # AX support for datetime input elements needs to be completed in glib platforms.
 accessibility/datetime [ Skip ]
 
@@ -580,7 +582,7 @@ webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [
 
 webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
 
-webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
+webkit.org/b/182107 accessibility/combobox/aria-combobox-control-owns-elements.html [ Timeout ]
 
 webkit.org/b/98363 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
@@ -637,7 +639,7 @@ webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
 http/tests/accessibility/focus-text-field-in-iframe.html [ Skip ]
 
 # Times out due to missing AccessibilityUIElement::linkedUIElementAtIndex() implementation.
-accessibility/combobox-linked-listbox-destroyed.html [ Skip ]
+accessibility/combobox/combobox-linked-listbox-destroyed.html [ Skip ]
 
 # Fails due to missing AccessibilityUIElement::indexInTable() implementation.
 accessibility/table-insert-second-thead.html [ Skip ]
