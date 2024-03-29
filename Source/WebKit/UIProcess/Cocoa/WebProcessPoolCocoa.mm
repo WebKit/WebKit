@@ -726,19 +726,19 @@ void WebProcessPool::registerNotificationObservers()
     };
     m_notifyTokens = WTF::compactMap(notificationMessages, [weakThis = WeakPtr { *this }](const ASCIILiteral& message) -> std::optional<int> {
         int notifyToken = 0;
-        auto status = notify_register_dispatch(message, &notifyToken, dispatch_get_main_queue(), [weakThis, message](int token) {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-            if (!protectedThis->m_processes.isEmpty()) {
+        auto queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+        auto registerStatus = notify_register_dispatch(message, &notifyToken, queue, [weakThis, message](int token) {
+            uint64_t state = 0;
+            auto status = notify_get_state(token, &state);
+            callOnMainRunLoop([weakThis, message, state, status] {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
                 String messageString(message);
-                uint64_t state = 0;
-                auto status = notify_get_state(token, &state);
-                for (auto& process : protectedThis->m_processes)
-                    process->send(Messages::WebProcess::PostNotification(messageString, (status == NOTIFY_STATUS_OK) ? std::optional<uint64_t>(state) : std::nullopt), 0);
-            }
+                protectedThis->sendToAllProcesses(Messages::WebProcess::PostNotification(messageString, (status == NOTIFY_STATUS_OK) ? std::optional<uint64_t>(state) : std::nullopt));
+            });
         });
-        if (status)
+        if (registerStatus)
             return std::nullopt;
         return notifyToken;
     });
