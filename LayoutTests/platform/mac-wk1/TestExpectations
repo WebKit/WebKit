@@ -2844,11 +2844,12 @@ webkit.org/b/271770 imported/w3c/web-platform-tests/xhr/setrequestheader-case-in
 # Unprefixed backdrop filter disabled on WK1
 imported/w3c/web-platform-tests/css/filter-effects [ Skip ]
 compositing/filters/backdrop-filter-root-element-no-backdrop-root.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/backdrop-filter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1.html [ ImageOnlyFailure ]
 
-webkit.org/b/271865 css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]
+# webkit.org/b/271865 REGRESSION (276749@main): [ MacOS WK1 ] 2X backdrop-filter tests are consistent failures 
+[ Sonoma+ ] css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/backdrop-filter.html [ Failure ]
 
 webkit.org/b/271892 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe.html [ Failure ]
