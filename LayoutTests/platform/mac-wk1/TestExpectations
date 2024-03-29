@@ -2850,3 +2850,5 @@ imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.
 imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1.html [ ImageOnlyFailure ]
 
 webkit.org/b/271865 css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]
+
+webkit.org/b/271892 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe.html [ Failure ]
