@@ -12,7 +12,7 @@ let restoredFromPageCache = false;
 let getUserMediaRejected = false;
 
 if (window.testRunner)
-    testRunner.setUserMediaPermission(true);
+    testRunner.setUserMediaPermission(false);
 
 function getUserMediaCompleted() {
     // Avoid invoking getUserMedia again.
