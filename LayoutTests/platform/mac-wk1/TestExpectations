@@ -2769,8 +2769,8 @@ webkit.org/b/265783 accessibility/mac/ruby-hierarchy-roles.html [ Skip ]
 webkit.org/b/266184 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
 
 # webkit.org/b/266345 [Test Gardening] css-contain/contain-size-block-003.html and css-contain/contain-size-inline-block-003.html only fail on GTK
-imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]
 
 # webkit.org/b/263441 [ mac-wk1 ] Several WPTs using wheel actions are timing out after 269632@main
 imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html [ Skip ]
