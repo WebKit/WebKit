@@ -86,6 +86,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
+#include "ScrollbarsController.h"
 #include "Settings.h"
 #include "StyleReflection.h"
 #include "StyleScrollSnapPoints.h"
@@ -344,6 +345,12 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
             scrollableArea->setPostLayoutScrollPosition(scrollPosition);
         }
     }
+    
+    if (layer() && oldStyle && oldStyle->shouldPlaceVerticalScrollbarOnLeft() != newStyle.shouldPlaceVerticalScrollbarOnLeft()) {
+        if (auto* scrollableArea = layer()->scrollableArea())
+            scrollableArea->scrollbarsController().scrollbarLayoutDirectionChanged(shouldPlaceVerticalScrollbarOnLeft() ? UserInterfaceLayoutDirection::RTL : UserInterfaceLayoutDirection::LTR);
+    }
+
 
 #if ENABLE(DARK_MODE_CSS)
     if (layer() && oldStyle && oldStyle->colorScheme() != newStyle.colorScheme()) {

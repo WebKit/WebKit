@@ -31,6 +31,7 @@
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "ScrollingCoordinatorTypes.h"
+#include "UserInterfaceLayoutDirection.h"
 #include "WheelEventTestMonitor.h"
 #include <variant>
 #include <wtf/Forward.h>
@@ -209,6 +210,7 @@ public:
     WEBCORE_EXPORT virtual void setMouseMovedInContentArea(ScrollableArea&) { }
     WEBCORE_EXPORT virtual void setMouseIsOverScrollbar(Scrollbar*, bool) { }
     WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
+    WEBCORE_EXPORT virtual void setScrollbarLayoutDirection(ScrollableArea&, UserInterfaceLayoutDirection) { }
 
 protected:
     explicit ScrollingCoordinator(Page*);

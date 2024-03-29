@@ -69,6 +69,7 @@ private:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        UserInterfaceLayoutDirection,
         RequestedKeyboardScrollData&&
     );
     ScrollingStateOverflowScrollingNode(ScrollingStateTree&, ScrollingNodeID);

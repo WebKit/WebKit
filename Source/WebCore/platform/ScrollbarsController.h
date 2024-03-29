@@ -27,6 +27,7 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "UserInterfaceLayoutDirection.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -99,6 +100,7 @@ public:
 
     WEBCORE_EXPORT virtual void setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation, int) { }
     WEBCORE_EXPORT virtual int minimumThumbLength(WebCore::ScrollbarOrientation) { return 0; }
+    WEBCORE_EXPORT virtual void scrollbarLayoutDirectionChanged(UserInterfaceLayoutDirection) { }
 
 private:
     ScrollableArea& m_scrollableArea;

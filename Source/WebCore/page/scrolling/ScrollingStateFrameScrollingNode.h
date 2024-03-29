@@ -153,6 +153,7 @@ private:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        UserInterfaceLayoutDirection,
         RequestedKeyboardScrollData&&,
         float frameScaleFactor,
         EventTrackingRegions&&,
