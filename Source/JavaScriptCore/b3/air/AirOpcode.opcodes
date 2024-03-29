@@ -751,7 +751,7 @@ ZeroExtend8To32 U:G:8, ZD:G:32
     x86: Addr, Tmp as load8
     x86: Index, Tmp as load8
 
-SignExtend8To32 U:G:8, ZD:G:32
+SignExtend8To32 U:G:8, D:G:32
     Tmp, Tmp
     x86: Addr, Tmp as load8SignedExtendTo32
     x86: Index, Tmp as load8SignedExtendTo32
@@ -761,7 +761,7 @@ ZeroExtend16To32 U:G:16, ZD:G:32
     x86: Addr, Tmp as load16
     x86: Index, Tmp as load16
 
-SignExtend16To32 U:G:16, ZD:G:32
+SignExtend16To32 U:G:16, D:G:32
     Tmp, Tmp
     x86: Addr, Tmp as load16SignedExtendTo32
     x86: Index, Tmp as load16SignedExtendTo32
@@ -861,11 +861,11 @@ Store8 U:G:8, D:G:8
 arm64: StoreRel8 U:G:8, D:G:8 /effects
     Tmp, SimpleAddr
 
-Load8SignedExtendTo32 U:G:8, ZD:G:32
+Load8SignedExtendTo32 U:G:8, D:G:32
     Addr, Tmp
     Index, Tmp
 
-arm64: LoadAcq8SignedExtendTo32 U:G:8, ZD:G:32 /effects
+arm64: LoadAcq8SignedExtendTo32 U:G:8, D:G:32 /effects
     SimpleAddr, Tmp
 
 Load16 U:G:16, ZD:G:32
@@ -875,11 +875,11 @@ Load16 U:G:16, ZD:G:32
 arm64: LoadAcq16 U:G:16, ZD:G:32 /effects
     SimpleAddr, Tmp
 
-Load16SignedExtendTo32 U:G:16, ZD:G:32
+Load16SignedExtendTo32 U:G:16, D:G:32
     Addr, Tmp
     Index, Tmp
 
-arm64: LoadAcq16SignedExtendTo32 U:G:16, ZD:G:32 /effects
+arm64: LoadAcq16SignedExtendTo32 U:G:16, D:G:32 /effects
     SimpleAddr, Tmp
 
 Store16 U:G:16, D:G:16
@@ -993,13 +993,13 @@ arm64: ExtractInsertBitfieldAtLowEnd32 U:G:32, U:G:32, U:G:32, UZD:G:32
 arm64: ExtractInsertBitfieldAtLowEnd64 U:G:64, U:G:32, U:G:32, UD:G:64
     Tmp, Imm, Imm, Tmp
 
-arm64: InsertSignedBitfieldInZero32 U:G:32, U:G:32, U:G:32, ZD:G:32
+arm64: InsertSignedBitfieldInZero32 U:G:32, U:G:32, U:G:32, D:G:32
     Tmp, Imm, Imm, Tmp
 
 arm64: InsertSignedBitfieldInZero64 U:G:64, U:G:32, U:G:32, D:G:64
     Tmp, Imm, Imm, Tmp
 
-arm64: ExtractSignedBitfield32 U:G:32, U:G:32, U:G:32, ZD:G:32
+arm64: ExtractSignedBitfield32 U:G:32, U:G:32, U:G:32, D:G:32
     Tmp, Imm, Imm, Tmp
 
 arm64: ExtractSignedBitfield64 U:G:64, U:G:32, U:G:32, D:G:64
@@ -1757,11 +1757,11 @@ RetDouble U:F:64 /return
     Imm, Tmp, Tmp
 64: VectorExtractLaneInt32 U:G:8, U:F:128, ZD:G:32
     Imm, Tmp, Tmp
-64: VectorExtractLaneSignedInt16 U:G:8, U:F:128, ZD:G:32
+64: VectorExtractLaneSignedInt16 U:G:8, U:F:128, D:G:32
     Imm, Tmp, Tmp
 64: VectorExtractLaneUnsignedInt16 U:G:8, U:F:128, ZD:G:16
     Imm, Tmp, Tmp
-64: VectorExtractLaneSignedInt8 U:G:8, U:F:128, ZD:G:32
+64: VectorExtractLaneSignedInt8 U:G:8, U:F:128, D:G:32
     Imm, Tmp, Tmp
 64: VectorExtractLaneUnsignedInt8 U:G:8, U:F:128, ZD:G:8
     Imm, Tmp, Tmp
