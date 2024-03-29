@@ -145,6 +145,7 @@
 #include "TextIterator.h"
 #include "TouchAction.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "VisibilityAdjustment.h"
 #include "VoidCallback.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
@@ -5635,14 +5636,16 @@ CustomStateSet& Element::ensureCustomStateSet()
     return *rareData.customStateSet();
 }
 
-bool Element::isVisibilityAdjustmentRoot() const
+OptionSet<VisibilityAdjustment> Element::visibilityAdjustment() const
 {
-    return hasRareData() && elementRareData()->isVisibilityAdjustmentRoot();
+    if (!hasRareData())
+        return { };
+    return elementRareData()->visibilityAdjustment();
 }
 
-void Element::setIsVisibilityAdjustmentRoot()
+void Element::addVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment)
 {
-    ensureElementRareData().setIsVisibilityAdjustmentRoot();
+    ensureElementRareData().addVisibilityAdjustment(adjustment);
 }
 
 } // namespace WebCore

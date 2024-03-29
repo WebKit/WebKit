@@ -99,6 +99,7 @@ enum class IsSyntheticClick : bool { No, Yes };
 enum class ParserContentPolicy : uint8_t;
 enum class ResolveURLs : uint8_t { No, NoExcludingURLsForPrivacy, Yes, YesExcludingURLsForPrivacy };
 enum class SelectionRestorationMode : uint8_t;
+enum class VisibilityAdjustment : uint8_t;
 
 struct CheckVisibilityOptions;
 struct FullscreenOptions;
@@ -632,8 +633,8 @@ public:
     WEBCORE_EXPORT void requestPointerLock();
 #endif
 
-    bool isVisibilityAdjustmentRoot() const;
-    void setIsVisibilityAdjustmentRoot();
+    OptionSet<VisibilityAdjustment> visibilityAdjustment() const;
+    void addVisibilityAdjustment(OptionSet<VisibilityAdjustment>);
 
     bool isSpellCheckingEnabled() const;
     WEBCORE_EXPORT bool isWritingSuggestionsEnabled() const;

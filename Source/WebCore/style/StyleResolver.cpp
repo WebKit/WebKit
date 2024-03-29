@@ -78,6 +78,7 @@
 #include "StyleSheetContents.h"
 #include "UserAgentParts.h"
 #include "UserAgentStyle.h"
+#include "VisibilityAdjustment.h"
 #include "VisitedLinkState.h"
 #include "WebAnimationTypes.h"
 #include "WebKitFontFamilyNames.h"
@@ -514,6 +515,8 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& elem
 
     Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
+
+    Adjuster::adjustVisibilityForPseudoElement(*state.style(), element);
 
     if (state.style()->usesViewportUnits())
         document().setHasStyleWithViewportUnits();

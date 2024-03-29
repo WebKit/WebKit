@@ -115,4 +115,9 @@
     return _info->isUnderPoint();
 }
 
+- (BOOL)isPseudoElement
+{
+    return _info->isPseudoElement();
+}
+
 @end

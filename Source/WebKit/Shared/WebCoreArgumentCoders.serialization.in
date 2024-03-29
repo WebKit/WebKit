@@ -900,6 +900,7 @@ header: <WebCore/ElementTargetingTypes.h>
     WebCore::PositionType positionType
     Vector<WebCore::FrameIdentifier> childFrameIdentifiers
     bool isUnderPoint
+    bool isPseudoElement
 };
 
 header: <WebCore/RenderStyleConstants.h>

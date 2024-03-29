@@ -71,6 +71,7 @@
 #include "TouchAction.h"
 #include "TypedElementDescendantIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "VisibilityAdjustment.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
 
@@ -602,7 +603,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
                 style.setHeight(Length(200, LengthType::Fixed));
         }
 
-        if (UNLIKELY(m_element->isVisibilityAdjustmentRoot() || m_parentStyle.isInVisibilityAdjustmentSubtree()))
+        if (UNLIKELY(m_element->visibilityAdjustment().contains(VisibilityAdjustment::Subtree) || m_parentStyle.isInVisibilityAdjustmentSubtree()))
             style.setIsInVisibilityAdjustmentSubtree();
     }
 
@@ -1138,6 +1139,13 @@ bool Adjuster::adjustForTextAutosizing(RenderStyle& style, const Element& elemen
     return adjustForTextAutosizing(style, element, adjustmentForTextAutosizing(style, element));
 }
 #endif
+
+void Adjuster::adjustVisibilityForPseudoElement(RenderStyle& style, const Element& host)
+{
+    if ((style.pseudoElementType() == PseudoId::After && host.visibilityAdjustment().contains(VisibilityAdjustment::AfterPseudo))
+        || (style.pseudoElementType() == PseudoId::Before && host.visibilityAdjustment().contains(VisibilityAdjustment::BeforePseudo)))
+        style.setIsInVisibilityAdjustmentSubtree();
+}
 
 }
 }

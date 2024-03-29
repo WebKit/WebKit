@@ -815,6 +815,9 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedSt
     if (startingStyle->display() == DisplayType::None)
         return nullptr;
 
+    // FIXME: This logic seems wrong, because passing a non-null Element to Adjuster corresponds
+    // to the absence (not presence) of a pseudo ID. We should instead refactor this code to
+    // pass a non-null element, along with an optional pseudo element identifier.
     Adjuster adjuster(m_document, parentAfterChangeStyle, resolutionContext.parentBoxStyle, styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
     adjuster.adjust(*startingStyle, nullptr);
 

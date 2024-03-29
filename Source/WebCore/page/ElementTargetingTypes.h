@@ -52,6 +52,7 @@ struct TargetedElementInfo {
     PositionType positionType { PositionType::Static };
     Vector<FrameIdentifier> childFrameIdentifiers;
     bool isUnderPoint { true };
+    bool isPseudoElement { false };
 };
 
 } // namespace WebCore

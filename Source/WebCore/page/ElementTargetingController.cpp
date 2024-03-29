@@ -42,11 +42,13 @@
 #include "LocalFrameView.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PseudoElement.h"
 #include "Region.h"
 #include "RenderDescendantIterator.h"
 #include "RenderView.h"
 #include "TextExtraction.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "VisibilityAdjustment.h"
 
 namespace WebCore {
 
@@ -171,6 +173,29 @@ static String parentRelativeSelectorRecursive(Element& element)
 // Returns multiple CSS selectors that uniquely match the target element.
 static Vector<String> selectorsForTarget(Element& element)
 {
+    if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element)) {
+        RefPtr host = pseudoElement->hostElement();
+        if (!host)
+            return { };
+
+        auto pseudoSelector = [&]() -> String {
+            if (element.isBeforePseudoElement())
+                return "::before"_s;
+
+            if (element.isAfterPseudoElement())
+                return "::after"_s;
+
+            return { };
+        }();
+
+        if (pseudoSelector.isEmpty())
+            return { };
+
+        return selectorsForTarget(*host).map([&](auto hostSelector) {
+            return makeString(hostSelector, pseudoSelector);
+        });
+    }
+
     Vector<String> selectors;
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
         selectors.append(WTFMove(selector));
@@ -224,6 +249,7 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint is
         .positionType = renderer->style().position(),
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
         .isUnderPoint = isUnderPoint == IsUnderPoint::Yes,
+        .isPseudoElement = element.isPseudoElement(),
     };
 }
 
@@ -248,6 +274,11 @@ static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainEleme
 {
     if (!element.renderer())
         return false;
+
+    if (element.isBeforePseudoElement() || element.isAfterPseudoElement()) {
+        // We don't need to worry about affecting main content if we're only adjusting pseudo elements.
+        return true;
+    }
 
     if (&element == element.document().body())
         return false;
@@ -425,6 +456,42 @@ static FloatRect computeClientRect(RenderObject& renderer)
     return rect;
 }
 
+static inline Element& elementToAdjust(Element& element)
+{
+    if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element)) {
+        if (RefPtr host = pseudoElement->hostElement())
+            return *host;
+    }
+    return element;
+}
+
+static inline VisibilityAdjustment adjustmentToApply(Element& element)
+{
+    if (element.isAfterPseudoElement())
+        return VisibilityAdjustment::AfterPseudo;
+
+    if (element.isBeforePseudoElement())
+        return VisibilityAdjustment::BeforePseudo;
+
+    return VisibilityAdjustment::Subtree;
+}
+
+struct VisibilityAdjustmentResult {
+    RefPtr<Element> adjustedElement;
+    bool invalidateSubtree { false };
+};
+
+static inline VisibilityAdjustmentResult adjustVisibilityIfNeeded(Element& element)
+{
+    Ref adjustedElement = elementToAdjust(element);
+    auto adjustment = adjustmentToApply(element);
+    if (adjustedElement->visibilityAdjustment().contains(adjustment))
+        return { };
+
+    adjustedElement->addVisibilityAdjustment(adjustment);
+    return { adjustedElement.ptr(), adjustment == VisibilityAdjustment::Subtree };
+}
+
 bool ElementTargetingController::adjustVisibility(const Vector<Ref<Element>>& elements)
 {
     RefPtr page = m_page.get();
@@ -446,12 +513,15 @@ bool ElementTargetingController::adjustVisibility(const Vector<Ref<Element>>& el
 
     bool changed = false;
     for (auto& element : elements) {
-        if (element->isVisibilityAdjustmentRoot())
-            continue;
-
         CheckedPtr renderer = element->renderer();
         if (!renderer)
             continue;
+
+        auto [adjustedElement, invalidateSubtree] = adjustVisibilityIfNeeded(element);
+        if (!adjustedElement)
+            continue;
+
+        changed = true;
 
         auto clientRect = computeClientRect(*renderer);
         if (renderer->isOutOfFlowPositioned() && clientRect.area() / viewportArea < maximumAreaRatioForTrackingAdjustmentAreas) {
@@ -465,9 +535,10 @@ bool ElementTargetingController::adjustVisibility(const Vector<Ref<Element>>& el
             m_viewportSizeForVisibilityAdjustment = viewportSize;
         }
 
-        element->setIsVisibilityAdjustmentRoot();
-        element->invalidateStyleAndRenderersForSubtree();
-        changed = true;
+        if (invalidateSubtree)
+            adjustedElement->invalidateStyleAndRenderersForSubtree();
+        else
+            adjustedElement->invalidateStyle();
     }
     return changed;
 }
@@ -555,9 +626,6 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
         if (!element)
             continue;
 
-        if (element->isVisibilityAdjustmentRoot())
-            continue;
-
         if (!renderer.isVisibleInDocumentRect(visibleDocumentRect))
             continue;
 
@@ -571,8 +639,14 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
     }
 
     for (auto& element : elementsToAdjust) {
-        element->setIsVisibilityAdjustmentRoot();
-        element->invalidateStyleAndRenderersForSubtree();
+        auto [adjustedElement, invalidateSubtree] = adjustVisibilityIfNeeded(element);
+        if (!adjustedElement)
+            continue;
+
+        if (invalidateSubtree)
+            adjustedElement->invalidateStyleAndRenderersForSubtree();
+        else
+            adjustedElement->invalidateStyle();
     }
 }
 

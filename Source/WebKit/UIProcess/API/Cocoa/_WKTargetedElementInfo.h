@@ -43,6 +43,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @property (nonatomic, readonly) _WKTargetedElementPosition positionType;
 @property (nonatomic, readonly) CGRect bounds;
 @property (nonatomic, readonly, getter=isUnderPoint) BOOL underPoint;
+@property (nonatomic, readonly, getter=isPseudoElement) BOOL pseudoElement;
 
 @property (nonatomic, readonly, copy) NSArray<NSString *> *selectors;
 @property (nonatomic, readonly, copy) NSString *renderedText;
