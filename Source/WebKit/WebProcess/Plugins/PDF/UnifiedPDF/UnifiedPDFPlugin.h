@@ -510,6 +510,8 @@ private:
     bool m_didAttachScrollingTreeNode { false };
     bool m_didScrollToFragment { false };
 
+    ShouldUpdateAutoSizeScale m_shouldUpdateAutoSizeScale { ShouldUpdateAutoSizeScale::Yes };
+
     AnnotationTrackingState m_annotationTrackingState;
 
     struct SelectionTrackingData {

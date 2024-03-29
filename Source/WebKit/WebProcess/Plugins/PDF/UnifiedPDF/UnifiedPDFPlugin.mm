@@ -1136,7 +1136,7 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     }
 
     if (scale != 1.0)
-        m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
+        m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
 
     setScaleFactor(scale, origin);
 }
@@ -1185,13 +1185,13 @@ IntRect UnifiedPDFPlugin::availableContentsRect() const
 void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
 {
     auto layoutSize = availableContentsRect().size();
-    m_documentLayout.updateLayout(layoutSize);
+    m_documentLayout.updateLayout(layoutSize, m_shouldUpdateAutoSizeScale);
     updateScrollbars();
 
     // Do a second layout pass if the first one changed scrollbars.
     auto newLayoutSize = availableContentsRect().size();
     if (layoutSize != newLayoutSize) {
-        m_documentLayout.updateLayout(newLayoutSize);
+        m_documentLayout.updateLayout(newLayoutSize, m_shouldUpdateAutoSizeScale);
         updateScrollbars();
     }
 
@@ -1204,7 +1204,7 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
         LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - on first layout, chose scale for actual size " << initialScaleFactor);
         setScaleFactor(initialScaleFactor);
 
-        m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
+        m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
     }
 }
 
@@ -2455,7 +2455,7 @@ PDFContextMenuItem UnifiedPDFPlugin::contextMenuItem(ContextMenuItemTag tag, boo
             auto currentDisplayMode = contextMenuItemTagFromDisplayMode(m_documentLayout.displayMode());
             state = currentDisplayMode == tag;
         } else if (tag == ContextMenuItemTag::AutoSize)
-            state = m_documentLayout.shouldUpdateAutoSizeScale() == PDFDocumentLayout::ShouldUpdateAutoSizeScale::Yes;
+            state = m_shouldUpdateAutoSizeScale == ShouldUpdateAutoSizeScale::Yes;
 
         return { titleForContextMenuItemTag(tag), state, enumToUnderlyingType(tag), ContextMenuItemEnablement::Enabled, hasAction ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::No };
     }
@@ -2519,12 +2519,12 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag, const In
 {
     switch (tag) {
     case ContextMenuItemTag::AutoSize:
-        if (m_documentLayout.shouldUpdateAutoSizeScale() == PDFDocumentLayout::ShouldUpdateAutoSizeScale::No) {
-            m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::Yes);
+        if (m_shouldUpdateAutoSizeScale == ShouldUpdateAutoSizeScale::No) {
+            m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::Yes;
             setScaleFactor(1.0);
             updateLayout();
         } else
-            m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
+            m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
         break;
     case ContextMenuItemTag::WebSearch:
         performWebSearch(selectionString());
@@ -3280,13 +3280,13 @@ id UnifiedPDFPlugin::accessibilityObject() const
 
 void UnifiedPDFPlugin::zoomIn()
 {
-    m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
+    m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
     setScaleFactor(std::clamp(m_scaleFactor * zoomIncrement, minimumZoomScale, maximumZoomScale));
 }
 
 void UnifiedPDFPlugin::zoomOut()
 {
-    m_documentLayout.setShouldUpdateAutoSizeScale(PDFDocumentLayout::ShouldUpdateAutoSizeScale::No);
+    m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
     setScaleFactor(std::clamp(m_scaleFactor / zoomIncrement, minimumZoomScale, maximumZoomScale));
 }
 

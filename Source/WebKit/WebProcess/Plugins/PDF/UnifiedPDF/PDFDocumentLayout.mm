@@ -113,7 +113,7 @@ PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint
     return pageCount - 1;
 }
 
-void PDFDocumentLayout::updateLayout(IntSize pluginSize)
+void PDFDocumentLayout::updateLayout(IntSize pluginSize, ShouldUpdateAutoSizeScale shouldUpdateScale)
 {
     auto pageCount = this->pageCount();
     m_pageGeometry.clear();
@@ -172,28 +172,28 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize)
 
     maxRowWidth += 2 * documentMargin.width();
 
-    layoutPages(pluginSize.width(), maxRowWidth);
+    layoutPages(pluginSize.width(), maxRowWidth, shouldUpdateScale);
 
     LOG_WITH_STREAM(PDF, stream << "PDFDocumentLayout::updateLayout() - plugin size " << pluginSize << " document bounds " << m_documentBounds << " scale " << m_scale);
 }
 
-void PDFDocumentLayout::layoutPages(float availableWidth, float maxRowWidth)
+void PDFDocumentLayout::layoutPages(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale shouldUpdateScale)
 {
     // We always lay out in a continuous mode. We handle non-continuous mode via scroll snap.
     switch (m_displayMode) {
     case DisplayMode::SinglePageDiscrete:
     case DisplayMode::SinglePageContinuous:
-        layoutSingleColumn(availableWidth, maxRowWidth);
+        layoutSingleColumn(availableWidth, maxRowWidth, shouldUpdateScale);
         break;
 
     case DisplayMode::TwoUpDiscrete:
     case DisplayMode::TwoUpContinuous:
-        layoutTwoUpColumn(availableWidth, maxRowWidth);
+        layoutTwoUpColumn(availableWidth, maxRowWidth, shouldUpdateScale);
         break;
     }
 }
 
-void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWidth)
+void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale shouldUpdateScale)
 {
     float currentYOffset = documentMargin.height();
     auto pageCount = this->pageCount();
@@ -217,14 +217,14 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWid
     currentYOffset -= pageMargin.height();
     currentYOffset += documentMargin.height();
 
-    if (m_autoSizeState == ShouldUpdateAutoSizeScale::Yes)
+    if (shouldUpdateScale == ShouldUpdateAutoSizeScale::Yes)
         m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
     m_documentBounds = FloatRect { 0, 0, maxRowWidth, currentYOffset };
 
     LOG_WITH_STREAM(PDF, stream << "PDFDocumentLayout::layoutSingleColumn - document bounds " << m_documentBounds << " scale " << m_scale);
 }
 
-void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidth)
+void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale shouldUpdateScale)
 {
     FloatSize currentRowSize;
     float currentYOffset = documentMargin.height();
@@ -275,7 +275,7 @@ void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidt
     currentYOffset -= pageMargin.height();
     currentYOffset += documentMargin.height();
 
-    if (m_autoSizeState == ShouldUpdateAutoSizeScale::Yes)
+    if (shouldUpdateScale == ShouldUpdateAutoSizeScale::Yes)
         m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
     m_documentBounds = FloatRect { 0, 0, maxRowWidth, currentYOffset };
 }
