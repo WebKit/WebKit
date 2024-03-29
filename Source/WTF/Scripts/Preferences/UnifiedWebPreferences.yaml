@@ -7871,48 +7871,48 @@ WebXRAugmentedRealityModuleEnabled:
 
 WebXREnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "WebXR Device API"
   humanReadableDescription: "Adds support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web"
   condition: ENABLE(WEBXR)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 WebXRGamepadsModuleEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "WebXR Gamepads Module"
   humanReadableDescription: "Adds support for the WebXR Gamepads Module"
   condition: ENABLE(WEBXR)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 WebXRHandInputModuleEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "WebXR Hand Input Module"
   humanReadableDescription: "Adds support for the Hands Input Module for WebXR"
   condition: ENABLE(WEBXR_HANDS)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 WheelEventGesturesBecomeNonBlocking:
   type: bool
