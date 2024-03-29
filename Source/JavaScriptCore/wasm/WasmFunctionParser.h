@@ -471,7 +471,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
 #endif
 
         if (verbose) {
-            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawHex(op), ", ", makeString(static_cast<OpType>(op)), " at offset: ", RawHex(m_offset));
+            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawHex(m_currentOpcode), ", ", makeString(static_cast<OpType>(m_currentOpcode)), " at offset: ", RawHex(m_currentOpcodeStartingOffset));
             m_context.dump(m_controlStack, &m_expressionStack);
         }
 
