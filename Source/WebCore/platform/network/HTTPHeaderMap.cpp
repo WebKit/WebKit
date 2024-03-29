@@ -106,7 +106,7 @@ void HTTPHeaderMap::set(const String& name, const String& value)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName)) {
-        set(headerName, value);
+        set(headerName, name, value);
         return;
     }
 
@@ -133,7 +133,7 @@ void HTTPHeaderMap::add(const String& name, const String& value)
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName)) {
-        add(headerName, value);
+        add(headerName, name, value);
         return;
     }
     addUncommonHeader(name, value);
@@ -160,9 +160,10 @@ void HTTPHeaderMap::append(const String& name, const String& value)
     ASSERT(!contains(name));
 
     HTTPHeaderName headerName;
-    if (findHTTPHeaderName(name, headerName))
-        m_commonHeaders.append(CommonHeader { headerName, value });
-    else
+    if (findHTTPHeaderName(name, headerName)) {
+        const String& customKey = httpHeaderNameString(headerName) != name ? name : emptyString();
+        m_commonHeaders.append(CommonHeader { headerName, value, customKey });
+    } else
         m_uncommonHeaders.append(UncommonHeader { name, value });
 }
 
@@ -171,7 +172,7 @@ bool HTTPHeaderMap::addIfNotPresent(HTTPHeaderName headerName, const String& val
     if (contains(headerName))
         return false;
 
-    m_commonHeaders.append(CommonHeader { headerName, value });
+    m_commonHeaders.append(CommonHeader { headerName, { }, value });
     return true;
 }
 
@@ -207,13 +208,20 @@ String HTTPHeaderMap::get(HTTPHeaderName name) const
 
 void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
 {
+    set(name, { }, value);
+}
+
+void HTTPHeaderMap::set(HTTPHeaderName name, const String& customKey, const String& value)
+{
     auto index = m_commonHeaders.findIf([&](auto& header) {
         return header.key == name;
     });
     if (index == notFound)
-        m_commonHeaders.append(CommonHeader { name, value });
-    else
+        m_commonHeaders.append(CommonHeader { name, customKey, value });
+    else {
+        m_commonHeaders[index].customKey = customKey;
         m_commonHeaders[index].value = value;
+    }
 }
 
 bool HTTPHeaderMap::contains(HTTPHeaderName name) const
@@ -232,13 +240,22 @@ bool HTTPHeaderMap::remove(HTTPHeaderName name)
 
 void HTTPHeaderMap::add(HTTPHeaderName name, const String& value)
 {
+    add(name, { }, value);
+}
+
+void HTTPHeaderMap::add(HTTPHeaderName name, const String& customName, const String& value)
+{
     auto index = m_commonHeaders.findIf([&](auto& header) {
         return header.key == name;
     });
-    if (index != notFound)
+    if (index != notFound) {
+        if (httpHeaderNameString(name) != customName)
+            m_commonHeaders[index].customKey = customName;
         m_commonHeaders[index].value = makeString(m_commonHeaders[index].value, ", ", value);
-    else
-        m_commonHeaders.append(CommonHeader { name, value });
+    } else {
+        const String& customKey = httpHeaderNameString(name) != customName ? customName : emptyString();
+        m_commonHeaders.append(CommonHeader { name, customKey, value });
+    }
 }
 
 } // namespace WebCore
