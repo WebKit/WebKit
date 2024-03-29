@@ -437,6 +437,13 @@ template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder,
 #endif
 #endif // ENABLE(DATA_DETECTION)
 
+#if USE(PASSKIT)
+    if (PAL::isPassKitCoreFrameworkAvailable() && [object isKindOfClass:PAL::getPKSecureElementPassClass()]) {
+        [delegate setTransformURLs:NO];
+        [delegate setRewriteMutableArray:YES];
+    }
+#endif
+
     [archiver setDelegate:delegate.get()];
 
     [archiver encodeObject:object forKey:NSKeyedArchiveRootObjectKey];
@@ -596,6 +603,11 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
         if (allowedClasses.contains(PAL::getPKPaymentClass()) || allowedClasses.contains(PAL::getPKPaymentMethodClass()) || allowedClasses.contains(PAL::getPKPaymentTokenClass())) {
             allowedClasses.add(PAL::getPKSecureElementPassClass());
         }
+    }
+
+    if (PAL::isPassKitCoreFrameworkAvailable()) {
+        if (PAL::getPKSecureElementPassClass() && allowedClasses.contains(PAL::getPKSecureElementPassClass()))
+            allowedClasses.add(PAL::getPKPaymentPassClass());
     }
 #endif
 
