@@ -296,8 +296,8 @@ EventPath::EventPath(EventTarget& target)
 static Node* moveOutOfAllShadowRoots(Node& startingNode)
 {
     Node* node = &startingNode;
-    while (node->isInShadowTree())
-        node = downcast<ShadowRoot>(node->treeScope().rootNode()).host();
+    while (node && node->isInShadowTree())
+        node = downcast<ShadowRoot>(node->rootNode()).host();
     return node;
 }
 
