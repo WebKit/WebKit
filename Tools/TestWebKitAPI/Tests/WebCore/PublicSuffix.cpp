@@ -195,7 +195,7 @@ TEST_F(PublicSuffix, PublicSuffixCache)
     EXPECT_EQ(String("example.example"_s), publicSuffixStore.topPrivatelyControlledDomain("a.b.example.example"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix(""_s));
 
-    publicSuffixStore.enablePublicSuffixCache();
+    publicSuffixStore.enablePublicSuffixCache(PublicSuffixStore::CanAcceptCustomPublicSuffix::Yes);
     publicSuffixStore.clearHostTopPrivatelyControlledDomainCache();
     publicSuffixStore.addPublicSuffix("example.example"_s);
     publicSuffixStore.addPublicSuffix(""_s);

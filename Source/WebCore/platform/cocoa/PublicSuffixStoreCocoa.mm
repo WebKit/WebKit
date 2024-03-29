@@ -60,11 +60,12 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(const String& hos
     return { };
 }
 
-void PublicSuffixStore::enablePublicSuffixCache()
+void PublicSuffixStore::enablePublicSuffixCache(CanAcceptCustomPublicSuffix canAcceptCustomPublicSuffix)
 {
     Locker locker { m_publicSuffixCacheLock };
     ASSERT(!m_publicSuffixCache);
 
+    m_canAcceptCustomPublicSuffix = (canAcceptCustomPublicSuffix == CanAcceptCustomPublicSuffix::Yes);
     m_publicSuffixCache = HashSet<String, ASCIICaseInsensitiveHash> { };
 }
 
@@ -74,6 +75,12 @@ void PublicSuffixStore::addPublicSuffix(const String& publicSuffix)
         return;
 
     Locker locker { m_publicSuffixCacheLock };
+
+    if (!m_publicSuffixCache)
+        return;
+
+    if (!m_canAcceptCustomPublicSuffix)
+        RELEASE_ASSERT(isPublicSuffixCF(publicSuffix));
 
     if (m_publicSuffixCache)
         m_publicSuffixCache->add(crossThreadCopy(publicSuffix));
