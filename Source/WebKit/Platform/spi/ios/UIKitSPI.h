@@ -31,6 +31,7 @@
 #import <UIKit/NSTextAlternatives.h>
 #import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIAlertController_Private.h>
+#import <UIKit/UIApplication+iOSMac_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItem_Private.h>
 #import <UIKit/UIBlurEffect_Private.h>
@@ -1013,6 +1014,10 @@ extern NSNotificationName const _UIWindowSceneDidBeginLiveResizeNotification;
 extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;
 
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
+
+#if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
+extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserInterfaceIdiom, CGFloat scaleFactor);
+#endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
