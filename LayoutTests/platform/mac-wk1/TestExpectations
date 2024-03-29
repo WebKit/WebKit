@@ -2847,3 +2847,4 @@ imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-003.ht
 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1.html [ ImageOnlyFailure ]
 
+webkit.org/b/271865 css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]
