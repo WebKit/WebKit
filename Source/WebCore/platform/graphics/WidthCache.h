@@ -54,14 +54,14 @@ private:
         {
         }
 
-        SmallStringKey(StringView string)
+        ALWAYS_INLINE SmallStringKey(StringView string)
         {
             unsigned length = string.length();
             ASSERT(length <= s_capacity);
             if (string.is8Bit())
-                StringImpl::copyCharacters(m_characters.data(), string.characters8(), length);
+                copySmallCharacters(m_characters.data(), string.characters8(), length);
             else
-                StringImpl::copyCharacters(m_characters.data(), string.characters16(), length);
+                copySmallCharacters(m_characters.data(), string.characters16(), length);
             m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(m_characters.data(), s_capacity) | (length << 24);
         }
 
@@ -78,6 +78,13 @@ private:
     private:
         static constexpr unsigned s_capacity = 16;
         static constexpr unsigned s_deletedValueLength = s_capacity + 1;
+
+        template<typename CharacterType>
+        ALWAYS_INLINE static void copySmallCharacters(UChar* dest, const CharacterType* source, unsigned length)
+        {
+            for (unsigned i = 0; i < length; ++i)
+                dest[i] = source[i];
+        }
 
         std::array<UChar, s_capacity> m_characters { };
         unsigned m_hashAndLength { 0 };
@@ -157,7 +164,10 @@ private:
         bool isNewEntry;
         float* value;
         if (length == 1) {
-            SingleCharMap::AddResult addResult = m_singleCharMap.fastAdd(text[0], entry);
+            // The map use 0 for empty key, thus we do +1 here to avoid conflicting against empty key.
+            // This is fine since the key is uint32_t while character is UChar. So +1 never causes overflow.
+            uint32_t character = text[0];
+            auto addResult = m_singleCharMap.fastAdd(character + 1, entry);
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         } else {
@@ -186,8 +196,8 @@ private:
         return nullptr;
     }
 
-    using Map = HashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits>;
-    using SingleCharMap = HashMap<uint32_t, float, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using Map = HashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
+    using SingleCharMap = HashMap<uint32_t, float, DefaultHash<uint32_t>, HashTraits<uint32_t>, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
 
     static constexpr int s_minInterval = -3; // A cache hit pays for about 3 cache misses.
     static constexpr int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
