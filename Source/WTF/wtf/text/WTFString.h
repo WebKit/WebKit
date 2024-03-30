@@ -57,14 +57,11 @@ public:
     String() = default;
 
     // Construct a string with UTF-16 data.
-    WTF_EXPORT_PRIVATE String(const UChar* characters, unsigned length);
-    ALWAYS_INLINE String(std::span<const UChar> characters) : String(characters.data(), characters.size()) { }
+    WTF_EXPORT_PRIVATE String(std::span<const UChar> characters);
 
     // Construct a string with Latin-1 data.
-    WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
-    WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
-    ALWAYS_INLINE String(std::span<const LChar> characters) : String(characters.data(), characters.size()) { }
-    ALWAYS_INLINE String(std::span<const char> characters) : String(characters.data(), characters.size()) { }
+    WTF_EXPORT_PRIVATE String(std::span<const LChar> characters);
+    WTF_EXPORT_PRIVATE String(std::span<const char> characters);
     ALWAYS_INLINE static String fromLatin1(const char* characters) { return String { characters }; }
 
     // Construct a string referencing an existing StringImpl.
@@ -255,10 +252,10 @@ public:
 
 #if OS(WINDOWS)
     String(const wchar_t* characters, unsigned length)
-        : String(ucharFrom(characters), length) { }
+        : String({ ucharFrom(characters), length }) { }
 
     String(const wchar_t* characters)
-        : String(characters, characters ? wcslen(characters) : 0) { }
+        : String({ ucharFrom(characters), static_cast<size_t>(characters ? wcslen(characters) : 0) }) { }
 
     WTF_EXPORT_PRIVATE Vector<wchar_t> wideCharacters() const;
 #endif
@@ -380,7 +377,7 @@ template<> struct VectorTraits<String> : VectorTraitsBase<false, void> {
 template<> struct IntegerToStringConversionTrait<String> {
     using ReturnType = String;
     using AdditionalArgumentType = void;
-    static String flush(LChar* characters, unsigned length, void*) { return { characters, length }; }
+    static String flush(const LChar* characters, unsigned length, void*) { return std::span { characters, length }; }
 };
 
 #ifdef __OBJC__
@@ -581,7 +578,7 @@ inline String operator"" _str(const char* characters, size_t)
 
 inline String operator"" _str(const UChar* characters, size_t length)
 {
-    return String(characters, length);
+    return String({ characters, length });
 }
 
 } // inline StringLiterals

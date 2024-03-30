@@ -92,7 +92,7 @@ void HTTPHeaderMap::set(CFStringRef name, const String& value)
         if (findHTTPHeaderName(StringView(std::span { nameCharacters, length }), headerName))
             set(headerName, value);
         else
-            setUncommonHeader(String(nameCharacters, length), value);
+            setUncommonHeader(String({ nameCharacters, length }), value);
 
         return;
     }

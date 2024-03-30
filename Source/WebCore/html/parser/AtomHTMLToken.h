@@ -270,7 +270,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
         if (token.commentIsAll8BitData())
             m_data = String::make8Bit(token.comment().data(), token.comment().size());
         else
-            m_data = String(token.comment().data(), token.comment().size());
+            m_data = token.comment().span();
         return;
     }
     case Type::Character:

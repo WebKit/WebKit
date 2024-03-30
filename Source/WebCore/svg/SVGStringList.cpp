@@ -53,7 +53,7 @@ bool SVGStringList::parse(StringView data, UChar delimiter)
             if (buffer.position() == start)
                 break;
 
-            m_items.append(String(start, buffer.position() - start));
+            m_items.append(String({ start, buffer.position() }));
             skipOptionalSVGSpacesOrDelimiter(buffer, delimiter);
         }
 

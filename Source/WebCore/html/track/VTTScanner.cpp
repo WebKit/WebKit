@@ -105,9 +105,9 @@ String VTTScanner::extractString(const Run& run)
     ASSERT(run.end() <= end());
     String s;
     if (m_is8Bit)
-        s = String(m_data.characters8, run.length());
+        s = std::span { m_data.characters8, run.length() };
     else
-        s = String(m_data.characters16, run.length());
+        s = std::span { m_data.characters16, run.length() };
     seekTo(run.end());
     return s;
 }

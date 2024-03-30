@@ -118,10 +118,10 @@ void ContentSecurityPolicyTrustedTypesDirective::parse(const String& value)
             }
 
             if (skipExactly<isPolicyNameCharacter>(policyBuffer)) {
-                auto policy = String(beginPolicy, buffer.position() - beginPolicy);
+                auto policy = String({ beginPolicy, buffer.position() });
                 m_list.add(policy);
             } else {
-                auto policy = String(beginPolicy, buffer.position() - beginPolicy);
+                auto policy = String({ beginPolicy, buffer.position() });
                 directiveList().policy().reportInvalidTrustedTypesPolicy(policy);
             }
 

@@ -1236,7 +1236,7 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
             auto& vm = state.vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
 
-            String jwkString(bytes.data(), bytes.size());
+            String jwkString(bytes.span());
             JSLockHolder locker(vm);
             auto jwkObject = JSONParse(&state, jwkString);
             if (!jwkObject) {

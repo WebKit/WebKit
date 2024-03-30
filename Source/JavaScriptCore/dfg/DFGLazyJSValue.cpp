@@ -131,7 +131,7 @@ String LazyJSValue::tryGetString(Graph& graph) const
         return u.stringImpl;
 
     case SingleCharacterString:
-        return String(&u.character, 1);
+        return span(u.character);
 
     case KnownValue:
     case KnownStringImpl:

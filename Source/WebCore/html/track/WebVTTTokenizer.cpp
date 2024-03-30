@@ -86,7 +86,7 @@ WebVTTTokenizer::WebVTTTokenizer(const String& input)
 {
     // Append an EOF marker and close the input "stream".
     ASSERT(!m_input.isClosed());
-    m_input.append(String { &kEndOfFileMarker, 1 });
+    m_input.append(span(kEndOfFileMarker));
     m_input.close();
 }
 

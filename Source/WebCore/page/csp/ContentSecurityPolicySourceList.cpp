@@ -268,7 +268,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
             if (isValidSourceForExtensionMode(source.value()))
                 m_list.append(ContentSecurityPolicySource(m_policy, source->scheme.convertToASCIILowercase(), source->host.value.toString(), source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard, IsSelfSource::No));
         } else
-            m_policy.reportInvalidSourceExpression(m_directiveName, String(beginSource, buffer.position() - beginSource));
+            m_policy.reportInvalidSourceExpression(m_directiveName, String({ beginSource, buffer.position() }));
 
         ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
     }
@@ -516,7 +516,7 @@ template<typename CharacterType> String ContentSecurityPolicySourceList::parsePa
     // path/to/file.js?query=string || path/to/file.js#anchor
     //                ^                               ^
     if (buffer.hasCharactersRemaining())
-        m_policy.reportInvalidPathCharacter(m_directiveName, String(begin, buffer.end() - begin), *buffer);
+        m_policy.reportInvalidPathCharacter(m_directiveName, String({ begin, buffer.end() }), *buffer);
 
     ASSERT(buffer.position() <= buffer.end());
     ASSERT(buffer.atEnd() || (*buffer == '#' || *buffer == '?'));
@@ -578,7 +578,7 @@ template<typename CharacterType> bool ContentSecurityPolicySourceList::parseNonc
     if (buffer.atEnd() || buffer.position() == beginNonceValue || *buffer != '\'')
         return false;
     if (extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName))
-        m_nonces.add(String(beginNonceValue, buffer.position() - beginNonceValue));
+        m_nonces.add(String({ beginNonceValue, buffer.position() }));
     return true;
 }
 

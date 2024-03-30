@@ -375,7 +375,7 @@ String HTTPServer::parsePath(const Vector<char>& request)
         pathPrefixLength = strlen(postPathPrefix);
     ASSERT_WITH_MESSAGE(pathPrefixLength, "HTTPServer assumes request is GET or POST");
     size_t pathLength = pathEnd - request.data() - pathPrefixLength;
-    return String(request.data() + pathPrefixLength, pathLength);
+    return request.subspan(pathPrefixLength, pathLength);
 }
 
 String HTTPServer::parseBody(const Vector<char>& request)
@@ -383,7 +383,7 @@ String HTTPServer::parseBody(const Vector<char>& request)
     const char* headerEndBytes = "\r\n\r\n";
     const char* headerEnd = strnstr(request.data(), headerEndBytes, request.size()) + strlen(headerEndBytes);
     size_t headerLength = headerEnd - request.data();
-    return String(headerEnd, request.size() - headerLength);
+    return request.subspan(headerLength);
 }
 
 void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> requestData)

@@ -291,7 +291,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
         truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer, shouldInsertEllipsis);
     }
     
-    return String(stringBuffer, truncatedLength);
+    return String({ stringBuffer, truncatedLength });
 }
 
 String StringTruncator::centerTruncate(const String& string, float maxWidth, const FontCascade& font)

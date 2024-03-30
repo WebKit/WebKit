@@ -310,7 +310,7 @@ String FileReaderLoader::stringResult()
         // No conversion is needed.
         break;
     case ReadAsBinaryString:
-        m_stringResult = String(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
+        m_stringResult = m_rawData->span().first(m_bytesLoaded);
         break;
     case ReadAsText:
         convertToText();

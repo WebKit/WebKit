@@ -56,7 +56,7 @@ String TextCodecReplacement::decode(std::span<const uint8_t>, bool, bool, bool& 
     if (m_sentEOF)
         return emptyString();
     m_sentEOF = true;
-    return String { &replacementCharacter, 1 };
+    return span(replacementCharacter);
 }
 
 Vector<uint8_t> TextCodecReplacement::encode(StringView string, UnencodableHandling) const

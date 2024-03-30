@@ -128,7 +128,7 @@ auto RenderListMarker::textRun() const -> TextRunWithUnderlyingString
             textForRun = m_textWithSuffix;
         else {
             if (style().listStyleType().isDisclosureClosed())
-                textForRun = { &blackLeftPointingSmallTriangle, 1 };
+                textForRun = span(blackLeftPointingSmallTriangle);
             else
                 textForRun = makeString(reversed(StringView(m_textWithSuffix).substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
         }

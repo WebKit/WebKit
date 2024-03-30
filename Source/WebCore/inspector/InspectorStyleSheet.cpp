@@ -452,7 +452,7 @@ static inline void fixUnparsedProperties(const CharacterType* characters, CSSRul
                 ++valueStart;
             
             // Need to exclude the trailing ';' from the property value.
-            currentData->value = String(characters + valueStart, propertyEnd - valueStart + (characters[propertyEnd] == ';' ? 0 : 1));
+            currentData->value = String({ characters + valueStart, propertyEnd - valueStart + (characters[propertyEnd] == ';' ? 0 : 1) });
         }
     }
 }

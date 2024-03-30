@@ -261,7 +261,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
 
             // header1,header2 OR header1
             //        ^                  ^
-            m_policies.append(ContentSecurityPolicyDirectiveList::create(*this, String(begin, buffer.position() - begin), type, policyFrom));
+            m_policies.append(ContentSecurityPolicyDirectiveList::create(*this, String({ begin, buffer.position() }), type, policyFrom));
 
             // Skip the comma, and begin the next header from the current position.
             ASSERT(buffer.atEnd() || *buffer == ',');

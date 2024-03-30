@@ -2644,7 +2644,7 @@ static String commandNameForSelector(SEL selector)
     size_t selectorNameLength = strlen(selectorName);
     if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
         return String();
-    return String(selectorName, selectorNameLength - 1);
+    return String({ selectorName, selectorNameLength - 1 });
 }
 
 bool WebViewImpl::executeSavedCommandBySelector(SEL selector)

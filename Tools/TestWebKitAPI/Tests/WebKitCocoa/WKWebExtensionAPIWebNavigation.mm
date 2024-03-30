@@ -268,7 +268,7 @@ template<size_t length>
 String longString(LChar c)
 {
     Vector<LChar> vector(length, c);
-    return String(vector.data(), length);
+    return vector.span();
 }
 
 TEST(WKWebExtensionAPIWebNavigation, OnErrorOccurredDuringLoadEvent)

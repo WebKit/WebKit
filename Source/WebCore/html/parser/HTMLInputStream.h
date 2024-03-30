@@ -72,7 +72,7 @@ public:
 
     void markEndOfFile()
     {
-        m_last->append(String { &kEndOfFileMarker, 1 });
+        m_last->append(span(kEndOfFileMarker));
         m_last->close();
     }
 

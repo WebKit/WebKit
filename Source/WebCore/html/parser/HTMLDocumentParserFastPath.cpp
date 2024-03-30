@@ -492,7 +492,7 @@ private:
         unsigned length = m_parsingBuffer.position() - start;
         if (UNLIKELY(length >= Text::defaultLengthLimit))
             return didFail(HTMLFastPathResult::FailedBigText, String());
-        return length ? String(start, length) : String();
+        return length ? String({ start, length }) : String();
     }
 
     // Slow-path of `scanText()`, which supports escape sequences by copying to a

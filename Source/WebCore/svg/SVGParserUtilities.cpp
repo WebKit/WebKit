@@ -281,7 +281,7 @@ std::optional<HashSet<String>> parseGlyphName(StringView string)
             while (inputStart < inputEnd && isASCIIWhitespace(*inputEnd))
                 --inputEnd;
 
-            values.add(String(inputStart, inputEnd - inputStart + 1));
+            values.add(String({ inputStart, static_cast<size_t>(inputEnd - inputStart + 1) }));
             skipOptionalSVGSpacesOrDelimiter(buffer, ',');
         }
         return values;
@@ -381,7 +381,7 @@ std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeStri
             if (auto range = parseUnicodeRange(StringParsingBuffer { inputStart, buffer.position() }))
                 rangeList.append(WTFMove(*range));
             else
-                stringList.add(String(inputStart, buffer.position() - inputStart));
+                stringList.add(String({ inputStart, buffer.position() }));
 
             if (buffer.atEnd())
                 break;

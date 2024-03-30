@@ -88,14 +88,14 @@ private:
     {
     }
 
-    OpaqueJSString(const LChar* characters, unsigned length)
-        : m_string(characters, length)
+    OpaqueJSString(const LChar* characters, unsigned length) // FIXME: Should take in a span.
+        : m_string({ characters, length })
         , m_characters(nullptr)
     {
     }
 
-    OpaqueJSString(const UChar* characters, unsigned length)
-        : m_string(characters, length)
+    OpaqueJSString(const UChar* characters, unsigned length) // FIXME: Should take in a span.
+        : m_string({ characters, length })
         , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
     {
     }

@@ -440,7 +440,7 @@ void EventSource::dispatchMessageEvent()
     ASSERT(!m_data.isEmpty());
 
     // Omit the trailing "\n" character.
-    String data(m_data.data(), m_data.size() - 1);
+    String data(m_data.subspan(0, m_data.size() - 1));
     m_data = { };
 
     dispatchEvent(MessageEvent::create(name, WTFMove(data), m_eventStreamOrigin, m_lastEventId));

@@ -177,17 +177,17 @@ static inline String gap(JSGlobalObject* globalObject, JSValue space)
     // If the space value is a number, create a gap string with that number of spaces.
     if (space.isNumber()) {
         double spaceCount = space.asNumber();
-        int count;
+        size_t count;
         if (spaceCount > maxGapLength)
             count = maxGapLength;
         else if (!(spaceCount > 0))
             count = 0;
         else
-            count = static_cast<int>(spaceCount);
+            count = static_cast<size_t>(spaceCount);
         char spaces[maxGapLength];
-        for (int i = 0; i < count; ++i)
+        for (size_t i = 0; i < count; ++i)
             spaces[i] = ' ';
-        return String(spaces, count);
+        return String({ spaces, count });
     }
 
     // If the space value is a string, use it as the gap string, otherwise use no gap string.
@@ -843,7 +843,7 @@ inline String FastStringifier<CharType>::result() const
     }
     logOutcome("success"_s);
 #endif
-    return { m_buffer, m_length };
+    return std::span { m_buffer, m_length };
 }
 
 template<typename CharType>

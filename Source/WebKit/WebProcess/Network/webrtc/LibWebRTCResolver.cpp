@@ -62,7 +62,7 @@ void LibWebRTCResolver::start(const rtc::SocketAddress& address, Function<void()
     m_port = address.port();
 
     auto addressString = address.HostAsURIString();
-    String name { addressString.data(), static_cast<unsigned>(addressString.length()) };
+    String name { std::span { addressString } };
 
     if (name.endsWithIgnoringASCIICase(".local"_s) && !WTF::isVersion4UUID(StringView { name }.left(name.length() - 6))) {
         RELEASE_LOG_ERROR(WebRTC, "mDNS candidate is not a Version 4 UUID");

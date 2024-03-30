@@ -1062,7 +1062,7 @@ static inline void parseHeader(const CharacterType* header, unsigned headerLengt
     // Save memory by putting the header names into atom strings so each is stored only once,
     // even though the setHTTPHeaderField function does not require an atom string.
     AtomString headerName { header, colonPosition };
-    String headerValue { header + colonPosition + 1, headerLength - colonPosition - 1 };
+    String headerValue({ header + colonPosition + 1, headerLength - colonPosition - 1 });
 
     response.setHTTPHeaderField(headerName, headerValue);
 }

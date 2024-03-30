@@ -711,8 +711,7 @@ void WebPasteboardProxy::testIPCSharedMemory(IPC::Connection& connection, const 
         return;
     }
 
-    String message = { static_cast<char*>(sharedMemoryBuffer->data()), static_cast<unsigned>(sharedMemoryBuffer->size()) };
-    completionHandler(sharedMemoryBuffer->size(), WTFMove(message));
+    completionHandler(sharedMemoryBuffer->size(), sharedMemoryBuffer->span());
 }
 #endif
 

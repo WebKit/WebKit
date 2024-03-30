@@ -846,7 +846,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyURIArray)
         return false;
 
-    keyURI = String(reinterpret_cast<UChar*>(keyURIArray->data()), keyURILength / sizeof(unsigned short));
+    keyURI = String({ reinterpret_cast<UChar*>(keyURIArray->data()), keyURILength / sizeof(unsigned short) });
     offset += keyURILength;
 
     uint32_t keyIDLength = initDataView->get<uint32_t>(offset, true, &status);
@@ -858,7 +858,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyIDArray)
         return false;
 
-    keyID = String(reinterpret_cast<UChar*>(keyIDArray->data()), keyIDLength / sizeof(unsigned short));
+    keyID = String({ reinterpret_cast<UChar*>(keyIDArray->data()), keyIDLength / sizeof(unsigned short) });
     offset += keyIDLength;
 
     uint32_t certificateLength = initDataView->get<uint32_t>(offset, true, &status);

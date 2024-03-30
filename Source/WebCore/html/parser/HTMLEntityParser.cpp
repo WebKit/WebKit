@@ -152,7 +152,7 @@ void SegmentedStringSource::advance()
 
 void SegmentedStringSource::pushEverythingBack()
 {
-    m_source.pushBack(String { m_consumedCharacters });
+    m_source.pushBack(m_consumedCharacters.span());
     m_consumedCharacters.clear();
 }
 
@@ -160,7 +160,7 @@ void SegmentedStringSource::pushBackButKeep(unsigned keepCount)
 {
     ASSERT(keepCount < m_consumedCharacters.size());
     unsigned length = m_consumedCharacters.size() - keepCount;
-    m_source.pushBack(String { m_consumedCharacters.data() + keepCount, length });
+    m_source.pushBack(m_consumedCharacters.subspan(keepCount, length));
     m_consumedCharacters.shrink(keepCount);
 }
 

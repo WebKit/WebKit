@@ -304,7 +304,7 @@ static String retrieveSeparator(const CString& locale, const String& numberingSy
     if (U_FAILURE(status))
         return fallbackTimeSeparator;
 
-    return String(data, length);
+    return String({ data, static_cast<size_t>(length) });
 }
 
 enum class ElementType : uint8_t {

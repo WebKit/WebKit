@@ -409,7 +409,7 @@ bool isTableStructureNode(const Node& node)
 
 const String& nonBreakingSpaceString()
 {
-    static NeverDestroyed<String> nonBreakingSpaceString(&noBreakSpace, 1);
+    static NeverDestroyed<String> nonBreakingSpaceString(span(noBreakSpace));
     return nonBreakingSpaceString;
 }
 

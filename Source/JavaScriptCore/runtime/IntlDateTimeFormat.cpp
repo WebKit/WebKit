@@ -159,7 +159,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
         int32_t nameLength;
         while (const char* availableName = uenum_next(calendars, &nameLength, &status)) {
             ASSERT(U_SUCCESS(status));
-            String calendar = String(availableName, nameLength);
+            String calendar = String({ availableName, static_cast<size_t>(nameLength) });
             keyLocaleData.append(calendar);
             // Adding "islamicc" candidate for backward compatibility.
             if (calendar == "islamic-civil"_s)

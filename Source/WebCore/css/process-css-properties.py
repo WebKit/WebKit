@@ -2601,8 +2601,7 @@ class GenerateCSSPropertyNames:
                     }
                     *nextCharacter++ = character;
                 }
-                unsigned length = nextCharacter - characters;
-                return { characters, length };
+                return std::span<const LChar> { characters, nextCharacter };
             }
 
             """)

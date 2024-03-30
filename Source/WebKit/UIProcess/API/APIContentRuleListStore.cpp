@@ -458,14 +458,14 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
     size_t start = headerSizeBytes + sizeof(bool);
     size_t length = mappedData.metaData.sourceSize - sizeof(bool);
     if (is8Bit)
-        return WTF::String(mappedData.data.data() + start, length);
+        return mappedData.data.span().subspan(start, length);
 
     if (length % sizeof(UChar)) {
         ASSERT_NOT_REACHED();
         return { };
     }
 
-    return WTF::String(reinterpret_cast<const UChar*>(mappedData.data.data() + start), length / sizeof(UChar));
+    return WTF::String({ reinterpret_cast<const UChar*>(mappedData.data.data() + start), length / sizeof(UChar) });
 }
 
 void ContentRuleListStore::lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)

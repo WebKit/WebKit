@@ -23,6 +23,7 @@
 #include <wtf/text/WTFString.h>
 
 #include <wtf/ASCIICType.h>
+#include <wtf/Algorithms.h>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
@@ -40,19 +41,19 @@ namespace WTF {
 using namespace Unicode;
 
 // Construct a string with UTF-16 data.
-String::String(const UChar* characters, unsigned length)
-    : m_impl(characters ? RefPtr { StringImpl::create(std::span { characters, length }) } : nullptr)
+String::String(std::span<const UChar> characters)
+    : m_impl(characters.data() ? RefPtr { StringImpl::create(characters) } : nullptr)
 {
 }
 
 // Construct a string with latin1 data.
-String::String(const LChar* characters, unsigned length)
-    : m_impl(characters ? RefPtr { StringImpl::create(std::span { characters, length }) } : nullptr)
+String::String(std::span<const LChar> characters)
+    : m_impl(characters.data() ? RefPtr { StringImpl::create(characters) } : nullptr)
 {
 }
 
-String::String(const char* characters, unsigned length)
-    : m_impl(characters ? RefPtr { StringImpl::create(std::span { reinterpret_cast<const LChar*>(characters), length }) } : nullptr)
+String::String(std::span<const char> characters)
+    : m_impl(characters.data() ? RefPtr { StringImpl::create(spanReinterpretCast<const uint8_t>(characters)) } : nullptr)
 {
 }
 
@@ -543,7 +544,7 @@ String String::fromCodePoint(char32_t codePoint)
     uint8_t length = 0;
     UBool error = false;
     U16_APPEND(buffer, length, 2, codePoint, error);
-    return error ? String() : String(buffer, length);
+    return error ? String() : String({ buffer, length });
 }
 
 // String Operations

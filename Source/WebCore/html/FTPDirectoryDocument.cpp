@@ -114,7 +114,7 @@ void FTPDirectoryDocumentParser::appendEntry(String&& filename, String&& size, S
     rowElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryEntryRow"_s);
 
     Ref typeElement = HTMLTableCellElement::create(tdTag, document);
-    typeElement->appendChild(Text::create(document, String(&noBreakSpace, 1)));
+    typeElement->appendChild(Text::create(document, span(noBreakSpace)));
     if (isDirectory)
         typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeDirectory"_s);
     else
@@ -298,7 +298,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
         return false;
     }
 
-    HTMLDocumentParser::insert(String(templateDocumentData.get()->data(), templateDocumentData.get()->size()));
+    HTMLDocumentParser::insert(String(templateDocumentData.get()->span()));
 
     Ref document = *this->document();
 

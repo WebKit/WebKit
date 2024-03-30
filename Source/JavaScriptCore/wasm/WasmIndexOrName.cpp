@@ -56,7 +56,7 @@ String makeString(const IndexOrName& ion)
 {
     if (ion.isEmpty())
         return "wasm-stub"_s;
-    const String moduleName = ion.nameSection()->moduleName.size() ? String(ion.nameSection()->moduleName.data(), ion.nameSection()->moduleName.size()) : String(ion.nameSection()->moduleHash.data(), ion.nameSection()->moduleHash.size());
+    auto moduleName = ion.nameSection()->moduleName.size() ? ion.nameSection()->moduleName.span() : ion.nameSection()->moduleHash.span();
     if (ion.isIndex())
         return makeString(moduleName, ".wasm-function["_s, ion.index(), ']');
     return makeString(moduleName, ".wasm-function["_s, ion.name()->span(), ']');

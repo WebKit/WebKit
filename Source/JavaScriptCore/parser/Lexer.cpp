@@ -1858,7 +1858,7 @@ template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::pars
         if (isLatin1(mergedCharacterBits))
             return String::make8Bit(stringStart, length);
     }
-    return { stringStart, length };
+    return std::span { stringStart, length };
 }
 IGNORE_WARNINGS_END
 

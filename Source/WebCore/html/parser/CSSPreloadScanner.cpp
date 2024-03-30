@@ -172,7 +172,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
     }
 }
 
-static String parseCSSStringOrURL(const UChar* characters, size_t length)
+static String parseCSSStringOrURL(const UChar* characters, size_t length) // FIXME: This should take in a span.
 {
     size_t offset = 0;
     size_t reducedLength = length;
@@ -213,7 +213,7 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
             reducedLength -= 2;            
         }
 
-    return String(characters + offset, reducedLength);
+    return String({ characters + offset, reducedLength });
 }
 
 static bool hasValidImportConditions(StringView conditions)

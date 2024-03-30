@@ -69,7 +69,7 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
         if (!length)
             continue;
         
-        m_entries.add(String(line, length));
+        m_entries.add(String({ line, length }));
     }
 
     int result = fclose(f);

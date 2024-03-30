@@ -92,7 +92,7 @@ template<typename CharType> static std::optional<Token> parseToken(StringParsing
         return std::nullopt;
     auto tokenStart = buffer.position();
     skipUntil<isEndOfToken>(buffer);
-    return Token { String(tokenStart, buffer.position() - tokenStart) };
+    return Token { String({ tokenStart, buffer.position() }) };
 }
 
 // Parsing a Boolean (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.8).

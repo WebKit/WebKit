@@ -57,6 +57,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/UUID.h>
 #import <wtf/UniqueRef.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
 
@@ -805,9 +806,8 @@ public:
             @"topic": (NSString *)topic,
             @"userInfo": apsUserInfo
         };
-        NSData *data = [NSJSONSerialization dataWithJSONObject:obj options:0 error:nullptr];
 
-        String message { static_cast<const char *>(data.bytes), static_cast<unsigned>(data.length) };
+        String message { span([NSJSONSerialization dataWithJSONObject:obj options:0 error:nullptr]) };
 
         auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };

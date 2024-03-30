@@ -67,7 +67,7 @@ bool WebSocketExtensionParser::consumeToken()
     while (m_current < m_end && isASCIIPrintable(*m_current) && !isSeparator(*m_current))
         ++m_current;
     if (start < m_current) {
-        m_currentToken = String(start, m_current - start);
+        m_currentToken = String({ start, m_current });
         return true;
     }
     return false;

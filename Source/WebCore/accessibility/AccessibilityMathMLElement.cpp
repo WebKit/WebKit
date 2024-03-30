@@ -70,7 +70,7 @@ String AccessibilityMathMLElement::textUnderElement(AccessibilityTextUnderElemen
 {
     if (m_isAnonymousOperator) {
         UChar operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();
-        return operatorChar ? String(&operatorChar, 1) : String();
+        return operatorChar ? String(span(operatorChar)) : String();
     }
 
     return AccessibilityRenderObject::textUnderElement(mode);

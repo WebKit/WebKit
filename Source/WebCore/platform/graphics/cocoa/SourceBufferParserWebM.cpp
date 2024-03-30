@@ -817,7 +817,7 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
         return Status(Status::kOkCompleted);
 
     auto trackType = trackEntry.track_type.value();
-    String codecId { trackEntry.codec_id.value().data(), (unsigned)trackEntry.codec_id.value().length() };
+    String codecId = std::span { trackEntry.codec_id.value() };
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, trackType, ", codec ", codecId);
 

@@ -199,7 +199,7 @@ String bootSessionUUIDString()
         size_t uuidLength = maxUUIDLength;
         if (sysctlbyname("kern.bootsessionuuid", uuid, &uuidLength, nullptr, 0))
             return;
-        bootSessionUUID.construct(static_cast<const char*>(uuid), uuidLength - 1);
+        bootSessionUUID.construct(std::span { static_cast<const char*>(uuid), uuidLength - 1 });
     });
     return bootSessionUUID;
 #else

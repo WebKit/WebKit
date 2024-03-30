@@ -280,7 +280,7 @@ static void openNewWindow(const URL& urlToLoad, LocalFrame& frame, Event* event,
 
 static void insertUnicodeCharacter(UChar character, LocalFrame& frame)
 {
-    String text(&character, 1);
+    String text(span(character));
     if (!frame.checkedEditor()->shouldInsertText(text, frame.selection().selection().toNormalizedRange(), EditorInsertAction::Typed))
         return;
 

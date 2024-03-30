@@ -215,7 +215,7 @@ static String textFromEvent(WPARAM wparam, WebEventType type)
         return String();
 
     UChar c = static_cast<UChar>(wparam);
-    return String(&c, 1);
+    return span(c);
 }
 
 static String unmodifiedTextFromEvent(WPARAM wparam, WebEventType type)
@@ -224,7 +224,7 @@ static String unmodifiedTextFromEvent(WPARAM wparam, WebEventType type)
         return String();
 
     UChar c = static_cast<UChar>(wparam);
-    return String(&c, 1);
+    return span(c);
 }
 
 static String keyIdentifierFromEvent(WPARAM wparam, WebEventType type)

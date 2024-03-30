@@ -1476,7 +1476,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
         return 0;
 
     if (length >= 7 && strstr(pathOrURL, "file://")) {
-        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(pathOrURL + 7, length - 7))) {
+        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ pathOrURL + 7, length - 7 }))) {
             printf("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathOrURL);
             return 0;
         }
@@ -1511,7 +1511,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
     }
 
     auto cPath = buffer.get();
-    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(cPath + 7, strlen(cPath) - 7))) {
+    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ cPath + 7, strlen(cPath) - 7 }))) {
         printf("Failed: File ‘%s’ was not found or is inaccessible\n", pathOrURL);
         return 0;
     }

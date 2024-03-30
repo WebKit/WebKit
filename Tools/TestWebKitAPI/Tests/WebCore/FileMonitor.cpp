@@ -110,7 +110,7 @@ static String readContentsOfFile(const String& path)
     if (!buffer)
         return emptyString();
 
-    String result(static_cast<const LChar*>(buffer->data()), buffer->size());
+    String result = buffer->span();
     if (result.endsWith('\n'))
         return result.left(result.length() - 1);
 

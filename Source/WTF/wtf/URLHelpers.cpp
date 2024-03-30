@@ -667,7 +667,7 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
     if (!decodeFunction && !allCharactersInAllowedIDNScriptList(destinationBuffer, numCharactersConverted) && !allCharactersAllowedByTLDRules(destinationBuffer, numCharactersConverted))
         return String();
 
-    return String(destinationBuffer, numCharactersConverted);
+    return String({ destinationBuffer, static_cast<size_t>(numCharactersConverted) });
 }
 
 using MappingRangesVector = std::optional<Vector<std::tuple<unsigned, unsigned, String>>>;

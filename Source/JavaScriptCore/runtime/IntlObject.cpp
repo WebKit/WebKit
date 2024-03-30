@@ -405,7 +405,7 @@ String languageTagForLocaleID(const char* localeID, bool isImmortal)
         // This must be immortal to make concurrent ref/deref safe.
         if (isImmortal)
             return StringImpl::createStaticStringImpl(buffer.data(), buffer.size());
-        return String(buffer.data(), buffer.size());
+        return buffer.span();
     };
 
     return createResult(canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer)));
@@ -1636,7 +1636,7 @@ const Vector<String>& intlAvailableCalendars()
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
-            String calendar(pointer, length);
+            String calendar({ pointer, static_cast<size_t>(length) });
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
                 return createImmortalThreadSafeString(WTFMove(mapped.value()));
             return createImmortalThreadSafeString(WTFMove(calendar));
@@ -1707,7 +1707,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
             throwTypeError(globalObject, scope, "failed to enumerate available collations"_s);
             return { };
         }
-        String collation(pointer, length);
+        String collation({ pointer, static_cast<size_t>(length) });
         if (collation == "standard"_s || collation == "search"_s)
             continue;
         if (auto mapped = mapICUCollationKeywordToBCP47(collation))
@@ -1764,7 +1764,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
             throwTypeError(globalObject, scope, "failed to enumerate available currencies"_s);
             return { };
         }
-        String currency(pointer, length);
+        String currency({ pointer, static_cast<size_t>(length) });
         if (currency == "EQE"_s)
             continue;
         if (currency == "LSM"_s)
@@ -1819,7 +1819,7 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
         }
         if (unumsys_isAlgorithmic(numberingSystem.get()))
             continue;
-        elements.constructAndAppend(name, length);
+        elements.constructAndAppend(std::span { name, static_cast<size_t>(length) });
     }
 
     // The AvailableNumberingSystems abstract operation returns a List, ordered as if an Array of the same
@@ -1873,7 +1873,7 @@ const Vector<String>& intlAvailableTimeZones()
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
-            String timeZone(pointer, length);
+            String timeZone({ pointer, static_cast<size_t>(length) });
             if (isValidTimeZoneNameFromICUTimeZone(timeZone)) {
                 if (auto mapped = canonicalizeTimeZoneNameFromICUTimeZone(WTFMove(timeZone)))
                     temporary.append(WTFMove(mapped.value()));

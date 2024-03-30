@@ -487,7 +487,7 @@ String DateCache::defaultTimeZone()
     if (U_FAILURE(status))
         return "UTC"_s;
 
-    String canonical = String(canonicalTimeZoneID.getBuffer(), canonicalTimeZoneID.length());
+    String canonical = String({ canonicalTimeZoneID.getBuffer(), static_cast<size_t>(canonicalTimeZoneID.length()) });
     if (isUTCEquivalent(canonical))
         return "UTC"_s;
 
@@ -520,12 +520,12 @@ String DateCache::timeZoneDisplayName(bool isDST)
         {
             icu::UnicodeString standardDisplayName;
             timeZoneCache.getDisplayName(false /* inDaylight */, icu::TimeZone::LONG, locale, standardDisplayName);
-            m_timeZoneStandardDisplayNameCache = String(standardDisplayName.getBuffer(), standardDisplayName.length());
+            m_timeZoneStandardDisplayNameCache = String({ standardDisplayName.getBuffer(), static_cast<size_t>(standardDisplayName.length()) });
         }
         {
             icu::UnicodeString dstDisplayName;
             timeZoneCache.getDisplayName(true /* inDaylight */, icu::TimeZone::LONG, locale, dstDisplayName);
-            m_timeZoneDSTDisplayNameCache = String(dstDisplayName.getBuffer(), dstDisplayName.length());
+            m_timeZoneDSTDisplayNameCache = String({ dstDisplayName.getBuffer(), static_cast<size_t>(dstDisplayName.length()) });
         }
 #endif
     }

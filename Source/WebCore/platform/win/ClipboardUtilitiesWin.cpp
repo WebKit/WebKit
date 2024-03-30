@@ -689,7 +689,7 @@ template<typename T> void getStringData(IDataObject* data, FORMATETC* format, Ve
     STGMEDIUM store;
     if (FAILED(data->GetData(format, &store)))
         return;
-    dataStrings.append(String(static_cast<T*>(GlobalLock(store.hGlobal)), ::GlobalSize(store.hGlobal) / sizeof(T)));
+    dataStrings.append(String({ static_cast<T*>(GlobalLock(store.hGlobal)), ::GlobalSize(store.hGlobal) / sizeof(T) }));
     GlobalUnlock(store.hGlobal);
     ReleaseStgMedium(&store);
 }

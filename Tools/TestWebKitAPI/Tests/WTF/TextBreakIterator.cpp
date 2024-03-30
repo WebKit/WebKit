@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 static String makeUTF16(std::vector<UChar> input)
 {
-    return { input.data(), static_cast<unsigned>(input.size()) };
+    return std::span<const UChar> { input };
 }
 
 TEST(WTF_TextBreakIterator, NumGraphemeClusters)

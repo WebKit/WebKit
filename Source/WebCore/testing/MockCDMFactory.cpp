@@ -341,7 +341,7 @@ void MockCDMInstanceSession::updateLicense(const String& sessionID, LicenseType,
         return;
     }
 
-    Vector<String> responseVector = String(response->makeContiguous()->data(), response->size()).split(' ');
+    Vector<String> responseVector = String(response->makeContiguous()->span()).split(' ');
 
     if (responseVector.contains(String("invalid-format"_s))) {
         callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);

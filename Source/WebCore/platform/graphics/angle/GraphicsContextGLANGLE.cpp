@@ -1253,7 +1253,7 @@ bool GraphicsContextGLANGLE::getActiveAttribImpl(PlatformGLObject program, GCGLu
     if (!nameLength)
         return false;
 
-    info.name = String(name.data(), nameLength);
+    info.name = name.subspan(0, nameLength);
     info.type = type;
     info.size = size;
     return true;
@@ -1284,7 +1284,7 @@ bool GraphicsContextGLANGLE::getActiveUniformImpl(PlatformGLObject program, GCGL
     if (!nameLength)
         return false;
 
-    info.name = String(name.data(), nameLength);
+    info.name = name.subspan(0, nameLength);
     info.type = type;
     info.size = size;
     return true;
@@ -1955,7 +1955,7 @@ String GraphicsContextGLANGLE::getProgramInfoLog(PlatformGLObject program)
     GLsizei size = 0;
     Vector<GLchar> info(length);
     GL_GetProgramInfoLog(program, length, &size, info.data());
-    return { info.data(), static_cast<unsigned>(size) };
+    return info.subspan(0, static_cast<unsigned>(size));
 }
 
 GCGLint GraphicsContextGLANGLE::getRenderbufferParameteri(GCGLenum target, GCGLenum pname)
@@ -1992,7 +1992,7 @@ String GraphicsContextGLANGLE::getShaderInfoLog(PlatformGLObject shader)
     GLsizei size = 0;
     Vector<GLchar> info(length);
     GL_GetShaderInfoLog(shader, length, &size, info.data());
-    return { info.data(), static_cast<unsigned>(size) };
+    return info.subspan(0, static_cast<unsigned>(size));
 }
 
 String GraphicsContextGLANGLE::getShaderSource(PlatformGLObject)
@@ -2244,7 +2244,7 @@ String GraphicsContextGLANGLE::getActiveUniformBlockName(PlatformGLObject progra
     GL_GetActiveUniformBlockName(program, uniformBlockIndex, buffer.size(), &length, buffer.data());
     if (!length)
         return String();
-    return String(buffer.data(), length);
+    return buffer.subspan(0, length);
 }
 
 void GraphicsContextGLANGLE::uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding)
@@ -2377,7 +2377,7 @@ void GraphicsContextGLANGLE::getTransformFeedbackVarying(PlatformGLObject progra
 
     GL_GetTransformFeedbackVarying(program, index, bufSize, &length, &size, &type, name.data());
 
-    info.name = String(name.data(), length);
+    info.name = name.subspan(0, length);
     info.size = size;
     info.type = type;
 }
@@ -2972,7 +2972,7 @@ String GraphicsContextGLANGLE::getTranslatedShaderSourceANGLE(PlatformGLObject s
         return emptyString();
     // returnedLength does not include the null terminator.
     ASSERT(returnedLength == sourceLength - 1);
-    return String(name.data(), returnedLength);
+    return name.subspan(0, returnedLength);
 }
 
 void GraphicsContextGLANGLE::drawBuffersEXT(std::span<const GCGLenum> bufs)

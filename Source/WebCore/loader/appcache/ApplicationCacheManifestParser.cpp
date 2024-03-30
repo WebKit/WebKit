@@ -62,7 +62,7 @@ template<typename CharacterType> static constexpr bool isManifestWhitespaceOrNew
 
 template<typename CharacterType> static URL makeManifestURL(const URL& manifestURL, const CharacterType* start, const CharacterType* end)
 {
-    URL url(manifestURL, String(start, end - start));
+    URL url(manifestURL, String({ start, end }));
     url.removeFragmentIdentifier();
     return url;
 }

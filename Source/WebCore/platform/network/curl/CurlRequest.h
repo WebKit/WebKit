@@ -105,7 +105,7 @@ private:
     void didCancelTransfer() override;
     void finalizeTransfer();
 
-    int didReceiveDebugInfo(curl_infotype, char*, size_t);
+    int didReceiveDebugInfo(curl_infotype, std::span<const char>);
 
     // For setup 
     void appendAcceptLanguageHeader(HTTPHeaderMap&);

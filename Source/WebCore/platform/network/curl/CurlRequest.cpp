@@ -505,13 +505,13 @@ void CurlRequest::finalizeTransfer()
     m_curlHandle = nullptr;
 }
 
-int CurlRequest::didReceiveDebugInfo(curl_infotype type, char* data, size_t size)
+int CurlRequest::didReceiveDebugInfo(curl_infotype type, std::span<const char> data)
 {
-    if (!data)
+    if (!data.data())
         return 0;
 
     if (type == CURLINFO_HEADER_OUT) {
-        String requestHeader(data, size);
+        String requestHeader(data);
         auto headerFields = requestHeader.split("\r\n"_s);
         // Remove the request line
         if (headerFields.size())
@@ -643,7 +643,7 @@ size_t CurlRequest::willSendDataCallback(char* ptr, size_t blockSize, size_t num
 
 size_t CurlRequest::didReceiveHeaderCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* userData)
 {
-    return static_cast<CurlRequest*>(userData)->didReceiveHeader(String(ptr, blockSize * numberOfBlocks));
+    return static_cast<CurlRequest*>(userData)->didReceiveHeader(String({ ptr, blockSize * numberOfBlocks }));
 }
 
 size_t CurlRequest::didReceiveDataCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* userData)
@@ -653,7 +653,7 @@ size_t CurlRequest::didReceiveDataCallback(char* ptr, size_t blockSize, size_t n
 
 int CurlRequest::didReceiveDebugInfoCallback(CURL*, curl_infotype type, char* data, size_t size, void* userData)
 {
-    return static_cast<CurlRequest*>(userData)->didReceiveDebugInfo(type, data, size);
+    return static_cast<CurlRequest*>(userData)->didReceiveDebugInfo(type, { data, size });
 }
 
 }

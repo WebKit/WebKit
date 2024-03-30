@@ -189,10 +189,7 @@ inline void TextRun::setTabSize(bool allow, const TabSize& size)
 inline TextRun TextRun::isolatedCopy() const
 {
     TextRun clone = *this;
-    if (clone.m_text.is8Bit())
-        clone.m_text = String(clone.m_text.characters8(), clone.m_text.length());
-    else
-        clone.m_text = String(clone.m_text.characters16(), clone.m_text.length());
+    clone.m_text = clone.m_text.isolatedCopy();
     return clone;
 }
 

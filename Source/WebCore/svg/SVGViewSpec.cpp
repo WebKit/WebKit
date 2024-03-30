@@ -103,7 +103,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
                     skipUntil(buffer, ')');
                     if (buffer.atEnd())
                         return false;
-                    m_viewTargetString = String(viewTargetStart, buffer.position() - viewTargetStart);
+                    m_viewTargetString = String({ viewTargetStart, buffer.position() });
                     ++buffer;
                 } else
                     return false;

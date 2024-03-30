@@ -76,7 +76,7 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
 
     Vector<uint8_t> bodyData(std::span<const char>("body=", static_cast<size_t>(5)));
     FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
-    body = makeStringByReplacingAll(String(bodyData.data(), bodyData.size()), '+', "%20"_s);
+    body = makeStringByReplacingAll(bodyData.span(), '+', "%20"_s);
 
     auto query = url.query();
     if (query.isEmpty())

@@ -142,7 +142,7 @@ float RenderTextControl::getAverageCharWidth()
         return width;
 
     const UChar ch = '0';
-    const String str = String(&ch, 1);
+    const String str = span(ch);
     const FontCascade& font = style().fontCascade();
     TextRun textRun = constructTextRun(str, style(), ExpansionBehavior::allowRightOnly());
     return font.width(textRun);

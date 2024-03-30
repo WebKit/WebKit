@@ -144,7 +144,7 @@ public:
     static float width(TextLayout&, unsigned from, unsigned len, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr);
     float widthOfSpaceString() const
     {
-        return width(TextRun { String { &space, 1 } });
+        return width(TextRun { StringView(WTF::span(space)) });
     }
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;

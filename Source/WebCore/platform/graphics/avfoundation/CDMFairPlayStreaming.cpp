@@ -92,7 +92,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
     // JSON of the format: "{ sinf: [ <base64-encoded-string> ] }"
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return { };
-    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(buffer.size()) };
+    String json { buffer.makeContiguous()->span() };
 
     auto value = JSON::Value::parseJSON(json);
     if (!value)
@@ -214,7 +214,7 @@ std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKey
     // JSON of the format: "{ "codc" : [integer],  "mtyp" : [integer],  "cont" : "mpts"} }"
     if (buffer.size() > std::numeric_limits<unsigned>::max())
         return { };
-    String json { buffer.makeContiguous()->data(), static_cast<unsigned>(buffer.size()) };
+    String json { buffer.makeContiguous()->span() };
 
     auto value = JSON::Value::parseJSON(json);
     if (!value)

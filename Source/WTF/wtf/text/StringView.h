@@ -652,8 +652,8 @@ inline StringView::UpconvertedCharactersWithSize<N>::UpconvertedCharactersWithSi
 inline String StringView::toString() const
 {
     if (is8Bit())
-        return String(characters8(), m_length);
-    return String(characters16(), m_length);
+        return span8();
+    return span16();
 }
 
 inline AtomString StringView::toAtomString() const
