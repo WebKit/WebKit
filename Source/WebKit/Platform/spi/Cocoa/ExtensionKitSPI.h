@@ -145,7 +145,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface _SECapability (SPI)
 - (BOOL)setActive:(BOOL)active;
 + (instancetype)mediaWithWebsite:(NSString *)website;
-+ (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name environmentIdentifier:(NSString *)environmentIdentifier;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name environmentIdentifier:(NSString *)environmentIdentifier willInvalidate:(void (^)())willInvalidateBlock didInvalidate:(void (^)())didInvalidateBlock;
 @property (nonatomic, readonly) NSString *mediaEnvironment;
