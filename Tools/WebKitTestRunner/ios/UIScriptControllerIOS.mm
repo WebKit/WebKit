@@ -221,6 +221,16 @@ void UIScriptControllerIOS::doAfterVisibleContentRectUpdate(JSValueRef callback)
     }).get()];
 }
 
+void UIScriptControllerIOS::doAfterNextVisibleContentRectAndStablePresentationUpdate(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    [webView() _doAfterNextVisibleContentRectAndStablePresentationUpdate:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }).get()];
+}
+
 void UIScriptControllerIOS::zoomToScale(double scale, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

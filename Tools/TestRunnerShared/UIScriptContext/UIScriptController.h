@@ -83,6 +83,7 @@ public:
     virtual void doAfterNextStablePresentationUpdate(JSValueRef callback) { doAfterPresentationUpdate(callback); }
     virtual void ensurePositionInformationIsUpToDateAt(long, long, JSValueRef callback) { doAsyncTask(callback); }
     virtual void doAfterVisibleContentRectUpdate(JSValueRef callback) { doAsyncTask(callback); }
+    virtual void doAfterNextVisibleContentRectAndStablePresentationUpdate(JSValueRef callback) { doAsyncTask(callback); }
 
     virtual void doAfterDoubleTapDelay(JSValueRef callback) { doAsyncTask(callback); }
 

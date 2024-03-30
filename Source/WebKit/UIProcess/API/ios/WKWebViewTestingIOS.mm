@@ -489,6 +489,13 @@ static void dumpUIView(TextStream& ts, UIView *view)
 #endif
 }
 
+- (void)_doAfterNextVisibleContentRectAndStablePresentationUpdate:(void (^)(void))updateBlock
+{
+    [self _doAfterNextVisibleContentRectUpdate:makeBlockPtr([strongSelf = retainPtr(self), updateBlock = makeBlockPtr(updateBlock)] {
+        [strongSelf _doAfterNextStablePresentationUpdate:updateBlock.get()];
+    }).get()];
+}
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

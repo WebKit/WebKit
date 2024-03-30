@@ -1369,11 +1369,6 @@ http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 # Depend on iOS 11 API.
 fast/css/variables/env/ios [ Pass ]
 
-# webkit.org/b/271778 (3 fast/viewport/ios/viewport-fit-*.html layout tests constantly failing.)
-fast/viewport/ios/viewport-fit-contain.html [ Failure ]
-fast/viewport/ios/viewport-fit-cover.html [ Failure ]
-fast/viewport/ios/viewport-fit-auto.html [ Failure ]
-
 ###
 # Known failures
 ##

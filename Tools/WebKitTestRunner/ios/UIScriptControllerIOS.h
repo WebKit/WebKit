@@ -56,6 +56,7 @@ private:
     void doAfterNextStablePresentationUpdate(JSValueRef) override;
     void ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef) override;
     void doAfterVisibleContentRectUpdate(JSValueRef) override;
+    void doAfterNextVisibleContentRectAndStablePresentationUpdate(JSValueRef) override;
     void doAfterDoubleTapDelay(JSValueRef) override;
     void zoomToScale(double scale, JSValueRef) override;
     void retrieveSpeakSelectionContent(JSValueRef) override;

@@ -56,6 +56,7 @@ interface UIScriptController {
     undefined doAfterNextStablePresentationUpdate(object callback);
     undefined ensurePositionInformationIsUpToDateAt(long x, long y, object callback);
     undefined doAfterVisibleContentRectUpdate(object callback);
+    undefined doAfterNextVisibleContentRectAndStablePresentationUpdate(object callback);
 
     undefined doAfterDoubleTapDelay(object callback);
 

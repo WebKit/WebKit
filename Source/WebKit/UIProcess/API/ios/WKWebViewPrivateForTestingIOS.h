@@ -92,6 +92,8 @@
 
 + (void)_resetPresentLockdownModeMessage;
 
+- (void)_doAfterNextVisibleContentRectAndStablePresentationUpdate:(void (^)(void))updateBlock;
+
 @end
 
 #endif // TARGET_OS_IPHONE
