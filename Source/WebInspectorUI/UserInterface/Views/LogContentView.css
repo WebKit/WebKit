@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -201,11 +202,12 @@
 
 .console-messages:focus .console-item.selected {
     background-color: hsl(210, 98%, 96%);
-    border-color: hsl(210, 90%, 93%);
+    --console-border-color: hsl(210, 90%, 93%);
+    border-color: var(--console-border-color);
 }
 
 .console-messages:focus .console-item.selected + .console-item {
-    border-top-color: hsl(210, 90%, 93%);
+    border-top-color: var(--console-border-color);
 }
 
 .console-messages:focus .console-item.selected::after {
@@ -362,19 +364,19 @@ body[dir=rtl] .console-group-title::before {
     }
 
     .console-messages {
-        --background-color-selected: hsl(233, 30%, 30%);
-        --border-color-selected: hsl(224, 30%, 35%);
-        --border-color-error: hsla(20, 100%, 50%, 0.12);
-        --border-color-warning: hsla(40, 100%, 50%, 0.12);
+        --console-background-color-selected: hsl(233, 30%, 30%);
+        --console-border-color-selected: hsl(224, 30%, 35%);
+        --console-border-color-error: hsla(20, 100%, 50%, 0.12);
+        --console-border-color-warning: hsla(40, 100%, 50%, 0.12);
     }
 
     .console-messages:focus .console-item.selected {
-        background-color: var(--background-color-selected);
-        border-color: var(--border-color-selected);
+        background-color: var(--console-background-color-selected);
+        border-color: var(--console-border-color-selected);
     }
 
     .console-messages:focus .console-item.selected + .console-item {
-        border-color: var(--border-color-selected);
+        border-color: var(--console-border-color-selected);
     }
 
     .console-session:first-of-type .console-session-header {
@@ -397,20 +399,20 @@ body[dir=rtl] .console-group-title::before {
 
     .console-error-level {
         background-color: var(--error-background-color-secondary);
-        border-color: var(--border-color-error);
+        border-color: var(--console-border-color-error);
     }
 
     .console-error-level:not(.filtered-out, .filtered-out-by-search), .console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
-        border-top-color: var(--border-color-error);
+        border-top-color: var(--console-border-color-error);
     }
 
     .console-warning-level {
         background-color: var(--warning-background-color-secondary);
-        border-color: var(--border-color-warning);
+        border-color: var(--console-border-color-warning);
     }
 
     .console-warning-level:not(.filtered-out, .filtered-out-by-search), .console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
-        border-top-color: var(--border-color-warning);
+        border-top-color: var(--console-border-color-warning);
     }
     
     .console-group-sourcemap-errors {
@@ -426,5 +428,34 @@ body[dir=rtl] .console-group-title::before {
     .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected {
         color: var(--search-highlight-text-color-active);
         background-color: var(--search-highlight-background-color-active);
+    }
+
+    @media (prefers-contrast: more) {
+        .console-error-level:not(.filtered-out, .filtered-out-by-search),
+        .console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+            --console-border-top-color: hsla(0, 100%, 90%, 70%);
+            border-top-color: var(--console-border-top-color);
+        }
+
+        .console-item {
+            border-top-color: var(--console-border-top-color) !important;
+        }
+
+        .console-session:first-of-type .console-session-header {
+            --console-text-color: hsl(0, 0%, 90%);
+            color: var(--console-text-color);
+        }
+
+        .console-other-filters-button > .glyph {
+            color: var(--console-text-color);
+        }
+
+        .console-item.selected::after {
+            background: var(--console-text-color);
+        }
+
+        .console-item.selected::before {
+            background: var(--console-text-color);
+        }
     }
 }

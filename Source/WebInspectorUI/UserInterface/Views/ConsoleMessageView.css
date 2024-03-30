@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -351,5 +352,32 @@
     .console-message .go-to-link:hover,
     .console-message .go-to-link:focus {
         color: var(--selected-secondary-text-color-active);
+    }
+
+    @media (prefers-contrast: more) {
+        .console-error-level .console-message-body {
+            color: hsl(10, 100%, 80%);
+        }
+
+        .console-user-command > .console-message-body {
+            color: hsl(209, 100%, 80%);
+        }
+
+        .console-warning-level .console-message-body {
+            color: hsl(53, 80%, 80%);
+        }
+
+        .console-message .repeat-count {
+            background-color: hsl(218, 70%, 80%);
+        }
+
+        .console-saved-variable {
+            color: hsl(0, 0%, 90%);
+        }
+
+        .console-messages {
+            --console-background-color-selected: hsl(233, 30%, 15%);
+            --console-border-color-selected: hsl(224, 30%, 20%);
+        }
     }
 }
