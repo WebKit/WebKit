@@ -1274,7 +1274,7 @@ webkit.org/b/251107 webgl/2.0.0/conformance2/extensions/ext-color-buffer-float.h
 webkit.org/b/251107 webgl/2.0.0/conformance2/extensions/ext-color-buffer-half-float.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/renderbuffers/invalidate-framebuffer.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Pass Failure ]
-webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/blitframebuffer-test.html [ Skip ]
+webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/blitframebuffer-test.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/rgb-format-support.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r32f-red-float.html [ Pass Timeout ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb5_a1-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]

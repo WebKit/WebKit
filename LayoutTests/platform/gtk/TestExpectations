@@ -437,8 +437,7 @@ webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-sr
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/blitframebuffer-multisampled-readbuffer.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/blitframebuffer-outside-readbuffer.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
-# https://bugs.webkit.org/show_bug.cgi?id=271874
-webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/blitframebuffer-test.html [ Skip ]
+webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/blitframebuffer-test.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/clear-srgb-color-buffer.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/draw-buffers.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/rendering/element-index-uint.html [ Pass Failure ]

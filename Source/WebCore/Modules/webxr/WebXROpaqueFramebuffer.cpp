@@ -407,7 +407,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     m_leftViewport = calculateViewportShared(PlatformXR::Eye::Left, foveationChange, data.viewports[0], data.viewports[1]);
     m_rightViewport = calculateViewportShared(PlatformXR::Eye::Right, foveationChange, data.viewports[0], data.viewports[1]);
     // Intermediate resolve target
-    if (framebufferResize && needsIntermediateResolve) {
+    if ((!m_resolvedFBO || framebufferResize) && needsIntermediateResolve) {
         allocateAttachments(gl, m_resolveAttachments, 0, size);
 
         ensure(gl, m_resolvedFBO);
@@ -416,8 +416,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
         ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
         if (gl.checkFramebufferStatus(GL::FRAMEBUFFER) != GL::FRAMEBUFFER_COMPLETE)
             return false;
-    } else
-        m_resolvedFBO.release(gl);
+    }
 
     // Drawing target
     if (framebufferResize) {
