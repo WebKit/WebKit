@@ -26,14 +26,15 @@
 #import "config.h"
 #import "PDFPluginAnnotation.h"
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
 #import "PDFPluginBase.h"
 #import "PDFPluginChoiceAnnotation.h"
 #import "PDFPluginTextAnnotation.h"
-#import <Quartz/Quartz.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <PDFKit/PDFKit.h>
 #import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
@@ -106,7 +107,7 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
 
 void PDFPluginAnnotation::updateGeometry()
 {
-    NSRect annotationRect = NSRectFromCGRect(m_plugin->pluginBoundsForAnnotation(m_annotation));
+    auto annotationRect = m_plugin->pluginBoundsForAnnotation(m_annotation);
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
     styledElement->setInlineStyleProperty(CSSPropertyWidth, annotationRect.size.width, CSSUnitType::CSS_PX);
@@ -133,4 +134,4 @@ void PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent(ScriptEx
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

@@ -108,7 +108,6 @@ public:
     bool performImmediateActionHitTestAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
 
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const;
-    CGFloat contentScaleFactor() const;
     
     bool isUsingUISideCompositing() const;
 

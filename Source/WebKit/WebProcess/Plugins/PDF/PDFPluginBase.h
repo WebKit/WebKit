@@ -91,6 +91,8 @@ class PDFPluginBase : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PDF
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
     friend class PDFIncrementalLoader;
+    friend class PDFPluginChoiceAnnotation;
+    friend class PDFPluginTextAnnotation;
 public:
     static WebCore::PluginInfo pluginInfo();
 
@@ -120,8 +122,8 @@ public:
     virtual RefPtr<WebCore::ShareableBitmap> snapshot() { return nullptr; }
     virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) { }
 
-    virtual CGFloat scaleFactor() const = 0;
-    virtual float contentScaleFactor() const = 0;
+    virtual double scaleFactor() const = 0;
+    virtual void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin) = 0;
 
     virtual CGFloat minScaleFactor() const { return 0.25; }
     virtual CGFloat maxScaleFactor() const { return 5; }
@@ -138,7 +140,6 @@ public:
     bool handlesPageScaleFactor() const;
     virtual void didBeginMagnificationGesture() { }
     virtual void didEndMagnificationGesture() { }
-    virtual void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin) = 0;
 
     void updateControlTints(WebCore::GraphicsContext&);
 
@@ -254,6 +255,9 @@ public:
 #endif
 
     uint64_t streamedBytes() const;
+
+protected:
+    virtual double contentScaleFactor() const = 0;
 
 private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }

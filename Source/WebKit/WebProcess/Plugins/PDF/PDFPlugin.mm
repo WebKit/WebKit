@@ -1260,7 +1260,7 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
     
     NSRect rangeRect;
     rangeRect.origin = NSMakePoint(point.x, point.y);
-    CGFloat scaleFactor = PDFPlugin::scaleFactor();
+    auto scaleFactor = PDFPlugin::scaleFactor();
 
     rangeRect.size.height = string.size.height * scaleFactor;
     rangeRect.size.width = string.size.width * scaleFactor;
@@ -1536,12 +1536,12 @@ CGSize PDFPlugin::contentSizeRespectingZoom() const
     return [m_pdfLayerController contentSizeRespectingZoom];
 }
 
-CGFloat PDFPlugin::scaleFactor() const
+double PDFPlugin::scaleFactor() const
 {
     return [m_pdfLayerController contentScaleFactor];
 }
 
-float PDFPlugin::contentScaleFactor() const
+double PDFPlugin::contentScaleFactor() const
 {
     return scaleFactor();
 }

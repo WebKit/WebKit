@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-
 #import "config.h"
 #import "PDFPluginChoiceAnnotation.h"
+
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
@@ -94,4 +94,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

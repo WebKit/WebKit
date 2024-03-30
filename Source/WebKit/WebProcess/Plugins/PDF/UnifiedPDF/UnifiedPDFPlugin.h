@@ -197,9 +197,9 @@ private:
     PDFDataDetectorOverlayController& dataDetectorOverlayController() { return *m_dataDetectorOverlayController; }
 #endif
 
-    float scaleForActualSize() const;
-    float initialScale() const;
-    float scaleForFitToView() const;
+    double scaleForActualSize() const;
+    double initialScale() const;
+    double scaleForFitToView() const;
 
     /*
         Unified PDF Plugin scales, in depth order:
@@ -218,8 +218,8 @@ private:
 
         - "contentScaleFactor": the scale between the plugin and document space (scaleFactor * document layout scale)
     */
-    CGFloat scaleFactor() const override;
-    float contentScaleFactor() const final;
+    double scaleFactor() const override;
+    double contentScaleFactor() const final;
 
     void didBeginMagnificationGesture() override;
     void didEndMagnificationGesture() override;
@@ -502,7 +502,7 @@ private:
 
     WebCore::ScrollingNodeID m_scrollingNodeID;
 
-    float m_scaleFactor { 1 };
+    double m_scaleFactor { 1 };
     bool m_inMagnificationGesture { false };
     std::optional<WebCore::IntPoint> m_magnificationOriginInContentCoordinates;
     std::optional<WebCore::IntPoint> m_magnificationOriginInPluginCoordinates;

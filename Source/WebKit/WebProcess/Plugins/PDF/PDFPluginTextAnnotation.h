@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PDFPluginTextAnnotation_h
-#define PDFPluginTextAnnotation_h
+#pragma once
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #include "PDFPluginAnnotation.h"
 
@@ -69,6 +68,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
-
-#endif // PDFPluginTextAnnotation_h
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

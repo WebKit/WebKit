@@ -122,9 +122,9 @@
 
 // FIXME: We should rationalize these with the values in ViewGestureController.
 // For now, we'll leave them differing as they do in PDFPlugin.
-static constexpr CGFloat minimumZoomScale = 0.2;
-static constexpr CGFloat maximumZoomScale = 6.0;
-static constexpr CGFloat zoomIncrement = 1.18920;
+static constexpr double minimumZoomScale = 0.2;
+static constexpr double maximumZoomScale = 6.0;
+static constexpr double zoomIncrement = 1.18920;
 
 namespace WebKit {
 using namespace WebCore;
@@ -979,7 +979,7 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexWithHover
     return pageIndex;
 }
 
-float UnifiedPDFPlugin::scaleForActualSize() const
+double UnifiedPDFPlugin::scaleForActualSize() const
 {
 #if PLATFORM(MAC)
     if (!m_frame || !m_frame->coreLocalFrame())
@@ -1009,7 +1009,7 @@ float UnifiedPDFPlugin::scaleForActualSize() const
     return 1;
 }
 
-float UnifiedPDFPlugin::scaleForFitToView() const
+double UnifiedPDFPlugin::scaleForFitToView() const
 {
     auto contentsSize = m_documentLayout.scaledContentsSize();
     auto availableSize = FloatSize { availableContentsRect().size() };
@@ -1021,22 +1021,22 @@ float UnifiedPDFPlugin::scaleForFitToView() const
     return aspectRatioFitRect.width() / size().width();
 }
 
-float UnifiedPDFPlugin::initialScale() const
+double UnifiedPDFPlugin::initialScale() const
 {
     auto actualSizeScale = scaleForActualSize();
     auto fitToViewScale = scaleForFitToView();
     auto initialScale = std::max(actualSizeScale, fitToViewScale);
     // Only let actual size scaling scale down, not up.
-    initialScale = std::min(initialScale, 1.0f);
+    initialScale = std::min(initialScale, 1.0);
     return initialScale;
 }
 
-CGFloat UnifiedPDFPlugin::scaleFactor() const
+double UnifiedPDFPlugin::scaleFactor() const
 {
     return m_scaleFactor;
 }
 
-float UnifiedPDFPlugin::contentScaleFactor() const
+double UnifiedPDFPlugin::contentScaleFactor() const
 {
     return m_scaleFactor * m_documentLayout.scale();
 }
@@ -1224,7 +1224,7 @@ FloatSize UnifiedPDFPlugin::centeringOffset() const
         std::floor(std::max<float>(availableSize.height() - documentPresentationSize.height(), 0) / 2)
     };
 
-    offset.scale(1.0f / m_scaleFactor);
+    offset.scale(1 / m_scaleFactor);
     return offset;
 }
 

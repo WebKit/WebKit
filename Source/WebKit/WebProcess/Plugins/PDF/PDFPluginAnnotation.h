@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #include <WebCore/EventListener.h>
 #include <wtf/RefCounted.h>
@@ -109,4 +109,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

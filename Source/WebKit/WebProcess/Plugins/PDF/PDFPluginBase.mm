@@ -1088,7 +1088,7 @@ DictionaryPopupInfo PDFPluginBase::dictionaryPopupInfoForSelection(PDFSelection 
     NSAttributedString *nsAttributedString = selection.attributedString;
     RetainPtr scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    CGFloat scaleFactor = contentScaleFactor();
+    auto scaleFactor = contentScaleFactor();
 
     [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPluginPasswordField.h"
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
@@ -84,4 +84,4 @@ void PDFPluginPasswordField::resetField()
     
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

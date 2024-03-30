@@ -116,8 +116,8 @@ public:
     WebCore::IntPoint convertFromRootViewToPDFView(const WebCore::IntPoint&) const;
     WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
 
-    CGFloat scaleFactor() const override;
-    float contentScaleFactor() const final;
+    double scaleFactor() const override;
+    double contentScaleFactor() const final;
     CGSize contentSizeRespectingZoom() const;
 
 private:
