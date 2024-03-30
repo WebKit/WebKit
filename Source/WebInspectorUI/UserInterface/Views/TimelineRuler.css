@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
     pointer-events: none;
 
     --timeline-ruler-marker-translateX: -1px;
+    --timeline-text-color: hsl(0, 0%, 50%);
 }
 
 .timeline-ruler.allows-time-range-selection:not(.disabled) {
@@ -84,7 +86,7 @@ body.window-inactive .timeline-ruler > .header > .divider {
     inset-inline-end: var(--timeline-ruler-header-divider-label-offset-end);
     font-size: 9px;
     font-weight: normal;
-    color: hsl(0, 0%, 50%);
+    color: var(--timeline-text-color);
     white-space: nowrap;
 
     --timeline-ruler-header-divider-label-offset-end: 5px;
@@ -160,7 +162,7 @@ body.window-inactive .timeline-ruler > .header > .divider {
 }
 
 .timeline-ruler > .markers > .marker.load-event {
-    color: hsl(0, 100%, 50%);
+    color: var(--timeline-text-color);
 }
 
 .timeline-ruler > .markers > .marker.dom-content-event {
@@ -261,5 +263,27 @@ body[dir=rtl] .timeline-ruler > .selection-handle.left {
 @media (prefers-color-scheme: dark) {
     .timeline-ruler > .markers > .marker.dom-content-event {
         color: hsl(240, 100%, 70%);
+    }
+
+    @media (prefers-contrast: more) {
+        .timeline-ruler {
+            --timeline-text-color: hsl(0, 0%, 90%);
+        }
+
+        .timeline-ruler > .markers > .marker.load-event {
+            color: var(--timeline-text-color);
+        }
+
+        .timeline-ruler > .markers > .marker.dom-content-event {
+            color: hsl(240, 100%, 95%);
+        }
+
+        .timeline-ruler > .markers > .marker.timestamp {
+            color: hsl(119, 100%, 95%);
+        }
+
+        .timeline-ruler > .header > .divider > .label {
+            color: var(--timeline-text-color);
+        }
     }
 }
