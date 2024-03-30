@@ -7348,3 +7348,5 @@ fast/url/idna2008.html [ Failure ]
 fast/url/url-hostname-encoding.html [ Failure ]
 
 webkit.org/b/271764 fast/scrolling/ios/video-atop-overflow-scroll.html [ Pass Failure ]
+
+webkit.org/b/271931 [ Debug ] imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-105.html [ Crash ]
