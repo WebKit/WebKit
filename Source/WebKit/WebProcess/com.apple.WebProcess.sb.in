@@ -1800,6 +1800,7 @@
 
 (define (kernel-mig-routines-blocked-in-lockdown-mode) (kernel-mig-routine
     task_threads_from_user
+    thread_info
     thread_policy
     thread_policy_set))
 
@@ -1813,25 +1814,19 @@
     io_registry_entry_get_name_in_plane
     io_registry_entry_get_properties_bin_buf
     io_registry_get_root_entry
-    io_service_close
-    thread_info
-))
+    io_service_close))
 
 (define (allow-mach-exceptions)
 #if HAVE(HARDENED_MACH_EXCEPTIONS)
     (when (equal? (param "CPU") "arm64")
         (with-filter (require-not (webcontent-process-launched))
-            (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))
-        )
-        (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))
-    )
+            (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler)))
+        (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler)))
     (when (not (equal? (param "CPU") "arm64"))
-        (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))
-    )
+        (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))))
 #else
-    (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))
+    (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 #endif
-)
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
@@ -1846,8 +1841,7 @@
             (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode))
 #endif
             (with-filter (require-not (lockdown-mode))
-                (allow-mach-exceptions)
-            )
+                (allow-mach-exceptions))
 
             (allow mach-message-send (kernel-mig-routines-in-use))
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
