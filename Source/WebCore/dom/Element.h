@@ -634,7 +634,7 @@ public:
 #endif
 
     OptionSet<VisibilityAdjustment> visibilityAdjustment() const;
-    void addVisibilityAdjustment(OptionSet<VisibilityAdjustment>);
+    void setVisibilityAdjustment(OptionSet<VisibilityAdjustment>);
 
     bool isSpellCheckingEnabled() const;
     WEBCORE_EXPORT bool isWritingSuggestionsEnabled() const;

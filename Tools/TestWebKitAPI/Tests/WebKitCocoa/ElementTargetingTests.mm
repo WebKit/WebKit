@@ -29,13 +29,19 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>
 
 @interface WKWebView (ElementTargeting)
+
 - (NSArray<_WKTargetedElementInfo *> *)targetedElementInfoAt:(CGPoint)point;
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets;
+- (BOOL)resetVisibilityAdjustmentsForTargets:(NSArray<_WKTargetedElementInfo *> *)elements;
+
+@property (nonatomic, readonly) NSUInteger numberOfVisibilityAdjustmentRects;
+
 @end
 
 @implementation WKWebView (ElementTargeting)
@@ -59,6 +65,30 @@
     __block BOOL result = NO;
     __block bool done = false;
     [self _adjustVisibilityForTargetedElements:targets completionHandler:^(BOOL success) {
+        result = success;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (NSUInteger)numberOfVisibilityAdjustmentRects
+{
+    __block NSUInteger result = 0;
+    __block bool done = false;
+    [self _numberOfVisibilityAdjustmentRectsWithCompletionHandler:^(NSUInteger count) {
+        result = count;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+- (BOOL)resetVisibilityAdjustmentsForTargets:(NSArray<_WKTargetedElementInfo *> *)elements
+{
+    __block BOOL result = NO;
+    __block bool done = false;
+    [self _resetVisibilityAdjustmentsForTargetedElements:elements completionHandler:^(BOOL success) {
         result = success;
         done = true;
     }];
@@ -150,21 +180,27 @@ TEST(ElementTargeting, NearbyOutOfFlowElements)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-2"];
 
-    auto elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
-    EXPECT_EQ(elements.count, 4U);
-    EXPECT_TRUE(elements[0].underPoint);
-    EXPECT_FALSE(elements[1].underPoint);
-    EXPECT_FALSE(elements[2].underPoint);
-    EXPECT_FALSE(elements[3].underPoint);
-    EXPECT_WK_STREQ(".fixed.container", elements[0].selectors.firstObject);
+    RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
+    EXPECT_EQ([elements count], 4U);
+    EXPECT_TRUE([elements objectAtIndex:0].underPoint);
+    EXPECT_FALSE([elements objectAtIndex:1].underPoint);
+    EXPECT_FALSE([elements objectAtIndex:2].underPoint);
+    EXPECT_FALSE([elements objectAtIndex:3].underPoint);
+    EXPECT_WK_STREQ(".fixed.container", [elements firstObject].selectors.firstObject);
     __auto_type nextThreeSelectors = [NSSet setWithArray:@[
-        elements[1].selectors.firstObject,
-        elements[2].selectors.firstObject,
-        elements[3].selectors.firstObject,
+        [elements objectAtIndex:1].selectors.firstObject,
+        [elements objectAtIndex:2].selectors.firstObject,
+        [elements objectAtIndex:3].selectors.firstObject,
     ]];
     EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.top-right"]);
     EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-left"]);
     EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-right"]);
+
+    [webView adjustVisibilityForTargets:elements.get()];
+    EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
+
+    [webView resetVisibilityAdjustmentsForTargets:elements.get()];
+    EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 0U);
 }
 
 TEST(ElementTargeting, AdjustVisibilityForUnparentedElement)

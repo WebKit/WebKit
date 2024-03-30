@@ -9432,6 +9432,18 @@ void WebPage::adjustVisibilityForTargetedElements(const Vector<std::pair<Element
     completion(page && page->checkedElementTargetingController()->adjustVisibility(identifiers));
 }
 
+void WebPage::resetVisibilityAdjustmentsForTargetedElements(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers, CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr page = corePage();
+    completion(page && page->checkedElementTargetingController()->resetVisibilityAdjustments(identifiers));
+}
+
+void WebPage::numberOfVisibilityAdjustmentRects(CompletionHandler<void(uint64_t)>&& completion)
+{
+    RefPtr page = corePage();
+    completion(page ? page->checkedElementTargetingController()->numberOfVisibilityAdjustmentRects() : 0);
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

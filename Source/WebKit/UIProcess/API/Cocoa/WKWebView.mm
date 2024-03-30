@@ -4225,14 +4225,33 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     return [_configuration _requiredWebExtensionBaseURL];
 }
 
-- (void)_adjustVisibilityForTargetedElements:(NSArray<_WKTargetedElementInfo *> *)wkElements completionHandler:(void(^)(BOOL success))completion
+static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKTargetedElementInfo *> *wkElements)
 {
     Vector<Ref<API::TargetedElementInfo>> elements;
     elements.reserveInitialCapacity(wkElements.count);
     for (_WKTargetedElementInfo *element in wkElements)
         elements.append(*element->_info);
-    _page->adjustVisibilityForTargetedElements(elements, [completion = makeBlockPtr(completion)](bool success) {
+    return elements;
+}
+
+- (void)_resetVisibilityAdjustmentsForTargetedElements:(NSArray<_WKTargetedElementInfo *> *)elements completionHandler:(void(^)(BOOL success))completion
+{
+    _page->resetVisibilityAdjustmentsForTargetedElements(elementsFromWKElements(elements), [completion = makeBlockPtr(completion)](bool success) {
         completion(static_cast<BOOL>(success));
+    });
+}
+
+- (void)_adjustVisibilityForTargetedElements:(NSArray<_WKTargetedElementInfo *> *)elements completionHandler:(void(^)(BOOL success))completion
+{
+    _page->adjustVisibilityForTargetedElements(elementsFromWKElements(elements), [completion = makeBlockPtr(completion)](bool success) {
+        completion(static_cast<BOOL>(success));
+    });
+}
+
+- (void)_numberOfVisibilityAdjustmentRectsWithCompletionHandler:(void(^)(NSUInteger))completion
+{
+    _page->numberOfVisibilityAdjustmentRects([completion = makeBlockPtr(completion)](uint64_t count) {
+        completion(static_cast<NSUInteger>(count));
     });
 }
 

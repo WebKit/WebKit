@@ -27,6 +27,7 @@
 
 #include "ElementIdentifier.h"
 #include "ElementTargetingTypes.h"
+#include "EventTarget.h"
 #include "IntRect.h"
 #include "Region.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -34,6 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -53,11 +55,15 @@ public:
 
     void resetAdjustmentRegions();
 
+    WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects() const;
+    WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
+
 private:
     SingleThreadWeakPtr<Page> m_page;
     HashMap<ElementIdentifier, IntRect> m_pendingAdjustmentClientRects;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_adjustedElements;
     FloatSize m_viewportSizeForVisibilityAdjustment;
 };
 

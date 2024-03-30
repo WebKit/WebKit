@@ -5641,9 +5641,9 @@ OptionSet<VisibilityAdjustment> Element::visibilityAdjustment() const
     return elementRareData()->visibilityAdjustment();
 }
 
-void Element::addVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment)
+void Element::setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment)
 {
-    ensureElementRareData().addVisibilityAdjustment(adjustment);
+    ensureElementRareData().setVisibilityAdjustment(adjustment);
 }
 
 } // namespace WebCore

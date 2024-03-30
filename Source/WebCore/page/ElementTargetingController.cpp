@@ -312,6 +312,29 @@ static FloatRect computeClientRect(RenderObject& renderer)
     return rect;
 }
 
+static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracking(Element& element, float viewportArea)
+{
+    CheckedPtr renderer = element.checkedRenderer();
+    if (!renderer)
+        return { };
+
+    if (!renderer->isOutOfFlowPositioned())
+        return { };
+
+    auto clientRect = computeClientRect(*renderer);
+    if (clientRect.isEmpty())
+        return { };
+
+    if (clientRect.area() / viewportArea >= maximumAreaRatioForTrackingAdjustmentAreas)
+        return { };
+
+    // Keep track of the client rects of elements we're targeting, until the client
+    // triggers visibility adjustment for these elements.
+    auto inflatedClientRect = enclosingIntRect(clientRect);
+    inflatedClientRect.inflate(marginForTrackingAdjustmentRects);
+    return { inflatedClientRect };
+}
+
 Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElementRequest&& request)
 {
     RefPtr page = m_page.get();
@@ -367,25 +390,8 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     }();
 
     auto addOutOfFlowTargetClientRectIfNeeded = [&](Element& element) {
-        CheckedPtr renderer = element.checkedRenderer();
-        if (!renderer)
-            return;
-
-        if (!renderer->isOutOfFlowPositioned())
-            return;
-
-        auto clientRect = computeClientRect(*renderer);
-        if (clientRect.isEmpty())
-            return;
-
-        if (clientRect.area() / viewportArea >= maximumAreaRatioForTrackingAdjustmentAreas)
-            return;
-
-        // Keep track of the client rects of elements we're targeting, until the client
-        // triggers visibility adjustment for these elements.
-        auto inflatedClientRect = enclosingIntRect(clientRect);
-        inflatedClientRect.inflate(marginForTrackingAdjustmentRects);
-        m_pendingAdjustmentClientRects.add(element.identifier(), inflatedClientRect);
+        if (auto rect = inflatedClientRectForAdjustmentRegionTracking(element, viewportArea))
+            m_pendingAdjustmentClientRects.add(element.identifier(), *rect);
     };
 
     auto computeViewportAreaRatio = [&](IntRect boundingBox) {
@@ -523,10 +529,11 @@ static inline VisibilityAdjustmentResult adjustVisibilityIfNeeded(Element& eleme
 {
     Ref adjustedElement = elementToAdjust(element);
     auto adjustment = adjustmentToApply(element);
-    if (adjustedElement->visibilityAdjustment().contains(adjustment))
+    auto currentAdjustment = adjustedElement->visibilityAdjustment();
+    if (currentAdjustment.contains(adjustment))
         return { };
 
-    adjustedElement->addVisibilityAdjustment(adjustment);
+    adjustedElement->setVisibilityAdjustment(currentAdjustment | adjustment);
     return { adjustedElement.ptr(), adjustment == VisibilityAdjustment::Subtree };
 }
 
@@ -582,6 +589,7 @@ bool ElementTargetingController::adjustVisibility(const Vector<std::pair<Element
             adjustedElement->invalidateStyleAndRenderersForSubtree();
         else
             adjustedElement->invalidateStyle();
+        m_adjustedElements.add(element);
     }
     return changed;
 }
@@ -690,6 +698,7 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
             adjustedElement->invalidateStyleAndRenderersForSubtree();
         else
             adjustedElement->invalidateStyle();
+        m_adjustedElements.add(element);
     }
 }
 
@@ -699,6 +708,133 @@ void ElementTargetingController::resetAdjustmentRegions()
     m_repeatedAdjustmentClientRegion = { };
     m_viewportSizeForVisibilityAdjustment = { };
     m_pendingAdjustmentClientRects = { };
+    m_adjustedElements = { };
+}
+
+bool ElementTargetingController::resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return false;
+
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!mainFrame)
+        return false;
+
+    RefPtr frameView = mainFrame->view();
+    if (!frameView)
+        return false;
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return false;
+
+    Vector<Ref<Element>> elementsToReset;
+    if (identifiers.isEmpty()) {
+        elementsToReset.reserveInitialCapacity(m_adjustedElements.computeSize());
+        for (auto& element : m_adjustedElements)
+            elementsToReset.append(element);
+        m_adjustedElements.clear();
+    } else {
+        elementsToReset.reserveInitialCapacity(identifiers.size());
+        for (auto [elementID, documentID] : identifiers) {
+            RefPtr element = Element::fromIdentifier(elementID);
+            if (!element)
+                continue;
+
+            if (element->document().identifier() != documentID)
+                continue;
+
+            if (!m_adjustedElements.remove(*element))
+                continue;
+
+            elementsToReset.append(element.releaseNonNull());
+        }
+    }
+
+    if (elementsToReset.isEmpty())
+        return false;
+
+    bool changed = false;
+    for (auto& element : elementsToReset) {
+        Ref adjustedElement = elementToAdjust(element);
+        auto adjustment = adjustmentToApply(element);
+        auto currentAdjustment = adjustedElement->visibilityAdjustment();
+        if (!currentAdjustment.contains(adjustment))
+            continue;
+
+        adjustedElement->setVisibilityAdjustment(currentAdjustment - adjustment);
+        if (adjustment == VisibilityAdjustment::Subtree)
+            adjustedElement->invalidateStyleAndRenderersForSubtree();
+        else
+            adjustedElement->invalidateStyle();
+        changed = true;
+    }
+
+    m_viewportSizeForVisibilityAdjustment = frameView->baseLayoutViewportSize();
+    m_repeatedAdjustmentClientRegion = { };
+    m_adjustmentClientRegion = { };
+
+    if (changed && !m_adjustedElements.isEmptyIgnoringNullReferences()) {
+        document->updateLayoutIgnorePendingStylesheets();
+        auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
+        for (auto& element : m_adjustedElements) {
+            if (auto rect = inflatedClientRectForAdjustmentRegionTracking(element, viewportArea))
+                m_adjustmentClientRegion.unite(*rect);
+        }
+    }
+
+    return changed;
+}
+
+uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return 0;
+
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!mainFrame)
+        return 0;
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return 0;
+
+    document->updateLayoutIgnorePendingStylesheets();
+
+    Vector<FloatRect> clientRects;
+    clientRects.reserveInitialCapacity(m_adjustedElements.computeSize());
+    for (auto& element : m_adjustedElements) {
+        CheckedPtr renderer = element.renderer();
+        if (!renderer)
+            continue;
+
+        auto clientRect = computeClientRect(*renderer);
+        if (clientRect.isEmpty())
+            continue;
+
+        clientRects.append(clientRect);
+    }
+
+    // Sort by area in descending order so that we don't double-count fully overlapped elements.
+    std::sort(clientRects.begin(), clientRects.end(), [](auto first, auto second) {
+        return first.area() > second.area();
+    });
+
+    Region adjustedRegion;
+    uint64_t numberOfRects = 0;
+
+    for (auto rect : clientRects) {
+        auto enclosingRect = enclosingIntRect(rect);
+        if (adjustedRegion.contains(enclosingRect))
+            continue;
+
+        numberOfRects++;
+        adjustedRegion.unite(enclosingRect);
+    }
+
+    return numberOfRects;
 }
 
 } // namespace WebCore
