@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -202,7 +203,8 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
 }
 
 .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
-    background-color: hsl(0, 0%, 96%);
+    --timeline-color: hsl(0, 0%, 95%);
+    color: var(--timeline-color);
     background-clip: padding-box;
 }
 
@@ -226,5 +228,12 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
 @media (prefers-color-scheme: dark) {
     .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
         background: var(--background-color-alternate);
+    }
+
+    @media (prefers-contrast: more) {
+        .timeline-overview.edit-instruments > .tree-outline.timelines .item:nth-child(even),
+        .timeline-overview > .tree-outline.timelines .item:not(.selected):nth-child(even) {
+            background-color: hsla(0, 0%, 15%);
+        }
     }
 }
