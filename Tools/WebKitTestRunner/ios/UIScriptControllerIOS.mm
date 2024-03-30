@@ -57,9 +57,7 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)
 
 @interface UIPhysicalKeyboardEvent (UIPhysicalKeyboardEventHack)
-@property (nonatomic, assign) NSInteger _modifierFlags;
-// FIXME: <rdar://107768498> Replace this declaration with a "setter=" above, once the setter is available everywhere we need.
-- (void)_setModifierFlags:(NSInteger)modifierFlags;
+@property (nonatomic, assign, setter=_setModifierFlags:) NSInteger _modifierFlags;
 @end
 
 namespace WTR {
@@ -612,21 +610,12 @@ void UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard(JSStringRef chara
     }).get()];
 }
 
-static void setModifierFlagsForUIPhysicalKeyboardEvent(UIPhysicalKeyboardEvent *keyboardEvent, UIKeyModifierFlags modifierFlags)
-{
-    // FIXME: <rdar://107768498> Remove the respondsToSelector check once the method is available everywhere we need.
-    if ([keyboardEvent respondsToSelector:@selector(_setModifierFlags:)])
-        [keyboardEvent _setModifierFlags:modifierFlags];
-    else
-        keyboardEvent._modifierFlags = modifierFlags;
-}
-
 enum class IsKeyDown : bool { No, Yes };
 
 static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInputString, NSString *uiEventInputString, UIKeyModifierFlags modifierFlags, UIKeyboardInputFlags inputFlags, IsKeyDown isKeyDown)
 {
     auto* keyboardEvent = [getUIPhysicalKeyboardEventClass() _eventWithInput:uiEventInputString inputFlags:inputFlags];
-    setModifierFlagsForUIPhysicalKeyboardEvent(keyboardEvent, modifierFlags);
+    [keyboardEvent _setModifierFlags:modifierFlags];
     auto hidEvent = createHIDKeyEvent(hidInputString, keyboardEvent.timestamp, isKeyDown == IsKeyDown::Yes);
     [keyboardEvent _setHIDEvent:hidEvent.get() keyboard:nullptr];
     return keyboardEvent;
