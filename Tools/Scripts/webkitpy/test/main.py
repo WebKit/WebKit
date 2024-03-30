@@ -135,6 +135,7 @@ def main():
         "webkitcorepy.tests.null_context_unittest",
         "webkitcorepy.tests.output_capture_unittest",
         "webkitcorepy.tests.partial_proxy_unittest",
+        "webkitcorepy.tests.date_utils_unittest",
         "webkitcorepy.tests.string_utils_unittest",
         "webkitcorepy.tests.subprocess_utils_unittest",
         "webkitcorepy.tests.task_pool_unittest",
