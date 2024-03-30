@@ -1082,10 +1082,17 @@ void PageClientImpl::handleContextMenuTranslation(const TranslationContextMenuIn
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+
+bool PageClientImpl::canHandleSwapCharacters() const
+{
+    return m_impl->canHandleSwapCharacters();
+}
+
 void PageClientImpl::handleContextMenuSwapCharacters(IntRect selectionBoundsInRootView)
 {
     m_impl->handleContextMenuSwapCharacters(selectionBoundsInRootView);
 }
+
 #endif
 
 #if ENABLE(DATA_DETECTION)

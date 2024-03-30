@@ -700,6 +700,7 @@ public:
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+    virtual bool canHandleSwapCharacters() const = 0;
     virtual void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView) = 0;
 #endif
 

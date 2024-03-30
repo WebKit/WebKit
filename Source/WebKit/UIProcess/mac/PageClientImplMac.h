@@ -303,6 +303,7 @@ private:
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+    bool canHandleSwapCharacters() const override;
     void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView) override;
 #endif
 

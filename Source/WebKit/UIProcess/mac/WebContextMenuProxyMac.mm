@@ -749,6 +749,14 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     }
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (!page()->canHandleSwapCharacters() || isPopover) {
+        filteredItems.removeAllMatching([] (auto& item) {
+            return item.action() == ContextMenuItemTagSwapCharacters;
+        });
+    }
+#endif
+
     ASSERT(m_context.webHitTestResultData());
     auto hitTestData = m_context.webHitTestResultData().value();
     

@@ -834,6 +834,7 @@ void WebPageProxy::abortApplePayAMSUISession()
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
 #if ENABLE(CONTEXT_MENUS)
+
 #if HAVE(TRANSLATION_UI_SERVICES)
 
 bool WebPageProxy::canHandleContextMenuTranslation() const
@@ -847,21 +848,27 @@ void WebPageProxy::handleContextMenuTranslation(const TranslationContextMenuInfo
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)
-#endif // ENABLE(CONTEXT_MENUS)
 
-void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, WebCore::NowPlayingInfo&&)>&& callback)
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+bool WebPageProxy::canHandleSwapCharacters() const
 {
-    sendWithAsyncReply(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), WTFMove(callback));
+    return protectedPageClient()->canHandleSwapCharacters();
 }
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
 
 void WebPageProxy::handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView)
 {
     protectedPageClient()->handleContextMenuSwapCharacters(selectionBoundsInRootView);
 }
 
-#endif
+#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+#endif // ENABLE(CONTEXT_MENUS)
+
+void WebPageProxy::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, WebCore::NowPlayingInfo&&)>&& callback)
+{
+    sendWithAsyncReply(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), WTFMove(callback));
+}
 
 void WebPageProxy::setLastNavigationWasAppInitiated(ResourceRequest& request)
 {

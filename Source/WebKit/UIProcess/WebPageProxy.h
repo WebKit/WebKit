@@ -2228,10 +2228,12 @@ public:
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if ENABLE(CONTEXT_MENUS)
+    bool canHandleSwapCharacters() const;
     void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView);
+#endif
 
     void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView);
-
     void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID);
 #endif
 

@@ -693,6 +693,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+    bool canHandleSwapCharacters() const;
     void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView);
 #endif
 
