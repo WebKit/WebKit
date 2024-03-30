@@ -586,6 +586,9 @@ public:
     static auto flagIsParsingChildren() { return enumToUnderlyingType(StateFlag::IsParsingChildren); }
 #endif // ENABLE(JIT)
 
+    bool containsSelectionEndPoint() const { return hasStateFlag(StateFlag::ContainsSelectionEndPoint); }
+    void setContainsSelectionEndPoint(bool value) { setStateFlag(StateFlag::ContainsSelectionEndPoint, value); }
+
 protected:
     enum class TypeFlag : uint16_t {
         IsCharacterData = 1 << 0,
@@ -625,6 +628,7 @@ protected:
         ContainsOnlyASCIIWhitespace = 1 << 11, // Only used on CharacterData.
         ContainsOnlyASCIIWhitespaceIsValid = 1 << 12, // Only used on CharacterData.
         HasHeldBackChildrenChanged = 1 << 13,
+        ContainsSelectionEndPoint = 1 << 14,
         IsInCustomElementReactionQueue = 1 << 15,
     };
 

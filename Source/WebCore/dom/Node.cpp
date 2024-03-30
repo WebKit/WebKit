@@ -1464,6 +1464,7 @@ void Node::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
 
 Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
+    ASSERT(!containsSelectionEndPoint());
     if (insertionType.connectedToDocument)
         setEventTargetFlag(EventTargetFlag::IsConnected);
     if (parentOfInsertedTree.isInShadowTree())
@@ -1476,6 +1477,7 @@ Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insert
 
 void Node::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
+    ASSERT(!containsSelectionEndPoint());
     if (removalType.disconnectedFromDocument)
         clearEventTargetFlag(EventTargetFlag::IsConnected);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
