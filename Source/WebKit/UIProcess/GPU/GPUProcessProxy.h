@@ -179,6 +179,10 @@ private:
     GPUProcessCreationParameters processCreationParameters();
     void platformInitializeGPUProcessParameters(GPUProcessCreationParameters&);
 
+#if USE(EXTENSIONKIT)
+    void sendBookmarkDataForCacheDirectory();
+#endif
+
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };

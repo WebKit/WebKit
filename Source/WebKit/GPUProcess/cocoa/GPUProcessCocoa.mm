@@ -127,6 +127,16 @@ void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& para
 #endif
 }
 
+#if USE(EXTENSIONKIT)
+void GPUProcess::resolveBookmarkDataForCacheDirectory(const std::span<const uint8_t>& bookmarkData)
+{
+    auto bookmark = adoptNS([[NSData alloc] initWithBytes:bookmarkData.data() length:bookmarkData.size()]);
+    BOOL bookmarkIsStale = NO;
+    NSError* error = nil;
+    [NSURL URLByResolvingBookmarkData:bookmark.get() options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&bookmarkIsStale error:&error];
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

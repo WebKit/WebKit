@@ -86,6 +86,10 @@ messages -> GPUProcess LegacyReceiver {
     UserPreferredLanguagesChanged(Vector<String> languages)
 
     WebProcessConnectionCountForTesting() -> (uint64_t count)
+
+#if USE(EXTENSIONKIT)
+    ResolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData)
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

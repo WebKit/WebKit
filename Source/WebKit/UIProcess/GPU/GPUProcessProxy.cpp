@@ -609,6 +609,10 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         });
     }).get());
 #endif
+
+#if USE(EXTENSIONKIT)
+    sendBookmarkDataForCacheDirectory();
+#endif
 }
 
 void GPUProcessProxy::updateProcessAssertion()

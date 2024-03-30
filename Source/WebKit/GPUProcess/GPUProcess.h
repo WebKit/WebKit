@@ -119,6 +119,10 @@ public:
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
+#if USE(EXTENSIONKIT)
+    void resolveBookmarkDataForCacheDirectory(const std::span<const uint8_t>& bookmarkData);
+#endif
+
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
 #endif
