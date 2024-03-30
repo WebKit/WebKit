@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Frances Cornwall.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -393,11 +392,5 @@ body:not(.window-inactive, .window-docked-inactive) .data-grid:focus tr.editable
 
     .data-grid th:is(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
         filter: invert();
-    }
-
-    @media (prefers-contrast: more) {
-        .data-grid tr.filler td {
-            background: hsl(0, 0%, 15%);
-        }
     }
 }
