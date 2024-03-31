@@ -387,6 +387,13 @@
 			remoteGlobalIDString = 1C4FAE8F28FC83DC00FFE212;
 			remoteInfo = libavif;
 		};
+		44EC6BC72BB9CE7100513744 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 44F97F252B2C19420018D785;
+			remoteInfo = avif_decode_fuzzer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1041,6 +1048,7 @@
 			isa = PBXGroup;
 			children = (
 				1C2D0DF8296A44CC00BE33A3 /* libavif.a */,
+				44EC6BC82BB9CE7100513744 /* avif_decode_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1612,6 +1620,13 @@
 			fileType = archive.ar;
 			path = libavif.a;
 			remoteRef = 1C2D0DF7296A44CC00BE33A3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44EC6BC82BB9CE7100513744 /* avif_decode_fuzzer */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = avif_decode_fuzzer;
+			remoteRef = 44EC6BC72BB9CE7100513744 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
