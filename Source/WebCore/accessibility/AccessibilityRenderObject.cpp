@@ -1641,20 +1641,10 @@ Widget* AccessibilityRenderObject::widget() const
     return renderWidget ? renderWidget->widget() : nullptr;
 }
 
-AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(HTMLMapElement* map) const
+AccessibilityObject* AccessibilityRenderObject::associatedAXImage(HTMLMapElement& map) const
 {
-    // find an image that is using this map
-    if (!map)
-        return nullptr;
-
-    RefPtr imageElement = map->imageElement();
-    if (!imageElement)
-        return nullptr;
-    
-    if (CheckedPtr cache = axObjectCache())
-        return cache->getOrCreate(imageElement.get());
-    
-    return nullptr;
+    CheckedPtr cache = axObjectCache();
+    return cache ? cache->getOrCreate(map.imageElement().get()) : nullptr;
 }
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLinks()
@@ -1687,7 +1677,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
                     auto& areaObject = uncheckedDowncast<AccessibilityImageMapLink>(*axObjectCache()->create(AccessibilityRole::ImageMapLink));
                     areaObject.setHTMLAreaElement(uncheckedDowncast<HTMLAreaElement>(current));
                     areaObject.setHTMLMapElement(parentMap);
-                    areaObject.setParent(accessibilityParentForImageMap(parentMap));
+                    areaObject.setParent(associatedAXImage(*parentMap));
                     result.append(&areaObject);
                 }
             }
@@ -1987,20 +1977,14 @@ IntRect AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset(const 
     return boundsForRange(*range);
 }
 
-AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaElement* area, const IntPoint& point) const
+AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaElement& area, const IntPoint& point) const
 {
-    if (!area)
+    auto* mapAncestor = ancestorsOfType<HTMLMapElement>(area).first();
+    auto* associatedImage = mapAncestor ? associatedAXImage(*mapAncestor) : nullptr;
+    if (!associatedImage)
         return nullptr;
 
-    auto* mapParent = ancestorsOfType<HTMLMapElement>(*area).first();
-    if (!mapParent)
-        return nullptr;
-
-    auto* parent = accessibilityParentForImageMap(mapParent);
-    if (!parent)
-        return nullptr;
-
-    for (const auto& child : parent->children()) {
+    for (const auto& child : associatedImage->children()) {
         if (child->elementRect().contains(point))
             return dynamicDowncast<AccessibilityObject>(child.get());
     }
@@ -2026,46 +2010,33 @@ AccessibilityObject* AccessibilityRenderObject::elementAccessibilityHitTest(cons
     return AccessibilityObject::elementAccessibilityHitTest(point);
 }
     
-static bool shouldUseShadowHostForHitTesting(Node* shadowHost)
-{
-    // We need to allow automation of mouse events on video tags.
-    return shadowHost && !shadowHost->hasTagName(videoTag);
-}
-
 AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& point) const
 {
     if (!m_renderer || !m_renderer->hasLayer())
         return nullptr;
 
     m_renderer->document().updateLayout();
-
+    // Layout may have destroyed this renderer or layer, so re-check their presence.
     if (!m_renderer || !m_renderer->hasLayer())
         return nullptr;
 
-    auto* layer = uncheckedDowncast<RenderBox>(*m_renderer).layer();
-
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AccessibilityHitTest };
     HitTestResult hitTestResult { point };
-    layer->hitTest(hitType, hitTestResult);
-    Node* node = hitTestResult.innerNode();
+
+    dynamicDowncast<RenderLayerModelObject>(*m_renderer)->layer()->hitTest(hitType, hitTestResult);
+    RefPtr node = hitTestResult.innerNode();
     if (!node)
         return nullptr;
-    Node* shadowAncestorNode = node->shadowHost();
-    if (shouldUseShadowHostForHitTesting(shadowAncestorNode))
-        node = shadowAncestorNode;
-    ASSERT(node);
 
-    if (auto* textarea = dynamicDowncast<HTMLAreaElement>(*node))
-        return accessibilityImageMapHitTest(textarea, point);
-    
-    if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*node))
+    if (auto* area = dynamicDowncast<HTMLAreaElement>(*node))
+        return accessibilityImageMapHitTest(*area, point);
+
+    if (auto* option = dynamicDowncast<HTMLOptionElement>(*node))
         node = option->ownerSelectElement();
-    
+
     auto* renderer = node->renderer();
-    if (!renderer)
-        return nullptr;
-    
-    auto* result = renderer->document().axObjectCache()->getOrCreate(renderer);
+    auto* cache = renderer ? renderer->document().axObjectCache() : nullptr;
+    RefPtr result = cache ? cache->getOrCreate(renderer) : nullptr;
     if (!result)
         return nullptr;
 
@@ -2081,8 +2052,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
 
         result = result->parentObjectUnignored();
     }
-
-    return result;
+    return result.get();
 }
 
 bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer) const

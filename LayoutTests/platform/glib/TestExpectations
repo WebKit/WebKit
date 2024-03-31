@@ -475,6 +475,8 @@ imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [
 # AXObjectCache::announce not implemented.
 accessibility/announcement-notification.html [ Skip ]
 
+accessibility/shadow-dom-hit-test.html [ Skip ]
+
 # AccessibilityUIElement::isAttributeSupported needs to be updated to handle AXSelectedRows.
 accessibility/aria-table-selection-support.html [ Skip ]
 

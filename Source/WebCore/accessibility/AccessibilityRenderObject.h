@@ -165,8 +165,8 @@ private:
     bool nodeIsTextControl(const Node*) const;
     Path elementPath() const override;
     
-    AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
-    AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
+    AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement&, const IntPoint&) const;
+    AccessibilityObject* associatedAXImage(HTMLMapElement&) const;
     AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     bool renderObjectIsObservable(RenderObject&) const;
