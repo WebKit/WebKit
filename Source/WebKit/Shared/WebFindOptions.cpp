@@ -32,19 +32,19 @@ WebCore::FindOptions core(OptionSet<FindOptions> options)
 {
     WebCore::FindOptions result;
     if (options.contains(FindOptions::CaseInsensitive))
-        result.add(WebCore::CaseInsensitive);
+        result.add(WebCore::FindOption::CaseInsensitive);
     if (options.contains(FindOptions::AtWordStarts))
-        result.add(WebCore::AtWordStarts);
+        result.add(WebCore::FindOption::AtWordStarts);
     if (options.contains(FindOptions::TreatMedialCapitalAsWordStart))
-        result.add(WebCore::TreatMedialCapitalAsWordStart);
+        result.add(WebCore::FindOption::TreatMedialCapitalAsWordStart);
     if (options.contains(FindOptions::Backwards))
-        result.add(WebCore::Backwards);
+        result.add(WebCore::FindOption::Backwards);
     if (options.contains(FindOptions::WrapAround))
-        result.add(WebCore::WrapAround);
+        result.add(WebCore::FindOption::WrapAround);
     if (options.contains(FindOptions::AtWordEnds))
-        result.add(WebCore::AtWordEnds);
+        result.add(WebCore::FindOption::AtWordEnds);
     if (options.contains(FindOptions::DoNotSetSelection))
-        result.add(WebCore::DoNotSetSelection);
+        result.add(WebCore::FindOption::DoNotSetSelection);
     return result;
 }
 

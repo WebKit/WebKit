@@ -2977,14 +2977,14 @@ unsigned UnifiedPDFPlugin::countFindMatches(const String& target, WebCore::FindO
     if (!target.length())
         return 0;
 
-    NSStringCompareOptions nsOptions = options.contains(WebCore::CaseInsensitive) ? NSCaseInsensitiveSearch : 0;
+    NSStringCompareOptions nsOptions = options.contains(FindOption::CaseInsensitive) ? NSCaseInsensitiveSearch : 0;
     return [[m_pdfDocument findString:target withOptions:nsOptions] count];
 }
 
 static NSStringCompareOptions compareOptionsForFindOptions(WebCore::FindOptions options)
 {
-    bool searchForward = !options.contains(WebCore::Backwards);
-    bool isCaseSensitive = !options.contains(WebCore::CaseInsensitive);
+    bool searchForward = !options.contains(FindOption::Backwards);
+    bool isCaseSensitive = !options.contains(FindOption::CaseInsensitive);
 
     NSStringCompareOptions compareOptions = 0;
     if (!searchForward)
@@ -3004,14 +3004,14 @@ bool UnifiedPDFPlugin::findString(const String& target, WebCore::FindOptions opt
         return false;
     }
 
-    if (options.contains(WebCore::DoNotSetSelection)) {
+    if (options.contains(FindOption::DoNotSetSelection)) {
         // If the max was zero, any result means we exceeded the max, so we can skip computing the actual count.
         // FIXME: How can always returning true without searching if passed a max of 0 be right?
         // Even if it is right, why not put that special case inside countFindMatches instead of here?
         return !target.isEmpty() && (!maxMatchCount || countFindMatches(target, options, maxMatchCount));
     }
 
-    bool wrapSearch = options.contains(WebCore::WrapAround);
+    bool wrapSearch = options.contains(FindOption::WrapAround);
     auto compareOptions = compareOptionsForFindOptions(options);
 
     auto nextMatchForString = [&]() -> RetainPtr<PDFSelection> {

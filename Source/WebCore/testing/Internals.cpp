@@ -2929,17 +2929,17 @@ static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionLis
 {
     const struct {
         ASCIILiteral name;
-        FindOptionFlag value;
+        FindOption value;
     } flagList[] = {
-        { "CaseInsensitive"_s, CaseInsensitive },
-        { "AtWordStarts"_s, AtWordStarts },
-        { "TreatMedialCapitalAsWordStart"_s, TreatMedialCapitalAsWordStart },
-        { "Backwards"_s, Backwards },
-        { "WrapAround"_s, WrapAround },
-        { "StartInSelection"_s, StartInSelection },
-        { "DoNotRevealSelection"_s, DoNotRevealSelection },
-        { "AtWordEnds"_s, AtWordEnds },
-        { "DoNotTraverseFlatTree"_s, DoNotTraverseFlatTree },
+        { "CaseInsensitive"_s, FindOption::CaseInsensitive },
+        { "AtWordStarts"_s, FindOption::AtWordStarts },
+        { "TreatMedialCapitalAsWordStart"_s, FindOption::TreatMedialCapitalAsWordStart },
+        { "Backwards"_s, FindOption::Backwards },
+        { "WrapAround"_s, FindOption::WrapAround },
+        { "StartInSelection"_s, FindOption::StartInSelection },
+        { "DoNotRevealSelection"_s, FindOption::DoNotRevealSelection },
+        { "AtWordEnds"_s, FindOption::AtWordEnds },
+        { "DoNotTraverseFlatTree"_s, FindOption::DoNotTraverseFlatTree },
     };
     FindOptions result;
     for (auto& option : optionList) {

@@ -899,7 +899,7 @@ std::optional<FrameIdentifier> Page::findString(const String& target, FindOption
     if (target.isEmpty())
         return std::nullopt;
 
-    CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
+    CanWrap canWrap = options.contains(FindOption::WrapAround) ? CanWrap::Yes : CanWrap::No;
     CheckedRef focusController { *m_focusController };
     RefPtr frame = focusController->focusedFrame() ? focusController->focusedFrame() : m_mainFrame.ptr();
     RefPtr startFrame = frame;
@@ -907,18 +907,18 @@ std::optional<FrameIdentifier> Page::findString(const String& target, FindOption
     do {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
-            frame = incrementFrame(frame.get(), !options.contains(Backwards), canWrap, didWrap);
+            frame = incrementFrame(frame.get(), !options.contains(FindOption::Backwards), canWrap, didWrap);
             continue;
         }
-        if (localFrame->editor().findString(target, (options - WrapAround) | StartInSelection)) {
-            if (!options.contains(DoNotSetSelection)) {
+        if (localFrame->editor().findString(target, (options - FindOption::WrapAround) | FindOption::StartInSelection)) {
+            if (!options.contains(FindOption::DoNotSetSelection)) {
                 if (focusedLocalFrame && localFrame != focusedLocalFrame)
                     focusedLocalFrame->checkedSelection()->clear();
                 focusController->setFocusedFrame(localFrame.get());
             }
             return localFrame->frameID();
         }
-        frame = incrementFrame(frame.get(), !options.contains(Backwards), canWrap, didWrap);
+        frame = incrementFrame(frame.get(), !options.contains(FindOption::Backwards), canWrap, didWrap);
     } while (frame && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the selection that we did earlier.
@@ -926,8 +926,8 @@ std::optional<FrameIdentifier> Page::findString(const String& target, FindOption
     if (canWrap == CanWrap::Yes && focusedLocalFrame && !focusedLocalFrame->selection().isNone()) {
         if (didWrap)
             *didWrap = DidWrap::Yes;
-        bool found = focusedLocalFrame->checkedEditor()->findString(target, options | WrapAround | StartInSelection);
-        if (!options.contains(DoNotSetSelection))
+        bool found = focusedLocalFrame->checkedEditor()->findString(target, options | FindOption::WrapAround | FindOption::StartInSelection);
+        if (!options.contains(FindOption::DoNotSetSelection))
             focusController->setFocusedFrame(frame.get());
         return found ? std::make_optional(focusedLocalFrame->frameID()) : std::nullopt;
     }
@@ -971,7 +971,7 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
     if (frameWithSelection) {
         result.indexForSelection = NoMatchAfterUserSelection;
         auto selectedRange = *frameWithSelection->selection().selection().firstRange();
-        if (options.contains(Backwards)) {
+        if (options.contains(FindOption::Backwards)) {
             for (size_t i = result.ranges.size(); i > 0; --i) {
                 // FIXME: Seems like this should be is_gteq to correctly handle the same string found twice in a row.
                 if (is_gt(treeOrder<ComposedTree>(selectedRange.start, result.ranges[i - 1].end))) {
@@ -989,7 +989,7 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
             }
         }
     } else {
-        if (options.contains(Backwards))
+        if (options.contains(FindOption::Backwards))
             result.indexForSelection = result.ranges.size() - 1;
         else
             result.indexForSelection = 0;
@@ -1006,24 +1006,24 @@ std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::
     if (referenceRange && referenceRange->start.document().page() != this)
         return std::nullopt;
 
-    CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
+    CanWrap canWrap = options.contains(FindOption::WrapAround) ? CanWrap::Yes : CanWrap::No;
     RefPtr frame = referenceRange ? referenceRange->start.document().frame() : &mainFrame();
     RefPtr startFrame = dynamicDowncast<LocalFrame>(frame.get());
     do {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
-            frame = incrementFrame(frame.get(), !options.contains(Backwards), canWrap);
+            frame = incrementFrame(frame.get(), !options.contains(FindOption::Backwards), canWrap);
             continue;
         }
-        if (auto resultRange = localFrame->checkedEditor()->rangeOfString(target, localFrame.get() == startFrame.get() ? referenceRange : std::nullopt, options - WrapAround))
+        if (auto resultRange = localFrame->checkedEditor()->rangeOfString(target, localFrame.get() == startFrame.get() ? referenceRange : std::nullopt, options - FindOption::WrapAround))
             return resultRange;
-        frame = incrementFrame(localFrame.get(), !options.contains(Backwards), canWrap);
+        frame = incrementFrame(localFrame.get(), !options.contains(FindOption::Backwards), canWrap);
     } while (frame && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the reference range that we did earlier.
     // We cheat a bit and just search again with wrap on.
     if (canWrap == CanWrap::Yes && referenceRange) {
-        if (auto resultRange = startFrame->checkedEditor()->rangeOfString(target, *referenceRange, options | WrapAround | StartInSelection))
+        if (auto resultRange = startFrame->checkedEditor()->rangeOfString(target, *referenceRange, options | FindOption::WrapAround | FindOption::StartInSelection))
             return resultRange;
     }
 

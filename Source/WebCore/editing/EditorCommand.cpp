@@ -382,7 +382,7 @@ static bool executeDeleteWordForward(LocalFrame& frame, Event*, EditorCommandSou
 
 static bool executeFindString(LocalFrame& frame, Event*, EditorCommandSource, const String& value)
 {
-    return frame.editor().findString(value, { CaseInsensitive, WrapAround, DoNotTraverseFlatTree });
+    return frame.editor().findString(value, { FindOption::CaseInsensitive, FindOption::WrapAround, FindOption::DoNotTraverseFlatTree });
 }
 
 static bool executeFontName(LocalFrame& frame, Event*, EditorCommandSource source, const String& value)

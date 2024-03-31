@@ -302,7 +302,7 @@ private:
 constexpr TextIteratorBehaviors findIteratorOptions(FindOptions options = { })
 {
     TextIteratorBehaviors iteratorOptions { TextIteratorBehavior::EntersTextControls, TextIteratorBehavior::ClipsToFrameAncestors, TextIteratorBehavior::EntersImageOverlays };
-    if (!options.contains(DoNotTraverseFlatTree))
+    if (!options.contains(FindOption::DoNotTraverseFlatTree))
         iteratorOptions.add(TextIteratorBehavior::TraversesFlatTree);
     return iteratorOptions;
 }

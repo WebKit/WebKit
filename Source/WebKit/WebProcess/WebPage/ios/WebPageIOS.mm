@@ -216,7 +216,7 @@ static void adjustCandidateAutocorrectionInFrame(const String& correction, Local
     if (!referenceRange)
         return;
 
-    auto correctedRange = findPlainText(*referenceRange, correction, { Backwards });
+    auto correctedRange = findPlainText(*referenceRange, correction, { FindOption::Backwards });
     if (correctedRange.collapsed())
         return;
 
@@ -2778,7 +2778,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
                 textForRange = emptyString();
                 range = makeSimpleRange(position);
             } else if (auto searchRange = rangeExpandedAroundPositionByCharacters(position, characterCount)) {
-                if (auto foundRange = findPlainText(*searchRange, originalTextWithFoldedQuoteMarks, { DoNotSetSelection, DoNotRevealSelection }); !foundRange.collapsed()) {
+                if (auto foundRange = findPlainText(*searchRange, originalTextWithFoldedQuoteMarks, { FindOption::DoNotSetSelection, FindOption::DoNotRevealSelection }); !foundRange.collapsed()) {
                     textForRange = plainTextForContext(foundRange);
                     range = foundRange;
                 }

@@ -1989,7 +1989,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     , m_options(options)
     , m_prefixLength(0)
     , m_atBreak(true)
-    , m_needsMoreContext(options.contains(AtWordStarts))
+    , m_needsMoreContext(options.contains(FindOption::AtWordStarts))
     , m_targetRequiresKanaWorkaround(containsKanaLetters(m_target))
 {
     ASSERT(!m_target.isEmpty());
@@ -1998,13 +1998,13 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     m_buffer.reserveInitialCapacity(std::max(targetLength * 8, minimumSearchBufferSize));
     m_overlap = m_buffer.capacity() / 4;
 
-    if (m_options.contains(AtWordStarts) && targetLength) {
+    if (m_options.contains(FindOption::AtWordStarts) && targetLength) {
         char32_t targetFirstCharacter;
         U16_GET(m_target, 0, 0u, targetLength, targetFirstCharacter);
         // Characters in the separator category never really occur at the beginning of a word,
         // so if the target begins with such a character, we just ignore the AtWordStart option.
         if (isSeparator(targetFirstCharacter)) {
-            m_options.remove(AtWordStarts);
+            m_options.remove(FindOption::AtWordStarts);
             m_needsMoreContext = false;
         }
     }
@@ -2019,7 +2019,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
 
     UCollationStrength strength;
     USearchAttributeValue comparator;
-    if (m_options.contains(CaseInsensitive)) {
+    if (m_options.contains(FindOption::CaseInsensitive)) {
         // Without loss of generality, have 'e' match {'e', 'E', 'é', 'É'} and 'é' match {'é', 'É'}.
         strength = UCOL_SECONDARY;
         comparator = USEARCH_PATTERN_BASE_WEIGHT_IS_WILDCARD;
@@ -2182,7 +2182,7 @@ inline bool SearchBuffer::isBadMatch(const UChar* match, size_t matchLength) con
 inline bool SearchBuffer::isWordEndMatch(size_t start, size_t length) const
 {
     ASSERT(length);
-    ASSERT(m_options.contains(AtWordEnds));
+    ASSERT(m_options.contains(FindOption::AtWordEnds));
 
     // Start searching at the end of matched search, so that multiple word matches succeed.
     int endWord;
@@ -2192,7 +2192,7 @@ inline bool SearchBuffer::isWordEndMatch(size_t start, size_t length) const
 
 inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 {
-    ASSERT(m_options.contains(AtWordStarts));
+    ASSERT(m_options.contains(FindOption::AtWordStarts));
 
     if (!start)
         return true;
@@ -2202,7 +2202,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
     char32_t firstCharacter;
     U16_GET(m_buffer.data(), 0, offset, size, firstCharacter);
 
-    if (m_options.contains(TreatMedialCapitalAsWordStart)) {
+    if (m_options.contains(FindOption::TreatMedialCapitalAsWordStart)) {
         char32_t previousCharacter;
         U16_PREV(m_buffer.data(), 0, offset, previousCharacter);
 
@@ -2279,7 +2279,7 @@ nextMatch:
     // possibly including a combining character that's not yet in the buffer.
     if (!m_atBreak && static_cast<size_t>(matchStart) >= size - m_overlap) {
         size_t overlap = m_overlap;
-        if (m_options.contains(AtWordStarts)) {
+        if (m_options.contains(FindOption::AtWordStarts)) {
             // Ensure that there is sufficient context before matchStart the next time around for
             // determining if it is at a word boundary.
             unsigned wordBoundaryContextStart = matchStart;
@@ -2298,8 +2298,8 @@ nextMatch:
 
     // If this match is "bad", move on to the next match.
     if (isBadMatch(m_buffer.data() + matchStart, matchedLength)
-        || (m_options.contains(AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))
-        || (m_options.contains(AtWordEnds) && !isWordEndMatch(matchStart, matchedLength))) {
+        || (m_options.contains(FindOption::AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))
+        || (m_options.contains(FindOption::AtWordEnds) && !isWordEndMatch(matchStart, matchedLength))) {
         matchStart = usearch_next(searcher, &status);
         ASSERT(U_SUCCESS(status));
         goto nextMatch;
@@ -2585,7 +2585,7 @@ static void forEachMatch(const SimpleRange& range, const String& target, FindOpt
 static SimpleRange rangeForMatch(const SimpleRange& range, FindOptions options, CharacterRange match)
 {
     auto noMatchResult = [&] () {
-        auto& boundary = options.contains(Backwards) ? range.start : range.end;
+        auto& boundary = options.contains(FindOption::Backwards) ? range.start : range.end;
         return SimpleRange { boundary, boundary };
     };
 
@@ -2617,10 +2617,10 @@ SimpleRange findClosestPlainText(const SimpleRange& range, const String& target,
         auto matchDistance = std::min(distance(match.location, targetOffset), distance(match.location + match.length, targetOffset));
         if (matchDistance > closestMatchDistance)
             return false;
-        if (matchDistance == closestMatchDistance && !options.contains(Backwards))
+        if (matchDistance == closestMatchDistance && !options.contains(FindOption::Backwards))
             return false;
         closestMatch = match;
-        if (!matchDistance && !options.contains(Backwards))
+        if (!matchDistance && !options.contains(FindOption::Backwards))
             return true;
         closestMatchDistance = matchDistance;
         return false;
@@ -2632,7 +2632,7 @@ SimpleRange findPlainText(const SimpleRange& range, const String& target, FindOp
 {
     // When searching forward stop since we want the first match.
     // When searching backward keep going since we want the last match.
-    bool stopAfterFindingMatch = !options.contains(Backwards);
+    bool stopAfterFindingMatch = !options.contains(FindOption::Backwards);
     CharacterRange lastMatchFound;
     forEachMatch(range, target, options, [&] (CharacterRange match) {
         lastMatchFound = match;

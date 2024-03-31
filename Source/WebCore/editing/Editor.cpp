@@ -3696,10 +3696,10 @@ bool Editor::findString(const String& target, FindOptions options)
     if (!resultRange)
         return false;
 
-    if (!options.contains(DoNotSetSelection))
+    if (!options.contains(FindOption::DoNotSetSelection))
         document->selection().setSelection(VisibleSelection(*resultRange));
 
-    if (!(options.contains(DoNotRevealSelection)))
+    if (!(options.contains(FindOption::DoNotRevealSelection)))
         document->selection().revealSelection();
 
     return true;
@@ -3707,22 +3707,22 @@ bool Editor::findString(const String& target, FindOptions options)
 
 template<typename T> static auto& start(T& range, FindOptions options)
 {
-    return options.contains(Backwards) ? range.end : range.start;
+    return options.contains(FindOption::Backwards) ? range.end : range.start;
 }
 
 template<typename T> static auto& end(T& range, FindOptions options)
 {
-    return options.contains(Backwards) ? range.start : range.end;
+    return options.contains(FindOption::Backwards) ? range.start : range.end;
 }
 
 static BoundaryPoint makeBoundaryPointAfterNodeContents(Node& node, FindOptions options)
 {
-    return options.contains(Backwards) ? makeBoundaryPointBeforeNodeContents(node) : makeBoundaryPointAfterNodeContents(node);
+    return options.contains(FindOption::Backwards) ? makeBoundaryPointBeforeNodeContents(node) : makeBoundaryPointAfterNodeContents(node);
 }
 
 static std::optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node, FindOptions options)
 {
-    return options.contains(Backwards) ? makeBoundaryPointBeforeNode(node) : makeBoundaryPointAfterNode(node);
+    return options.contains(FindOption::Backwards) ? makeBoundaryPointBeforeNode(node) : makeBoundaryPointAfterNode(node);
 }
 
 static SimpleRange collapseIfRootsDiffer(SimpleRange&& range)
@@ -3740,7 +3740,7 @@ std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std
     // Start from an edge of the reference range, if there's a reference range that's not in shadow content. Which edge
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
 
-    bool startInReferenceRange = referenceRange && options.contains(StartInSelection);
+    bool startInReferenceRange = referenceRange && options.contains(FindOption::StartInSelection);
     auto shadowTreeRoot = referenceRange ? referenceRange->startContainer().containingShadowRoot() : nullptr;
 
     Ref document = protectedDocument();
@@ -3772,7 +3772,7 @@ std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std
 
     // If we didn't find anything and we're wrapping, search again in the entire document (this will
     // redundantly re-search the area already searched in some cases).
-    if (resultRange.collapsed() && options.contains(WrapAround)) {
+    if (resultRange.collapsed() && options.contains(FindOption::WrapAround)) {
         resultRange = collapseIfRootsDiffer(findPlainText(makeRangeSelectingNodeContents(document), target, options));
         // We used to return false here if we ended up with the same range that we started with
         // (e.g., the reference range was already the only instance of this text). But we decided that
@@ -3811,7 +3811,7 @@ unsigned Editor::countMatchesForText(const String& target, const std::optional<S
 
     unsigned matchCount = 0;
     do {
-        auto resultRange = findPlainText(*searchRange, target, options - Backwards);
+        auto resultRange = findPlainText(*searchRange, target, options - FindOption::Backwards);
         if (resultRange.collapsed()) {
             if (!resultRange.start.container->isInShadowTree())
                 break;

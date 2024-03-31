@@ -729,17 +729,17 @@ WebCore::FindOptions coreOptions(WebFindOptions options)
 {
     WebCore::FindOptions findOptions;
     if (options & WebFindOptionsCaseInsensitive)
-        findOptions.add(WebCore::CaseInsensitive);
+        findOptions.add(WebCore::FindOption::CaseInsensitive);
     if (options & WebFindOptionsAtWordStarts)
-        findOptions.add(WebCore::AtWordStarts);
+        findOptions.add(WebCore::FindOption::AtWordStarts);
     if (options & WebFindOptionsTreatMedialCapitalAsWordStart)
-        findOptions.add(WebCore::TreatMedialCapitalAsWordStart);
+        findOptions.add(WebCore::FindOption::TreatMedialCapitalAsWordStart);
     if (options & WebFindOptionsBackwards)
-        findOptions.add(WebCore::Backwards);
+        findOptions.add(WebCore::FindOption::Backwards);
     if (options & WebFindOptionsWrapAround)
-        findOptions.add(WebCore::WrapAround);
+        findOptions.add(WebCore::FindOption::WrapAround);
     if (options & WebFindOptionsStartInSelection)
-        findOptions.add(WebCore::StartInSelection);
+        findOptions.add(WebCore::FindOption::StartInSelection);
     return findOptions;
 }
 

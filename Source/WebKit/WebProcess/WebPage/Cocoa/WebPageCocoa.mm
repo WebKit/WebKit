@@ -360,7 +360,7 @@ void WebPage::addDictationAlternative(const String& text, DictationContext conte
 
     auto targetOffset = characterCount(*searchRange);
     targetOffset -= std::min<uint64_t>(targetOffset, text.length());
-    auto matchRange = findClosestPlainText(*searchRange, text, { Backwards, DoNotRevealSelection }, targetOffset);
+    auto matchRange = findClosestPlainText(*searchRange, text, { FindOption::Backwards, FindOption::DoNotRevealSelection }, targetOffset);
     if (matchRange.collapsed()) {
         completion(false);
         return;

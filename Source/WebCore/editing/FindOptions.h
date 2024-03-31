@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum FindOptionFlag {
+enum class FindOption : uint16_t {
     CaseInsensitive = 1 << 0,
     AtWordStarts = 1 << 1,
     // When combined with AtWordStarts, accepts a match in the middle of a word if the match begins with
@@ -44,6 +44,6 @@ enum FindOptionFlag {
     DoNotSetSelection = 1 << 9,
 };
 
-using FindOptions = OptionSet<FindOptionFlag>;
+using FindOptions = OptionSet<FindOption>;
 
 } // namespace WebCore

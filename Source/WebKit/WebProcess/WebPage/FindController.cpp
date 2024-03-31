@@ -273,7 +273,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     //
     // To share logic between platforms, prevent Editor from revealing the selection
     // and reveal the selection in FindController::didFindString.
-    coreOptions.add(DoNotRevealSelection);
+    coreOptions.add(FindOption::DoNotRevealSelection);
 
     willFindString();
 
