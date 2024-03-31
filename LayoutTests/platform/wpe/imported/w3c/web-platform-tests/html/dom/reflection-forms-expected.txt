@@ -315,10 +315,12 @@ PASS form.tabIndex: setAttribute() to "\f7"
 PASS form.tabIndex: setAttribute() to " 7"
 PASS form.tabIndex: setAttribute() to "\n7"
 PASS form.tabIndex: setAttribute() to "\r7"
+PASS form.tabIndex: setAttribute() to "7\v"
 PASS form.tabIndex: setAttribute() to 1.5
 PASS form.tabIndex: setAttribute() to "5%"
 PASS form.tabIndex: setAttribute() to "+100"
 PASS form.tabIndex: setAttribute() to object "2"
+PASS form.tabIndex: setAttribute() to object "3"
 PASS form.tabIndex: IDL set to -36
 PASS form.tabIndex: IDL set to -1
 PASS form.tabIndex: IDL set to 0
@@ -1100,10 +1102,12 @@ PASS fieldset.tabIndex: setAttribute() to "\f7"
 PASS fieldset.tabIndex: setAttribute() to " 7"
 PASS fieldset.tabIndex: setAttribute() to "\n7"
 PASS fieldset.tabIndex: setAttribute() to "\r7"
+PASS fieldset.tabIndex: setAttribute() to "7\v"
 PASS fieldset.tabIndex: setAttribute() to 1.5
 PASS fieldset.tabIndex: setAttribute() to "5%"
 PASS fieldset.tabIndex: setAttribute() to "+100"
 PASS fieldset.tabIndex: setAttribute() to object "2"
+PASS fieldset.tabIndex: setAttribute() to object "3"
 PASS fieldset.tabIndex: IDL set to -36
 PASS fieldset.tabIndex: IDL set to -1
 PASS fieldset.tabIndex: IDL set to 0
@@ -1501,10 +1505,12 @@ PASS legend.tabIndex: setAttribute() to "\f7"
 PASS legend.tabIndex: setAttribute() to " 7"
 PASS legend.tabIndex: setAttribute() to "\n7"
 PASS legend.tabIndex: setAttribute() to "\r7"
+PASS legend.tabIndex: setAttribute() to "7\v"
 PASS legend.tabIndex: setAttribute() to 1.5
 PASS legend.tabIndex: setAttribute() to "5%"
 PASS legend.tabIndex: setAttribute() to "+100"
 PASS legend.tabIndex: setAttribute() to object "2"
+PASS legend.tabIndex: setAttribute() to object "3"
 PASS legend.tabIndex: IDL set to -36
 PASS legend.tabIndex: IDL set to -1
 PASS legend.tabIndex: IDL set to 0
@@ -1863,10 +1869,12 @@ PASS label.tabIndex: setAttribute() to "\f7"
 PASS label.tabIndex: setAttribute() to " 7"
 PASS label.tabIndex: setAttribute() to "\n7"
 PASS label.tabIndex: setAttribute() to "\r7"
+PASS label.tabIndex: setAttribute() to "7\v"
 PASS label.tabIndex: setAttribute() to 1.5
 PASS label.tabIndex: setAttribute() to "5%"
 PASS label.tabIndex: setAttribute() to "+100"
 PASS label.tabIndex: setAttribute() to object "2"
+PASS label.tabIndex: setAttribute() to object "3"
 PASS label.tabIndex: IDL set to -36
 PASS label.tabIndex: IDL set to -1
 PASS label.tabIndex: IDL set to 0
@@ -2225,10 +2233,12 @@ PASS input.tabIndex: setAttribute() to "\f7"
 PASS input.tabIndex: setAttribute() to " 7"
 PASS input.tabIndex: setAttribute() to "\n7"
 PASS input.tabIndex: setAttribute() to "\r7"
+PASS input.tabIndex: setAttribute() to "7\v"
 PASS input.tabIndex: setAttribute() to 1.5
 PASS input.tabIndex: setAttribute() to "5%"
 PASS input.tabIndex: setAttribute() to "+100"
 PASS input.tabIndex: setAttribute() to object "2"
+PASS input.tabIndex: setAttribute() to object "3"
 PASS input.tabIndex: IDL set to -36
 PASS input.tabIndex: IDL set to -1
 PASS input.tabIndex: IDL set to 0
@@ -2755,6 +2765,8 @@ PASS input.maxLength: setAttribute() to 2147483648
 PASS input.maxLength: setAttribute() to 4294967295
 PASS input.maxLength: setAttribute() to 4294967296
 PASS input.maxLength: setAttribute() to ""
+PASS input.maxLength: setAttribute() to "-"
+PASS input.maxLength: setAttribute() to "+"
 PASS input.maxLength: setAttribute() to "-1"
 PASS input.maxLength: setAttribute() to "-0"
 PASS input.maxLength: setAttribute() to "0"
@@ -2785,6 +2797,12 @@ PASS input.maxLength: setAttribute() to " 7"
 PASS input.maxLength: setAttribute() to " 7"
 PASS input.maxLength: setAttribute() to " 7"
 PASS input.maxLength: setAttribute() to "　7"
+PASS input.maxLength: setAttribute() to "\t\v7"
+PASS input.maxLength: setAttribute() to "\n\v7"
+PASS input.maxLength: setAttribute() to "\f\v7"
+PASS input.maxLength: setAttribute() to "\r\v7"
+PASS input.maxLength: setAttribute() to " \v7"
+PASS input.maxLength: setAttribute() to "7\v"
 PASS input.maxLength: setAttribute() to undefined
 PASS input.maxLength: setAttribute() to 1.5
 PASS input.maxLength: setAttribute() to "5%"
@@ -2857,6 +2875,8 @@ PASS input.minLength: setAttribute() to 2147483648
 PASS input.minLength: setAttribute() to 4294967295
 PASS input.minLength: setAttribute() to 4294967296
 PASS input.minLength: setAttribute() to ""
+PASS input.minLength: setAttribute() to "-"
+PASS input.minLength: setAttribute() to "+"
 PASS input.minLength: setAttribute() to "-1"
 PASS input.minLength: setAttribute() to "-0"
 PASS input.minLength: setAttribute() to "0"
@@ -2887,6 +2907,12 @@ PASS input.minLength: setAttribute() to " 7"
 PASS input.minLength: setAttribute() to " 7"
 PASS input.minLength: setAttribute() to " 7"
 PASS input.minLength: setAttribute() to "　7"
+PASS input.minLength: setAttribute() to "\t\v7"
+PASS input.minLength: setAttribute() to "\n\v7"
+PASS input.minLength: setAttribute() to "\f\v7"
+PASS input.minLength: setAttribute() to "\r\v7"
+PASS input.minLength: setAttribute() to " \v7"
+PASS input.minLength: setAttribute() to "7\v"
 PASS input.minLength: setAttribute() to undefined
 PASS input.minLength: setAttribute() to 1.5
 PASS input.minLength: setAttribute() to "5%"
@@ -3151,6 +3177,8 @@ PASS input.size: setAttribute() to 2147483648
 PASS input.size: setAttribute() to 4294967295
 PASS input.size: setAttribute() to 4294967296
 PASS input.size: setAttribute() to ""
+PASS input.size: setAttribute() to "-"
+PASS input.size: setAttribute() to "+"
 PASS input.size: setAttribute() to "-1"
 PASS input.size: setAttribute() to "-0"
 PASS input.size: setAttribute() to "0"
@@ -3180,6 +3208,12 @@ PASS input.size: setAttribute() to " 7"
 PASS input.size: setAttribute() to " 7"
 PASS input.size: setAttribute() to " 7"
 PASS input.size: setAttribute() to "　7"
+PASS input.size: setAttribute() to "\t\v7"
+PASS input.size: setAttribute() to "\n\v7"
+PASS input.size: setAttribute() to "\f\v7"
+PASS input.size: setAttribute() to "\r\v7"
+PASS input.size: setAttribute() to " \v7"
+PASS input.size: setAttribute() to "7\v"
 PASS input.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS input.size: setAttribute() to undefined
 PASS input.size: setAttribute() to 1.5
@@ -3966,10 +4000,12 @@ PASS button.tabIndex: setAttribute() to "\f7"
 PASS button.tabIndex: setAttribute() to " 7"
 PASS button.tabIndex: setAttribute() to "\n7"
 PASS button.tabIndex: setAttribute() to "\r7"
+PASS button.tabIndex: setAttribute() to "7\v"
 PASS button.tabIndex: setAttribute() to 1.5
 PASS button.tabIndex: setAttribute() to "5%"
 PASS button.tabIndex: setAttribute() to "+100"
 PASS button.tabIndex: setAttribute() to object "2"
+PASS button.tabIndex: setAttribute() to object "3"
 PASS button.tabIndex: IDL set to -36
 PASS button.tabIndex: IDL set to -1
 PASS button.tabIndex: IDL set to 0
@@ -4736,10 +4772,12 @@ PASS select.tabIndex: setAttribute() to "\f7"
 PASS select.tabIndex: setAttribute() to " 7"
 PASS select.tabIndex: setAttribute() to "\n7"
 PASS select.tabIndex: setAttribute() to "\r7"
+PASS select.tabIndex: setAttribute() to "7\v"
 PASS select.tabIndex: setAttribute() to 1.5
 PASS select.tabIndex: setAttribute() to "5%"
 PASS select.tabIndex: setAttribute() to "+100"
 PASS select.tabIndex: setAttribute() to object "2"
+PASS select.tabIndex: setAttribute() to object "3"
 PASS select.tabIndex: IDL set to -36
 PASS select.tabIndex: IDL set to -1
 PASS select.tabIndex: IDL set to 0
@@ -4934,6 +4972,8 @@ PASS select.size: setAttribute() to 2147483648
 PASS select.size: setAttribute() to 4294967295
 PASS select.size: setAttribute() to 4294967296
 PASS select.size: setAttribute() to ""
+PASS select.size: setAttribute() to "-"
+PASS select.size: setAttribute() to "+"
 PASS select.size: setAttribute() to "-1"
 PASS select.size: setAttribute() to "-0"
 PASS select.size: setAttribute() to "0"
@@ -4963,6 +5003,12 @@ PASS select.size: setAttribute() to " 7"
 PASS select.size: setAttribute() to " 7"
 PASS select.size: setAttribute() to " 7"
 PASS select.size: setAttribute() to "　7"
+PASS select.size: setAttribute() to "\t\v7"
+PASS select.size: setAttribute() to "\n\v7"
+PASS select.size: setAttribute() to "\f\v7"
+PASS select.size: setAttribute() to "\r\v7"
+PASS select.size: setAttribute() to " \v7"
+PASS select.size: setAttribute() to "7\v"
 PASS select.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS select.size: setAttribute() to undefined
 PASS select.size: setAttribute() to 1.5
@@ -5299,10 +5345,12 @@ PASS datalist.tabIndex: setAttribute() to "\f7"
 PASS datalist.tabIndex: setAttribute() to " 7"
 PASS datalist.tabIndex: setAttribute() to "\n7"
 PASS datalist.tabIndex: setAttribute() to "\r7"
+PASS datalist.tabIndex: setAttribute() to "7\v"
 PASS datalist.tabIndex: setAttribute() to 1.5
 PASS datalist.tabIndex: setAttribute() to "5%"
 PASS datalist.tabIndex: setAttribute() to "+100"
 PASS datalist.tabIndex: setAttribute() to object "2"
+PASS datalist.tabIndex: setAttribute() to object "3"
 PASS datalist.tabIndex: IDL set to -36
 PASS datalist.tabIndex: IDL set to -1
 PASS datalist.tabIndex: IDL set to 0
@@ -5623,10 +5671,12 @@ PASS optgroup.tabIndex: setAttribute() to "\f7"
 PASS optgroup.tabIndex: setAttribute() to " 7"
 PASS optgroup.tabIndex: setAttribute() to "\n7"
 PASS optgroup.tabIndex: setAttribute() to "\r7"
+PASS optgroup.tabIndex: setAttribute() to "7\v"
 PASS optgroup.tabIndex: setAttribute() to 1.5
 PASS optgroup.tabIndex: setAttribute() to "5%"
 PASS optgroup.tabIndex: setAttribute() to "+100"
 PASS optgroup.tabIndex: setAttribute() to object "2"
+PASS optgroup.tabIndex: setAttribute() to object "3"
 PASS optgroup.tabIndex: IDL set to -36
 PASS optgroup.tabIndex: IDL set to -1
 PASS optgroup.tabIndex: IDL set to 0
@@ -6024,10 +6074,12 @@ PASS option.tabIndex: setAttribute() to "\f7"
 PASS option.tabIndex: setAttribute() to " 7"
 PASS option.tabIndex: setAttribute() to "\n7"
 PASS option.tabIndex: setAttribute() to "\r7"
+PASS option.tabIndex: setAttribute() to "7\v"
 PASS option.tabIndex: setAttribute() to 1.5
 PASS option.tabIndex: setAttribute() to "5%"
 PASS option.tabIndex: setAttribute() to "+100"
 PASS option.tabIndex: setAttribute() to object "2"
+PASS option.tabIndex: setAttribute() to object "3"
 PASS option.tabIndex: IDL set to -36
 PASS option.tabIndex: IDL set to -1
 PASS option.tabIndex: IDL set to 0
@@ -6464,10 +6516,12 @@ PASS textarea.tabIndex: setAttribute() to "\f7"
 PASS textarea.tabIndex: setAttribute() to " 7"
 PASS textarea.tabIndex: setAttribute() to "\n7"
 PASS textarea.tabIndex: setAttribute() to "\r7"
+PASS textarea.tabIndex: setAttribute() to "7\v"
 PASS textarea.tabIndex: setAttribute() to 1.5
 PASS textarea.tabIndex: setAttribute() to "5%"
 PASS textarea.tabIndex: setAttribute() to "+100"
 PASS textarea.tabIndex: setAttribute() to object "2"
+PASS textarea.tabIndex: setAttribute() to object "3"
 PASS textarea.tabIndex: IDL set to -36
 PASS textarea.tabIndex: IDL set to -1
 PASS textarea.tabIndex: IDL set to 0
@@ -6506,6 +6560,8 @@ PASS textarea.cols: setAttribute() to 2147483648
 PASS textarea.cols: setAttribute() to 4294967295
 PASS textarea.cols: setAttribute() to 4294967296
 PASS textarea.cols: setAttribute() to ""
+PASS textarea.cols: setAttribute() to "-"
+PASS textarea.cols: setAttribute() to "+"
 PASS textarea.cols: setAttribute() to "-1"
 PASS textarea.cols: setAttribute() to "-0"
 PASS textarea.cols: setAttribute() to "0"
@@ -6535,6 +6591,12 @@ PASS textarea.cols: setAttribute() to " 7"
 PASS textarea.cols: setAttribute() to " 7"
 PASS textarea.cols: setAttribute() to " 7"
 PASS textarea.cols: setAttribute() to "　7"
+PASS textarea.cols: setAttribute() to "\t\v7"
+PASS textarea.cols: setAttribute() to "\n\v7"
+PASS textarea.cols: setAttribute() to "\f\v7"
+PASS textarea.cols: setAttribute() to "\r\v7"
+PASS textarea.cols: setAttribute() to " \v7"
+PASS textarea.cols: setAttribute() to "7\v"
 PASS textarea.cols: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS textarea.cols: setAttribute() to undefined
 PASS textarea.cols: setAttribute() to 1.5
@@ -6646,6 +6708,8 @@ PASS textarea.maxLength: setAttribute() to 2147483648
 PASS textarea.maxLength: setAttribute() to 4294967295
 PASS textarea.maxLength: setAttribute() to 4294967296
 PASS textarea.maxLength: setAttribute() to ""
+PASS textarea.maxLength: setAttribute() to "-"
+PASS textarea.maxLength: setAttribute() to "+"
 PASS textarea.maxLength: setAttribute() to "-1"
 PASS textarea.maxLength: setAttribute() to "-0"
 PASS textarea.maxLength: setAttribute() to "0"
@@ -6676,6 +6740,12 @@ PASS textarea.maxLength: setAttribute() to " 7"
 PASS textarea.maxLength: setAttribute() to " 7"
 PASS textarea.maxLength: setAttribute() to " 7"
 PASS textarea.maxLength: setAttribute() to "　7"
+PASS textarea.maxLength: setAttribute() to "\t\v7"
+PASS textarea.maxLength: setAttribute() to "\n\v7"
+PASS textarea.maxLength: setAttribute() to "\f\v7"
+PASS textarea.maxLength: setAttribute() to "\r\v7"
+PASS textarea.maxLength: setAttribute() to " \v7"
+PASS textarea.maxLength: setAttribute() to "7\v"
 PASS textarea.maxLength: setAttribute() to undefined
 PASS textarea.maxLength: setAttribute() to 1.5
 PASS textarea.maxLength: setAttribute() to "5%"
@@ -6710,6 +6780,8 @@ PASS textarea.minLength: setAttribute() to 2147483648
 PASS textarea.minLength: setAttribute() to 4294967295
 PASS textarea.minLength: setAttribute() to 4294967296
 PASS textarea.minLength: setAttribute() to ""
+PASS textarea.minLength: setAttribute() to "-"
+PASS textarea.minLength: setAttribute() to "+"
 PASS textarea.minLength: setAttribute() to "-1"
 PASS textarea.minLength: setAttribute() to "-0"
 PASS textarea.minLength: setAttribute() to "0"
@@ -6740,6 +6812,12 @@ PASS textarea.minLength: setAttribute() to " 7"
 PASS textarea.minLength: setAttribute() to " 7"
 PASS textarea.minLength: setAttribute() to " 7"
 PASS textarea.minLength: setAttribute() to "　7"
+PASS textarea.minLength: setAttribute() to "\t\v7"
+PASS textarea.minLength: setAttribute() to "\n\v7"
+PASS textarea.minLength: setAttribute() to "\f\v7"
+PASS textarea.minLength: setAttribute() to "\r\v7"
+PASS textarea.minLength: setAttribute() to " \v7"
+PASS textarea.minLength: setAttribute() to "7\v"
 PASS textarea.minLength: setAttribute() to undefined
 PASS textarea.minLength: setAttribute() to 1.5
 PASS textarea.minLength: setAttribute() to "5%"
@@ -6927,6 +7005,8 @@ PASS textarea.rows: setAttribute() to 2147483648
 PASS textarea.rows: setAttribute() to 4294967295
 PASS textarea.rows: setAttribute() to 4294967296
 PASS textarea.rows: setAttribute() to ""
+PASS textarea.rows: setAttribute() to "-"
+PASS textarea.rows: setAttribute() to "+"
 PASS textarea.rows: setAttribute() to "-1"
 PASS textarea.rows: setAttribute() to "-0"
 PASS textarea.rows: setAttribute() to "0"
@@ -6956,6 +7036,12 @@ PASS textarea.rows: setAttribute() to " 7"
 PASS textarea.rows: setAttribute() to " 7"
 PASS textarea.rows: setAttribute() to " 7"
 PASS textarea.rows: setAttribute() to "　7"
+PASS textarea.rows: setAttribute() to "\t\v7"
+PASS textarea.rows: setAttribute() to "\n\v7"
+PASS textarea.rows: setAttribute() to "\f\v7"
+PASS textarea.rows: setAttribute() to "\r\v7"
+PASS textarea.rows: setAttribute() to " \v7"
+PASS textarea.rows: setAttribute() to "7\v"
 PASS textarea.rows: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS textarea.rows: setAttribute() to undefined
 PASS textarea.rows: setAttribute() to 1.5
@@ -7328,10 +7414,12 @@ PASS output.tabIndex: setAttribute() to "\f7"
 PASS output.tabIndex: setAttribute() to " 7"
 PASS output.tabIndex: setAttribute() to "\n7"
 PASS output.tabIndex: setAttribute() to "\r7"
+PASS output.tabIndex: setAttribute() to "7\v"
 PASS output.tabIndex: setAttribute() to 1.5
 PASS output.tabIndex: setAttribute() to "5%"
 PASS output.tabIndex: setAttribute() to "+100"
 PASS output.tabIndex: setAttribute() to object "2"
+PASS output.tabIndex: setAttribute() to object "3"
 PASS output.tabIndex: IDL set to -36
 PASS output.tabIndex: IDL set to -1
 PASS output.tabIndex: IDL set to 0
@@ -7690,16 +7778,108 @@ PASS progress.tabIndex: setAttribute() to "\f7"
 PASS progress.tabIndex: setAttribute() to " 7"
 PASS progress.tabIndex: setAttribute() to "\n7"
 PASS progress.tabIndex: setAttribute() to "\r7"
+PASS progress.tabIndex: setAttribute() to "7\v"
 PASS progress.tabIndex: setAttribute() to 1.5
 PASS progress.tabIndex: setAttribute() to "5%"
 PASS progress.tabIndex: setAttribute() to "+100"
 PASS progress.tabIndex: setAttribute() to object "2"
+PASS progress.tabIndex: setAttribute() to object "3"
 PASS progress.tabIndex: IDL set to -36
 PASS progress.tabIndex: IDL set to -1
 PASS progress.tabIndex: IDL set to 0
 PASS progress.tabIndex: IDL set to 1
 PASS progress.tabIndex: IDL set to 2147483647
 PASS progress.tabIndex: IDL set to -2147483648
+PASS progress.max: typeof IDL attribute
+PASS progress.max: IDL get with DOM attribute unset
+PASS progress.max: setAttribute() to -2147483649
+PASS progress.max: setAttribute() to -2147483648
+PASS progress.max: setAttribute() to -36
+PASS progress.max: setAttribute() to -1
+PASS progress.max: setAttribute() to 0
+PASS progress.max: setAttribute() to 1
+PASS progress.max: setAttribute() to 2147483647
+PASS progress.max: setAttribute() to 2147483648
+PASS progress.max: setAttribute() to 4294967295
+PASS progress.max: setAttribute() to 4294967296
+PASS progress.max: setAttribute() to ""
+PASS progress.max: setAttribute() to "-"
+PASS progress.max: setAttribute() to "+"
+FAIL progress.max: setAttribute() to "\t7" assert_equals: IDL get expected 7 but got 1
+PASS progress.max: setAttribute() to "\v7"
+FAIL progress.max: setAttribute() to "\f7" assert_equals: IDL get expected 7 but got 1
+FAIL progress.max: setAttribute() to " 7" assert_equals: IDL get expected 7 but got 1
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to "﻿7"
+FAIL progress.max: setAttribute() to "\n7" assert_equals: IDL get expected 7 but got 1
+FAIL progress.max: setAttribute() to "\r7" assert_equals: IDL get expected 7 but got 1
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to "᠎7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to " 7"
+PASS progress.max: setAttribute() to "　7"
+PASS progress.max: setAttribute() to "\t\v7"
+PASS progress.max: setAttribute() to "\n\v7"
+PASS progress.max: setAttribute() to "\f\v7"
+PASS progress.max: setAttribute() to "\r\v7"
+PASS progress.max: setAttribute() to " \v7"
+FAIL progress.max: setAttribute() to "7\v" assert_equals: IDL get expected 7 but got 1
+PASS progress.max: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS progress.max: setAttribute() to undefined
+PASS progress.max: setAttribute() to 1.5
+FAIL progress.max: setAttribute() to "5%" assert_equals: IDL get expected 5 but got 1
+FAIL progress.max: setAttribute() to "+100" assert_equals: IDL get expected 100 but got 1
+PASS progress.max: setAttribute() to ".5"
+PASS progress.max: setAttribute() to true
+PASS progress.max: setAttribute() to false
+PASS progress.max: setAttribute() to "1."
+PASS progress.max: setAttribute() to "1e2"
+PASS progress.max: setAttribute() to "1e+2"
+PASS progress.max: setAttribute() to "1e-2"
+PASS progress.max: setAttribute() to "1E2"
+PASS progress.max: setAttribute() to "1E+2"
+PASS progress.max: setAttribute() to "1E-2"
+PASS progress.max: setAttribute() to "1.e2"
+PASS progress.max: setAttribute() to "1.0e2"
+PASS progress.max: setAttribute() to "1. 1"
+PASS progress.max: setAttribute() to "1 .1"
+PASS progress.max: setAttribute() to "1. e2"
+PASS progress.max: setAttribute() to "1 .e2"
+PASS progress.max: setAttribute() to "1 e2"
+PASS progress.max: setAttribute() to "1e 2"
+PASS progress.max: setAttribute() to "1e -2"
+PASS progress.max: setAttribute() to "1e- 2"
+PASS progress.max: setAttribute() to "1.8e308"
+PASS progress.max: setAttribute() to "-1.8e308"
+PASS progress.max: setAttribute() to object "[object Object]"
+PASS progress.max: setAttribute() to NaN
+PASS progress.max: setAttribute() to Infinity
+PASS progress.max: setAttribute() to -Infinity
+PASS progress.max: setAttribute() to "\0"
+PASS progress.max: setAttribute() to object "2"
+PASS progress.max: setAttribute() to object "3"
+PASS progress.max: IDL set to -10000000000
+PASS progress.max: IDL set to -1
+PASS progress.max: IDL set to -0
+PASS progress.max: IDL set to 0
+PASS progress.max: IDL set to 1
+PASS progress.max: IDL set to 10000000000
+PASS progress.max: IDL set to 1e-10
+PASS progress.max: IDL set to 0.0001
+PASS progress.max: IDL set to 1.5
+PASS progress.max: IDL set to 1e+25
 PASS meter.title: typeof IDL attribute
 PASS meter.title: IDL get with DOM attribute unset
 PASS meter.title: setAttribute() to ""
@@ -8014,10 +8194,12 @@ PASS meter.tabIndex: setAttribute() to "\f7"
 PASS meter.tabIndex: setAttribute() to " 7"
 PASS meter.tabIndex: setAttribute() to "\n7"
 PASS meter.tabIndex: setAttribute() to "\r7"
+PASS meter.tabIndex: setAttribute() to "7\v"
 PASS meter.tabIndex: setAttribute() to 1.5
 PASS meter.tabIndex: setAttribute() to "5%"
 PASS meter.tabIndex: setAttribute() to "+100"
 PASS meter.tabIndex: setAttribute() to object "2"
+PASS meter.tabIndex: setAttribute() to object "3"
 PASS meter.tabIndex: IDL set to -36
 PASS meter.tabIndex: IDL set to -1
 PASS meter.tabIndex: IDL set to 0
@@ -8031,6 +8213,10 @@ PASS meter.value: IDL set to -0
 PASS meter.value: IDL set to 0
 PASS meter.value: IDL set to 1
 PASS meter.value: IDL set to 10000000000
+PASS meter.value: IDL set to 1e-10
+PASS meter.value: IDL set to 0.0001
+PASS meter.value: IDL set to 1.5
+PASS meter.value: IDL set to 1e+25
 PASS meter.min: typeof IDL attribute
 PASS meter.min: IDL set to -10000000000
 PASS meter.min: IDL set to -1
@@ -8038,6 +8224,10 @@ PASS meter.min: IDL set to -0
 PASS meter.min: IDL set to 0
 PASS meter.min: IDL set to 1
 PASS meter.min: IDL set to 10000000000
+PASS meter.min: IDL set to 1e-10
+PASS meter.min: IDL set to 0.0001
+PASS meter.min: IDL set to 1.5
+PASS meter.min: IDL set to 1e+25
 PASS meter.max: typeof IDL attribute
 PASS meter.max: IDL set to -10000000000
 PASS meter.max: IDL set to -1
@@ -8045,6 +8235,10 @@ PASS meter.max: IDL set to -0
 PASS meter.max: IDL set to 0
 PASS meter.max: IDL set to 1
 PASS meter.max: IDL set to 10000000000
+PASS meter.max: IDL set to 1e-10
+PASS meter.max: IDL set to 0.0001
+PASS meter.max: IDL set to 1.5
+PASS meter.max: IDL set to 1e+25
 PASS meter.low: typeof IDL attribute
 PASS meter.low: IDL set to -10000000000
 PASS meter.low: IDL set to -1
@@ -8052,6 +8246,10 @@ PASS meter.low: IDL set to -0
 PASS meter.low: IDL set to 0
 PASS meter.low: IDL set to 1
 PASS meter.low: IDL set to 10000000000
+PASS meter.low: IDL set to 1e-10
+PASS meter.low: IDL set to 0.0001
+PASS meter.low: IDL set to 1.5
+PASS meter.low: IDL set to 1e+25
 PASS meter.high: typeof IDL attribute
 PASS meter.high: IDL set to -10000000000
 PASS meter.high: IDL set to -1
@@ -8059,6 +8257,10 @@ PASS meter.high: IDL set to -0
 PASS meter.high: IDL set to 0
 PASS meter.high: IDL set to 1
 PASS meter.high: IDL set to 10000000000
+PASS meter.high: IDL set to 1e-10
+PASS meter.high: IDL set to 0.0001
+PASS meter.high: IDL set to 1.5
+PASS meter.high: IDL set to 1e+25
 PASS meter.optimum: typeof IDL attribute
 PASS meter.optimum: IDL set to -10000000000
 PASS meter.optimum: IDL set to -1
@@ -8066,4 +8268,8 @@ PASS meter.optimum: IDL set to -0
 PASS meter.optimum: IDL set to 0
 PASS meter.optimum: IDL set to 1
 PASS meter.optimum: IDL set to 10000000000
-(Note: missing tests for types tokenlist, settable tokenlist, limited double.)
+PASS meter.optimum: IDL set to 1e-10
+PASS meter.optimum: IDL set to 0.0001
+PASS meter.optimum: IDL set to 1.5
+PASS meter.optimum: IDL set to 1e+25
+(Note: missing tests for types tokenlist, settable tokenlist.)

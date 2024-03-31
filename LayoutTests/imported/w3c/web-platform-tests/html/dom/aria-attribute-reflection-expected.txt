@@ -40,4 +40,6 @@ PASS aria-valuemax attribute reflects.
 PASS aria-valuemin attribute reflects.
 PASS aria-valuenow attribute reflects.
 PASS aria-valuetext attribute reflects.
+PASS aria-braillelabel attribute reflects.
+PASS aria-brailleroledescription attribute reflects.
 

@@ -420,6 +420,8 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "focus(optional FocusOptions)" with the proper type
 PASS HTMLElement interface: calling focus(optional FocusOptions) on document.createElement("noscript") with too few arguments must throw TypeError
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "blur()" with the proper type
+PASS HTMLElement must be primary interface of Object.assign(document.createElement("noscript"),{popover:"auto"})
+PASS Stringification of Object.assign(document.createElement("noscript"),{popover:"auto"})
 PASS HTMLUnknownElement interface: existence and properties of interface object
 PASS HTMLUnknownElement interface object length
 PASS HTMLUnknownElement interface object name

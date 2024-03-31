@@ -28,6 +28,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-assorted.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-div-append-child.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-dynamic-changes.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-dynamic-simple-dataChange-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-dynamic-simple-dataChange.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-dynamic-simple-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-dynamic-simple-replace-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-dynamic-simple-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-dynamic-simple-textContent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-dynamic-simple-textContent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-auto-form-associated.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-bdi-script.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-01-expected.html
@@ -153,6 +160,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-42-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-42-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-42.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-slots-directionality.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-EN-L-expected.html
