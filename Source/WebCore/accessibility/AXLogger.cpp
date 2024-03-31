@@ -540,6 +540,33 @@ TextStream& operator<<(TextStream& stream, AXRelationType relationType)
     return stream;
 }
 
+TextStream& operator<<(WTF::TextStream& stream, const TextUnderElementMode& mode)
+{
+    String childrenInclusion;
+    switch (mode.childrenInclusion) {
+    case TextUnderElementMode::Children::SkipIgnoredChildren:
+        childrenInclusion = "SkipIgnoredChildren"_s;
+        break;
+    case TextUnderElementMode::Children::IncludeAllChildren:
+        childrenInclusion = "IncludeAllChildren"_s;
+        break;
+    case TextUnderElementMode::Children::IncludeNameFromContentsChildren:
+        childrenInclusion = "IncludeNameFromContentsChildren"_s;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    stream << childrenInclusion << ", includeFocusableContent: " << mode.includeFocusableContent;
+    // Only log the non-default value of false to avoid noise.
+    if (!mode.considerHiddenState)
+        stream << ", considerHiddenState: 0";
+    if (mode.ignoredChildNode)
+        stream << ", ignoredChildNode: " << mode.ignoredChildNode;
+    return stream;
+}
+
 TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notification)
 {
     switch (notification) {

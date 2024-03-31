@@ -727,21 +727,22 @@ enum class AccessibilityOrientation {
     Undefined,
 };
 
-struct AccessibilityTextUnderElementMode {
-    enum ChildrenInclusion {
-        TextUnderElementModeSkipIgnoredChildren,
-        TextUnderElementModeIncludeAllChildren,
-        TextUnderElementModeIncludeNameFromContentsChildren, // This corresponds to ARIA concept: nameFrom
+struct TextUnderElementMode {
+    enum class Children : uint8_t {
+        SkipIgnoredChildren,
+        IncludeAllChildren,
+        IncludeNameFromContentsChildren, // This corresponds to ARIA concept: nameFrom
     };
 
-    ChildrenInclusion childrenInclusion;
+    Children childrenInclusion;
     bool includeFocusableContent;
+    bool considerHiddenState { true };
     Node* ignoredChildNode;
 
-    AccessibilityTextUnderElementMode(ChildrenInclusion c = TextUnderElementModeSkipIgnoredChildren, bool i = false, Node* ignored = nullptr)
-        : childrenInclusion(c)
-        , includeFocusableContent(i)
-        , ignoredChildNode(ignored)
+    TextUnderElementMode(Children childrenInclusion = Children::SkipIgnoredChildren, bool includeFocusable = false, Node* ignoredChild = nullptr)
+        : childrenInclusion(childrenInclusion)
+        , includeFocusableContent(includeFocusable)
+        , ignoredChildNode(ignoredChild)
     { }
 };
 
@@ -1140,7 +1141,7 @@ public:
 
     // Methods for determining accessibility text.
     virtual String stringValue() const = 0;
-    virtual String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const = 0;
+    virtual String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const = 0;
     virtual String text() const = 0;
     virtual unsigned textLength() const = 0;
 #if PLATFORM(COCOA)
@@ -1725,5 +1726,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, const AXCoreObject&);
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityText);
 WTF::TextStream& operator<<(WTF::TextStream&, AccessibilityTextSource);
 WTF::TextStream& operator<<(WTF::TextStream&, AXRelationType);
+WTF::TextStream& operator<<(WTF::TextStream&, const TextUnderElementMode&);
 
 } // namespace WebCore

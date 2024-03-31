@@ -105,7 +105,7 @@ public:
 
     URL url() const override;
     unsigned hierarchicalLevel() const override;
-    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
+    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override;
     String accessibilityDescriptionForChildren() const;
     String description() const override;
     String helpText() const override;

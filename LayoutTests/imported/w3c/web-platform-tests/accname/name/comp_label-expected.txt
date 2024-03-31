@@ -250,12 +250,7 @@ FAIL aria-label undefined on img w/o alt assert_equals: <img aria-label="undefin
 FAIL aria-label undefined on img w/ empty alt assert_equals: <img alt="" aria-label="undefined" data-expectedlabel="" data-testname="aria-label undefined on img w/ empty alt" class="ex"> expected "" but got "undefined"
 FAIL aria-label undefined on img w/o alt but w/ title assert_equals: <img aria-label="undefined" data-expectedlabel="title" data-testname="aria-label undefined on img w/o alt but w/ title" class="ex"> expected "title" but got "undefined"
 FAIL aria-label undefined on img w/ empty alt but w/ title assert_equals: <img alt="" aria-label="undefined" data-expectedlabel="title" data-testname="aria-label undefined on img w/ empty alt but w/ title" class="ex"> expected "title" but got "undefined"
-FAIL button's hidden referenced name (display:none) supercedes aria-label assert_equals: <button aria-labelledby="span1" aria-label="foo" data-expectedlabel="label" data-testname="button's hidden referenced name (display:none) supercedes aria-label" class="ex">
-  <span id="span1" style="display:none;">
-    <span id="span2" style="display:none;">label</span>
-  </span>
-x
-</button> expected "label" but got "foo"
+PASS button's hidden referenced name (display:none) supercedes aria-label
 PASS button's hidden referenced name (visibility:hidden) supercedes aria-label
 FAIL button's hidden referenced name (visibility:hidden) with hidden aria-labelledby traversal falls back to aria-label assert_equals: <button aria-labelledby="span4" aria-label="foo" data-expectedlabel="foo" data-testname="button's hidden referenced name (visibility:hidden) with hidden aria-labelledby traversal falls back to aria-label" class="ex">
   <span id="span4">

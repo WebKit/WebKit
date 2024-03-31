@@ -663,7 +663,7 @@ String AccessibilityRenderObject::helpText() const
     return { };
 }
 
-String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
+String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) const
 {
     if (!m_renderer)
         return AccessibilityNodeObject::textUnderElement(mode);
@@ -680,7 +680,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
 
     // We use a text iterator for text objects AND for those cases where we are
     // explicitly asking for the full text under a given element.
-    if (is<RenderText>(*m_renderer) || mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren) {
+    if (is<RenderText>(*m_renderer) || mode.childrenInclusion == TextUnderElementMode::Children::IncludeAllChildren) {
         // If possible, use a text iterator to get the text, so that whitespace
         // is handled consistently.
         Document* nodeDocument = nullptr;
@@ -728,7 +728,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     return AccessibilityNodeObject::textUnderElement(mode);
 }
 
-bool AccessibilityRenderObject::shouldGetTextFromNode(AccessibilityTextUnderElementMode mode) const
+bool AccessibilityRenderObject::shouldGetTextFromNode(TextUnderElementMode mode) const
 {
     if (!m_renderer)
         return true;
@@ -737,7 +737,7 @@ bool AccessibilityRenderObject::shouldGetTextFromNode(AccessibilityTextUnderElem
     // the child nodes to define positions. CSS tables and their anonymous descendants lack
     // children with nodes.
     if (m_renderer->isAnonymous() && m_renderer->isTablePart())
-        return mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren;
+        return mode.childrenInclusion == TextUnderElementMode::Children::IncludeAllChildren;
 
     // AccessibilityRenderObject::textUnderElement() calls rangeOfContents() to create the text
     // range. rangeOfContents() does not include CSS-generated content.

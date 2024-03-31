@@ -1925,7 +1925,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
         return;
 
     if (dependsOnTextUnderElement()) {
-        AccessibilityTextUnderElementMode mode;
+        TextUnderElementMode mode;
 
         // Headings often include links as direct children. Those links need to be included in text under element.
         if (isHeading())
@@ -2191,10 +2191,10 @@ void AccessibilityNodeObject::setIsExpanded(bool expand)
 
 // When building the textUnderElement for an object, determine whether or not
 // we should include the inner text of this given descendant object or skip it.
-static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, AccessibilityTextUnderElementMode mode)
+static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, TextUnderElementMode mode)
 {
     // Do not use any heuristic if we are explicitly asking to include all the children.
-    if (mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren)
+    if (mode.childrenInclusion == TextUnderElementMode::Children::IncludeAllChildren)
         return true;
 
     // Consider this hypothetical example:
@@ -2215,7 +2215,7 @@ static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, Acce
     // containers with lots of children.
 
     // ARIA states that certain elements are not allowed to expose their children content for name calculation.
-    if (mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren
+    if (mode.childrenInclusion == TextUnderElementMode::Children::IncludeNameFromContentsChildren
         && !obj->accessibleNameDerivesFromContent())
         return false;
 
@@ -2259,7 +2259,7 @@ static void appendNameToStringBuilder(StringBuilder& builder, String&& text)
     builder.append(WTFMove(text));
 }
 
-String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
+String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) const
 {
     Node* node = this->node();
     if (RefPtr text = dynamicDowncast<Text>(node))
@@ -2272,9 +2272,17 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
     // The Accname specification states that if the current node is hidden, and not directly
     // referenced by aria-labelledby or aria-describedby, and is not a host language text
     // alternative, the empty string should be returned.
-    if (isDOMHidden() && !isAriaVisible && !is<HTMLLabelElement>(node) && (node && !ancestorsOfType<HTMLCanvasElement>(*node).first())) {
+    if (mode.considerHiddenState && isDOMHidden() && !isAriaVisible && !is<HTMLLabelElement>(node) && (node && !ancestorsOfType<HTMLCanvasElement>(*node).first())) {
         if (labelForObjects().isEmpty() && descriptionForObjects().isEmpty())
             return { };
+
+        // This object is a hidden label or description for another object, so ignore hidden states for our
+        // subtree text under element traversals too (https://w3c.github.io/accname/#comp_labelledby).
+        //
+        // "The result of LabelledBy Recursion in combination with Hidden Not Referenced means that user
+        // agents MUST include all nodes in the subtree as part of the accessible name or accessible
+        // description, when the node referenced by aria-labelledby or aria-describedby is hidden."
+        mode.considerHiddenState = false;
     }
 
     StringBuilder builder;
@@ -2282,7 +2290,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
         if (mode.ignoredChildNode && child->node() == mode.ignoredChildNode)
             continue;
 
-        bool shouldDeriveNameFromAuthor = (mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren && !child->accessibleNameDerivesFromContent());
+        bool shouldDeriveNameFromAuthor = (mode.childrenInclusion == TextUnderElementMode::Children::IncludeNameFromContentsChildren && !child->accessibleNameDerivesFromContent());
         if (shouldDeriveNameFromAuthor) {
             appendNameToStringBuilder(builder, accessibleNameForNode(child->node()));
             continue;
@@ -2372,7 +2380,7 @@ String AccessibilityNodeObject::title() const
     if (isLink())
         return textUnderElement();
     if (isHeading())
-        return textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeSkipIgnoredChildren, true));
+        return textUnderElement(TextUnderElementMode(TextUnderElementMode::Children::SkipIgnoredChildren, true));
 
     return { };
 }
@@ -2556,7 +2564,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
     String text;
     if (axObject) {
         if (axObject->accessibleNameDerivesFromContent())
-            text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren, true, labelledbyNode));
+            text = axObject->textUnderElement(TextUnderElementMode(TextUnderElementMode::Children::IncludeNameFromContentsChildren, true, labelledbyNode));
     } else
         text = (element ? element->innerText() : node->textContent()).simplifyWhiteSpace(isUnicodeWhitespace);
 

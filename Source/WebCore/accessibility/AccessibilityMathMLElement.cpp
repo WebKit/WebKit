@@ -66,7 +66,7 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
     return AccessibilityRole::MathElement;
 }
 
-String AccessibilityMathMLElement::textUnderElement(AccessibilityTextUnderElementMode mode) const
+String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
     if (m_isAnonymousOperator) {
         UChar operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();

@@ -1199,7 +1199,7 @@ void AXIsolatedObject::findMatchingObjects(AccessibilitySearchCriteria* criteria
     Accessibility::findMatchingObjects(*criteria, results);
 }
 
-String AXIsolatedObject::textUnderElement(AccessibilityTextUnderElementMode) const
+String AXIsolatedObject::textUnderElement(TextUnderElementMode) const
 {
     ASSERT_NOT_REACHED();
     return { };

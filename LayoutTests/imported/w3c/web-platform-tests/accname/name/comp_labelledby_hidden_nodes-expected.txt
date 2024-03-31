@@ -22,16 +22,16 @@ PASS button with aria-labelledby using span without display:none (with nested di
 PASS button with aria-labelledby using display:none hidden span (with nested sibling spans)
 PASS button with aria-labelledby using span without display:none (with nested display:none sibling spans)
 PASS button with aria-labelledby using span with display:none (with nested display:inline sibling spans)
-FAIL button with aria-labelledby using visibility:hidden span (with nested span) assert_equals: <button aria-labelledby="b11" data-expectedlabel="foo bar" data-testname="button with aria-labelledby using visibility:hidden span (with nested span)" class="ex">x</button> expected "foo bar" but got "foo"
-FAIL button with aria-labelledby using visibility:hidden span (with nested spans, depth 2) assert_equals: <button aria-labelledby="b21" data-expectedlabel="foo bar baz" data-testname="button with aria-labelledby using visibility:hidden span (with nested spans, depth 2)" class="ex">x</button> expected "foo bar baz" but got "foo"
+PASS button with aria-labelledby using visibility:hidden span (with nested span)
+PASS button with aria-labelledby using visibility:hidden span (with nested spans, depth 2)
 PASS button with aria-labelledby using span without visibility:hidden (with nested visibility:hidden spans, depth 2)
-FAIL button with aria-labelledby using visibility:hidden hidden span (with nested sibling spans) assert_equals: <button aria-labelledby="b41" data-expectedlabel="foo bar baz" data-testname="button with aria-labelledby using visibility:hidden hidden span (with nested sibling spans)" class="ex">x</button> expected "foo bar baz" but got "foo"
+PASS button with aria-labelledby using visibility:hidden hidden span (with nested sibling spans)
 PASS button with aria-labelledby using span without visibility:hidden (with nested visibility:hidden sibling spans)
 PASS button with aria-labelledby using span with visibility:hidden (with nested visibility:visible sibling spans)
-FAIL button with aria-labelledby using visibility:collapse span (with nested span) assert_equals: <button aria-labelledby="c11" data-expectedlabel="foo bar" data-testname="button with aria-labelledby using visibility:collapse span (with nested span)" class="ex">x</button> expected "foo bar" but got "foo"
-FAIL button with aria-labelledby using visibility:collapse span (with nested spans, depth 2) assert_equals: <button aria-labelledby="c21" data-expectedlabel="foo bar baz" data-testname="button with aria-labelledby using visibility:collapse span (with nested spans, depth 2)" class="ex">x</button> expected "foo bar baz" but got "foo"
+PASS button with aria-labelledby using visibility:collapse span (with nested span)
+PASS button with aria-labelledby using visibility:collapse span (with nested spans, depth 2)
 PASS button with aria-labelledby using span without visibility:collapse (with nested visibility:visible spans, depth 2)
-FAIL button with aria-labelledby using visibility:collapse span (with nested sibling spans) assert_equals: <button aria-labelledby="c41" data-expectedlabel="foo bar baz" data-testname="button with aria-labelledby using visibility:collapse span (with nested sibling spans)" class="ex">x</button> expected "foo bar baz" but got "foo"
+PASS button with aria-labelledby using visibility:collapse span (with nested sibling spans)
 PASS button with aria-labelledby using span without visibility:collapse (with nested visibility:collapse sibling spans)
 PASS button with aria-labelledby using span with visibility:collapse (with nested visible sibling spans)
 PASS button with aria-labelledby using aria-hidden span (with nested span)
