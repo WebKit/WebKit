@@ -302,7 +302,7 @@ void StorageAccessPromptQuirkController::setCachedQuirks(Vector<WebCore::Organiz
 {
     m_cachedQuirks = WTFMove(quirks);
     m_cachedQuirks.shrinkToFit();
-    RELEASE_LOG_ERROR(ResourceLoadStatistics, "StorageAccessPromptQuirkController::setCachedQuirks: Loaded %lu storage access prompt(s) quirks from WebPrivacy.", quirks.size());
+    RELEASE_LOG(ResourceLoadStatistics, "StorageAccessPromptQuirkController::setCachedQuirks: Loaded %lu storage access prompt(s) quirks from WebPrivacy.", m_cachedQuirks.size());
 }
 
 void StorageAccessPromptQuirkController::setCachedQuirksForTesting(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&& quirks)
