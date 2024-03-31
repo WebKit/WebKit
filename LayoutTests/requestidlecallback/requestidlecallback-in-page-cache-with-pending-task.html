@@ -2,6 +2,28 @@
 <html>
 <body>
 <script src="../resources/js-test.js"></script>
+<style>
+@-webkit-keyframes bounce {
+    from {
+        -webkit-transform: translate3d(0,0,0);
+    }
+    to {
+        -webkit-transform: translate3d(200px,0,0);
+    }
+}
+
+#animator {
+    position: relative;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    -webkit-animation-name: bounce;
+    -webkit-animation-duration: 80ms;
+    -webkit-animation-iteration-count: infinite;
+}
+</style>
+<div id="animator"></div>
 <script>
 
 description('This tests that requestIdleCallback will execute the function even when there is a pending task for a suspended document');

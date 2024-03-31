@@ -1271,6 +1271,7 @@ public:
     WEBCORE_EXPORT EventLoopTaskGroup& eventLoop() final;
     CheckedRef<EventLoopTaskGroup> checkedEventLoop() { return eventLoop(); }
     WindowEventLoop& windowEventLoop();
+    Ref<WindowEventLoop> protectedWindowEventLoop();
 
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }
     void suspendScriptedAnimationControllerCallbacks();

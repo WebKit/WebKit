@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests scheduling idle callbacks while there is a constant work in the event loop<br>
+WebKit should eventually invoke all idle callbacks.</p>
+<pre id="result"></pre>
+<details><summary>hello</summary>world</details>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+let busyWorkCounter = 0;
+function busyWork() {
+    let start = performance.now();
+    while (performance.now() - start < 2);
+    ++busyWorkCounter;
+}
+
+let shouldStopBusyWork = false;
+function scheduleBusyWork() {
+    if (shouldStopBusyWork)
+        return;
+
+    let timer = 0;
+    function doWork() {
+        if (shouldStopBusyWork)
+            return;
+        clearTimeout(timer);
+        document.querySelector('details').toggleAttribute('open');
+        setTimeout(scheduleBusyWork, 0);
+        setTimeout(() => busyWork(), 5);
+        setTimeout(() => busyWork(), 10);
+        busyWork();
+    }
+
+    requestAnimationFrame(doWork);
+    timer = setTimeout(doWork, 18);
+}
+
+scheduleBusyWork();
+
+let idleCounter = 0;
+function scheduleIdleWork(remaining) {
+    if (!remaining)
+        return;
+    requestIdleCallback((deadline) => {
+        ++idleCounter;
+        result.textContent += `idle${idleCounter}\n`;
+        busyWork();
+        if (idleCounter == 20) {
+            result.textContent += 'PASS\n';
+            document.querySelector('details').remove();
+            shouldStopBusyWork = true;
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    });
+    setTimeout(() => {
+        scheduleIdleWork(remaining - 1);
+    }, 100);
+}
+
+scheduleIdleWork(20);
+
+</script>
+</body>
+</html>

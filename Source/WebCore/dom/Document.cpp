@@ -7765,6 +7765,11 @@ WindowEventLoop& Document::windowEventLoop()
     return *m_eventLoop;
 }
 
+Ref<WindowEventLoop> Document::protectedWindowEventLoop()
+{
+    return windowEventLoop();
+}
+
 void Document::suspendScheduledTasks(ReasonForSuspension reason)
 {
     if (m_scheduledTasksAreSuspended) {
@@ -8070,8 +8075,6 @@ int Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds t
 {
     if (!m_idleCallbackController)
         m_idleCallbackController = makeUnique<IdleCallbackController>(*this);
-    if (RefPtr page = this->page())
-        page->opportunisticTaskScheduler().willQueueIdleCallback();
     return m_idleCallbackController->queueIdleCallback(WTFMove(callback), timeout);
 }
 

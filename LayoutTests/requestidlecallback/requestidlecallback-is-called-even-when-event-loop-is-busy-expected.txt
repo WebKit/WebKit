@@ -1,0 +1,25 @@
+This tests scheduling idle callbacks while there is a constant work in the event loop
+WebKit should eventually invoke all idle callbacks.
+
+idle1
+idle2
+idle3
+idle4
+idle5
+idle6
+idle7
+idle8
+idle9
+idle10
+idle11
+idle12
+idle13
+idle14
+idle15
+idle16
+idle17
+idle18
+idle19
+idle20
+PASS
+
