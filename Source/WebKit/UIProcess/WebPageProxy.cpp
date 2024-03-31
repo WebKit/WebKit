@@ -391,6 +391,10 @@
 #import "WKTextExtractionUtilities.h"
 #endif
 
+#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+#include <wtf/spi/darwin/SandboxSPI.h>
+#endif
+
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_COMPLETION(process, assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process->connection(), completion)
@@ -7203,7 +7207,13 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
 #if USE(QUICK_LOOK)
         if (policyAction == PolicyAction::Use && process->lockdownMode() == WebProcessProxy::LockdownMode::Enabled && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(navigationResponse->response().mimeType()) || MIMETypeRegistry::isSupportedModelMIMEType(navigationResponse->response().mimeType()) || PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType())))
             policyAction = PolicyAction::Download;
-#endif
+#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+        if (policyAction == PolicyAction::Use && PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType())) {
+            auto auditToken = m_process->connection()->getAuditToken();
+            sandbox_enable_state_flag("EnableQuickLookSandboxResources", *auditToken);
+        }
+#endif // ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+#endif // USE(QUICK_LOOK)
         receivedNavigationResponsePolicyDecision(policyAction, navigation.get(), request, WTFMove(navigationResponse), WTFMove(completionHandler));
     }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No);
 
