@@ -340,8 +340,14 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
             computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, GridTrackSizingDirection::ForRows);
             if (shouldApplySizeContainment())
                 shouldRecomputeHeight = true;
-        } else
-            computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForRows, availableLogicalHeight(ExcludeMarginBorderPadding));
+        } else {
+            auto availableLogicalHeightForContentBox = [&] {
+                if (!hasOverridingLogicalHeight())
+                    return availableLogicalHeight(ExcludeMarginBorderPadding);
+                return constrainContentBoxLogicalHeightByMinMax(overridingLogicalHeight() - borderAndPaddingLogicalHeight(), { });
+            };
+            computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForRows, availableLogicalHeightForContentBox());
+        }
 
         LayoutUnit trackBasedLogicalHeight = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         if (auto size = explicitIntrinsicInnerLogicalSize(GridTrackSizingDirection::ForRows))
