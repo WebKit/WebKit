@@ -54,8 +54,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun&
     m_glyph.unicodeString = run.text().toString();
     m_glyph.isValid = true;
 
-    ASSERT(run.length() >= 0);
-    m_length = static_cast<unsigned>(run.length());
+    m_length = run.length();
 }
 
 TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned position, unsigned length)
