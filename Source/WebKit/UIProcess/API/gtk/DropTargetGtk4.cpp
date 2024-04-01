@@ -191,7 +191,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 if (length) {
                     // If data starts with UTF-16 BOM assume it's UTF-16, otherwise assume UTF-8.
                     if (length >= 2 && reinterpret_cast<const UChar*>(markupData)[0] == 0xFEFF)
-                        m_selectionData->setMarkup(String(reinterpret_cast<const UChar*>(markupData) + 1, (length / 2) - 1));
+                        m_selectionData->setMarkup(String({ reinterpret_cast<const UChar*>(markupData) + 1, (length / 2) - 1 }));
                     else
                         m_selectionData->setMarkup(String::fromUTF8(reinterpret_cast<const char*>(markupData), length));
                 }
