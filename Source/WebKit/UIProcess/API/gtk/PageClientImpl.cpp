@@ -53,6 +53,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <WebCore/RefPtrCairo.h>
+#include <WebCore/Region.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
@@ -63,10 +64,6 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "WebDateTimePickerGtk.h"
-#endif
-
-#if USE(CAIRO)
-#include <WebCore/CairoUtilities.h>
 #endif
 
 namespace WebKit {
@@ -83,6 +80,18 @@ std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProc
     return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), webProcessProxy);
 }
 
+#if !USE(GTK4)
+static RefPtr<cairo_region_t> toCairoRegion(const Region& region)
+{
+    RefPtr<cairo_region_t> cairoRegion = adoptRef(cairo_region_create());
+    for (const auto& rect : region.rects()) {
+        cairo_rectangle_int_t cairoRect = rect;
+        cairo_region_union_rectangle(cairoRegion.get(), &cairoRect);
+    }
+    return cairoRegion;
+}
+#endif
+
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
 {
 #if USE(GTK4)
@@ -98,13 +107,7 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
         return;
     }
 
-#if USE(CAIRO)
     gtk_widget_queue_draw_region(m_viewWidget, toCairoRegion(region).get());
-#else
-    // FIXME: use gtk_widget_queue_draw_region() too.
-    gtk_widget_queue_draw(m_viewWidget);
-    UNUSED_PARAM(region);
-#endif
 #endif
 }
 

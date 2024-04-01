@@ -94,8 +94,6 @@ WEBCORE_EXPORT void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo
 IntSize cairoSurfaceSize(cairo_surface_t*);
 void flipImageSurfaceVertically(cairo_surface_t*);
 
-RefPtr<cairo_region_t> toCairoRegion(const Region&);
-
 cairo_matrix_t toCairoMatrix(const AffineTransform&);
 
 void attachSurfaceUniqueID(cairo_surface_t*);
