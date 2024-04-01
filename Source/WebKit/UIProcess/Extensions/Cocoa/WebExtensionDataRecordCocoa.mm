@@ -23,34 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKWebExtensionDataRecordPrivate.h"
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
+#import "config.h"
+#import "WebExtensionDataRecord.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WKObject.h"
-#import "WebExtensionDataRecord.h"
-#import <wtf/cocoa/VectorCocoa.h>
-
-namespace WebKit {
-template<> struct WrapperTraits<WebExtensionDataRecord> {
-    using WrapperClass = _WKWebExtensionDataRecord;
-};
-}
-
-@interface _WKWebExtensionDataRecord () <WKObject> {
-@package
-    API::ObjectStorage<WebKit::WebExtensionDataRecord> _webExtensionDataRecord;
-}
-
-@property (nonatomic, readonly) WebKit::WebExtensionDataRecord& _webExtensionDataRecord;
-
-@end
+#import "_WKWebExtensionDataRecordInternal.h"
 
 namespace WebKit {
 
-Vector<Ref<WebExtensionDataRecord>> toWebExtensionDataRecords(NSArray *);
-NSArray *toAPI(const Vector<Ref<WebExtensionDataRecord>>&);
-NSError *createDataRecordError(_WKWebExtensionDataRecordError, NSString *underlyingErrorMessage);
+void WebExtensionDataRecord::addError(NSString *debugDescription, WebExtensionDataType type)
+{
+    if (!m_errors)
+        m_errors = [[NSMutableArray alloc] init];
+
+    switch (type) {
+    case WebExtensionDataType::Local:
+        [m_errors.get() addObject:createDataRecordError(_WKWebExtensionDataRecordErrorLocalStorageFailed, debugDescription)];
+        break;
+    case WebExtensionDataType::Session:
+        [m_errors.get() addObject:createDataRecordError(_WKWebExtensionDataRecordErrorSessionStorageFailed, debugDescription)];
+        break;
+    case WebExtensionDataType::Sync:
+        [m_errors.get() addObject:createDataRecordError(_WKWebExtensionDataRecordErrorSyncStorageFailed, debugDescription)];
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
 
 } // namespace WebKit
 

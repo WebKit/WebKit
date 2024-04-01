@@ -258,8 +258,10 @@ using namespace WebKit;
 
     NSString *databaseCloseErrorMessage;
     if ([self _isDatabaseOpen]) {
-        if ([_database close] != SQLITE_OK)
+        if ([_database close] != SQLITE_OK) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to close storage database for extension %{private}@", _uniqueIdentifier);
             databaseCloseErrorMessage = @"Failed to close extension storage database.";
+        }
         _database = nil;
     }
 
