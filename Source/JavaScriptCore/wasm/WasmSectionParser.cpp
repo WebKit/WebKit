@@ -464,6 +464,8 @@ auto SectionParser::parseExport() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldLen), "can't get ", exportNumber, "th Export's field name length");
         WASM_PARSER_FAIL_IF(!consumeUTF8String(fieldString, fieldLen), "can't get ", exportNumber, "th Export's field name of length ", fieldLen);
         String fieldName = String::fromUTF8(fieldString);
+        if (fieldName.isNull())
+            fieldName = emptyString();
         WASM_PARSER_FAIL_IF(exportNames.contains(fieldName), "duplicate export: '", fieldString, "'");
         exportNames.add(fieldName);
 

@@ -38,7 +38,7 @@ Ref<JSON::Value> Bytecode::toJSON(Dumper& dumper) const
     auto result = JSON::Object::create();
     result->setDouble(dumper.keys().m_bytecodeIndex, m_bytecodeIndex);
     result->setString(dumper.keys().m_opcode, String::fromUTF8(opcodeNames[m_opcodeID]));
-    result->setString(dumper.keys().m_description, String::fromUTF8(m_description));
+    result->setString(dumper.keys().m_description, String::fromUTF8(m_description.span()));
     return result;
 }
 

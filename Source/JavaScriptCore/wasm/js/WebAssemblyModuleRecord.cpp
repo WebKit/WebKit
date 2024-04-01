@@ -76,7 +76,8 @@ void WebAssemblyModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& v
     Base::finishCreation(globalObject, vm);
     ASSERT(inherits(info()));
     for (const auto& exp : moduleInformation.exports) {
-        Identifier field = Identifier::fromString(vm, String::fromUTF8(exp.field));
+        auto fieldString = String::fromUTF8(exp.field);
+        Identifier field = Identifier::fromString(vm, fieldString.isNull() ? emptyString() : fieldString);
         addExportEntry(ExportEntry::createLocal(field, field));
     }
 }
@@ -134,9 +135,14 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
         return makeString(before, ' ', String::fromUTF8(import.module), ':', String::fromUTF8(import.field), ' ', after);
     };
 
+    auto stringFromUTF8 = [](auto& span) {
+        auto string = String::fromUTF8(span);
+        return string.isNull() ? emptyString() : string;
+    };
+
     for (const auto& import : moduleInformation.imports) {
-        Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
-        Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
+        Identifier moduleName = Identifier::fromString(vm, stringFromUTF8(import.module));
+        Identifier fieldName = Identifier::fromString(vm, stringFromUTF8(import.field));
         JSValue value;
         if (creationMode == Wasm::CreationMode::FromJS) {
             // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
@@ -728,7 +734,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         }
         }
 
-        Identifier propertyName = Identifier::fromString(vm, String::fromUTF8(exp.field));
+        String fieldString = String::fromUTF8(exp.field);
+        Identifier propertyName = Identifier::fromString(vm, fieldString.isNull() ? emptyString() : fieldString);
 
         bool shouldThrowReadOnlyError = false;
         bool ignoreReadOnlyErrors = true;

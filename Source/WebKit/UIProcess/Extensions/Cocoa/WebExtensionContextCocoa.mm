@@ -4162,7 +4162,7 @@ static NSString *computeStringHashForContentBlockerRules(NSString *rules)
     sha1.computeHash(digest);
 
     auto hashAsCString = SHA1::hexDigest(digest);
-    auto hashAsString = String::fromUTF8(hashAsCString);
+    auto hashAsString = String::fromUTF8(hashAsCString.span());
     return [hashAsString stringByAppendingString:[NSString stringWithFormat:@"-%zu", currentDeclarativeNetRequestRuleTranslatorVersion]];
 }
 

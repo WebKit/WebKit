@@ -1094,7 +1094,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
         result->setString("category"_s, tierName(stackFrame));
         if (std::optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = stackFrame.machineLocation) {
             auto inliner = JSON::Object::create();
-            inliner->setString("name"_s, String::fromUTF8(machineLocation->second->inferredName()));
+            inliner->setString("name"_s, String::fromUTF8(machineLocation->second->inferredName().span()));
             inliner->setString("location"_s, descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
             inliner->setString("category"_s, tierName(stackFrame));
             result->setValue("inliner"_s, WTFMove(inliner));

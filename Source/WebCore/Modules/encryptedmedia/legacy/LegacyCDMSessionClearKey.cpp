@@ -82,7 +82,7 @@ bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8A
     ASSERT(rawKeysData);
 
     do {
-        auto rawKeysString = String::fromUTF8(rawKeysData->data(), rawKeysData->length());
+        auto rawKeysString = String::fromUTF8(rawKeysData->span());
         if (rawKeysString.isEmpty())  {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: empty message", this);
             break;

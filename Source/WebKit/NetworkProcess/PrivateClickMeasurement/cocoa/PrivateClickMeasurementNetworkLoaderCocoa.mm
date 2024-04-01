@@ -33,6 +33,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 static RetainPtr<SecTrustRef>& allowedLocalTestServerTrust()
 {
@@ -130,7 +131,7 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
         taskMap().remove(identifier);
         if (error)
             return callback(error.localizedDescription, { });
-        if (auto jsonValue = JSON::Value::parseJSON(String::fromUTF8(static_cast<const LChar*>(data.bytes), data.length)))
+        if (auto jsonValue = JSON::Value::parseJSON(String::fromUTF8(span(data))))
             return callback({ }, jsonValue->asObject());
         callback({ }, nullptr);
     }).get()];

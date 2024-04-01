@@ -212,7 +212,7 @@ static String decodeEscapeSequencesFromParsedURL(StringView input)
 
     // FIXME: Is UTF-8 always the correct encoding?
     // FIXME: This returns a null string when we encounter an invalid UTF-8 sequence. Is that OK?
-    return String::fromUTF8(percentDecoded.data(), percentDecoded.size());
+    return String::fromUTF8(percentDecoded.span());
 }
 
 String URL::user() const

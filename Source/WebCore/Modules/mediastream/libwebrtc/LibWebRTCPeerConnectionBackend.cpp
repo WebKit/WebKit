@@ -269,7 +269,7 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
     std::unique_ptr<webrtc::IceCandidateInterface> rtcCandidate(webrtc::CreateIceCandidate(candidate.sdpMid().utf8().data(), sdpMLineIndex, candidate.candidate().utf8().data(), &error));
 
     if (!rtcCandidate) {
-        callback(Exception { ExceptionCode::OperationError, String::fromUTF8(error.description.data(), error.description.length()) });
+        callback(Exception { ExceptionCode::OperationError, String::fromUTF8(error.description) });
         return;
     }
 

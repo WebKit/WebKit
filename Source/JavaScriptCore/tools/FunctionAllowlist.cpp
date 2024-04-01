@@ -85,11 +85,11 @@ bool FunctionAllowlist::contains(CodeBlock* codeBlock) const
     if (m_entries.isEmpty())
         return false;
 
-    String name = String::fromUTF8(codeBlock->inferredName());
+    String name = String::fromUTF8(codeBlock->inferredName().span());
     if (m_entries.contains(name))
         return true;
 
-    String hash = String::fromUTF8(codeBlock->hashAsStringIfPossible());
+    String hash = String::fromUTF8(codeBlock->hashAsStringIfPossible().span());
     if (m_entries.contains(hash))
         return true;
 

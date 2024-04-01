@@ -521,7 +521,7 @@ long StopWatch::getElapsedMS()
 template<typename Vector>
 static inline String stringFromUTF(const Vector& utf8)
 {
-    return String::fromUTF8WithLatin1Fallback(utf8.data(), utf8.size());
+    return String::fromUTF8WithLatin1Fallback(utf8.span());
 }
 
 static JSC_DECLARE_CUSTOM_GETTER(accessorMakeMasquerader);
@@ -1995,7 +1995,7 @@ JSC_DEFINE_HOST_FUNCTION(functionReadFile, (JSGlobalObject* globalObject, CallFr
         return throwVMError(globalObject, scope, "Could not open file."_s);
 
     if (!isBinary)
-        return JSValue::encode(jsString(vm, String::fromUTF8WithLatin1Fallback(content->data(), content->length())));
+        return JSValue::encode(jsString(vm, String::fromUTF8WithLatin1Fallback(content->span())));
 
     Structure* structure = globalObject->typedArrayStructure(TypeUint8, content->isResizableOrGrowableShared());
     JSObject* result = JSUint8Array::create(vm, structure, WTFMove(content));

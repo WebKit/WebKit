@@ -213,7 +213,7 @@ SQLValue SQLiteStatement::columnValue(int col)
         return sqlite3_value_double(value);
     case SQLITE_BLOB: // SQLValue and JS don't represent blobs, so use TEXT -case
     case SQLITE_TEXT:
-        return String::fromUTF8(sqlite3_value_text(value), sqlite3_value_bytes(value));
+        return String::fromUTF8(std::span(sqlite3_value_text(value), sqlite3_value_bytes(value)));
     case SQLITE_NULL:
         return nullptr;
     default:
@@ -231,7 +231,7 @@ String SQLiteStatement::columnText(int col)
         return String();
     if (columnCount() <= col)
         return String();
-    return String::fromUTF8(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col));
+    return String::fromUTF8(std::span(sqlite3_column_text(m_statement, col), sqlite3_column_bytes(m_statement, col)));
 }
     
 double SQLiteStatement::columnDouble(int col)

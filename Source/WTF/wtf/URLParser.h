@@ -119,8 +119,8 @@ private:
     template<bool(*isInCodeSet)(char32_t), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> void utf8QueryEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> std::optional<LCharBuffer> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
-    template<typename CharacterType> LCharBuffer percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
-    static LCharBuffer percentDecode(const LChar*, size_t);
+    template<typename CharacterType> LCharBuffer percentDecode(std::span<const LChar>, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
+    static LCharBuffer percentDecode(std::span<const LChar>);
     bool hasForbiddenHostCodePoint(const LCharBuffer&);
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(char32_t);

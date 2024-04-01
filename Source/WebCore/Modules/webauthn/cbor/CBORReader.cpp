@@ -220,7 +220,7 @@ std::optional<CBORValue> CBORReader::readString(uint64_t numBytes)
     }
 
     ASSERT(numBytes <= std::numeric_limits<size_t>::max());
-    String cborString = String::fromUTF8(m_data.data() + std::distance(m_data.begin(), m_it), static_cast<size_t>(numBytes));
+    String cborString = String::fromUTF8(m_data.subspan(std::distance(m_data.begin(), m_it), numBytes));
     m_it += numBytes;
 
     // Invalid UTF8 bytes produce an empty WTFString.

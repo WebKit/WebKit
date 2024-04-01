@@ -338,7 +338,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
 
     if (request.httpBody() && !request.httpBody()->isEmpty()) {
         auto bytes = request.httpBody()->flatten();
-        requestObject->setPostData(String::fromUTF8WithLatin1Fallback(bytes.data(), bytes.size()));
+        requestObject->setPostData(String::fromUTF8WithLatin1Fallback(bytes.span()));
     }
 
     if (resourceLoader) {

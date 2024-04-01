@@ -782,7 +782,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
         failureReason = makeString("CR doesn't follow LF after header value at ", trimInputSample(std::span { p, end }));
         return 0;
     }
-    valueStr = String::fromUTF8(value.data(), value.size());
+    valueStr = String::fromUTF8(value.span());
     if (valueStr.isNull()) {
         failureReason = "Invalid UTF-8 sequence in header value"_s;
         return 0;

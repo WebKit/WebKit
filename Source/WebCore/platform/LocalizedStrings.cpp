@@ -132,7 +132,7 @@ String localizedString(const wchar_t* key)
 #else
 String localizedString(const char* key)
 {
-    return String::fromUTF8(key, strlen(key));
+    return String::fromUTF8(key);
 }
 #endif
 

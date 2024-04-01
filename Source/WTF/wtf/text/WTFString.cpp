@@ -457,11 +457,11 @@ CString String::utf8(ConversionMode mode) const
     return expectedString.value();
 }
 
-String String::make8Bit(const UChar* source, unsigned length)
+String String::make8Bit(std::span<const UChar> source)
 {
     LChar* destination;
-    String result = String::createUninitialized(length, destination);
-    StringImpl::copyCharacters(destination, source, length);
+    String result = String::createUninitialized(source.size(), destination);
+    StringImpl::copyCharacters(destination, source.data(), source.size());
     return result;
 }
 
@@ -477,54 +477,50 @@ void String::convertTo16Bit()
 }
 
 template<bool replaceInvalidSequences>
-String fromUTF8Impl(const LChar* stringStart, size_t length)
+String fromUTF8Impl(std::span<const LChar> string)
 {
     // Do this assertion before chopping the size_t down to unsigned.
-    RELEASE_ASSERT(length <= String::MaxLength);
+    RELEASE_ASSERT(string.size() <= String::MaxLength);
 
-    if (!stringStart)
-        return String();
-
-    if (!length)
+    if (string.empty())
         return emptyString();
 
-    if (charactersAreAllASCII(std::span { stringStart, length }))
-        return StringImpl::create(std::span { stringStart, length });
+    if (charactersAreAllASCII(string))
+        return StringImpl::create(string);
 
-    Vector<UChar, 1024> buffer(length);
+    Vector<UChar, 1024> buffer(string.size());
     UChar* bufferStart = buffer.data();
  
     UChar* bufferCurrent = bufferStart;
-    const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
+    const char* stringCurrent = reinterpret_cast<const char*>(string.data());
     constexpr auto function = replaceInvalidSequences ? convertUTF8ToUTF16ReplacingInvalidSequences : convertUTF8ToUTF16;
-    if (!function(stringCurrent, reinterpret_cast<const char*>(stringStart + length), &bufferCurrent, bufferCurrent + buffer.size(), nullptr))
+    if (!function(stringCurrent, reinterpret_cast<const char*>(string.data() + string.size()), &bufferCurrent, bufferCurrent + buffer.size(), nullptr))
         return String();
 
     unsigned utf16Length = bufferCurrent - bufferStart;
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(utf16Length <= length);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(utf16Length <= string.size());
     return StringImpl::create(std::span { bufferStart, utf16Length });
 }
 
-String String::fromUTF8(const LChar* stringStart, size_t length)
+String String::fromUTF8(std::span<const LChar> string)
 {
-    return fromUTF8Impl<false>(stringStart, length);
+    if (!string.data())
+        return { };
+    return fromUTF8Impl<false>(string);
 }
 
-String String::fromUTF8ReplacingInvalidSequences(const LChar* characters, size_t length)
+String String::fromUTF8ReplacingInvalidSequences(std::span<const LChar> characters)
 {
-    return fromUTF8Impl<true>(characters, length);
+    if (!characters.data())
+        return { };
+    return fromUTF8Impl<true>(characters);
 }
 
 String String::fromUTF8(const LChar* string)
 {
     if (!string)
-        return String();
-    return fromUTF8(string, strlen(reinterpret_cast<const char*>(string)));
-}
-
-String String::fromUTF8(const CString& s)
-{
-    return fromUTF8(s.data());
+        return { };
+    return fromUTF8Impl<false>({ string, strlen(reinterpret_cast<const char*>(string)) });
 }
 
 String String::fromUTF8WithLatin1Fallback(std::span<const LChar> string)
@@ -533,7 +529,7 @@ String String::fromUTF8WithLatin1Fallback(std::span<const LChar> string)
     if (!utf8) {
         // Do this assertion before chopping the size_t down to unsigned.
         RELEASE_ASSERT(string.size() <= String::MaxLength);
-        return String(string);
+        return string;
     }
     return utf8;
 }

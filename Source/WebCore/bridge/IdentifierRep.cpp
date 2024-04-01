@@ -89,9 +89,9 @@ IdentifierRep* IdentifierRep::get(const char* name)
 {
     ASSERT(name);
     if (!name)
-        return 0;
+        return nullptr;
   
-    String string = String::fromUTF8WithLatin1Fallback(name, strlen(name));
+    String string = String::fromUTF8WithLatin1Fallback(span(name));
     StringIdentifierMap::AddResult result = stringIdentifierMap().add(string.impl(), nullptr);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);

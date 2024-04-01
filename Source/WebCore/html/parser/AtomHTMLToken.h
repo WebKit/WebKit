@@ -268,7 +268,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
         return;
     case Type::Comment: {
         if (token.commentIsAll8BitData())
-            m_data = String::make8Bit(token.comment().data(), token.comment().size());
+            m_data = String::make8Bit(token.comment().span());
         else
             m_data = token.comment().span();
         return;

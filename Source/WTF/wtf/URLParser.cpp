@@ -2475,16 +2475,16 @@ std::optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator
 }
 
 template<typename CharacterType>
-URLParser::LCharBuffer URLParser::percentDecode(const LChar* input, size_t length, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
+URLParser::LCharBuffer URLParser::percentDecode(std::span<const LChar> input, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
     LCharBuffer output;
-    output.reserveInitialCapacity(length);
+    output.reserveInitialCapacity(input.size());
     
-    for (size_t i = 0; i < length; ++i) {
+    for (size_t i = 0; i < input.size(); ++i) {
         uint8_t byte = input[i];
         if (byte != '%')
             output.append(byte);
-        else if (length > 2 && i < length - 2) {
+        else if (input.size() > 2 && i < input.size() - 2) {
             if (isASCIIHexDigit(input[i + 1]) && isASCIIHexDigit(input[i + 2])) {
                 syntaxViolation(iteratorForSyntaxViolationPosition);
                 output.append(toASCIIHexValue(input[i + 1], input[i + 2]));
@@ -2497,16 +2497,16 @@ URLParser::LCharBuffer URLParser::percentDecode(const LChar* input, size_t lengt
     return output;
 }
     
-URLParser::LCharBuffer URLParser::percentDecode(const LChar* input, size_t length)
+URLParser::LCharBuffer URLParser::percentDecode(std::span<const LChar> input)
 {
     LCharBuffer output;
-    output.reserveInitialCapacity(length);
+    output.reserveInitialCapacity(input.size());
     
-    for (size_t i = 0; i < length; ++i) {
+    for (size_t i = 0; i < input.size(); ++i) {
         uint8_t byte = input[i];
         if (byte != '%')
             output.append(byte);
-        else if (length > 2 && i < length - 2) {
+        else if (input.size() > 2 && i < input.size() - 2) {
             if (isASCIIHexDigit(input[i + 1]) && isASCIIHexDigit(input[i + 2])) {
                 output.append(toASCIIHexValue(input[i + 1], input[i + 2]));
                 i += 2;
@@ -2852,8 +2852,8 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
             return HostParsingResult::InvalidHost;
         utf8Encoded.append(std::span { buffer, offset });
     }
-    LCharBuffer percentDecoded = percentDecode(utf8Encoded.data(), utf8Encoded.size(), hostBegin);
-    String domain = String::fromUTF8(percentDecoded.data(), percentDecoded.size());
+    LCharBuffer percentDecoded = percentDecode(utf8Encoded.span(), hostBegin);
+    String domain = String::fromUTF8(percentDecoded.span());
     if (domain.isNull())
         return HostParsingResult::InvalidHost;
     if (domain != StringView(percentDecoded.span()))
@@ -2894,8 +2894,8 @@ std::optional<String> URLParser::formURLDecode(StringView input)
     auto utf8 = input.utf8(StrictConversion);
     if (utf8.isNull())
         return std::nullopt;
-    auto percentDecoded = percentDecode(utf8.dataAsUInt8Ptr(), utf8.length());
-    return String::fromUTF8ReplacingInvalidSequences(percentDecoded.data(), percentDecoded.size());
+    auto percentDecoded = percentDecode(utf8.span());
+    return String::fromUTF8ReplacingInvalidSequences(percentDecoded.span());
 }
 
 // https://url.spec.whatwg.org/#concept-urlencoded-parser

@@ -289,7 +289,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
     if (types.contains("text/html"_s)) {
         auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, "text/html"_s);
-        if (buffer && reader.readHTML(String::fromUTF8(buffer->data(), buffer->size())))
+        if (buffer && reader.readHTML(String::fromUTF8(buffer->span())))
             return;
     }
 
@@ -417,7 +417,7 @@ String Pasteboard::readString(const String& type)
             return platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name);
 
         auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, type);
-        return buffer ? String::fromUTF8(buffer->data(), buffer->size()) : String();
+        return buffer ? String::fromUTF8(buffer->span()) : String();
     }
 
     switch (selectionDataTypeFromHTMLClipboardType(type)) {

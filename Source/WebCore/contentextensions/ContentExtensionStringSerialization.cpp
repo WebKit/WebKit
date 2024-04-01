@@ -33,7 +33,7 @@ namespace WebCore::ContentExtensions {
 String deserializeString(std::span<const uint8_t> span)
 {
     auto serializedLength = *reinterpret_cast<const uint32_t*>(span.data());
-    return String::fromUTF8(span.data() + sizeof(uint32_t), serializedLength - sizeof(uint32_t));
+    return String::fromUTF8(span.subspan(sizeof(uint32_t), serializedLength - sizeof(uint32_t)));
 }
 
 void serializeString(Vector<uint8_t>& actions, const String& string)

@@ -957,7 +957,7 @@ String GStreamerMediaEndpoint::trackIdFromSDPMedia(const GstSDPMedia& media)
     if (components.size() < 2)
         return emptyString();
 
-    return String::fromUTF8(components[1].utf8());
+    return String::fromUTF8(components[1].utf8().span());
 }
 
 void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)

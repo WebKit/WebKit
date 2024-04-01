@@ -146,7 +146,7 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
     if (isRaw)
         buffer = Vector(data);
     else
-        text = String::fromUTF8(data.data(), data.size());
+        text = String::fromUTF8(data);
 
     postTaskToHandler(handlerIdentifier, [isRaw, text = WTFMove(text).isolatedCopy(), buffer = WTFMove(buffer)](auto& handler) mutable {
         if (isRaw)

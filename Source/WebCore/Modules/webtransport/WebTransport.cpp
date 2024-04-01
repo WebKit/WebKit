@@ -217,7 +217,7 @@ static CString trimToValidUTF8Length1024(CString&& string)
     while (true) {
         if (!string.length())
             return WTFMove(string);
-        auto decoded = String::fromUTF8(string.data(), string.length());
+        auto decoded = String::fromUTF8(string.span());
         if (!decoded)
             string = CString(string.data(), string.length() - 1);
         else

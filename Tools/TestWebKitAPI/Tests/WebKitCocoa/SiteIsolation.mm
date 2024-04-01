@@ -2450,7 +2450,7 @@ TEST(SiteIsolation, ApplicationNameForUserAgent)
                 continue;
             }
             if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
                     return header.startsWith("User-Agent:"_s);
                 });
@@ -2506,7 +2506,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgent)
                 continue;
             }
             if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
                     return header.startsWith("User-Agent:"_s);
                 });
@@ -2595,7 +2595,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringCrossSiteProvisionalNavi
                 continue;
             }
             if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
                     return header.startsWith("User-Agent:"_s);
                 });
@@ -2681,7 +2681,7 @@ TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringSameSiteProvisionalNavig
                 continue;
             }
             if (path == "/request_from_subframe"_s) {
-                auto headers = String::fromUTF8(request.data(), request.size()).split("\r\n"_s);
+                auto headers = String::fromUTF8(request.span()).split("\r\n"_s);
                 auto userAgentIndex = headers.findIf([](auto& header) {
                     return header.startsWith("User-Agent:"_s);
                 });

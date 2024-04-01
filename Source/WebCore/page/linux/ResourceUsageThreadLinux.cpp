@@ -171,7 +171,7 @@ static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
         if (!name)
             return false;
         name++;
-        info.name = String::fromUTF8(name, position - name);
+        info.name = String::fromUTF8({ name, position });
     }
 
     // Move after state.

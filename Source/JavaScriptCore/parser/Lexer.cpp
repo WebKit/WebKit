@@ -1848,7 +1848,7 @@ template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::pars
             mergedCharacterBits |= m_current;
         shift();
     }
-    unsigned length = currentSourcePtr() - stringStart;
+    std::span commentDirective { stringStart, currentSourcePtr() };
 
     skipWhitespace();
     if (!isLineTerminator(m_current) && !atEnd())
@@ -1856,9 +1856,9 @@ template<typename CharacterType> ALWAYS_INLINE String Lexer<CharacterType>::pars
 
     if constexpr (std::is_same_v<CharacterType, UChar>) {
         if (isLatin1(mergedCharacterBits))
-            return String::make8Bit(stringStart, length);
+            return String::make8Bit(commentDirective);
     }
-    return std::span { stringStart, length };
+    return commentDirective;
 }
 IGNORE_WARNINGS_END
 

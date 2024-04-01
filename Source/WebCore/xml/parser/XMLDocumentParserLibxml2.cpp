@@ -689,7 +689,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
 
 static inline String toString(const xmlChar* string, size_t size)
 {
-    return String::fromUTF8(reinterpret_cast<const char*>(string), size);
+    return String::fromUTF8({ reinterpret_cast<const char*>(string), size });
 }
 
 static inline String toString(const xmlChar* string)

@@ -438,7 +438,7 @@ static void webkitWebContextConstructed(GObject* object)
         // Once the settings have been passed to the ProcessPoolConfiguration, we don't need them anymore so we can free them.
         g_clear_pointer(&priv->memoryPressureSettings, webkit_memory_pressure_settings_free);
     }
-    configuration.setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.data(), priv->timeZoneOverride.length()));
+    configuration.setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.span()));
 
 #if !ENABLE(2022_GLIB_API)
     if (!priv->websiteDataManager)

@@ -61,7 +61,7 @@ using namespace WebCore;
 static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoFormat& format)
 {
     auto& codecs = WebProcess::singleton().libWebRTCCodecs();
-    auto codecString = String::fromUTF8(format.name.data(), format.name.length());
+    auto codecString = String::fromUTF8(format.name);
 
     if (equalIgnoringASCIICase(codecString, "H264"_s))
         return { codecs.createDecoder(VideoCodecType::H264), false };
@@ -589,7 +589,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(VideoCodecType 
     encoder->scalabilityMode = scalabilityMode;
 
     auto parameters = WTF::map(formatParameters, [](auto& entry) {
-        return std::pair { String::fromUTF8(entry.first.data(), entry.first.length()), String::fromUTF8(entry.second.data(), entry.second.length()) };
+        return std::pair { String::fromUTF8(entry.first), String::fromUTF8(entry.second) };
     });
 
     ensureGPUProcessConnectionAndDispatchToThread([this, encoder = WTFMove(encoder), parameters = WTFMove(parameters), callback = WTFMove(callback)]() mutable {

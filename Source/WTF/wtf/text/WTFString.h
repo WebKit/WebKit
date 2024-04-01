@@ -260,25 +260,19 @@ public:
     WTF_EXPORT_PRIVATE Vector<wchar_t> wideCharacters() const;
 #endif
 
-    WTF_EXPORT_PRIVATE static String make8Bit(const UChar*, unsigned);
+    WTF_EXPORT_PRIVATE static String make8Bit(std::span<const UChar>);
     WTF_EXPORT_PRIVATE void convertTo16Bit();
 
     // String::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
-    WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*, size_t);
+    WTF_EXPORT_PRIVATE static String fromUTF8(std::span<const LChar>);
     WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*);
-    static String fromUTF8(const char* characters, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(characters), length); }
+    static String fromUTF8(std::span<const char> characters) { return fromUTF8(std::span { reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
     static String fromUTF8(const char* string) { return fromUTF8(reinterpret_cast<const LChar*>(string)); }
-    WTF_EXPORT_PRIVATE static String fromUTF8(const CString&);
-    static String fromUTF8(const std::span<const LChar>& characters);
-    static String fromUTF8(const Vector<LChar>& characters) { return fromUTF8(characters.span()); }
-    static String fromUTF8ReplacingInvalidSequences(const LChar*, size_t);
+    static String fromUTF8ReplacingInvalidSequences(std::span<const LChar>);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
     WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(std::span<const LChar>);
-
-    // FIXME: Update all call sites to pass a span and remove these 2 overloads.
-    static String fromUTF8WithLatin1Fallback(const LChar* characters, size_t length) { return fromUTF8WithLatin1Fallback(std::span { characters, length }); }
-    static String fromUTF8WithLatin1Fallback(const char* characters, size_t length) { return fromUTF8WithLatin1Fallback(std::span { reinterpret_cast<const LChar*>(characters), length }); }
+    static String fromUTF8WithLatin1Fallback(std::span<const char> characters) { return fromUTF8WithLatin1Fallback({ reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
 
     WTF_EXPORT_PRIVATE static String fromCodePoint(char32_t codePoint);
 
@@ -534,13 +528,6 @@ inline NSString * nsStringNilIfNull(const String& string)
 inline bool codePointCompareLessThan(const String& a, const String& b)
 {
     return codePointCompare(a.impl(), b.impl()) < 0;
-}
-
-inline String String::fromUTF8(const std::span<const LChar>& characters)
-{
-    if (characters.empty())
-        return emptyString();
-    return fromUTF8(characters.data(), characters.size());
 }
 
 template<typename Predicate>

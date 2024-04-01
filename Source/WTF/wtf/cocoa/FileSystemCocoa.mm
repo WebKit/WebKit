@@ -86,7 +86,7 @@ String createTemporaryZipArchive(const String& path)
         
         BOMCopier copier = BOMCopierNew();
         if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), (__bridge CFDictionaryRef)options))
-            temporaryFile = String::fromUTF8(archivePath);
+            temporaryFile = String::fromUTF8(archivePath.span());
         BOMCopierFree(copier);
     }];
     

@@ -1010,7 +1010,7 @@ void Storage::traverseWithinRootPath(const String& rootPath, const String& type,
                         static_cast<size_t>(metaData.bodySize),
                         worth,
                         bodyShareCount,
-                        String::fromUTF8(SHA1::hexDigest(metaData.bodyHash))
+                        String::fromUTF8(SHA1::hexDigest(metaData.bodyHash).span())
                     };
                     traverseOperation.handler(&record, info);
                 }

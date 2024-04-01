@@ -264,7 +264,7 @@ Vector<String> extractGStreamerOptionsFromCommandLine()
         return { };
 
     Vector<String> options;
-    auto optionsString = String::fromUTF8(contents.get(), length);
+    auto optionsString = String::fromUTF8(std::span(contents.get(), length));
     optionsString.split('\0', [&options](StringView item) {
         if (item.startsWith("--gst"_s))
             options.append(item.toString());

@@ -3263,7 +3263,7 @@ void getAllStorageAccessEntriesCallback(void* userData, WKArrayRef domainList)
         auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(domain));
         auto stringLength = WKStringGetUTF8CString(domain, buffer.data(), buffer.size());
 
-        resultDomains.append(String::fromUTF8(buffer.data(), stringLength - 1));
+        resultDomains.append(String::fromUTF8({ buffer.data(), stringLength - 1 }));
     }
 
     if (context->completionHandler)

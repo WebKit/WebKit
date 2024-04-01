@@ -62,7 +62,7 @@ static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
     Vector<uint8_t> buffer(size.value());
     if (!decoder.decodeFixedLengthData({ buffer.data(), size.value() }))
         return std::nullopt;
-    auto result = String::fromUTF8(buffer.data(), size.value());
+    auto result = String::fromUTF8(buffer.span());
     if (result.isNull())
         return std::nullopt;
 
