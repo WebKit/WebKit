@@ -6034,6 +6034,18 @@
    },
    {
       "emails" : [
+         "nitinmahendru@apple.com",
+         "nitin.mahendru88@gmail.com"
+      ],
+      "expertise" : "Applied Cryptography",
+      "github" : "nmahendru",
+      "name" : "Nitin Mahendru",
+      "nicks" : [
+         "Nitin"
+      ]
+   },
+   {
+      "emails" : [
          "noam@webkit.org",
          "noam.rosenthal@nokia.com"
       ],
