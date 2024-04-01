@@ -36,6 +36,8 @@
 namespace WebKit {
 
 struct WebPreferencesStore : public CanMakeCheckedPtr {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     using Value = std::variant<String, bool, uint32_t, double>;
     using ValueMap = MemoryCompactRobinHoodHashMap<String, Value>;
 

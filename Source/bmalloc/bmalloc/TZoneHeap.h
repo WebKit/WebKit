@@ -204,7 +204,7 @@ public: \
     } \
     exportMacro static void freeAfterDestruction(void*); \
     \
-    using webkitFastMalloced = int; \
+    using WTFIsFastAllocated = int; \
 private: \
     using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 

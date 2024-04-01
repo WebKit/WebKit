@@ -154,7 +154,7 @@ public: \
         btzoneHeap().deallocate(p); \
     } \
     \
-    using webkitFastMalloced = int; \
+    using WTFIsFastAllocated = int; \
 private: \
     using __makeBtzoneMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 

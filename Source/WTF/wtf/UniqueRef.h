@@ -43,7 +43,7 @@ UniqueRef<T> makeUniqueRefWithoutFastMallocCheck(Args&&... args)
 template<typename T, class... Args>
 UniqueRef<T> makeUniqueRef(Args&&... args)
 {
-    static_assert(std::is_same<typename T::webkitFastMalloced, int>::value, "T is FastMalloced");
+    static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T sould use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
     return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
 }
 

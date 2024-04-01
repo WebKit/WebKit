@@ -1714,7 +1714,7 @@ void RenderLayerCompositor::adjustOverflowScrollbarContainerLayers(RenderLayer& 
 
         if (lastDescendantLayerIndex && scrollerLayerIndex) {
             auto insertionIndex = std::max(lastDescendantLayerIndex.value() + 1, scrollerLayerIndex.value() + 1);
-            LOG_WITH_STREAM(Compositing, stream << "Moving overflow controls layer for " << overflowScrollingLayer << " to appear after " << lastContainedDescendant);
+            LOG_WITH_STREAM(Compositing, stream << "Moving overflow controls layer for " << *overflowScrollingLayer << " to appear after " << *lastContainedDescendant);
             layerChildren.insert(insertionIndex, *overflowContainerLayer);
         }
 

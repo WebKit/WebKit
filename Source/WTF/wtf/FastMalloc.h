@@ -448,7 +448,7 @@ using WTF::fastCompactAlignedMalloc;
     { \
         ::WTF::fastFree(p); \
     } \
-    using webkitFastMalloced = int; \
+    using WTFIsFastAllocated = int; \
 
 #define WTF_MAKE_FAST_COMPACT_ALLOCATED_IMPL \
     WTF_ALLOW_COMPACT_POINTERS_IMPL; \
@@ -483,7 +483,7 @@ using WTF::fastCompactAlignedMalloc;
     { \
         ::WTF::fastFree(p); \
     } \
-    using webkitFastMalloced = int; \
+    using WTFIsFastAllocated = int; \
 
 // FIXME: WTF_MAKE_FAST_ALLOCATED should take class name so that we can create malloc_zone per this macro.
 // https://bugs.webkit.org/show_bug.cgi?id=205702
@@ -541,7 +541,7 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
     { \
         classname##Malloc::free(p); \
     } \
-    using webkitFastMalloced = int; \
+    using WTFIsFastAllocated = int; \
 
 #define WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(classname) \
 public: \
