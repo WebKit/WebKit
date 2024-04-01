@@ -1,6 +1,6 @@
 {
     "repository": "https://github.com/SeleniumHQ/selenium.git",
-    "revision": "e3fcf791239c0e9ba5c04686025f578b561ecd6f",
+    "revision": "907b2197dada02fe80de04843799f50d3d129f54",
     "paths_to_import": [
         "common",
         "py/conftest.py",
@@ -9,10 +9,18 @@
         "py/test"
     ],
     "paths_to_skip": [
+        "common/browsers.bzl",
         "common/BUILD.bazel",
         "common/defs.bzl",
         "common/devtools",
+        "common/geckodriver",
+        "common/images",
+        "common/manager",
+        "common/mirror",
         "common/private",
+        "common/remote-build",
+        "common/repositories.bzl",
+        "common/selenium_manager.bzl",
         "common/src/web/BUILD.bazel",
         "common/src/web/devToolsConsoleTest.html",
         "common/src/web/devToolsProfilerTest.html",
@@ -27,6 +35,7 @@
         "common/src/web/Settings.StyleCop",
         "common/src/web/upload_hidden.html",
         "common/src/web/upload_multiple.html",
+        "common/webextensions",
         "py/selenium/webdriver/android",
         "py/selenium/webdriver/blackberry",
         "py/selenium/webdriver/chrome",

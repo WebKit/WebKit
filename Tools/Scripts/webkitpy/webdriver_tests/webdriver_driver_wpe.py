@@ -59,7 +59,7 @@ class WebDriverWPE(WebDriver):
             'args': self.browser_args()}}
 
     def selenium_name(self):
-        return 'WPEWebKit'
+        return 'wpewebkit'
 
 
 register_driver('wpe', WebDriverWPE)
