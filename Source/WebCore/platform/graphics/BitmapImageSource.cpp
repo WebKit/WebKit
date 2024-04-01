@@ -615,11 +615,11 @@ RefPtr<NativeImage> BitmapImageSource::preTransformedNativeImageAtIndex(unsigned
     auto size =  this->size();
     auto sourceSize = this->sourceSize();
 
-    if (orientation == ImageOrientation::Orientation::None && size == sourceSize)
-        return nativeImage;
-
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = frameOrientationAtIndex(index);
+
+    if (orientation == ImageOrientation::Orientation::None && size == sourceSize)
+        return nativeImage;
 
     RefPtr buffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
