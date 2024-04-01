@@ -188,6 +188,12 @@ typedef NS_ENUM(NSInteger, ASPublicKeyCredentialClientDataCrossOriginValue) {
 
 @end
 
+@interface ASAuthorizationPlatformPublicKeyCredentialDescriptor : NSObject <ASAuthorizationPublicKeyCredentialDescriptor>
+
+- (instancetype)initWithCredentialID:(NSData *)credentialID NS_DESIGNATED_INITIALIZER;
+
+@end
+
 @protocol ASAuthorizationPublicKeyCredentialAssertionRequest <NSObject, NSSecureCoding, NSCopying>
 
 @property (nonatomic, copy) NSData *challenge;
@@ -200,10 +206,13 @@ typedef NS_ENUM(NSInteger, ASPublicKeyCredentialClientDataCrossOriginValue) {
 
 @end
 
-@interface ASAuthorizationPlatformPublicKeyCredentialDescriptor : NSObject <ASAuthorizationPublicKeyCredentialDescriptor>
+@protocol ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest
+@property (nonatomic, readonly, nullable) ASPublicKeyCredentialClientData *clientData;
+@property (nonatomic, nullable, copy) NSArray<ASAuthorizationPlatformPublicKeyCredentialDescriptor *> *excludedCredentials;
+@property (nonatomic) BOOL shouldShowHybridTransport;
+@end
 
-- (instancetype)initWithCredentialID:(NSData *)credentialID NS_DESIGNATED_INITIALIZER;
-
+@interface ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest () <ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest>
 @end
 
 typedef NS_ENUM(NSInteger, ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperation) {
