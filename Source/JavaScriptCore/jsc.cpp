@@ -4350,6 +4350,9 @@ int jscmain(int argc, char** argv)
         JSC::JITOperationList::populateDisassemblyLabelsInEmbedder(&startOfJITOperationsInShell, &endOfJITOperationsInShell);
 #endif
 
+    if (!Options::maxHeapSizeAsRAMSizeMultiple())
+        Options::maxHeapSizeAsRAMSizeMultiple() = 2;
+
     initializeTimeoutIfNeeded();
 
 #if OS(DARWIN) || OS(LINUX)

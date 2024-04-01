@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -361,6 +361,7 @@ bool canUseHandlerIC();
     v(Unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(8), Normal, nullptr) \
     v(Bool, useParallelMarkingConstraintSolver, true, Normal, nullptr) \
     v(Unsigned, opaqueRootMergeThreshold, 1000, Normal, nullptr) \
+    v(Unsigned, maxHeapSizeAsRAMSizeMultiple, 0, Normal, nullptr) \
     v(Double, minHeapUtilization, 0.8, Normal, nullptr) \
     v(Double, minMarkedBlockUtilization, 0.9, Normal, nullptr) \
     v(Unsigned, slowPathAllocsBetweenGCs, 0, Normal, "force a GC on every Nth slow path alloc, where N is specified by this option") \
