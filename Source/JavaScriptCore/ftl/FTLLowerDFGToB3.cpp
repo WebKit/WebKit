@@ -113,14 +113,6 @@
 #include <wtf/GenericHashKey.h>
 #include <wtf/RecursableLambda.h>
 
-#undef RELEASE_ASSERT
-#define RELEASE_ASSERT(assertion) do { \
-    if (!(assertion)) { \
-        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
-        CRASH(); \
-    } \
-} while (0)
-
 namespace JSC { namespace FTL {
 
 using namespace B3;
