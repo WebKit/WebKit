@@ -160,7 +160,7 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
     proxyConfiguration.shouldUsePersistentCache = player->shouldUsePersistentCache();
     proxyConfiguration.isVideo = player->isVideoPlayer();
 
-#if ENABLE(AVF_CAPTIONS)
+#if PLATFORM(COCOA)
     proxyConfiguration.outOfBandTrackData = player->outOfBandTrackSources().map([](auto& track) {
         return track->data();
     });

@@ -316,10 +316,8 @@ protected:
     long platformErrorCode() const override { return assetErrorCode(); }
 
     void trackModeChanged() override;
-#if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged() override { }
     virtual void synchronizeTextTrackState() { }
-#endif
     void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF>>&);
     void clearTextTracks();
     Vector<RefPtr<InbandTextTrackPrivateAVF>> m_textTracks;

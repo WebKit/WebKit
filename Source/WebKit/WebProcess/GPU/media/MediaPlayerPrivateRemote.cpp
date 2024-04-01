@@ -1553,12 +1553,10 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateRemote::videoPlayba
     return m_cachedState.videoMetrics;
 }
 
-#if ENABLE(AVF_CAPTIONS)
 void MediaPlayerPrivateRemote::notifyTrackModeChanged()
 {
     connection().send(Messages::RemoteMediaPlayerProxy::NotifyTrackModeChanged(), m_id);
 }
-#endif
 
 void MediaPlayerPrivateRemote::notifyActiveSourceBuffersChanged()
 {

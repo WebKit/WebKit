@@ -66,6 +66,7 @@
 #import "SerializedPlatformDataCueMac.h"
 #import "SharedBuffer.h"
 #import "SourceBufferParserWebM.h"
+#import "TextTrack.h"
 #import "TextTrackRepresentation.h"
 #import "UTIUtilities.h"
 #import "VideoFrameCV.h"
@@ -112,10 +113,6 @@
 #import <wtf/text/CString.h>
 #import <wtf/threads/BinarySemaphore.h>
 
-#if ENABLE(AVF_CAPTIONS)
-#import "TextTrack.h"
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import "MediaPlaybackTarget.h"
 #endif
@@ -143,14 +140,12 @@ template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionA
 };
 }
 
-#if ENABLE(AVF_CAPTIONS)
 // Note: This must be defined before our SOFT_LINK macros:
 @class AVMediaSelectionOption;
 @interface AVMediaSelectionOption (OutOfBandExtensions)
 @property (nonatomic, readonly) NSString* outOfBandSource;
 @property (nonatomic, readonly) NSString* outOfBandIdentifier;
 @end
-#endif
 
 @interface AVURLAsset (WebKitExtensions)
 @property (nonatomic, readonly) NSURL *resolvedURL;
@@ -710,8 +705,6 @@ bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
     return m_videoFrameHasDrawn;
 }
 
-#if ENABLE(AVF_CAPTIONS)
-
 static const NSArray *mediaDescriptionForKind(PlatformTextTrackData::TrackKind kind)
 {
     static bool manualSelectionMode = MTEnableCaption2015BehaviorPtr() && MTEnableCaption2015BehaviorPtr()();
@@ -778,8 +771,6 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
         }
     }
 }
-
-#endif
 
 static NSURL *canonicalURL(const URL& url)
 {
@@ -950,7 +941,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
             [options setObject:(NSString *)type forKey:AVURLAssetOutOfBandMIMETypeKey];
     }
 
-#if ENABLE(AVF_CAPTIONS)
     auto outOfBandTrackSources = player->outOfBandTrackSources();
     if (!outOfBandTrackSources.isEmpty()) {
         auto outOfBandTracks = createNSArray(outOfBandTrackSources, [] (auto& trackSource) {
@@ -966,7 +956,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
 
         [options setObject:outOfBandTracks.get() forKey:AVURLAssetOutOfBandAlternateTracksKey];
     }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     String networkInterfaceName = player->mediaPlayerNetworkInterfaceName();
@@ -3142,13 +3131,10 @@ END_BLOCK_OBJC_EXCEPTIONS
                 continue;
 
             RetainPtr<AVMediaSelectionOption> currentOption;
-#if ENABLE(AVF_CAPTIONS)
             if (removedTextTracks[i - 1]->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand) {
                 RefPtr<OutOfBandTextTrackPrivateAVF> track = static_cast<OutOfBandTextTrackPrivateAVF*>(removedTextTracks[i - 1].get());
                 currentOption = track->mediaSelectionOption();
-            } else
-#endif
-            {
+            } else {
                 RefPtr<InbandTextTrackPrivateAVFObjC> track = static_cast<InbandTextTrackPrivateAVFObjC*>(removedTextTracks[i - 1].get());
                 currentOption = track->mediaSelectionOption();
             }
@@ -3162,13 +3148,11 @@ END_BLOCK_OBJC_EXCEPTIONS
         if (!newTrack)
             continue;
 
-#if ENABLE(AVF_CAPTIONS)
         if ([option outOfBandSource]) {
             m_textTracks.append(OutOfBandTextTrackPrivateAVF::create(this, option, m_currentTextTrackID++));
             m_textTracks.last()->setHasBeenReported(true); // Ignore out-of-band tracks that we passed to AVFoundation so we do not double-count them
             continue;
         }
-#endif
 
         m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, legibleGroup, option, m_currentTextTrackID++, InbandTextTrackPrivate::CueFormat::Generic));
     }
@@ -3223,12 +3207,10 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack(InbandTextTrackPriv
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [m_avPlayer setClosedCaptionDisplayEnabled:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
-#if ENABLE(AVF_CAPTIONS)
         else if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand) {
 BEGIN_BLOCK_OBJC_EXCEPTIONS
             [m_avPlayerItem selectMediaOption:static_cast<OutOfBandTextTrackPrivateAVF*>(track)->mediaSelectionOption() inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
 END_BLOCK_OBJC_EXCEPTIONS
-#endif
         } else {
 BEGIN_BLOCK_OBJC_EXCEPTIONS
             [m_avPlayerItem selectMediaOption:static_cast<InbandTextTrackPrivateAVFObjC*>(track)->mediaSelectionOption() inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];

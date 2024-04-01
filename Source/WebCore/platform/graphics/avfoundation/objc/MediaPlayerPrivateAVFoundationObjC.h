@@ -162,10 +162,8 @@ private:
     void beginSimulatedHDCPError() final { outputObscuredDueToInsufficientExternalProtectionChanged(true); }
     void endSimulatedHDCPError() final { outputObscuredDueToInsufficientExternalProtectionChanged(false); }
 
-#if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged() final;
     void synchronizeTextTrackState() final;
-#endif
 
     void platformSetVisible(bool) final;
     void platformPlay() final;

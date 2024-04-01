@@ -2329,10 +2329,8 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack& track)
     if (RefPtr textTracks = m_textTracks; textTracks && textTracks->contains(track))
         textTracks->scheduleChangeEvent();
 
-#if ENABLE(AVF_CAPTIONS)
     if (track.trackType() == TextTrack::TrackElement && m_player)
         RefPtr { m_player }->notifyTrackModeChanged();
-#endif
 }
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack& track)

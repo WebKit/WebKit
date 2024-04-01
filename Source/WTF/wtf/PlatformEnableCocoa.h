@@ -231,10 +231,6 @@
 #define ENABLE_AUTOCORRECT 1
 #endif
 
-#if !defined(ENABLE_AVF_CAPTIONS)
-#define ENABLE_AVF_CAPTIONS 1
-#endif
-
 #if !defined(ENABLE_AX_THREAD_TEXT_APIS) && PLATFORM(MAC)
 #define ENABLE_AX_THREAD_TEXT_APIS 0
 #endif

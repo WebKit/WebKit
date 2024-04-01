@@ -297,7 +297,7 @@ private:
 
     void textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
 
-#if ENABLE(AVF_CAPTIONS)
+#if PLATFORM(COCOA)
     Vector<RefPtr<WebCore::PlatformTextTrack>> outOfBandTrackSources() final;
 #endif
 

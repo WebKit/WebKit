@@ -432,9 +432,7 @@ private:
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     void updateVideoPlaybackMetricsUpdateInterval(const Seconds&);
 
-#if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged() final;
-#endif
 
     void notifyActiveSourceBuffersChanged() final;
 
