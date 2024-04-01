@@ -85,6 +85,8 @@ static inline bool isNonContentRunsOnly(const InlineContentBreaker::ContinuousCo
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
             continue;
+        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem); inlineTextItem && inlineTextItem->isEmpty())
+            continue;
         return false;
     }
     return true;
