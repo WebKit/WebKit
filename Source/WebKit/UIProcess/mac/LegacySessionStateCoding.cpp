@@ -524,7 +524,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     // Copy in the actual session state data
     CFDataGetBytes(data.get(), CFRangeMake(0, length), buffer.get() + sizeof(uint32_t));
 
-    return API::Data::createWithoutCopying(buffer.leakPtr(), bufferSize, [] (unsigned char* buffer, const void* context) {
+    return API::Data::createWithoutCopying({ buffer.leakPtr(), bufferSize }, [] (uint8_t* buffer, const void* context) {
         HistoryEntryDataEncoderMalloc::free(buffer);
     }, nullptr);
 }

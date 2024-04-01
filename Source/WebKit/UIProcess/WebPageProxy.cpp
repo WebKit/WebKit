@@ -5599,7 +5599,7 @@ static CompletionHandler<void(T data)> toAPIDataCallbackT(CompletionHandler<void
             callback(nullptr);
             return;
         }
-        callback(API::Data::create(data->data(), data->size()).ptr());
+        callback(API::Data::create(data->span()).ptr());
     };
 }
 
@@ -11022,7 +11022,7 @@ void WebPageProxy::savePDFToFileInDownloadsFolder(String&& suggestedFilename, UR
     if (!sanitizedFilename.endsWithIgnoringASCIICase(".pdf"_s))
         return;
 
-    saveDataToFileInDownloadsFolder(WTFMove(sanitizedFilename), "application/pdf"_s, WTFMove(originatingURL), API::Data::create(dataReference.data(), dataReference.size()).get());
+    saveDataToFileInDownloadsFolder(WTFMove(sanitizedFilename), "application/pdf"_s, WTFMove(originatingURL), API::Data::create(dataReference).get());
 }
 
 void WebPageProxy::setMinimumSizeForAutoLayout(const IntSize& size)
@@ -11945,7 +11945,7 @@ void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, Callbac
         }
         sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(true, loadIdentifier), [callback = WTFMove(callback)](const IPC::SharedBufferReference& iconData) mutable {
             if (auto buffer = iconData.unsafeBuffer())
-                callback(API::Data::create(buffer->data(), buffer->size()).ptr());
+                callback(API::Data::create(buffer->span()).ptr());
             else
                 callback(nullptr);
         });

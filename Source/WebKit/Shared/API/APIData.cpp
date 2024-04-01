@@ -28,9 +28,4 @@
 
 namespace API {
 
-Ref<Data> Data::create(std::span<const uint8_t> data)
-{
-    return create(data.data(), data.size());
-}
-
 } // namespace API

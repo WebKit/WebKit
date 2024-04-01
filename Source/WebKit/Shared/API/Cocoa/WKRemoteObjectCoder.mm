@@ -598,7 +598,7 @@ static NSString *escapeKey(NSString *key)
 
 - (void)encodeBytes:(const uint8_t *)bytes length:(NSUInteger)length forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), API::Data::create(bytes, length));
+    _currentDictionary->set(escapeKey(key), API::Data::create({ bytes, length }));
 }
 
 - (void)encodeBool:(BOOL)value forKey:(NSString *)key

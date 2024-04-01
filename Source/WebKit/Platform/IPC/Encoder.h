@@ -88,6 +88,7 @@ public:
 
     uint8_t* buffer() const { return m_buffer; }
     size_t bufferSize() const { return m_bufferSize; }
+    std::span<const uint8_t> span() const { return { m_buffer, m_bufferSize }; }
 
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();

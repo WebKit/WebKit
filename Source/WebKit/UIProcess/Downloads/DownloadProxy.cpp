@@ -71,7 +71,7 @@ static RefPtr<API::Data> createData(std::span<const uint8_t> data)
 {
     if (data.empty())
         return nullptr;
-    return API::Data::create(data.data(), data.size());
+    return API::Data::create(data);
 }
 
 void DownloadProxy::cancel(CompletionHandler<void(API::Data*)>&& completionHandler)
