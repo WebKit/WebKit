@@ -1648,7 +1648,8 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 logEnviron=True,
                 logfiles={'json': self.jsonFileName},
-                command=['python3', 'Tools/Scripts/run-webdriver-tests', '--json-output=webdriver_tests.json', '--release'],
+                command=['/bin/sh', '-c', 'python3 Tools/Scripts/run-webdriver-tests --json-output=webdriver_tests.json --release > logs.txt 2>&1'],
+                timeout=5400
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='webdriver-tests')
@@ -1663,7 +1664,8 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 logEnviron=True,
                 logfiles={'json': self.jsonFileName},
-                command=['python3', 'Tools/Scripts/run-webdriver-tests', '--json-output=webdriver_tests.json', '--release'],
+                command=['/bin/sh', '-c', 'python3 Tools/Scripts/run-webdriver-tests --json-output=webdriver_tests.json --release > logs.txt 2>&1'],
+                timeout=5400
             ) + 1,
         )
         self.expectOutcome(result=FAILURE, state_string='webdriver-tests (failure)')

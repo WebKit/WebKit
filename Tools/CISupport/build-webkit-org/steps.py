@@ -1253,6 +1253,10 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
     command = ["python3", "Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
 
+    def __init__(self, **kwargs):
+        kwargs['timeout'] = 90 * 60
+        super().__init__(**kwargs)
+
     @defer.inlineCallbacks
     def run(self):
         additionalArguments = self.getProperty('additionalArguments')
@@ -1260,6 +1264,7 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
             self.command += additionalArguments
 
         self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
+        self.command = ['/bin/sh', '-c', ' '.join(self.command) + ' > logs.txt 2>&1']
 
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
@@ -1276,6 +1281,19 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin):
         foundItems = re.findall(r"^Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
         if foundItems:
             self.newPassesCount = int(foundItems[0])
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
 
         if rc != 0:
             defer.returnValue(FAILURE)
