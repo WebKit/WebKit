@@ -240,6 +240,15 @@ unsigned GStreamerQuirksManager::getAdditionalPlaybinFlags() const
     return getGstPlayFlag("text") | getGstPlayFlag("soft-colorbalance");
 }
 
+bool GStreamerQuirksManager::shouldParseIncomingLibWebRTCBitStream() const
+{
+    for (auto& quirk : m_quirks) {
+        if (!quirk->shouldParseIncomingLibWebRTCBitStream())
+            return false;
+    }
+    return true;
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore

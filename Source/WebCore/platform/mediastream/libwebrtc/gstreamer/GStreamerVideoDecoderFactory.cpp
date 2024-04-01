@@ -23,6 +23,7 @@
 #if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "GStreamerVideoDecoderFactory.h"
 
+#include "GStreamerQuirks.h"
 #include "GStreamerVideoCommon.h"
 #include "GStreamerVideoFrameLibWebRTC.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
@@ -88,6 +89,16 @@ public:
         m_needsKeyframe = true;
     }
 
+    static unsigned getGstAutoplugSelectResult(const char* nick)
+    {
+        static GEnumClass* enumClass = static_cast<GEnumClass*>(g_type_class_ref(g_type_from_name("GstAutoplugSelectResult")));
+        ASSERT(enumClass);
+        GEnumValue* ev = g_enum_get_value_by_nick(enumClass, nick);
+        if (!ev)
+            return 0;
+        return ev->value;
+    }
+
     bool Configure(const webrtc::VideoDecoder::Settings& codecSettings) override
     {
         m_src = makeElement("appsrc");
@@ -104,6 +115,18 @@ public:
 
         auto sinkpad = adoptGRef(gst_element_get_static_pad(capsfilter, "sink"));
         g_signal_connect(decoder, "pad-added", G_CALLBACK(decodebinPadAddedCb), sinkpad.get());
+
+        auto& quirksManager = GStreamerQuirksManager::singleton();
+        if (quirksManager.isEnabled()) {
+            g_signal_connect(decoder, "autoplug-select", G_CALLBACK(+[](GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer) -> unsigned {
+                auto& quirksManager = GStreamerQuirksManager::singleton();
+                auto isHardwareAccelerated = quirksManager.isHardwareAccelerated(factory).value_or(false);
+                if (isHardwareAccelerated)
+                    return getGstAutoplugSelectResult("skip");
+                return getGstAutoplugSelectResult("try");
+            }), nullptr);
+        }
+
         // Make the decoder output "parsed" frames only and let the main decodebin
         // do the real decoding. This allows us to have optimized decoding/rendering
         // happening in the main pipeline.
@@ -334,7 +357,14 @@ private:
 
 class H264Decoder : public GStreamerWebRTCVideoDecoder {
 public:
-    H264Decoder() { m_requireParse = true; }
+    H264Decoder()
+    {
+        m_requireParse = true;
+
+        auto& quirksManager = GStreamerQuirksManager::singleton();
+        if (quirksManager.isEnabled())
+            m_requireParse = quirksManager.shouldParseIncomingLibWebRTCBitStream();
+    }
 
     bool Configure(const webrtc::VideoDecoder::Settings& codecSettings) final
     {
