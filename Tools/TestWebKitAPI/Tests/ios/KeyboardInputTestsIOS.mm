@@ -1266,21 +1266,18 @@ TEST(KeyboardInputTests, AutocorrectionIndicatorColorNotAffectedByAuthorDefinedA
 
 #if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
 
-static BOOL allowESIMAutoFillForWebKitDomains(id, SEL, NSString *domain, NSError **)
+static BOOL allowESIMAutoFillForWebKit(id, SEL, NSString *host, NSError **)
 {
-    return [domain isEqualToString:@"webkit.org"];
+    return [host isEqualToString:@"login.webkit.org"];
 }
 
 TEST(KeyboardInputTests, DeviceEIDAndIMEIAutoFill)
 {
-    auto clientClass = PAL::getCoreTelephonyClientClass();
-    auto autoFillAllowedSelector = @selector(isAutofilleSIMIdAllowedForDomain:error:);
-    if (![clientClass instancesRespondToSelector:autoFillAllowedSelector]) {
-        // Skip this test altogether if system support is missing.
-        return;
-    }
-
-    InstanceMethodSwizzler swizzler { clientClass, autoFillAllowedSelector, reinterpret_cast<IMP>(allowESIMAutoFillForWebKitDomains) };
+    InstanceMethodSwizzler swizzler {
+        PAL::getCoreTelephonyClientClass(),
+        @selector(isAutofilleSIMIdAllowedForDomain:error:),
+        reinterpret_cast<IMP>(allowESIMAutoFillForWebKit)
+    };
     [WKWebView _setApplicationBundleIdentifier:@"org.webkit.SomeTelephonyApp"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -1316,7 +1313,7 @@ TEST(KeyboardInputTests, DeviceEIDAndIMEIAutoFill)
         didStartInputSession = false;
     };
 
-    loadSimulatedRequest(@"https://webkit.org"); // AutoFill is allowed here.
+    loadSimulatedRequest(@"https://login.webkit.org"); // AutoFill is allowed here.
     focusElementWithID(@"imei");
     EXPECT_WK_STREQ(UITextContentTypeCellularIMEI, [webView effectiveTextInputTraits].textContentType);
 
