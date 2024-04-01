@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -668,13 +668,14 @@ class BasePlan
     attr_accessor :retryParameters
 
     @@index = 0
-    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters)
+    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters, expectCrash)
         @directory = directory
         @arguments = argumentsMapper(arguments)
         @family = family
         @name = name
         @outputHandler = outputHandler
         @errorHandler = errorHandler
+        @expectCrash = expectCrash
         # A plan for which @retryParameters is not nil is being
         # treated as potentially flaky.
         @retryParameters = retryParameters
@@ -683,13 +684,17 @@ class BasePlan
         @@index += 1
     end
     def self.mock(family, name, retryParameters=nil)
-        self.new("/none", [], family, name, nil, nil, retryParameters)
+        self.new("/none", [], family, name, nil, nil, retryParameters, false)
     end
     def self.create(directory, arguments, family, name, outputHandler, errorHandler)
-        if $runCommandOptions[:crashOK]
+        if $runCommandOptions[:mustCrash]
             outputHandler = noisyOutputHandler
         end
-        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky])
+        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky], $runCommandOptions[:mustCrash])
+    end
+
+    def expectCrash
+        @expectCrash
     end
     def argumentsMapper(args)
         args
@@ -910,9 +915,9 @@ def slow!
     skip() if ($mode == "quick")
 end
 
-def crashOK!
+def mustCrash!
     $testSpecificRequiredOptions += ["-s"]
-    $runCommandOptions[:crashOK] = true
+    $runCommandOptions[:mustCrash] = true
 end
 
 def serial!
