@@ -7353,3 +7353,5 @@ webkit.org/b/271764 fast/scrolling/ios/video-atop-overflow-scroll.html [ Pass Fa
 webkit.org/b/271931 [ Debug ] imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-105.html [ Crash ]
 
 webkit.org/b/271990 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Failure ]
+
+webkit.org/b/271994 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ Failure ]
