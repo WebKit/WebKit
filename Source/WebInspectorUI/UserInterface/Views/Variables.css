@@ -365,6 +365,8 @@
         --slider-track-background: hsl(0, 0%, 35%);
         --slider-track-box-shadow: inset 0 0 3px hsl(0, 0%, 20%);
         --slider-track-tick-background: hsl(0, 0%, 55%);
+
+        --scope-bar-text-color-active: hsl(0, 0%, 15%);
     }
 }
 

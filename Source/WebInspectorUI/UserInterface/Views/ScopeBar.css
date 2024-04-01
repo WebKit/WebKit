@@ -119,3 +119,9 @@
     margin-bottom: -1px;
     margin-inline: 6px 2px;
 }
+
+@media (prefers-color-scheme: dark) {
+    .scope-bar > li:is(.selected, :hover) {
+        color: var(--scope-bar-text-color-active);
+    }
+}

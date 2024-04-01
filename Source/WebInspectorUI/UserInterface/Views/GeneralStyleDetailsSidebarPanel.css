@@ -195,6 +195,10 @@
     .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
         filter: var(--filter-invert);
     }
+
+    .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:is(.selected,:hover) {
+        color: var(--scope-bar-text-color-active);
+    }
 }
 
 .multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .options-container > .toggle,
