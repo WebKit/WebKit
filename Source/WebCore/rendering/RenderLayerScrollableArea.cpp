@@ -546,7 +546,7 @@ bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheel
 IntRect RenderLayerScrollableArea::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
 {
     IntSize scrollbarSpace;
-    if (showsOverflowControls() && scrollbarInclusion == IncludeScrollbars)
+    if (showsOverflowControls() && scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes)
         scrollbarSpace = scrollbarIntrusion();
 
     auto visibleSize = this->visibleSize();

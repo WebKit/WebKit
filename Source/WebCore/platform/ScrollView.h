@@ -194,10 +194,10 @@ public:
     // Parts of the document can be visible through transparent or blured UI widgets of the chrome. Those parts
     // contribute to painting but not to the scrollable area.
     // The unobscuredContentRect is the area that is not covered by UI elements.
-    WEBCORE_EXPORT IntRect unobscuredContentRect(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    WEBCORE_EXPORT IntRect unobscuredContentRect(VisibleContentRectIncludesScrollbars = VisibleContentRectIncludesScrollbars::No) const;
 
 #if PLATFORM(IOS_FAMILY)
-    IntRect unobscuredContentRectIncludingScrollbars() const { return unobscuredContentRect(IncludeScrollbars); }
+    IntRect unobscuredContentRectIncludingScrollbars() const { return unobscuredContentRect(VisibleContentRectIncludesScrollbars::Yes); }
 #else
     IntRect unobscuredContentRectIncludingScrollbars() const { return visibleContentRectIncludingScrollbars(); }
 #endif
@@ -217,7 +217,7 @@ public:
 #endif
 
     // Size available for view contents, including content inset areas. Not affected by zooming.
-    IntSize sizeForVisibleContent(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    IntSize sizeForVisibleContent(VisibleContentRectIncludesScrollbars = VisibleContentRectIncludesScrollbars::No) const;
     // FIXME: remove this. It's only used for the incorrectly behaving ScrollView::unobscuredContentRectInternal().
     virtual float visibleContentScaleFactor() const { return 1; }
 
@@ -455,10 +455,10 @@ private:
 
 private:
     // Size available for view contents, excluding content insets. Not affected by zooming.
-    IntSize sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    IntSize sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars = VisibleContentRectIncludesScrollbars::No) const;
 
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
-    WEBCORE_EXPORT IntRect unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
+    WEBCORE_EXPORT IntRect unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars = VisibleContentRectIncludesScrollbars::No) const;
 
     void completeUpdatesAfterScrollTo(const IntSize& scrollDelta);
 

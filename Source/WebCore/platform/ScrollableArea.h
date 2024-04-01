@@ -183,7 +183,7 @@ public:
     // Force the contents to recompute their size (i.e. do layout).
     virtual void updateContentsSize() { }
 
-    enum class AvailableSizeChangeReason {
+    enum class AvailableSizeChangeReason : bool {
         ScrollbarsChanged,
         AreaSizeChanged
     };
@@ -305,7 +305,7 @@ public:
     bool scrollShouldClearLatchedState() const { return m_scrollShouldClearLatchedState; }
     void setScrollShouldClearLatchedState(bool shouldClear) { m_scrollShouldClearLatchedState = shouldClear; }
 
-    enum VisibleContentRectIncludesScrollbars { ExcludeScrollbars, IncludeScrollbars };
+    enum class VisibleContentRectIncludesScrollbars : bool { No, Yes };
     enum VisibleContentRectBehavior {
         ContentsVisibleRect,
 #if PLATFORM(IOS_FAMILY)
