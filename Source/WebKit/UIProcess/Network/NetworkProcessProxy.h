@@ -335,6 +335,8 @@ public:
 
     void notifyMediaStreamingActivity(bool);
 
+    void releaseLockedFileAssertion();
+
 private:
     explicit NetworkProcessProxy();
 
@@ -472,6 +474,8 @@ private:
     RetainPtr<id> m_backgroundObserver;
     RetainPtr<id> m_foregroundObserver;
 #endif
+
+    RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 };
 
 } // namespace WebKit

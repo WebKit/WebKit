@@ -70,7 +70,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetCacheModelSynchronouslyForTesting(enum:uint8_t WebKit::CacheModel cacheModel) -> () Synchronous
 
     ProcessWillSuspendImminentlyForTestingSync() -> () Synchronous
-    PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
+    PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> (bool needsLockedFilesAssertion)
     ProcessDidResume(bool forForegroundActivity)
 
     NotifyMediaStreamingActivity(bool activity)

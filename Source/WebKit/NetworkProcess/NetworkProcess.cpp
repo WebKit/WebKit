@@ -56,7 +56,6 @@
 #include "NetworkStorageManager.h"
 #include "PreconnectTask.h"
 #include "PrivateClickMeasurementPersistentStore.h"
-#include "ProcessAssertion.h"
 #include "RTCDataChannelRemoteManagerProxy.h"
 #include "RemoteWorkerType.h"
 #include "ResourceLoadStatisticsStore.h"
@@ -89,6 +88,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SQLiteDatabase.h>
+#include <WebCore/SQLiteDatabaseTracker.h>
 #include <WebCore/SWServer.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -151,9 +151,6 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_networkContentRuleListManager(*this)
 #endif
-#if USE(RUNNINGBOARD)
-    , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { setIsHoldingLockedFiles(isHoldingLockedFiles); })
-#endif
 {
     NetworkProcessPlatformStrategies::initialize();
 
@@ -175,6 +172,8 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
         for (auto& webProcessConnection : weakThis->m_webProcessConnections.values())
             webProcessConnection->setOnLineState(isOnLine);
     });
+
+    SQLiteDatabaseTracker::setClient(this);
 
     initialize(WTFMove(parameters));
 }
@@ -2221,7 +2220,9 @@ void NetworkProcess::terminate()
 
 void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&& completionHandler)
 {
-    prepareToSuspend(true, MonotonicTime::now(), WTFMove(completionHandler));
+    prepareToSuspend(true, MonotonicTime::now(), [completionHandler = WTFMove(completionHandler)](bool) mutable {
+        completionHandler();
+    });
 }
 
 void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType workerType, PAL::SessionID sessionID, const WebCore::RegistrableDomain& registrableDomain, WebCore::ProcessIdentifier processIdentifier)
@@ -2242,7 +2243,7 @@ void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWo
     }
 }
 
-void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if !RELEASE_LOG_DISABLED
     auto nowTime = MonotonicTime::now();
@@ -2254,9 +2255,11 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime e
     lowMemoryHandler(Critical::Yes);
 
     RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create([this, completionHandler = WTFMove(completionHandler)]() mutable {
-        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend() Process is ready to suspend", this);
+        m_requestedLockedFileAssertion = SQLiteDatabaseTracker::hasTransactionInProgress();
+        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(needsLockedFileAssertion = %d) Process is ready to suspend", this, m_requestedLockedFileAssertion);
         UNUSED_VARIABLE(this);
-        completionHandler();
+
+        completionHandler(m_requestedLockedFileAssertion);
     });
     
     WebResourceLoadStatisticsStore::suspend([callbackAggregator] { });
@@ -2966,37 +2969,14 @@ void NetworkProcess::requestBackgroundFetchPermission(PAL::SessionID sessionID, 
     parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestBackgroundFetchPermission(sessionID, origin), WTFMove(callback));
 }
 
-#if USE(RUNNINGBOARD)
-void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
+void NetworkProcess::didFinishLastTransaction()
 {
-#if PLATFORM(MAC)
-    // The sandbox doesn't allow the network process to talk to runningboardd on macOS.
-    UNUSED_PARAM(isHoldingLockedFiles);
-#else
-    if (!isHoldingLockedFiles) {
-        m_holdingLockedFileAssertion = nullptr;
-#if USE(EXTENSIONKIT)
-        invalidateFileActivity();
-#endif
-        return;
-    }
-
-    if (m_holdingLockedFileAssertion && m_holdingLockedFileAssertion->isValid())
+    if (LIKELY(!m_requestedLockedFileAssertion))
         return;
 
-#if USE(EXTENSIONKIT)
-    if (hasAcquiredFileActivity())
-        return;
-    if (acquireLockedFileActivity())
-        return;
-#endif
-
-    // We synchronously take a process assertion when beginning a SQLite transaction so that we don't get suspended
-    // while holding a locked file. We would get killed if suspended while holding locked files.
-    m_holdingLockedFileAssertion = ProcessAssertion::create(getCurrentProcessID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskInterruptable, ProcessAssertion::Mode::Sync);
-#endif
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::ReleaseLockedFileAssertion(), 0);
+    m_requestedLockedFileAssertion = false;
 }
-#endif
 
 void NetworkProcess::setInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
 {

@@ -48,6 +48,7 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PushPermissionState.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/SQLiteDatabaseTrackerClient.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <memory>
@@ -112,7 +113,6 @@ class NetworkProcessSupplement;
 class NetworkProximityManager;
 class NetworkResourceLoader;
 class NetworkStorageManager;
-class ProcessAssertion;
 class RTCDataChannelRemoteManagerProxy;
 class SandboxExtensionHandle;
 class WebPageNetworkParameters;
@@ -135,7 +135,7 @@ class Cache;
 enum class CacheOption : uint8_t;
 }
 
-class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
+class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public WebCore::SQLiteDatabaseTrackerClient, public ThreadSafeRefCounted<NetworkProcess>
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
@@ -184,7 +184,7 @@ public:
     void addStorageSession(PAL::SessionID, const WebsiteDataStoreParameters&);
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
-    void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
+    void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void(bool)>&&);
     void processDidResume(bool forForegroundActivity);
 
     CacheModel cacheModel() const { return m_cacheModel; }
@@ -521,6 +521,9 @@ private:
     void registerURLSchemeAsNoAccess(const String&) const;
     void registerURLSchemeAsCORSEnabled(const String&) const;
 
+    void willBeginFirstTransaction() override { }
+    void didFinishLastTransaction() override;
+
 #if USE(RUNNINGBOARD)
     void setIsHoldingLockedFiles(bool);
 #if USE(EXTENSIONKIT)
@@ -562,13 +565,7 @@ private:
     NetworkContentRuleListManager m_networkContentRuleListManager;
 #endif
 
-#if USE(RUNNINGBOARD)
-    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
-#if USE(EXTENSIONKIT)
-    OSObjectPtr<dispatch_semaphore_t> m_holdingLockedFileSemaphore;
-#endif
-    RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
-#endif
+    bool m_requestedLockedFileAssertion { false };
     
 #if ENABLE(WEB_RTC)
     RefPtr<RTCDataChannelRemoteManagerProxy> m_rtcDataChannelProxy;

@@ -1393,6 +1393,11 @@ void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
         sendSync(Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync(), 0);
 }
 
+void NetworkProcessProxy::releaseLockedFileAssertion()
+{
+    m_holdingLockedFileAssertion = nullptr;
+}
+
 static bool s_suspensionAllowedForTesting { true };
 void NetworkProcessProxy::setSuspensionAllowedForTesting(bool allowed)
 {
@@ -1403,9 +1408,16 @@ void NetworkProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspension
 {
     if (!s_suspensionAllowedForTesting)
         return completionHandler();
-    
+
+    auto suspendCompletionHandler = [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](bool needsLockedFileAssertion) mutable {
+        if (needsLockedFileAssertion && weakThis)
+            m_holdingLockedFileAssertion = ProcessAssertion::create(processID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskInterruptable, ProcessAssertion::Mode::Sync);
+
+        completionHandler();
+    };
+
     auto estimatedSuspendTime = MonotonicTime::now() + Seconds(remainingRunTime);
-    sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, estimatedSuspendTime), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
+    sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, estimatedSuspendTime), WTFMove(suspendCompletionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
 void NetworkProcessProxy::sendProcessDidResume(ResumeReason reason)

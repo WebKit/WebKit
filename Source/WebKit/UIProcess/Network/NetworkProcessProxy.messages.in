@@ -112,6 +112,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     ReportNetworkIssue(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, URL requestURL)
 #endif
+
+    ReleaseLockedFileAssertion()
 }
 
 }
