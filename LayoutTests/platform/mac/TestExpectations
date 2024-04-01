@@ -2670,3 +2670,5 @@ webkit.org/b/271194 accessibility/mac/custom-text-editor.html [ Pass Timeout ]
 # webkit.org/b/271792 [ MacOS iOS ] 2x fast/url/* (layout-tests) are constant text failures
 [ Sonoma+ ] fast/url/idna2008.html [ Failure ]
 [ Sonoma+ ] fast/url/url-hostname-encoding.html [ Failure ]
+
+webkit.org/b/272001 media/media-source/media-managedmse-noresumeafterpause.html [ Pass Failure ]
