@@ -615,6 +615,12 @@ webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
 # Times out due to missing AccessibilityUIElement::takeFocus
 http/tests/accessibility/focus-text-field-in-iframe.html [ Skip ]
 
+# Fails due to missing AccessibilityUIElement::indexInTable() implementation.
+accessibility/table-insert-second-thead.html [ Skip ]
+
+# Fails due to missing AccessibilityUIElement::columns() implementation.
+accessibility/dynamic-table-row-column-indices.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

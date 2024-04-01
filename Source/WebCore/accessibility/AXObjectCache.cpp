@@ -1432,14 +1432,14 @@ void AXObjectCache::valueChanged(Element* element)
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-void AXObjectCache::columnIndexChanged(AccessibilityTableCell& cell)
+void AXObjectCache::columnIndexChanged(AccessibilityObject& object)
 {
-    postNotification(cell, AXColumnIndexChanged);
+    postNotification(object, AXColumnIndexChanged);
 }
 
-void AXObjectCache::rowIndexChanged(AccessibilityTableCell& cell)
+void AXObjectCache::rowIndexChanged(AccessibilityObject& object)
 {
-    postNotification(cell, AXRowIndexChanged);
+    postNotification(object, AXRowIndexChanged);
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
@@ -4234,6 +4234,8 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::AXColumnCount });
             break;
         case AXColumnIndexChanged:
+            tree->queueNodeUpdate(*notification.first, { { AXPropertyName::ColumnIndexRange, AXPropertyName::ColumnIndex } });
+            break;
         case AXColumnSpanChanged:
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::ColumnIndexRange });
             break;
@@ -4302,6 +4304,8 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::RoleDescription });
             break;
         case AXRowIndexChanged:
+            tree->queueNodeUpdate(*notification.first, { { AXPropertyName::RowIndexRange, AXPropertyName::RowIndex } });
+            break;
         case AXRowSpanChanged:
             tree->queueNodeUpdate(*notification.first, { AXPropertyName::RowIndexRange });
             break;
