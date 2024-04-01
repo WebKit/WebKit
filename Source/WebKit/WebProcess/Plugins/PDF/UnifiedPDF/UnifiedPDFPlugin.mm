@@ -1031,7 +1031,31 @@ double UnifiedPDFPlugin::initialScale() const
     return initialScale;
 }
 
+void UnifiedPDFPlugin::computeNormalizationFactor()
+{
+    auto actualSizeScale = scaleForActualSize();
+    m_scaleNormalizationFactor = 1.0 / actualSizeScale;
+}
+
+double UnifiedPDFPlugin::fromNormalizedScaleFactor(double normalizedScale) const
+{
+    return normalizedScale / m_scaleNormalizationFactor;
+}
+
+double UnifiedPDFPlugin::toNormalizedScaleFactor(double scale) const
+{
+    return scale * m_scaleNormalizationFactor;
+}
+
 double UnifiedPDFPlugin::scaleFactor() const
+{
+    // The return value is mapped to `pageScaleFactor`, so we want a value of 1 to match "actual size".
+    return toNormalizedScaleFactor(m_scaleFactor);
+}
+
+// This is a GraphicsLayerClient function. The return value is used to compute layer contentsScale, so we don't
+// want to use the normalized scale factor.
+float UnifiedPDFPlugin::pageScaleFactor() const
 {
     return m_scaleFactor;
 }
@@ -1114,6 +1138,8 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
     scheduleRenderingUpdate();
 
     m_view->pluginScaleFactorDidChange();
+
+    LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::setScaleFactor " << scale << " - new scale factor " << m_scaleFactor << " (exposed as normalized scale factor " << scaleFactor() << ") normalization factor " << m_scaleNormalizationFactor << " layout scale " << m_documentLayout.scale());
 }
 
 void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin)
@@ -1138,7 +1164,9 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
     if (scale != 1.0)
         m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
 
-    setScaleFactor(scale, origin);
+    auto internalScale = fromNormalizedScaleFactor(scale);
+    LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::setPageScaleFactor " << scale << " mapped to " << internalScale);
+    setScaleFactor(internalScale, origin);
 }
 
 bool UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
@@ -1202,6 +1230,7 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
     updateLayerHierarchy();
     updateLayerPositions();
     updateScrollingExtents();
+    computeNormalizationFactor();
 
     if (shouldAdjustScale == AdjustScaleAfterLayout::Yes && m_view) {
         auto initialScaleFactor = initialScale();
@@ -1210,6 +1239,8 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
 
         m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
     }
+
+    LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - scale " << m_scaleFactor << " normalization factor " << m_scaleNormalizationFactor << " layout scale " << m_documentLayout.scale());
 }
 
 FloatSize UnifiedPDFPlugin::centeringOffset() const

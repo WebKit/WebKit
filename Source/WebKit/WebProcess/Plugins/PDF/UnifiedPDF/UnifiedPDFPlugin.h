@@ -221,6 +221,12 @@ private:
     double scaleFactor() const override;
     double contentScaleFactor() const final;
 
+    // Scale normalization is used to map the internal "scale factor" to the exposed scaleFactor()/setPageScaleFactor()
+    // so that scale factor 1 shows at "Actual Size".
+    void computeNormalizationFactor();
+    double fromNormalizedScaleFactor(double) const;
+    double toNormalizedScaleFactor(double) const;
+
     void didBeginMagnificationGesture() override;
     void didEndMagnificationGesture() override;
     void setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin) final;
@@ -367,7 +373,7 @@ private:
     // GraphicsLayerClient
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
-    float pageScaleFactor() const override { return scaleFactor(); }
+    float pageScaleFactor() const override;
     bool layerNeedsPlatformContext(const WebCore::GraphicsLayer*) const override { return true; }
     void tiledBackingUsageChanged(const WebCore::GraphicsLayer*, bool /*usingTiledBacking*/) override;
     std::optional<float> customContentsScale(const WebCore::GraphicsLayer*) const override;
@@ -503,10 +509,12 @@ private:
     WebCore::ScrollingNodeID m_scrollingNodeID;
 
     double m_scaleFactor { 1 };
-    bool m_inMagnificationGesture { false };
+    double m_scaleNormalizationFactor { 1 };
+
     std::optional<WebCore::IntPoint> m_magnificationOriginInContentCoordinates;
     std::optional<WebCore::IntPoint> m_magnificationOriginInPluginCoordinates;
 
+    bool m_inMagnificationGesture { false };
     bool m_didAttachScrollingTreeNode { false };
     bool m_didScrollToFragment { false };
     bool m_didLayoutWithValidDocument { false };
