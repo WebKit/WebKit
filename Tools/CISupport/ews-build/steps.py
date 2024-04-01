@@ -2453,7 +2453,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     flunkOnFailure = False
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'tv', 'tv-sim', 'watch', 'watch-sim']
-    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress']
+    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'jsc', 'jsc-arm64']
     LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-skia', 'wpe-wk2', 'api-wpe', 'jsc-armv7', 'jsc-armv7-tests']
     WINDOWS_CHECKS = ['wincairo']
     EWS_WEBKIT_FAILED = 0
@@ -2499,14 +2499,6 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
 
     @defer.inlineCallbacks
     def checkPRStatus(self, pr_number):
-        passed_status_check = self.getProperty('passed_status_check')
-        failed_status_check = self.getProperty('failed_status_check')
-        pending_prs = self.getProperty('pending_prs')
-
-        all_pr_data = self.getProperty('all_pr_data')
-        pr_data = [i for i in all_pr_data if i['node']['number'] == pr_number][0]
-        pr_commit_status_data = pr_data['node']['commits']['nodes'][0]['commit']['status']
-
         yield self._addToLog('stdio', f'Checking the status of PR {pr_number}...\n')
         project = self.getProperty('project') or GITHUB_PROJECTS[0]
         owner, name = project.split('/', 1)
