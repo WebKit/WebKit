@@ -34,6 +34,7 @@
 #include "LocalFrame.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -299,13 +300,13 @@ static float numericPrefix(StringView key, StringView value, const InternalViewp
     else
         numericValue = charactersToFloat(value.characters16(), value.length(), parsedLength);
     if (!parsedLength) {
-        errorHandler(UnrecognizedViewportArgumentValueError, value, key);
+        errorHandler(ViewportErrorCode::UnrecognizedViewportArgumentValue, value, key);
         if (ok)
             *ok = false;
         return 0;
     }
     if (parsedLength < value.length())
-        errorHandler(TruncatedViewportArgumentValueError, value, key);
+        errorHandler(ViewportErrorCode::TruncatedViewportArgumentValue, value, key);
     if (ok)
         *ok = true;
     return numericValue;
@@ -361,7 +362,7 @@ static float findScaleValue(StringView key, StringView value, const InternalView
         return ViewportArguments::ValueAuto;
 
     if (numericValue > 10.0)
-        errorHandler(MaximumScaleTooLargeError, { }, { });
+        errorHandler(ViewportErrorCode::MaximumScaleTooLarge, { }, { });
 
     return numericValue;
 }
@@ -392,31 +393,35 @@ static ViewportFit parseViewportFitValue(StringView key, StringView value, const
     if (equalLettersIgnoringASCIICase(value, "cover"_s))
         return ViewportFit::Cover;
 
-    errorHandler(UnrecognizedViewportArgumentValueError, value, key);
+    errorHandler(ViewportErrorCode::UnrecognizedViewportArgumentValue, value, key);
 
     return ViewportFit::Auto;
 }
 
 static ASCIILiteral viewportErrorMessageTemplate(ViewportErrorCode errorCode)
 {
-    static constexpr ASCIILiteral errors[] = {
-        "Viewport argument key \"%replacement1\" not recognized and ignored."_s,
-        "Viewport argument value \"%replacement1\" for key \"%replacement2\" is invalid, and has been ignored."_s,
-        "Viewport argument value \"%replacement1\" for key \"%replacement2\" was truncated to its numeric prefix."_s,
-        "Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0."_s
-    };
-
-    return errors[errorCode];
+    switch (errorCode) {
+    case ViewportErrorCode::UnrecognizedViewportArgumentKey:
+        return "Viewport argument key \"%replacement1\" not recognized and ignored."_s;
+    case ViewportErrorCode::UnrecognizedViewportArgumentValue:
+        return "Viewport argument value \"%replacement1\" for key \"%replacement2\" is invalid, and has been ignored."_s;
+    case ViewportErrorCode::TruncatedViewportArgumentValue:
+        return "Viewport argument value \"%replacement1\" for key \"%replacement2\" was truncated to its numeric prefix."_s;
+    case ViewportErrorCode::MaximumScaleTooLarge:
+        return "Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0."_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "Unknown viewport error."_s;
 }
 
 static MessageLevel viewportErrorMessageLevel(ViewportErrorCode errorCode)
 {
     switch (errorCode) {
-    case TruncatedViewportArgumentValueError:
+    case ViewportErrorCode::TruncatedViewportArgumentValue:
         return MessageLevel::Warning;
-    case UnrecognizedViewportArgumentKeyError:
-    case UnrecognizedViewportArgumentValueError:
-    case MaximumScaleTooLargeError:
+    case ViewportErrorCode::UnrecognizedViewportArgumentKey:
+    case ViewportErrorCode::UnrecognizedViewportArgumentValue:
+    case ViewportErrorCode::MaximumScaleTooLarge:
         return MessageLevel::Error;
     }
 
@@ -433,7 +438,7 @@ static String viewportErrorMessage(ViewportErrorCode errorCode, StringView repla
     if (!replacement2.isNull())
         message = makeStringByReplacingAll(message, "%replacement2"_s, replacement2);
 
-    if ((errorCode == UnrecognizedViewportArgumentValueError || errorCode == TruncatedViewportArgumentValueError) && replacement1.contains(';'))
+    if ((errorCode == ViewportErrorCode::UnrecognizedViewportArgumentValue || errorCode == ViewportErrorCode::TruncatedViewportArgumentValue) && replacement1.contains(';'))
         message = makeString(message, " Note that ';' is not a separator in viewport values. The list should be comma-separated."_s);
 
     return message;
@@ -478,7 +483,7 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
     else if (equalLettersIgnoringASCIICase(key, "viewport-fit"_s))
         arguments.viewportFit = parseViewportFitValue(key, value, internalErrorHandler);
     else
-        internalErrorHandler(UnrecognizedViewportArgumentKeyError, key, { });
+        internalErrorHandler(ViewportErrorCode::UnrecognizedViewportArgumentKey, key, { });
 }
 
 void setViewportFeature(ViewportArguments& arguments, Document& document, StringView key, StringView value)
