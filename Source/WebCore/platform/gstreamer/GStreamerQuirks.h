@@ -55,7 +55,7 @@ public:
 
     virtual bool isPlatformSupported() const { return true; }
     virtual GstElement* createWebAudioSink() { return nullptr; }
-    virtual bool configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) { return false; }
+    virtual void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) { }
     virtual std::optional<bool> isHardwareAccelerated(GstElementFactory*) { return std::nullopt; }
     virtual std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const { return std::nullopt; }
     virtual Vector<String> disallowedWebAudioDecoders() const { return { }; }

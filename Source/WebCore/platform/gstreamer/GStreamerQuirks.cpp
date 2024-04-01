@@ -174,10 +174,8 @@ bool GStreamerQuirksManager::sinksRequireClockSynchronization() const
 void GStreamerQuirksManager::configureElement(GstElement* element, OptionSet<ElementRuntimeCharacteristics>&& characteristics)
 {
     GST_DEBUG("Configuring element %" GST_PTR_FORMAT, element);
-    for (const auto& quirk : m_quirks) {
-        if (quirk->configureElement(element, characteristics))
-            return;
-    }
+    for (const auto& quirk : m_quirks)
+        quirk->configureElement(element, characteristics);
 }
 
 std::optional<bool> GStreamerQuirksManager::isHardwareAccelerated(GstElementFactory* factory) const

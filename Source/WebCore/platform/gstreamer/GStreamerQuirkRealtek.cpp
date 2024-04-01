@@ -55,10 +55,10 @@ GstElement* GStreamerQuirkRealtek::createWebAudioSink()
     return sink;
 }
 
-bool GStreamerQuirkRealtek::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
+void GStreamerQuirkRealtek::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
     if (!characteristics.contains(ElementRuntimeCharacteristics::IsMediaStream))
-        return false;
+        return;
 
     if (gstObjectHasProperty(element, "media-tunnel")) {
         GST_INFO("Enable 'immediate-output' in rtkaudiosink");
@@ -69,8 +69,6 @@ bool GStreamerQuirkRealtek::configureElement(GstElement* element, const OptionSe
         GST_INFO("Enable 'lowdelay-mode' in rtk omx decoder");
         g_object_set(element, "lowdelay-mode", TRUE, nullptr);
     }
-
-    return true;
 }
 
 std::optional<bool> GStreamerQuirkRealtek::isHardwareAccelerated(GstElementFactory* factory)

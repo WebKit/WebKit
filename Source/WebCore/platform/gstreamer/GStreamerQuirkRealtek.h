@@ -32,7 +32,7 @@ public:
     const char* identifier() final { return "Realtek"; }
 
     GstElement* createWebAudioSink() final;
-    bool configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
+    void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;
     Vector<String> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
 

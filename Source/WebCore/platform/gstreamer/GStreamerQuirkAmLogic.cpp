@@ -48,21 +48,17 @@ GstElement* GStreamerQuirkAmLogic::createWebAudioSink()
     return sink;
 }
 
-bool GStreamerQuirkAmLogic::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
+void GStreamerQuirkAmLogic::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
     if (gstObjectHasProperty(element, "disable-xrun")) {
         GST_INFO("Set property disable-xrun to TRUE");
         g_object_set(element, "disable-xrun", TRUE, nullptr);
-    } else
-        return false;
+    }
 
     if (characteristics.contains(ElementRuntimeCharacteristics::HasVideo) && gstObjectHasProperty(element, "wait-video")) {
         GST_INFO("Set property wait-video to TRUE");
         g_object_set(element, "wait-video", TRUE, nullptr);
-    } else
-        return false;
-
-    return true;
+    }
 }
 
 #undef GST_CAT_DEFAULT

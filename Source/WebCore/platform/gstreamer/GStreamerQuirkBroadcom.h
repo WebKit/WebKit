@@ -32,7 +32,7 @@ public:
     GStreamerQuirkBroadcom();
     const char* identifier() final { return "Broadcom"; }
 
-    bool configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
+    void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
     std::optional<bool> isHardwareAccelerated(GstElementFactory*) final;
     std::optional<GstElementFactoryListType> audioVideoDecoderFactoryListType() const final { return GST_ELEMENT_FACTORY_TYPE_PARSER; }
     Vector<String> disallowedWebAudioDecoders() const final { return m_disallowedWebAudioDecoders; }
