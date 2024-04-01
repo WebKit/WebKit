@@ -1,0 +1,30 @@
+<script>
+    if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+}
+
+onload = async () => {
+  let img0 = await imageWithData(71, 153, '#25b426c5', '#572b57f1');
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

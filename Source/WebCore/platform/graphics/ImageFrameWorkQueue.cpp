@@ -64,9 +64,9 @@ void ImageFrameWorkQueue::start()
 
     m_workQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::QOS::Default);
 
-    m_workQueue->dispatch([protectedThis = Ref { *this }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = this->protectedSource(), protectedDecoder = Ref { *decoder }] () mutable {
+    m_workQueue->dispatch([protectedThis = Ref { *this }, protectedWorkQueue = Ref { *m_workQueue }, protectedSource = this->protectedSource(), protectedDecoder = Ref { *decoder }, protectedRequestQueue = Ref { requestQueue() }] () mutable {
         Request request;
-        while (protectedThis->requestQueue().dequeue(request)) {
+        while (protectedRequestQueue->dequeue(request)) {
             TraceScope tracingScope(AsyncImageDecodeStart, AsyncImageDecodeEnd);
 
             auto minimumDecodingDuration = protectedThis->minimumDecodingDurationForTesting();
