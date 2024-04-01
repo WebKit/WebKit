@@ -30,8 +30,8 @@
 
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/GRefPtrGtk.h>
+#include <WebCore/GdkSkiaUtilities.h>
 #include <WebCore/GtkUtilities.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
 
@@ -142,12 +142,12 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     if (image) {
 #if USE(CAIRO)
         RefPtr<cairo_surface_t> imageSurface(image->createCairoSurface());
+#else
+        auto skiaImage = image->createPlatformImage();
+        RefPtr<cairo_surface_t> imageSurface(skiaImageToCairoSurface(*skiaImage));
+#endif
         cairo_surface_set_device_offset(imageSurface.get(), -imageHotspot.x(), -imageHotspot.y());
         gtk_drag_set_icon_surface(m_drag.get(), imageSurface.get());
-#elif USE(SKIA)
-        notImplemented();
-        gtk_drag_set_icon_default(m_drag.get());
-#endif
     } else
         gtk_drag_set_icon_default(m_drag.get());
 }
