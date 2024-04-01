@@ -57,14 +57,6 @@ namespace WTF {
 
 template<> struct DefaultHash<WebKit::WebExtensionDataType> : IntHash<WebKit::WebExtensionDataType> { };
 template<> struct HashTraits<WebKit::WebExtensionDataType> : StrongEnumHashTraits<WebKit::WebExtensionDataType> { };
-template<> struct EnumTraits<WebKit::WebExtensionDataType> {
-    using values = EnumValues<
-        WebKit::WebExtensionDataType,
-        WebKit::WebExtensionDataType::Local,
-        WebKit::WebExtensionDataType::Session,
-        WebKit::WebExtensionDataType::Sync
-    >;
-};
 
 } // namespace WTF
 
