@@ -30,6 +30,7 @@
 #include "AirArg.h"
 #include "AirInst.h"
 #include "B3Type.h"
+#include <variant>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
@@ -38,11 +39,48 @@ class CCallValue;
 
 namespace Air {
 
+namespace CCallDetail {
+
+struct RegisterArgument {
+    Reg reg;
+    Type type;
+    void recordArgs(Vector<Arg>&) const;
+};
+
+#if CPU(ARM_THUMB2)
+struct RegisterPairArgument {
+    Reg hi, lo;
+    void recordArgs(Vector<Arg>&) const;
+};
+#endif
+
+struct StackArgument {
+    unsigned offset;
+    Type type;
+    void recordArgs(Vector<Arg>&) const;
+};
+
+using Argument = std::variant<
+    RegisterArgument,
+#if CPU(ARM_THUMB2)
+    RegisterPairArgument,
+#endif
+    StackArgument>;
+
+void recordAirArgs(Vector<Arg>& result, const Argument&);
+
+} // namespace CCallDetail
+
+
 class Code;
+
+JS_EXPORT_PRIVATE
+Vector<CCallDetail::Argument> computeCCallArguments(const Vector<Type>&);
 
 Vector<Arg> computeCCallingConvention(Code&, CCallValue*);
 
-size_t cCallResultCount(Code&, CCallValue*);
+size_t cCallResultCount(Code&, Type);
+size_t cCallResultCount(Code&, const CCallValue*);
 
 /*
  * On some platforms (well, on 32-bit platforms,) C functions can take arguments
@@ -51,15 +89,23 @@ size_t cCallResultCount(Code&, CCallValue*);
  * lower to Air.
  */
 
-// Return the number of Air::Args needed to marshall this Value to the C function
-size_t cCallArgumentRegisterCount(const Value*);
-// Return the width of the individual Air::Args needed to marshall this value
+// Return the number of Air::Args needed to marshall a value of this Type to the C function
+size_t cCallArgumentRegisterCount(Type);
+inline size_t cCallArgumentRegisterCount(const Value* v)
+{
+    return cCallArgumentRegisterCount(v->type());
+}
+
+// Return the width of the individual Air::Args needed to marshall a value of this Type
 Width cCallArgumentRegisterWidth(Type);
 
 Tmp cCallResult(Code&, CCallValue*, unsigned);
 
-Inst buildCCall(Code&, Value* origin, const Vector<Arg>&);
+Tmp cCallResult(CCallValue*, unsigned);
 
-} } } // namespace JSC::B3::Air
+Inst buildCCall(Code&, Value* origin, const Vector<Arg>&);
+}
+}
+} // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

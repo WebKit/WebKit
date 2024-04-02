@@ -35,33 +35,78 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
+namespace CCallDetail {
+
+void RegisterArgument::recordArgs(Vector<Arg>& result) const
+{
+    result.append(Tmp(reg));
+}
+
+#if CPU(ARM_THUMB2)
+void RegisterPairArgument::recordArgs(Vector<Arg>& result) const
+{
+    result.append(Tmp(lo));
+    result.append(Tmp(hi));
+}
+#endif
+
+void StackArgument::recordArgs(Vector<Arg>& result) const
+{
+    auto const width = cCallArgumentRegisterWidth(type);
+    auto const count = cCallArgumentRegisterCount(type);
+    ASSERT(count == 1 || isARM_THUMB2());
+
+    unsigned stackOffset = offset;
+    for (unsigned i = 0; i < count; i++) {
+        result.append(Arg::callArg(stackOffset));
+        stackOffset += bytesForWidth(width);
+    }
+}
+
+void recordAirArgs(Vector<Arg>& result, const Argument& arg)
+{
+    std::visit(
+        [&](auto&& cArg) -> void { cArg.recordArgs(result); },
+        arg
+    );
+}
+
+} // namespace CCallDetail
+
 namespace {
 
 template<typename BankInfo>
-void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, unsigned& stackOffset, Value* child)
+CCallDetail::Argument marshallCCallArgumentImpl(unsigned& argumentCount, unsigned& stackOffset, Type type)
 {
-    const auto registerCount = cCallArgumentRegisterCount(child);
-    if (is32Bit() && child->type() == Int64)
+    const auto registerCount = cCallArgumentRegisterCount(type);
+    if (isARM_THUMB2() && type == Int64)
         argumentCount = WTF::roundUpToMultipleOf<2>(argumentCount);
 
     if (argumentCount < BankInfo::numberOfArgumentRegisters) {
-        for (unsigned i = 0; i < registerCount; i++)
-            result.append(Tmp(BankInfo::toArgumentRegister(argumentCount++)));
-        return;
+        switch (registerCount) {
+        case 1:
+            return CCallDetail::RegisterArgument {
+                BankInfo::toArgumentRegister(argumentCount++),
+                type
+            };
+#if CPU(ARM_THUMB2)
+        case 2: {
+            auto const lo = BankInfo::toArgumentRegister(argumentCount++);
+            auto const hi = BankInfo::toArgumentRegister(argumentCount++);
+            return CCallDetail::RegisterPairArgument(hi, lo);
+        }
+#endif
+        default:
+            break;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     unsigned slotSize, slotAlignment;
     if ((isARM64() && isDarwin()) || isARM_THUMB2()) {
         // Arguments are packed to their natural alignment.
-        //
-        // In the rare case when the Arg width does not match the argument width
-        // (32-bit arm passing a 64-bit argument), we respect the width needed
-        // for each stack access:
-        slotSize = bytesForWidth(cCallArgumentRegisterWidth(child->type()));
-
-        // but the logical stack slot uses the natural alignment of the argument
-        slotAlignment = sizeofType(child->type());
-
+        slotSize = sizeofType(type);
+        slotAlignment = sizeofType(type);
     } else {
         // On other platforms, arguments are always aligned to machine word
         // boundaries.
@@ -70,26 +115,37 @@ void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, uns
     }
 
     stackOffset = WTF::roundUpToMultipleOf(slotAlignment, stackOffset);
-    for (unsigned i = 0; i < registerCount; i++) {
-        result.append(Arg::callArg(stackOffset));
-        stackOffset += slotSize;
-    }
+    unsigned offset = stackOffset;
+    stackOffset += slotSize;
+    return CCallDetail::StackArgument { offset, type };
 }
 
-void marshallCCallArgument(Vector<Arg> &result, unsigned& gpArgumentCount, unsigned& fpArgumentCount, unsigned& stackOffset, Value* child)
+CCallDetail::Argument marshallCCallArgument(unsigned& gpArgumentCount, unsigned& fpArgumentCount, unsigned& stackOffset, Type type)
 {
-    switch (bankForType(child->type())) {
+    switch (bankForType(type)) {
     case GP:
-        marshallCCallArgumentImpl<GPRInfo>(result, gpArgumentCount, stackOffset, child);
-        return;
+        return marshallCCallArgumentImpl<GPRInfo>(gpArgumentCount, stackOffset, type);
     case FP:
-        marshallCCallArgumentImpl<FPRInfo>(result, fpArgumentCount, stackOffset, child);
-        return;
+        return marshallCCallArgumentImpl<FPRInfo>(fpArgumentCount, stackOffset, type);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // anonymous namespace
+
+Vector<CCallDetail::Argument> computeCCallArguments(const Vector<Type>& types)
+{
+    Vector<CCallDetail::Argument> result;
+    unsigned gpArgumentCount = 0;
+    unsigned fpArgumentCount = 0;
+    unsigned stackOffset = 0;
+
+    for (auto type : types)
+        result.append(marshallCCallArgument(gpArgumentCount, fpArgumentCount, stackOffset, type));
+
+    return result;
+}
+
 
 Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
 {
@@ -98,15 +154,19 @@ Vector<Arg> computeCCallingConvention(Code& code, CCallValue* value)
     unsigned gpArgumentCount = 0;
     unsigned fpArgumentCount = 0;
     unsigned stackOffset = 0;
-    for (unsigned i = 1; i < value->numChildren(); ++i)
-        marshallCCallArgument(result, gpArgumentCount, fpArgumentCount, stackOffset, value->child(i));
+    for (unsigned i = 1; i < value->numChildren(); ++i) {
+        CCallDetail::recordAirArgs(
+            result,
+            marshallCCallArgument(gpArgumentCount, fpArgumentCount, stackOffset, value->child(i)->type())
+        );
+    }
     code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset));
     return result;
 }
 
-size_t cCallResultCount(Code& code, CCallValue* value)
+size_t cCallResultCount(Code& code, Type type)
 {
-    switch (value->type().kind()) {
+    switch (type.kind()) {
     case Void:
         return 0;
     case Int64:
@@ -116,9 +176,9 @@ size_t cCallResultCount(Code& code, CCallValue* value)
     case Tuple:
         // We only support tuples that return exactly two register sized ints.
         UNUSED_PARAM(code);
-        ASSERT(code.proc().resultCount(value->type()) == 2);
-        ASSERT(code.proc().typeAtOffset(value->type(), 0) == pointerType());
-        ASSERT(code.proc().typeAtOffset(value->type(), 1) == pointerType());
+        ASSERT(code.proc().resultCount(type) == 2);
+        ASSERT(code.proc().typeAtOffset(type, 0) == pointerType());
+        ASSERT(code.proc().typeAtOffset(type, 1) == pointerType());
         return 2;
     default:
         return 1;
@@ -126,9 +186,14 @@ size_t cCallResultCount(Code& code, CCallValue* value)
     }
 }
 
-size_t cCallArgumentRegisterCount(const Value* value)
+size_t cCallResultCount(Code& code, const CCallValue* value)
 {
-    switch (value->type().kind()) {
+    return cCallResultCount(code, value->type());
+}
+
+size_t cCallArgumentRegisterCount(Type type)
+{
+    switch (type.kind()) {
     case Void:
         return 0;
     case Int64:
