@@ -119,9 +119,12 @@ class RemoteWCLayerTreeHost;
 
 #if ENABLE(VIDEO)
 class RemoteMediaPlayerManagerProxy;
-class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
 class RemoteVideoFrameObjectHeap;
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
+class RemoteMediaRecorderManager;
 #endif
 
 #if ENABLE(WEBGL)
@@ -264,7 +267,7 @@ private:
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
     RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
 
@@ -357,7 +360,9 @@ private:
     bool m_isLastToCaptureAudio { false };
 
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
+#endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #endif
 #if ENABLE(MEDIA_STREAM)

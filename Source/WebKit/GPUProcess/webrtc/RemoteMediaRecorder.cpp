@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaRecorder.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
@@ -137,4 +137,4 @@ void RemoteMediaRecorder::setSharedVideoFrameMemory(SharedMemory::Handle&& handl
 
 #undef MESSAGE_CHECK
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)
