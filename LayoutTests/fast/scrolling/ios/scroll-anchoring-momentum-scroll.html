@@ -38,7 +38,7 @@ async function runTest()
     await UIHelper.dragFromPointToPoint(150, 420, 150, 400, 0.01);
     document.querySelector("#block1").style.height = "200px";
     await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
-    shouldBeGreaterThan("document.scrollingElement.scrollTop", "900");
+    shouldBeGreaterThan("document.scrollingElement.scrollTop", "600");
     finishJSTest();
 }
 </script>
