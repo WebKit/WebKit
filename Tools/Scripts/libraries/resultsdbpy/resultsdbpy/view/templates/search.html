@@ -33,7 +33,8 @@
 import {CommitBank} from '/assets/js/commit.js';
 import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, escapeHTML} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
-import {TESTS_LIMITS} from '/assets/js/constants.js';
+import {TESTS_LIMITS, DASHBOARD_QUERY} from '/assets/js/constants.js'
+import {Dashboard} from '/assets/js/dashboard.js';
 import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar} from '/assets/js/drawer.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {SearchBar} from '/assets/js/search.js';
@@ -44,6 +45,22 @@ import {DOM, REF, EventStream} from '/library/js/Ref.js';
 const DEFAULT_LIMIT = 100;
 const SUITES = JSON.parse('{{ suites|safe }}');
 const onCommitSearch = new EventStream();
+
+let dashboards = [];
+DASHBOARD_QUERY.forEach(query => {
+    let parameters = {...query};
+    delete parameters.title;
+    delete parameters.suite;
+    delete parameters.warnAfter;
+    delete parameters.expireAfter;
+    dashboards.push(new Dashboard(
+        query.title ? query.title : '?',
+        query.suite,
+        parameters,
+        query.warnAfter,
+        query.expireAfter,
+    ));
+});
 
 class SearchView {
     constructor() {    
@@ -109,8 +126,12 @@ class SearchView {
                                 }
                                 if (params.suite.length === 0)
                                     delete params.suite;
-                                if (params.test.length === 0)
+                                if (params.test.length === 0) {
                                     delete params.test;
+                                    dashboards.forEach(dashboard => {
+                                        dashboard.setEnabled(true);
+                                    });
+                                }
 
                                 const queryString = paramsToQuery(params);
                                 window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
@@ -154,10 +175,18 @@ class SearchView {
                         this.ref.state.children.push(child);
                     });
                 }
+
+                if (this.ref.state.children.length)
+                    dashboards.forEach(dashboard => {
+                        dashboard.setEnabled(false);
+                    });
             }
         });
     }
     reload() {
+        dashboards.forEach(dashboard => {
+            dashboard.reload();
+        });
         let params = queryToParams(document.URL.split('?')[1]);
         let limit = params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT;
 
@@ -311,6 +340,7 @@ DOM.inject(
                 const queryString = paramsToQuery(params);
                 window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
             }, SUITES)}
+            ${dashboards.map(dashboard=>{return dashboard.toString();})}
             ${view}
         </div>
     </div>`

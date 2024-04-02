@@ -28,5 +28,6 @@ const DEFAULT_ARCHITECTURE = {{ default_architecture }};
 const TESTS_LIMITS = JSON.parse('{{ tests_limits|safe }}');
 const SUITES_LIMITS = JSON.parse('{{ suites_limits|safe }}');
 const COMMITS_LIMITS = JSON.parse('{{ commits_limits|safe }}');
+const DASHBOARD_QUERY = JSON.parse('{{ dashboard_queries|safe }}');
 
-export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS}
+export {XCODE_CLOUD_SUITES, DEFAULT_ARCHITECTURE, TESTS_LIMITS, SUITES_LIMITS, COMMITS_LIMITS, DASHBOARD_QUERY}
