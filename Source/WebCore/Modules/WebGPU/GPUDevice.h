@@ -157,7 +157,10 @@ private:
     Ref<GPUQueue> m_queue;
     Ref<GPUPipelineLayout> m_autoPipelineLayout;
     HashSet<GPUBuffer*> m_buffersToUnmap;
+
+#if ENABLE(VIDEO)
     GPUExternalTexture* externalTextureForDescriptor(const GPUExternalTextureDescriptor&);
+#endif
 
     WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData> m_videoElementToExternalTextureMap;
     bool m_waitingForDeviceLostPromise { false };

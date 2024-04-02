@@ -7120,6 +7120,7 @@ header: <WebCore/Font.h>
 [Nested] enum class WebCore::FontVisibility : bool;
 [Nested] enum class WebCore::FontIsOrientationFallback : bool;
 
+#if ENABLE(VIDEO)
 header: <WebCore/CaptionUserPreferences.h>
 enum class WebCore::CaptionUserPreferencesDisplayMode : uint8_t {
     Automatic,
@@ -7127,6 +7128,7 @@ enum class WebCore::CaptionUserPreferencesDisplayMode : uint8_t {
     AlwaysOn,
     Manual,
 };
+#endif
 
 header: <WebCore/InspectorClient.h>
 enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
@@ -7741,6 +7743,7 @@ header: <WebCore/FilterFunction.h>
     SourceGraphic
 };
 
+#if ENABLE(VIDEO)
 class WebCore::SerializedPlatformDataCueValue {
     std::optional<WebCore::SerializedPlatformDataCueValue::Data> data()
 }
@@ -7752,5 +7755,6 @@ class WebCore::SerializedPlatformDataCueValue {
     String key;
     RetainPtr<NSLocale> locale;
     std::variant<std::nullptr_t, RetainPtr<NSString>, RetainPtr<NSDate>, RetainPtr<NSNumber>, RetainPtr<NSData>> value;
+#endif
 #endif
 };
