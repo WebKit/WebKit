@@ -135,10 +135,10 @@ public:
     WEBCORE_EXPORT Element* firstElementChild() const;
     WEBCORE_EXPORT Element* lastElementChild() const;
     WEBCORE_EXPORT unsigned childElementCount() const;
-    ExceptionOr<void> append(FixedVector<NodeOrString>&&);
-    ExceptionOr<void> prepend(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> append(FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<void> prepend(FixedVector<NodeOrStringOrTrustedScript>&&);
 
-    ExceptionOr<void> replaceChildren(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> replaceChildren(FixedVector<NodeOrStringOrTrustedScript>&&);
 
     ExceptionOr<void> ensurePreInsertionValidity(Node& newChild, Node* refChild);
     ExceptionOr<void> ensurePreInsertionValidityForPhantomDocumentFragment(NodeVector& newChildren, Node* refChild = nullptr);

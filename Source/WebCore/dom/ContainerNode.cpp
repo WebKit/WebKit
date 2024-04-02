@@ -1163,9 +1163,9 @@ unsigned ContainerNode::childElementCount() const
     return std::distance(children.begin(), { });
 }
 
-ExceptionOr<void> ContainerNode::append(FixedVector<NodeOrString>&& vector)
+ExceptionOr<void> ContainerNode::append(FixedVector<NodeOrStringOrTrustedScript>&& vector)
 {
-    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
+    auto result = convertNodesOrStringsOrTrustedScriptsIntoNodeVector(this, WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
 
@@ -1184,9 +1184,9 @@ ExceptionOr<void> ContainerNode::append(FixedVector<NodeOrString>&& vector)
     return { };
 }
 
-ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrString>&& vector)
+ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrStringOrTrustedScript>&& vector)
 {
-    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
+    auto result = convertNodesOrStringsOrTrustedScriptsIntoNodeVector(this, WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
 
@@ -1207,9 +1207,9 @@ ExceptionOr<void> ContainerNode::prepend(FixedVector<NodeOrString>&& vector)
 }
 
 // https://dom.spec.whatwg.org/#dom-parentnode-replacechildren
-ExceptionOr<void> ContainerNode::replaceChildren(FixedVector<NodeOrString>&& vector)
+ExceptionOr<void> ContainerNode::replaceChildren(FixedVector<NodeOrStringOrTrustedScript>&& vector)
 {
-    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(vector));
+    auto result = convertNodesOrStringsOrTrustedScriptsIntoNodeVector(this, WTFMove(vector));
     if (result.hasException())
         return result.releaseException();
     auto newChildren = result.releaseReturnValue();

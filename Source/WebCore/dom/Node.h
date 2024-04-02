@@ -72,6 +72,7 @@ class RenderStyle;
 class SVGQualifiedName;
 class ShadowRoot;
 class TouchEvent;
+class TrustedScript;
 class WebCoreOpaqueRoot;
 
 namespace Style {
@@ -90,7 +91,7 @@ enum class MutationObserverOptionType : uint8_t;
 using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
 using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
-using NodeOrString = std::variant<RefPtr<Node>, String>;
+using NodeOrStringOrTrustedScript = std::variant<RefPtr<Node>, String, RefPtr<TrustedScript>>;
 
 const int initialNodeVectorSize = 11; // Covers 99.5%. See webkit.org/b/80706
 typedef Vector<Ref<Node>, initialNodeVectorSize> NodeVector;
@@ -217,9 +218,9 @@ public:
     WEBCORE_EXPORT Element* nextElementSibling() const;
 
     // From the ChildNode - https://dom.spec.whatwg.org/#childnode
-    ExceptionOr<void> before(FixedVector<NodeOrString>&&);
-    ExceptionOr<void> after(FixedVector<NodeOrString>&&);
-    ExceptionOr<void> replaceWith(FixedVector<NodeOrString>&&);
+    ExceptionOr<void> before(FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<void> after(FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<void> replaceWith(FixedVector<NodeOrStringOrTrustedScript>&&);
     WEBCORE_EXPORT ExceptionOr<void> remove();
 
     // Other methods (not part of DOM)
@@ -767,9 +768,9 @@ protected:
     template<typename NodeClass>
     static NodeClass& traverseToRootNodeInternal(const NodeClass&);
 
-    // FIXME: Replace all uses of convertNodesOrStringsIntoNode by convertNodesOrStringsIntoNodeVector.
-    ExceptionOr<RefPtr<Node>> convertNodesOrStringsIntoNode(FixedVector<NodeOrString>&&);
-    ExceptionOr<NodeVector> convertNodesOrStringsIntoNodeVector(FixedVector<NodeOrString>&&);
+    // FIXME: Replace all uses of convertNodesOrStringsOrTrustedScriptsIntoNode by convertNodesOrStringsOrTrustedScriptsIntoNodeVector.
+    ExceptionOr<RefPtr<Node>> convertNodesOrStringsOrTrustedScriptsIntoNode(RefPtr<Node>, FixedVector<NodeOrStringOrTrustedScript>&&);
+    ExceptionOr<NodeVector> convertNodesOrStringsOrTrustedScriptsIntoNodeVector(RefPtr<Node>, FixedVector<NodeOrStringOrTrustedScript>&&);
 
 private:
     virtual PseudoId customPseudoId() const
