@@ -1987,7 +1987,12 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         if (!force || *force) {
-            setAttributeInternal(index, QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() }, emptyAtom(), InSynchronizationOfLazyAttribute::No);
+            QualifiedName name { nullQName() };
+            if (auto nodeName = findNodeName(Namespace::None, caseAdjustedQualifiedName); nodeName != NodeName::Unknown)
+                name = qualifiedNameForNodeName(nodeName);
+            else
+                name = QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
+            setAttributeInternal(index, WTFMove(name), emptyAtom(), InSynchronizationOfLazyAttribute::No);
             return true;
         }
         return false;
@@ -2008,8 +2013,14 @@ ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const A
     synchronizeAttribute(qualifiedName);
     auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
-    auto name = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
-    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
+    QualifiedName name { nullQName() };
+    if (index != ElementData::attributeNotFound)
+        name = attributeAt(index).name();
+    else if (auto nodeName = findNodeName(Namespace::None, caseAdjustedQualifiedName); nodeName != NodeName::Unknown)
+        name = qualifiedNameForNodeName(nodeName);
+    else
+        name = QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
+    setAttributeInternal(index, WTFMove(name), value, InSynchronizationOfLazyAttribute::No);
 
     return { };
 }

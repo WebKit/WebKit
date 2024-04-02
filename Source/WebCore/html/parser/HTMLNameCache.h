@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NodeName.h"
 #include "QualifiedName.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
@@ -89,6 +90,10 @@ private:
     {
         if (string.empty())
             return nullQName();
+
+        auto nodeName = findNodeName(Namespace::None, string);
+        if (nodeName != NodeName::Unknown)
+            return qualifiedNameForNodeName(nodeName);
 
         auto length = string.size();
         if (length > maxStringLengthForCache)
