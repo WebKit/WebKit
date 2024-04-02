@@ -39,6 +39,7 @@
 #include "MediaMetadata.h"
 #include "MediaSessionCoordinator.h"
 #include "Navigator.h"
+#include "NowPlayingInfo.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -432,6 +433,24 @@ void MediaSession::willPausePlayback()
     updateReportedPosition();
     m_playbackState = MediaSessionPlaybackState::Paused;
     notifyPositionStateObservers();
+}
+
+void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
+{
+    if (auto positionState = this->positionState()) {
+        info.duration = positionState->duration;
+        info.rate = positionState->playbackRate;
+    }
+    if (auto currentPosition = this->currentPosition())
+        info.currentTime = *currentPosition;
+
+    if (m_metadata && m_metadata->artworkImage()) {
+        ASSERT(m_metadata->artworkImage()->data(), "An image must always have associated data");
+        info.artwork = { { m_metadata->artworkSrc(), m_metadata->artworkImage()->mimeType(), m_metadata->artworkImage() } };
+        info.title = m_metadata->title();
+        info.artist = m_metadata->artist();
+        info.album = m_metadata->album();
+    }
 }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

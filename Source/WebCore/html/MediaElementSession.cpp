@@ -1266,18 +1266,26 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
 }
 #endif
 
-std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
+bool MediaElementSession::hasNowPlayingInfo() const
 {
-    auto* page = m_element.document().page();
-
-#if ENABLE(MEDIA_SESSION)
-    auto* session = mediaSession();
-#endif
-
 #if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_STREAM)
+    if (!canShowControlsManager(MediaElementSession::PlaybackControlsPurpose::NowPlaying))
+        return false;
+
+    RefPtr session = mediaSession();
     if (isDocumentPlayingSeveralMediaStreamsAndCapturing(m_element.document()) && (!session || !session->hasActiveActionHandlers()))
-        return { };
+        return false;
 #endif
+
+    return true;
+}
+
+std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
+{
+    if (!hasNowPlayingInfo())
+        return { };
+
+    RefPtr page = m_element.document().page();
 
     bool allowsNowPlayingControlsVisibility = page && !page->isVisibleAndActive();
     bool isPlaying = state() == PlatformMediaSession::State::Playing;
@@ -1297,27 +1305,13 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
         sourceApplicationIdentifier = presentingApplicationBundleIdentifier();
 #endif
 
+    NowPlayingInfo info { m_element.mediaSessionTitle(), emptyString(), emptyString(), sourceApplicationIdentifier, duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { } };
 #if ENABLE(MEDIA_SESSION)
-    auto positionState = session ? session->positionState() : std::nullopt;
-    auto currentPosition = session ? session->currentPosition() : std::nullopt;
-    if (positionState) {
-        duration = positionState->duration;
-        rate = positionState->playbackRate;
-    }
-    if (currentPosition)
-        currentTime = *currentPosition;
-    auto* sessionMetadata = session ? session->metadata() : nullptr;
-    if (sessionMetadata) {
-        std::optional<NowPlayingInfoArtwork> artwork;
-        if (sessionMetadata->artworkImage()) {
-            ASSERT(sessionMetadata->artworkImage()->data(), "An image must always have associated data");
-            artwork = NowPlayingInfoArtwork { sessionMetadata->artworkSrc(), sessionMetadata->artworkImage()->mimeType(), sessionMetadata->artworkImage() };
-        }
-        return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), sourceApplicationIdentifier, duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
-    }
+    if (RefPtr session = mediaSession())
+        session->updateNowPlayingInfo(info);
 #endif
 
-    return NowPlayingInfo { m_element.mediaSessionTitle(), emptyString(), emptyString(), sourceApplicationIdentifier, duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { } };
+    return info;
 }
 
 void MediaElementSession::updateMediaUsageIfChanged()

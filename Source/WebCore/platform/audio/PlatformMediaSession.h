@@ -126,6 +126,7 @@ public:
     void setActive(bool);
 
     using MediaType = WebCore::PlatformMediaSessionMediaType;
+    enum class PlaybackControlsPurpose { ControlsManager, NowPlaying, MediaSession };
 
     MediaType mediaType() const;
     MediaType presentationType() const;
@@ -229,7 +230,10 @@ public:
         virtual bool wantsToCaptureAudio() const = 0;
     };
 
-    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const;
+    std::optional<NowPlayingInfo> nowPlayingInfo() const;
+    bool isNowPlayingEligible() const;
+    WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlaybackControlsPurpose);
+
     virtual void updateMediaUsageIfChanged() { }
 
     virtual bool isLongEnoughForMainContent() const { return false; }
@@ -306,6 +310,10 @@ public:
     virtual void processIsSuspendedChanged() { }
 
     virtual bool shouldOverridePauseDuringRouteChange() const { return false; }
+
+    virtual bool isNowPlayingEligible() const { return false; }
+    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const;
+    virtual WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) { return nullptr; }
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
