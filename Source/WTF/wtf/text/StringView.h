@@ -673,15 +673,15 @@ inline AtomString StringView::toExistingAtomString() const
 inline float StringView::toFloat(bool& isValid) const
 {
     if (is8Bit())
-        return charactersToFloat(characters8(), m_length, &isValid);
-    return charactersToFloat(characters16(), m_length, &isValid);
+        return charactersToFloat(span8(), &isValid);
+    return charactersToFloat(span16(), &isValid);
 }
 
 inline double StringView::toDouble(bool& isValid) const
 {
     if (is8Bit())
-        return charactersToDouble(characters8(), m_length, &isValid);
-    return charactersToDouble(characters16(), m_length, &isValid);
+        return charactersToDouble(span8(), &isValid);
+    return charactersToDouble(span16(), &isValid);
 }
 
 inline String StringView::toStringWithoutCopying() const

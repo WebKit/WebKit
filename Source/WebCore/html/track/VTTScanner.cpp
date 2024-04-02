@@ -163,9 +163,9 @@ bool VTTScanner::scanFloat(float& number, bool* isNegative)
     size_t lengthOfFloat = Run(integerRun.start(), position(), m_is8Bit).length();
     bool validNumber;
     if (m_is8Bit)
-        number = charactersToFloat(integerRun.start(), lengthOfFloat, &validNumber);
+        number = charactersToFloat({ integerRun.start(), lengthOfFloat }, &validNumber);
     else
-        number = charactersToFloat(reinterpret_cast<const UChar*>(integerRun.start()), lengthOfFloat, &validNumber);
+        number = charactersToFloat({ reinterpret_cast<const UChar*>(integerRun.start()), lengthOfFloat }, &validNumber);
 
     if (!validNumber)
         number = std::numeric_limits<float>::max();

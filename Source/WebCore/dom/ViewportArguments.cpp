@@ -296,9 +296,9 @@ static float numericPrefix(StringView key, StringView value, const InternalViewp
     size_t parsedLength;
     float numericValue;
     if (value.is8Bit())
-        numericValue = charactersToFloat(value.characters8(), value.length(), parsedLength);
+        numericValue = charactersToFloat(value.span8(), parsedLength);
     else
-        numericValue = charactersToFloat(value.characters16(), value.length(), parsedLength);
+        numericValue = charactersToFloat(value.span16(), parsedLength);
     if (!parsedLength) {
         errorHandler(ViewportErrorCode::UnrecognizedViewportArgumentValue, value, key);
         if (ok)

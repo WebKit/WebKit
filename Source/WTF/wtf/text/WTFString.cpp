@@ -546,13 +546,13 @@ String String::fromCodePoint(char32_t codePoint)
 // String Operations
 
 template<typename CharacterType, TrailingJunkPolicy policy>
-static inline double toDoubleType(const CharacterType* data, size_t length, bool* ok, size_t& parsedLength)
+static inline double toDoubleType(std::span<const CharacterType> data, bool* ok, size_t& parsedLength)
 {
     size_t leadingSpacesLength = 0;
-    while (leadingSpacesLength < length && isUnicodeCompatibleASCIIWhitespace(data[leadingSpacesLength]))
+    while (leadingSpacesLength < data.size() && isUnicodeCompatibleASCIIWhitespace(data[leadingSpacesLength]))
         ++leadingSpacesLength;
 
-    double number = parseDouble(data + leadingSpacesLength, length - leadingSpacesLength, parsedLength);
+    double number = parseDouble(data.data() + leadingSpacesLength, data.size() - leadingSpacesLength, parsedLength);
     if (!parsedLength) {
         if (ok)
             *ok = false;
@@ -561,46 +561,46 @@ static inline double toDoubleType(const CharacterType* data, size_t length, bool
 
     parsedLength += leadingSpacesLength;
     if (ok)
-        *ok = policy == TrailingJunkPolicy::Allow || parsedLength == length;
+        *ok = policy == TrailingJunkPolicy::Allow || parsedLength == data.size();
     return number;
 }
 
-double charactersToDouble(const LChar* data, size_t length, bool* ok)
+double charactersToDouble(std::span<const LChar> data, bool* ok)
 {
     size_t parsedLength;
-    return toDoubleType<LChar, TrailingJunkPolicy::Disallow>(data, length, ok, parsedLength);
+    return toDoubleType<LChar, TrailingJunkPolicy::Disallow>(data, ok, parsedLength);
 }
 
-double charactersToDouble(const UChar* data, size_t length, bool* ok)
+double charactersToDouble(std::span<const UChar> data, bool* ok)
 {
     size_t parsedLength;
-    return toDoubleType<UChar, TrailingJunkPolicy::Disallow>(data, length, ok, parsedLength);
+    return toDoubleType<UChar, TrailingJunkPolicy::Disallow>(data, ok, parsedLength);
 }
 
-float charactersToFloat(const LChar* data, size_t length, bool* ok)
+float charactersToFloat(std::span<const LChar> data, bool* ok)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
     size_t parsedLength;
-    return static_cast<float>(toDoubleType<LChar, TrailingJunkPolicy::Disallow>(data, length, ok, parsedLength));
+    return static_cast<float>(toDoubleType<LChar, TrailingJunkPolicy::Disallow>(data, ok, parsedLength));
 }
 
-float charactersToFloat(const UChar* data, size_t length, bool* ok)
+float charactersToFloat(std::span<const UChar> data, bool* ok)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
     size_t parsedLength;
-    return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Disallow>(data, length, ok, parsedLength));
+    return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Disallow>(data, ok, parsedLength));
 }
 
-float charactersToFloat(const LChar* data, size_t length, size_t& parsedLength)
+float charactersToFloat(std::span<const LChar> data, size_t& parsedLength)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<LChar, TrailingJunkPolicy::Allow>(data, length, nullptr, parsedLength));
+    return static_cast<float>(toDoubleType<LChar, TrailingJunkPolicy::Allow>(data, nullptr, parsedLength));
 }
 
-float charactersToFloat(const UChar* data, size_t length, size_t& parsedLength)
+float charactersToFloat(std::span<const UChar> data, size_t& parsedLength)
 {
     // FIXME: This will return ok even when the string fits into a double but not a float.
-    return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Allow>(data, length, nullptr, parsedLength));
+    return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Allow>(data, nullptr, parsedLength));
 }
 
 const StaticString nullStringData { nullptr };

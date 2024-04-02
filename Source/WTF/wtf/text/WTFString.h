@@ -39,12 +39,12 @@ namespace WTF {
 
 // Declarations of string operations
 
-WTF_EXPORT_PRIVATE double charactersToDouble(const LChar*, size_t, bool* ok = nullptr);
-WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = nullptr);
-WTF_EXPORT_PRIVATE float charactersToFloat(const LChar*, size_t, bool* ok = nullptr);
-WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, bool* ok = nullptr);
-WTF_EXPORT_PRIVATE float charactersToFloat(const LChar*, size_t, size_t& parsedLength);
-WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, size_t& parsedLength);
+WTF_EXPORT_PRIVATE double charactersToDouble(std::span<const LChar>, bool* ok = nullptr);
+WTF_EXPORT_PRIVATE double charactersToDouble(std::span<const UChar>, bool* ok = nullptr);
+WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const LChar>, bool* ok = nullptr);
+WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const UChar>, bool* ok = nullptr);
+WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const LChar>, size_t& parsedLength);
+WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const UChar>, size_t& parsedLength);
 
 template<bool isSpecialCharacter(UChar), typename CharacterType> bool containsOnly(const CharacterType*, size_t);
 

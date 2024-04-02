@@ -41,37 +41,37 @@
 
 namespace WebCore {
 
-static Length parseLength(const UChar* data, unsigned length)
+static Length parseLength(std::span<const UChar> data)
 {
-    if (length == 0)
+    if (data.empty())
         return Length(1, LengthType::Relative);
 
     unsigned i = 0;
-    while (i < length && deprecatedIsSpaceOrNewline(data[i]))
+    while (i < data.size() && deprecatedIsSpaceOrNewline(data[i]))
         ++i;
-    if (i < length && (data[i] == '+' || data[i] == '-'))
+    if (i < data.size() && (data[i] == '+' || data[i] == '-'))
         ++i;
-    while (i < length && isASCIIDigit(data[i]))
+    while (i < data.size() && isASCIIDigit(data[i]))
         ++i;
     unsigned intLength = i;
-    while (i < length && (isASCIIDigit(data[i]) || data[i] == '.'))
+    while (i < data.size() && (isASCIIDigit(data[i]) || data[i] == '.'))
         ++i;
     unsigned doubleLength = i;
 
     // IE quirk: Skip whitespace between the number and the % character (20 % => 20%).
-    while (i < length && deprecatedIsSpaceOrNewline(data[i]))
+    while (i < data.size() && deprecatedIsSpaceOrNewline(data[i]))
         ++i;
 
     bool ok;
-    UChar next = (i < length) ? data[i] : ' ';
+    UChar next = (i < data.size()) ? data[i] : ' ';
     if (next == '%') {
         // IE quirk: accept decimal fractions for percentages.
-        double r = charactersToDouble(data, doubleLength, &ok);
+        double r = charactersToDouble(data.first(doubleLength), &ok);
         if (ok)
             return Length(r, LengthType::Percent);
         return Length(1, LengthType::Relative);
     }
-    auto r = parseInteger<int>(std::span { data, intLength });
+    auto r = parseInteger<int>(data.first(intLength));
     if (next == '*')
         return Length(r.value_or(1), LengthType::Relative);
     if (r)
@@ -105,7 +105,7 @@ UniqueArray<Length> newLengthArray(const String& string, int& len)
 
     auto upconvertedCharacters = StringView(str.get()).upconvertedCharacters();
     while ((pos2 = str->find(',', pos)) != notFound) {
-        r[i++] = parseLength(upconvertedCharacters + pos, pos2 - pos);
+        r[i++] = parseLength({ upconvertedCharacters + pos, pos2 - pos });
         pos = pos2+1;
     }
 
@@ -113,7 +113,7 @@ UniqueArray<Length> newLengthArray(const String& string, int& len)
 
     // IE Quirk: If the last comma is the last char skip it and reduce len by one.
     if (str->length()-pos > 0)
-        r[i] = parseLength(upconvertedCharacters + pos, str->length() - pos);
+        r[i] = parseLength({ upconvertedCharacters + pos, str->length() - pos });
     else
         len--;
 

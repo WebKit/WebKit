@@ -61,9 +61,9 @@ double CSSTokenizerInputStream::getDouble(unsigned start, unsigned end) const
     double result = 0.0;
     if (start < end) {
         if (m_string->is8Bit())
-            result = charactersToDouble(m_string->characters8() + m_offset + start, end - start, &isResultOK);
+            result = charactersToDouble(m_string->span8().subspan(m_offset + start, end - start), &isResultOK);
         else
-            result = charactersToDouble(m_string->characters16() + m_offset + start, end - start, &isResultOK);
+            result = charactersToDouble(m_string->span16().subspan(m_offset + start, end - start), &isResultOK);
     }
     // FIXME: It looks like callers ensure we have a valid number
     return isResultOK ? result : 0.0;

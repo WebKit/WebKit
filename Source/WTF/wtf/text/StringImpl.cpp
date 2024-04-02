@@ -811,15 +811,15 @@ Ref<StringImpl> StringImpl::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpac
 double StringImpl::toDouble(bool* ok)
 {
     if (is8Bit())
-        return charactersToDouble(characters8(), m_length, ok);
-    return charactersToDouble(characters16(), m_length, ok);
+        return charactersToDouble(span8(), ok);
+    return charactersToDouble(span16(), ok);
 }
 
 float StringImpl::toFloat(bool* ok)
 {
     if (is8Bit())
-        return charactersToFloat(characters8(), m_length, ok);
-    return charactersToFloat(characters16(), m_length, ok);
+        return charactersToFloat(span8(), ok);
+    return charactersToFloat(span16(), ok);
 }
 
 size_t StringImpl::find(const LChar* matchString, unsigned matchLength, unsigned start)
