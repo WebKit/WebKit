@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Bjoern Graf (bjoern.graf@gmail.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -3402,13 +3402,22 @@ static void startTimeoutTimer(Seconds duration)
     });
 }
 
+// The purpose of crashDueToJSCShellTimeout is solely to make it easier to distinquish
+// jsc shell test timeouts (i.e. crashDueToJSCShellTimeout is present in crash stack
+// traces) from other crashes.
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crashDueToJSCShellTimeout();
+void crashDueToJSCShellTimeout()
+{
+    CRASH();
+}
+
 static void timeoutCheckCallback(VM& vm)
 {
     RELEASE_ASSERT(&vm == s_vm);
     auto cpuTime = CPUTime::forCurrentThread();
     if (cpuTime >= s_maxAllowedCPUTime) {
         dataLog("Timed out after ", s_timeoutDuration, " seconds!\n");
-        CRASH();
+        crashDueToJSCShellTimeout();
     }
     auto remainingTime = s_maxAllowedCPUTime - cpuTime;
     startTimeoutTimer(remainingTime);
@@ -3988,7 +3997,8 @@ void CommandLine::parseArguments(int argc, char** argv)
 
             SignalAction (*exit)(Signal, SigInfo&, PlatformRegisters&) = [] (Signal, SigInfo&, PlatformRegisters&) {
                 dataLogLn("Signal handler hit. Exiting with status 0");
-                terminateProcess(EXIT_SUCCESS);
+                // Deliberate exit with a SIGKILL code greater than 130.
+                terminateProcess(137);
                 return SignalAction::ForceDefault;
             };
 

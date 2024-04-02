@@ -1,5 +1,7 @@
-//@ crashOK!
-//@ $skipModes << :lockdown
+//@ mustCrash!
+//@ skip if $buildType != "debug" # crash relies on a Debug ASSERT
+//@ $skipModes << :lockdown # because signal handler not supported.
+
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);
