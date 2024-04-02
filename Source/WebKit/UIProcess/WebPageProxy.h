@@ -1065,6 +1065,11 @@ public:
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void getTextIndicatorForID(WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+    void updateTextIndicatorStyleVisibilityForID(WTF::UUID&, bool, CompletionHandler<void()>&&);
+#endif
+
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResult(const DataDetectionResult&);
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
@@ -2184,6 +2189,10 @@ public:
     void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
     bool appHighlightsVisibility();
     CGRect appHighlightsOverlayRect();
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void removeTextIndicatorStyleForID(const WTF::UUID&);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

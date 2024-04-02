@@ -45,6 +45,7 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentInlines.h>
 #import <WebCore/DocumentMarkerController.h>
+#import <WebCore/DragImage.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -300,6 +301,21 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     editor.setIsGettingDictionaryPopupInfo(false);
     return dictionaryPopupInfo;
 }
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    m_unifiedTextReplacementController->getTextIndicatorForID(uuid, WTFMove(completionHandler));
+}
+
+void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+{
+    // FIXME: Turn on/off the visibility.
+
+    completionHandler();
+}
+
+#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
 void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&& options)
 {

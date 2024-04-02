@@ -378,6 +378,7 @@ struct PerWebProcessState {
 - (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
 
 - (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebKit::WebTextReplacementDataState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
+- (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid;
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;

@@ -681,6 +681,9 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    virtual void removeTextIndicatorStyleForID(const WTF::UUID&) = 0;
+#endif
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }
 
 #if PLATFORM(COCOA)

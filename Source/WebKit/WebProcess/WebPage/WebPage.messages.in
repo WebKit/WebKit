@@ -375,6 +375,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidConcludeDrop()
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    GetTextIndicatorForID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
+    UpdateTextIndicatorStyleVisibilityForID(WTF::UUID uuid, bool visible) -> ()
+#endif
+
     # Popup menu.
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
     SetTextForActivePopupMenu(int32_t index)

@@ -28,3 +28,4 @@
 #import <WebKitSwift/WKSLinearMediaPlayer.h>
 #import <WebKitSwift/WKSLinearMediaTypes.h>
 #import <WebKitSwift/WKSPreviewWindowController.h>
+#import <WebKitSwift/WKSTextStyleSourceDelegate.h>

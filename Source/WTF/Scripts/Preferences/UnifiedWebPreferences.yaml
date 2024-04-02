@@ -6476,6 +6476,20 @@ TextExtractionEnabled:
   defaultValue:
     WebKit:
       default: true
+      
+TextIndicatorStylingEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Text Indicator Styling"
+  humanReadableDescription: "Text Indicator Styling"
+  condition: ENABLE(UNIFIED_TEXT_REPLACEMENT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 TextInteractionEnabled:
   type: bool

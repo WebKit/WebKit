@@ -9030,6 +9030,15 @@ void WebPage::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&& comp
     return completionHandler(mainFrame->document()->loader()->lastNavigationWasAppInitiated());
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+void WebPage::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+{
+    send(Messages::WebPageProxy::RemoveTextIndicatorStyleForID(uuid));
+}
+
+#endif
+
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& info)

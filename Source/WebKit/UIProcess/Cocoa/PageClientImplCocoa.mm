@@ -154,6 +154,13 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void PageClientImplCocoa::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+{
+    [m_webView _removeTextIndicatorStyleForID:uuid];
+}
+#endif
+
 void PageClientImplCocoa::pageClosed()
 {
     m_alternativeTextUIController->clear();

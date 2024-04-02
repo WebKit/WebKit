@@ -195,6 +195,11 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#import "WKSTextStyleManager.h"
+#import "WebKitSwiftSoftLink.h"
+#endif
+
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/cocoa/TranslationUIServicesSoftLink.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
@@ -11722,6 +11727,30 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     }];
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid
+{
+    if (!_page->preferences().textIndicatorStylingEnabled())
+        return;
+
+    if (!_textStyleManager)
+        _textStyleManager = adoptNS([WebKit::allocWKSTextStyleManagerInstance() initWithDelegate:self]);
+
+    [_textStyleManager addTextIndicatorStyleForID:uuid];
+}
+
+- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid
+{
+    if (!_page->preferences().textIndicatorStylingEnabled())
+        return;
+
+    if (!_textStyleManager)
+        return;
+
+    [_textStyleManager removeTextIndicatorStyleForID:uuid];
+}
+#endif
+
 #if HAVE(UIFINDINTERACTION)
 
 - (void)find:(id)sender
@@ -13060,6 +13089,54 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 {
     return !!_suppressSelectionAssistantReasons;
 }
+
+#pragma mark - WKSTextStyleSourceDelegate
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (void)targetedPreviewForID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview *))completionHandler
+{
+    auto textUUID = WTF::UUID::fromNSUUID(uuid);
+    _page->getTextIndicatorForID(*textUUID, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] (std::optional<WebCore::TextIndicatorData> indicatorData) {
+
+        if (!indicatorData) {
+            completionHandler(nil);
+            return;
+        }
+
+        auto snapshot = indicatorData->contentImage;
+        if (!snapshot) {
+            completionHandler(nil);
+            return;
+        }
+
+        auto snapshotImage = snapshot->nativeImage();
+        if (!snapshotImage) {
+            completionHandler(nil);
+            return;
+        }
+
+        RetainPtr image = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage->platformImage().get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
+
+        RetainPtr targetedPreview = createTargetedPreview(image.get(), protectedSelf.get(), [protectedSelf containerForContextMenuHintPreviews], indicatorData->textBoundingRectInRootViewCoordinates, indicatorData->textRectsInBoundingRectCoordinates, nil);
+
+        completionHandler(targetedPreview.get());
+    });
+}
+
+- (void)updateTextIndicatorStyleVisibilityForID:(NSUUID *)uuid visible:(BOOL)visible completionHandler:(void (^)(void))completionHandler
+{
+    auto textUUID = WTF::UUID::fromNSUUID(uuid);
+    _page->updateTextIndicatorStyleVisibilityForID(*textUUID, visible, [completionHandler = makeBlockPtr(completionHandler)] () {
+        completionHandler();
+    });
+}
+
+- (UIView *)containingViewForTextIndicatorStyle
+{
+    return self;
+}
+
+#endif
 
 #pragma mark - BETextInteractionDelegate
 

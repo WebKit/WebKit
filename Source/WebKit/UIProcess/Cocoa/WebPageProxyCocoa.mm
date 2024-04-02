@@ -288,6 +288,27 @@ void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&&
 
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+void WebPageProxy::getTextIndicatorForID(WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    if (!hasRunningProcess())
+        return;
+
+    sendWithAsyncReply(Messages::WebPage::GetTextIndicatorForID(uuid), WTFMove(completionHandler));
+}
+
+void WebPageProxy::updateTextIndicatorStyleVisibilityForID(WTF::UUID& uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+{
+    if (!hasRunningProcess())
+        return;
+
+    sendWithAsyncReply(Messages::WebPage::UpdateTextIndicatorStyleVisibilityForID(uuid, visible), WTFMove(completionHandler));
+}
+
+#endif // UNIFIED_TEXT_REPLACEMENT
+
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::SharedBufferReference& bufferCopy)

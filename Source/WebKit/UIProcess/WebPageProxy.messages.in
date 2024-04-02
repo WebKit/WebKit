@@ -522,6 +522,10 @@ messages -> WebPageProxy {
     StoreAppHighlight(struct WebCore::AppHighlight info)
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    RemoveTextIndicatorStyleForID(WTF::UUID uuid)
+#endif
+
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisVoiceList() -> (Vector<WebKit::WebSpeechSynthesisVoice> voiceList) Synchronous
     SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> ()

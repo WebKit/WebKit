@@ -12420,6 +12420,16 @@ void WebPageProxy::storeAppHighlight(const WebCore::AppHighlight& highlight)
 }
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void WebPageProxy::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+{
+    MESSAGE_CHECK(m_process, uuid.isValid());
+
+    protectedPageClient()->removeTextIndicatorStyleForID(uuid);
+}
+#endif
+
+
 namespace {
 enum class CompletionCondition {
     Cancellation,

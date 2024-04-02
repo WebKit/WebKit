@@ -1765,6 +1765,15 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 }
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid
+{
+#if PLATFORM(IOS_FAMILY)
+    [_contentView removeTextIndicatorStyleForID:uuid];
+#endif
+}
+#endif
+
 - (WKPageRef)_pageForTesting
 {
     return toAPI(_page.get());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 
-#import <wtf/SoftLinking.h>
+@protocol WKSTextStyleSourceDelegate;
 
-SOFT_LINK_LIBRARY_FOR_HEADER(WebKit, WebKitSwift)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKGroupSessionObserver)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaPlayer)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTimeRange)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaTrack)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSPreviewWindowController)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSTextStyleManager)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionContainerItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionEditable)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionLink)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionTextItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionScrollableItem)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionImageItem)
+@interface WKSTextStyleManager : NSObject
+
+- (instancetype)initWithDelegate:(id <WKSTextStyleSourceDelegate>)delegate NS_DESIGNATED_INITIALIZER;
+- (void)addTextIndicatorStyleForID:(NSUUID *)uuid;
+- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
+@end
+
+#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
