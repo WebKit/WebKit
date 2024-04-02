@@ -33,6 +33,7 @@
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
 #import "DOMURL.h"
+#import "DeprecatedGlobalSettings.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
 #import "Editing.h"
@@ -425,15 +426,19 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
 
     ReplaceSelectionCommand::create(document.get(), WTFMove(fragment), ReplaceSelectionCommand::PreventNesting, EditAction::Insert)->apply();
 
-    auto primaryAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
-    auto primaryIdentifier = primaryAttachment->ensureUniqueIdentifier();
-    registerAttachmentIdentifier(primaryIdentifier, "image/heic"_s, makeString(primaryIdentifier, ".heic"_s), WTFMove(primaryBuffer));
-    source->setAttachmentElement(WTFMove(primaryAttachment));
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
+        auto primaryAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
+        auto primaryIdentifier = primaryAttachment->ensureUniqueIdentifier();
+        registerAttachmentIdentifier(primaryIdentifier, "image/heic"_s, makeString(primaryIdentifier, ".heic"_s), WTFMove(primaryBuffer));
+        source->setAttachmentElement(WTFMove(primaryAttachment));
 
-    auto fallbackAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
-    auto fallbackIdentifier = fallbackAttachment->ensureUniqueIdentifier();
-    registerAttachmentIdentifier(fallbackIdentifier, fallbackType, makeString(fallbackIdentifier, ".png"_s), WTFMove(fallbackBuffer));
-    image->setAttachmentElement(WTFMove(fallbackAttachment));
+        auto fallbackAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
+        auto fallbackIdentifier = fallbackAttachment->ensureUniqueIdentifier();
+        registerAttachmentIdentifier(fallbackIdentifier, fallbackType, makeString(fallbackIdentifier, ".png"_s), WTFMove(fallbackBuffer));
+        image->setAttachmentElement(WTFMove(fallbackAttachment));
+    }
+#endif
 }
 #endif
 
