@@ -738,8 +738,7 @@ void UnifiedTextReplacementController::getTextIndicatorForID(const WTF::UUID& uu
         return;
     }
 
-    RefPtr textIndicatorData = textIndicator->data();
-    completionHandler(WTFMove(textIndicatorData));
+    completionHandler(textIndicator->data());
 }
 
 } // namespace WebKit
