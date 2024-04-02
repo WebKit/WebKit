@@ -375,7 +375,7 @@ void AsyncScrollingCoordinator::stopAnimatedScroll(ScrollableArea& scrollableAre
 void AsyncScrollingCoordinator::setScrollbarLayoutDirection(ScrollableArea& scrollableArea, UserInterfaceLayoutDirection scrollbarLayoutDirection)
 {
     ASSERT(isMainThread());
-    ASSERT(page());
+    ASSERT(m_page);
     auto scrollingNodeID = scrollableArea.scrollingNodeID();
     if (!scrollingNodeID)
         return;
