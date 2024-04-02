@@ -45,6 +45,7 @@ JSTestEmptyDictionary.h:
 JSTestEnabledBySetting.h: TestEnabledBySettingSupplemental.idl
 TestEnabledBySettingSupplemental.idl:
 JSTestEnabledForContext.h: 
+JSTestEnumerationImplementedAsValue.h: 
 JSTestEventConstructor.h: 
 JSTestEventTarget.h: 
 JSTestException.h: 

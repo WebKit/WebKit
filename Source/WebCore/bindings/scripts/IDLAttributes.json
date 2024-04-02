@@ -252,7 +252,7 @@
             "unsupported": true
         },
         "ImplementedAs": {
-            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant"],
+            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "enum-value", "attribute", "operation", "constant"],
             "values": ["*"]
         },
         "ImplementedBy": {
