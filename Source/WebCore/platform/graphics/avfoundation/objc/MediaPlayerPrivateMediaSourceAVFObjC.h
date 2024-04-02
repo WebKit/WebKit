@@ -314,8 +314,10 @@ private:
     void setShouldMaintainAspectRatio(bool) final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& defaultSpatialTrackingLabel() const final;
+    void setDefaultSpatialTrackingLabel(const String&) final;
     const String& spatialTrackingLabel() const final;
-    void setSpatialTrackingLabel(String&&) final;
+    void setSpatialTrackingLabel(const String&) final;
     void updateSpatialTrackingLabel();
 #endif
 
@@ -387,6 +389,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     ProcessIdentity m_resourceOwner;
     bool m_shouldMaintainAspectRatio { true };
 #if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)

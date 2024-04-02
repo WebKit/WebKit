@@ -33,6 +33,7 @@
 #import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
 #import <AVFoundation/AVTime.h>
+#import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>

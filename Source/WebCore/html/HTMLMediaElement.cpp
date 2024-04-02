@@ -497,6 +497,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_categoryAtMostRecentPlayback(AudioSessionCategory::None)
     , m_modeAtMostRecentPlayback(AudioSessionMode::Default)
 #endif
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    , m_defaultSpatialTrackingLabelChangedObserver([this] (const String& defaultSpatialTrackingLabel) { defaultSpatialTrackingLabelChanged(defaultSpatialTrackingLabel); })
+#endif
 #if !RELEASE_LOG_DISABLED
     , m_logger(&document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
@@ -6667,6 +6670,10 @@ void HTMLMediaElement::visibilityStateChanged()
         auto page = document().page();
         player->setPageIsVisible(!m_elementIsHidden, page ? page->sceneIdentifier() : ""_s);
     }
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
 }
 
 bool HTMLMediaElement::requiresTextTrackRepresentation() const
@@ -7597,6 +7604,10 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     schedulePlaybackControlsManagerUpdate();
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     updateShouldContinueAfterNeedKey();
+#endif
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
 #endif
 
 #if ENABLE(WEB_AUDIO)
@@ -9335,18 +9346,41 @@ String HTMLMediaElement::localizedSourceType() const
     return { };
 }
 
-const String& HTMLMediaElement::spatialTrackingLabel() const
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void HTMLMediaElement::updateSpatialTrackingLabel()
 {
-    if (m_player)
-        return m_player->spatialTrackingLabel();
-    return emptyString();
+    if (!m_player)
+        return;
+
+    m_player->setSpatialTrackingLabel(m_spatialTrackingLabel);
+
+    auto page = document().protectedPage();
+    if (!page)
+        return;
+
+    m_player->setDefaultSpatialTrackingLabel(page->defaultSpatialTrackingLabel());
 }
 
-void HTMLMediaElement::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+const String& HTMLMediaElement::spatialTrackingLabel() const
+{
+    return m_spatialTrackingLabel;
+}
+
+void HTMLMediaElement::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+{
+    if (m_spatialTrackingLabel == spatialTrackingLabel)
+        return;
+    m_spatialTrackingLabel = spatialTrackingLabel;
+
+    m_player->setSpatialTrackingLabel(spatialTrackingLabel);
+}
+
+void HTMLMediaElement::defaultSpatialTrackingLabelChanged(const String& defaultSpatialTrackingLabel)
 {
     if (m_player)
-        m_player->setSpatialTrackingLabel(WTFMove(spatialTrackingLabel));
+        m_player->setDefaultSpatialTrackingLabel(defaultSpatialTrackingLabel);
 }
+#endif
 
 } // namespace WebCore
 

@@ -344,6 +344,10 @@ private:
 
     WebCore::FloatRect rootViewToWebView(const WebCore::FloatRect&) const final;
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& spatialTrackingLabel() const final;
+#endif
+
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }
 
     WeakObjCPtr<WKContentView> m_contentView;

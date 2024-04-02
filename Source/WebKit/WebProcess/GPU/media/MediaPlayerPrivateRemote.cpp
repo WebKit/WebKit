@@ -1773,12 +1773,27 @@ void MediaPlayerPrivateRemote::setShouldCheckHardwareSupport(bool value)
 }
 
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+const String& MediaPlayerPrivateRemote::defaultSpatialTrackingLabel() const
+{
+    return m_defaultSpatialTrackingLabel;
+}
+
+void MediaPlayerPrivateRemote::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+{
+    if (defaultSpatialTrackingLabel == m_defaultSpatialTrackingLabel)
+        return;
+
+    m_defaultSpatialTrackingLabel = WTFMove(defaultSpatialTrackingLabel);
+    connection().send(Messages::RemoteMediaPlayerProxy::SetDefaultSpatialTrackingLabel(m_defaultSpatialTrackingLabel), m_id);
+}
+
 const String& MediaPlayerPrivateRemote::spatialTrackingLabel() const
 {
     return m_spatialTrackingLabel;
 }
 
-void MediaPlayerPrivateRemote::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+void MediaPlayerPrivateRemote::setSpatialTrackingLabel(const String& spatialTrackingLabel)
 {
     if (spatialTrackingLabel == m_spatialTrackingLabel)
         return;
@@ -1786,6 +1801,7 @@ void MediaPlayerPrivateRemote::setSpatialTrackingLabel(String&& spatialTrackingL
     m_spatialTrackingLabel = WTFMove(spatialTrackingLabel);
     connection().send(Messages::RemoteMediaPlayerProxy::SetSpatialTrackingLabel(m_spatialTrackingLabel), m_id);
 }
+#endif
 
 void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
 {

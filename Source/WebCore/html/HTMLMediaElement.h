@@ -670,8 +670,13 @@ public:
 
     LayoutRect contentBoxRect() const { return mediaPlayerContentBoxRect(); }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void updateSpatialTrackingLabel();
+    void defaultSpatialTrackingLabelChanged(const String&);
+
     const String& spatialTrackingLabel() const;
-    void setSpatialTrackingLabel(String&&);
+    void setSpatialTrackingLabel(const String&);
+#endif
 
     void mediaSourceWasDetached();
 
@@ -1358,6 +1363,12 @@ private:
     RefPtr<MediaResourceSniffer> m_sniffer;
     bool m_networkErrorOccured { false };
     std::optional<ContentType> m_lastContentTypeUsed;
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    using DefaultSpatialTrackingLabelChangedObserver = WTF::Observer<void(String&&)>;
+    DefaultSpatialTrackingLabelChangedObserver m_defaultSpatialTrackingLabelChangedObserver;
+    String m_spatialTrackingLabel;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;

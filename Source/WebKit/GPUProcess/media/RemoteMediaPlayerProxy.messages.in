@@ -145,7 +145,10 @@ messages -> RemoteMediaPlayerProxy {
 
     SetShouldCheckHardwareSupport(bool value)
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    SetDefaultSpatialTrackingLabel(String defaultSpatialTrackingLabel);
     SetSpatialTrackingLabel(String spatialTrackingLabel);
+#endif
 }
 
 #endif

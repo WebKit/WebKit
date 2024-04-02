@@ -574,6 +574,13 @@ void PlaybackSessionManager::sendRemoteCommand(PlaybackSessionContextIdentifier 
     ensureModel(contextId).sendRemoteCommand(command, argument);
 }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionManager::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
+{
+    ensureModel(contextId).setSpatialTrackingLabel(label);
+}
+#endif
+
 #if !RELEASE_LOG_DISABLED
 void PlaybackSessionManager::sendLogIdentifierForMediaElement(HTMLMediaElement& mediaElement)
 {

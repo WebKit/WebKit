@@ -49,7 +49,7 @@ class WebAudioBufferList;
 
 namespace WebKit {
 
-class RemoteAudioDestinationProxy final : public WebCore::AudioDestinationResampler, public GPUProcessConnection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioDestinationProxy> {
+class RemoteAudioDestinationProxy : public WebCore::AudioDestinationResampler, public GPUProcessConnection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioDestinationProxy> {
     WTF_MAKE_NONCOPYABLE(RemoteAudioDestinationProxy);
 public:
     using AudioIOCallback = WebCore::AudioIOCallback;
@@ -64,8 +64,8 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioDestinationProxy>::controlBlock(); }
 
 private:
-    void startRendering(CompletionHandler<void(bool)>&&) final;
-    void stopRendering(CompletionHandler<void(bool)>&&) final;
+    void startRendering(CompletionHandler<void(bool)>&&) override;
+    void stopRendering(CompletionHandler<void(bool)>&&) override;
 
     void startRenderingThread();
     void stopRenderingThread();

@@ -85,11 +85,19 @@ public:
 #endif
 
 protected:
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void updateSpatialTrackingLabel();
+#endif
+
     PlaybackSessionInterfaceIOS(PlaybackSessionModel&);
     PlaybackSessionModel* m_playbackSessionModel { nullptr };
 
 private:
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_spatialTrackingLabel;
+    String m_defaultSpatialTrackingLabel;
+#endif
 };
 
 } // namespace WebCore

@@ -9456,6 +9456,14 @@ void WebPage::numberOfVisibilityAdjustmentRects(CompletionHandler<void(uint64_t)
     completion(page ? page->checkedElementTargetingController()->numberOfVisibilityAdjustmentRects() : 0);
 }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void WebPage::setDefaultSpatialTrackingLabel(const String& label)
+{
+    if (RefPtr page = corePage())
+        page->setDefaultSpatialTrackingLabel(label);
+}
+#endif
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

@@ -7958,6 +7958,30 @@ void Document::addDisplayChangedObserver(const DisplayChangedObserver& observer)
     m_displayChangedObservers.add(observer);
 }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+const String& Document::defaultSpatialTrackingLabel() const
+{
+    if (RefPtr page = protectedPage())
+        return page->defaultSpatialTrackingLabel();
+    return emptyString();
+}
+
+void Document::defaultSpatialTrackingLabelChanged(const String& defaultSpatialTrackingLabel)
+{
+    for (auto& observer : copyToVector(m_defaultSpatialTrackingLabelChangedObservers)) {
+        if (observer)
+            (*observer)(defaultSpatialTrackingLabel);
+    }
+}
+
+void Document::addDefaultSpatialTrackingLabelChangedObserver(const DefaultSpatialTrackingLabelChangedObserver& observer)
+{
+    ASSERT(!m_defaultSpatialTrackingLabelChangedObservers.contains(observer));
+    m_defaultSpatialTrackingLabelChangedObservers.add(observer);
+}
+#endif
+
+
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
 DeviceMotionController& Document::deviceMotionController() const

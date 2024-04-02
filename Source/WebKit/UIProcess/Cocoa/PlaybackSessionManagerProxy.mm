@@ -76,6 +76,14 @@ void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoR
         m_manager->setVideoReceiverEndpoint(m_contextId, endpoint);
 }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionModelContext::setSpatialTrackingLabel(const String& label)
+{
+    if (m_manager)
+        m_manager->setSpatialTrackingLabel(m_contextId, label);
+}
+#endif
+
 void PlaybackSessionModelContext::play()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
@@ -782,6 +790,14 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
     UNUSED_PARAM(endpoint);
 #endif
 }
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionManagerProxy::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
+{
+    if (m_page)
+        m_page->send(Messages::PlaybackSessionManager::SetSpatialTrackingLabel(contextId, label));
+}
+#endif
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
 {

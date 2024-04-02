@@ -1227,6 +1227,13 @@ FloatRect PageClientImpl::rootViewToWebView(const FloatRect& rect) const
     return [webView() convertRect:rect fromView:contentView().get()];
 }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+const String& PageClientImpl::spatialTrackingLabel() const
+{
+    return [contentView() spatialTrackingLabel];
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

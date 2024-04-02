@@ -740,8 +740,13 @@ public:
 
     void setVideoReceiverEndpoint(const VideoReceiverEndpoint&);
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& defaultSpatialTrackingLabel() const;
+    void setDefaultSpatialTrackingLabel(const String&);
+
     const String& spatialTrackingLabel() const;
-    void setSpatialTrackingLabel(String&&);
+    void setSpatialTrackingLabel(const String&);
+#endif
 
 private:
     MediaPlayer(MediaPlayerClient&);
@@ -790,6 +795,12 @@ private:
 #endif
     bool m_isGatheringVideoFrameMetadata { false };
     bool m_requiresRemotePlayback { false };
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_defaultSpatialTrackingLabel;
+    String m_spatialTrackingLabel;
+#endif
+
     String m_lastErrorMessage;
     ProcessIdentity m_processIdentity;
 };

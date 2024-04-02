@@ -1380,6 +1380,14 @@ public:
     using DisplayChangedObserver = WTF::Observer<void(PlatformDisplayID)>;
     void addDisplayChangedObserver(const DisplayChangedObserver&);
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& defaultSpatialTrackingLabel() const;
+    void defaultSpatialTrackingLabelChanged(const String&);
+
+    using DefaultSpatialTrackingLabelChangedObserver = WTF::Observer<void(const String&)>;
+    void addDefaultSpatialTrackingLabelChangedObserver(const DefaultSpatialTrackingLabelChangedObserver&);
+#endif
+
 #if ENABLE(FULLSCREEN_API)
     FullscreenManager* fullscreenManagerIfExists() { return m_fullscreenManager.get(); }
     const FullscreenManager* fullscreenManagerIfExists() const { return m_fullscreenManager.get(); }
@@ -2219,6 +2227,10 @@ private:
 
     WeakHashSet<MediaCanStartListener> m_mediaCanStartListeners;
     WeakHashSet<DisplayChangedObserver> m_displayChangedObservers;
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    WeakHashSet<DefaultSpatialTrackingLabelChangedObserver> m_defaultSpatialTrackingLabelChangedObservers;
+#endif
 
 #if ENABLE(FULLSCREEN_API)
     std::unique_ptr<FullscreenManager> m_fullscreenManager;

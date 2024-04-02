@@ -109,6 +109,9 @@ private:
     void setPlayingOnSecondScreen(bool) final;
     void sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&) final;
     void setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint&) final;
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void setSpatialTrackingLabel(const String&) final;
+#endif
 
     double playbackStartedTime() const final { return m_playbackStartedTime; }
     double duration() const final { return m_duration; }
@@ -266,6 +269,9 @@ private:
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
     void setVideoReceiverEndpoint(PlaybackSessionContextIdentifier, const WebCore::VideoReceiverEndpoint&);
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
+#endif
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(PlaybackSessionContextIdentifier, uint64_t);

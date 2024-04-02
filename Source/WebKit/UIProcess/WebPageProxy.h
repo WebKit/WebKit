@@ -2425,6 +2425,11 @@ public:
 
     template<typename M> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&);
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void setSpatialTrackingLabel(const String&);
+    const String& spatialTrackingLabel() const;
+#endif
+
 private:
     std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

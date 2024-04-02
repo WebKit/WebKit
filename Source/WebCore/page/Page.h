@@ -1109,6 +1109,11 @@ public:
     void setIsInSwipeAnimation(bool inSwipeAnimation) { m_inSwipeAnimation = inSwipeAnimation; }
     bool isInSwipeAnimation() const { return m_inSwipeAnimation; }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    WEBCORE_EXPORT void setDefaultSpatialTrackingLabel(const String&);
+    const String& defaultSpatialTrackingLabel() const { return m_defaultSpatialTrackingLabel; }
+#endif
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1493,6 +1498,10 @@ private:
 
 #if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
     bool m_appUsesCustomAccentColor { false };
+#endif
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_defaultSpatialTrackingLabel;
 #endif
 };
 

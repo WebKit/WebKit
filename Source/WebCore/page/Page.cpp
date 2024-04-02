@@ -4758,4 +4758,17 @@ bool Page::hasActiveImmersiveSession() const
 }
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(WEBXR)
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void Page::setDefaultSpatialTrackingLabel(const String& label)
+{
+    if (m_defaultSpatialTrackingLabel == label)
+        return;
+    m_defaultSpatialTrackingLabel = WTFMove(label);
+
+    forEachDocument([&] (Document& document) {
+        document.defaultSpatialTrackingLabelChanged(m_defaultSpatialTrackingLabel);
+    });
+}
+#endif
+
 } // namespace WebCore

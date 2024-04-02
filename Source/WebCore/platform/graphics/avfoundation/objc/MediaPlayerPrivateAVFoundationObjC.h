@@ -373,8 +373,13 @@ private:
     void clearVideoReceiverEndpoint();
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    const String& spatialTrackingLabel() const final;
-    void setSpatialTrackingLabel(String&&) final;
+    const String& defaultSpatialTrackingLabel() const;
+    void setDefaultSpatialTrackingLabel(const String&) final;
+
+    const String& spatialTrackingLabel() const;
+    void setSpatialTrackingLabel(const String&) final;
+
+    void updateSpatialTrackingLabel();
 #endif
 
     RetainPtr<AVURLAsset> m_avAsset;
@@ -507,6 +512,7 @@ private:
     TrackID m_currentTextTrackID { 0 };
     Ref<WorkQueue> m_targetQueue { WorkQueue::main() };
 #if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 #endif
 };

@@ -13881,6 +13881,18 @@ void WebPageProxy::numberOfVisibilityAdjustmentRects(CompletionHandler<void(uint
     sendWithAsyncReply(Messages::WebPage::NumberOfVisibilityAdjustmentRects(), WTFMove(completion));
 }
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void WebPageProxy::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+{
+    send(Messages::WebPage::SetDefaultSpatialTrackingLabel(spatialTrackingLabel));
+}
+
+const String& WebPageProxy::spatialTrackingLabel() const
+{
+    return protectedPageClient()->spatialTrackingLabel();
+}
+#endif
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

@@ -4516,8 +4516,7 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 - (UIView *)_fullScreenPlaceholderView
 {
 #if ENABLE(FULLSCREEN_API)
-    if ([_fullScreenWindowController isFullScreen])
-        return [_fullScreenWindowController webViewPlaceholder];
+    return [_fullScreenWindowController webViewPlaceholder];
 #endif // ENABLE(FULLSCREEN_API)
     return nil;
 }

@@ -443,6 +443,10 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_muted = player->muted();
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    m_defaultSpatialTrackingLabel = player->defaultSpatialTrackingLabel();
+    m_spatialTrackingLabel = player->spatialTrackingLabel();
+#endif
 }
 
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
@@ -1159,6 +1163,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     }
 #endif
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
+
     ASSERT(!m_currentTimeObserver);
     m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis = ThreadSafeWeakPtr { *this }, identifier = LOGIDENTIFIER, this] (CMTime cmTime) {
         ensureOnMainThread([weakThis, cmTime, this, identifier] {
@@ -1424,6 +1432,10 @@ void MediaPlayerPrivateAVFoundationObjC::didEnd()
 void MediaPlayerPrivateAVFoundationObjC::platformSetVisible(bool isVisible)
 {
     assertIsMainThread();
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
 
     if (!m_videoLayer)
         return;
@@ -4007,18 +4019,63 @@ void MediaPlayerPrivateAVFoundationObjC::audioOutputDeviceChanged()
 }
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
+const String& MediaPlayerPrivateAVFoundationObjC::defaultSpatialTrackingLabel() const
+{
+    return m_defaultSpatialTrackingLabel;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+{
+    if (m_defaultSpatialTrackingLabel == defaultSpatialTrackingLabel)
+        return;
+    m_defaultSpatialTrackingLabel = WTFMove(defaultSpatialTrackingLabel);
+    updateSpatialTrackingLabel();
+}
+
 const String& MediaPlayerPrivateAVFoundationObjC::spatialTrackingLabel() const
 {
     return m_spatialTrackingLabel;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::setSpatialTrackingLabel(String&& spatialTrackingLabel)
+void MediaPlayerPrivateAVFoundationObjC::setSpatialTrackingLabel(const String& spatialTrackingLabel)
 {
     if (m_spatialTrackingLabel == spatialTrackingLabel)
         return;
     m_spatialTrackingLabel = WTFMove(spatialTrackingLabel);
-    if (m_avPlayer)
-        [m_avPlayer _setSTSLabel:nsStringNilIfNull(m_spatialTrackingLabel)];
+    updateSpatialTrackingLabel();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
+{
+    assertIsMainThread();
+
+    if (!m_avPlayer)
+        return;
+
+    if (!m_spatialTrackingLabel.isNull()) {
+        [m_avPlayer _setSTSLabel:m_spatialTrackingLabel];
+        return;
+    }
+
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    if (!m_visible) {
+        // If the page is not visible, use the AudioSession's STS label.
+        [m_avPlayer _setSTSLabel:session.spatialTrackingLabel];
+        return;
+    }
+
+    if (m_videoLayer) {
+        // Let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
+        [m_avPlayer _setSTSLabel:nil];
+        return;
+    }
+
+    // If there is no AVPlayerLayer, use the default spatial tracking label if available, or
+    // the session's spatial tracking label if not.
+    if (!m_defaultSpatialTrackingLabel.isNull())
+        [m_avPlayer _setSTSLabel:m_defaultSpatialTrackingLabel];
+    else
+        [m_avPlayer _setSTSLabel:session.spatialTrackingLabel];
 }
 #endif
 

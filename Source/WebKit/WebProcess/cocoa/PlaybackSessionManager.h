@@ -175,6 +175,10 @@ private:
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
+#endif
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
