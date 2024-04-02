@@ -761,13 +761,11 @@ static RetainPtr<AXTextMarkerRef> previousTextMarker(AXObjectCache* cache, const
     return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value())));
 }
 
-- (NSAttributedString *)attributedStringForTextMarkerRange:(AXTextMarkerRangeRef)textMarkerRangeRef spellCheck:(AXCoreObject::SpellCheck)spellCheck
+static NSAttributedString *attributedStringForTextMarkerRange(const AXCoreObject& object, AXTextMarkerRangeRef textMarkerRangeRef, AXCoreObject::SpellCheck spellCheck)
 {
     if (!textMarkerRangeRef)
         return nil;
-
-    RefPtr<AXCoreObject> object = self.axBackingObject;
-    return object ? object->attributedStringForTextMarkerRange({ textMarkerRangeRef }, spellCheck).autorelease() : nil;
+    return object.attributedStringForTextMarkerRange({ textMarkerRangeRef }, spellCheck).autorelease();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -3566,11 +3564,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:AXAttributedStringForTextMarkerRangeAttribute])
-        return [self attributedStringForTextMarkerRange:textMarkerRange spellCheck:AXCoreObject::SpellCheck::Yes];
+        return attributedStringForTextMarkerRange(*backingObject, textMarkerRange, AXCoreObject::SpellCheck::Yes);
 
     if ([attribute isEqualToString:AXAttributedStringForTextMarkerRangeWithOptionsAttribute]) {
         if (textMarkerRange)
-            return [self attributedStringForTextMarkerRange:textMarkerRange spellCheck:AXCoreObject::SpellCheck::No];
+            return attributedStringForTextMarkerRange(*backingObject, textMarkerRange, AXCoreObject::SpellCheck::No);
 
         if (dictionary) {
             AXTextMarkerRangeRef textMarkerRange = nil;
@@ -3582,7 +3580,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             parameter = [dictionary objectForKey:@"AXSpellCheck"];
             if ([parameter isKindOfClass:[NSNumber class]] && [parameter boolValue])
                 spellCheck = AXCoreObject::SpellCheck::Yes;
-            return [self attributedStringForTextMarkerRange:textMarkerRange spellCheck:spellCheck];
+            return attributedStringForTextMarkerRange(*backingObject, textMarkerRange, spellCheck);
         }
 
         return nil;

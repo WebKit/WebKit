@@ -396,10 +396,10 @@ public:
     void recomputeIsIgnored(RenderObject*);
     void recomputeIsIgnored(Node*);
 
-    WEBCORE_EXPORT static void enableAccessibility();
-    WEBCORE_EXPORT static void disableAccessibility();
+    static void enableAccessibility();
+    static void disableAccessibility();
     static bool forceDeferredSpellChecking();
-    WEBCORE_EXPORT static void setForceDeferredSpellChecking(bool);
+    static void setForceDeferredSpellChecking(bool);
 #if PLATFORM(MAC)
     static bool shouldSpellCheck();
 #else
@@ -411,7 +411,7 @@ public:
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
 
-    WEBCORE_EXPORT static bool accessibilityEnabled();
+    static bool accessibilityEnabled();
     WEBCORE_EXPORT static bool accessibilityEnhancedUserInterfaceEnabled();
 #if ENABLE(AX_THREAD_TEXT_APIS)
     static bool useAXThreadTextApis() { return gAccessibilityThreadTextApisEnabled && !isMainThread(); }
@@ -751,9 +751,9 @@ private:
 
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
 
-    static bool gAccessibilityEnabled;
+    WEBCORE_EXPORT static std::atomic<bool> gAccessibilityEnabled;
     static bool gAccessibilityEnhancedUserInterfaceEnabled;
-    static bool gForceDeferredSpellChecking;
+    WEBCORE_EXPORT static std::atomic<bool> gForceDeferredSpellChecking;
 
     // FIXME: since the following only affects the behavior of isolated objects, we should move it into AXIsolatedTree in order to keep this class main thread only.
     static std::atomic<bool> gForceInitialFrameCaching;
@@ -843,6 +843,31 @@ inline Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const U& axIDs)
             return RefPtr { object };
         return std::nullopt;
     });
+}
+
+inline bool AXObjectCache::accessibilityEnabled()
+{
+    return gAccessibilityEnabled;
+}
+
+inline void AXObjectCache::enableAccessibility()
+{
+    gAccessibilityEnabled = true;
+}
+
+inline void AXObjectCache::disableAccessibility()
+{
+    gAccessibilityEnabled = false;
+}
+
+inline bool AXObjectCache::forceDeferredSpellChecking()
+{
+    return gForceDeferredSpellChecking;
+}
+
+inline void AXObjectCache::setForceDeferredSpellChecking(bool shouldForce)
+{
+    gForceDeferredSpellChecking = shouldForce;
 }
 
 class AXAttributeCacheEnabler final

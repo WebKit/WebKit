@@ -205,43 +205,13 @@ void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache* c
         cache->postTextStateChangeNotification(node.get(), type, text, position);
 }
 
-bool AXObjectCache::gAccessibilityEnabled = false;
+std::atomic<bool> AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
-bool AXObjectCache::gForceDeferredSpellChecking = false;
+std::atomic<bool> AXObjectCache::gForceDeferredSpellChecking = false;
 #if ENABLE(AX_THREAD_TEXT_APIS)
 std::atomic<bool> AXObjectCache::gAccessibilityThreadTextApisEnabled = false;
 #endif
 std::atomic<bool> AXObjectCache::gForceInitialFrameCaching = false;
-
-bool AXObjectCache::accessibilityEnabled()
-{
-    ASSERT(isMainThread());
-    return gAccessibilityEnabled;
-}
-
-void AXObjectCache::enableAccessibility()
-{
-    ASSERT(isMainThread());
-    gAccessibilityEnabled = true;
-}
-
-void AXObjectCache::disableAccessibility()
-{
-    ASSERT(isMainThread());
-    gAccessibilityEnabled = false;
-}
-
-bool AXObjectCache::forceDeferredSpellChecking()
-{
-    ASSERT(isMainThread());
-    return gForceDeferredSpellChecking;
-}
-
-void AXObjectCache::setForceDeferredSpellChecking(bool shouldForce)
-{
-    ASSERT(isMainThread());
-    gForceDeferredSpellChecking = shouldForce;
-}
 
 bool AXObjectCache::accessibilityEnhancedUserInterfaceEnabled()
 {
