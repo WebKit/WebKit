@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,11 @@ bool shouldAllowAutoFillForCellularIdentifiers(const URL& topURL)
         return false;
     }
 
+#if HAVE(DELAY_INIT_LINKING)
+    static NeverDestroyed cachedClient = adoptNS([[CoreTelephonyClient alloc] initWithQueue:dispatch_get_main_queue()]);
+#else
     static NeverDestroyed cachedClient = adoptNS([PAL::allocCoreTelephonyClientInstance() initWithQueue:dispatch_get_main_queue()]);
+#endif
     auto client = cachedClient->get();
 
     static NeverDestroyed<String> lastQueriedHost;

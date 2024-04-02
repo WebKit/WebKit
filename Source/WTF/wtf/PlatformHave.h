@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -1769,6 +1769,14 @@
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 100000) \
     || PLATFORM(VISION))
 #define HAVE_COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT 1
+#endif
+
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000) \
+    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 180000) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 110000) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 180000) \
+    || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 20000))
+#define HAVE_DELAY_INIT_LINKING 1
 #endif
 
 #if !defined(HAVE_ESIM_AUTOFILL_SYSTEM_SUPPORT) && \

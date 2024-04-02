@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -218,7 +218,10 @@ WK_NO_STATIC_INITIALIZERS_Release_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INIT
 WK_NO_STATIC_INITIALIZERS_Production__ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 WK_NO_STATIC_INITIALIZERS_Production_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 
-OTHER_LDFLAGS = $(inherited) -lsqlite3 -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(UNEXPORTED_SYMBOL_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) $(OTHER_LDFLAGS_SHARED_CACHE) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
+OTHER_LDFLAGS = $(inherited) -lsqlite3 -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(UNEXPORTED_SYMBOL_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) $(OTHER_LDFLAGS_DELAY_INIT) $(OTHER_LDFLAGS_SHARED_CACHE) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
+
+OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*] = -Wl,-delay_framework,CoreTelephony;
+OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*17.*] = ;
 
 REEXPORTED_FRAMEWORK_NAMES = WebKitLegacy;
 // Needed for bincompat (rdar://117360317)
