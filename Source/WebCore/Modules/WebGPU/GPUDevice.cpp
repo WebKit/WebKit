@@ -270,6 +270,7 @@ Ref<GPUSampler> GPUDevice::createSampler(const std::optional<GPUSamplerDescripto
     return GPUSampler::create(m_backing->createSampler(convertToBacking(samplerDescriptor)));
 }
 
+#if ENABLE(VIDEO)
 GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTextureDescriptor& descriptor)
 {
     m_videoElementToExternalTextureMap.removeNullReferences();
@@ -318,9 +319,11 @@ private:
     HTMLVideoElement& m_videoElement;
     WeakHashMap<HTMLVideoElement, WeakPtr<GPUExternalTexture>, WeakPtrImplWithEventTargetData> &m_weakMap;
 };
+#endif
 
 Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
+#if ENABLE(VIDEO)
     if (auto* externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
         externalTexture->undestroy();
 #if ENABLE(WEB_CODECS)
@@ -331,6 +334,7 @@ Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextur
         m_videoElementToExternalTextureMap.remove(*videoElement.get());
         return *externalTexture;
     }
+#endif
     auto externalTexture = GPUExternalTexture::create(m_backing->importExternalTexture(externalTextureDescriptor.convertToBacking()));
 #if ENABLE(VIDEO)
 #if ENABLE(WEB_CODECS)
