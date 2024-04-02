@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
-#include "JSDOMConvertStrings.h"
-#include "ScheduledAction.h"
-
-namespace WebCore {
-
-template<> struct Converter<IDLScheduledAction> : DefaultConverter<IDLScheduledAction> {
-    static std::unique_ptr<ScheduledAction> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, JSDOMGlobalObject& globalObject, const String& sink)
-    {
-        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        if (!value.isCallable()) {
-            auto code = Converter<IDLStringContextTrustedScriptAdaptor<IDLDOMString>>::convert(lexicalGlobalObject, value, sink);
-            RETURN_IF_EXCEPTION(scope, nullptr);
-            return ScheduledAction::create(globalObject.world(), WTFMove(code));
-        }
-
-        // The value must be an object at this point because no non-object values are callable.
-        ASSERT(value.isObject());
-        return ScheduledAction::create(globalObject.world(), JSC::Strong<JSC::JSObject> { vm, JSC::asObject(value) });
-    }
+[
+    Exposed=TestGlobalObject,
+    InterfaceName=TestScheduledActionReal
+] interface TestScheduledAction {
+    undefined method(ScheduledAction action);
 };
-
-}
-

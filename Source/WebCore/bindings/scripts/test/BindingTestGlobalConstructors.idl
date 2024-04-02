@@ -55,6 +55,7 @@ partial interface TestGlobalObject {
     attribute TestReadOnlyMapLikeConstructor TestReadOnlyMapLike;
     attribute TestReadOnlySetLikeConstructor TestReadOnlySetLike;
     attribute TestReportExtraMemoryCostConstructor TestReportExtraMemoryCost;
+    attribute TestScheduledActionConstructor TestScheduledActionReal;
     [Conditional=Condition1|Condition2] attribute TestSerializedScriptValueInterfaceConstructor TestSerializedScriptValueInterface;
     attribute TestSetLikeConstructor TestSetLike;
     attribute TestSetLikeWithOverriddenOperationsConstructor TestSetLikeWithOverriddenOperations;

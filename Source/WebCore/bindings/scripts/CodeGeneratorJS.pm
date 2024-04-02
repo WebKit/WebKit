@@ -7441,8 +7441,8 @@ sub JSValueToNative
     push(@conversionArguments, $thisObjectReference) if JSValueToNativeDOMConvertNeedsThisObject($type);
     push(@conversionArguments, $globalObjectReference) if JSValueToNativeDOMConvertNeedsGlobalObject($type);
     push(@conversionArguments, $exceptionThrower) if $exceptionThrower;
-    if ($type->extendedAttributes->{StringContext}) {
-        my $interfaceName = $interface->type->name;
+    if ($type->extendedAttributes->{StringContext} || $type->name eq "ScheduledAction") {
+        my $interfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
         if ($functionName) {
             push(@conversionArguments, "\"$interfaceName $functionName\"_s");
         } else {

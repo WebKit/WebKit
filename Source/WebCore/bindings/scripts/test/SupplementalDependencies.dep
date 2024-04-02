@@ -103,6 +103,7 @@ JSTestPromiseRejectionEvent.h:
 JSTestReadOnlyMapLike.h: 
 JSTestReadOnlySetLike.h: 
 JSTestReportExtraMemoryCost.h: 
+JSTestScheduledAction.h: 
 JSTestSerializedScriptValueInterface.h: 
 JSTestSetLike.h: 
 JSTestSetLikeWithOverriddenOperations.h: 
