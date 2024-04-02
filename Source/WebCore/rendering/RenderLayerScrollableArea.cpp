@@ -649,7 +649,6 @@ IntSize RenderLayerScrollableArea::reachableTotalContentsSize() const
 
 void RenderLayerScrollableArea::availableContentSizeChanged(AvailableSizeChangeReason reason)
 {
-    ALWAYS_LOG_WITH_STREAM(stream << " RenderLayerScrollableArea::availableContentSizeChanged " << scrollingNodeID());
     ScrollableArea::availableContentSizeChanged(reason);
 
     auto& renderer = m_layer.renderer();
@@ -658,7 +657,6 @@ void RenderLayerScrollableArea::availableContentSizeChanged(AvailableSizeChangeR
             renderBlock->setShouldForceRelayoutChildren(true);
         renderer.setNeedsLayout();
     }
-    ALWAYS_LOG_WITH_STREAM(stream << " RenderLayerScrollableArea::availableContentSizeChanged " << m_layer.renderer().needsLayout());
 }
 
 bool RenderLayerScrollableArea::shouldSuspendScrollAnimations() const
