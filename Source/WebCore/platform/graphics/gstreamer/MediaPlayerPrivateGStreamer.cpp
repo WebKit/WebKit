@@ -3493,6 +3493,10 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         }
     }
 
+    auto textureMapperFlags = m_textureMapperFlags;
+    if (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo))
+        textureMapperFlags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
+
     ++m_sampleCount;
 
     auto& proxy = m_nicosiaLayer->proxy();
@@ -3578,7 +3582,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
 #endif
                 }
                 return WTFMove(object);
-            }, m_textureMapperFlags);
+            }, textureMapperFlags);
 
         auto* quarkData = static_cast<DMABufMemoryQuarkData*>(gst_mini_object_get_qdata(GST_MINI_OBJECT_CAST(memory.get()), dmabuf_memory_quark()));
         if (quarkData)
@@ -3671,7 +3675,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
             auto object = swapchainBuffer->createDMABufObject(initialObject.handle);
             object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
             return object;
-        }, m_textureMapperFlags);
+        }, textureMapperFlags);
 }
 #endif // USE(TEXTURE_MAPPER_DMABUF)
 
