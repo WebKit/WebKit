@@ -809,7 +809,8 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
             if (entryName.endsWith("_ArrayLength"_s)) {
                 bufferTypeOverride = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength);
                 auto shortName = entryName.substring(2, entryName.length() - (sizeof("_ArrayLength") + 1));
-                minBindingSize = entryMap.find(shortName)->value;
+                if (auto it = entryMap.find(shortName); it != entryMap.end())
+                    minBindingSize = it->value;
             } else
                 entryMap.set(entryName, entry.webBinding);
 
