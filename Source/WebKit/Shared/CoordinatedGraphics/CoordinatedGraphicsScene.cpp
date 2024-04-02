@@ -486,7 +486,10 @@ void CoordinatedGraphicsScene::detach()
 const Vector<WebCore::IntRect>& CoordinatedGraphicsScene::lastDamagedRects() const
 {
     static const Vector<WebCore::IntRect> noRects;
-    return m_lastDamagedRectsAreUnreliable ? noRects : m_lastDamagedRects;
+    static const Vector<WebCore::IntRect> emptyRect = { WebCore::IntRect(0, 0, 0, 0) };
+    return !m_settings.propagateDamagingInformation() || m_lastDamagedRectsAreUnreliable
+        ? noRects
+        : (m_lastDamagedRects.isEmpty() ? emptyRect : m_lastDamagedRects);
 }
 
 void CoordinatedGraphicsScene::recordDamage(FloatRect damagedRect)
