@@ -24,5 +24,6 @@
 */
 
 [
-    RethrowException
+    RethrowException,
+    IsWeakCallback
 ] callback CreateHTMLCallback = DOMString? (DOMString input, any... arguments);

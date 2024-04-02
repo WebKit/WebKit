@@ -27,6 +27,7 @@
 #include "TrustedTypePolicyFactory.h"
 
 #include "ContentSecurityPolicy.h"
+#include "ContextDestructionObserver.h"
 #include "HTMLNames.h"
 #include "JSDOMConvertObject.h"
 #include "JSTrustedHTML.h"
@@ -43,10 +44,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TrustedTypePolicyFactory);
 
-Ref<TrustedTypePolicyFactory> TrustedTypePolicyFactory::create()
+Ref<TrustedTypePolicyFactory> TrustedTypePolicyFactory::create(ScriptExecutionContext& context)
 {
-    return adoptRef(*new TrustedTypePolicyFactory());
+    return adoptRef(*new TrustedTypePolicyFactory(context));
 }
+
+TrustedTypePolicyFactory::TrustedTypePolicyFactory(ScriptExecutionContext& context)
+    : ContextDestructionObserver(&context)
+{ }
 
 ExceptionOr<Ref<TrustedTypePolicy>> TrustedTypePolicyFactory::createPolicy(ScriptExecutionContext& context, const String& policyName, const TrustedTypePolicyOptions& options)
 {

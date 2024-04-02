@@ -25,7 +25,9 @@
 
 [
     EnabledBySetting=TrustedTypesEnabled,
-    Exposed=(Window,Worker)
+    Exposed=(Window,Worker),
+    GenerateIsReachable=ImplScriptExecutionContext,
+    JSCustomMarkFunction,
 ]
 interface TrustedTypePolicyFactory {
     [CallWith=CurrentScriptExecutionContext] TrustedTypePolicy createPolicy(DOMString policyName, optional TrustedTypePolicyOptions policyOptions = {});

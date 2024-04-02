@@ -725,6 +725,8 @@ bindings/js/JSTextCustom.cpp
 bindings/js/JSTextTrackCueCustom.cpp
 bindings/js/JSTrackCustom.cpp
 bindings/js/JSTreeWalkerCustom.cpp
+bindings/js/JSTrustedTypePolicyCustom.cpp
+bindings/js/JSTrustedTypePolicyFactoryCustom.cpp
 bindings/js/JSCSSStyleValueCustom.cpp
 bindings/js/JSCSSTransformComponentCustom.cpp
 bindings/js/JSUndoItemCustom.cpp

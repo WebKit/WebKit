@@ -158,6 +158,8 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
+    removeSupplement("WorkerGlobalScopeTrustedTypes"_s);
+
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
 
