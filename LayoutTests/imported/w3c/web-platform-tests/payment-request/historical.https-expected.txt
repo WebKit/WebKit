@@ -1,11 +1,11 @@
 
 PASS paymentRequestID in PaymentRequest
 PASS paymentRequestID in PaymentResponse
-PASS careOf in PaymentAddress
+FAIL careOf in ContactAddress undefined is not an object (evaluating 'window[interf].prototype')
 PASS totalAmount in PaymentResponse
 PASS paymentRequestId in PaymentRequest
 PASS paymentRequestId in PaymentResponse
-PASS languageCode in PaymentAddress
+FAIL languageCode in ContactAddress undefined is not an object (evaluating 'window[interf].prototype')
 PASS allowPaymentRequest in HTMLIFrameElement
 PASS supportedMethods must not support sequence<DOMString>
 

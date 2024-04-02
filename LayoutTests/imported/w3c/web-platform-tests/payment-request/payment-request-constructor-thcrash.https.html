@@ -6,24 +6,6 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script>
-/**
-    dictionary PaymentItem {
-        required DOMString             label;
-        required PaymentCurrencyAmount amount;
-                 boolean               pending = false;
-    };
-
-    dictionary PaymentDetailsBase {
-        sequence<PaymentItem>            displayItems;
-        sequence<PaymentShippingOption>  shippingOptions;
-        sequence<PaymentDetailsModifier> modifiers;
-    };
-
-    dictionary PaymentCurrencyAmount {
-        required DOMString currency;
-        required DOMString value;
-    };
-**/
 
 "use strict";
 const ABUSIVE_AMOUNT = 100000;
