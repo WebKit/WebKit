@@ -251,7 +251,7 @@ RetainPtr<ASAuthorizationController> WebAuthenticatorCoordinatorProxy::construct
 {
     RetainPtr<NSArray> requests;
     WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions &options) {
-        requests = requestsForRegisteration(options, requestData.frameInfo.securityOrigin);
+        requests = requestsForRegistration(options, requestData.frameInfo.securityOrigin);
     }, [&](const PublicKeyCredentialRequestOptions &options) {
         requests = requestsForAssertion(options, requestData.frameInfo.securityOrigin, requestData.parentOrigin);
     });
@@ -260,7 +260,7 @@ RetainPtr<ASAuthorizationController> WebAuthenticatorCoordinatorProxy::construct
     return adoptNS([allocASAuthorizationControllerInstance() initWithAuthorizationRequests:requests.get()]);
 }
 
-RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegisteration(const PublicKeyCredentialCreationOptions &options, const WebCore::SecurityOriginData& callerOrigin)
+RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(const PublicKeyCredentialCreationOptions &options, const WebCore::SecurityOriginData& callerOrigin)
 {
     RetainPtr<NSMutableArray<ASAuthorizationRequest *>> requests = adoptNS([[NSMutableArray alloc] init]);
     bool includeSecurityKeyRequest = true;

@@ -44,7 +44,7 @@ struct TzoneBmallocType {
 
 JS_EXPORT_PRIVATE void TZoneInit(const char** darwinEnvp);
 JS_EXPORT_PRIVATE void TZoneRegisterTypes(const TzoneBmallocType* begin, const TzoneBmallocType* end);
-JS_EXPORT_PRIVATE void TZoneRegisterationDone(void);
+JS_EXPORT_PRIVATE void TZoneRegistrationDone(void);
 
 #ifdef __cplusplus
 }

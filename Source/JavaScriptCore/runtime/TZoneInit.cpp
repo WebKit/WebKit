@@ -46,7 +46,7 @@ void TZoneRegisterTypes([[maybe_unused]] const TzoneBmallocType* begin, [[maybe_
     WTF_TZONE_REGISTER_TYPES(begin, end);
 }
 
-void TZoneRegisterationDone()
+void TZoneRegistrationDone()
 {
     WTF_TZONE_REGISTRATION_DONE();
 }
