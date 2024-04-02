@@ -1341,12 +1341,14 @@ String WebFrame::frameTextForTesting(bool includeSubframes)
         return builder.toString();
 
     for (auto* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (is<RemoteFrame>(*child)) {
-            builder.append(m_page->sendSync(Messages::WebPageProxy::FrameTextForTesting(child->frameID())).takeReplyOr("Sending WebPageProxy::FrameTextForTesting failed"_s));
-        } else if (RefPtr childWebFrame = fromCoreFrame(*child); childWebFrame && !childWebFrame->innerText().isNull()) {
-            builder.append("\n--------\nFrame: '"_s, childWebFrame->name(), "'\n--------\n"_s);
-            builder.append(childWebFrame->frameTextForTesting(includeSubframes));
-        }
+        RefPtr childWebFrame = fromCoreFrame(*child);
+        if (!childWebFrame)
+            continue;
+        auto frameName = makeAtomString("\n--------\nFrame: '"_s, childWebFrame->name(), "'\n--------\n"_s);
+        if (is<RemoteFrame>(*child))
+            builder.append(frameName, m_page->sendSync(Messages::WebPageProxy::FrameTextForTesting(child->frameID())).takeReplyOr("Sending WebPageProxy::FrameTextForTesting failed"_s));
+        else if (!childWebFrame->innerText().isNull())
+            builder.append(frameName, childWebFrame->frameTextForTesting(includeSubframes));
     }
 
     return builder.toString();
