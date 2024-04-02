@@ -1636,6 +1636,8 @@ private:
                 fixEdge<StringUse>(node->child2());
                 if (node->child3()->shouldSpeculateString())
                     fixEdge<StringUse>(node->child3());
+                else if (node->child3()->shouldSpeculateInt32())
+                    fixEdge<Int32Use>(node->child3());
                 break;
             }
 
@@ -1669,6 +1671,8 @@ private:
             fixEdge<StringUse>(node->child2());
             if (node->child3()->shouldSpeculateString())
                 fixEdge<StringUse>(node->child3());
+            else if (node->child3()->shouldSpeculateInt32())
+                fixEdge<Int32Use>(node->child3());
             break;
         }
             
