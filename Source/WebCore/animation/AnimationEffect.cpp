@@ -35,7 +35,7 @@
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 
-namespace WebCore {
+amespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationEffect);
 
