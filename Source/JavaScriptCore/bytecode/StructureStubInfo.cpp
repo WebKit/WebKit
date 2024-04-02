@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -787,26 +787,6 @@ void StructureStubInfo::checkConsistency()
     }
 }
 #endif // ASSERT_ENABLED
-
-RefPtr<PolymorphicAccessJITStubRoutine> SharedJITStubSet::getStatelessStub(StatelessCacheKey key) const
-{
-    return m_statelessStubs.get(key);
-}
-
-void SharedJITStubSet::setStatelessStub(StatelessCacheKey key, Ref<PolymorphicAccessJITStubRoutine> stub)
-{
-    m_statelessStubs.add(key, WTFMove(stub));
-}
-
-RefPtr<InlineCacheHandler> SharedJITStubSet::getSlowPathHandler(AccessType type) const
-{
-    return m_slowPathHandlers[static_cast<unsigned>(type)];
-}
-
-void SharedJITStubSet::setSlowPathHandler(AccessType type, Ref<InlineCacheHandler> handler)
-{
-    m_slowPathHandlers[static_cast<unsigned>(type)] = WTFMove(handler);
-}
 
 #endif // ENABLE(JIT)
 

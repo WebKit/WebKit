@@ -1667,6 +1667,10 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
         removeDeadCompilerWorklistEntries();
     }
+
+    // Keep in mind that we may use AtomStringTable, and this is totally OK since the main thread is suspended.
+    // End phase itself can run on main thread or concurrent collector thread. But whenever running this,
+    // mutator is suspended so there is no race condition.
     deleteUnmarkedCompiledCode();
 
     notifyIncrementalSweeper();

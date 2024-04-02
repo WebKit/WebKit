@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -556,9 +556,15 @@ struct BaselineUnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     BytecodeIndex bytecodeIndex;
 };
 
+using StubInfoMap = HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash>;
+
+#endif
+
 } // namespace JSC
 
 namespace WTF {
+
+#if ENABLE(JIT)
 
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<JSC::AccessType> : public IntHash<JSC::AccessType> { };
@@ -566,169 +572,6 @@ template<> struct DefaultHash<JSC::AccessType> : public IntHash<JSC::AccessType>
 template<typename T> struct HashTraits;
 template<> struct HashTraits<JSC::AccessType> : public StrongEnumHashTraits<JSC::AccessType> { };
 
+#endif
+
 } // namespace WTF
-
-namespace JSC {
-
-class SharedJITStubSet {
-    WTF_MAKE_FAST_ALLOCATED(SharedJITStubSet);
-public:
-    SharedJITStubSet() = default;
-
-    struct Hash {
-        struct Key {
-            Key() = default;
-
-            Key(GPRReg baseGPR, GPRReg valueGPR, GPRReg extraGPR, GPRReg extra2GPR, GPRReg stubInfoGPR, GPRReg arrayProfileGPR, ScalarRegisterSet usedRegisters, PolymorphicAccessJITStubRoutine* wrapped)
-                : m_wrapped(wrapped)
-                , m_baseGPR(baseGPR)
-                , m_valueGPR(valueGPR)
-                , m_extraGPR(extraGPR)
-                , m_extra2GPR(extra2GPR)
-                , m_stubInfoGPR(stubInfoGPR)
-                , m_arrayProfileGPR(arrayProfileGPR)
-                , m_usedRegisters(usedRegisters)
-            { }
-
-            Key(WTF::HashTableDeletedValueType)
-                : m_wrapped(bitwise_cast<PolymorphicAccessJITStubRoutine*>(static_cast<uintptr_t>(1)))
-            { }
-
-            bool isHashTableDeletedValue() const { return m_wrapped == bitwise_cast<PolymorphicAccessJITStubRoutine*>(static_cast<uintptr_t>(1)); }
-
-            friend bool operator==(const Key&, const Key&) = default;
-
-            PolymorphicAccessJITStubRoutine* m_wrapped { nullptr };
-            GPRReg m_baseGPR;
-            GPRReg m_valueGPR;
-            GPRReg m_extraGPR;
-            GPRReg m_extra2GPR;
-            GPRReg m_stubInfoGPR;
-            GPRReg m_arrayProfileGPR;
-            ScalarRegisterSet m_usedRegisters;
-        };
-
-        using KeyTraits = SimpleClassHashTraits<Key>;
-
-        static unsigned hash(const Key& p)
-        {
-            if (!p.m_wrapped)
-                return 1;
-            return p.m_wrapped->hash();
-        }
-
-        static bool equal(const Key& a, const Key& b)
-        {
-            return a == b;
-        }
-
-        static constexpr bool safeToCompareToEmptyOrDeleted = false;
-    };
-
-    struct Searcher {
-        struct Translator {
-            static unsigned hash(const Searcher& searcher)
-            {
-                return PolymorphicAccessJITStubRoutine::computeHash(searcher.m_cases, searcher.m_weakStructures);
-            }
-
-            static bool equal(const Hash::Key a, const Searcher& b)
-            {
-                if (a.m_baseGPR == b.m_baseGPR
-                    && a.m_valueGPR == b.m_valueGPR
-                    && a.m_extraGPR == b.m_extraGPR
-                    && a.m_extra2GPR == b.m_extra2GPR
-                    && a.m_stubInfoGPR == b.m_stubInfoGPR
-                    && a.m_arrayProfileGPR == b.m_arrayProfileGPR
-                    && a.m_usedRegisters == b.m_usedRegisters) {
-                    // FIXME: The ordering of cases does not matter for sharing capabilities.
-                    // We can potentially increase success rate by making this comparison / hashing non ordering sensitive.
-                    const auto& aCases = a.m_wrapped->cases();
-                    const auto& bCases = b.m_cases;
-                    if (aCases.size() != bCases.size())
-                        return false;
-                    for (unsigned index = 0; index < bCases.size(); ++index) {
-                        if (!AccessCase::canBeShared(*aCases[index], *bCases[index]))
-                            return false;
-                    }
-                    const auto& aWeak = a.m_wrapped->weakStructures();
-                    const auto& bWeak = b.m_weakStructures;
-                    if (aWeak.size() != bWeak.size())
-                        return false;
-                    for (unsigned i = 0, size = aWeak.size(); i < size; ++i) {
-                        if (aWeak[i] != bWeak[i])
-                            return false;
-                    }
-                    return true;
-                }
-                return false;
-            }
-        };
-
-        GPRReg m_baseGPR;
-        GPRReg m_valueGPR;
-        GPRReg m_extraGPR;
-        GPRReg m_extra2GPR;
-        GPRReg m_stubInfoGPR;
-        GPRReg m_arrayProfileGPR;
-        ScalarRegisterSet m_usedRegisters;
-        const FixedVector<RefPtr<AccessCase>>& m_cases;
-        const FixedVector<StructureID>& m_weakStructures;
-    };
-
-    struct PointerTranslator {
-        static unsigned hash(const PolymorphicAccessJITStubRoutine* stub)
-        {
-            return stub->hash();
-        }
-
-        static bool equal(const Hash::Key& key, const PolymorphicAccessJITStubRoutine* stub)
-        {
-            return key.m_wrapped == stub;
-        }
-    };
-
-    void add(Hash::Key&& key)
-    {
-        m_stubs.add(WTFMove(key));
-    }
-
-    void remove(PolymorphicAccessJITStubRoutine* stub)
-    {
-        auto iter = m_stubs.find<PointerTranslator>(stub);
-        if (iter != m_stubs.end())
-            m_stubs.remove(iter);
-    }
-
-    PolymorphicAccessJITStubRoutine* find(const Searcher& searcher)
-    {
-        auto entry = m_stubs.find<SharedJITStubSet::Searcher::Translator>(searcher);
-        if (entry != m_stubs.end())
-            return entry->m_wrapped;
-        return nullptr;
-    }
-
-    using StatelessCacheKey = std::tuple<AccessType, AccessCase::AccessType, bool, bool, bool, bool>;
-
-    RefPtr<PolymorphicAccessJITStubRoutine> getStatelessStub(StatelessCacheKey) const;
-    void setStatelessStub(StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>);
-
-    RefPtr<InlineCacheHandler> getSlowPathHandler(AccessType) const;
-    void setSlowPathHandler(AccessType, Ref<InlineCacheHandler>);
-
-private:
-    HashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
-    HashMap<StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>> m_statelessStubs;
-    std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_fallbackHandlers { };
-    std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_slowPathHandlers { };
-};
-
-#else
-
-class StructureStubInfo;
-
-#endif // ENABLE(JIT)
-
-typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
-
-} // namespace JSC

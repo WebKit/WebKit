@@ -323,6 +323,10 @@ public:
 
     UniquedStringImpl* uid() const { return m_identifier.uid(); }
     CacheableIdentifier identifier() const { return m_identifier; }
+    void updateIdentifier(CacheableIdentifier identifier)
+    {
+        m_identifier = identifier;
+    }
 
 #if ASSERT_ENABLED
     void checkConsistency(StructureStubInfo&);

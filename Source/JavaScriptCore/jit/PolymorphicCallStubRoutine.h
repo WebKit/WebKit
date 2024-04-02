@@ -89,6 +89,7 @@ private:
 
 class PolymorphicCallStubRoutine final : public GCAwareJITStubRoutine, public ButterflyArray<PolymorphicCallStubRoutine, PolymorphicCallNode, CallSlot> {
 public:
+    using Base = GCAwareJITStubRoutine;
     friend class JITStubRoutine;
 
     CallVariantList variants() const;
