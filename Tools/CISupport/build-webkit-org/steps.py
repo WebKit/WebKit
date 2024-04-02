@@ -718,6 +718,14 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
             kwargs['sigtermTime'] = 10
         super().__init__(*args, **kwargs)
 
+    def buildCommandKwargs(self, warnings):
+        kwargs = super().buildCommandKwargs(warnings)
+        if self.getProperty('platform') in ('gtk', 'wpe'):
+            kwargs['timeout'] = 20 * 60 * 60
+        else:
+            kwargs['timeout'] = 10 * 60 * 60
+        return kwargs
+
     def run(self):
         self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)
         self.log_observer = logobserver.BufferLogObserver()
@@ -742,6 +750,21 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
             self.command += ['--test-writer=ruby']
 
         self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
+        self.command = ['/bin/sh', '-c', ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py']
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+
         return super().run()
 
     def countFailures(self):
