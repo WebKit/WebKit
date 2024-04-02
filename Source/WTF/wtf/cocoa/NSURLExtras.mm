@@ -136,53 +136,22 @@ NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *URL, CFURLComponentType
     return result ? result.bridgingAutorelease() : URL;
 }
 
-NSURL *URLWithData(NSData *data, NSURL *baseURL)
-{
-    if (!data)
-        return nil;
-    
-    size_t length = [data length];
-    if (length > 0) {
-        // Work around <rdar://4470771>: CFURLCreateAbsoluteURLWithBytes(.., TRUE) doesn't remove non-path components.
-        baseURL = URLByTruncatingOneCharacterBeforeComponent(baseURL, kCFURLComponentResourceSpecifier);
-
-        const UInt8 *bytes = static_cast<const UInt8*>([data bytes]);
-
-        // CFURLCreateAbsoluteURLWithBytes would complain to console if we passed a path to it.
-        if (bytes[0] == '/' && !baseURL)
-            return nil;
-
-        // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
-        // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
-        // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
-        // onto using ISO Latin 1 in those cases.
-        auto result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, (__bridge CFURLRef)baseURL, YES));
-        if (!result)
-            result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingISOLatin1, (__bridge CFURLRef)baseURL, YES));
-        return result.bridgingAutorelease();
-    }
-    return [NSURL URLWithString:@""];
-}
-
 static NSData *dataWithUserTypedString(NSString *string)
 {
     NSData *userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
     ASSERT(userTypedData);
     
     const UInt8* inBytes = static_cast<const UInt8 *>([userTypedData bytes]);
-    int inLength = [userTypedData length];
-    if (!inLength)
+    NSUInteger inLength = [userTypedData length];
+
+    // large enough to %-escape every character
+    if (!inLength || inLength > (INT32_MAX / 3))
         return nil;
 
-    CheckedInt32 mallocLength = inLength;
-    mallocLength *= 3; // large enough to %-escape every character
-    if (mallocLength.hasOverflowed())
-        return nil;
-    
-    char* outBytes = static_cast<char *>(malloc(mallocLength));
+    char* outBytes = static_cast<char *>(malloc(inLength * 3U));
     char* p = outBytes;
-    int outLength = 0;
-    for (int i = 0; i < inLength; i++) {
+    NSUInteger outLength = 0;
+    for (NSUInteger i = 0; i < inLength; i++) {
         UInt8 c = inBytes[i];
         if (c <= 0x20 || c >= 0x7f) {
             *p++ = '%';
@@ -194,7 +163,7 @@ static NSData *dataWithUserTypedString(NSString *string)
             outLength++;
         }
     }
-    
+
     return [NSData dataWithBytesNoCopy:outBytes length:outLength]; // adopts outBytes
 }
 
@@ -218,7 +187,7 @@ NSURL *URLWithUserTypedString(NSString *string, NSURL *)
     if (!data)
         return [NSURL URLWithString:@""];
 
-    return URLWithData(data, nil);
+    return [NSURL absoluteURLWithDataRepresentation:data relativeToURL:nil];
 }
 
 NSURL *URLWithUserTypedStringDeprecated(NSString *string)
@@ -231,7 +200,7 @@ NSURL *URLWithUserTypedStringDeprecated(NSString *string)
         NSData *resultData = dataWithUserTypedString(string);
         if (!resultData)
             return [NSURL URLWithString:@""];
-        result = URLWithData(resultData, nil);
+        result = [NSURL absoluteURLWithDataRepresentation:resultData relativeToURL:nil];
     }
 
     return result;
@@ -306,17 +275,9 @@ NSURL *URLByRemovingUserInfo(NSURL *URL)
     return URLByRemovingComponentAndSubsequentCharacter(URL, kCFURLComponentUserInfo);
 }
 
-NSData *originalURLData(NSURL *URL)
-{
-    auto data = bridge_cast(bytesAsCFData(bridge_cast(URL)));
-    if (auto baseURL = bridge_cast(CFURLGetBaseURL(bridge_cast(URL))))
-        return originalURLData(URLWithData(data.get(), baseURL));
-    return data.autorelease();
-}
-
 NSString *userVisibleString(NSURL *URL)
 {
-    NSData *data = originalURLData(URL);
+    NSData *data = URL.dataRepresentation;
     return URLHelpers::userVisibleURL(CString(static_cast<const char*>([data bytes]), [data length]));
 }
 
@@ -324,10 +285,7 @@ BOOL isUserVisibleURL(NSString *string)
 {
     // Return true if the userVisibleString function is guaranteed to not change the passed-in URL.
     // This function is used to optimize all the most common cases where we don't need the userVisibleString algorithm.
-
-    char buffer[1024];
-    auto success = CFStringGetCString(bridge_cast(string), reinterpret_cast<char*>(buffer), sizeof(buffer) - 1, kCFStringEncodingUTF8);
-    auto characters = success ? buffer : [string UTF8String];
+    auto characters = string.UTF8String;
 
     // Check for control characters, %-escape sequences that are non-ASCII, and xn--: these
     // are the things that might lead the userVisibleString function to actually change the string.

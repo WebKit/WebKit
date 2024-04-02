@@ -507,7 +507,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 {
     NSURL *responseURL = [[[[self webFrame] _dataSource] response] URL];
     ASSERT(responseURL);
-    return [responseURL _web_originalDataAsString];
+    return responseURL.absoluteString;
 }
 
 - (void)pluginView:(NSView *)pluginView receivedResponse:(NSURLResponse *)response

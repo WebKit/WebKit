@@ -42,8 +42,6 @@
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string;
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string relativeToURL:(NSURL *)baseURL;
 
-- (NSData *)_web_originalData;
-- (NSString *)_web_originalDataAsString;
 - (const char*)_web_URLCString;
 
 - (NSString *)_web_hostString;
