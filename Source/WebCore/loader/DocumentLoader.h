@@ -254,6 +254,7 @@ public:
     RefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
     WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
 
+    bool hasArchiveResourceCollection() const { return !!m_archiveResourceCollection; }
     WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader&, const ResourceRequest&);
 #endif
 

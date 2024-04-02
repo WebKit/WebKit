@@ -458,6 +458,18 @@ static WebEvent *unwrap(BEKeyEntry *event)
     return result.autorelease();
 }
 
+- (NSData *)contentsAsWebArchive
+{
+    __block bool done = false;
+    __block RetainPtr<NSData> result;
+    [self createWebArchiveDataWithCompletionHandler:^(NSData *contents, NSError *error) {
+        result = contents;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
 - (NSArray<NSString *> *)tagsInBody
 {
     return [self objectByEvaluatingJavaScript:@"Array.from(document.body.getElementsByTagName('*')).map(e => e.tagName)"];

@@ -302,7 +302,10 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 
         auto sourceSize = sizesParser.length();
 
-        candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom(), srcset, sourceSize);
+        candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom(), srcset, sourceSize, [&](auto& candidate) {
+            return m_imageLoader->shouldIgnoreCandidateWhenLoadingFromArchive(candidate);
+        });
+
         if (!candidate.isEmpty()) {
             setSourceElement(source);
             break;
@@ -353,7 +356,9 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
             SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document());
             m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
             auto sourceSize = sizesParser.length();
-            candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), srcAttribute, srcsetAttribute, sourceSize);
+            candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), srcAttribute, srcsetAttribute, sourceSize, [&](auto& candidate) {
+                return m_imageLoader->shouldIgnoreCandidateWhenLoadingFromArchive(candidate);
+            });
         }
     }
     setBestFitURLAndDPRFromImageCandidate(candidate);

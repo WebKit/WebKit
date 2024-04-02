@@ -301,7 +301,7 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
     return imageCandidates[winner];
 }
 
-ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomString& srcAttribute, StringView srcsetAttribute, float sourceSize)
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomString& srcAttribute, StringView srcsetAttribute, float sourceSize, Function<bool(const ImageCandidate&)>&& shouldIgnoreCandidateCallback)
 {
     if (srcsetAttribute.isNull()) {
         if (srcAttribute.isNull())
@@ -313,6 +313,9 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
 
     if (!srcAttribute.isEmpty())
         imageCandidates.append(ImageCandidate(StringViewWithUnderlyingString(srcAttribute, srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin));
+
+    if (shouldIgnoreCandidateCallback)
+        imageCandidates.removeAllMatching(shouldIgnoreCandidateCallback);
 
     return pickBestImageCandidate(deviceScaleFactor, imageCandidates, sourceSize);
 }

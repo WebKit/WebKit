@@ -29,6 +29,8 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKDragDestinationAction.h>
@@ -642,6 +644,48 @@ TEST(LoadWebArchive, FileWebArchiveToDataWebArchiveAndBack)
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
     doneEvaluatingJavaScript = false;
+}
+
+TEST(LoadWebArchive, PreferCachedImageSourceOverBrokenImage)
+{
+    [TestProtocol registerWithScheme:@"http"];
+
+    RetainPtr archiveData = [] {
+        RetainPtr sourceView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+        [sourceView _setOverrideDeviceScaleFactor:1];
+        [sourceView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+            "<html>"
+            "  <meta name='viewport' content='width=device-width, initial-scale=1'>"
+            "  <body>"
+            "    <picture>"
+            "      <img src='http://bundle-file/400x400-green.png'"
+            "        srcset='http://bundle-file/400x400-green.png 1x,http://bundle-file/large-red-square.png 2x' />"
+            "    </picture>"
+            "  </body>"
+            "</html>"];
+        RetainPtr result = [sourceView contentsAsWebArchive];
+        [sourceView _killWebContentProcessAndResetState];
+        return result;
+    }();
+
+    [TestProtocol unregister];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:WKWebsiteDataStore.nonPersistentDataStore];
+    [configuration _setAllowedNetworkHosts:NSSet.set];
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView _setOverrideDeviceScaleFactor:2];
+    [webView loadData:archiveData.get() MIMEType:@"application/x-webarchive" characterEncodingName:@"" baseURL:[NSURL URLWithString:@""]];
+    [delegate waitForDidFinishNavigation];
+
+    NSArray<NSNumber *> *dimensions = [webView objectByEvaluatingJavaScript:@"const image = document.images[0]; [image.naturalWidth, image.naturalHeight];"];
+    auto naturalWidth = dimensions.firstObject.intValue;
+    auto naturalHeight = dimensions.lastObject.intValue;
+    EXPECT_EQ(naturalWidth, 400);
+    EXPECT_EQ(naturalHeight, 400);
 }
 
 } // namespace TestWebKitAPI
