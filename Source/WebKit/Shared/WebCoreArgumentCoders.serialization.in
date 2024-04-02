@@ -5138,7 +5138,7 @@ header: <WebCore/SecurityPolicyViolationEvent.h>
 };
 
 class WebCore::SecurityOriginData {
-    std::variant<WebCore::SecurityOriginData::Tuple, WebCore::ProcessQualified<WebCore::OpaqueOriginIdentifier>> data();
+    std::variant<WebCore::SecurityOriginData::Tuple, WebCore::OpaqueOriginIdentifierProcessQualified> data();
 };
 
 [Nested] class WebCore::SecurityOriginData::Tuple {
@@ -6637,10 +6637,6 @@ header: <WebCore/FontCache.h>
 struct WebCore::PrewarmInformation {
     WebCore::FontCachePrewarmInformation fontCache;
 };
-
-using WebCore::ScrollingNodeID = WebCore::ProcessQualified<ObjectIdentifier<WebCore::ScrollingNodeIDType>>;
-using WebCore::PlatformLayerIdentifier = WebCore::ProcessQualified<ObjectIdentifier<WebCore::PlatformLayerIdentifierType>>;
-using WebCore::ScriptExecutionContextIdentifier = WebCore::ProcessQualified<WTF::UUID>;
 
 header: <WebCore/FontSelectionAlgorithm.h>
 using WebCore::FontSelectionValue::BackingType = int16_t;
