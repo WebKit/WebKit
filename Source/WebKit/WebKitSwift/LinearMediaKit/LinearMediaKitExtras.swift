@@ -30,14 +30,14 @@ import UIKit
 @objc extension PlayableViewController {
     var wks_automaticallyDockOnFullScreenPresentation: Bool {
         get {
-#if canImport(LinearMediaKit, _version: 212)
+#if canImport(LinearMediaKit, _version: 211.0.2)
             self.automaticallyDockOnFullScreenPresentation
 #else
             false
 #endif
         }
         set {
-#if canImport(LinearMediaKit, _version: 212)
+#if canImport(LinearMediaKit, _version: 211.0.2)
             self.automaticallyDockOnFullScreenPresentation = newValue
 #endif
         }
@@ -45,21 +45,21 @@ import UIKit
 
     var wks_dismissFullScreenOnExitingDocking: Bool {
         get {
-#if canImport(LinearMediaKit, _version: 212)
+#if canImport(LinearMediaKit, _version: 211.0.2)
             self.dismissFullScreenOnExitingDocking
 #else
             false
 #endif
         }
         set {
-#if canImport(LinearMediaKit, _version: 212)
+#if canImport(LinearMediaKit, _version: 211.0.2)
             self.dismissFullScreenOnExitingDocking = newValue
 #endif
         }
     }
 
     var wks_environmentPickerButtonViewController: UIViewController? {
-#if canImport(LinearMediaKit, _version: 212)
+#if canImport(LinearMediaKit, _version: 211.0.2)
         self.environmentPickerButtonViewController
 #else
         nil
