@@ -848,6 +848,19 @@ BuiltInNotificationsEnabled:
     WebKit:
       default: false
 
+CFNetworkDefaultNetworkLoaderEnabled:
+  type: bool
+  status: stable
+  category: networking
+  humanReadableName: "Use system default network loader (the default may change without warning)"
+  humanReadableDescription: "Use system default network loader (the default may change without warning)"
+  webcoreBinding: none
+  condition: HAVE(NETWORK_LOADER)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
 CFNetworkNetworkLoaderEnabled:
   type: bool
   status: testable
