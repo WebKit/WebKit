@@ -446,6 +446,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:*this]))
     , m_cachedItemStatus(MediaPlayerAVPlayerItemStatusDoesNotExist)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_muted = player->muted();
 }
 
@@ -2145,7 +2146,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         auto initData = SharedBuffer::create(Vector<uint8_t> { static_cast<uint8_t*>(initDataBuffer->data()), byteLength });
         player->keyNeeded(initData);
 #if ENABLE(ENCRYPTED_MEDIA)
-        if (!player->shouldContinueAfterKeyNeeded())
+        if (!m_shouldContinueAfterKeyNeeded)
             return true;
 #endif
 #endif
@@ -2162,6 +2163,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         player->initializationDataEncountered("skd"_s, m_keyID->tryCreateArrayBuffer());
         setWaitingForKey(true);
 #endif
+
         m_keyURIToRequestMap.set(keyURI, avRequest);
 
         return true;
@@ -2181,7 +2183,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 
         player->keyNeeded(initData);
 
-        if (!player->shouldContinueAfterKeyNeeded())
+        if (!m_shouldContinueAfterKeyNeeded)
             return false;
 
         m_keyURIToRequestMap.set(keyID, avRequest);
@@ -2198,6 +2200,9 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 
 void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResourceLoadingRequest* avRequest)
 {
+    ASSERT(isMainThread());
+
+    ALWAYS_LOG(LOGIDENTIFIER);
     String scheme = [[[avRequest request] URL] scheme];
 
     WebCoreAVFResourceLoader* resourceLoader = m_resourceLoaderMap.get((__bridge CFTypeRef)avRequest);
@@ -2208,6 +2213,9 @@ void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResource
 
 void MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest(AVAssetResourceLoadingRequest *avRequest)
 {
+    ASSERT(isMainThread());
+
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_resourceLoaderMap.remove((__bridge CFTypeRef)avRequest);
 }
 
@@ -2884,6 +2892,12 @@ void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange()
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+void MediaPlayerPrivateAVFoundationObjC::setShouldContinueAfterKeyNeeded(bool shouldContinue)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, shouldContinue);
+    m_shouldContinueAfterKeyNeeded = shouldContinue;
+}
+
 RetainPtr<AVAssetResourceLoadingRequest> MediaPlayerPrivateAVFoundationObjC::takeRequestForKeyURI(const String& keyURI)
 {
     return m_keyURIToRequestMap.take(keyURI);
@@ -2897,6 +2911,7 @@ void MediaPlayerPrivateAVFoundationObjC::keyAdded()
 
     Vector<String> fulfilledKeyIds;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
     for (auto& pair : m_keyURIToRequestMap) {
         const String& keyId = pair.key;
         const RetainPtr<AVAssetResourceLoadingRequest>& request = pair.value;
