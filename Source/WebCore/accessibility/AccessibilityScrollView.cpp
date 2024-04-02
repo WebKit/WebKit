@@ -180,7 +180,7 @@ AccessibilityScrollbar* AccessibilityScrollView::addChildScrollbar(Scrollbar* sc
     if (!cache)
         return nullptr;
 
-    auto& scrollBarObject = uncheckedDowncast<AccessibilityScrollbar>(*cache->getOrCreate(scrollbar));
+    auto& scrollBarObject = uncheckedDowncast<AccessibilityScrollbar>(*cache->getOrCreate(*scrollbar));
     scrollBarObject.setParent(this);
     addChild(&scrollBarObject);
     return &scrollBarObject;
@@ -255,7 +255,7 @@ AccessibilityObject* AccessibilityScrollView::webAreaObject() const
         return nullptr;
 
     if (auto* cache = axObjectCache())
-        return cache->getOrCreate(document);
+        return cache->getOrCreate(*document);
 
     return nullptr;
 }
@@ -317,7 +317,7 @@ AccessibilityObject* AccessibilityScrollView::parentObject() const
         owner = remoteFrameView->frame().ownerElement();
 
     if (owner && owner->renderer())
-        return cache->getOrCreate(owner.get());
+        return cache->getOrCreate(*owner);
     return nullptr;
 }
 

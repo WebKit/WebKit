@@ -2918,7 +2918,7 @@ static RenderObject* rendererForView(NSView* view)
     if (!renderer)
         return nil;
     
-    AccessibilityObject* obj = renderer->document().axObjectCache()->getOrCreate(renderer);
+    AccessibilityObject* obj = renderer->document().axObjectCache()->getOrCreate(*renderer);
     if (obj)
         return obj->parentObjectUnignored()->wrapper();
     return nil;

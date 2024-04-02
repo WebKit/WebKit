@@ -384,7 +384,7 @@ void AccessibilityMathMLElement::mathPrescripts(AccessibilityMathMultiscriptPair
     std::pair<AccessibilityObject*, AccessibilityObject*> prescriptPair;
     for (Node* child = node()->firstChild(); child; child = child->nextSibling()) {
         if (foundPrescript) {
-            AccessibilityObject* axChild = axObjectCache()->getOrCreate(child);
+            AccessibilityObject* axChild = axObjectCache()->getOrCreate(*child);
             if (axChild && axChild->isMathElement()) {
                 if (!prescriptPair.first)
                     prescriptPair.first = axChild;
@@ -417,7 +417,7 @@ void AccessibilityMathMLElement::mathPostscripts(AccessibilityMathMultiscriptPai
         if (child->hasTagName(MathMLNames::mprescriptsTag))
             break;
 
-        AccessibilityObject* axChild = axObjectCache()->getOrCreate(child);
+        AccessibilityObject* axChild = axObjectCache()->getOrCreate(*child);
         if (axChild && axChild->isMathElement()) {
             if (!foundBaseElement)
                 foundBaseElement = true;

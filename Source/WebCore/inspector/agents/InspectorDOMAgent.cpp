@@ -2223,7 +2223,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
     unsigned level = 0;
 
     if (auto* axObjectCache = node.document().axObjectCache()) {
-        if (auto* axObject = axObjectCache->getOrCreate(&node)) {
+        if (auto* axObject = axObjectCache->getOrCreate(node)) {
 
             if (AXCoreObject* activeDescendant = axObject->activeDescendant())
                 activeDescendantNode = activeDescendant->node();

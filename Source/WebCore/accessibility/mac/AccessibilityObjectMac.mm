@@ -604,7 +604,7 @@ static void attributedStringSetBlockquoteLevel(NSMutableAttributedString *attrSt
     if (!renderer || !attributedStringContainsRange(attrString, range))
         return;
 
-    RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
+    RefPtr object = renderer->document().axObjectCache()->getOrCreate(*renderer);
     if (!object)
         return;
 
@@ -618,7 +618,7 @@ static void attributedStringSetExpandedText(NSMutableAttributedString *attrStrin
     if (!renderer || !attributedStringContainsRange(attrString, range))
         return;
 
-    RefPtr object = renderer->document().axObjectCache()->getOrCreate(renderer);
+    RefPtr object = renderer->document().axObjectCache()->getOrCreate(*renderer);
     if (object->supportsExpandedTextValue())
         [attrString addAttribute:NSAccessibilityExpandedTextValueAttribute value:object->expandedTextValue() range:range];
 }

@@ -403,8 +403,8 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
 
     if (!headerCell->element() || !headerCell->element()->hasTagName(thTag))
         return nullptr;
-    
-    return axObjectCache()->getOrCreate(headerCell);
+
+    return axObjectCache()->getOrCreate(*headerCell);
 }
     
 int AccessibilityTableCell::axColumnIndex() const

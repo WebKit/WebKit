@@ -267,18 +267,46 @@ public:
     WEBCORE_EXPORT AccessibilityObject* rootObjectForFrame(LocalFrame*);
 
     // Creation/retrieval of AX objects associated with a DOM or RenderTree object.
-    AccessibilityObject* getOrCreate(RenderObject*);
-    AccessibilityObject* getOrCreate(Widget*);
+    inline AccessibilityObject* getOrCreate(RenderObject* renderer)
+    {
+        return renderer ? getOrCreate(*renderer) : nullptr;
+    }
+    AccessibilityObject* getOrCreate(RenderObject&);
+
+    inline AccessibilityObject* getOrCreate(Widget* widget)
+    {
+        return widget ? getOrCreate(*widget) : nullptr;
+    }
+    AccessibilityObject* getOrCreate(Widget&);
+
     enum class IsPartOfRelation : bool { No, Yes };
-    WEBCORE_EXPORT AccessibilityObject* getOrCreate(Node*, IsPartOfRelation = IsPartOfRelation::No);
+    inline AccessibilityObject* getOrCreate(Node* node, IsPartOfRelation isPartOfRelation = IsPartOfRelation::No)
+    {
+        return node ? getOrCreate(*node, isPartOfRelation) : nullptr;
+    }
+    WEBCORE_EXPORT AccessibilityObject* getOrCreate(Node&, IsPartOfRelation = IsPartOfRelation::No);
 
     // used for objects without backing elements
     AccessibilityObject* create(AccessibilityRole);
     
-    // will only return the AccessibilityObject if it already exists
-    AccessibilityObject* get(RenderObject*);
-    AccessibilityObject* get(Widget*);
-    AccessibilityObject* get(Node*);
+    // Will only return the AccessibilityObject if it already exists.
+    inline AccessibilityObject* get(RenderObject* renderer)
+    {
+        return renderer ? get(*renderer) : nullptr;
+    }
+    AccessibilityObject* get(RenderObject&) const;
+
+    inline AccessibilityObject* get(Widget* widget) const
+    {
+        return widget ? get(*widget) : nullptr;
+    }
+    AccessibilityObject* get(Widget&) const;
+
+    inline AccessibilityObject* get(Node* node) const
+    {
+        return node ? get(*node) : nullptr;
+    }
+    AccessibilityObject* get(Node&) const;
 
     void remove(RenderObject*);
     void remove(Node&);
@@ -831,7 +859,9 @@ private:
 bool nodeHasRole(Node*, StringView role);
 bool nodeHasCellRole(Node*);
 bool nodeHasTableRole(Node*);
+
 // This will let you know if aria-hidden was explicitly set to false.
+bool isNodeAriaVisible(Node&);
 bool isNodeAriaVisible(Node*);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache::AXNotification);

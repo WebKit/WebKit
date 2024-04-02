@@ -74,7 +74,7 @@ AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
         return nullptr;
 
     if (auto* cache = axObjectCache())
-        return cache->getOrCreate(target.element.get());
+        return cache->getOrCreate(*target.element);
     return nullptr;
 }
 

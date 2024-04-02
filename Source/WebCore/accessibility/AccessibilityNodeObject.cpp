@@ -138,7 +138,7 @@ AccessibilityObject* AccessibilityNodeObject::firstChild() const
     if (!cache)
         return nullptr;
 
-    auto* axCurrentChild = cache->getOrCreate(currentChild);
+    auto* axCurrentChild = cache->getOrCreate(*currentChild);
     while (!axCurrentChild && currentChild) {
         currentChild = currentChild->nextSibling();
         axCurrentChild = cache->getOrCreate(currentChild);
@@ -156,7 +156,7 @@ AccessibilityObject* AccessibilityNodeObject::lastChild() const
         return nullptr;
 
     auto objectCache = axObjectCache();
-    return objectCache ? objectCache->getOrCreate(lastChild) : nullptr;
+    return objectCache ? objectCache->getOrCreate(*lastChild) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::previousSibling() const
@@ -169,7 +169,7 @@ AccessibilityObject* AccessibilityNodeObject::previousSibling() const
         return nullptr;
 
     auto objectCache = axObjectCache();
-    return objectCache ? objectCache->getOrCreate(previousSibling) : nullptr;
+    return objectCache ? objectCache->getOrCreate(*previousSibling) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::nextSibling() const
@@ -182,7 +182,7 @@ AccessibilityObject* AccessibilityNodeObject::nextSibling() const
         return nullptr;
 
     auto objectCache = axObjectCache();
-    return objectCache ? objectCache->getOrCreate(nextSibling) : nullptr;
+    return objectCache ? objectCache->getOrCreate(*nextSibling) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::parentObjectIfExists() const
@@ -210,7 +210,7 @@ AccessibilityObject* AccessibilityNodeObject::parentObject() const
         return nullptr;
 
     if (AXObjectCache* cache = axObjectCache())
-        return cache->getOrCreate(parentObj);
+        return cache->getOrCreate(*parentObj);
 
     return nullptr;
 }
@@ -229,7 +229,7 @@ LayoutRect AccessibilityNodeObject::checkboxOrRadioRect() const
     auto selfRect = boundingBoxRect();
     for (auto& label : labels) {
         if (label->renderer()) {
-            if (auto* axLabel = cache->getOrCreate(label.ptr()))
+            if (auto* axLabel = cache->getOrCreate(label.get()))
                 selfRect.unite(axLabel->elementRect());
         }
     }
@@ -584,7 +584,7 @@ void AccessibilityNodeObject::addChildren()
         return;
 
     for (auto* child = node->firstChild(); child; child = child->nextSibling())
-        addChild(objectCache->getOrCreate(child));
+        addChild(objectCache->getOrCreate(*child));
 
     updateOwnedChildren();
 }
@@ -1669,7 +1669,7 @@ AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const
 
     if (menuItem) {
         // ARIA just has generic menu items. AppKit needs to know if this is a top level items like MenuBarButton or MenuBarItem
-        AccessibilityObject* menuItemAX = cache->getOrCreate(menuItem);
+        AccessibilityObject* menuItemAX = cache->getOrCreate(*menuItem);
         if (menuItemAX && menuItemAX->isMenuButton())
             return menuItemAX;
     }
@@ -1688,7 +1688,7 @@ AccessibilityObject* AccessibilityNodeObject::captionForFigure() const
     Node* node = this->node();
     for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(figcaptionTag))
-            return cache->getOrCreate(child);
+            return cache->getOrCreate(*child);
     }
     return nullptr;
 }
@@ -2125,7 +2125,7 @@ String AccessibilityNodeObject::helpText() const
 
         // Only take help text from an ancestor element if its a group or an unknown role. If help was
         // added to those kinds of elements, it is likely it was meant for a child element.
-        if (auto* axAncestor = cache->getOrCreate(ancestor)) {
+        if (auto* axAncestor = cache->getOrCreate(*ancestor)) {
             if (!axAncestor->isGroup() && axAncestor->roleValue() != AccessibilityRole::Unknown)
                 break;
         }
@@ -2503,6 +2503,7 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 // ARIA Implementer's Guide.
 static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 {
+    // FIXME: We should just change this function to just take a reference since we ASSERT(node) and deref without a nullptr check.
     ASSERT(node);
 
     auto* element = dynamicDowncast<Element>(node);
@@ -2517,7 +2518,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
     // If the node can be turned into an AX object, we can use standard name computation rules.
     // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
     auto* cache = node->document().axObjectCache();
-    RefPtr axObject = cache ? cache->getOrCreate(node) : nullptr;
+    RefPtr axObject = cache ? cache->getOrCreate(*node) : nullptr;
     if (axObject) {
         String valueDescription = axObject->valueDescription();
         if (!valueDescription.isEmpty())
@@ -2605,7 +2606,7 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
         if (!is<Element>(child))
             continue;
 
-        if (AccessibilityObject* axObject = cache->getOrCreate(child)) {
+        if (AccessibilityObject* axObject = cache->getOrCreate(*child)) {
             String description = axObject->ariaLabeledByAttribute();
             if (description.isEmpty())
                 description = accessibleNameForNode(child);

@@ -57,7 +57,7 @@ static AccessibilityObject* accessibilityObjectForNode(Node& node)
         AXObjectCache::enableAccessibility();
 
     if (AXObjectCache* axObjectCache = node.document().axObjectCache())
-        return axObjectCache->getOrCreate(&node);
+        return axObjectCache->getOrCreate(node);
 
     return nullptr;
 }

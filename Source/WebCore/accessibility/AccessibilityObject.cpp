@@ -489,11 +489,11 @@ AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 AccessibilityObject* AccessibilityObject::displayContentsParent() const
 {
     auto* parentNode = node() ? node()->parentNode() : nullptr;
-    if (RefPtr element = dynamicDowncast<Element>(parentNode); !element || !element->hasDisplayContents())
+    if (RefPtr parentElement = dynamicDowncast<Element>(parentNode); !parentElement || !parentElement->hasDisplayContents())
         return nullptr;
 
     auto* cache = axObjectCache();
-    return cache ? cache->getOrCreate(parentNode) : nullptr;
+    return cache ? cache->getOrCreate(*parentNode) : nullptr;
 }
 
 AccessibilityObject* AccessibilityObject::previousSiblingUnignored(int limit) const
@@ -606,8 +606,8 @@ static void appendAccessibilityObject(RefPtr<AXCoreObject> object, Accessibility
         auto* document = frameView->frame().document();
         if (!document || !document->hasLivingRenderTree())
             return;
-        
-        object = object->axObjectCache()->getOrCreate(document);
+
+        object = object->axObjectCache()->getOrCreate(*document);
     }
 
     if (object)
@@ -1703,7 +1703,7 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
 
     // create an AX object, but skip it if it is not supposed to be seen
     if (auto* cache = replacedNode->renderer()->document().axObjectCache()) {
-        if (auto* axObject = cache->getOrCreate(replacedNode))
+        if (auto* axObject = cache->getOrCreate(*replacedNode))
             return !axObject->accessibilityIsIgnored();
     }
 
@@ -2202,8 +2202,8 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
     RenderObject* obj = node->renderer();
     if (!obj)
         return nullptr;
-    
-    RefPtr<AccessibilityObject> axObj = obj->document().axObjectCache()->getOrCreate(obj);
+
+    RefPtr<AccessibilityObject> axObj = obj->document().axObjectCache()->getOrCreate(*obj);
     Element* anchor = axObj->anchorElement();
     if (!anchor)
         return nullptr;
@@ -2212,7 +2212,7 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
     if (!anchorRenderer)
         return nullptr;
     
-    return anchorRenderer->document().axObjectCache()->getOrCreate(anchorRenderer);
+    return anchorRenderer->document().axObjectCache()->getOrCreate(*anchorRenderer);
 }
 
 AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
@@ -2224,7 +2224,7 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
     if (!renderObject)
         return nullptr;
 
-    AccessibilityObject* axObject = renderObject->document().axObjectCache()->getOrCreate(renderObject);
+    AccessibilityObject* axObject = renderObject->document().axObjectCache()->getOrCreate(*renderObject);
 
     return Accessibility::findAncestor<AccessibilityObject>(*axObject, true, [] (const AccessibilityObject& object) {
         return object.roleValue() == AccessibilityRole::Heading;
@@ -2969,7 +2969,7 @@ bool AccessibilityObject::supportsPressAction() const
     if (!cache)
         return true;
 
-    auto* axObject = actionElement != element() ? cache->getOrCreate(actionElement.get()) : nullptr;
+    auto* axObject = actionElement != element() ? cache->getOrCreate(*actionElement) : nullptr;
     if (!axObject)
         return true;
 
@@ -3210,7 +3210,7 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntP
         // Normalize the point for the widget's bounds.
         if (widget && widget->isLocalFrameView()) {
             if (AXObjectCache* cache = axObjectCache())
-                return cache->getOrCreate(widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
+                return cache->getOrCreate(*widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
         }
     }
     

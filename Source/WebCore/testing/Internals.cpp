@@ -7349,7 +7349,7 @@ AccessibilityObject* Internals::axObjectForElement(Element& element) const
     WebCore::AXObjectCache::enableAccessibility();
 
     auto* cache = document->axObjectCache();
-    return cache ? cache->getOrCreate(&element) : nullptr;
+    return cache ? cache->getOrCreate(element) : nullptr;
 }
 
 String Internals::getComputedLabel(Element& element) const
