@@ -7339,3 +7339,8 @@ webkit.org/b/271764 fast/scrolling/ios/video-atop-overflow-scroll.html [ Pass Fa
 webkit.org/b/271931 [ Debug ] imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-105.html [ Crash ]
 
 webkit.org/b/271994 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.html [ Failure ]
+
+# webkit.org/b/271850 [iOS] 10 fast/forms/switch/click-animation*.html layout tests are passing.
+fast/forms/switch/click-animation-redundant-checked.html [ ImageOnlyFailure ]
+fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
+fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
