@@ -40,6 +40,19 @@
     z-index: 1;
 }
 
+.network-detail .item {
+    --scope-bar-margin: var(--scope-bar-margin-override, var(--scope-bar-margin-default));
+    --scope-bar-padding: var(--scope-bar-padding-override, var(--scope-bar-padding-default));
+    --scope-bar-text-color: var(--scope-bar-text-color-override, var(--scope-bar-text-color-default));
+    --scope-bar-background-color: var(--scope-bar-background-color-override, var(--scope-bar-background-color-default));
+    --scope-bar-background-opacity: var(--scope-bar-background-opacity-override, var(--scope-bar-background-opacity-default));
+    --scope-bar-border-color: var(--scope-bar-border-color-override, var(--scope-bar-border-color-default));
+}
+
+.network-detail .item.button {
+    color: var(--text-color-secondary);
+}
+
 .network-detail .item.close > .glyph {
     border-radius: 2px;
     padding: 2px;
@@ -63,8 +76,13 @@
     display: none;
 }
 
-.network .network-detail .navigation-bar .item.radio.button.text-only.selected {
-    color: var(--glyph-color-active);
+.network .network-detail .navigation-bar .item.radio.button.text-only:is(.selected, :hover) {
+    background-color: var(--glyph-color-active);
+    color: var(--selected-foreground-color);
+}
+
+.network .network-detail .navigation-bar .item.radio.button.text-only:not(.selected):is(:hover) {
+    opacity: .8;
 }
 
 .network-detail > .content-browser {
