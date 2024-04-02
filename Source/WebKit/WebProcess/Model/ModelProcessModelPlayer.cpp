@@ -32,6 +32,7 @@
 #include "ModelProcessModelPlayerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/TransformationMatrix.h>
 
 namespace WebKit {
 
