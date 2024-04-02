@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WKSPreviewWindowController : NSObject
 @property (nonatomic, weak, nullable) id <WKSPreviewWindowControllerDelegate> delegate;
 
-- (instancetype)initWithURL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url sceneID:(NSString *)sceneID NS_DESIGNATED_INITIALIZER;
 - (void)presentWindow;
 - (void)dismissWindow;
 @end
