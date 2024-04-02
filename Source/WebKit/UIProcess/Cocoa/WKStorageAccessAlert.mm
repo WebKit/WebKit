@@ -160,16 +160,18 @@ void presentStorageAccessAlertSSOQuirk(WKWebView *webView, const String& organiz
     Vector<String> uniqueDomainList = copyToVector(allDomains);
     std::sort(uniqueDomainList.begin(), uniqueDomainList.end(), WTF::codePointCompareLessThan);
 
+    if (uniqueDomainList.size() < 4) {
+        auto lastSite = uniqueDomainList.takeLast();
+        StringBuilder initialListOfSites;
+        initialListOfSites.append(makeStringByJoining(uniqueDomainList.span(), ", "_s));
+        if (uniqueDomainList.size() == 2)
+            initialListOfSites.append(","_s);
 
-    if (uniqueDomainList.size() == 2) {
-        informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for two sites"), uniqueDomainList[0].utf8().data(), uniqueDomainList[1].utf8().data()];
+        informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for two sites"), initialListOfSites.toString().utf8().data(), lastSite.utf8().data()];
         relatedWebsitesString = nil;
         accessoryTextList = nil;
     } else {
-        if (uniqueDomainList.size() == 3)
-            informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s, %s, and one more website to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for three sites"), uniqueDomainList[0].utf8().data(), uniqueDomainList[1].utf8().data()];
-        else
-            informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for four or more sites."), uniqueDomainList[0].utf8().data(), uniqueDomainList[1].utf8().data(), uniqueDomainList.size() - 2];
+        informativeText = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.", @"Informative text for requesting cross-site cookie and website data access for four or more sites."), uniqueDomainList[0].utf8().data(), uniqueDomainList[1].utf8().data(), uniqueDomainList.size() - 2];
 
         relatedWebsitesString = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Related %@ websites", @"Label describing the list of related websites controlled by the same organization"), organizationName.createCFString().get()];
         accessoryTextList = [NSMutableArray arrayWithCapacity:uniqueDomainList.size()];

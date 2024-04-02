@@ -208,11 +208,8 @@
 /* Message for user microphone access prompt */
 "Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
 
-/* Informative text for requesting cross-site cookie and website data access for two sites. */
+/* Informative text for requesting cross-site cookie and website data access for two or three sites. */
 "Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.";
-
-/* Informative text for requesting cross-site cookie and website data access for three sites. */
-"Using the same cookies and website data is required for %s, %s, and one more website to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and one more website to work correctly, but could make it easier to track your browsing across these websites.";
 
 /* Informative text for requesting cross-site cookie and website data access for four or more sites. */
 "Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.";
