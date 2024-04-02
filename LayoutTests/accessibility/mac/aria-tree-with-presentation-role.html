@@ -33,7 +33,7 @@
     }
     
     function dumpAccessibilityChildren(element, level) {
-        if (element.stringValue.indexOf('End of test') >= 0)
+        if (element.stringValue && element.stringValue.indexOf('End of test') >= 0)
             return false;
 
         var indent = "";

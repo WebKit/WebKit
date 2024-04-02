@@ -18,7 +18,7 @@
         const element = accessibilityController.accessibleElementById(id);
         testOutput += `#${id}: ${element.role}\n`;
         testOutput += `#${id}: ${element.subrole}\n`;
-        testOutput += `#${id}: ${element.stringValue}\n`;
+        testOutput += `#${id}: ${element.title}\n`;
         testOutput += `#${id}: AXARIAPressedIsPresent: ${element.boolAttributeValue("AXARIAPressedIsPresent")}\n\n`;
     }
 

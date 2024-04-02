@@ -162,6 +162,53 @@ static id attributeValue(id element, NSString *attribute)
     if ([attribute isEqual:NSAccessibilityFocusedUIElementAttribute] && [element respondsToSelector:@selector(accessibilityFocusedUIElement)])
         return [element accessibilityFocusedUIElement];
 
+    // These are internal APIs used by DRT/WKTR; tests are allowed to use them but we don't want to advertise them.
+    static NeverDestroyed<RetainPtr<NSArray>> internalAttributes = @[
+        @"AXARIAPressedIsPresent",
+        @"AXARIARole",
+        @"AXAutocompleteValue",
+        @"AXClickPoint",
+        @"AXControllerFor",
+        @"AXControllers",
+        @"AXDRTSpeechAttribute",
+        @"AXDateTimeComponentsType",
+        @"AXDescribedBy",
+        @"AXDescriptionFor",
+        @"AXDetailsFor",
+        @"AXErrorMessageFor",
+        @"AXFlowFrom",
+        @"AXIsInCell",
+        @"AXIsInDescriptionListDetail",
+        @"AXIsInDescriptionListTerm",
+        @"AXIsIndeterminate",
+        @"AXIsMultiSelectable",
+        @"AXIsOnScreen",
+        @"AXLabelFor",
+        @"AXLabelledBy",
+        @"AXLineRectsAndText",
+        @"AXOwners",
+        @"AXStringValue",
+        @"AXValueAutofillType",
+
+        // FIXME: these shouldn't be here, but removing one of these causes tests to fail.
+        @"AXARIACurrent",
+        @"AXARIALive",
+        @"AXDescription",
+        @"AXKeyShortcutsValue",
+        @"AXOrientation",
+        @"AXOwns",
+        @"AXPopupValue",
+        @"AXRelativeFrame",
+        @"AXRequired",
+        @"AXSortDirection",
+        @"AXValue",
+        @"AXVisibleCharacterRange",
+    ];
+
+    NSArray<NSString *> *supportedAttributes = [element accessibilityAttributeNames];
+    if (![supportedAttributes containsObject:attribute] && ![internalAttributes.get() containsObject:attribute] && ![attribute isEqualToString:NSAccessibilityRoleAttribute])
+        return nil;
+
     return [element accessibilityAttributeValue:attribute];
 }
 

@@ -3449,6 +3449,9 @@ bool AccessibilityObject::supportsExpanded() const
     if (popoverTargetElement())
         return true;
 
+    if (is<HTMLDetailsElement>(node()))
+        return true;
+
     switch (roleValue()) {
     case AccessibilityRole::Details:
         return true;

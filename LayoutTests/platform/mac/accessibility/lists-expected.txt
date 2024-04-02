@@ -44,7 +44,6 @@ AXHighestEditableAncestor: (null)
 AXSelectedChildren: <array of size 0>
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
-AXTitleUIElement: (null)
 AXElementBusy: 0
 
 ------------
@@ -81,7 +80,6 @@ AXHighestEditableAncestor: (null)
 AXSelectedChildren: <array of size 0>
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
-AXTitleUIElement: (null)
 AXElementBusy: 0
 
 ------------
@@ -118,7 +116,6 @@ AXHighestEditableAncestor: (null)
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 5>
 AXOrientation: AXVerticalOrientation
-AXTitleUIElement: (null)
 AXElementBusy: 0
 
 ------------
@@ -154,7 +151,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXInlineText: 0
 AXElementBusy: 0
 
 ------------
@@ -188,7 +185,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXInlineText: 0
 AXElementBusy: 0
 
 ------------
@@ -224,7 +221,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXInlineText: 0
 AXElementBusy: 0
 
 ------------
@@ -258,7 +255,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXInlineText: 0
 AXElementBusy: 0
 
 ------------
