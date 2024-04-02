@@ -1903,6 +1903,9 @@
 		9EC532A32447FBAD00215216 /* GeolocationIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */; };
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1046EA12079263100F0C5D8 /* WKPDFView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1046E9F2079263100F0C5D8 /* WKPDFView.h */; };
+		A1098E682BB6410800449EE0 /* LinearMediaKitExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A1098E672BB6410800449EE0 /* LinearMediaKitExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1098E6A2BB6420D00449EE0 /* LinearMediaKitExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A1098E672BB6410800449EE0 /* LinearMediaKitExtras.h */; };
+		A1098E6D2BB6436400449EE0 /* LinearMediaKitExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1098E6B2BB6436400449EE0 /* LinearMediaKitExtras.swift */; };
 		A115DC72191D82DA00DA8072 /* _WKWebViewPrintFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A118A9F11908B8EA00F7C92B /* _WKNSFileManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A13B3DA2207F39DE0090C58D /* MobileWiFiSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */; };
@@ -1942,6 +1945,8 @@
 		A1AE0EC32B166439008A2563 /* ExtensionCapabilityGranter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AE0EC12B1663D4008A2563 /* ExtensionCapabilityGranter.h */; };
 		A1B4DCE125A7923C007D178C /* MediaSampleByteRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B4DCDF25A79211007D178C /* MediaSampleByteRange.h */; };
 		A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */; };
+		A1C9FBFF2BB78C4A00CC6B40 /* LinearMediaKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C9FBFE2BB78C4A00CC6B40 /* LinearMediaKitSPI.h */; };
+		A1C9FC002BB78C4A00CC6B40 /* LinearMediaKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C9FBFE2BB78C4A00CC6B40 /* LinearMediaKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1D4D2092B7DE6D00008C40E /* PlaybackSessionInterfaceLMK.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F6B9EFA2B7AA21B0051676F /* PlaybackSessionInterfaceLMK.mm */; };
 		A1D4D2372B7E7FAD0008C40E /* VideoReceiverEndpointMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D4D2352B7E7FAC0008C40E /* VideoReceiverEndpointMessage.h */; };
 		A1D4D23A2B7E82D90008C40E /* XPCEndpointMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D4D2382B7E82D90008C40E /* XPCEndpointMessages.h */; };
@@ -7006,6 +7011,8 @@
 		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
 		A1046E9F2079263100F0C5D8 /* WKPDFView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKPDFView.h; path = ios/WKPDFView.h; sourceTree = "<group>"; };
 		A1046EA02079263100F0C5D8 /* WKPDFView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFView.mm; path = ios/WKPDFView.mm; sourceTree = "<group>"; };
+		A1098E672BB6410800449EE0 /* LinearMediaKitExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinearMediaKitExtras.h; sourceTree = "<group>"; };
+		A1098E6B2BB6436400449EE0 /* LinearMediaKitExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinearMediaKitExtras.swift; sourceTree = "<group>"; };
 		A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
 		A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebViewPrintFormatter.h; sourceTree = "<group>"; };
 		A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNSFileManagerExtras.mm; sourceTree = "<group>"; };
@@ -7068,6 +7075,7 @@
 		A1B9CA382246E54A003D6DCA /* WebPaymentCoordinatorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorCocoa.mm; sourceTree = "<group>"; };
 		A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreviewLoaderClient.cpp; path = ios/WebPreviewLoaderClient.cpp; sourceTree = "<group>"; };
 		A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreviewLoaderClient.h; path = ios/WebPreviewLoaderClient.h; sourceTree = "<group>"; };
+		A1C9FBFE2BB78C4A00CC6B40 /* LinearMediaKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinearMediaKitSPI.h; sourceTree = "<group>"; };
 		A1D4D2342B7E7FAC0008C40E /* VideoReceiverEndpointMessage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoReceiverEndpointMessage.mm; sourceTree = "<group>"; };
 		A1D4D2352B7E7FAC0008C40E /* VideoReceiverEndpointMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoReceiverEndpointMessage.h; sourceTree = "<group>"; };
 		A1D4D2382B7E82D90008C40E /* XPCEndpointMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCEndpointMessages.h; sourceTree = "<group>"; };
@@ -13377,6 +13385,9 @@
 		A14F9B602B686DAE00AD9C56 /* LinearMediaKit */ = {
 			isa = PBXGroup;
 			children = (
+				A1098E672BB6410800449EE0 /* LinearMediaKitExtras.h */,
+				A1098E6B2BB6436400449EE0 /* LinearMediaKitExtras.swift */,
+				A1C9FBFE2BB78C4A00CC6B40 /* LinearMediaKitSPI.h */,
 				A14F9B752B68CA6B00AD9C56 /* LinearMediaPlayer.swift */,
 				A14F9B622B686DD200AD9C56 /* LinearMediaTypes.swift */,
 				A14F9B742B68CA6B00AD9C56 /* WKSLinearMediaPlayer.h */,
@@ -16299,6 +16310,8 @@
 				413075AD1DE85F580039EC69 /* LibWebRTCSocket.h in Headers */,
 				41DC459C1E3DBB2800B11F51 /* LibWebRTCSocketClient.h in Headers */,
 				413075B21DE85F580039EC69 /* LibWebRTCSocketFactory.h in Headers */,
+				A1098E6A2BB6420D00449EE0 /* LinearMediaKitExtras.h in Headers */,
+				A1C9FBFF2BB78C4A00CC6B40 /* LinearMediaKitSPI.h in Headers */,
 				2D1087611D2C573E00B85F82 /* LoadParameters.h in Headers */,
 				578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */,
 				574217922400E286002B303D /* LocalAuthenticationSPI.h in Headers */,
@@ -17482,6 +17495,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1098E682BB6410800449EE0 /* LinearMediaKitExtras.h in Headers */,
+				A1C9FC002BB78C4A00CC6B40 /* LinearMediaKitSPI.h in Headers */,
 				A14F9B672B686E0200AD9C56 /* WebKitSwift.h in Headers */,
 				A14F9B762B68CA6C00AD9C56 /* WKSLinearMediaPlayer.h in Headers */,
 				A14F9B632B686DD300AD9C56 /* WKSLinearMediaTypes.h in Headers */,
@@ -19718,6 +19733,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDF1B915266F396A0007EC10 /* GroupSession.swift in Sources */,
+				A1098E6D2BB6436400449EE0 /* LinearMediaKitExtras.swift in Sources */,
 				A14F9B772B68CA6C00AD9C56 /* LinearMediaPlayer.swift in Sources */,
 				A14F9B642B686DD300AD9C56 /* LinearMediaTypes.swift in Sources */,
 				EB0FBFA72B66C61E00269CC1 /* MarketplaceKitWrapper.swift in Sources */,

@@ -44,6 +44,7 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS LMPlayableViewController;
 OBJC_CLASS WKLayerHostView;
 OBJC_CLASS WKVideoView;
 OBJC_CLASS WebAVPlayerLayer;
@@ -189,6 +190,10 @@ public:
     WebCore::PlatformVideoPresentationInterface* returningToStandbyInterface() const;
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
     RetainPtr<WKVideoView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
+#endif
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    LMPlayableViewController *playableViewController(PlaybackSessionContextIdentifier) const;
 #endif
 
     PlatformLayerContainer createLayerWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);

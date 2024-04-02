@@ -182,18 +182,39 @@
 
 - (void)linearMediaPlayerToggleInlineMode:(WKSLinearMediaPlayer *)player
 {
-    auto model = _model.get();
-    if (!model)
-        return;
+    if (player.presentationMode == WKSLinearMediaPresentationModeFullscreenFromInline)
+        [self _exitFullscreen];
+}
 
-    model->toggleFullscreen();
-    model->setVideoReceiverEndpoint(nullptr);
+- (void)linearMediaPlayerWillEnterFullscreen:(WKSLinearMediaPlayer *)player
+{
+    if (auto model = _model.get())
+        model->enterFullscreen();
+}
+
+- (void)linearMediaPlayerWillExitFullscreen:(WKSLinearMediaPlayer *)player
+{
+    [self _exitFullscreen];
 }
 
 - (void)linearMediaPlayer:(WKSLinearMediaPlayer *)player setVideoReceiverEndpoint:(xpc_object_t)videoReceiverEndpoint
 {
     if (auto model = _model.get())
         model->setVideoReceiverEndpoint(videoReceiverEndpoint);
+}
+
+- (void)_exitFullscreen
+{
+    auto model = _model.get();
+    if (!model)
+        return;
+
+    // FIXME: we assume that `-_exitFullscreen` is only called when in fullscreen mode; hence
+    // toggling fullscreen is equivalent to exiting fullscreen. We should instead introduce an
+    // explicit PlaybackSessionModel::exitFullscreen().
+    model->toggleFullscreen();
+
+    model->setVideoReceiverEndpoint(nullptr);
 }
 
 @end

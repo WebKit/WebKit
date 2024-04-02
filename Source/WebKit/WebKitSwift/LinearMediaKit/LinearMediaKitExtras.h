@@ -23,21 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "LinearMediaKitSPI.h"
 
-#if USE(LINEARMEDIAKIT)
+#if TARGET_OS_VISION
 
-#import <UIKit/UIKit.h>
+NS_ASSUME_NONNULL_BEGIN
 
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <LinearMediaKit/LinearMediaKit.h>
-
-#else
-
-@interface LMPlayableViewController : UIViewController
+@interface LMPlayableViewController (WKSExtras)
+@property (nonatomic) BOOL wks_automaticallyDockOnFullScreenPresentation;
+@property (nonatomic) BOOL wks_dismissFullScreenOnExitingDocking;
+@property (nonatomic, readonly, strong, nullable) UIViewController *wks_environmentPickerButtonViewController;
 @end
 
-#endif
+NS_ASSUME_NONNULL_END
 
-#endif // USE(LINEARMEDIAKIT)
+#endif // TARGET_OS_VISION

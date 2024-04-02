@@ -23,8 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitSwift/LinearMediaKitExtras.h>
-#import <WebKitSwift/LinearMediaKitSPI.h>
-#import <WebKitSwift/WKSLinearMediaPlayer.h>
-#import <WebKitSwift/WKSLinearMediaTypes.h>
-#import <WebKitSwift/WKSPreviewWindowController.h>
+#pragma once
+
+#import <TargetConditionals.h>
+
+#if TARGET_OS_VISION
+
+#import <UIKit/UIKit.h>
+
+#if __has_include(<LinearMediaKit/LinearMediaKit.h>)
+
+#import <LinearMediaKit/LinearMediaKit.h>
+
+#else
+
+@interface LMPlayableViewController : UIViewController
+@end
+
+#endif
+
+#endif // TARGET_OS_VISION
