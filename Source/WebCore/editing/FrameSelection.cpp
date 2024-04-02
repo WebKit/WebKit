@@ -370,7 +370,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     VisibleSelection oldSelection = m_selection;
     bool willMutateSelection = oldSelection != newSelection;
-    if (willMutateSelection && document)
+    if (willMutateSelection && document && !options.contains(SetSelectionOption::DoNotNotifyEditorClients))
         document->editor().selectionWillChange();
 
     {
@@ -437,7 +437,8 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     // It will be restored by the vertical arrow navigation code if necessary.
     m_xPosForVerticalArrowNavigation = std::nullopt;
     selectFrameElementInParentIfFullySelected();
-    document->editor().respondToChangedSelection(oldSelection, options);
+    if (!options.contains(SetSelectionOption::DoNotNotifyEditorClients))
+        document->editor().respondToChangedSelection(oldSelection, options);
 
     if (shouldScheduleSelectionChangeEvent) {
         if (textControl)
@@ -1756,7 +1757,8 @@ void FrameSelection::willBeRemovedFromFrame()
     if (auto* view = m_document->renderView())
         view->selection().clear();
 
-    setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), CursorAlignOnScroll::IfNeeded, TextGranularity::CharacterGranularity);
+    setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions() | SetSelectionOption::DoNotNotifyEditorClients,
+        CursorAlignOnScroll::IfNeeded, TextGranularity::CharacterGranularity);
     m_previousCaretNode = nullptr;
     m_typingStyle = nullptr;
 }

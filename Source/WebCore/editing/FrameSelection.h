@@ -133,6 +133,7 @@ public:
         RevealSelectionBounds = 1 << 11,
         ForceCenterScroll = 1 << 12,
         ForBindings = 1 << 13,
+        DoNotNotifyEditorClients = 1 << 14,
     };
     static constexpr OptionSet<SetSelectionOption> defaultSetSelectionOptions(UserTriggered = UserTriggered::No);
 
