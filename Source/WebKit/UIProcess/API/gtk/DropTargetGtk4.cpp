@@ -193,22 +193,22 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                     if (length >= 2 && reinterpret_cast<const UChar*>(markupData)[0] == 0xFEFF)
                         m_selectionData->setMarkup(String({ reinterpret_cast<const UChar*>(markupData) + 1, (length / 2) - 1 }));
                     else
-                        m_selectionData->setMarkup(String::fromUTF8(reinterpret_cast<const char*>(markupData), length));
+                        m_selectionData->setMarkup(String::fromUTF8(std::span(static_cast<const char*>(markupData), length)));
                 }
             } else if (mimeType == "_NETSCAPE_URL"_s) {
                 gsize length;
-                const auto* urlData = g_bytes_get_data(data.get(), &length);
+                const auto* urlData = static_cast<const char*>(g_bytes_get_data(data.get(), &length));
                 if (length) {
-                    Vector<String> tokens = String::fromUTF8(reinterpret_cast<const char*>(urlData), length).split('\n');
+                    Vector<String> tokens = String::fromUTF8(std::span(urlData, length)).split('\n');
                     URL url({ }, tokens[0]);
                     if (url.isValid())
                         m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
                 }
             } else if (mimeType == "text/uri-list"_s) {
                 gsize length;
-                const auto* uriListData = g_bytes_get_data(data.get(), &length);
+                const auto* uriListData = static_cast<const char*>(g_bytes_get_data(data.get(), &length));
                 if (length) {
-                    String uriListString(String::fromUTF8(reinterpret_cast<const char*>(uriListData), length));
+                    String uriListString(String::fromUTF8(std::span(uriListData, length)));
                     for (auto& line : uriListString.split('\n')) {
                         line = line.trim(deprecatedIsSpaceOrNewline);
                         if (line.isEmpty())
