@@ -14,7 +14,5 @@
 	<true/>
 	<key>com.apple.runningboard.launch_extensions</key>
 	<true/>
-	<key>com.apple.developer.web-browser-engine.webcontent</key>
-	<true/>
 </dict>
 </plist>
