@@ -854,6 +854,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setUsesOverlayScrollbars(boolean enabled);
 
+    undefined forceAXObjectCacheUpdate();
     undefined forceReload(boolean endToEnd);
     undefined reloadExpiredOnly();
 
