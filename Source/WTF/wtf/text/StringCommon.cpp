@@ -178,6 +178,34 @@ const float* findFloatAlignedImpl(const float* pointer, float target, size_t len
 }
 
 SUPPRESS_ASAN
+const float* findFloatNaNAlignedImpl(const float* pointer, size_t length)
+{
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b11));
+
+    constexpr uint32x4_t indexMask { 0, 1, 2, 3 };
+
+    ASSERT(length);
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
+    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
+    const float* cursor = pointer;
+    constexpr size_t stride = 16 / sizeof(float);
+
+    while (true) {
+        float32x4_t value = vld1q_f32(cursor);
+        uint32x4_t mask = vmvnq_u32(vceqq_f32(value, value));
+        if (vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(mask)), 0)) {
+            uint32x4_t ranked = vornq_u32(indexMask, mask);
+            uint32_t index = vminvq_u32(ranked);
+            return (index < length) ? cursor + index : nullptr;
+        }
+        if (length <= stride)
+            return nullptr;
+        length -= stride;
+        cursor += stride;
+    }
+}
+
+SUPPRESS_ASAN
 const double* findDoubleAlignedImpl(const double* pointer, double target, size_t length)
 {
     ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b111));
@@ -196,6 +224,35 @@ const double* findDoubleAlignedImpl(const double* pointer, double target, size_t
         float64x2_t value = vld1q_f64(cursor);
         uint64x2_t mask = vceqq_f64(value, targetsVector);
         uint32x2_t reducedMask = vmovn_u64(mask);
+        if (vget_lane_u64(vreinterpret_u64_u32(reducedMask), 0)) {
+            uint32x2_t ranked = vorn_u32(indexMask, reducedMask);
+            uint32_t index = vminv_u32(ranked);
+            return (index < length) ? cursor + index : nullptr;
+        }
+        if (length <= stride)
+            return nullptr;
+        length -= stride;
+        cursor += stride;
+    }
+}
+
+SUPPRESS_ASAN
+const double* findDoubleNaNAlignedImpl(const double* pointer, size_t length)
+{
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b111));
+
+    constexpr uint32x2_t indexMask { 0, 1 };
+
+    ASSERT(length);
+    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
+    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
+    const double* cursor = pointer;
+    constexpr size_t stride = 16 / sizeof(double);
+
+    while (true) {
+        float64x2_t value = vld1q_f64(cursor);
+        uint64x2_t mask = vceqq_f64(value, value);
+        uint32x2_t reducedMask = vmvn_u32(vmovn_u64(mask));
         if (vget_lane_u64(vreinterpret_u64_u32(reducedMask), 0)) {
             uint32x2_t ranked = vorn_u32(indexMask, reducedMask);
             uint32_t index = vminv_u32(ranked);
