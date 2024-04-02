@@ -1305,6 +1305,11 @@ def generate_one_serialized_type_info(type):
             result.append('                "' + member.name + '"_s')
             result.append('            },')
             optional_tuple_state = None
+        if 'EncodeRequestBody' in member.attributes:
+            result.append('            {')
+            result.append('                "IPC::FormDataReference"_s,')
+            result.append('                "requestBody"_s')
+            result.append('            },')
         if member.condition is not None:
             result.append('#endif')
     if optional_tuple_state == 'middle':

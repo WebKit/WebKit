@@ -365,11 +365,19 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "WebCore::ResourceRequest"_s,
                 "request"_s
             },
+            {
+                "IPC::FormDataReference"_s,
+                "requestBody"_s
+            },
         } },
         { "RequestEncodedWithBodyRValue"_s, {
             {
                 "WebCore::ResourceRequest"_s,
                 "request"_s
+            },
+            {
+                "IPC::FormDataReference"_s,
+                "requestBody"_s
             },
         } },
 #if USE(AVFOUNDATION)
