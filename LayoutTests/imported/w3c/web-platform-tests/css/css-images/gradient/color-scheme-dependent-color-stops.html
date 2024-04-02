@@ -48,13 +48,13 @@
 <div id="light-dark-in-color-mix" class="box"></div>
 <script>
 
-setTimeout(() => {
+requestAnimationFrame(() => {
     document.querySelectorAll(".box").forEach((box) => {
         box.classList.add("dark");
     });
 
     document.documentElement.className = '';
-}, 0);
+});
 
 </script>
 </body>
