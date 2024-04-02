@@ -451,6 +451,7 @@
         "kern.osversion"
         "kern.safeboot"
         "kern.version"
+        "kern.willshutdown" ;; Silence after <rdar://125745970> is resolved.
         "machdep.cpu.brand_string"
         "security.mac.sandbox.sentinel"
         "sysctl.name2oid"
@@ -463,7 +464,9 @@
 )
 
 (deny sysctl-read (with no-report)
-    (sysctl-name "vm.task_no_footprint_for_debug"))
+    (sysctl-name
+        "sysctl.proc_translated"
+        "vm.task_no_footprint_for_debug"))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (webcontent-process-launched))

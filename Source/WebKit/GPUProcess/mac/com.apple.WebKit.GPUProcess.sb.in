@@ -221,7 +221,9 @@
         "kern.osproductversion"
         "kern.osrelease"
         "kern.ostype"
+        "kern.osversion"
         "kern.version"
+        "kern.willshutdown"
         "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
@@ -230,6 +232,8 @@
 (deny sysctl-read (with no-report)
     (sysctl-name
         "security.mac.amfi.qa_root_certs_allowed"
+        "sysctl.proc_translated"
+        "vm.page_wire_count"
         "vm.task_no_footprint_for_debug"))
 
 (deny iokit-get-properties)
