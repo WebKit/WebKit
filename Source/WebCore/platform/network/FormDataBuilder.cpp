@@ -90,17 +90,17 @@ static void appendQuoted(Vector<uint8_t>& buffer, const Vector<uint8_t>& string)
 }
 
 // https://url.spec.whatwg.org/#concept-urlencoded-byte-serializer
-static void appendFormURLEncoded(Vector<uint8_t>& buffer, const uint8_t* string, size_t length)
+static void appendFormURLEncoded(Vector<uint8_t>& buffer, std::span<const uint8_t> string)
 {
     static const char safeCharacters[] = "-._*";
-    for (size_t i = 0; i < length; ++i) {
+    for (size_t i = 0; i < string.size(); ++i) {
         auto character = string[i];
         if (isASCIIAlphanumeric(character)
             || (character != '\0' && strchr(safeCharacters, character)))
             append(buffer, character);
         else if (character == ' ')
             append(buffer, '+');
-        else if (character == '\n' || (character == '\r' && (i + 1 >= length || string[i + 1] != '\n')))
+        else if (character == '\n' || (character == '\r' && (i + 1 >= string.size() || string[i + 1] != '\n')))
             append(buffer, "%0D%0A"); // FIXME: Unclear exactly where this rule about normalizing line endings to CRLF comes from.
         else if (character != '\r') {
             append(buffer, '%');
@@ -113,7 +113,7 @@ static void appendFormURLEncoded(Vector<uint8_t>& buffer, const uint8_t* string,
 
 static void appendFormURLEncoded(Vector<uint8_t>& buffer, const Vector<uint8_t>& string)
 {
-    appendFormURLEncoded(buffer, string.data(), string.size());
+    appendFormURLEncoded(buffer, string.span());
 }
 
 Vector<uint8_t> generateUniqueBoundaryString()
@@ -212,7 +212,7 @@ void addKeyValuePairAsFormData(Vector<uint8_t>& buffer, const Vector<uint8_t>& k
 
 void encodeStringAsFormData(Vector<uint8_t>& buffer, const CString& string)
 {
-    appendFormURLEncoded(buffer, string.dataAsUInt8Ptr(), string.length());
+    appendFormURLEncoded(buffer, string.span());
 }
 
 }

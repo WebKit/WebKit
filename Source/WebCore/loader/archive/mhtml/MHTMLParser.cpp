@@ -206,7 +206,7 @@ RefPtr<ArchiveResource> MHTMLParser::parseNextPart(const MIMEHeader& mimeHeader,
         break;
     }
     case MIMEHeader::QuotedPrintable:
-        data = quotedPrintableDecode(contiguousContent->data(), contiguousContent->size());
+        data = quotedPrintableDecode(contiguousContent->span());
         break;
     case MIMEHeader::SevenBit:
     case MIMEHeader::Binary:

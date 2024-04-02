@@ -186,16 +186,14 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         mhtmlData.append(asciiString.span());
 
         // FIXME: ideally we would encode the content as a stream without having to fetch it all.
-        auto* data = resource.data->data();
-        size_t dataLength = resource.data->size();
         if (!strcmp(contentEncoding, quotedPrintable)) {
-            auto encodedData = quotedPrintableEncode(data, dataLength);
+            auto encodedData = quotedPrintableEncode(resource.data->span());
             mhtmlData.append(encodedData.span());
             mhtmlData.append("\r\n"_span);
         } else {
             ASSERT(!strcmp(contentEncoding, base64));
             // We are not specifying insertLFs = true below as it would cut the lines with LFs and MHTML requires CRLFs.
-            auto encodedData = base64EncodeToVector(data, dataLength);
+            auto encodedData = base64EncodeToVector(resource.data->span());
             const size_t maximumLineLength = 76;
             size_t index = 0;
             size_t encodedDataLength = encodedData.size();

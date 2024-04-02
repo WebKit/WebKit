@@ -1093,7 +1093,7 @@ webm::Status WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, 
             setFormatDescription(createVideoInfoFromVP9HeaderParser(m_headerParser, track().video.value().colour));
         }
     } else if (codec() == CodecType::VP8) {
-        auto header = parseVP8FrameHeader(blockBufferData, segmentHeaderLength);
+        auto header = parseVP8FrameHeader({ blockBufferData, segmentHeaderLength });
         if (header && header->keyframe) {
             isKey = true;
             setFormatDescription(createVideoInfoFromVP8Header(*header, track().video.value().colour));

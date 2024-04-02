@@ -66,7 +66,7 @@ struct VP8FrameHeader {
     bool needsClamping { false };
 };
 
-std::optional<VP8FrameHeader> parseVP8FrameHeader(const uint8_t* frameData, size_t frameSize);
+std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t>);
 Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader&, const webm::Element<webm::Colour>&);
 
 class WEBCORE_EXPORT VP9TestingOverrides {

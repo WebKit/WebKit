@@ -234,7 +234,7 @@ void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier)
 void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier identifier, std::span<const uint8_t> data, uint16_t width, uint16_t height)
 {
     doDecoderTask(identifier, [&](auto& decoder) {
-        decoder.webrtcDecoder->setFormat(data.data(), data.size(), width, height);
+        decoder.webrtcDecoder->setFormat(data, width, height);
     });
 }
 
@@ -243,7 +243,7 @@ void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_
     doDecoderTask(identifier, [&](auto& decoder) {
         if (decoder.frameRateMonitor)
             decoder.frameRateMonitor->update();
-        if (decoder.webrtcDecoder->decodeFrame(timeStamp, data.data(), data.size()))
+        if (decoder.webrtcDecoder->decodeFrame(timeStamp, data))
             m_connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
     });
 }

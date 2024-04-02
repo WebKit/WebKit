@@ -47,8 +47,8 @@ public:
 #endif
 
     virtual void flush() = 0;
-    virtual void setFormat(const uint8_t*, size_t, uint16_t width, uint16_t height) = 0;
-    virtual int32_t decodeFrame(int64_t timeStamp, const uint8_t*, size_t) = 0;
+    virtual void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) = 0;
+    virtual int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t>) = 0;
     virtual void setFrameSize(uint16_t width, uint16_t height) = 0;
 };
 

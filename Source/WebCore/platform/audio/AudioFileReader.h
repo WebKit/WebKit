@@ -39,6 +39,6 @@ class AudioBus;
 // sampleRate will be made (if it doesn't already match the file's sample-rate).
 // The created buffer will have its sample-rate set correctly to the result.
 
-RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
+RefPtr<AudioBus> createBusFromInMemoryAudioFile(std::span<const uint8_t> data, bool mixToMono, float sampleRate);
 
 } // namespace WebCore
