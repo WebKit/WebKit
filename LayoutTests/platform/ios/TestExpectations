@@ -3450,9 +3450,6 @@ fast/text/system-font-width-7.html [ Pass ]
 fast/text/system-font-width-8.html [ Pass ]
 fast/text/system-font-width-9.html [ Pass ]
 
-# rdar://80384054 ([ iOS15 ] css3/filters/filter-repaint-shadow-layer-child.html is flaky failure)
-css3/filters/filter-repaint-shadow-layer-child.html [ Pass ImageOnlyFailure ]
-
 # rdar://80393008 ([ iOS15 ] http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html is a flaky crash)
 http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html [ Pass Crash ]
 
