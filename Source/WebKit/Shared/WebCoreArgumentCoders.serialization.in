@@ -2030,6 +2030,11 @@ enum class WebCore::DiagnosticLoggingDomain : uint8_t {
 #if USE(CG)
 using WebCore::PlatformColorSpace = RetainPtr<CGColorSpaceRef>;
 #else
+#if USE(SKIA)
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::PlatformColorSpace {
+    int serialize();
+};
+#else
 [Nested] enum class WebCore::PlatformColorSpace::Name : uint8_t {
         SRGB
         , LinearSRGB
@@ -2041,6 +2046,7 @@ using WebCore::PlatformColorSpace = RetainPtr<CGColorSpaceRef>;
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::PlatformColorSpace {
     WebCore::PlatformColorSpace::Name get();
 };
+#endif
 #endif
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::DestinationColorSpace {

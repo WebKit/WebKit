@@ -45,6 +45,7 @@
 #include <skia/core/SkPoint3.h>
 #include <skia/core/SkRRect.h>
 #include <skia/core/SkRegion.h>
+#include <skia/core/SkSurface.h>
 #include <skia/core/SkTileMode.h>
 #include <skia/effects/SkImageFilters.h>
 #include <wtf/MathExtras.h>
@@ -55,11 +56,22 @@
 
 namespace WebCore {
 
+static DestinationColorSpace deduceColorSpaceFromCanvas(const SkCanvas& canvas)
+{
+    auto colorSpace = canvas.imageInfo().refColorSpace();
+    if (colorSpace == nullptr)
+        if (auto surface = canvas.getSurface(); surface != nullptr)
+            colorSpace = surface->imageInfo().refColorSpace();
+    // No color space means the default - SRGB.
+    return colorSpace != nullptr ? DestinationColorSpace(colorSpace) : DestinationColorSpace::SRGB();
+}
+
 GraphicsContextSkia::GraphicsContextSkia(SkCanvas& canvas, RenderingMode renderingMode, RenderingPurpose renderingPurpose, CompletionHandler<void()>&& destroyNotify)
     : m_canvas(canvas)
     , m_renderingMode(renderingMode)
     , m_renderingPurpose(renderingPurpose)
     , m_destroyNotify(WTFMove(destroyNotify))
+    , m_colorSpace(deduceColorSpaceFromCanvas(canvas))
 {
 }
 
@@ -83,6 +95,11 @@ AffineTransform GraphicsContextSkia::getCTM(IncludeDeviceScale includeScale) con
 SkCanvas* GraphicsContextSkia::platformContext() const
 {
     return &m_canvas;
+}
+
+const DestinationColorSpace& GraphicsContextSkia::colorSpace() const
+{
+    return m_colorSpace;
 }
 
 bool GraphicsContextSkia::makeGLContextCurrentIfNeeded() const
@@ -293,7 +310,7 @@ void GraphicsContextSkia::drawLine(const FloatPoint& point1, const FloatPoint& p
         return;
 
     SkPaint paint = createStrokePaint();
-    paint.setColor(SkColor(strokeColor().colorWithAlphaMultipliedBy(alpha())));
+    setupColor(paint, SkColor(strokeColor().colorWithAlphaMultipliedBy(alpha())));
 
     const bool isVertical = (point1.x() + strokeThickness() == point2.x());
     float strokeWidth = isVertical ? point2.y() - point1.y() : point2.x() - point1.x();
@@ -456,12 +473,12 @@ SkPaint GraphicsContextSkia::createFillPaint() const
 void GraphicsContextSkia::setupFillSource(SkPaint& paint) const
 {
     if (auto fillPattern = fillBrush().pattern()) {
-        paint.setShader(fillPattern->createPlatformPattern({ }, toSkSamplingOptions(imageInterpolationQuality())));
+        setupShader(paint, fillPattern->createPlatformPattern({ }, toSkSamplingOptions(imageInterpolationQuality())));
         paint.setAlphaf(alpha());
     } else if (auto fillGradient = fillBrush().gradient())
-        paint.setShader(fillGradient->shader(alpha(), fillBrush().gradientSpaceTransform()));
+        setupShader(paint, fillGradient->shader(alpha(), fillBrush().gradientSpaceTransform()));
     else
-        paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
+        setupColor(paint, fillColor().colorWithAlphaMultipliedBy(alpha()));
 }
 
 SkPaint GraphicsContextSkia::createStrokePaint() const
@@ -480,11 +497,22 @@ SkPaint GraphicsContextSkia::createStrokePaint() const
 void GraphicsContextSkia::setupStrokeSource(SkPaint& paint) const
 {
     if (auto strokePattern = strokeBrush().pattern())
-        paint.setShader(strokePattern->createPlatformPattern({ }, toSkSamplingOptions(imageInterpolationQuality())));
+        setupShader(paint, strokePattern->createPlatformPattern({ }, toSkSamplingOptions(imageInterpolationQuality())));
     else if (auto strokeGradient = strokeBrush().gradient())
-        paint.setShader(strokeGradient->shader(alpha(), strokeBrush().gradientSpaceTransform()));
+        setupShader(paint, strokeGradient->shader(alpha(), strokeBrush().gradientSpaceTransform()));
     else
-        paint.setColor(SkColor(strokeBrush().color().colorWithAlphaMultipliedBy(alpha())));
+        setupColor(paint, SkColor(strokeBrush().color().colorWithAlphaMultipliedBy(alpha())));
+}
+
+void GraphicsContextSkia::setupColor(SkPaint& paint, SkColor color) const
+{
+    paint.setColor4f(SkColor4f::FromColor(color), colorSpace().platformColorSpace().get());
+}
+
+void GraphicsContextSkia::setupShader(SkPaint& paint, sk_sp<SkShader> shader) const
+{
+    if (shader)
+        paint.setShader(shader->makeWithWorkingColorSpace(colorSpace().platformColorSpace()));
 }
 
 void GraphicsContextSkia::fillRect(const FloatRect& boundaries)
@@ -504,7 +532,7 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fil
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(fillColor));
+    setupColor(paint, SkColor(fillColor));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     m_canvas.drawRect(boundaries, paint);
 }
@@ -515,7 +543,7 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, Gradient& gradie
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setShader(gradient.shader(alpha(), gradientSpaceTransform));
+    setupShader(paint, gradient.shader(alpha(), gradientSpaceTransform));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     m_canvas.drawRect(boundaries, paint);
 }
@@ -698,7 +726,7 @@ void GraphicsContextSkia::drawDotsForDocumentMarker(const FloatRect& boundaries,
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(style.color));
+    setupColor(paint, (SkColor(style.color)));
     m_canvas.drawPath(createErrorUnderlinePath(boundaries), paint);
 }
 
@@ -852,7 +880,7 @@ void GraphicsContextSkia::fillRoundedRectImpl(const FloatRoundedRect& rect, cons
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(color));
+    setupColor(paint, SkColor(color));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     m_canvas.drawRRect(rect, paint);
 }
@@ -866,7 +894,7 @@ void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect& outerRect, co
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(color));
+    setupColor(paint, SkColor(color));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Inset));
     m_canvas.drawDRRect(SkRRect::MakeRect(outerRect), innerRRect, paint);
 }
@@ -895,7 +923,7 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
 
     if (spacing.isZero() && !needsClip)
-        paint.setShader(image->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions, &shaderMatrix));
+        setupShader(paint, image->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions, &shaderMatrix));
     else {
         if (needsClip) {
             // FIXME: handle the case where the tile rect has a different size than the image.
@@ -905,7 +933,7 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
         auto* recordCanvas = recorder.beginRecording(SkRect::MakeWH(tileRect.width() + spacing.width() / patternTransform.a(), tileRect.height() + spacing.height() / patternTransform.d()));
         recordCanvas->drawImageRect(image, tileRect, SkRect::MakeWH(tileRect.width(), tileRect.height()), samplingOptions, nullptr, SkCanvas::kStrict_SrcRectConstraint);
         auto picture = recorder.finishRecordingAsPicture();
-        paint.setShader(picture->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions.filter, &shaderMatrix, nullptr));
+        setupShader(paint, picture->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions.filter, &shaderMatrix, nullptr));
     }
 
     m_canvas.drawRect(destRect, paint);

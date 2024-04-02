@@ -42,6 +42,8 @@ public:
     bool hasPlatformContext() const final;
     SkCanvas* platformContext() const final;
 
+    const DestinationColorSpace& colorSpace() const final;
+
     void didUpdateState(GraphicsContextState&);
 
     void setLineCap(LineCap) final;
@@ -104,6 +106,8 @@ public:
 
     void setupFillSource(SkPaint&) const;
     void setupStrokeSource(SkPaint&) const;
+    void setupColor(SkPaint&, SkColor) const;
+    void setupShader(SkPaint&, sk_sp<SkShader>) const;
 
 private:
     bool makeGLContextCurrentIfNeeded() const;
@@ -126,6 +130,7 @@ private:
     CompletionHandler<void()> m_destroyNotify;
     SkiaState m_skiaState;
     Vector<SkiaState, 1> m_skiaStateStack;
+    const DestinationColorSpace m_colorSpace;
 };
 
 } // namespace WebCore

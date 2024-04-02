@@ -39,7 +39,7 @@ public:
     float floodOpacity() const { return m_floodOpacity; }
     bool setFloodOpacity(float);
 
-#if !USE(CG)
+#if !USE(CG) && !USE(SKIA)
     // feFlood does not perform color interpolation of any kind, so the result is always in the current
     // color space regardless of the value of color-interpolation-filters.
     void setOperatingColorSpace(const DestinationColorSpace&) override { }

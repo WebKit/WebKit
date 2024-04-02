@@ -45,7 +45,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     , m_bitmapInfo(calculateBitmapInfo(this->colorSpace(), isOpaque))
 #endif
 #if USE(SKIA)
-    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height()))
+    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), this->colorSpace().platformColorSpace()))
 #endif
 {
     ASSERT(!m_size.isEmpty());
@@ -65,7 +65,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     , m_bitmapInfo(bitmapInfo)
 #endif
 #if USE(SKIA)
-    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height()))
+    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), this->colorSpace().platformColorSpace()))
 #endif
 {
     // This constructor is called when decoding ShareableBitmapConfiguration. So this constructor

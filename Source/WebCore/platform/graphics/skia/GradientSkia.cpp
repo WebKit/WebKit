@@ -64,8 +64,7 @@ static SkGradientShader::Interpolation toSkiaInterpolation(const ColorInterpolat
             }
         },
         [&] (const auto&) {
-            // FIXME: support other color spaces.
-            notImplemented();
+            WTFCrash();
         });
     return interpolation;
 }
@@ -147,7 +146,7 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 {
     auto paint = static_cast<GraphicsContextSkia*>(&context)->createFillPaint();
-    paint.setShader(shader(context.alpha(), context.fillGradientSpaceTransform()));
+    paint.setShader(shader(context.alpha(), context.fillGradientSpaceTransform())->makeWithWorkingColorSpace(context.colorSpace().platformColorSpace()));
     context.platformContext()->drawRect(rect, paint);
 }
 
