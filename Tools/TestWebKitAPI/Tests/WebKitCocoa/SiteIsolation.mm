@@ -429,6 +429,40 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, PreferencesUpdatesToAllProcesses)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://apple.com/apple'></iframe>"_s } },
+        { "/apple"_s, { "hi"_s } },
+        { "/opened"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = NO;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    __block RetainPtr<WKFrameInfo> childFrame;
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        childFrame = mainFrame.childFrames[0].info;
+    }];
+    while (!childFrame)
+        Util::spinRunLoop();
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    __block bool opened { false };
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures)
+    {
+        opened = true;
+        return nil;
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView _evaluateJavaScript:@"window.open('https://example.com/opened')" withSourceURL:nil inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld withUserGesture:NO completionHandler:nil];
+    Util::run(&opened);
+}
+
 TEST(SiteIsolation, ParentOpener)
 {
     HTTPServer server({
