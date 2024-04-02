@@ -27,13 +27,12 @@
 
 #if ENABLE(DATA_DETECTION)
 
+#import <WebCore/IntRect.h>
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS DDScannerResult;
 
 namespace WebCore {
-
-class IntRect;
 
 struct DataDetectorElementInfo {
     RetainPtr<DDScannerResult> result;

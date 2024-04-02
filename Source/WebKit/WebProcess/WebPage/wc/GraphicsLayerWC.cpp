@@ -31,6 +31,7 @@
 
 #include "WCPlatformLayerGCGL.h"
 #include "WCTileGrid.h"
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/TransformState.h>
 
 namespace WebKit {

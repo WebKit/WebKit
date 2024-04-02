@@ -37,6 +37,7 @@
 #include "RemoteVideoFrameObjectHeap.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <wtf/Logger.h>

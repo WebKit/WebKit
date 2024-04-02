@@ -110,6 +110,10 @@
 #include "IPCTesterMessages.h"
 #endif
 
+#if ENABLE(CONTENT_FILTERING)
+#include <WebCore/MockContentFilterSettings.h>
+#endif
+
 #if HAVE(OS_SIGNPOST)
 #include <wtf/SystemTracing.h>
 #endif

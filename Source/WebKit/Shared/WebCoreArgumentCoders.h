@@ -28,94 +28,24 @@
 #include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
-#include <WebCore/AutoplayEvent.h>
-#include <WebCore/ColorSpace.h>
-#include <WebCore/DisplayListItems.h>
-#include <WebCore/FloatRoundedRect.h>
-#include <WebCore/FloatSize.h>
-#include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/IndexedDB.h>
-#include <WebCore/InputMode.h>
-#include <WebCore/LayoutPoint.h>
-#include <WebCore/LayoutSize.h>
-#include <WebCore/MediaSelectionOption.h>
-#include <WebCore/NetworkLoadMetrics.h>
-#include <WebCore/NotificationDirection.h>
-#include <WebCore/RealtimeMediaSource.h>
-#include <WebCore/RenderingMode.h>
-#include <WebCore/ScrollSnapOffsetsInfo.h>
-#include <WebCore/ScrollTypes.h>
-#include <WebCore/SerializedPlatformDataCueValue.h>
-#include <WebCore/ServiceWorkerTypes.h>
-#include <WebCore/StoredCredentialsPolicy.h>
-#include <WebCore/WorkerType.h>
+#include <WebCore/FontPlatformData.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 
-#if ENABLE(APPLE_PAY)
-#include <WebCore/PaymentHeaders.h>
-#endif
-
 #if USE(CURL)
 #include <WebCore/CurlProxySettings.h>
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-#include <WebCore/InspectorOverlay.h>
 #endif
 
 #if PLATFORM(GTK)
 #include "ArgumentCodersGtk.h"
 #endif
 
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-#include <WebCore/GraphicsContextGL.h>
-#include <WebCore/GraphicsContextGLEnums.h>
-#endif
-
-#if ENABLE(WEBXR)
-#include <WebCore/PlatformXR.h>
-#endif
-
-#if ENABLE(CONTENT_FILTERING)
-#include <WebCore/MockContentFilterSettings.h>
-#endif
-
-#if USE(AVFOUNDATION)
-typedef struct __CVBuffer* CVPixelBufferRef;
-#endif
-
 namespace WebCore {
 
-class BlobPart;
-class Credential;
-class Cursor;
-class FilterEffect;
-class FilterFunction;
-class FilterOperation;
-class FilterOperations;
-class FixedPositionViewportConstraints;
 class Font;
 class FontPlatformData;
-class FragmentedSharedBuffer;
-class PaymentInstallmentConfiguration;
-class PixelBuffer;
-class SerializedScriptValue;
-class SharedBuffer;
-class StickyPositionViewportConstraints;
-class SystemImage;
 
-struct CompositionUnderline;
-struct DataDetectorElementInfo;
 struct SoupNetworkProxySettings;
-struct ViewportArguments;
-
-template <class>
-struct PathCommand;
-
-namespace DOMCacheEngine {
-struct Record;
-}
 
 } // namespace WebCore
 
