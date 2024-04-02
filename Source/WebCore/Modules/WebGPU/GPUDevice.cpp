@@ -281,6 +281,7 @@ ExceptionOr<Ref<GPUSampler>> GPUDevice::createSampler(const std::optional<GPUSam
     return GPUSampler::create(sampler.releaseNonNull());
 }
 
+#if ENABLE(VIDEO)
 GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTextureDescriptor& descriptor)
 {
     m_videoElementToExternalTextureMap.removeNullReferences();
@@ -333,9 +334,11 @@ private:
     WeakPtr<HTMLVideoElement> m_videoElement;
     WeakPtr<GPUDevice, WeakPtrImplWithEventTargetData> m_gpuDevice;
 };
+#endif
 
 ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
+#if ENABLE(VIDEO)
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
         externalTexture->undestroy();
 #if ENABLE(WEB_CODECS)
@@ -346,6 +349,7 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
         m_videoElementToExternalTextureMap.remove(*videoElement.get());
         return externalTexture.releaseNonNull();
     }
+#endif
     RefPtr texture = m_backing->importExternalTexture(externalTextureDescriptor.convertToBacking());
     if (!texture)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.importExternalTexture: Unable to import texture."_s };

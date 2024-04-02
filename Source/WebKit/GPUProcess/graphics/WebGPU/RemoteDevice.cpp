@@ -171,7 +171,6 @@ void RemoteDevice::setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&& han
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTextureDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::optional<WebKit::SharedVideoFrame> sharedVideoFrame = descriptor.sharedFrame;
     RetainPtr<CVPixelBufferRef> pixelBuffer { nullptr };
     if (sharedVideoFrame) {
@@ -193,9 +192,6 @@ void RemoteDevice::importExternalTextureFromVideoFrame(const WebGPU::ExternalTex
     RELEASE_ASSERT(externalTexture);
     auto remoteExternalTexture = RemoteExternalTexture::create(*externalTexture, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, remoteExternalTexture);
-#else
-    UNUSED_PARAM(identifier);
-#endif
 }
 #endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 

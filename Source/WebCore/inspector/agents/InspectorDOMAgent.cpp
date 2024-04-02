@@ -3100,6 +3100,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAllowEditingUserA
 
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> InspectorDOMAgent::getMediaStats(Inspector::Protocol::DOM::NodeId nodeId)
 {
+#if ENABLE(VIDEO)
     Inspector::Protocol::ErrorString errorString;
 
     auto* element = assertElement(errorString, nodeId);
@@ -3176,6 +3177,10 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
     }
 
     return stats;
+#else
+    UNUSED_PARAM(nodeId);
+    return makeUnexpected("no media support"_s);
+#endif
 }
 
 } // namespace WebCore

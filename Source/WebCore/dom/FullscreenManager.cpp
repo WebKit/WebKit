@@ -529,9 +529,11 @@ bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEn
     INFO_LOG(LOGIDENTIFIER);
     ASSERT(page()->settings().fullScreenEnabled());
 
+#if ENABLE(VIDEO)
     if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element))
         mediaElement->willBecomeFullscreenElement(mode);
     else
+#endif
         element.willBecomeFullscreenElement();
 
     ASSERT(&element == m_pendingFullscreenElement);

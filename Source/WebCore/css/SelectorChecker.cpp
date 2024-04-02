@@ -1075,8 +1075,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesAnimatingFullscreenTransitionPseudoClass(element);
         case CSSSelector::PseudoClass::InternalFullscreenDocument:
             return matchesFullscreenDocumentPseudoClass(element);
+#if ENABLE(VIDEO)
         case CSSSelector::PseudoClass::InternalInWindowFullScreen:
             return matchesInWindowFullScreenPseudoClass(element);
+#endif
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
         case CSSSelector::PseudoClass::PictureInPicture:
