@@ -58,6 +58,8 @@ public:
     void updateScrollbarEnabledState(WebCore::Scrollbar&) final;
     void scrollbarLayoutDirectionChanged(WebCore::UserInterfaceLayoutDirection) final;
 
+    void updateScrollbarStyle() final;
+
 private:
     bool m_horizontalOverlayScrollbarIsVisible { false };
     bool m_verticalOverlayScrollbarIsVisible { false };

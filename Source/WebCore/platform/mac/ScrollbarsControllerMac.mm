@@ -957,14 +957,7 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         NSScrollerImp *oldVerticalPainter = [m_scrollerImpPair verticalScrollerImp];
         auto* verticalScrollbarMac = dynamicDowncast<ScrollbarMac>(verticalScrollbar);
         verticalScrollbarMac->createScrollerImp(WTFMove(oldVerticalPainter));
-
         [m_scrollerImpPair setVerticalScrollerImp:verticalScrollbarMac->scrollerImp()];
-
-        // The different scrollbar styles have different thicknesses, so we must re-set the
-        // frameRect to the new thickness, and the re-layout below will ensure the position
-        // and length are properly updated.
-        int thickness = macTheme->scrollbarThickness(verticalScrollbar->widthStyle());
-        verticalScrollbar->setFrameRect(IntRect(0, 0, thickness, thickness));
     }
 
     Scrollbar* horizontalScrollbar = scrollableArea().horizontalScrollbar();
@@ -974,15 +967,13 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         NSScrollerImp *oldHorizontalPainter = [m_scrollerImpPair horizontalScrollerImp];
         auto* horizontalScrollbarMac = dynamicDowncast<ScrollbarMac>(horizontalScrollbar);
         horizontalScrollbarMac->createScrollerImp(WTFMove(oldHorizontalPainter));
-
         [m_scrollerImpPair setHorizontalScrollerImp:horizontalScrollbarMac->scrollerImp()];
-
-        // The different scrollbar styles have different thicknesses, so we must re-set the
-        // frameRect to the new thickness, and the re-layout below will ensure the position
-        // and length are properly updated.
-        int thickness = macTheme->scrollbarThickness(horizontalScrollbar->widthStyle());
-        horizontalScrollbar->setFrameRect(IntRect(0, 0, thickness, thickness));
     }
+
+    // The different scrollbar styles have different thicknesses, so we must re-set the
+    // frameRect to the new thickness, and the re-layout below will ensure the position
+    // and length are properly updated.
+    updateScrollbarsThickness();
 
     // If m_needsScrollerStyleUpdate is true, then the page is restoring from the back/forward cache, and
     // a relayout will happen on its own. Otherwise, we must initiate a re-layout ourselves.
