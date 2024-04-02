@@ -55,7 +55,8 @@ bool AXLogger::shouldLog()
     // Add strings to the Vector below to just log from instances whose m_methodName includes any of the strings.
     // For instance, if you want to just log from the wrapper and the AXIsolatedTree class:
     // static NeverDestroyed nameFilter = Vector<String> { "WebAccessibilityObjectWrapper"_s, "AXIsolatedTree"_s };
-    static NeverDestroyed nameFilter = Vector<String> { };
+    // The default string "log nothing", prevents any output. An empty Vector or an empty string in the Vector will log everything.
+    static NeverDestroyed nameFilter = Vector<String> { "log nothing"_s };
 
     if (!nameFilter->isEmpty()) {
         auto it = std::find_if(nameFilter->begin(), nameFilter->end(), [this] (const auto& name) {
