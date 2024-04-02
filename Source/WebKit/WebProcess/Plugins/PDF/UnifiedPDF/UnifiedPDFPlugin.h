@@ -436,6 +436,14 @@ private:
 
     WebCore::FloatSize centeringOffset() const;
 
+    struct ScrollAnchoringInfo {
+        PDFDocumentLayout::PageIndex pageIndex { 0 };
+        WebCore::FloatPoint pagePoint;
+    };
+
+    std::optional<ScrollAnchoringInfo> scrollAnchoringForCurrentScrollPosition(bool preserveScrollPosition) const;
+    void restoreScrollPositionWithInfo(const ScrollAnchoringInfo&);
+
     // HUD Actions.
 #if ENABLE(PDF_HUD)
     void zoomIn() final;

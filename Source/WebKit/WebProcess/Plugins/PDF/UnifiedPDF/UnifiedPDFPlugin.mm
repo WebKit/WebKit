@@ -1213,8 +1213,10 @@ IntRect UnifiedPDFPlugin::availableContentsRect() const
 void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
 {
     auto layoutSize = availableContentsRect().size();
-
     auto autoSizeMode = m_didLayoutWithValidDocument ? m_shouldUpdateAutoSizeScale : ShouldUpdateAutoSizeScale::Yes;
+
+    auto scrollAnchoringInfo = scrollAnchoringForCurrentScrollPosition(shouldAdjustScale == AdjustScaleAfterLayout::Yes || autoSizeMode == ShouldUpdateAutoSizeScale::Yes);
+
     m_documentLayout.updateLayout(layoutSize, autoSizeMode);
     updateScrollbars();
 
@@ -1225,7 +1227,7 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
         updateScrollbars();
     }
 
-    m_didLayoutWithValidDocument = m_documentLayout.havePDFDocument();
+    m_didLayoutWithValidDocument = m_documentLayout.hasPDFDocument();
 
     updateLayerHierarchy();
     updateLayerPositions();
@@ -1241,6 +1243,30 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale)
     }
 
     LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - scale " << m_scaleFactor << " normalization factor " << m_scaleNormalizationFactor << " layout scale " << m_documentLayout.scale());
+
+    if (scrollAnchoringInfo)
+        restoreScrollPositionWithInfo(*scrollAnchoringInfo);
+}
+
+auto UnifiedPDFPlugin::scrollAnchoringForCurrentScrollPosition(bool preserveScrollPosition) const -> std::optional<ScrollAnchoringInfo>
+{
+    if (!preserveScrollPosition)
+        return { };
+
+    if (!m_documentLayout.hasLaidOutPDFDocument())
+        return { };
+
+    auto topLeftInDocumentSpace = convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, FloatPoint { });
+    auto [pageIndex, pointInPDFPageSpace] = m_documentLayout.pageIndexAndPagePointForDocumentYOffset(topLeftInDocumentSpace.y());
+
+    LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::scrollAnchoringForCurrentScrollPosition - point " << pointInPDFPageSpace << " in page " << pageIndex);
+
+    return ScrollAnchoringInfo { pageIndex, pointInPDFPageSpace };
+}
+
+void UnifiedPDFPlugin::restoreScrollPositionWithInfo(const ScrollAnchoringInfo& info)
+{
+    scrollToPointInPage(info.pagePoint, info.pageIndex);
 }
 
 FloatSize UnifiedPDFPlugin::centeringOffset() const
