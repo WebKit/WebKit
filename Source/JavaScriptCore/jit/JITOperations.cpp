@@ -1136,7 +1136,7 @@ ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& v
     {
         JSObject* object = baseObject;
         while (true) {
-            if (UNLIKELY(structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto())) {
+            if (UNLIKELY(mayHaveNonDefaultHandlingForPut(vm, structure, uid))) {
                 if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                     repatchPutBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
                 scope.release();
@@ -1892,7 +1892,7 @@ ALWAYS_INLINE static void putByValMegamorphic(JSGlobalObject* globalObject, VM& 
     {
         JSObject* object = baseObject;
         while (true) {
-            if (UNLIKELY(structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto())) {
+            if (UNLIKELY(mayHaveNonDefaultHandlingForPut(vm, structure, uid))) {
                 if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                     repatchPutBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
                 scope.release();
