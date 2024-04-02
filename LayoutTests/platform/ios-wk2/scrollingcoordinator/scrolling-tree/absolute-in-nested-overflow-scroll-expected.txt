@@ -11,7 +11,7 @@
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,421))
   (behavior for fixed 1)
-  (children 1
+  (children 2
     (Overflow scrolling node
       (scrollable area size 310 310)
       (contents size 310 1112)
@@ -33,6 +33,9 @@
             (allows horizontal scrolling 1))
         )
       )
+    )
+    (Overflow scroll proxy node
+      (related overflow scrolling node scroll position (0,0))
     )
   )
 )

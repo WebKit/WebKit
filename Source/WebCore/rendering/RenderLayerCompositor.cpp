@@ -1596,18 +1596,21 @@ void RenderLayerCompositor::updateBackingSharingAfterDescendantTraversal(Backing
     if (!stackingContextAncestor)
         return;
 
-    if (!sharingState.backingSharingStackingContext()) {
-        computeExtent(overlapMap, layer, layerExtent);
-        sharingState.startBackingSharingSequence(layer, layerExtent.bounds, *stackingContextAncestor);
-        LOG_WITH_STREAM(Compositing, stream << "BackingSharingState::updateAfterDescendantTraversal: started sharing sequence with provider candidate " << &layer);
-        return;
-    }
+    bool canBeBackingProvider = !layer.hasCompositingDescendant();
+    if (canBeBackingProvider) {
+        if (!sharingState.backingSharingStackingContext()) {
+            computeExtent(overlapMap, layer, layerExtent);
+            sharingState.startBackingSharingSequence(layer, layerExtent.bounds, *stackingContextAncestor);
+            LOG_WITH_STREAM(Compositing, stream << " - started sharing sequence with provider candidate " << &layer);
+            return;
+        }
 
-    computeExtent(overlapMap, layer, layerExtent);
-    if (sharingState.isAdditionalProviderCandidate(layer, layerExtent.bounds, stackingContextAncestor)) {
-        sharingState.addBackingSharingCandidate(layer, layerExtent.bounds, *stackingContextAncestor);
-        LOG_WITH_STREAM(Compositing, stream << "BackingSharingState::updateAfterDescendantTraversal: added additional provider candidate " << &layer);
-        return;
+        computeExtent(overlapMap, layer, layerExtent);
+        if (sharingState.isAdditionalProviderCandidate(layer, layerExtent.bounds, stackingContextAncestor)) {
+            sharingState.addBackingSharingCandidate(layer, layerExtent.bounds, *stackingContextAncestor);
+            LOG_WITH_STREAM(Compositing, stream << " - added additional provider candidate " << &layer);
+            return;
+        }
     }
 
     layer.backing()->clearBackingSharingLayers();
