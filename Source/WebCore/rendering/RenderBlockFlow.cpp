@@ -672,8 +672,13 @@ inline LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogi
     // Calculate alignment shift.
     LayoutUnit computedLogicalHeight = logicalHeight();
     LayoutUnit space = computedLogicalHeight - intrinsicLogicalHeight;
-    if (space <= 0 && OverflowAlignment::Unsafe != alignment.overflow())
-        return 0_lu; // Floored at zero; we're done
+    if (space <= 0) {
+        bool overflowIsSafe = (alignment.overflow() == OverflowAlignment::Default && !isScrollContainerY())
+            || alignment.overflow() == OverflowAlignment::Safe
+            || alignment.position() == ContentPosition::Normal;
+        if (overflowIsSafe)
+            return 0_lu; // Floored at zero; we're done
+    }
     if (alignment.isCentered())
         space = space / 2;
 
@@ -4445,8 +4450,7 @@ LayoutOptionalOutsets RenderBlockFlow::allowedLayoutOverflow() const
 {
     LayoutOptionalOutsets allowance = RenderBox::allowedLayoutOverflow();
 
-    auto alignment = style().alignContent();
-    if (!alignment.isNormal() && OverflowAlignment::Unsafe == alignment.overflow()) {
+    if (style().alignContent().position() != ContentPosition::Normal) {
         if (hasRareBlockFlowData()) {
             if (isHorizontalWritingMode())
                 allowance.setTop(-rareBlockFlowData()->m_alignContentShift);
