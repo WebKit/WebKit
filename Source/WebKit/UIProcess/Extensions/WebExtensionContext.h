@@ -543,6 +543,7 @@ private:
     NSDictionary *readStateFromStorage();
     void writeStateToStorage() const;
 
+    void determineInstallReasonDuringLoad();
     void moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&&);
 
     void permissionsDidChange(const PermissionsSet&);
@@ -565,7 +566,6 @@ private:
     void loadBackgroundWebViewIfNeeded();
     void loadBackgroundWebView();
     void unloadBackgroundWebView();
-    void queueStartupAndInstallEventsForExtensionIfNecessary();
     void scheduleBackgroundContentToUnload();
     void unloadBackgroundContentIfPossible();
 
@@ -639,6 +639,7 @@ private:
 
     // Registered content scripts methods.
     void loadRegisteredContentScripts();
+    void clearRegisteredContentScripts();
     _WKWebExtensionRegisteredScriptsSQLiteStore *registeredContentScriptsStore();
 
     // Storage
