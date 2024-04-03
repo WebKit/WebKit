@@ -46,6 +46,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/NativePromise.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/cocoa/Entitlements.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, &m_connectionProxy->connection())
@@ -56,7 +57,8 @@ using namespace WebCore;
 class UserMediaCaptureManagerProxy::SourceProxy
     : public RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
-    , private RealtimeMediaSource::VideoFrameObserver {
+    , private RealtimeMediaSource::VideoFrameObserver
+    , public CanMakeCheckedPtr<UserMediaCaptureManagerProxy::SourceProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source, RefPtr<RemoteVideoFrameObjectHeap>&& videoFrameObjectHeap)
@@ -271,6 +273,12 @@ public:
     }
 
 private:
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     void sourceStopped() final {
         m_connection->send(Messages::UserMediaCaptureManager::SourceStopped(m_id, m_source->captureDidFail()), 0);
     }

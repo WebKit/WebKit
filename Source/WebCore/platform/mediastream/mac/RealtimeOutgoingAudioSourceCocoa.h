@@ -29,6 +29,7 @@
 
 #include "AudioSampleDataSource.h"
 #include "RealtimeOutgoingAudioSource.h"
+#include <wtf/CheckedRef.h>
 
 namespace webrtc {
 class AudioTrackInterface;
@@ -37,13 +38,18 @@ class AudioTrackSinkInterface;
 
 namespace WebCore {
 
-class RealtimeOutgoingAudioSourceCocoa final : public RealtimeOutgoingAudioSource {
+class RealtimeOutgoingAudioSourceCocoa final : public RealtimeOutgoingAudioSource, public CanMakeCheckedPtr<RealtimeOutgoingAudioSourceCocoa> {
 public:
     static Ref<RealtimeOutgoingAudioSourceCocoa> create(Ref<MediaStreamTrackPrivate>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSourceCocoa(WTFMove(audioSource))); }
 
 private:
     explicit RealtimeOutgoingAudioSourceCocoa(Ref<MediaStreamTrackPrivate>&&);
     ~RealtimeOutgoingAudioSourceCocoa();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 

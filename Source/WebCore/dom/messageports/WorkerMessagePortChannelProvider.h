@@ -34,7 +34,7 @@ namespace WebCore {
 
 class WorkerOrWorkletGlobalScope;
 
-class WorkerMessagePortChannelProvider final : public MessagePortChannelProvider, public CanMakeCheckedPtr {
+class WorkerMessagePortChannelProvider final : public MessagePortChannelProvider, public CanMakeCheckedPtr<WorkerMessagePortChannelProvider> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerMessagePortChannelProvider(WorkerOrWorkletGlobalScope&);

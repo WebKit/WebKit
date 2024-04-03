@@ -62,7 +62,8 @@ class VideoPresentationInterfaceIOS
     : public VideoPresentationModelClient
     , public PlaybackSessionModelClient
     , public VideoFullscreenCaptions
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationInterfaceIOS, WTF::DestructionThread::MainRunLoop> {
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationInterfaceIOS, WTF::DestructionThread::MainRunLoop>
+    , public CanMakeCheckedPtr<VideoPresentationInterfaceIOS> {
 public:
     WEBCORE_EXPORT ~VideoPresentationInterfaceIOS();
     WEBCORE_EXPORT void setVideoPresentationModel(VideoPresentationModel*);
@@ -229,6 +230,11 @@ protected:
     bool m_waitingForPreparedToExit { false };
 #endif
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     void returnToStandby();
     void watchdogTimerFired();
 

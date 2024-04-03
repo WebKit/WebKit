@@ -86,7 +86,7 @@ enum class AllowTrustedTypePolicy : uint8_t {
     DisallowedDuplicateName,
 };
 
-class ContentSecurityPolicy : public CanMakeThreadSafeCheckedPtr {
+class ContentSecurityPolicy : public CanMakeThreadSafeCheckedPtr<ContentSecurityPolicy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ContentSecurityPolicy(URL&&, ScriptExecutionContext&);

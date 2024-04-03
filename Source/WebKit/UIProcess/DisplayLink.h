@@ -32,6 +32,7 @@
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 
@@ -48,7 +49,8 @@ namespace WebKit {
 class DisplayLink {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Client : public CanMakeThreadSafeCheckedPtr {
+    class Client : public CanMakeThreadSafeCheckedPtr<Client> {
+        WTF_MAKE_FAST_ALLOCATED;
     friend class DisplayLink;
     public:
         virtual ~Client() = default;

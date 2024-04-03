@@ -34,6 +34,7 @@
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/VideoPresentationModelVideoElement.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -68,7 +69,8 @@ class VideoPresentationManager;
 
 class VideoPresentationInterfaceContext
     : public RefCounted<VideoPresentationInterfaceContext>
-    , public WebCore::VideoPresentationModelClient {
+    , public WebCore::VideoPresentationModelClient
+    , public CanMakeCheckedPtr<VideoPresentationInterfaceContext> {
 public:
     static Ref<VideoPresentationInterfaceContext> create(VideoPresentationManager& manager, PlaybackSessionContextIdentifier contextId)
     {
@@ -101,6 +103,12 @@ public:
 private:
     // VideoPresentationModelClient
     void hasVideoChanged(bool) override;
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     void videoDimensionsChanged(const WebCore::FloatSize&) override;
     void setPlayerIdentifier(std::optional<WebCore::MediaPlayerIdentifier>) final;
 

@@ -42,6 +42,7 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <UIKit/UIView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/CheckedRef.h>
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/WorkQueue.h>
 
@@ -100,8 +101,9 @@ class VideoFullscreenControllerContext final
     : public VideoPresentationModel
     , private VideoPresentationModelClient
     , private PlaybackSessionModel
-    , private PlaybackSessionModelClient {
-
+    , private PlaybackSessionModelClient
+    , public CanMakeCheckedPtr<VideoFullscreenControllerContext> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<VideoFullscreenControllerContext> create()
     {
@@ -118,6 +120,11 @@ public:
 
 private:
     VideoFullscreenControllerContext() { }
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     // VideoPresentationModelClient
     void hasVideoChanged(bool) override;

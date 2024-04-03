@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-struct ExpectedTextRunSize : public CanMakeCheckedPtr {
+struct ExpectedTextRunSize : public CanMakeCheckedPtr<ExpectedTextRunSize> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     String text;

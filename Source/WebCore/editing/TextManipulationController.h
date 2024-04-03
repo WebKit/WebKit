@@ -43,7 +43,7 @@ class Document;
 class Element;
 class VisiblePosition;
 
-class TextManipulationController : public CanMakeWeakPtr<TextManipulationController>, public CanMakeCheckedPtr {
+class TextManipulationController : public CanMakeWeakPtr<TextManipulationController>, public CanMakeCheckedPtr<TextManipulationController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TextManipulationController(Document&);

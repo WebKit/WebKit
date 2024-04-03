@@ -38,7 +38,7 @@ namespace WebCore {
 class DeviceClient;
 class Page;
 
-class DeviceController : public Supplement<Page>, public CanMakeCheckedPtr {
+class DeviceController : public Supplement<Page>, public CanMakeCheckedPtr<DeviceController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DeviceController(DeviceClient&);

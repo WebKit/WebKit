@@ -37,7 +37,7 @@ namespace WebCore {
 class StorageAreaSync;
 class StorageTask;
 
-class StorageThread : public CanMakeCheckedPtr {
+class StorageThread : public CanMakeCheckedPtr<StorageThread> {
     WTF_MAKE_NONCOPYABLE(StorageThread); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type { LocalStorage, IndexedDB };

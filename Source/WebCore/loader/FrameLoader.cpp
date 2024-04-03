@@ -311,7 +311,7 @@ private:
 };
 
 
-class FrameLoader::FrameProgressTracker : public CanMakeCheckedPtr {
+class FrameLoader::FrameProgressTracker : public CanMakeCheckedPtr<FrameLoader::FrameProgressTracker> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     explicit FrameProgressTracker(LocalFrame& frame)

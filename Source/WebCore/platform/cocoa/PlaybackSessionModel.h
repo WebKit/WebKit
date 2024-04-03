@@ -126,9 +126,15 @@ public:
 #endif
 };
 
-class PlaybackSessionModelClient : public CanMakeWeakPtr<PlaybackSessionModelClient>, public CanMakeCheckedPtr {
+class PlaybackSessionModelClient : public CanMakeWeakPtr<PlaybackSessionModelClient> {
 public:
     virtual ~PlaybackSessionModelClient() { };
+
+    // CheckedPtr interface
+    virtual uint32_t ptrCount() const = 0;
+    virtual void incrementPtrCount() const = 0;
+    virtual void decrementPtrCount() const = 0;
+
     virtual void durationChanged(double) { }
     virtual void currentTimeChanged(double /* currentTime */, double /* anchorTime */) { }
     virtual void bufferedTimeChanged(double) { }

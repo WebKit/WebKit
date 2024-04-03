@@ -251,7 +251,7 @@ enum AXTextChange { AXTextInserted, AXTextDeleted, AXTextAttributesChanged };
 enum class PostTarget { Element, ObservableParent };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXObjectCache);
-class AXObjectCache final : public CanMakeWeakPtr<AXObjectCache>, public CanMakeCheckedPtr
+class AXObjectCache final : public CanMakeWeakPtr<AXObjectCache>, public CanMakeCheckedPtr<AXObjectCache>
     , public AXTreeStore<AXObjectCache> {
     WTF_MAKE_NONCOPYABLE(AXObjectCache);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXObjectCache);

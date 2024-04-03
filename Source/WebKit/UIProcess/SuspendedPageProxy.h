@@ -53,7 +53,7 @@ using LayerHostingContextID = uint32_t;
 
 enum class ShouldDelayClosingUntilFirstLayerFlush : bool { No, Yes };
 
-class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeCheckedPtr {
+class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeCheckedPtr<SuspendedPageProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&&, ShouldDelayClosingUntilFirstLayerFlush);

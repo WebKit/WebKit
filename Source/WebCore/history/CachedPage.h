@@ -36,7 +36,7 @@ class Document;
 class DocumentLoader;
 class Page;
 
-class CachedPage : public CanMakeCheckedPtr {
+class CachedPage : public CanMakeCheckedPtr<CachedPage> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit CachedPage(Page&);

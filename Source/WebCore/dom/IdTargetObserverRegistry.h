@@ -37,7 +37,7 @@ namespace WebCore {
 
 class IdTargetObserver;
 
-class IdTargetObserverRegistry : public CanMakeCheckedPtr {
+class IdTargetObserverRegistry : public CanMakeCheckedPtr<IdTargetObserverRegistry> {
     WTF_MAKE_FAST_ALLOCATED;
     friend class IdTargetObserver;
 public:
@@ -51,7 +51,7 @@ private:
     void removeObserver(const AtomString& id, IdTargetObserver&);
     void notifyObserversInternal(const AtomString& id);
 
-    struct ObserverSet : public CanMakeCheckedPtr {
+    struct ObserverSet : public CanMakeCheckedPtr<ObserverSet> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         HashSet<CheckedRef<IdTargetObserver>> observers;
     };

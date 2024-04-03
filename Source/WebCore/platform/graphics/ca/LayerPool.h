@@ -32,13 +32,15 @@
 #include "Timer.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
     
-class LayerPool : public CanMakeCheckedPtr {
+class LayerPool : public CanMakeCheckedPtr<LayerPool> {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(LayerPool);
 public:
     WEBCORE_EXPORT LayerPool();

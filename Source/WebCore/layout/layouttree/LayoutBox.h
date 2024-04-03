@@ -43,7 +43,7 @@ class InitialContainingBlock;
 class LayoutState;
 class TreeBuilder;
 
-class Box : public CanMakeCheckedPtr {
+class Box : public CanMakeCheckedPtr<Box> {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
     enum class NodeType : uint8_t {
@@ -194,9 +194,6 @@ public:
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
 
     UniqueRef<Box> removeFromParent();
-
-    void incrementPtrCount() const { CanMakeCheckedPtr::incrementPtrCount(); }
-    void decrementPtrCount() const { CanMakeCheckedPtr::decrementPtrCount(); }
 
 protected:
     Box(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);

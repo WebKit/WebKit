@@ -38,7 +38,7 @@ class SWServerWorker;
 class ServiceWorkerJob;
 struct WorkerFetchResult;
 
-class SWServerJobQueue : public CanMakeCheckedPtr {
+class SWServerJobQueue : public CanMakeCheckedPtr<SWServerJobQueue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SWServerJobQueue(SWServer&, const ServiceWorkerRegistrationKey&);

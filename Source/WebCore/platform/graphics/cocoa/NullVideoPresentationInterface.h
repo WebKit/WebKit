@@ -37,7 +37,8 @@ class NullVideoPresentationInterface final
     : public VideoPresentationModelClient
     , public PlaybackSessionModelClient
     , public VideoFullscreenCaptions
-    , public RefCounted<NullVideoPresentationInterface> {
+    , public RefCounted<NullVideoPresentationInterface>
+    , public CanMakeCheckedPtr<NullVideoPresentationInterface> {
 public:
     static Ref<NullVideoPresentationInterface> create(NullPlaybackSessionInterface& playbackSessionInterface)
     {
@@ -86,6 +87,11 @@ private:
         : m_playbackSessionInterface(playbackSessionInterface)
     {
     }
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     Ref<NullPlaybackSessionInterface> m_playbackSessionInterface;
     ThreadSafeWeakPtr<VideoPresentationModel> m_videoPresentationModel;

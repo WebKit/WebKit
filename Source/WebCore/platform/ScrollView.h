@@ -70,6 +70,7 @@ enum class DelegatedScrollingMode : uint8_t {
 };
 
 class ScrollView : public Widget, public ScrollableArea {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ScrollView();
 

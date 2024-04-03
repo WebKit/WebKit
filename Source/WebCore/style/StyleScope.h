@@ -67,7 +67,7 @@ class CustomPropertyRegistry;
 class Resolver;
 class RuleSet;
 
-class Scope : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr {
+class Scope : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr<Scope> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Scope(Document&);

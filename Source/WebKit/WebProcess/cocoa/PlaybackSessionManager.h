@@ -34,6 +34,7 @@
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/PlaybackSessionModelMediaElement.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -57,7 +58,8 @@ class PlaybackSessionManager;
 
 class PlaybackSessionInterfaceContext final
     : public RefCounted<PlaybackSessionInterfaceContext>
-    , public WebCore::PlaybackSessionModelClient {
+    , public WebCore::PlaybackSessionModelClient
+    , public CanMakeCheckedPtr<PlaybackSessionInterfaceContext> {
 public:
     static Ref<PlaybackSessionInterfaceContext> create(PlaybackSessionManager& manager, PlaybackSessionContextIdentifier contextId)
     {
@@ -69,6 +71,11 @@ public:
 
 private:
     friend class VideoPresentationInterfaceContext;
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     // PlaybackSessionModelClient
     void durationChanged(double) final;

@@ -151,7 +151,7 @@ struct ScrollRectToVisibleOptions {
 
 using ScrollingScope = uint64_t;
 
-class RenderLayer : public CanMakeSingleThreadWeakPtr<RenderLayer>, public CanMakeCheckedPtr {
+class RenderLayer : public CanMakeSingleThreadWeakPtr<RenderLayer>, public CanMakeCheckedPtr<RenderLayer> {
     WTF_MAKE_ISO_ALLOCATED(RenderLayer);
 public:
     friend class RenderReplica;

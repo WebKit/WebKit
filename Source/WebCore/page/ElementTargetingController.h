@@ -44,7 +44,7 @@ namespace WebCore {
 class Document;
 class Page;
 
-class ElementTargetingController : public CanMakeCheckedPtr {
+class ElementTargetingController : public CanMakeCheckedPtr<ElementTargetingController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ElementTargetingController(Page&);
