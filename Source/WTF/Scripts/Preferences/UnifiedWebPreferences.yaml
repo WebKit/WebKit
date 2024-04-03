@@ -6628,17 +6628,17 @@ TrustedTypesEnabled:
 
 UAVisualTransitionDetectionEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "Detect UA visual transitions"
   humanReadableDescription: "Enable detection of UA visual transitions"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 UndoManagerAPIEnabled:
