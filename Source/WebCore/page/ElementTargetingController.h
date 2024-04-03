@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "Region.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
@@ -53,14 +54,18 @@ public:
     WEBCORE_EXPORT bool adjustVisibility(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
     void adjustVisibilityInRepeatedlyTargetedRegions(Document&);
 
-    void resetAdjustmentRegions();
+    void reset();
 
     WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects() const;
     WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
 
 private:
+    void applyVisibilityAdjustmentFromSelectors(Document&);
+
     SingleThreadWeakPtr<Page> m_page;
     HashMap<ElementIdentifier, IntRect> m_pendingAdjustmentClientRects;
+    std::optional<HashSet<String>> m_remainingVisibilityAdjustmentSelectors;
+    ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
     Region m_adjustmentClientRegion;
     Region m_repeatedAdjustmentClientRegion;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_adjustedElements;

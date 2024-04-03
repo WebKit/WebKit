@@ -71,6 +71,16 @@
     return _info->boundsInRootView();
 }
 
+- (CGRect)boundsInWebView
+{
+    return _info->boundsInWebView();
+}
+
+- (CGRect)boundsInClientCoordinates
+{
+    return _info->boundsInClientCoordinates();
+}
+
 - (NSArray<NSString *> *)selectors
 {
     return createNSArray(_info->selectors()).autorelease();

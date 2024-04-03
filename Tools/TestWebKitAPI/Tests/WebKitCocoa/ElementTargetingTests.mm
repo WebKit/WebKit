@@ -203,23 +203,30 @@ TEST(ElementTargeting, NearbyOutOfFlowElements)
     EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 0U);
 }
 
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<Util::PlatformWindow>> setUpWebViewForSnapshotting(CGRect frame)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:frame configuration:configuration.get() addToWindow:NO]);
+    RetainPtr window = adoptNS([[UIWindow alloc] initWithFrame:frame]);
+    [window addSubview:webView.get()];
+    return { WTFMove(webView), WTFMove(window) };
+#else
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:frame]);
+    return { WTFMove(webView), { [webView window] } };
+#endif
+}
+
 TEST(ElementTargeting, AdjustVisibilityForUnparentedElement)
 {
     auto webViewFrame = CGRectMake(0, 0, 800, 600);
 
-#if PLATFORM(IOS_FAMILY)
-    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:webViewFrame configuration:configuration.get() addToWindow:NO]);
-    auto window = adoptNS([[UIWindow alloc] initWithFrame:webViewFrame]);
-    [window addSubview:webView.get()];
-#else
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:webViewFrame]);
-#endif
-
+    auto viewAndWindow = setUpWebViewForSnapshotting(webViewFrame);
+    auto [webView, window] = viewAndWindow;
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-2"];
 
     auto setOverlaysParented = [&](bool visible) {
-        [webView objectByEvaluatingJavaScript:visible ? @"addOverlays()" : @"removeOverlays()"];
+        [viewAndWindow.first objectByEvaluatingJavaScript:visible ? @"addOverlays()" : @"removeOverlays()"];
     };
 
     RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
@@ -239,6 +246,61 @@ TEST(ElementTargeting, AdjustVisibilityForUnparentedElement)
     auto x = static_cast<unsigned>(100 * (pixelReader.width() / CGRectGetWidth(webViewFrame)));
     auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
     EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
+}
+
+TEST(ElementTargeting, AdjustVisibilityFromSelectors)
+{
+    auto webViewFrame = CGRectMake(0, 0, 800, 600);
+
+    auto [webView, window] = setUpWebViewForSnapshotting(webViewFrame);
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    [preferences _setVisibilityAdjustmentSelectors:[NSSet setWithObjects:
+        @".fixed.container"
+        , @".absolute.bottom-right"
+        , @".absolute.bottom-left"
+        , @".absolute.top-right"
+        , nil]];
+
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-2" preferences:preferences.get()];
+    [webView waitForNextPresentationUpdate];
+    {
+        RetainPtr snapshot = [webView snapshotAfterScreenUpdates];
+        CGImagePixelReader pixelReader { snapshot.get() };
+        auto x = static_cast<unsigned>(100 * (pixelReader.width() / CGRectGetWidth(webViewFrame)));
+        auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
+        EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
+        EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
+    }
+
+    [webView resetVisibilityAdjustmentsForTargets:nil];
+    [webView waitForNextPresentationUpdate];
+    {
+        RetainPtr snapshot = [webView snapshotAfterScreenUpdates];
+        CGImagePixelReader pixelReader { snapshot.get() };
+        auto x = static_cast<unsigned>(100 * (pixelReader.width() / CGRectGetWidth(webViewFrame)));
+        auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
+        EXPECT_FALSE(pixelReader.at(x, y) == WebCore::Color::white);
+        EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 0U);
+    }
+}
+
+TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
+{
+    auto webViewFrame = CGRectMake(0, 0, 800, 600);
+
+    auto [webView, window] = setUpWebViewForSnapshotting(webViewFrame);
+    RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
+    auto selectors = [NSSet setWithObjects:@"main::before", @"HTML::AFTER", nil];
+    [preferences _setVisibilityAdjustmentSelectors:selectors];
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-3" preferences:preferences.get()];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr snapshot = [webView snapshotAfterScreenUpdates];
+    CGImagePixelReader pixelReader { snapshot.get() };
+    auto x = static_cast<unsigned>(100 * (pixelReader.width() / CGRectGetWidth(webViewFrame)));
+    auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
+    EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
+    EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
 }
 
 } // namespace TestWebKitAPI

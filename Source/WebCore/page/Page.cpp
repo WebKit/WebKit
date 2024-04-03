@@ -1552,7 +1552,7 @@ void Page::didCommitLoad()
         geolocationController->didNavigatePage();
 #endif
 
-    m_elementTargetingController->resetAdjustmentRegions();
+    m_elementTargetingController->reset();
 
     m_isWaitingForLoadToFinish = true;
 }

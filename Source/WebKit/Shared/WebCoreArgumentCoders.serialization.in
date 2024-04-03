@@ -897,6 +897,7 @@ header: <WebCore/ElementTargetingTypes.h>
     String renderedText
     Vector<String> selectors
     WebCore::FloatRect boundsInRootView
+    WebCore::FloatRect boundsInClientCoordinates
     WebCore::PositionType positionType
     Vector<WebCore::FrameIdentifier> childFrameIdentifiers
     bool isUnderPoint

@@ -52,6 +52,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         documentLoader.setContentExtensionEnablement(WTFMove(websitePolicies.contentExtensionEnablement));
 
     documentLoader.setActiveContentRuleListActionPatterns(websitePolicies.activeContentRuleListActionPatterns);
+    documentLoader.setVisibilityAdjustmentSelectors(WTFMove(websitePolicies.visibilityAdjustmentSelectors));
 
     OptionSet<WebCore::AutoplayQuirk> quirks;
     const auto& allowedQuirks = websitePolicies.allowedAutoplayQuirks;

@@ -28,6 +28,7 @@
 
 #include "DOMTokenList.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
@@ -60,6 +61,7 @@ static constexpr auto minimumAreaRatioForInFlowContent = 0.01;
 static constexpr auto maximumAreaRatioForTrackingAdjustmentAreas = 0.25;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
+static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
 
 ElementTargetingController::ElementTargetingController(Page& page)
     : m_page { page }
@@ -245,6 +247,13 @@ static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(Element& elem
     return identifiers;
 }
 
+static FloatRect computeClientRect(RenderObject& renderer)
+{
+    FloatRect rect = renderer.absoluteBoundingBoxRect();
+    renderer.document().convertAbsoluteToClientRect(rect, renderer.style());
+    return rect;
+}
+
 enum class IsUnderPoint : bool { No, Yes };
 static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint isUnderPoint)
 {
@@ -256,6 +265,7 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint is
         .renderedText = TextExtraction::extractRenderedText(element),
         .selectors = selectorsForTarget(element),
         .boundsInRootView = element.boundingBoxInRootViewCoordinates(),
+        .boundsInClientCoordinates = computeClientRect(*renderer),
         .positionType = renderer->style().position(),
         .childFrameIdentifiers = collectChildFrameIdentifiers(element),
         .isUnderPoint = isUnderPoint == IsUnderPoint::Yes,
@@ -303,13 +313,6 @@ static bool isTargetCandidate(Element& element, const HTMLElement* onlyMainEleme
         return false;
 
     return true;
-}
-
-static FloatRect computeClientRect(RenderObject& renderer)
-{
-    FloatRect rect = renderer.absoluteBoundingBoxRect();
-    renderer.document().convertAbsoluteToClientRect(rect, renderer.style());
-    return rect;
 }
 
 static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracking(Element& element, float viewportArea)
@@ -662,6 +665,8 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
         adjustRegionAfterViewportSizeChange(m_repeatedAdjustmentClientRegion, previousViewportSize, m_viewportSizeForVisibilityAdjustment);
     }
 
+    applyVisibilityAdjustmentFromSelectors(document);
+
     if (m_repeatedAdjustmentClientRegion.isEmpty())
         return;
 
@@ -702,13 +707,102 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
     }
 }
 
-void ElementTargetingController::resetAdjustmentRegions()
+void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document& document)
+{
+    RefPtr loader = document.loader();
+    if (!loader)
+        return;
+
+    auto currentTime = ApproximateTime::now();
+    if (!m_remainingVisibilityAdjustmentSelectors) {
+        m_remainingVisibilityAdjustmentSelectors = loader->visibilityAdjustmentSelectors();
+        m_startTimeForSelectorBasedVisibilityAdjustment = currentTime;
+    }
+
+    if (currentTime - m_startTimeForSelectorBasedVisibilityAdjustment >= selectorBasedVisibilityAdjustmentTimeLimit) {
+        m_remainingVisibilityAdjustmentSelectors->clear();
+        return;
+    }
+
+    if (m_remainingVisibilityAdjustmentSelectors->isEmpty())
+        return;
+
+    auto resolveSelectorToQuery = [](const String& selectorIncludingPseudo) -> std::pair<String, VisibilityAdjustment> {
+        auto components = selectorIncludingPseudo.splitAllowingEmptyEntries("::"_s);
+        if (components.size() == 1)
+            return { components.first(), VisibilityAdjustment::Subtree };
+
+        if (components.size() == 2) {
+            auto pseudo = components.last();
+            if (equalLettersIgnoringASCIICase(pseudo, "after"_s))
+                return { components.first(), VisibilityAdjustment::AfterPseudo };
+
+            if (equalLettersIgnoringASCIICase(pseudo, "before"_s))
+                return { components.first(), VisibilityAdjustment::BeforePseudo };
+        }
+
+        return { { }, VisibilityAdjustment::Subtree };
+    };
+
+    auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
+    Region adjustmentRegion;
+    Vector<String> selectorsToRemove;
+    for (auto& selectorIncludingPseudo : *m_remainingVisibilityAdjustmentSelectors) {
+        auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
+        if (selector.isEmpty()) {
+            // FIXME: Handle the case where the full selector is `::after|before`.
+            continue;
+        }
+
+        auto queryResult = document.querySelector(selector);
+        if (queryResult.hasException())
+            continue;
+
+        RefPtr element = queryResult.releaseReturnValue();
+        if (!element)
+            continue;
+
+        if (adjustment == VisibilityAdjustment::AfterPseudo && !element->afterPseudoElement())
+            continue;
+
+        if (adjustment == VisibilityAdjustment::BeforePseudo && !element->beforePseudoElement())
+            continue;
+
+        auto currentAdjustment = element->visibilityAdjustment();
+        if (currentAdjustment.contains(adjustment)) {
+            selectorsToRemove.append(selectorIncludingPseudo);
+            continue;
+        }
+
+        element->setVisibilityAdjustment(currentAdjustment | adjustment);
+        if (adjustment == VisibilityAdjustment::Subtree)
+            element->invalidateStyleAndRenderersForSubtree();
+        else
+            element->invalidateStyle();
+
+        m_adjustedElements.add(*element);
+        selectorsToRemove.append(selectorIncludingPseudo);
+
+        if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
+            adjustmentRegion.unite(*clientRect);
+    }
+
+    if (!adjustmentRegion.isEmpty())
+        m_adjustmentClientRegion.unite(adjustmentRegion);
+
+    for (auto& selector : selectorsToRemove)
+        m_remainingVisibilityAdjustmentSelectors->remove(selector);
+}
+
+void ElementTargetingController::reset()
 {
     m_adjustmentClientRegion = { };
     m_repeatedAdjustmentClientRegion = { };
     m_viewportSizeForVisibilityAdjustment = { };
     m_pendingAdjustmentClientRects = { };
     m_adjustedElements = { };
+    m_remainingVisibilityAdjustmentSelectors = { };
+    m_startTimeForSelectorBasedVisibilityAdjustment = { };
 }
 
 bool ElementTargetingController::resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers)

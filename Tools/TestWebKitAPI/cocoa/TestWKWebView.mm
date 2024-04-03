@@ -137,6 +137,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self _test_waitForDidFinishNavigation];
 }
 
+- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName preferences:(WKWebpagePreferences *)preferences
+{
+    [self loadTestPageNamed:pageName];
+    [self _test_waitForDidFinishNavigationWithPreferences:preferences];
+}
+
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument
 {
     __block bool done = false;

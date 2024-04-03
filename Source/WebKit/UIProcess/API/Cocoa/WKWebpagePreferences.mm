@@ -654,4 +654,21 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     _websitePolicies->setAdvancedPrivacyProtections(webCorePolicy);
 }
 
+- (void)_setVisibilityAdjustmentSelectors:(NSSet<NSString *> *)nsSelectors
+{
+    HashSet<String> selectors;
+    selectors.reserveInitialCapacity(nsSelectors.count);
+    for (NSString *selector in nsSelectors)
+        selectors.add(selector);
+    _websitePolicies->setVisibilityAdjustmentSelectors(WTFMove(selectors));
+}
+
+- (NSSet<NSString *> *)_visibilityAdjustmentSelectors
+{
+    RetainPtr selectors = adoptNS([[NSMutableSet alloc] initWithCapacity:_websitePolicies->visibilityAdjustmentSelectors().size()]);
+    for (auto& selector : _websitePolicies->visibilityAdjustmentSelectors())
+        [selectors addObject:selector];
+    return selectors.autorelease();
+}
+
 @end
