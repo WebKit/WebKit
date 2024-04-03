@@ -149,7 +149,6 @@ typedef void (*ExternalStringFinalizer)(void* finalize_ptr, void* buffer, size_t
 JS_EXPORT JSStringRef JSStringCreate(const char* string, size_t length);
 JS_EXPORT JSStringRef JSStringCreateStatic(const char* string, size_t length);
 JS_EXPORT JSStringRef JSStringCreateExternal(const char* string, size_t length, void* finalize_ptr, const ExternalStringFinalizer finalizer);
-JS_EXPORT bool JSStringIsEqualToString(JSStringRef a, const char* b, size_t length);
 JS_EXPORT char JSStringEncoding(JSStringRef string);
 JS_EXPORT const char* JSStringGetCharacters8Ptr(JSStringRef string);
 JS_EXPORT bool JSStringIsStatic(JSStringRef string);

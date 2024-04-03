@@ -170,15 +170,6 @@ bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b)
     return JSStringIsEqual(a, adoptRef(JSStringCreateWithUTF8CString(b)).get());
 }
 
-bool JSStringIsEqualToString(JSStringRef a, const char* b, size_t length)
-{
-    if (a->is8Bit()) {
-        return length == a->length() && a->rawString() == StringView(b, length);
-    } else {
-        return length == a->length() && a->rawString() == StringView(b, length);
-    }
-}
-
 bool JSStringIsStatic(JSStringRef string)
 {
     return string->isStatic();

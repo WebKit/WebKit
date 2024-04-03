@@ -47,7 +47,7 @@ ErrorInstance* createSuppressedError(JSGlobalObject* globalObject, VM& vm, Struc
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    auto* inst = ErrorInstance::create(globalObject, vm, structure, messageString, cause, appender, type, ErrorType::SuppressedError, useCurrentFrame);
+    auto* inst = ErrorInstance::create(vm, structure, messageString, cause, appender, type, ErrorType::SuppressedError, useCurrentFrame);
     inst->putDirect(vm, vm.propertyNames->error, error, static_cast<unsigned>(0));
     inst->putDirect(vm, vm.propertyNames->suppressed, suppressed, static_cast<unsigned>(0));
     return inst;

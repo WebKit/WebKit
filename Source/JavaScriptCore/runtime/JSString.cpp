@@ -180,7 +180,7 @@ bool JSString::equalSlowCase(JSGlobalObject* globalObject, const char* ptr, size
     String str1 = value(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
 
-    return WTF::equal(*str1.impl(), StringView(ptr, len));
+    return WTF::equal(*str1.impl(), StringView({ ptr, len }));
 }
 
 AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) const

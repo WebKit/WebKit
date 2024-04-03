@@ -99,11 +99,11 @@ public:
     const String& sourceURL() const { return m_sourceURL; }
     void setSourceURL(String sourceURL) { m_sourceURL = sourceURL; } 
 
-    unsigned line() const { return m_line; }
-    void setLine(unsigned line) { m_line = line; }
+    unsigned line() const { return m_lineColumn.line; }
+    void setLine(unsigned line) { m_lineColumn.line = line; }
 
-    unsigned column() const { return m_column; }
-    void setColumn(unsigned column) { m_column = column; }
+    unsigned column() const { return m_lineColumn.column; }
+    void setColumn(unsigned column) { m_lineColumn.column = column; }
 #endif
 
     JS_EXPORT_PRIVATE String sanitizedToString(JSGlobalObject*);
