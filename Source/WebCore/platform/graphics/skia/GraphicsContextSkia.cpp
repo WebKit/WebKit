@@ -789,7 +789,13 @@ void GraphicsContextSkia::setLineDash(const DashArray& dashArray, float dashOffs
         return;
     }
 
-    m_skiaState.m_stroke.dash = SkDashPathEffect::Make(dashArray.data(), dashArray.size(), dashOffset);
+    if (dashArray.size() % 2 == 1) {
+        // Repeat the array to ensure even number of dash array elements, see e.g. 'stroke-dasharray' spec.
+        DashArray repeatedDashArray(dashArray);
+        repeatedDashArray.appendVector(dashArray);
+        m_skiaState.m_stroke.dash = SkDashPathEffect::Make(repeatedDashArray.data(), repeatedDashArray.size(), dashOffset);
+    } else
+        m_skiaState.m_stroke.dash = SkDashPathEffect::Make(dashArray.data(), dashArray.size(), dashOffset);
 }
 
 void GraphicsContextSkia::setLineJoin(LineJoin lineJoin)
