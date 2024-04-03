@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "Region.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include "Timer.h"
 #include <wtf/ApproximateTime.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
@@ -60,10 +61,12 @@ public:
     WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>&);
 
 private:
+    void cleanUpAdjustmentClientRects();
     void applyVisibilityAdjustmentFromSelectors(Document&);
 
     SingleThreadWeakPtr<Page> m_page;
-    HashMap<ElementIdentifier, IntRect> m_pendingAdjustmentClientRects;
+    DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;
+    HashMap<ElementIdentifier, IntRect> m_recentAdjustmentClientRects;
     std::optional<HashSet<String>> m_remainingVisibilityAdjustmentSelectors;
     ApproximateTime m_startTimeForSelectorBasedVisibilityAdjustment;
     Region m_adjustmentClientRegion;
