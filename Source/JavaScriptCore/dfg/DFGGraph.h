@@ -1302,7 +1302,7 @@ private:
 
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);
     
-    AddSpeculationMode addImmediateShouldSpeculateInt32(Node* add, bool variableShouldSpeculateInt32, Node* operand, Node*immediate, RareCaseProfilingSource source)
+    AddSpeculationMode addImmediateShouldSpeculateInt32(Node* add, bool variableShouldSpeculateInt32, Node* operand, Node* immediate, RareCaseProfilingSource source)
     {
         ASSERT(immediate->hasConstant());
         
@@ -1318,10 +1318,12 @@ private:
         NodeFlags operandResultType = operand->result();
         if (operandResultType != NodeResultInt32 && immediateValue.isDouble())
             return DontSpeculateInt32;
-        
+
         if (immediateValue.isBoolean() || jsNumber(immediateValue.asNumber()).isInt32())
             return add->canSpeculateInt32(source) ? SpeculateInt32 : DontSpeculateInt32;
-        
+
+        // At this point {immediateValue} must be a double and {operandResultType} must be NodeResultInt32.
+        ASSERT(immediateValue.isDouble() && operandResultType == NodeResultInt32);
         double doubleImmediate = immediateValue.asDouble();
         if (std::isnan(doubleImmediate))
             return DontSpeculateInt32;
@@ -1331,13 +1333,12 @@ private:
             return DontSpeculateInt32;
         
         if (bytecodeCanTruncateInteger(add->arithNodeFlags())) {
-            // If int32 + const double, then we should not speculate this add node with int32 type.
-            // Because ToInt32(int32 + const double) is not always equivalent to int32 + ToInt32(const double).
+            // This function is called from attemptToMakeIntegerAdd. If we return SpeculateInt32AndTruncateConstants
+            // both operands will be truncated to integers. If int32 + double, then we should not speculate this add
+            // node with int32 type. Because ToInt32(int32 + double) is not always equivalent to int32 + ToInt32(double).
             // For example:
-            // let the int32 = -1 and const double = 0.1, then ToInt32(-1 + 0.1) = 0 but -1 + ToInt32(0.1) = -1.
-            if (operandResultType == NodeResultInt32 && !isInteger(doubleImmediate))
-                return DontSpeculateInt32;
-            return SpeculateInt32AndTruncateConstants;
+            //     let the int32 be -1 and double be 0.1, then ToInt32(-1 + 0.1) is 0 but -1 + ToInt32(0.1) is -1.
+            return isInteger(doubleImmediate) ? SpeculateInt32AndTruncateConstants : DontSpeculateInt32;
         }
 
         return DontSpeculateInt32;
