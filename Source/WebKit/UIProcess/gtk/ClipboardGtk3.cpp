@@ -245,7 +245,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
                 break;
             case ClipboardTargetType::Custom:
                 if (data.selectionData.hasCustomData()) {
-                    auto* buffer = data.selectionData.customData();
+                    auto& buffer = data.selectionData.customData();
                     gtk_selection_data_set(selection, gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType().characters()), 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
                 }
                 break;

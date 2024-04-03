@@ -77,7 +77,7 @@ DragSource::DragSource(GtkWidget* webView)
             gtk_selection_data_set_text(data, "", -1);
             break;
         case DragTargetType::Custom: {
-            auto* buffer = drag.m_selectionData->customData();
+            auto& buffer = drag.m_selectionData->customData();
             gtk_selection_data_set(data, gdk_atom_intern_static_string(PasteboardCustomData::gtkType()), 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
             break;
         }

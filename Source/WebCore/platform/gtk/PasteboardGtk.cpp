@@ -350,7 +350,7 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
 {
     if (m_selectionData) {
         ListHashSet<String> types;
-        if (auto* buffer = m_selectionData->customData()) {
+        if (auto& buffer = m_selectionData->customData()) {
             auto customData = PasteboardCustomData::fromSharedBuffer(*buffer);
             if (customData.origin() == origin) {
                 for (auto& type : customData.orderedTypes())
@@ -397,7 +397,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 String Pasteboard::readOrigin()
 {
     if (m_selectionData) {
-        if (auto* buffer = m_selectionData->customData())
+        if (auto& buffer = m_selectionData->customData())
             return PasteboardCustomData::fromSharedBuffer(*buffer).origin();
 
         return { };
@@ -440,7 +440,7 @@ String Pasteboard::readString(const String& type)
 String Pasteboard::readStringInCustomData(const String& type)
 {
     if (m_selectionData) {
-        if (auto* buffer = m_selectionData->customData())
+        if (auto& buffer = m_selectionData->customData())
             return PasteboardCustomData::fromSharedBuffer(*buffer).readStringInCustomData(type);
 
         return { };
