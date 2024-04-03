@@ -301,6 +301,7 @@ bool WebExtensionContext::unload(NSError **outError)
     writeStateToStorage();
 
     unloadBackgroundWebView();
+    m_safeToLoadBackgroundContent = false;
 
     removeInjectedContent();
     m_registeredScriptsMap.clear();
