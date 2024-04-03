@@ -31,10 +31,10 @@
 #import "Logging.h"
 #import <CoreMedia/CoreMedia.h>
 #import <Foundation/Foundation.h>
-#import <VideoToolbox/VTCompressionSession.h>
 #import <wtf/EnumTraits.h>
 #import <wtf/SoftLinking.h>
 
+#import "VideoToolboxSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cf/VideoToolboxSoftLink.h>
 
