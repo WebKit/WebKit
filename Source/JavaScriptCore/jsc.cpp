@@ -1155,6 +1155,11 @@ static void convertShebangToJSComment(Vector& buffer)
 
 static RefPtr<Uint8Array> fillBufferWithContentsOfFile(FILE* file)
 {
+    struct stat statBuf;
+    if (fstat(fileno(file), &statBuf) == -1)
+        return nullptr;
+    if ((statBuf.st_mode & S_IFMT) != S_IFREG)
+        return nullptr;
     if (fseek(file, 0, SEEK_END) == -1)
         return nullptr;
     long bufferCapacity = ftell(file);
@@ -1204,6 +1209,16 @@ static bool fillBufferWithContentsOfFile(FILE* file, Vector& buffer)
 
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer)
 {
+    struct stat statBuf;
+    if (stat(fileName.utf8().data(), &statBuf) == -1) {
+        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
+        return false;
+    }
+
+    if ((statBuf.st_mode & S_IFMT) != S_IFREG) {
+        fprintf(stderr, "Trying to open a non-file: %s\n", fileName.utf8().data());
+        return false;
+    }
     FILE* f = fopen(fileName.utf8().data(), "rb");
     if (!f) {
         fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
