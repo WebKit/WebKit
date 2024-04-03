@@ -10050,8 +10050,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
 #if HAVE(STATIC_FONT_REGISTRY)
-    if (preferences().shouldAllowUserInstalledFonts())
-        parameters.fontMachExtensionHandles = process.fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
+    if (preferences().shouldAllowUserInstalledFonts()) {
+        if (auto handles = process.fontdMachExtensionHandles())
+            parameters.fontMachExtensionHandles = WTFMove(*handles);
+    }
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     parameters.accentColor = protectedPageClient()->accentColor();

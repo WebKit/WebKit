@@ -486,7 +486,7 @@ public:
 
 #if PLATFORM(COCOA)
     std::optional<audit_token_t> auditToken() const;
-    Vector<SandboxExtension::Handle> fontdMachExtensionHandles(SandboxExtension::MachBootstrapOptions) const;
+    std::optional<Vector<SandboxExtension::Handle>> fontdMachExtensionHandles();
 #endif
 
     bool isConnectedToHardwareConsole() const { return m_isConnectedToHardwareConsole; }
@@ -720,6 +720,7 @@ private:
     WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };
+    bool m_sentFontdMachExtensionHandles { false };
 #endif
 
 #if PLATFORM(WATCHOS)
