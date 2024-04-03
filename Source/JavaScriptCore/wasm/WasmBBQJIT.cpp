@@ -4702,7 +4702,10 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(Compilati
         result->bbqSharedLoopEntrypoint = irGenerator.addLoopOSREntrypoint();
 
     irGenerator.finalize();
-    callee.setStackCheckSize(irGenerator.stackCheckSize());
+    auto checkSize = irGenerator.stackCheckSize();
+    if (!checkSize)
+        checkSize = stackCheckNotNeeded;
+    callee.setStackCheckSize(checkSize);
 
     result->exceptionHandlers = irGenerator.takeExceptionHandlers();
     compilationContext.catchEntrypoints = irGenerator.takeCatchEntrypoints();
