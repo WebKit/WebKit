@@ -66,7 +66,7 @@
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/WorkQueue.h>
-#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/CString.h>
 
 #pragma mark - Soft Linking
@@ -103,7 +103,12 @@ static bool sampleBufferRenderersSupportKeySession()
 
 static inline bool supportsAttachContentKey()
 {
-    return processIsExtension();
+    static bool supportsAttachContentKey;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        supportsAttachContentKey = WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s) || WTF::processHasEntitlement("com.apple.private.coremedia.allow-fps-attachment"_s);
+    });
+    return supportsAttachContentKey;
 }
 
 static inline bool shouldAddContentKeyRecipients()
