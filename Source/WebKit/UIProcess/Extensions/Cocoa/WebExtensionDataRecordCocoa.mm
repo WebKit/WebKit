@@ -36,6 +36,11 @@
 
 namespace WebKit {
 
+NSArray *WebExtensionDataRecord::errors()
+{
+    return [m_errors copy] ?: @[ ];
+}
+
 void WebExtensionDataRecord::addError(NSString *debugDescription, WebExtensionDataType type)
 {
     if (!m_errors)

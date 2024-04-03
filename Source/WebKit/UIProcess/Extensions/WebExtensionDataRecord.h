@@ -62,7 +62,7 @@ public:
     size_t sizeOfType(Type type) const { return m_typeSizes.get(type); }
     void setSizeOfType(Type type, size_t size) { m_typeSizes.set(type, size); }
 
-    NSMutableArray *errors() { return m_errors.get(); };
+    NSArray *errors();
     void addError(NSString *debugDescription, Type);
 
 #ifdef __OBJC__
