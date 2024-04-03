@@ -93,6 +93,11 @@ static_assert(std::is_same_v<WTF::ProcessID, pid_t>);
 
 namespace WebKit {
 
+template<typename E> uint64_t enumValueForIPCTestAPI(E e)
+{
+    return static_cast<std::make_unsigned_t<std::underlying_type_t<E>>>(e);
+}
+
 Vector<SerializedTypeInfo> allSerializedTypes()
 {
     return {
@@ -520,61 +525,61 @@ Vector<SerializedEnumInfo> allSerializedEnums()
         } },
 #endif
         { "EnumWithoutNamespace"_s, sizeof(EnumWithoutNamespace), false, {
-            static_cast<uint64_t>(EnumWithoutNamespace::Value1),
-            static_cast<uint64_t>(EnumWithoutNamespace::Value2),
-            static_cast<uint64_t>(EnumWithoutNamespace::Value3),
+            enumValueForIPCTestAPI(EnumWithoutNamespace::Value1),
+            enumValueForIPCTestAPI(EnumWithoutNamespace::Value2),
+            enumValueForIPCTestAPI(EnumWithoutNamespace::Value3),
         } },
 #if ENABLE(UINT16_ENUM)
         { "EnumNamespace::EnumType"_s, sizeof(EnumNamespace::EnumType), false, {
-            static_cast<uint64_t>(EnumNamespace::EnumType::FirstValue),
+            enumValueForIPCTestAPI(EnumNamespace::EnumType::FirstValue),
 #if ENABLE(ENUM_VALUE_CONDITION)
-            static_cast<uint64_t>(EnumNamespace::EnumType::SecondValue),
+            enumValueForIPCTestAPI(EnumNamespace::EnumType::SecondValue),
 #endif
         } },
 #endif
         { "EnumNamespace2::OptionSetEnumType"_s, sizeof(EnumNamespace2::OptionSetEnumType), true, {
-            static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue),
+            enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue),
 #if ENABLE(OPTION_SET_SECOND_VALUE)
-            static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue),
+            enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue),
 #endif
 #if !(ENABLE(OPTION_SET_SECOND_VALUE))
-            static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValueElse),
+            enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetSecondValueElse),
 #endif
-            static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue),
+            enumValueForIPCTestAPI(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue),
         } },
         { "OptionSetEnumFirstCondition"_s, sizeof(OptionSetEnumFirstCondition), true, {
 #if ENABLE(OPTION_SET_FIRST_VALUE)
-            static_cast<uint64_t>(OptionSetEnumFirstCondition::OptionSetFirstValue),
+            enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetFirstValue),
 #endif
-            static_cast<uint64_t>(OptionSetEnumFirstCondition::OptionSetSecondValue),
-            static_cast<uint64_t>(OptionSetEnumFirstCondition::OptionSetThirdValue),
+            enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetSecondValue),
+            enumValueForIPCTestAPI(OptionSetEnumFirstCondition::OptionSetThirdValue),
         } },
         { "OptionSetEnumLastCondition"_s, sizeof(OptionSetEnumLastCondition), true, {
-            static_cast<uint64_t>(OptionSetEnumLastCondition::OptionSetFirstValue),
-            static_cast<uint64_t>(OptionSetEnumLastCondition::OptionSetSecondValue),
+            enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetFirstValue),
+            enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetSecondValue),
 #if ENABLE(OPTION_SET_THIRD_VALUE)
-            static_cast<uint64_t>(OptionSetEnumLastCondition::OptionSetThirdValue),
+            enumValueForIPCTestAPI(OptionSetEnumLastCondition::OptionSetThirdValue),
 #endif
         } },
         { "OptionSetEnumAllCondition"_s, sizeof(OptionSetEnumAllCondition), true, {
 #if ENABLE(OPTION_SET_FIRST_VALUE)
-            static_cast<uint64_t>(OptionSetEnumAllCondition::OptionSetFirstValue),
+            enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetFirstValue),
 #endif
 #if ENABLE(OPTION_SET_SECOND_VALUE)
-            static_cast<uint64_t>(OptionSetEnumAllCondition::OptionSetSecondValue),
+            enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetSecondValue),
 #endif
 #if ENABLE(OPTION_SET_THIRD_VALUE)
-            static_cast<uint64_t>(OptionSetEnumAllCondition::OptionSetThirdValue),
+            enumValueForIPCTestAPI(OptionSetEnumAllCondition::OptionSetThirdValue),
 #endif
         } },
 #if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
         { "EnumNamespace::InnerEnumType"_s, sizeof(EnumNamespace::InnerEnumType), false, {
-            static_cast<uint64_t>(EnumNamespace::InnerEnumType::InnerValue),
+            enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::InnerValue),
 #if ENABLE(INNER_INNER_CONDITION)
-            static_cast<uint64_t>(EnumNamespace::InnerEnumType::InnerInnerValue),
+            enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::InnerInnerValue),
 #endif
 #if !(ENABLE(INNER_INNER_CONDITION))
-            static_cast<uint64_t>(EnumNamespace::InnerEnumType::OtherInnerInnerValue),
+            enumValueForIPCTestAPI(EnumNamespace::InnerEnumType::OtherInnerInnerValue),
 #endif
         } },
 #endif

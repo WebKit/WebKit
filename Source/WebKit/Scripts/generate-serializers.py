@@ -1358,6 +1358,11 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
     result.append('')
     result.append('namespace WebKit {')
     result.append('')
+    result.append('template<typename E> uint64_t enumValueForIPCTestAPI(E e)')
+    result.append('{')
+    result.append('    return static_cast<std::make_unsigned_t<std::underlying_type_t<E>>>(e);')
+    result.append('}')
+    result.append('')
     result.append('Vector<SerializedTypeInfo> allSerializedTypes()')
     result.append('{')
     result.append('    return {')
@@ -1396,7 +1401,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
             for valid_value in enum.valid_values:
                 if valid_value.condition is not None:
                     result.append('#if ' + valid_value.condition)
-                result.append('            static_cast<uint64_t>(' + enum.namespace_and_name() + '::' + valid_value.name + '),')
+                result.append('            enumValueForIPCTestAPI(' + enum.namespace_and_name() + '::' + valid_value.name + '),')
                 if valid_value.condition is not None:
                     result.append('#endif')
         result.append('        } },')
