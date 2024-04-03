@@ -889,17 +889,11 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
     auto samplingOptions = toSkSamplingOptions(m_state.imageInterpolationQuality());
     bool needsClip = tileRect.size() != nativeImage.size();
 
-    auto tileMode = [](float dstPoint, float dstMax, float tilePoint, float tileMax) -> SkTileMode {
-        return dstPoint >= tilePoint && dstMax <= tileMax ? SkTileMode::kClamp : SkTileMode::kRepeat;
-    };
-    auto tileModeX = tileMode(destRect.x(), destRect.maxX(), rect.x(), rect.maxX());
-    auto tileModeY = tileMode(destRect.y(), destRect.maxY(), rect.y(), rect.maxY());
-
     SkPaint paint = createFillPaint();
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
 
     if (spacing.isZero() && !needsClip)
-        paint.setShader(image->makeShader(tileModeX, tileModeY, samplingOptions, &shaderMatrix));
+        paint.setShader(image->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions, &shaderMatrix));
     else {
         if (needsClip) {
             // FIXME: handle the case where the tile rect has a different size than the image.
@@ -909,7 +903,7 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
         auto* recordCanvas = recorder.beginRecording(SkRect::MakeWH(tileRect.width() + spacing.width() / patternTransform.a(), tileRect.height() + spacing.height() / patternTransform.d()));
         recordCanvas->drawImageRect(image, tileRect, SkRect::MakeWH(tileRect.width(), tileRect.height()), samplingOptions, nullptr, SkCanvas::kStrict_SrcRectConstraint);
         auto picture = recorder.finishRecordingAsPicture();
-        paint.setShader(picture->makeShader(tileModeX, tileModeY, samplingOptions.filter, &shaderMatrix, nullptr));
+        paint.setShader(picture->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, samplingOptions.filter, &shaderMatrix, nullptr));
     }
 
     m_canvas.drawRect(destRect, paint);
