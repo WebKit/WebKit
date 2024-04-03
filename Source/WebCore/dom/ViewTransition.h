@@ -164,6 +164,7 @@ private:
 
     OrderedNamedElementsMap m_namedElements;
     ViewTransitionPhase m_phase { ViewTransitionPhase::PendingCapture };
+    FloatSize m_initialLargeViewportSize;
 
     RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
 

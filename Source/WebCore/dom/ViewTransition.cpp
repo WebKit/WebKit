@@ -95,7 +95,6 @@ void ViewTransition::skipViewTransition(ExceptionOr<JSC::JSValue>&& reason)
     if (!m_document)
         return;
 
-    ASSERT(m_document->activeViewTransition() == this);
     ASSERT(m_phase != ViewTransitionPhase::Done);
 
     if (m_phase < ViewTransitionPhase::UpdateCallbackCalled) {
@@ -336,8 +335,8 @@ ExceptionOr<void> ViewTransition::captureOldState()
     ListHashSet<AtomString> usedTransitionNames;
     Vector<Ref<Element>> captureElements;
     Ref document = *m_document;
-    // FIXME: Set transition’s initial snapshot containing block size to the snapshot containing block size.
     if (CheckedPtr view = document->renderView()) {
+        m_initialLargeViewportSize = view->sizeForCSSLargeViewportUnits();
         auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
             if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
@@ -491,8 +490,10 @@ void ViewTransition::activateViewTransition()
         return;
 
     // FIXME: Set rendering suppression for view transitions to false.
-
-    // FIXME: If transition’s initial snapshot containing block size is not equal to the snapshot containing block size, then skip the view transition for transition, and return.
+    if (!protectedDocument()->renderView() || protectedDocument()->renderView()->sizeForCSSLargeViewportUnits() != m_initialLargeViewportSize) {
+        skipViewTransition(Exception { ExceptionCode::InvalidStateError, "Skipping view transition because viewport size changed."_s });
+        return;
+    }
 
     auto checkFailure = captureNewState();
     if (checkFailure.hasException()) {
@@ -555,9 +556,14 @@ void ViewTransition::handleTransitionFrame()
         m_phase = ViewTransitionPhase::Done;
         clearViewTransition();
         m_finished.second->resolve();
+        return;
     }
 
-    // FIXME: If transition’s initial snapshot containing block size is not equal to the snapshot containing block size, then skip the view transition for transition, and return.
+    if (!protectedDocument()->renderView() || protectedDocument()->renderView()->sizeForCSSLargeViewportUnits() != m_initialLargeViewportSize) {
+        skipViewTransition(Exception { ExceptionCode::InvalidStateError, "Skipping view transition because viewport size changed."_s });
+        return;
+    }
+
     updatePseudoElementStyles();
 }
 

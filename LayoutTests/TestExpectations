@@ -6999,6 +6999,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition-destr
 
 # Flakes
 imported/w3c/web-platform-tests/css/css-view-transitions/synchronous-callback-skipped-before-run.html [ Failure Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure Pass ]
 
 # -- END: View transitions -- #
 

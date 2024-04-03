@@ -1651,8 +1651,6 @@ compositing/visible-rect/nested-transform.html [ Failure ]
 compositing/visible-rect/scrolled.html [ Failure ]
 compositing/video/video-border-radius-clipping.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ ImageOnlyFailure ]
-
 # Tests timing out after 275888@main.
 fast/block/float/floats-wrap-inside-inline-006.html [ Timeout ]
 fast/block/float/previous-sibling-abspos-002.html [ Timeout ]
