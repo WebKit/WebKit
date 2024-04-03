@@ -258,42 +258,4 @@ void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pa
 }
 #endif // HAVE(NW_PROXY_CONFIG)
 
-#if USE(RUNNINGBOARD) && USE(EXTENSIONKIT)
-bool NetworkProcess::acquireLockedFileActivity()
-{
-    RELEASE_LOG(Process, "NetworkProcess::acquireLockedFileActivity hasAcquiredFileActivity = %d", hasAcquiredFileActivity());
-
-    invalidateFileActivity();
-
-    m_holdingLockedFileSemaphore = adoptOSObject(dispatch_semaphore_create(0));
-    [[NSProcessInfo processInfo] performExpiringActivityWithReason:@"Expiring activity for locked file" usingBlock:[holdingLockedFileSemaphore = m_holdingLockedFileSemaphore] (BOOL expired) {
-        RELEASE_LOG(Process, "Starting expiring activity, expired = %d", expired);
-        if (!expired) {
-            auto timeout = dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC);
-            dispatch_semaphore_wait(holdingLockedFileSemaphore.get(), timeout);
-        }
-    }];
-
-    return true;
-}
-
-void NetworkProcess::invalidateFileActivity()
-{
-    RELEASE_LOG(Process, "NetworkProcess::invalidateActivity hasAcquiredFileActivity = %d", hasAcquiredFileActivity());
-
-    if (!hasAcquiredFileActivity())
-        return;
-
-    if (m_holdingLockedFileSemaphore) {
-        dispatch_semaphore_signal(m_holdingLockedFileSemaphore.get());
-        m_holdingLockedFileSemaphore = nullptr;
-    }
-}
-
-bool NetworkProcess::hasAcquiredFileActivity() const
-{
-    return !!m_holdingLockedFileSemaphore;
-}
-#endif
-
 } // namespace WebKit
