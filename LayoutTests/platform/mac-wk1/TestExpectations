@@ -2856,3 +2856,12 @@ imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context
 # webkit.org/b/271865 REGRESSION (276749@main): [ MacOS WK1 ] 2X backdrop-filter tests are consistent failures 
 [ Sonoma+ ] css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/backdrop-filter.html [ Failure ]
+
+# webkit.org/b/272101 [ Sonoma WK1 ] 7X imported/w3c/web-platform-tests/worklets tests are flaky failures
+[ Sonoma+ ] imported/w3c/web-platform-tests/worklets/animation-worklet-credentials.https.html [ Pass Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/worklets/audio-worklet-credentials.https.html [ Pass Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/worklets/audio-worklet-csp.https.html [ Pass Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/worklets/audio-worklet-import.https.html [ Pass Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/worklets/audio-worklet-referrer.https.html [ Pass Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/worklets/layout-worklet-credentials.https.html [ Pass Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/worklets/paint-worklet-credentials.https.html [ Pass Failure ]
