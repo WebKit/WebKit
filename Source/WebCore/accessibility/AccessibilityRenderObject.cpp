@@ -667,8 +667,11 @@ String AccessibilityRenderObject::helpText() const
 
 String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) const
 {
-    if (!m_renderer)
-        return AccessibilityNodeObject::textUnderElement(mode);
+    // If we are within a hidden context, we don't want to add any text for this object, instead
+    // just fanning out to nodes within our subtree to search for un-hidden nodes.
+    // AccessibilityNodeObject::textUnderElement takes care of this, so call it directly.
+    if (!m_renderer || mode.isHidden())
+        return AccessibilityNodeObject::textUnderElement(WTFMove(mode));
 
     if (auto* fileUpload = dynamicDowncast<RenderFileUploadControl>(*m_renderer))
         return fileUpload->buttonValue();
@@ -678,7 +681,7 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
         return "\n"_s;
 
     if (shouldGetTextFromNode(mode))
-        return AccessibilityNodeObject::textUnderElement(mode);
+        return AccessibilityNodeObject::textUnderElement(WTFMove(mode));
 
     // We use a text iterator for text objects AND for those cases where we are
     // explicitly asking for the full text under a given element.
@@ -727,7 +730,7 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
         }
     }
 
-    return AccessibilityNodeObject::textUnderElement(mode);
+    return AccessibilityNodeObject::textUnderElement(WTFMove(mode));
 }
 
 bool AccessibilityRenderObject::shouldGetTextFromNode(TextUnderElementMode mode) const

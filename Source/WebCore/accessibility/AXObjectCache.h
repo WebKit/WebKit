@@ -58,6 +58,7 @@ class Node;
 class Page;
 class RenderBlock;
 class RenderObject;
+class RenderStyle;
 class RenderText;
 class RenderWidget;
 class Scrollbar;
@@ -888,6 +889,8 @@ bool nodeHasTableRole(Node*);
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node&);
 bool isNodeAriaVisible(Node*);
+
+bool isDOMHidden(const RenderStyle*);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache::AXNotification);
 

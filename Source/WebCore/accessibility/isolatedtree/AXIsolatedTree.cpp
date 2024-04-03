@@ -1094,7 +1094,7 @@ void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
     if (labeledObjectIDs) {
         // Update the labeled objects since axObject is one of their labels and it is being removed.
         for (AXID labeledObjectID : *labeledObjectIDs) {
-            // The label/title of an isolated object is computed based on its AccessibilityText propperty, thus update it.
+            // The label/title of an isolated object is computed based on its AccessibilityText property, thus update it.
             queueNodeUpdate(labeledObjectID, { AXPropertyName::AccessibilityText });
         }
     }

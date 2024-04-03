@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button">
+    visible to all users,
+    <span style="visibility: hidden;" id="initially-hidden-span">
+        hidden-foo-bar,
+        <span id="visible-span" style="visibility: visible;">un-hidden for all users</span>
+    </span>
+</button>
+
+<script>
+var output = "This test ensures we compute the correct accessibility label when visibility:hidden and visibility:visible are nested.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text = platformTextAlternatives(accessibilityController.accessibleElementById("button"));
+    output += `${text}\n`;
+    output += expect("text.includes('un-hidden for all users')", "true");
+    output += expect("!text.includes('hidden-foo-bar')", "true");
+    output += "\n";
+
+    document.getElementById("initially-hidden-span").removeAttribute("style");
+    setTimeout(async function() {
+        await waitFor(() => {
+            text = platformTextAlternatives(accessibilityController.accessibleElementById("button"));
+            return text && text.includes("hidden-foo-bar");
+        });
+        output += `${text}\n`;
+        output += expect("text.includes('hidden-foo-bar')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

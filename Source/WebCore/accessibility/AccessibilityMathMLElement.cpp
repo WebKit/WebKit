@@ -68,7 +68,7 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
 
 String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
-    if (m_isAnonymousOperator) {
+    if (m_isAnonymousOperator && !mode.isHidden()) {
         UChar operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();
         return operatorChar ? String(span(operatorChar)) : String();
     }

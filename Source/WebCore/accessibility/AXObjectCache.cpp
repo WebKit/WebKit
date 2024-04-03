@@ -2534,8 +2534,14 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == disabledAttr)
         postNotification(element, AXDisabledStateChanged);
     else if (attrName == forAttr) {
-        if (RefPtr label = dynamicDowncast<HTMLLabelElement>(element))
+        if (RefPtr label = dynamicDowncast<HTMLLabelElement>(element)) {
             updateLabelFor(*label);
+
+            if (RefPtr oldControl = element->treeScope().getElementById(oldValue))
+                postNotification(oldControl.get(), AXTextChanged);
+            if (RefPtr newControl = element->treeScope().getElementById(newValue))
+                postNotification(newControl.get(), AXTextChanged);
+        }
     } else if (attrName == requiredAttr)
         postNotification(element, AXRequiredStatusChanged);
     else if (attrName == tabindexAttr) {
@@ -4685,6 +4691,13 @@ bool isNodeAriaVisible(Node& node)
     return !requiresAriaHiddenFalse || ariaHiddenFalsePresent;
 }
 
+// DOM component of hidden definition.
+// https://www.w3.org/TR/wai-aria/#dfn-hidden
+bool isDOMHidden(const RenderStyle* style)
+{
+    return style ? style->display() == DisplayType::None || style->usedVisibility() != Visibility::Visible : true;
+}
+
 AccessibilityObject* AXObjectCache::rootWebArea()
 {
     auto* root = getOrCreate(m_document->view());
@@ -5074,7 +5087,7 @@ void AXObjectCache::addLabelForRelation(Element& origin)
 
     // LabelFor relations are established for <label for=...> and for <figcaption> elements.
     if (RefPtr label = dynamicDowncast<HTMLLabelElement>(origin)) {
-        if (auto control = Accessibility::controlForLabelElement(*label))
+        if (RefPtr control = Accessibility::controlForLabelElement(*label))
             addedRelation = addRelation(&origin, control.get(), AXRelationType::LabelFor);
     } else if (origin.hasTagName(figcaptionTag)) {
         RefPtr parent = origin.parentNode();

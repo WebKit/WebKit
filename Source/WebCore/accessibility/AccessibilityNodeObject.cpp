@@ -2261,34 +2261,55 @@ static void appendNameToStringBuilder(StringBuilder& builder, String&& text)
 
 String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) const
 {
-    Node* node = this->node();
-    if (RefPtr text = dynamicDowncast<Text>(node))
-        return text->wholeText();
+    auto isAriaVisible = [this] () {
+        return Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const auto& object) {
+            return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "false"_s);
+        }) != nullptr;
+    };
 
-    bool isAriaVisible = Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
-        return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "false"_s);
-    }) != nullptr;
+    RefPtr node = this->node();
+    if (auto* text = dynamicDowncast<Text>(node.get()))
+        return !mode.isHidden() || isAriaVisible() ? text->wholeText() : emptyString();
 
+    const auto* style = this->style();
+    mode.inHiddenSubtree = WebCore::isDOMHidden(style);
     // The Accname specification states that if the current node is hidden, and not directly
     // referenced by aria-labelledby or aria-describedby, and is not a host language text
     // alternative, the empty string should be returned.
-    if (mode.considerHiddenState && isDOMHidden() && !isAriaVisible && !is<HTMLLabelElement>(node) && (node && !ancestorsOfType<HTMLCanvasElement>(*node).first())) {
-        if (labelForObjects().isEmpty() && descriptionForObjects().isEmpty())
+    if (mode.isHidden() && !isAriaVisible() && (node && !ancestorsOfType<HTMLCanvasElement>(*node).first())) {
+        if (!labelForObjects().isEmpty() || !descriptionForObjects().isEmpty()) {
+            // This object is a hidden label or description for another object, so ignore hidden states for our
+            // subtree text under element traversals too.
+            //
+            // https://w3c.github.io/accname/#comp_labelledby
+            // "The result of LabelledBy Recursion in combination with Hidden Not Referenced means that user
+            // agents MUST include all nodes in the subtree as part of the accessible name or accessible
+            // description, when the node referenced by aria-labelledby or aria-describedby is hidden."
+            mode.considerHiddenState = false;
+        } else if (style && style->display() == DisplayType::None) {
+            // Unlike visibility:visible + visiblity:visible where the latter can override the former in a subtree,
+            // display:none guarantees nothing within will be rendered, so we can exit early.
             return { };
-
-        // This object is a hidden label or description for another object, so ignore hidden states for our
-        // subtree text under element traversals too (https://w3c.github.io/accname/#comp_labelledby).
-        //
-        // "The result of LabelledBy Recursion in combination with Hidden Not Referenced means that user
-        // agents MUST include all nodes in the subtree as part of the accessible name or accessible
-        // description, when the node referenced by aria-labelledby or aria-describedby is hidden."
-        mode.considerHiddenState = false;
+        }
     }
 
     StringBuilder builder;
+    auto appendTextUnderElement = [&] (const RefPtr<AXCoreObject>& object) {
+        auto childText = object->textUnderElement(mode);
+        if (childText.length())
+            appendNameToStringBuilder(builder, WTFMove(childText));
+    };
+
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
         if (mode.ignoredChildNode && child->node() == mode.ignoredChildNode)
             continue;
+
+        if (mode.isHidden()) {
+            // If we are within a hidden context, don't add any text for this node. Instead, fan out downwards
+            // to search for un-hidden nodes (e.g. visibility:visible nodes within a visibility:hidden ancestor).
+            appendTextUnderElement(child);
+            continue;
+        }
 
         bool shouldDeriveNameFromAuthor = (mode.childrenInclusion == TextUnderElementMode::Children::IncludeNameFromContentsChildren && !child->accessibleNameDerivesFromContent());
         if (shouldDeriveNameFromAuthor) {
@@ -2326,9 +2347,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
                 continue;
         }
 
-        String childText = child->textUnderElement(mode);
-        if (childText.length())
-            appendNameToStringBuilder(builder, WTFMove(childText));
+        appendTextUnderElement(child);
     }
 
     return builder.toString().trim(isUnicodeWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
