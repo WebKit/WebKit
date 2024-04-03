@@ -62,6 +62,9 @@ public:
     size_t sizeOfType(Type type) const { return m_typeSizes.get(type); }
     void setSizeOfType(Type type, size_t size) { m_typeSizes.set(type, size); }
 
+    NSMutableArray *errors() { return m_errors.get(); };
+    void addError(NSString *debugDescription, Type);
+
 #ifdef __OBJC__
     _WKWebExtensionDataRecord *wrapper() const { return (_WKWebExtensionDataRecord *)API::ObjectImpl<API::Object::Type::WebExtensionDataRecord>::wrapper(); }
 #endif
@@ -72,6 +75,7 @@ private:
     String m_displayName;
     String m_uniqueIdentifier;
     HashMap<Type, size_t> m_typeSizes;
+    RetainPtr<NSMutableArray> m_errors;
 };
 
 class WebExtensionDataRecordHolder : public RefCounted<WebExtensionDataRecordHolder> {

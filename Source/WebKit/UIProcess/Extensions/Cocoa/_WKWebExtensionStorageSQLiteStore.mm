@@ -77,6 +77,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
     dispatch_async(_databaseQueue, ^{
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to retrieve keys: %{private}@ for extension %{private}@.", keys, self->_uniqueIdentifier);
             completionHandler(nil, [NSString stringWithFormat:@"Failed to retrieve keys %@", keys]);
             return;
         }
@@ -96,6 +97,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
     dispatch_async(_databaseQueue, ^{
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for keys: %{private}@ for extension %{private}@.", keys, self->_uniqueIdentifier);
             completionHandler(0, [NSString stringWithFormat:@"Failed to caluclate storage size for keys: %@", keys]);
             return;
         }
@@ -126,8 +128,10 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
         dispatch_async(dispatch_get_main_queue(), ^{
             if (success)
                 completionHandler(result, nil);
-            else
+            else {
+                RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for keys: %{private}@ for extension %{private}@. %{private}@", keys, self->_uniqueIdentifier, error.localizedDescription);
                 completionHandler(0, error.localizedDescription);
+            }
         });
     });
 }
@@ -144,6 +148,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
         dispatch_async(self->_databaseQueue, ^{
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
+                RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for extension %{private}@.", self->_uniqueIdentifier);
                 completionHandler(0.0, 0, @{ }, @"Failed to calculate storage size");
                 return;
             }
