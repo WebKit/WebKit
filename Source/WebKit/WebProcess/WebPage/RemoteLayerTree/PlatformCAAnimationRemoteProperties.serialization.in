@@ -22,7 +22,7 @@
 
 struct WebKit::PlatformCAAnimationRemoteProperties {
     String keyPath;
-    WebCore::PlatformCAAnimation::AnimationType animationType;
+    [Validator='WebCore::PlatformCAAnimation::isValidKeyPath(*keyPath, *animationType)'] WebCore::PlatformCAAnimation::AnimationType animationType;
 
     CFTimeInterval beginTime;
     double duration;
