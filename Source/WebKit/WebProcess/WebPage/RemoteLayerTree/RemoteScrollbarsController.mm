@@ -103,7 +103,7 @@ bool RemoteScrollbarsController::shouldDrawIntoScrollbarLayer(WebCore::Scrollbar
 
 bool RemoteScrollbarsController::shouldRegisterScrollbars() const
 {
-    return scrollableArea().isListBox();
+    return !scrollableArea().usesAsyncScrolling();
 }
 
 void RemoteScrollbarsController::setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation orientation, int minimumThumbLength)
