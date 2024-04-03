@@ -82,7 +82,7 @@ class DynamicBuffer : angle::NonCopyable
     DynamicBuffer(DynamicBuffer &&other);
     ~DynamicBuffer();
 
-    void init(RendererVk *renderer,
+    void init(Renderer *renderer,
               VkBufferUsageFlags usage,
               size_t alignment,
               size_t initialSize,
@@ -103,7 +103,7 @@ class DynamicBuffer : angle::NonCopyable
                            bool *newBufferAllocatedOut);
 
     // This releases resources when they might currently be in use.
-    void release(RendererVk *renderer);
+    void release(Renderer *renderer);
 
     // This adds in-flight buffers to the mResourceUseList in the share group and then releases
     // them.
@@ -111,7 +111,7 @@ class DynamicBuffer : angle::NonCopyable
                                                     const QueueSerial &queueSerial);
 
     // This frees resources immediately.
-    void destroy(RendererVk *renderer);
+    void destroy(Renderer *renderer);
 
     BufferHelper *getCurrentBuffer() const { return mBuffer.get(); }
 
@@ -119,7 +119,7 @@ class DynamicBuffer : angle::NonCopyable
     // image uploads, which can contain updates to unrelated mips, possibly with different formats.
     // The staging buffer should have an alignment that can satisfy all those formats, i.e. it's the
     // lcm of all alignments set in its lifetime.
-    void requireAlignment(RendererVk *renderer, size_t alignment);
+    void requireAlignment(Renderer *renderer, size_t alignment);
     size_t getAlignment() const { return mAlignment; }
 
     // For testing only!
@@ -174,7 +174,7 @@ class DescriptorSetHelper final : public Resource
 using DescriptorSetList = std::deque<DescriptorSetHelper>;
 
 // Uses DescriptorPool to allocate descriptor sets as needed. If a descriptor pool becomes full, we
-// allocate new pools internally as needed. RendererVk takes care of the lifetime of the discarded
+// allocate new pools internally as needed. Renderer takes care of the lifetime of the discarded
 // pools. Note that we used a fixed layout for descriptor pools in ANGLE.
 
 // Shared handle to a descriptor pool. Each helper is allocated from the dynamic descriptor pool.
@@ -192,8 +192,8 @@ class DescriptorPoolHelper final : public Resource
     angle::Result init(Context *context,
                        const std::vector<VkDescriptorPoolSize> &poolSizesIn,
                        uint32_t maxSets);
-    void destroy(RendererVk *renderer);
-    void release(RendererVk *renderer);
+    void destroy(Renderer *renderer);
+    void release(Renderer *renderer);
 
     bool allocateDescriptorSet(Context *context,
                                const DescriptorSetLayout &descriptorSetLayout,
@@ -245,7 +245,7 @@ class DynamicDescriptorPool final : angle::NonCopyable
                        const VkDescriptorPoolSize *setSizes,
                        size_t setSizeCount,
                        const DescriptorSetLayout &descriptorSetLayout);
-    void destroy(RendererVk *renderer);
+    void destroy(Renderer *renderer);
 
     bool valid() const { return !mDescriptorPools.empty(); }
 
@@ -264,8 +264,8 @@ class DynamicDescriptorPool final : angle::NonCopyable
                                              VkDescriptorSet *descriptorSetOut,
                                              SharedDescriptorSetCacheKey *sharedCacheKeyOut);
 
-    void releaseCachedDescriptorSet(RendererVk *renderer, const DescriptorSetDesc &desc);
-    void destroyCachedDescriptorSet(RendererVk *renderer, const DescriptorSetDesc &desc);
+    void releaseCachedDescriptorSet(Renderer *renderer, const DescriptorSetDesc &desc);
+    void destroyCachedDescriptorSet(Renderer *renderer, const DescriptorSetDesc &desc);
 
     template <typename Accumulator>
     void accumulateDescriptorCacheStats(VulkanCacheType cacheType, Accumulator *accum) const
@@ -279,7 +279,7 @@ class DynamicDescriptorPool final : angle::NonCopyable
     }
 
     // Release the pool if it is no longer been used and contains no valid descriptorSet.
-    void checkAndReleaseUnusedPool(RendererVk *renderer, RefCountedDescriptorPoolHelper *pool);
+    void checkAndReleaseUnusedPool(Renderer *renderer, RefCountedDescriptorPoolHelper *pool);
 
     // For testing only!
     static uint32_t GetMaxSetsPerPoolForTesting();
@@ -319,7 +319,7 @@ class MetaDescriptorPool final : angle::NonCopyable
     MetaDescriptorPool();
     ~MetaDescriptorPool();
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(Renderer *renderer);
 
     angle::Result bindCachedDescriptorPool(Context *context,
                                            const DescriptorSetLayoutDesc &descriptorSetLayoutDesc,
@@ -783,9 +783,9 @@ class BufferHelper : public ReadWriteResource
                                BufferUsageType usageType,
                                BufferPool *pool);
 
-    void destroy(RendererVk *renderer);
-    void release(RendererVk *renderer);
-    void releaseBufferAndDescriptorSetCache(RendererVk *renderer);
+    void destroy(Renderer *renderer);
+    void release(Renderer *renderer);
+    void releaseBufferAndDescriptorSetCache(Renderer *renderer);
 
     BufferSerial getBufferSerial() const { return mSerial; }
     BufferSerial getBlockSerial() const
@@ -817,13 +817,13 @@ class BufferHelper : public ReadWriteResource
 
     angle::Result map(Context *context, uint8_t **ptrOut);
     angle::Result mapWithOffset(Context *context, uint8_t **ptrOut, size_t offset);
-    void unmap(RendererVk *renderer) {}
+    void unmap(Renderer *renderer) {}
     // After a sequence of writes, call flush to ensure the data is visible to the device.
-    angle::Result flush(RendererVk *renderer);
-    angle::Result flush(RendererVk *renderer, VkDeviceSize offset, VkDeviceSize size);
+    angle::Result flush(Renderer *renderer);
+    angle::Result flush(Renderer *renderer, VkDeviceSize offset, VkDeviceSize size);
     // After a sequence of writes, call invalidate to ensure the data is visible to the host.
-    angle::Result invalidate(RendererVk *renderer);
-    angle::Result invalidate(RendererVk *renderer, VkDeviceSize offset, VkDeviceSize size);
+    angle::Result invalidate(Renderer *renderer);
+    angle::Result invalidate(Renderer *renderer, VkDeviceSize offset, VkDeviceSize size);
 
     void changeQueue(uint32_t newQueueFamilyIndex, OutsideRenderPassCommandBuffer *commandBuffer);
 
@@ -871,7 +871,7 @@ class BufferHelper : public ReadWriteResource
     // robustResourceInit is enabled, mBufferWithUserSize is created to match the exact user
     // size. Thus when user size changes, we must clear and recreate this mBufferWithUserSize.
     // Returns true if mBufferWithUserSize is released.
-    bool onBufferUserSizeChange(RendererVk *renderer);
+    bool onBufferUserSizeChange(Renderer *renderer);
 
     void initializeBarrierTracker(Context *context);
 
@@ -916,7 +916,7 @@ class BufferPool : angle::NonCopyable
     ~BufferPool();
 
     // Init that gives the ability to pass in specified memory property flags for the buffer.
-    void initWithFlags(RendererVk *renderer,
+    void initWithFlags(Renderer *renderer,
                        vma::VirtualBlockCreateFlags flags,
                        VkBufferUsageFlags usage,
                        VkDeviceSize initialSize,
@@ -930,9 +930,9 @@ class BufferPool : angle::NonCopyable
 
     // Frees resources immediately, or orphan the non-empty BufferBlocks if allowed. If orphan is
     // not allowed, it will assert if BufferBlock is still not empty.
-    void destroy(RendererVk *renderer, bool orphanAllowed);
+    void destroy(Renderer *renderer, bool orphanAllowed);
     // Remove and destroy empty BufferBlocks
-    void pruneEmptyBuffers(RendererVk *renderer);
+    void pruneEmptyBuffers(Renderer *renderer);
 
     bool valid() const { return mSize != 0; }
 
@@ -1863,12 +1863,12 @@ enum class ApplyImageUpdate
 constexpr VkImageAspectFlagBits IMAGE_ASPECT_DEPTH_STENCIL =
     static_cast<VkImageAspectFlagBits>(VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
 
-bool FormatHasNecessaryFeature(RendererVk *renderer,
+bool FormatHasNecessaryFeature(Renderer *renderer,
                                angle::FormatID formatID,
                                VkImageTiling tilingMode,
                                VkFormatFeatureFlags featureBits);
 
-bool CanCopyWithTransfer(RendererVk *renderer,
+bool CanCopyWithTransfer(Renderer *renderer,
                          angle::FormatID srcFormatID,
                          VkImageTiling srcTilingMode,
                          angle::FormatID dstFormatID,
@@ -2027,13 +2027,19 @@ class ImageHelper final : public Resource, public angle::Subject
         VkImageCreateFlags *createFlagsOut);
 
     // Check whether the given format supports the provided flags.
-    static bool FormatSupportsUsage(RendererVk *renderer,
+    enum class FormatSupportCheck
+    {
+        OnlyQuerySuccess,
+        RequireMultisampling
+    };
+    static bool FormatSupportsUsage(Renderer *renderer,
                                     VkFormat format,
                                     VkImageType imageType,
                                     VkImageTiling tilingMode,
                                     VkImageUsageFlags usageFlags,
                                     VkImageCreateFlags createFlags,
-                                    void *propertiesPNext);
+                                    void *propertiesPNext,
+                                    const FormatSupportCheck formatSupportCheck);
 
     // Image formats used for the creation of imageless framebuffers.
     using ImageFormats = angle::FixedVector<VkFormat, kImageListFormatCount>;
@@ -2046,24 +2052,24 @@ class ImageHelper final : public Resource, public angle::Subject
                                                   ImageFormats &formatOut);
 
     // Release the underlining VkImage object for garbage collection.
-    void releaseImage(RendererVk *renderer);
+    void releaseImage(Renderer *renderer);
     // Similar to releaseImage, but also notify all contexts in the same share group to stop
     // accessing to it.
-    void releaseImageFromShareContexts(RendererVk *renderer,
+    void releaseImageFromShareContexts(Renderer *renderer,
                                        ContextVk *contextVk,
                                        UniqueSerial imageSiblingSerial);
-    void finalizeImageLayoutInShareContexts(RendererVk *renderer,
+    void finalizeImageLayoutInShareContexts(Renderer *renderer,
                                             ContextVk *contextVk,
                                             UniqueSerial imageSiblingSerial);
-    void releaseStagedUpdates(RendererVk *renderer);
+    void releaseStagedUpdates(Renderer *renderer);
 
     bool valid() const { return mImage.valid(); }
 
     VkImageAspectFlags getAspectFlags() const;
     // True if image contains both depth & stencil aspects
     bool isCombinedDepthStencilFormat() const;
-    void destroy(RendererVk *renderer);
-    void release(RendererVk *renderer) { destroy(renderer); }
+    void destroy(Renderer *renderer);
+    void release(Renderer *renderer) { destroy(renderer); }
 
     void init2DWeakReference(Context *context,
                              VkImage handle,
@@ -2507,9 +2513,9 @@ class ImageHelper final : public Resource, public angle::Subject
     bool hasImmutableSampler() const { return mYcbcrConversionDesc.valid(); }
     uint64_t getExternalFormat() const { return mYcbcrConversionDesc.getExternalFormat(); }
     bool isYuvResolve() const { return mYcbcrConversionDesc.getExternalFormat() != 0; }
-    bool updateChromaFilter(RendererVk *rendererVk, VkFilter filter)
+    bool updateChromaFilter(Renderer *renderer, VkFilter filter)
     {
-        return mYcbcrConversionDesc.updateChromaFilter(rendererVk, filter);
+        return mYcbcrConversionDesc.updateChromaFilter(renderer, filter);
     }
     const YcbcrConversionDesc &getYcbcrConversionDesc() const { return mYcbcrConversionDesc; }
     const YcbcrConversionDesc getY2YConversionDesc() const
@@ -2627,7 +2633,7 @@ class ImageHelper final : public Resource, public angle::Subject
 
         SubresourceUpdate &operator=(SubresourceUpdate &&other);
 
-        void release(RendererVk *renderer);
+        void release(Renderer *renderer);
 
         bool isUpdateToLayers(uint32_t layerIndex, uint32_t layerCount) const;
         void getDestSubresource(uint32_t imageLayerCount,
@@ -3011,7 +3017,7 @@ class ImageViewHelper final : angle::NonCopyable
     ImageViewHelper(ImageViewHelper &&other);
     ~ImageViewHelper();
 
-    void init(RendererVk *renderer);
+    void init(Renderer *renderer);
     void destroy(VkDevice device);
 
     const ImageView &getLinearReadImageView() const
@@ -3179,7 +3185,7 @@ class ImageViewHelper final : angle::NonCopyable
 
     bool isImageViewGarbageEmpty() const;
 
-    void release(RendererVk *renderer, const ResourceUse &use);
+    void release(Renderer *renderer, const ResourceUse &use);
 
   private:
     ImageView &getReadImageView()
@@ -3298,7 +3304,7 @@ class BufferViewHelper final : public Resource
     BufferViewHelper(BufferViewHelper &&other);
     ~BufferViewHelper() override;
 
-    void init(RendererVk *renderer, VkDeviceSize offset, VkDeviceSize size);
+    void init(Renderer *renderer, VkDeviceSize offset, VkDeviceSize size);
     bool isInitialized() const { return mInitialized; }
     void release(ContextVk *contextVk);
     void destroy(VkDevice device);
@@ -3356,7 +3362,7 @@ class ShaderProgramHelper : angle::NonCopyable
     ~ShaderProgramHelper();
 
     bool valid(const gl::ShaderType shaderType) const;
-    void destroy(RendererVk *rendererVk);
+    void destroy(Renderer *renderer);
     void release(ContextVk *contextVk);
 
     void setShader(gl::ShaderType shaderType, RefCounted<ShaderModule> *shader);
@@ -3620,7 +3626,7 @@ class CommandBufferAccess : angle::NonCopyable
 class LineLoopHelper final : angle::NonCopyable
 {
   public:
-    LineLoopHelper(RendererVk *renderer);
+    LineLoopHelper(Renderer *renderer);
     ~LineLoopHelper();
 
     angle::Result getIndexBufferForDrawArrays(ContextVk *contextVk,
@@ -3659,7 +3665,7 @@ class LineLoopHelper final : angle::NonCopyable
                                       BufferHelper **indexIndirectBufferOut);
 
     void release(ContextVk *contextVk);
-    void destroy(RendererVk *renderer);
+    void destroy(Renderer *renderer);
 
     static void Draw(uint32_t count, uint32_t baseVertex, RenderPassCommandBuffer *commandBuffer);
 

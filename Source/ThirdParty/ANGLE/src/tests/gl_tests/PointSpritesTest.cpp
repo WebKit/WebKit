@@ -68,7 +68,7 @@ class PointSpritesTest : public ANGLETest<>
         GLfloat pixelOffset = ((int)maxPointSize % 2) ? (1.0f / (GLfloat)windowWidth) : 0;
         GLBuffer vertexObject;
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertexObject.get());
+        glBindBuffer(GL_ARRAY_BUFFER, vertexObject);
         ASSERT_GL_NO_ERROR();
 
         GLfloat thePoints[] = {-0.5f + pixelOffset, -0.5f + pixelOffset, 0.5f + pixelOffset,
@@ -235,7 +235,7 @@ void main()
     GLBuffer vertexObject;
     ASSERT_GL_NO_ERROR();
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexObject.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexObject);
     ASSERT_GL_NO_ERROR();
 
     GLfloat thePoints[] = {0.0f, 0.0f};
@@ -296,7 +296,7 @@ void main()
     GLBuffer vertexObject;
     ASSERT_GL_NO_ERROR();
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexObject.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexObject);
     ASSERT_GL_NO_ERROR();
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) + sizeof(colors), nullptr, GL_STATIC_DRAW);
@@ -512,7 +512,7 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
     GLfloat pointXPosition = 1;
 
     GLBuffer vertexBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     GLfloat thePoints[] = {pointXPosition, 0.0f};
     glBufferData(GL_ARRAY_BUFFER, sizeof(thePoints), thePoints, GL_STATIC_DRAW);
     ASSERT_GL_NO_ERROR();

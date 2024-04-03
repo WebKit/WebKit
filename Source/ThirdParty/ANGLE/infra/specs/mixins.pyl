@@ -15,6 +15,7 @@
 
 { 'android_r': {'swarming': {'dimensions': {'device_os': 'R'}}},
   'android_t': {'swarming': {'dimensions': {'device_os': 'TP1A.220624.021'}}},
+  'android_u': {'swarming': {'dimensions': {'device_os': 'UQ1A.240105.002'}}},
   'angle_skia_gold_test': { 'args': ['--git-revision=${got_angle_revision}'],
                             'precommit_args': [ '--gerrit-issue=${patch_issue}',
                                                 '--gerrit-patchset=${patch_set}',

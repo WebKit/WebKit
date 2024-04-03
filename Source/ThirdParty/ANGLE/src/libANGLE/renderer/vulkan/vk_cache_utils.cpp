@@ -17,11 +17,11 @@
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 #include "libANGLE/renderer/vulkan/ProgramVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/TextureVk.h"
 #include "libANGLE/renderer/vulkan/VertexArrayVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include <type_traits>
 
@@ -714,7 +714,7 @@ void InitializeDefaultSubpassSelfDependencies(
     uint32_t subpassIndex,
     std::vector<VkSubpassDependency2> *subpassDependencies)
 {
-    RendererVk *renderer = context->getRenderer();
+    Renderer *renderer = context->getRenderer();
     const bool hasRasterizationOrderAttachmentAccess =
         renderer->getFeatures().supportsRasterizationOrderAttachmentAccess.enabled;
     const bool hasBlendOperationAdvanced =
@@ -760,7 +760,7 @@ void InitializeMSRTSS(Context *context,
                       VkMultisampledRenderToSingleSampledInfoEXT *msrtss,
                       VkMultisampledRenderToSingleSampledInfoGOOGLEX *msrtssGOOGLEX)
 {
-    RendererVk *renderer = context->getRenderer();
+    Renderer *renderer = context->getRenderer();
 
     ASSERT(renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled ||
            renderer->getFeatures().supportsMultisampledRenderToSingleSampledGOOGLEX.enabled);
@@ -2283,7 +2283,7 @@ void ReleaseCachedObject(ContextVk *contextVk, const FramebufferDesc &desc)
 {
     contextVk->getShareGroup()->getFramebufferCache().erase(contextVk, desc);
 }
-void ReleaseCachedObject(RendererVk *renderer, const FramebufferDesc &desc)
+void ReleaseCachedObject(Renderer *renderer, const FramebufferDesc &desc)
 {
     UNREACHABLE();
 }
@@ -2292,19 +2292,19 @@ void ReleaseCachedObject(ContextVk *contextVk, const DescriptorSetDescAndPool &d
 {
     UNREACHABLE();
 }
-void ReleaseCachedObject(RendererVk *renderer, const DescriptorSetDescAndPool &descAndPool)
+void ReleaseCachedObject(Renderer *renderer, const DescriptorSetDescAndPool &descAndPool)
 {
     ASSERT(descAndPool.mPool != nullptr);
     descAndPool.mPool->releaseCachedDescriptorSet(renderer, descAndPool.mDesc);
 }
 
-void DestroyCachedObject(RendererVk *renderer, const FramebufferDesc &desc)
+void DestroyCachedObject(Renderer *renderer, const FramebufferDesc &desc)
 {
     // Framebuffer cache are implemented in a way that each cache entry tracks GPU progress and we
     // always guarantee cache entries are released before calling destroy.
 }
 
-void DestroyCachedObject(RendererVk *renderer, const DescriptorSetDescAndPool &descAndPool)
+void DestroyCachedObject(Renderer *renderer, const DescriptorSetDescAndPool &descAndPool)
 {
     ASSERT(descAndPool.mPool != nullptr);
     descAndPool.mPool->destroyCachedDescriptorSet(renderer, descAndPool.mDesc);
@@ -4364,7 +4364,7 @@ void PipelineLayoutDesc::updatePushConstantRange(VkShaderStageFlags stageMask,
 
 // CreateMonolithicPipelineTask implementation.
 CreateMonolithicPipelineTask::CreateMonolithicPipelineTask(
-    RendererVk *renderer,
+    Renderer *renderer,
     const PipelineCacheAccess &pipelineCache,
     const PipelineLayout &pipelineLayout,
     const ShaderModuleMap &shaders,
@@ -4379,11 +4379,7 @@ CreateMonolithicPipelineTask::CreateMonolithicPipelineTask(
       mDesc(desc),
       mResult(VK_NOT_READY),
       mFeedback(CacheLookUpFeedback::None)
-{
-    // Make sure the given pipeline cache has an associated mutex as this task will be running
-    // asynchronously.
-    ASSERT(pipelineCache.isThreadSafe());
-}
+{}
 
 void CreateMonolithicPipelineTask::setCompatibleRenderPass(const RenderPass *compatibleRenderPass)
 {
@@ -4564,9 +4560,9 @@ angle::Result FramebufferHelper::init(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
-void FramebufferHelper::destroy(RendererVk *rendererVk)
+void FramebufferHelper::destroy(Renderer *renderer)
 {
-    mFramebuffer.destroy(rendererVk->getDevice());
+    mFramebuffer.destroy(renderer->getDevice());
 }
 
 void FramebufferHelper::release(ContextVk *contextVk)
@@ -4750,7 +4746,7 @@ void YcbcrConversionDesc::reset()
     mReserved              = 0;
 }
 
-void YcbcrConversionDesc::update(RendererVk *rendererVk,
+void YcbcrConversionDesc::update(Renderer *renderer,
                                  uint64_t externalFormat,
                                  VkSamplerYcbcrModelConversion conversionModel,
                                  VkSamplerYcbcrRange colorRange,
@@ -4761,7 +4757,7 @@ void YcbcrConversionDesc::update(RendererVk *rendererVk,
                                  angle::FormatID intendedFormatID,
                                  YcbcrLinearFilterSupport linearFilterSupported)
 {
-    const vk::Format &vkFormat = rendererVk->getFormat(intendedFormatID);
+    const vk::Format &vkFormat = renderer->getFormat(intendedFormatID);
     ASSERT(externalFormat != 0 || vkFormat.getIntendedFormat().isYUV);
 
     SetBitField(mIsExternalFormat, (externalFormat) ? 1 : 0);
@@ -4771,7 +4767,7 @@ void YcbcrConversionDesc::update(RendererVk *rendererVk,
                               ? externalFormat
                               : vkFormat.getActualImageVkFormat(vk::ImageAccess::SampleOnly);
 
-    updateChromaFilter(rendererVk, chromaFilter);
+    updateChromaFilter(renderer, chromaFilter);
 
     SetBitField(mConversionModel, conversionModel);
     SetBitField(mColorRange, colorRange);
@@ -4783,18 +4779,18 @@ void YcbcrConversionDesc::update(RendererVk *rendererVk,
     SetBitField(mASwizzle, components.a);
 }
 
-bool YcbcrConversionDesc::updateChromaFilter(RendererVk *rendererVk, VkFilter filter)
+bool YcbcrConversionDesc::updateChromaFilter(Renderer *renderer, VkFilter filter)
 {
     // The app has requested a specific min/mag filter, reconcile that with the filter
     // requested by preferLinearFilterForYUV feature.
     //
     // preferLinearFilterForYUV enforces linear filter while forceNearestFiltering and
     // forceNearestMipFiltering enforces nearest filter, enabling one precludes the other.
-    ASSERT(!rendererVk->getFeatures().preferLinearFilterForYUV.enabled ||
-           (!rendererVk->getFeatures().forceNearestFiltering.enabled &&
-            !rendererVk->getFeatures().forceNearestMipFiltering.enabled));
+    ASSERT(!renderer->getFeatures().preferLinearFilterForYUV.enabled ||
+           (!renderer->getFeatures().forceNearestFiltering.enabled &&
+            !renderer->getFeatures().forceNearestMipFiltering.enabled));
 
-    VkFilter preferredChromaFilter = rendererVk->getPreferredFilterForYUV(filter);
+    VkFilter preferredChromaFilter = renderer->getPreferredFilterForYUV(filter);
     ASSERT(preferredChromaFilter == VK_FILTER_LINEAR || preferredChromaFilter == VK_FILTER_NEAREST);
 
     if (preferredChromaFilter == VK_FILTER_LINEAR && !mLinearFilterSupported)
@@ -5536,7 +5532,7 @@ void DescriptorSetDescBuilder::updateTransformFeedbackBuffer(
 {
     const uint32_t baseBinding = variableInfoMap.getEmulatedXfbBufferBinding(0);
 
-    RendererVk *renderer = context->getRenderer();
+    Renderer *renderer = context->getRenderer();
     VkDeviceSize offsetAlignment =
         renderer->getPhysicalDeviceProperties().limits.minStorageBufferOffsetAlignment;
     // Set the offset as close as possible to the requested offset while remaining aligned.
@@ -6081,7 +6077,7 @@ angle::Result DescriptorSetDescBuilder::updateImages(
     const std::vector<gl::ImageUnit> &imageUnits,
     const WriteDescriptorDescs &writeDescriptorDescs)
 {
-    RendererVk *renderer                               = context->getRenderer();
+    Renderer *renderer                                 = context->getRenderer();
     const std::vector<gl::ImageBinding> &imageBindings = executable.getImageBindings();
     const std::vector<gl::LinkedUniform> &uniforms     = executable.getUniforms();
 
@@ -6263,7 +6259,7 @@ void SharedCacheKeyManager<SharedCacheKeyT>::releaseKeys(ContextVk *contextVk)
 }
 
 template <class SharedCacheKeyT>
-void SharedCacheKeyManager<SharedCacheKeyT>::releaseKeys(RendererVk *renderer)
+void SharedCacheKeyManager<SharedCacheKeyT>::releaseKeys(Renderer *renderer)
 {
     for (SharedCacheKeyT &sharedCacheKey : mSharedCacheKeys)
     {
@@ -6279,7 +6275,7 @@ void SharedCacheKeyManager<SharedCacheKeyT>::releaseKeys(RendererVk *renderer)
 }
 
 template <class SharedCacheKeyT>
-void SharedCacheKeyManager<SharedCacheKeyT>::destroyKeys(RendererVk *renderer)
+void SharedCacheKeyManager<SharedCacheKeyT>::destroyKeys(Renderer *renderer)
 {
     for (SharedCacheKeyT &sharedCacheKey : mSharedCacheKeys)
     {
@@ -6359,9 +6355,9 @@ VkResult PipelineCacheAccess::createComputePipeline(vk::Context *context,
     return pipelineOut->initCompute(context->getDevice(), createInfo, *mPipelineCache);
 }
 
-void PipelineCacheAccess::merge(RendererVk *renderer, const vk::PipelineCache &pipelineCache)
+void PipelineCacheAccess::merge(Renderer *renderer, const vk::PipelineCache &pipelineCache)
 {
-    ASSERT(mMutex != nullptr);
+    ASSERT(isThreadSafe());
 
     std::unique_lock<std::mutex> lock = getLock();
 
@@ -6473,13 +6469,13 @@ uint32_t UpdateDescriptorSetsBuilder::flushDescriptorSetUpdates(VkDevice device)
 }
 
 // FramebufferCache implementation.
-void FramebufferCache::destroy(RendererVk *rendererVk)
+void FramebufferCache::destroy(vk::Renderer *renderer)
 {
-    rendererVk->accumulateCacheStats(VulkanCacheType::Framebuffer, mCacheStats);
+    renderer->accumulateCacheStats(VulkanCacheType::Framebuffer, mCacheStats);
     for (auto &entry : mPayload)
     {
         vk::FramebufferHelper &tmpFB = entry.second;
-        tmpFB.destroy(rendererVk);
+        tmpFB.destroy(renderer);
     }
     mPayload.clear();
 }
@@ -6534,7 +6530,7 @@ RenderPassCache::~RenderPassCache()
 
 void RenderPassCache::destroy(ContextVk *contextVk)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     renderer->accumulateCacheStats(VulkanCacheType::CompatibleRenderPass,
                                    mCompatibleRenderPassCacheStats);
@@ -7337,11 +7333,11 @@ DescriptorSetLayoutCache::~DescriptorSetLayoutCache()
     ASSERT(mPayload.empty());
 }
 
-void DescriptorSetLayoutCache::destroy(RendererVk *rendererVk)
+void DescriptorSetLayoutCache::destroy(vk::Renderer *renderer)
 {
-    rendererVk->accumulateCacheStats(VulkanCacheType::DescriptorSetLayout, mCacheStats);
+    renderer->accumulateCacheStats(VulkanCacheType::DescriptorSetLayout, mCacheStats);
 
-    VkDevice device = rendererVk->getDevice();
+    VkDevice device = renderer->getDevice();
 
     for (auto &item : mPayload)
     {
@@ -7400,11 +7396,11 @@ PipelineLayoutCache::~PipelineLayoutCache()
     ASSERT(mPayload.empty());
 }
 
-void PipelineLayoutCache::destroy(RendererVk *rendererVk)
+void PipelineLayoutCache::destroy(vk::Renderer *renderer)
 {
-    accumulateCacheStats(rendererVk);
+    accumulateCacheStats(renderer);
 
-    VkDevice device = rendererVk->getDevice();
+    VkDevice device = renderer->getDevice();
 
     for (auto &item : mPayload)
     {
@@ -7484,18 +7480,18 @@ SamplerYcbcrConversionCache::~SamplerYcbcrConversionCache()
     ASSERT(mExternalFormatPayload.empty() && mVkFormatPayload.empty());
 }
 
-void SamplerYcbcrConversionCache::destroy(RendererVk *rendererVk)
+void SamplerYcbcrConversionCache::destroy(vk::Renderer *renderer)
 {
-    rendererVk->accumulateCacheStats(VulkanCacheType::SamplerYcbcrConversion, mCacheStats);
+    renderer->accumulateCacheStats(VulkanCacheType::SamplerYcbcrConversion, mCacheStats);
 
-    VkDevice device = rendererVk->getDevice();
+    VkDevice device = renderer->getDevice();
 
     for (auto &iter : mExternalFormatPayload)
     {
         vk::SamplerYcbcrConversion &samplerYcbcrConversion = iter.second;
         samplerYcbcrConversion.destroy(device);
 
-        rendererVk->onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion);
+        renderer->onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion);
     }
 
     for (auto &iter : mVkFormatPayload)
@@ -7503,7 +7499,7 @@ void SamplerYcbcrConversionCache::destroy(RendererVk *rendererVk)
         vk::SamplerYcbcrConversion &samplerYcbcrConversion = iter.second;
         samplerYcbcrConversion.destroy(device);
 
-        rendererVk->onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion);
+        renderer->onDeallocateHandle(vk::HandleType::SamplerYcbcrConversion);
     }
 
     mExternalFormatPayload.clear();
@@ -7553,11 +7549,11 @@ SamplerCache::~SamplerCache()
     ASSERT(mPayload.empty());
 }
 
-void SamplerCache::destroy(RendererVk *rendererVk)
+void SamplerCache::destroy(vk::Renderer *renderer)
 {
-    rendererVk->accumulateCacheStats(VulkanCacheType::Sampler, mCacheStats);
+    renderer->accumulateCacheStats(VulkanCacheType::Sampler, mCacheStats);
 
-    VkDevice device = rendererVk->getDevice();
+    VkDevice device = renderer->getDevice();
 
     for (auto &iter : mPayload)
     {
@@ -7565,7 +7561,7 @@ void SamplerCache::destroy(RendererVk *rendererVk)
         ASSERT(!sampler.isReferenced());
         sampler.get().get().destroy(device);
 
-        rendererVk->onDeallocateHandle(vk::HandleType::Sampler);
+        renderer->onDeallocateHandle(vk::HandleType::Sampler);
     }
 
     mPayload.clear();

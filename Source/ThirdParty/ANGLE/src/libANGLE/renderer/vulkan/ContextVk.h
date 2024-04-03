@@ -20,9 +20,9 @@
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/OverlayVk.h"
 #include "libANGLE/renderer/vulkan/PersistentCommandPool.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/ShareGroupVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace angle
 {
@@ -37,7 +37,6 @@ class SyncHelper;
 }  // namespace vk
 
 class ProgramExecutableVk;
-class RendererVk;
 class WindowSurfaceVk;
 class OffscreenSurfaceVk;
 class ShareGroupVk;
@@ -70,7 +69,7 @@ enum class UpdateDepthFeedbackLoopReason
 class ContextVk : public ContextImpl, public vk::Context, public MultisampleTextureInitializer
 {
   public:
-    ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk *renderer);
+    ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Renderer *renderer);
     ~ContextVk() override;
 
     angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
@@ -1463,7 +1462,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     vk::PipelineCache mInterfacePipelinesCache;
 
     // These pools are externally synchronized, so cannot be accessed from different
-    // threads simultaneously. Hence, we keep them in the ContextVk instead of the RendererVk.
+    // threads simultaneously. Hence, we keep them in the ContextVk instead of the vk::Renderer.
     // Note that this implementation would need to change in shared resource scenarios. Likely
     // we'd instead share a single set of pools between the share groups.
     gl::QueryTypeMap<vk::DynamicQueryPool> mQueryPools;

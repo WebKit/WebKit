@@ -178,3 +178,20 @@ void main() {
     EXPECT_TRUE(
         foundInIntermediateTree("Size of declared variable exceeds implementation-defined limit"));
 }
+
+// Tests that separating variable declaration of multiple instances of a anonymous structure
+// rewrites the expression types for expressions that use the variables. At the time of writing
+// the expression types were left referencing the original anonymous function.
+TEST_F(ParseTest, SeparateAnonymousFunctionsRewritesExpressions)
+{
+    const char kShader[] = R"(
+struct {
+    mediump vec2 d;
+} s0, s1;
+void main() {
+    s0 = s0;
+    s1 = s1;
+})";
+    EXPECT_TRUE(compile(kShader));
+    EXPECT_FALSE(foundInIntermediateTree("anonymous"));
+}

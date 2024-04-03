@@ -550,14 +550,14 @@ def get_gn_target_dependencies(abi, target, build_info):
     return result
 
 
-def get_angle_on_system_flag_config():
+def get_angle_in_vendor_flag_config():
     blueprint_results = []
 
     blueprint_results.append(('soong_config_module_type', {
         'name': 'angle_config_cc_defaults',
         'module_type': 'cc_defaults',
         'config_namespace': 'angle',
-        'bool_variables': ['angle_on_system',],
+        'bool_variables': ['angle_in_vendor',],
         'properties': [
             'target.android.relative_install_path',
             'vendor',
@@ -565,28 +565,28 @@ def get_angle_on_system_flag_config():
     }))
 
     blueprint_results.append(('soong_config_bool_variable', {
-        'name': 'angle_on_system',
+        'name': 'angle_in_vendor',
     }))
 
     blueprint_results.append((
         'angle_config_cc_defaults',
         {
             'name': 'angle_vendor_cc_defaults',
-            'vendor': True,
+            'vendor': False,
             'target': {
                 'android': {
-                    'relative_install_path': 'egl',
-                },
-            },
-            'soong_config_variables': {
-                'angle_on_system': {
-                    'vendor': False,
                     # Android EGL loader can not load from /system/egl/${LIB}
                     # path and hence don't set the relative path so that ANGLE
                     # libraries get built into /system/${LIB}
+                    'relative_install_path': '',
+                },
+            },
+            'soong_config_variables': {
+                'angle_in_vendor': {
+                    'vendor': True,
                     'target': {
                         'android': {
-                            'relative_install_path': '',
+                            'relative_install_path': 'egl',
                         },
                     },
                 },
@@ -622,7 +622,7 @@ def main():
 
     blueprint_targets = []
 
-    blueprint_targets.extend(get_angle_on_system_flag_config())
+    blueprint_targets.extend(get_angle_in_vendor_flag_config())
 
     blueprint_targets.append((
         'cc_defaults',

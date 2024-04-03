@@ -4,8 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_TRANSLATOR_MSL_ASNODE_H_
-#define COMPILER_TRANSLATOR_MSL_ASNODE_H_
+#ifndef COMPILER_TRANSLATOR_ASNODE_H_
+#define COMPILER_TRANSLATOR_ASNODE_H_
 
 #include "common/angleutils.h"
 #include "compiler/translator/IntermNode.h"
@@ -209,4 +209,4 @@ ANGLE_INLINE T *asNode(TIntermNode *node)
 
 }  // namespace sh
 
-#endif  // COMPILER_TRANSLATOR_MSL_ASNODE_H_
+#endif  // COMPILER_TRANSLATOR_ASNODE_H_

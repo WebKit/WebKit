@@ -1788,6 +1788,10 @@ void TracePerfTest::initializeBenchmark()
     mTraceReplay->setValidateSerializedStateCallback(ValidateSerializedState);
     mTraceReplay->setBinaryDataDir(testDataDir);
     mTraceReplay->setReplayResourceMode(gIncludeInactiveResources);
+    if (gScreenshotDir)
+    {
+        mTraceReplay->setDebugOutputDir(gScreenshotDir);
+    }
 
     if (gMinimizeGPUWork)
     {

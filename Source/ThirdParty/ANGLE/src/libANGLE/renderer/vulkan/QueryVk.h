@@ -50,7 +50,7 @@ class QueryVk : public QueryImpl
   private:
     angle::Result getResult(const gl::Context *context, bool wait);
 
-    bool isCurrentlyInUse(RendererVk *renderer) const;
+    bool isCurrentlyInUse(vk::Renderer *renderer) const;
     angle::Result finishRunningCommands(ContextVk *contextVk);
     void stashQueryHelper();
     uint32_t getQueryResultCount(ContextVk *contextVk) const;

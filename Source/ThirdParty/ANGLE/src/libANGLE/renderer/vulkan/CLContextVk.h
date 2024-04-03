@@ -41,7 +41,6 @@ class CLContextVk : public CLContextImpl, public vk::Context
                                      CLCommandQueueImpl::Ptr *commandQueueOut) override;
 
     angle::Result createBuffer(const cl::Buffer &buffer,
-                               size_t size,
                                void *hostPtr,
                                CLMemoryImpl::Ptr *bufferOut) override;
 
@@ -94,8 +93,24 @@ class CLContextVk : public CLContextImpl, public vk::Context
   private:
     void handleDeviceLost() const;
 
+    // Have the CL Context keep tabs on associated CL objects
+    struct Mutable
+    {
+        std::unordered_set<const _cl_mem *> mMemories;
+    };
+    using MutableData = angle::SynchronizedValue<Mutable>;
+    MutableData mAssociatedObjects;
+
     const cl::DevicePtrs mAssociatedDevices;
+
+    friend class CLMemoryVk;
 };
+
+inline bool CLContextVk::hasMemory(cl_mem memory) const
+{
+    const auto data = mAssociatedObjects.synchronize();
+    return data->mMemories.find(memory) != data->mMemories.cend();
+}
 
 }  // namespace rx
 

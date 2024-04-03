@@ -499,7 +499,7 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
                                                         &useNonConstIndex, &maxConstIndex,
                                                         &constIndices, builtInQualifier);
     root->traverse(&indexTraverser);
-    if (!useNonConstIndex && constIndices.none())
+    if (!useNonConstIndex && constIndices.none() && redeclaredBuiltIn == nullptr)
     {
         // No references of gl_ClipDistance
         return true;

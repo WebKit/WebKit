@@ -667,7 +667,7 @@ void CopyImageCHROMIUM(const uint8_t *sourceData,
 }
 
 // IncompleteTextureSet implementation.
-IncompleteTextureSet::IncompleteTextureSet() : mIncompleteTextureBufferAttachment(nullptr) {}
+IncompleteTextureSet::IncompleteTextureSet() {}
 
 IncompleteTextureSet::~IncompleteTextureSet() {}
 
@@ -684,11 +684,6 @@ void IncompleteTextureSet::onDestroy(const gl::Context *context)
                 incompleteTexture.set(context, nullptr);
             }
         }
-    }
-    if (mIncompleteTextureBufferAttachment != nullptr)
-    {
-        mIncompleteTextureBufferAttachment->onDestroy(context);
-        mIncompleteTextureBufferAttachment = nullptr;
     }
 }
 
@@ -734,6 +729,7 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
     gl::Texture *tex =
         new gl::Texture(implFactory, {std::numeric_limits<GLuint>::max()}, createType);
     angle::UniqueObjectPointer<gl::Texture, gl::Context> t(tex, context);
+    gl::Buffer *incompleteTextureBufferAttachment = nullptr;
 
     // This is a bit of a kludge but is necessary to consume the error.
     gl::Context *mutableContext = const_cast<gl::Context *>(context);
@@ -741,9 +737,9 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
     if (createType == gl::TextureType::Buffer)
     {
         constexpr uint32_t kBufferInitData = 0;
-        mIncompleteTextureBufferAttachment =
+        incompleteTextureBufferAttachment =
             new gl::Buffer(implFactory, {std::numeric_limits<GLuint>::max()});
-        ANGLE_TRY(mIncompleteTextureBufferAttachment->bufferData(
+        ANGLE_TRY(incompleteTextureBufferAttachment->bufferData(
             mutableContext, gl::BufferBinding::Texture, &kBufferInitData, sizeof(kBufferInitData),
             gl::BufferUsage::StaticDraw));
     }
@@ -793,7 +789,8 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
     }
     else if (type == gl::TextureType::Buffer)
     {
-        ANGLE_TRY(t->setBuffer(context, mIncompleteTextureBufferAttachment,
+        ASSERT(incompleteTextureBufferAttachment != nullptr);
+        ANGLE_TRY(t->setBuffer(context, incompleteTextureBufferAttachment,
                                incompleteTextureParam.sizedInternalFormat));
     }
     else

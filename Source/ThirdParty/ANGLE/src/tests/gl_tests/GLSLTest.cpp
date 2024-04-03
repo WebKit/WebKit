@@ -2669,7 +2669,7 @@ void main()
     glUseProgram(program);
 
     // Test drawing, should be red.
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     EXPECT_GL_NO_ERROR();
@@ -2692,7 +2692,7 @@ void main()
     glUseProgram(program);
 
     // Test drawing, should be red.
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
     EXPECT_GL_NO_ERROR();
@@ -2717,7 +2717,7 @@ void main()
     glUseProgram(program);
 
     // Test drawing, should be red.
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     EXPECT_GL_NO_ERROR();
@@ -2739,11 +2739,11 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
 
     // We need to bypass validation for this call.
-    GLint nearIndex = glGetUniformLocation(program.get(), "gl_DepthRange.near");
+    GLint nearIndex = glGetUniformLocation(program, "gl_DepthRange.near");
     EXPECT_EQ(-1, nearIndex);
 
     // Test drawing does not throw an exception.
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
 
     EXPECT_GL_NO_ERROR();
 }
@@ -2808,7 +2808,7 @@ TEST_P(GLSLTest, PowOfSmallConstant)
 
         ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), fragmentShaderSource.c_str());
 
-        drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
 
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
         EXPECT_GL_NO_ERROR();
@@ -3076,7 +3076,7 @@ TEST_P(GLSLTest, ArrayOfStructContainingArrayOfSamplers)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[4];
     GLColor expected = MakeGLColor(32, 64, 96, 255);
     GLubyte data[8]  = {};  // 4 bytes of padding, so that texture can be initialized with 4 bytes
@@ -3092,13 +3092,13 @@ TEST_P(GLSLTest, ArrayOfStructContainingArrayOfSamplers)
         std::stringstream uniformName;
         uniformName << "test[" << innerIdx << "].data[" << outerIdx << "]";
         // Then send it as a uniform
-        GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+        GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
         // The uniform should be active.
         EXPECT_NE(uniformLocation, -1);
 
         glUniform1i(uniformLocation, 3 - i);
     }
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, expected);
 }
 
@@ -3662,7 +3662,7 @@ TEST_P(GLSLTest, RenderTrisWithPointCoord)
         "}";
 
     ANGLE_GL_PROGRAM(prog, kVS, kFS);
-    drawQuad(prog.get(), "aPosition", 0.5f);
+    drawQuad(prog, "aPosition", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -3686,7 +3686,7 @@ TEST_P(GLSLTest, NestedPowStatements)
         "}";
 
     ANGLE_GL_PROGRAM(prog, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(prog.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(prog, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -3751,14 +3751,14 @@ void main()
 
     ANGLE_GL_PROGRAM(prog, kVS, kFS);
 
-    GLint scaleIndex = glGetUniformLocation(prog.get(), "scale");
+    GLint scaleIndex = glGetUniformLocation(prog, "scale");
     ASSERT_NE(-1, scaleIndex);
 
-    glUseProgram(prog.get());
+    glUseProgram(prog);
     glUniform4f(scaleIndex, 0.5, 0.5, 0.5, 0.5);
 
     // Don't crash
-    drawQuad(prog.get(), "position", 0.5f);
+    drawQuad(prog, "position", 0.5f);
 }
 
 // Test that -float calculation is correct.
@@ -3775,7 +3775,7 @@ TEST_P(GLSLTest_ES3, UnaryMinusOperatorFloat)
         "}\n";
 
     ANGLE_GL_PROGRAM(prog, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(prog.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(prog, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -3794,7 +3794,7 @@ TEST_P(GLSLTest_ES3, AtanVec2)
         "}\n";
 
     ANGLE_GL_PROGRAM(prog, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(prog.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(prog, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -3830,18 +3830,18 @@ TEST_P(GLSLTest_ES3, UnaryMinusOperatorSignedInt)
 
     ANGLE_GL_PROGRAM(prog, kVS, kFS);
 
-    GLint oneIndex = glGetUniformLocation(prog.get(), "ui_one");
+    GLint oneIndex = glGetUniformLocation(prog, "ui_one");
     ASSERT_NE(-1, oneIndex);
-    GLint twoIndex = glGetUniformLocation(prog.get(), "ui_two");
+    GLint twoIndex = glGetUniformLocation(prog, "ui_two");
     ASSERT_NE(-1, twoIndex);
-    GLint threeIndex = glGetUniformLocation(prog.get(), "ui_three");
+    GLint threeIndex = glGetUniformLocation(prog, "ui_three");
     ASSERT_NE(-1, threeIndex);
-    glUseProgram(prog.get());
+    glUseProgram(prog);
     glUniform1i(oneIndex, 1);
     glUniform1i(twoIndex, 2);
     glUniform1i(threeIndex, 3);
 
-    drawQuad(prog.get(), "position", 0.5f);
+    drawQuad(prog, "position", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -3877,18 +3877,18 @@ TEST_P(GLSLTest_ES3, UnaryMinusOperatorUnsignedInt)
 
     ANGLE_GL_PROGRAM(prog, kVS, kFS);
 
-    GLint oneIndex = glGetUniformLocation(prog.get(), "ui_one");
+    GLint oneIndex = glGetUniformLocation(prog, "ui_one");
     ASSERT_NE(-1, oneIndex);
-    GLint twoIndex = glGetUniformLocation(prog.get(), "ui_two");
+    GLint twoIndex = glGetUniformLocation(prog, "ui_two");
     ASSERT_NE(-1, twoIndex);
-    GLint threeIndex = glGetUniformLocation(prog.get(), "ui_three");
+    GLint threeIndex = glGetUniformLocation(prog, "ui_three");
     ASSERT_NE(-1, threeIndex);
-    glUseProgram(prog.get());
+    glUseProgram(prog);
     glUniform1ui(oneIndex, 1u);
     glUniform1ui(twoIndex, 2u);
     glUniform1ui(threeIndex, 3u);
 
-    drawQuad(prog.get(), "position", 0.5f);
+    drawQuad(prog, "position", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -3910,7 +3910,7 @@ TEST_P(GLSLTest, NestedSequenceOperatorWithTernaryInside)
         "}";
 
     ANGLE_GL_PROGRAM(prog, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(prog.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(prog, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -3948,7 +3948,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(prog, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(prog.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(prog, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
@@ -3976,7 +3976,7 @@ void main() {
     ASSERT_NE(uloc, -1);
     glUniform4ui(uloc, true, false, true, false);
 
-    drawQuad(prog.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(prog, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4211,7 +4211,7 @@ TEST_P(GLSLTest_ES3, LiteralInfinityOutput)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4232,7 +4232,7 @@ TEST_P(GLSLTest_ES3, LiteralNegativeInfinityOutput)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4350,7 +4350,7 @@ TEST_P(GLSLTest_ES3, NestedDynamicIndexingInLValue)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4453,7 +4453,7 @@ TEST_P(GLSLTest_ES31, FindMSBAndFindLSBCornerCases)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4480,7 +4480,7 @@ TEST_P(GLSLTest_ES3, WriteIntoDynamicIndexingOfSwizzledVector)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4587,7 +4587,7 @@ void main() {
                        kAtomicCounterRows * kAtomicCounterCols);
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     constexpr unsigned int kBufferData[kAtomicCounterRows * kAtomicCounterCols] = {};
     GLBuffer atomicCounterBuffer;
@@ -4632,7 +4632,7 @@ void main()
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
@@ -4659,7 +4659,7 @@ void main()
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 
@@ -4690,7 +4690,7 @@ void main()
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
     glDispatchCompute(1, 1, 1);
     EXPECT_GL_NO_ERROR();
 }
@@ -4716,20 +4716,20 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysBasicType)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 2; j++)
         {
             std::stringstream uniformName;
             uniformName << "test[" << i << "][" << j << "]";
-            GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+            GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
             // All array indices should be used.
             EXPECT_NE(uniformLocation, -1);
             glUniform2i(uniformLocation, i + 1, j + 1);
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4757,12 +4757,12 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysBlockBasicType)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     // Use interface queries to determine buffer size and offset
-    GLuint uboBlockIndex   = glGetProgramResourceIndex(program.get(), GL_UNIFORM_BLOCK, "UBO");
+    GLuint uboBlockIndex   = glGetProgramResourceIndex(program, GL_UNIFORM_BLOCK, "UBO");
     GLenum uboDataSizeProp = GL_BUFFER_DATA_SIZE;
     GLint uboDataSize;
-    glGetProgramResourceiv(program.get(), GL_UNIFORM_BLOCK, uboBlockIndex, 1, &uboDataSizeProp, 1,
+    glGetProgramResourceiv(program, GL_UNIFORM_BLOCK, uboBlockIndex, 1, &uboDataSizeProp, 1,
                            nullptr, &uboDataSize);
     std::unique_ptr<char[]> uboData(new char[uboDataSize]);
     for (int i = 0; i < 2; i++)
@@ -4776,10 +4776,10 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysBlockBasicType)
             GLint offset;
         } values;
         GLuint resourceIndex =
-            glGetProgramResourceIndex(program.get(), GL_UNIFORM, resourceName.str().c_str());
+            glGetProgramResourceIndex(program, GL_UNIFORM, resourceName.str().c_str());
         ASSERT_NE(resourceIndex, GL_INVALID_INDEX);
-        glGetProgramResourceiv(program.get(), GL_UNIFORM, resourceIndex, 2, &resourceProps[0], 2,
-                               nullptr, &values.stride);
+        glGetProgramResourceiv(program, GL_UNIFORM, resourceIndex, 2, &resourceProps[0], 2, nullptr,
+                               &values.stride);
         for (int j = 0; j < 2; j++)
         {
             GLint(&dataPtr)[2] =
@@ -4789,13 +4789,13 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysBlockBasicType)
         }
     }
     GLBuffer ubo;
-    glBindBuffer(GL_UNIFORM_BUFFER, ubo.get());
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
     glBufferData(GL_UNIFORM_BUFFER, uboDataSize, &uboData[0], GL_STATIC_DRAW);
-    GLuint ubo_index = glGetUniformBlockIndex(program.get(), "UBO");
+    GLuint ubo_index = glGetUniformBlockIndex(program, "UBO");
     ASSERT_NE(ubo_index, GL_INVALID_INDEX);
-    glUniformBlockBinding(program.get(), ubo_index, 5);
-    glBindBufferBase(GL_UNIFORM_BUFFER, 5, ubo.get());
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    glUniformBlockBinding(program, ubo_index, 5);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 5, ubo);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -4821,7 +4821,7 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysSampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[2][2];
     for (int i = 0; i < 2; i++)
     {
@@ -4838,13 +4838,13 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysSampler)
             // Then send it as a uniform
             std::stringstream uniformName;
             uniformName << "test[" << i << "][" << j << "]";
-            GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+            GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
             // All array indices should be used.
             EXPECT_NE(uniformLocation, -1);
             glUniform1i(uniformLocation, textureUnit);
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -5250,7 +5250,7 @@ void main()
     fragColor = vec4(1, 0, 0, 0) + imageLoad(img, imgcoord);
 })");
     ASSERT_TRUE(program.valid());
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -5440,7 +5440,7 @@ void main()
 })");
 
     ASSERT_TRUE(program.valid());
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLint drawColorLocation = glGetUniformLocation(program, "drawColor");
 
     // Tell the driver the binding is GL_READ_WRITE, since it will be referenced by two image2Ds:
@@ -5490,7 +5490,7 @@ TEST_P(GLSLTest_ES31, StructArraySampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[2];
     GLColor expected = MakeGLColor(32, 64, 96, 255);
     GLubyte data[6]  = {};  // Two bytes of padding, so that texture can be initialized with 4 bytes
@@ -5504,12 +5504,12 @@ TEST_P(GLSLTest_ES31, StructArraySampler)
         std::stringstream uniformName;
         uniformName << "test.data[" << i << "]";
         // Then send it as a uniform
-        GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+        GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
         // The uniform should be active.
         EXPECT_NE(uniformLocation, -1);
         glUniform1i(uniformLocation, i);
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, expected);
 }
 
@@ -5536,7 +5536,7 @@ TEST_P(GLSLTest_ES31, StructArrayArraySampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[2][2];
     for (int i = 0; i < 2; i++)
     {
@@ -5553,13 +5553,13 @@ TEST_P(GLSLTest_ES31, StructArrayArraySampler)
             // Then send it as a uniform
             std::stringstream uniformName;
             uniformName << "test.data[" << i << "][" << j << "]";
-            GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+            GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
             // All array indices should be used.
             EXPECT_NE(uniformLocation, -1);
             glUniform1i(uniformLocation, textureUnit);
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -5596,7 +5596,7 @@ TEST_P(GLSLTest_ES31, ArrayStructArrayArraySampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[2][2][2][2];
     for (int i = 0; i < 2; i++)
     {
@@ -5619,7 +5619,7 @@ TEST_P(GLSLTest_ES31, ArrayStructArrayArraySampler)
                     std::stringstream uniformName;
                     uniformName << "test[" << i << "].data" << j << "[" << k << "][" << l << "]";
                     GLint uniformLocation =
-                        glGetUniformLocation(program.get(), uniformName.str().c_str());
+                        glGetUniformLocation(program, uniformName.str().c_str());
                     // All array indices should be used.
                     EXPECT_NE(uniformLocation, -1);
                     glUniform1i(uniformLocation, textureUnit);
@@ -5627,7 +5627,7 @@ TEST_P(GLSLTest_ES31, ArrayStructArrayArraySampler)
             }
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -5670,7 +5670,7 @@ TEST_P(GLSLTest_ES31, ComplexStructArraySampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     struct Data
     {
         GLTexture data1[2];
@@ -5705,7 +5705,7 @@ TEST_P(GLSLTest_ES31, ComplexStructArraySampler)
                     std::stringstream uniformName;
                     uniformName << "test[" << i << "][" << j << "].data" << k << "[" << l << "]";
                     GLint uniformLocation =
-                        glGetUniformLocation(program.get(), uniformName.str().c_str());
+                        glGetUniformLocation(program, uniformName.str().c_str());
                     // All array indices should be used.
                     EXPECT_NE(uniformLocation, -1);
                     glUniform1i(uniformLocation, textureUnit);
@@ -5713,7 +5713,7 @@ TEST_P(GLSLTest_ES31, ComplexStructArraySampler)
             }
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -5748,7 +5748,7 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysStructDifferentTypesSampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[3][2][2];
     for (int i = 0; i < 3; i++)
     {
@@ -5779,15 +5779,14 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysStructDifferentTypesSampler)
                 // Then send it as a uniform
                 std::stringstream uniformName;
                 uniformName << "test[" << i << "].data" << j << "[" << k << "]";
-                GLint uniformLocation =
-                    glGetUniformLocation(program.get(), uniformName.str().c_str());
+                GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
                 // All array indices should be used.
                 EXPECT_NE(uniformLocation, -1);
                 glUniform1i(uniformLocation, textureUnit);
             }
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -5824,7 +5823,7 @@ TEST_P(GLSLTest_ES31, ParameterArraysOfArraysSampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[2][3];
     for (int i = 0; i < 2; i++)
     {
@@ -5841,13 +5840,13 @@ TEST_P(GLSLTest_ES31, ParameterArraysOfArraysSampler)
             // Then send it as a uniform
             std::stringstream uniformName;
             uniformName << "test[" << i << "][" << j << "]";
-            GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+            GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
             // All array indices should be used.
             EXPECT_NE(uniformLocation, -1);
             glUniform1i(uniformLocation, textureUnit);
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -5884,7 +5883,7 @@ TEST_P(GLSLTest_ES31, ParameterStructArrayArraySampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[2][3];
     for (int i = 0; i < 2; i++)
     {
@@ -5901,13 +5900,13 @@ TEST_P(GLSLTest_ES31, ParameterStructArrayArraySampler)
             // Then send it as a uniform
             std::stringstream uniformName;
             uniformName << "test.data[" << i << "][" << j << "]";
-            GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+            GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
             // All array indices should be used.
             EXPECT_NE(uniformLocation, -1);
             glUniform1i(uniformLocation, textureUnit);
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -5953,7 +5952,7 @@ TEST_P(GLSLTest_ES31, ParameterArrayArrayStructArrayArraySampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures[3][2][2][2];
     for (int i = 0; i < 3; i++)
     {
@@ -5976,7 +5975,7 @@ TEST_P(GLSLTest_ES31, ParameterArrayArrayStructArrayArraySampler)
                     std::stringstream uniformName;
                     uniformName << "test[" << i << "][" << j << "].data[" << k << "][" << l << "]";
                     GLint uniformLocation =
-                        glGetUniformLocation(program.get(), uniformName.str().c_str());
+                        glGetUniformLocation(program, uniformName.str().c_str());
                     // All array indices should be used.
                     EXPECT_NE(uniformLocation, -1);
                     glUniform1i(uniformLocation, textureUnit);
@@ -5984,7 +5983,7 @@ TEST_P(GLSLTest_ES31, ParameterArrayArrayStructArrayArraySampler)
             }
         }
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6033,7 +6032,7 @@ TEST_P(GLSLTest_ES31, ParameterArrayArrayArraySampler)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     GLTexture textures1[2][3][4];
     GLTexture textures2[4];
     for (int i = 0; i < 2; i++)
@@ -6054,8 +6053,7 @@ TEST_P(GLSLTest_ES31, ParameterArrayArrayArraySampler)
                 // Then send it as a uniform
                 std::stringstream uniformName;
                 uniformName << "test[" << i << "][" << j << "][" << k << "]";
-                GLint uniformLocation =
-                    glGetUniformLocation(program.get(), uniformName.str().c_str());
+                GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
                 // All array indices should be used.
                 EXPECT_NE(uniformLocation, -1);
                 glUniform1i(uniformLocation, textureUnit);
@@ -6075,12 +6073,12 @@ TEST_P(GLSLTest_ES31, ParameterArrayArrayArraySampler)
         // Then send it as a uniform
         std::stringstream uniformName;
         uniformName << "test2[" << k << "]";
-        GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+        GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
         // All array indices should be used.
         EXPECT_NE(uniformLocation, -1);
         glUniform1i(uniformLocation, textureUnit);
     }
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6121,7 +6119,7 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysNameCollisionSampler)
     glBindTexture(GL_TEXTURE_2D, tex);
     GLint zero = 0;
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1, 1, 0, GL_RED, GL_UNSIGNED_BYTE, &zero);
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6149,7 +6147,7 @@ TEST_P(GLSLTest_ES31, BasicTypeArrayAndArrayOfSampler)
     glBindTexture(GL_TEXTURE_2D, tex);
     GLint zero = 0;
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 1, 1, 0, GL_RED, GL_UNSIGNED_BYTE, &zero);
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6357,7 +6355,7 @@ TEST_P(WebGL2GLSLTest, InitUninitializedLocals)
     // DrawArrays or drawElements will generate an INVALID_OPERATION error
     // if a vertex attribute is enabled as an array via enableVertexAttribArray
     // but no buffer is bound to that attribute.
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6394,7 +6392,7 @@ TEST_P(WebGL2GLSLTest, InitUninitializedStructContainingArrays)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6466,7 +6464,7 @@ TEST_P(WebGL2GLSLTest, UninitializedNamelessStructInForInitStatement)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6494,7 +6492,7 @@ TEST_P(WebGLGLSLTest, InitUninitializedGlobals)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6514,7 +6512,7 @@ TEST_P(WebGLGLSLTest, UninitializedNamelessStructInGlobalScope)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6558,7 +6556,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_NEAR(0, 0, 255, 127, 0, 255, 1);
 }
 
@@ -6582,7 +6580,7 @@ void main()
     ASSERT_NE(-1, uniLoc);
     glUniform1f(uniLoc, 0.5f);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6606,7 +6604,7 @@ void main()
     ASSERT_NE(-1, uniLoc);
     glUniform1f(uniLoc, 0.5f);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6763,7 +6761,7 @@ void main()
     ASSERT_NE(-1, uniLocC);
     glUniform1f(uniLocC, 1.0f);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6793,7 +6791,7 @@ TEST_P(GLSLTest_ES3, ConditionInitializerDeclaresVariable)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6816,7 +6814,7 @@ TEST_P(GLSLTest, VariableHidesUserDefinedFunctionAfterInitializer)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6840,7 +6838,7 @@ TEST_P(GLSLTest, StructsWithSameMembersDisambiguatedByName)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -6868,7 +6866,7 @@ TEST_P(GLSLTest, InactiveVaryingInVertexActiveInFragment)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -6942,7 +6940,7 @@ TEST_P(GLSLTest_ES31, InactiveVaryingIOBlock)
         })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -6980,7 +6978,7 @@ TEST_P(GLSLTest_ES31, VaryingIOBlockNotDeclaredInFragmentShader)
         })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -7018,7 +7016,7 @@ TEST_P(GLSLTest_ES31, VaryingIOBlockNotDeclaredInVertexShader)
         })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
@@ -7093,7 +7091,7 @@ TEST_P(GLSLTest_ES31, VaryingTessellationSampleInAndOut)
         })";
 
     ANGLE_GL_PROGRAM_WITH_TESS(program, kVS, kTCS, kTES, kFS);
-    drawPatches(program.get(), "inputAttribute", 0.5f, 1.0f, GL_FALSE);
+    drawPatches(program, "inputAttribute", 0.5f, 1.0f, GL_FALSE);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -7227,7 +7225,7 @@ TEST_P(GLSLTest_ES31, VaryingSampleInAndOutDifferentPrecision)
         })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f, 1.0f, GL_FALSE);
+    drawQuad(program, "inputAttribute", 0.5f, 1.0f, GL_FALSE);
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, 0, GLColor::red);
@@ -7309,7 +7307,7 @@ TEST_P(GLSLTest_ES31, VaryingIOBlockDeclaredAsInAndOut)
     })";
 
     ANGLE_GL_PROGRAM_WITH_TESS(program, kVS, kTCS, kTES, kFS);
-    drawPatches(program.get(), "inputAttribute", 0.5f, 1.0f, GL_FALSE);
+    drawPatches(program, "inputAttribute", 0.5f, 1.0f, GL_FALSE);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -7388,7 +7386,7 @@ TEST_P(GLSLTest_ES31, TessellationTextureBufferAccess)
     glClear(GL_COLOR_BUFFER_BIT);
 
     ANGLE_GL_PROGRAM_WITH_TESS(program, kVS, kTCS, kTES, kFS);
-    drawPatches(program.get(), "inputAttribute", 0.5f, 1.0f, GL_FALSE);
+    drawPatches(program, "inputAttribute", 0.5f, 1.0f, GL_FALSE);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -7538,7 +7536,7 @@ TEST_P(GLSLTest_ES3, VaryingStructUsedInFragmentShader)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -7576,7 +7574,7 @@ TEST_P(GLSLTest_ES31, SamplerPassthroughFailedLink)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     ASSERT_GL_NO_ERROR();
 
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
@@ -7615,7 +7613,7 @@ TEST_P(GLSLTest_ES31, SamplerPassthroughIncorrectColor)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     ASSERT_GL_NO_ERROR();
 
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
@@ -7667,7 +7665,7 @@ TEST_P(GLSLTest_ES3, ComplexVaryingStructsUsedInFragmentShader)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -7697,7 +7695,7 @@ TEST_P(GLSLTest_ES3, InactiveVaryingArrayUnusedInFragmentShader)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 }
 
@@ -7734,7 +7732,7 @@ TEST_P(GLSLTest_ES3, InactiveVaryingStructUnusedInFragmentShader)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -7773,7 +7771,7 @@ TEST_P(GLSLTest_ES3, VaryingMatrices)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 127, 191, 255), 1);
 }
 
@@ -8294,7 +8292,7 @@ TEST_P(WebGLGLSLTest, GlobalVariableDeclaredAfterMain)
         "}\n";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8329,7 +8327,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8363,7 +8361,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8396,7 +8394,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8436,7 +8434,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8473,7 +8471,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8527,7 +8525,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8554,7 +8552,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8635,7 +8633,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8664,7 +8662,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8702,7 +8700,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8725,7 +8723,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8761,7 +8759,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8806,7 +8804,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -8844,8 +8842,8 @@ void main()
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
-    glUseProgram(program.get());
-    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    glUseProgram(program);
+    GLint positionLocation              = glGetAttribLocation(program, "position");
     std::array<Vector3, 6> quadVertices = GetQuadVertices();
     for (Vector3 &vertex : quadVertices)
     {
@@ -8899,8 +8897,8 @@ void main()
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
-    glUseProgram(program.get());
-    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    glUseProgram(program);
+    GLint positionLocation              = glGetAttribLocation(program, "position");
     std::array<Vector3, 6> quadVertices = GetQuadVertices();
     for (Vector3 &vertex : quadVertices)
     {
@@ -8954,8 +8952,8 @@ void main()
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
-    glUseProgram(program.get());
-    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    glUseProgram(program);
+    GLint positionLocation              = glGetAttribLocation(program, "position");
     std::array<Vector3, 6> quadVertices = GetQuadVertices();
     for (Vector3 &vertex : quadVertices)
     {
@@ -9006,8 +9004,8 @@ void main()
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
-    glUseProgram(program.get());
-    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    glUseProgram(program);
+    GLint positionLocation              = glGetAttribLocation(program, "position");
     std::array<Vector3, 6> quadVertices = GetQuadVertices();
     for (Vector3 &vertex : quadVertices)
     {
@@ -9044,7 +9042,7 @@ void main() {
 })";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -9069,7 +9067,7 @@ void main() {
 })";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -9180,7 +9178,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "inputAttribute", 0.5f);
+    drawQuad(program, "inputAttribute", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -9271,14 +9269,14 @@ TEST_P(GLSLTest, DrawAfterShaderLinkError)
     }
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    GLuint fs = GetProgramShader(program.get(), GL_FRAGMENT_SHADER);
+    GLuint fs = GetProgramShader(program, GL_FRAGMENT_SHADER);
 
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
-    glUseProgram(program.get());
-    GLint positionLocation              = glGetAttribLocation(program.get(), "position");
+    glUseProgram(program);
+    GLint positionLocation              = glGetAttribLocation(program, "position");
     std::array<Vector3, 6> quadVertices = GetQuadVertices();
     for (Vector3 &vertex : quadVertices)
     {
@@ -9289,11 +9287,11 @@ TEST_P(GLSLTest, DrawAfterShaderLinkError)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
-    glDetachShader(program.get(), fs);
-    glAttachShader(program.get(), fsBad);
-    glLinkProgram(program.get());
+    glDetachShader(program, fs);
+    glAttachShader(program, fsBad);
+    glLinkProgram(program);
     GLint linkStatus = GL_TRUE;
-    glGetProgramiv(program.get(), GL_LINK_STATUS, &linkStatus);
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
     ASSERT_FALSE(linkStatus);
 
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
@@ -9617,7 +9615,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     // Verify that all the corners of the rendered result are green.
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
@@ -9771,7 +9769,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
@@ -9801,7 +9799,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_NEAR(0, 0, 63, 127, 255, 255, 1);
 }
 
@@ -9833,7 +9831,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
-    drawQuad(program.get(), "a_position", 0.5f);
+    drawQuad(program, "a_position", 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -9874,7 +9872,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -11678,9 +11676,9 @@ void main(void)
     GLBuffer inputBuffer;
     glBindBuffer(GL_UNIFORM_BUFFER, inputBuffer);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(inputData), &inputData, GL_STATIC_DRAW);
-    GLuint inputBufferIndex = glGetUniformBlockIndex(program.get(), "Input");
+    GLuint inputBufferIndex = glGetUniformBlockIndex(program, "Input");
     ASSERT_NE(inputBufferIndex, GL_INVALID_INDEX);
-    glUniformBlockBinding(program.get(), inputBufferIndex, 0);
+    glUniformBlockBinding(program, inputBufferIndex, 0);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, inputBuffer);
 
     unsigned int outputInitData[5] = {0x12345678u, 0x09ABCDEFu, 0x56789ABCu, 0x0DEF1234u,
@@ -16661,7 +16659,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM_WITH_TESS(program, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
-    drawPatches(program.get(), essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
+    drawPatches(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
     ASSERT_GL_NO_ERROR();
 }
@@ -16743,7 +16741,7 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM_WITH_TESS(program, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
-    drawPatches(program.get(), essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
+    drawPatches(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
     ASSERT_GL_NO_ERROR();
 }
@@ -18776,7 +18774,7 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragmentShader);
     glUseProgram(program);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -18804,7 +18802,7 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragmentShader);
     glUseProgram(program);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -18834,7 +18832,7 @@ Foo foo()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragmentShader);
     glUseProgram(program);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -18870,7 +18868,7 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragmentShader);
     glUseProgram(program);
 
-    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 

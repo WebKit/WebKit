@@ -315,7 +315,7 @@ class EXTBlendFuncExtendedDrawTestES31 : public EXTBlendFuncExtendedDrawTestES3
     GLuint createShaderProgram(GLenum type, const GLchar *shaderString)
     {
         GLShader shader(type);
-        if (!shader.get())
+        if (!shader)
         {
             return 0;
         }

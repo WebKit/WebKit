@@ -20,8 +20,7 @@ class TSymbolTable;
 //  struct Foo {int x; }; Foo foo;
 [[nodiscard]] bool SeparateCompoundStructDeclarations(TCompiler &compiler,
                                                       IdGen &idGen,
-                                                      TIntermBlock &root,
-                                                      TSymbolTable *symbolTable);
+                                                      TIntermBlock &root);
 
 }  // namespace sh
 

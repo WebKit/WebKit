@@ -21,10 +21,10 @@
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/RenderTargetVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 
 namespace rx
 {
@@ -40,13 +40,13 @@ constexpr VkClearValue kUninitializedClearValue = {{{0.95, 0.05, 0.95, 0.95}}};
 // automatically convert to the actual data type.
 constexpr unsigned int kEmulatedAlphaValue = 1;
 
-bool HasSrcBlitFeature(RendererVk *renderer, RenderTargetVk *srcRenderTarget)
+bool HasSrcBlitFeature(vk::Renderer *renderer, RenderTargetVk *srcRenderTarget)
 {
     angle::FormatID srcFormatID = srcRenderTarget->getImageActualFormatID();
     return renderer->hasImageFormatFeatureBits(srcFormatID, VK_FORMAT_FEATURE_BLIT_SRC_BIT);
 }
 
-bool HasDstBlitFeature(RendererVk *renderer, RenderTargetVk *dstRenderTarget)
+bool HasDstBlitFeature(vk::Renderer *renderer, RenderTargetVk *dstRenderTarget)
 {
     angle::FormatID dstFormatID = dstRenderTarget->getImageActualFormatID();
     return renderer->hasImageFormatFeatureBits(dstFormatID, VK_FORMAT_FEATURE_BLIT_DST_BIT);
@@ -330,7 +330,7 @@ void AdjustLayersAndDepthFor3DImages(VkImageSubresourceLayers *subresource,
 }
 }  // anonymous namespace
 
-FramebufferVk::FramebufferVk(RendererVk *renderer, const gl::FramebufferState &state)
+FramebufferVk::FramebufferVk(vk::Renderer *renderer, const gl::FramebufferState &state)
     : FramebufferImpl(state), mBackbuffer(nullptr), mActiveColorComponentMasksForClear(0)
 {
     if (mState.isDefault())
@@ -352,7 +352,7 @@ void FramebufferVk::destroy(const gl::Context *context)
 
     if (mFragmentShadingRateImage.valid())
     {
-        RendererVk *renderer = contextVk->getRenderer();
+        vk::Renderer *renderer = contextVk->getRenderer();
         mFragmentShadingRateImageView.release(renderer, mFragmentShadingRateImage.getResourceUse());
         mFragmentShadingRateImage.releaseImage(renderer);
     }
@@ -1115,9 +1115,9 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
                                   GLbitfield mask,
                                   GLenum filter)
 {
-    ContextVk *contextVk = vk::GetImpl(context);
-    RendererVk *renderer = contextVk->getRenderer();
-    UtilsVk &utilsVk     = contextVk->getUtils();
+    ContextVk *contextVk   = vk::GetImpl(context);
+    vk::Renderer *renderer = contextVk->getRenderer();
+    UtilsVk &utilsVk       = contextVk->getUtils();
 
     // If any clears were picked up when syncing the read framebuffer (as the blit source), restage
     // them.  They correspond to attachments that are not used in the blit.  This will cause the
@@ -1637,7 +1637,7 @@ angle::Result FramebufferVk::ensureFragmentShadingRateImageAndViewInitialized(
     const uint32_t fragmentShadingRateAttachmentWidth,
     const uint32_t fragmentShadingRateAttachmentHeight)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     // Release current valid image iff attachment extents need to change.
     if (mFragmentShadingRateImage.valid() &&
@@ -1726,10 +1726,10 @@ angle::Result FramebufferVk::generateFragmentShadingRateWithCPU(
                 for (uint32_t point = 0; point < activeFocalPoints.size(); point++)
                 {
                     float density =
-                        1.0f / std::max(std::powf(activeFocalPoints[point].focalX - px, 2) *
-                                                std::powf(activeFocalPoints[point].gainX, 2) +
-                                            std::powf(activeFocalPoints[point].focalY - py, 2) *
-                                                std::powf(activeFocalPoints[point].gainY, 2) -
+                        1.0f / std::max(std::pow(activeFocalPoints[point].focalX - px, 2.0f) *
+                                                std::pow(activeFocalPoints[point].gainX, 2.0f) +
+                                            std::pow(activeFocalPoints[point].focalY - py, 2.0f) *
+                                                std::pow(activeFocalPoints[point].gainY, 2.0f) -
                                             activeFocalPoints[point].foveaArea,
                                         1.0f);
 
@@ -2626,7 +2626,7 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
         attachments->push_back(imageView->getHandle());
 
         renderTargetsInfoOut->emplace_back(
-            RenderTargetInfo(colorRenderTarget, RenderTargetImage::AttachmentImage));
+            RenderTargetInfo(colorRenderTarget, RenderTargetImage::Attachment));
     }
 
     // Depth/stencil attachment.
@@ -2638,7 +2638,7 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
 
         attachments->push_back(imageView->getHandle());
         renderTargetsInfoOut->emplace_back(
-            RenderTargetInfo(depthStencilRenderTarget, RenderTargetImage::AttachmentImage));
+            RenderTargetInfo(depthStencilRenderTarget, RenderTargetImage::Attachment));
     }
 
     // Color resolve attachments.
@@ -2652,8 +2652,8 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
         attachments->push_back(resolveImageViewIn->getHandle());
         renderTargetsInfoOut->emplace_back(
             RenderTargetInfo(resolveRenderTargetIn, (resolveRenderTargetIn->hasResolveAttachment())
-                                                        ? RenderTargetImage::ResolveImage
-                                                        : RenderTargetImage::AttachmentImage));
+                                                        ? RenderTargetImage::Resolve
+                                                        : RenderTargetImage::Attachment));
     }
     else
     {
@@ -2670,7 +2670,7 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
 
                 attachments->push_back(resolveImageView->getHandle());
                 renderTargetsInfoOut->emplace_back(
-                    RenderTargetInfo(colorRenderTarget, RenderTargetImage::ResolveImage));
+                    RenderTargetInfo(colorRenderTarget, RenderTargetImage::Resolve));
             }
         }
     }
@@ -2683,7 +2683,7 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
 
         attachments->push_back(imageView->getHandle());
         renderTargetsInfoOut->emplace_back(
-            RenderTargetInfo(depthStencilRenderTarget, RenderTargetImage::ResolveImage));
+            RenderTargetInfo(depthStencilRenderTarget, RenderTargetImage::Resolve));
     }
 
     // Fragment shading rate attachment.
@@ -2691,6 +2691,7 @@ angle::Result FramebufferVk::getAttachmentsAndRenderTargets(
     {
         const vk::ImageViewHelper *imageViewHelper = &mFragmentShadingRateImageView;
         attachments->push_back(imageViewHelper->getFragmentShadingRateImageView().getHandle());
+        renderTargetsInfoOut->emplace_back(nullptr, RenderTargetImage::FragmentShadingRate);
     }
 
     return angle::Result::Continue;
@@ -2771,7 +2772,6 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
     framebufferInfo.flags                   = 0;
     framebufferInfo.renderPass              = compatibleRenderPass->getHandle();
     framebufferInfo.attachmentCount         = static_cast<uint32_t>(attachments.size());
-    framebufferInfo.pAttachments            = attachments.data();
     framebufferInfo.width                   = static_cast<uint32_t>(attachmentsSize.width);
     framebufferInfo.height                  = static_cast<uint32_t>(attachmentsSize.height);
     framebufferInfo.layers                  = (!mCurrentFramebufferDesc.isMultiview())
@@ -2785,6 +2785,8 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
 
     if (!useImagelessFramebuffer)
     {
+        framebufferInfo.pAttachments = attachments.data();
+
         // Since the cache key FramebufferDesc can't distinguish between
         // two FramebufferHelper, if they both have 0 attachment, but their sizes
         // are different, we could have wrong cache hit(new framebufferHelper has
@@ -2811,75 +2813,60 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
     {
         // For imageless framebuffers, attachment image and create info objects should be defined
         // when creating the new framebuffer.
-        std::vector<VkFramebufferAttachmentImageInfoKHR> fbAttachmentImageInfoArray;
+        vk::FramebufferAttachmentsVector<VkFramebufferAttachmentImageInfo> attachmentImageInfos(
+            attachments.size(), {});
 
-        for (auto const &info : renderTargetsInfo)
+        for (size_t index = 0; index < attachments.size(); ++index)
         {
-            vk::ImageHelper *renderTargetImage =
-                (info.renderTargetImage == RenderTargetImage::ResolveImage ||
-                 info.renderTarget->isYuvResolve())
-                    ? &info.renderTarget->getResolveImageForRenderPass()
-                    : &info.renderTarget->getImageForRenderPass();
-            uint32_t renderTargetLevel      = info.renderTarget->getLevelIndex().get();
-            uint32_t renderTargetLayerCount = info.renderTarget->getLayerCount();
+            const RenderTargetInfo &info                     = renderTargetsInfo[index];
+            VkFramebufferAttachmentImageInfo &attachmentInfo = attachmentImageInfos[index];
 
-            VkFramebufferAttachmentImageInfoKHR fbAttachmentImageInfo = {};
-            fbAttachmentImageInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO_KHR;
+            attachmentInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO;
 
-            uint32_t baseLevel =
-                static_cast<uint32_t>(renderTargetImage->getFirstAllocatedLevel().get());
-            uint32_t level = (renderTargetLevel > baseLevel) ? (renderTargetLevel - baseLevel) : 0;
-            uint32_t fbAttachmentWidth   = renderTargetImage->getExtents().width >> level;
-            uint32_t fbAttachmentHeight  = renderTargetImage->getExtents().height >> level;
-            fbAttachmentImageInfo.width  = (fbAttachmentWidth > 0) ? fbAttachmentWidth : 1;
-            fbAttachmentImageInfo.height = (fbAttachmentHeight > 0) ? fbAttachmentHeight : 1;
-
-            fbAttachmentImageInfo.layerCount =
-                (mCurrentFramebufferDesc.isMultiview())
-                    ? std::max(static_cast<uint32_t>(mRenderPassDesc.viewCount()), 1u)
-                    : renderTargetLayerCount;
-            fbAttachmentImageInfo.flags = renderTargetImage->getCreateFlags();
-            fbAttachmentImageInfo.usage = renderTargetImage->getUsage();
-            fbAttachmentImageInfo.viewFormatCount =
-                static_cast<uint32_t>(renderTargetImage->getViewFormats().size());
-            fbAttachmentImageInfo.pViewFormats = renderTargetImage->getViewFormats().data();
-
-            fbAttachmentImageInfoArray.push_back(fbAttachmentImageInfo);
-
-            if (mCurrentFramebufferDesc.hasFragmentShadingRateAttachment())
+            // The fragment shading rate attachment does not have a corresponding render target, and
+            // is handle specially.
+            if (info.renderTargetImage == RenderTargetImage::FragmentShadingRate)
             {
-                VkFramebufferAttachmentImageInfoKHR fragmentShadingRatebAttachmentImageInfo = {};
-                fragmentShadingRatebAttachmentImageInfo.sType =
-                    VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO_KHR;
+                attachmentInfo.width  = mFragmentShadingRateImage.getExtents().width;
+                attachmentInfo.height = mFragmentShadingRateImage.getExtents().height;
 
-                fragmentShadingRatebAttachmentImageInfo.width =
-                    mFragmentShadingRateImage.getExtents().width;
-                fragmentShadingRatebAttachmentImageInfo.height =
-                    mFragmentShadingRateImage.getExtents().height;
-
-                fragmentShadingRatebAttachmentImageInfo.layerCount = 1;
-                fragmentShadingRatebAttachmentImageInfo.flags =
-                    mFragmentShadingRateImage.getCreateFlags();
-                fragmentShadingRatebAttachmentImageInfo.usage =
-                    mFragmentShadingRateImage.getUsage();
-                fragmentShadingRatebAttachmentImageInfo.viewFormatCount =
+                attachmentInfo.layerCount = 1;
+                attachmentInfo.flags      = mFragmentShadingRateImage.getCreateFlags();
+                attachmentInfo.usage      = mFragmentShadingRateImage.getUsage();
+                attachmentInfo.viewFormatCount =
                     static_cast<uint32_t>(mFragmentShadingRateImage.getViewFormats().size());
-                fragmentShadingRatebAttachmentImageInfo.pViewFormats =
-                    mFragmentShadingRateImage.getViewFormats().data();
-
-                fbAttachmentImageInfoArray.push_back(fragmentShadingRatebAttachmentImageInfo);
+                attachmentInfo.pViewFormats = mFragmentShadingRateImage.getViewFormats().data();
+                continue;
             }
+
+            vk::ImageHelper *image = (info.renderTargetImage == RenderTargetImage::Resolve ||
+                                      info.renderTarget->isYuvResolve())
+                                         ? &info.renderTarget->getResolveImageForRenderPass()
+                                         : &info.renderTarget->getImageForRenderPass();
+
+            const gl::LevelIndex level = info.renderTarget->getLevelIndex();
+            const uint32_t layerCount  = info.renderTarget->getLayerCount();
+            const gl::Extents extents  = image->getLevelExtents2D(image->toVkLevel(level));
+
+            attachmentInfo.width           = std::max(extents.width, 1);
+            attachmentInfo.height          = std::max(extents.height, 1);
+            attachmentInfo.layerCount      = mCurrentFramebufferDesc.isMultiview()
+                                                 ? std::max<uint32_t>(mRenderPassDesc.viewCount(), 1u)
+                                                 : layerCount;
+            attachmentInfo.flags           = image->getCreateFlags();
+            attachmentInfo.usage           = image->getUsage();
+            attachmentInfo.viewFormatCount = static_cast<uint32_t>(image->getViewFormats().size());
+            attachmentInfo.pViewFormats    = image->getViewFormats().data();
         }
 
-        VkFramebufferAttachmentsCreateInfoKHR fbAttachmentsCreateInfo = {};
-        fbAttachmentsCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO_KHR;
-        fbAttachmentsCreateInfo.attachmentImageInfoCount =
-            static_cast<uint32_t>(fbAttachmentImageInfoArray.size());
-        fbAttachmentsCreateInfo.pAttachmentImageInfos = fbAttachmentImageInfoArray.data();
+        VkFramebufferAttachmentsCreateInfo attachmentsCreateInfo = {};
+        attachmentsCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
+        attachmentsCreateInfo.attachmentImageInfoCount =
+            static_cast<uint32_t>(attachmentImageInfos.size());
+        attachmentsCreateInfo.pAttachmentImageInfos = attachmentImageInfos.data();
 
-        framebufferInfo.flags |= VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT_KHR;
-        framebufferInfo.pAttachments = nullptr;
-        vk::AddToPNextChain(&framebufferInfo, &fbAttachmentsCreateInfo);
+        framebufferInfo.flags |= VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT;
+        vk::AddToPNextChain(&framebufferInfo, &attachmentsCreateInfo);
 
         ANGLE_TRY(newFramebuffer.init(contextVk, framebufferInfo));
         mCurrentFramebuffer.setHandle(newFramebuffer.getFramebuffer().release());

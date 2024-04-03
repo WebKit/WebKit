@@ -654,13 +654,6 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/6692"
     };
 
-    FeatureInfo supportsPipelineCreationCacheControl = {
-        "supportsPipelineCreationCacheControl",
-        FeatureCategory::VulkanFeatures,
-        "VkDevice supports VK_EXT_pipeline_creation_cache_control extension",
-        &members, "http://anglebug.com/5881"
-    };
-
     FeatureInfo supportsPipelineCreationFeedback = {
         "supportsPipelineCreationFeedback",
         FeatureCategory::VulkanFeatures,
@@ -1341,6 +1334,15 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanFeatures,
         "Enable SPIR-V dumping at runtime for OpenCL programs compiled with clspv",
         &members,
+    };
+
+    FeatureInfo enableAdditionalBlendFactorsForDithering = {
+        "enableAdditionalBlendFactorsForDithering",
+        FeatureCategory::VulkanAppWorkarounds,
+        "Dithering darkens or brightens pixels depending on coordinates and when repeated "
+        "sufficient numbers of times this effect becomes visible to users. Conditionally "
+        "enable additional blend factors for dithering",
+        &members, "https://issuetracker.google.com/328837151"
     };
 
 };

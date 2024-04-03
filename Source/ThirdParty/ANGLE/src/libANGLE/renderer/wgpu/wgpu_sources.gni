@@ -30,6 +30,8 @@ wgpu_backend_sources = [
   "ProgramWgpu.h",
   "QueryWgpu.cpp",
   "QueryWgpu.h",
+  "RenderTargetWgpu.cpp",
+  "RenderTargetWgpu.h",
   "RenderbufferWgpu.cpp",
   "RenderbufferWgpu.h",
   "SamplerWgpu.cpp",
@@ -48,4 +50,6 @@ wgpu_backend_sources = [
   "VertexArrayWgpu.h",
   "wgpu_helpers.cpp",
   "wgpu_helpers.h",
+  "wgpu_utils.cpp",
+  "wgpu_utils.h",
 ]

@@ -19,8 +19,8 @@
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 #include "libANGLE/renderer/vulkan/OverlayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/trace.h"
 
 namespace rx
@@ -172,9 +172,9 @@ angle::Result InitImageHelper(DisplayVk *displayVk,
     VkImageUsageFlags usage = isDepthOrStencilFormat ? kSurfaceVkDepthStencilImageUsageFlags
                                                      : kSurfaceVkColorImageUsageFlags;
 
-    RendererVk *rendererVk = displayVk->getRenderer();
+    vk::Renderer *renderer = displayVk->getRenderer();
     // If shaders may be fetching from this, we need this image to be an input
-    if (NeedsInputAttachmentUsage(rendererVk->getFeatures()))
+    if (NeedsInputAttachmentUsage(renderer->getFeatures()))
     {
         usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     }
@@ -184,7 +184,7 @@ angle::Result InitImageHelper(DisplayVk *displayVk,
 
     angle::FormatID renderableFormatId = vkFormat.getActualRenderableImageFormatID();
     // For devices that don't support creating swapchain images with RGB8, emulate with RGBA8.
-    if (rendererVk->getFeatures().overrideSurfaceFormatRGB8ToRGBA8.enabled &&
+    if (renderer->getFeatures().overrideSurfaceFormatRGB8ToRGBA8.enabled &&
         renderableFormatId == angle::FormatID::R8G8B8_UNORM)
     {
         renderableFormatId = angle::FormatID::R8G8B8A8_UNORM;
@@ -201,7 +201,7 @@ angle::Result InitImageHelper(DisplayVk *displayVk,
     return angle::Result::Continue;
 }
 
-VkColorSpaceKHR MapEglColorSpaceToVkColorSpace(RendererVk *renderer, EGLenum EGLColorspace)
+VkColorSpaceKHR MapEglColorSpaceToVkColorSpace(vk::Renderer *renderer, EGLenum EGLColorspace)
 {
     switch (EGLColorspace)
     {
@@ -541,8 +541,8 @@ SurfaceVk::~SurfaceVk() {}
 
 void SurfaceVk::destroy(const egl::Display *display)
 {
-    DisplayVk *displayVk = vk::GetImpl(display);
-    RendererVk *renderer = displayVk->getRenderer();
+    DisplayVk *displayVk   = vk::GetImpl(display);
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     mColorRenderTarget.destroy(renderer);
     mDepthStencilRenderTarget.destroy(renderer);
@@ -594,7 +594,7 @@ angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(DisplayVk *display
     ANGLE_TRY(InitImageHelper(displayVk, width, height, vkFormat, samples,
                               isRobustResourceInitEnabled, hasProtectedContent, &image));
 
-    RendererVk *renderer        = displayVk->getRenderer();
+    vk::Renderer *renderer      = displayVk->getRenderer();
     VkMemoryPropertyFlags flags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     if (hasProtectedContent)
     {
@@ -611,15 +611,16 @@ angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(DisplayVk *display
 
 void OffscreenSurfaceVk::AttachmentImage::destroy(const egl::Display *display)
 {
-    DisplayVk *displayVk = vk::GetImpl(display);
-    RendererVk *renderer = displayVk->getRenderer();
+    DisplayVk *displayVk   = vk::GetImpl(display);
+    vk::Renderer *renderer = displayVk->getRenderer();
     // Front end must ensure all usage has been submitted.
     imageViews.release(renderer, image.getResourceUse());
     image.releaseImage(renderer);
     image.releaseStagedUpdates(renderer);
 }
 
-OffscreenSurfaceVk::OffscreenSurfaceVk(const egl::SurfaceState &surfaceState, RendererVk *renderer)
+OffscreenSurfaceVk::OffscreenSurfaceVk(const egl::SurfaceState &surfaceState,
+                                       vk::Renderer *renderer)
     : SurfaceVk(surfaceState),
       mWidth(mState.attributes.getAsInt(EGL_WIDTH, 0)),
       mHeight(mState.attributes.getAsInt(EGL_HEIGHT, 0)),
@@ -644,7 +645,7 @@ egl::Error OffscreenSurfaceVk::initialize(const egl::Display *display)
 
 angle::Result OffscreenSurfaceVk::initializeImpl(DisplayVk *displayVk)
 {
-    RendererVk *renderer      = displayVk->getRenderer();
+    vk::Renderer *renderer    = displayVk->getRenderer();
     const egl::Config *config = mState.config;
 
     renderer->reloadVolkIfNeeded();
@@ -1009,10 +1010,10 @@ WindowSurfaceVk::~WindowSurfaceVk()
 
 void WindowSurfaceVk::destroy(const egl::Display *display)
 {
-    DisplayVk *displayVk = vk::GetImpl(display);
-    RendererVk *renderer = displayVk->getRenderer();
-    VkDevice device      = renderer->getDevice();
-    VkInstance instance  = renderer->getInstance();
+    DisplayVk *displayVk   = vk::GetImpl(display);
+    vk::Renderer *renderer = displayVk->getRenderer();
+    VkDevice device        = renderer->getDevice();
+    VkInstance instance    = renderer->getInstance();
 
     // flush the pipe.
     (void)renderer->waitForPresentToBeSubmitted(&mSwapchainStatus);
@@ -1122,14 +1123,14 @@ egl::Error WindowSurfaceVk::unMakeCurrent(const gl::Context *context)
     return angle::ToEGL(result, EGL_BAD_CURRENT_SURFACE);
 }
 
-angle::FormatID WindowSurfaceVk::getIntendedFormatID(RendererVk *renderer)
+angle::FormatID WindowSurfaceVk::getIntendedFormatID(vk::Renderer *renderer)
 {
     // Ensure that the format and colorspace pair is supported.
     const vk::Format &format = renderer->getFormat(mState.config->renderTargetFormat);
     return format.getIntendedFormatID();
 }
 
-angle::FormatID WindowSurfaceVk::getActualFormatID(RendererVk *renderer)
+angle::FormatID WindowSurfaceVk::getActualFormatID(vk::Renderer *renderer)
 {
     // Ensure that the format and colorspace pair is supported.
     const vk::Format &format = renderer->getFormat(mState.config->renderTargetFormat);
@@ -1148,7 +1149,7 @@ angle::FormatID WindowSurfaceVk::getActualFormatID(RendererVk *renderer)
 
 bool WindowSurfaceVk::updateColorSpace(DisplayVk *displayVk)
 {
-    RendererVk *renderer = displayVk->getRenderer();
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     VkFormat vkFormat = vk::GetVkFormatFromFormatID(getActualFormatID(renderer));
 
@@ -1172,7 +1173,7 @@ bool WindowSurfaceVk::updateColorSpace(DisplayVk *displayVk)
 
 angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut)
 {
-    RendererVk *renderer = displayVk->getRenderer();
+    vk::Renderer *renderer = displayVk->getRenderer();
 
     mColorImageMSViews.init(renderer);
     mDepthStencilImageViews.init(renderer);
@@ -1358,7 +1359,15 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMat
         return angle::Result::Continue;
     }
 
+    // Android used to only advertise INHERIT bit, but might update to advertise OPAQUE bit as a
+    // hint for RGBX backed VK_FORMAT_R8G8B8A8_* surface format. So here we would default to the
+    // INHERTI bit if detecting Android and the client has explicitly requested alpha channel.
     mCompositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    if (IsAndroid() && mState.config->alphaSize != 0)
+    {
+        mCompositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+    }
+
     if ((mSurfaceCaps.supportedCompositeAlpha & mCompositeAlpha) == 0)
     {
         mCompositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
@@ -1554,8 +1563,8 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
 
     ASSERT(mSwapchain == VK_NULL_HANDLE);
 
-    RendererVk *renderer = context->getRenderer();
-    VkDevice device      = renderer->getDevice();
+    vk::Renderer *renderer = context->getRenderer();
+    VkDevice device        = renderer->getDevice();
 
     const vk::Format &format = renderer->getFormat(mState.config->renderTargetFormat);
 
@@ -1885,7 +1894,7 @@ angle::Result WindowSurfaceVk::checkForOutOfDateSwapchain(ContextVk *contextVk,
 
 void WindowSurfaceVk::releaseSwapchainImages(ContextVk *contextVk)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     mColorRenderTarget.release(contextVk);
     mDepthStencilRenderTarget.release(contextVk);
@@ -1932,7 +1941,7 @@ void WindowSurfaceVk::releaseSwapchainImages(ContextVk *contextVk)
 
 angle::Result WindowSurfaceVk::finish(vk::Context *context)
 {
-    RendererVk *renderer = context->getRenderer();
+    vk::Renderer *renderer = context->getRenderer();
 
     mUse.merge(mDepthStencilImage.getResourceUse());
     mUse.merge(mColorImageMS.getResourceUse());
@@ -1946,8 +1955,8 @@ angle::Result WindowSurfaceVk::finish(vk::Context *context)
 
 void WindowSurfaceVk::destroySwapChainImages(DisplayVk *displayVk)
 {
-    RendererVk *renderer = displayVk->getRenderer();
-    VkDevice device      = displayVk->getDevice();
+    vk::Renderer *renderer = displayVk->getRenderer();
+    VkDevice device        = displayVk->getDevice();
 
     mDepthStencilImage.destroy(renderer);
     mDepthStencilImageViews.destroy(device);
@@ -1985,7 +1994,7 @@ egl::Error WindowSurfaceVk::prepareSwap(const gl::Context *context)
         return egl::NoError();
     }
 
-    RendererVk *renderer = vk::GetImpl(context)->getRenderer();
+    vk::Renderer *renderer = vk::GetImpl(context)->getRenderer();
 
     bool swapchainRecreated = false;
     angle::Result result = prepareForAcquireNextSwapchainImage(context, false, &swapchainRecreated);
@@ -2101,7 +2110,7 @@ vk::Framebuffer &WindowSurfaceVk::chooseFramebuffer(const SwapchainResolveMode s
 angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
                                                 const vk::Semaphore &presentSemaphore)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     SwapchainImage &image               = mSwapchainImages[mCurrentSwapchainImageIndex];
     vk::Framebuffer &currentFramebuffer = chooseFramebuffer(SwapchainResolveMode::Disabled);
@@ -2209,7 +2218,7 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
                                        bool *presentOutOfDate)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::present");
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     // Clean up whatever present is already finished. Do this before allocating new semaphore/fence
     // to reduce number of allocations.
@@ -2351,11 +2360,11 @@ angle::Result WindowSurfaceVk::throttleCPU(vk::Context *context,
 
     if (swapSerial.valid() && !context->getRenderer()->hasQueueSerialFinished(swapSerial))
     {
-        // Make this call after unlocking the EGL lock.   The RendererVk::finishQueueSerial is
-        // necessarily thread-safe because it can get called from any number of GL commands, which
-        // don't necessarily hold the EGL lock.
+        // Make this call after unlocking the EGL lock.  Renderer::finishQueueSerial is necessarily
+        // thread-safe because it can get called from any number of GL commands, which don't
+        // necessarily hold the EGL lock.
         //
-        // As this is an unlocked tail call, it must not access anything else in RendererVk.  The
+        // As this is an unlocked tail call, it must not access anything else in Renderer.  The
         // display passed to |finishQueueSerial| is a |vk::Context|, and the only possible
         // modification to it is through |handleError()|.
         egl::Display::GetCurrentThreadUnlockedTailCall()->add(
@@ -2494,7 +2503,7 @@ angle::Result WindowSurfaceVk::swapImpl(const gl::Context *context,
         ANGLE_TRY(doDeferredAcquireNextImage(context, presentOutOfDate));
     }
 
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
     ANGLE_TRY(renderer->syncPipelineCacheVk(contextVk, renderer->getGlobalOps(), context));
 
     return angle::Result::Continue;
@@ -2537,8 +2546,8 @@ angle::Result WindowSurfaceVk::prepareForAcquireNextSwapchainImage(const gl::Con
 {
     ASSERT(!NeedToProcessAcquireNextImageResult(mAcquireOperation.unlockedTryAcquireResult));
 
-    ContextVk *contextVk = vk::GetImpl(context);
-    RendererVk *renderer = contextVk->getRenderer();
+    ContextVk *contextVk   = vk::GetImpl(context);
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     // TODO(jmadill): Expose in CommandQueueInterface, or manage in CommandQueue. b/172704839
     if (renderer->isAsyncCommandQueueEnabled())
@@ -2713,10 +2722,10 @@ VkResult WindowSurfaceVk::postProcessUnlockedTryAcquire(vk::Context *context)
     {
         ASSERT(image.image->valid() &&
                image.image->getCurrentImageLayout() != vk::ImageLayout::SharedPresent);
-        rx::RendererVk *rendererVk = context->getRenderer();
+        rx::vk::Renderer *renderer = context->getRenderer();
         rx::vk::PrimaryCommandBuffer primaryCommandBuffer;
         auto protectionType = vk::ConvertProtectionBoolToType(mState.hasProtectedContent());
-        if (rendererVk->getCommandBufferOneOff(context, protectionType, &primaryCommandBuffer) ==
+        if (renderer->getCommandBufferOneOff(context, protectionType, &primaryCommandBuffer) ==
             angle::Result::Continue)
         {
             VkSemaphore semaphore;
@@ -2730,11 +2739,11 @@ VkResult WindowSurfaceVk::postProcessUnlockedTryAcquire(vk::Context *context)
                 return VK_ERROR_OUT_OF_DATE_KHR;
             }
             QueueSerial queueSerial;
-            if (rendererVk->queueSubmitOneOff(
-                    context, std::move(primaryCommandBuffer), protectionType,
-                    egl::ContextPriority::Medium, semaphore,
-                    VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                    vk::SubmitPolicy::EnsureSubmitted, &queueSerial) != angle::Result::Continue)
+            if (renderer->queueSubmitOneOff(context, std::move(primaryCommandBuffer),
+                                            protectionType, egl::ContextPriority::Medium, semaphore,
+                                            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                            vk::SubmitPolicy::EnsureSubmitted,
+                                            &queueSerial) != angle::Result::Continue)
             {
                 mDesiredSwapchainPresentMode = vk::PresentMode::FifoKHR;
                 return VK_ERROR_OUT_OF_DATE_KHR;
@@ -3084,7 +3093,7 @@ void WindowSurfaceVk::updateOverlay(ContextVk *contextVk) const
         return;
     }
 
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     uint32_t validationMessageCount = 0;
     std::string lastValidationMessage =

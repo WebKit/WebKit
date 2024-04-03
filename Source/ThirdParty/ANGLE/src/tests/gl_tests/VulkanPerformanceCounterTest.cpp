@@ -1508,14 +1508,14 @@ TEST_P(VulkanPerformanceCounterTest_ES31, MultisampleResolveWithBlit)
     glViewport(0, 0, kSize, kSize);
 
     GLFramebuffer msaaFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture.get());
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);
     glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, kSize, kSize, false);
     ASSERT_GL_NO_ERROR();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                           texture.get(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texture,
+                           0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     ANGLE_GL_PROGRAM(gradientProgram, essl31_shaders::vs::Passthrough(),
@@ -6958,7 +6958,7 @@ TEST_P(VulkanPerformanceCounterTest, ResizeFBOAttachedTexture)
 
             // Draw to FBO backed by the texture
             glUseProgram(blueProgram);
-            drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+            drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
             ASSERT_GL_NO_ERROR();
             EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
         }
@@ -7001,7 +7001,7 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithSameValueOnFBOAttached
         // Draw to FBO
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
         glUseProgram(blueProgram);
-        drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
 
         // Sample from texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -7012,14 +7012,14 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithSameValueOnFBOAttached
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
-        drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        drawQuad(textureProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     }
     // Now make fbo current and read out cache size and verify it does not grow just because of
     // swizzle update even though there is no actual change.
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glUseProgram(blueProgram);
-    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
     int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
@@ -7070,7 +7070,7 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithDifferentValueOnFBOAtt
                 // Draw to FBO
                 glBindFramebuffer(GL_FRAMEBUFFER, fbo);
                 glUseProgram(blueProgram);
-                drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+                drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
 
                 // Sample from texture
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -7081,7 +7081,7 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithDifferentValueOnFBOAtt
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, swizzle_G);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, swizzle_B);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
-                drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+                drawQuad(textureProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
                 EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[loop]);
                 loop++;
             }
@@ -7091,7 +7091,7 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithDifferentValueOnFBOAtt
     // swizzle update even though there is no actual change.
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glUseProgram(blueProgram);
-    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
     ASSERT_GL_NO_ERROR();
     int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
     int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
@@ -7220,7 +7220,7 @@ TEST_P(VulkanPerformanceCounterTest, Source2DAndRepeatedlyRespecifyTarget2DWithS
     // Create an eglImage from the source texture
     constexpr EGLint kDefaultAttribs[] = {EGL_IMAGE_PRESERVED, EGL_TRUE, EGL_NONE};
     EGLClientBuffer clientBuffer =
-        reinterpret_cast<EGLClientBuffer>(static_cast<size_t>(sourceTexture.get()));
+        reinterpret_cast<EGLClientBuffer>(static_cast<size_t>(sourceTexture));
     EGLImageKHR image = eglCreateImageKHR(window->getDisplay(), window->getContext(),
                                           EGL_GL_TEXTURE_2D_KHR, clientBuffer, kDefaultAttribs);
     ASSERT_EGL_SUCCESS();
@@ -7242,7 +7242,7 @@ TEST_P(VulkanPerformanceCounterTest, Source2DAndRepeatedlyRespecifyTarget2DWithS
 
         // Draw a quad with the target texture
         glBindTexture(GL_TEXTURE_2D, targetTexture);
-        drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        drawQuad(textureProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
         // Expect that the rendered quad's color is the same as the reference color with a tolerance
         // of 1
         EXPECT_PIXEL_NEAR(0, 0, kLinearColor[0], kLinearColor[1], kLinearColor[2], kLinearColor[3],
@@ -7283,7 +7283,7 @@ TEST_P(VulkanPerformanceCounterTest, CreateDestroyTextureDoesNotIncreaseDescript
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         ASSERT_GL_NO_ERROR();
 
-        drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        drawQuad(textureProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
         // Expect that the rendered quad's color is the same as the reference color with a tolerance
         // of 1
         EXPECT_PIXEL_NEAR(0, 0, kLinearColor[0], kLinearColor[1], kLinearColor[2], kLinearColor[3],
@@ -7313,7 +7313,7 @@ void main()
     imageStore(uImage_2, ivec2(gl_LocalInvocationID.xy), value);
 })";
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     constexpr int kWidth = 1, kHeight = 1;
     constexpr GLuint kInputValues[2][1] = {{200}, {100}};

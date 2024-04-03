@@ -8,8 +8,8 @@
 // is bound.
 
 #include "compiler/translator/tree_ops/msl/GuardFragDepthWrite.h"
+#include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/msl/AstHelpers.h"
-#include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
 
 using namespace sh;

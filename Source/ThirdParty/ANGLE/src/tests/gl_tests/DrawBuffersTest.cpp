@@ -1056,18 +1056,14 @@ TEST_P(DrawBuffersTest, 3DTexturesOES)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_3D"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_3D, texture.get());
+    glBindTexture(GL_TEXTURE_3D, texture);
     glTexImage3DOES(GL_TEXTURE_3D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(),
                     getWindowWidth(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    glFramebufferTexture3DOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, texture.get(), 0,
-                              0);
-    glFramebufferTexture3DOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_3D, texture.get(), 0,
-                              1);
-    glFramebufferTexture3DOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_3D, texture.get(), 0,
-                              2);
-    glFramebufferTexture3DOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_3D, texture.get(), 0,
-                              3);
+    glFramebufferTexture3DOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, texture, 0, 0);
+    glFramebufferTexture3DOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_3D, texture, 0, 1);
+    glFramebufferTexture3DOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_3D, texture, 0, 2);
+    glFramebufferTexture3DOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_3D, texture, 0, 3);
 
     bool flags[8] = {true, true, true, true, false};
 
@@ -1084,10 +1080,10 @@ TEST_P(DrawBuffersTest, 3DTexturesOES)
     setDrawBuffers(4, bufs);
     drawQuad(program, positionAttrib(), 0.5);
 
-    verifyAttachment3DOES(0, texture.get(), 0, 0);
-    verifyAttachment3DOES(1, texture.get(), 0, 1);
-    verifyAttachment3DOES(2, texture.get(), 0, 2);
-    verifyAttachment3DOES(3, texture.get(), 0, 3);
+    verifyAttachment3DOES(0, texture, 0, 0);
+    verifyAttachment3DOES(1, texture, 0, 1);
+    verifyAttachment3DOES(2, texture, 0, 2);
+    verifyAttachment3DOES(3, texture, 0, 3);
 
     EXPECT_GL_NO_ERROR();
 
@@ -1103,14 +1099,14 @@ TEST_P(DrawBuffersTestES3, 3DTextures)
     ANGLE_SKIP_TEST_IF(!setupTest());
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_3D, texture.get());
+    glBindTexture(GL_TEXTURE_3D, texture);
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), getWindowWidth(),
                  0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.get(), 0, 0);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture.get(), 0, 1);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture.get(), 0, 2);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture.get(), 0, 3);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture, 0, 1);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture, 0, 2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture, 0, 3);
 
     bool flags[8] = {true, true, true, true, false};
 
@@ -1127,10 +1123,10 @@ TEST_P(DrawBuffersTestES3, 3DTextures)
     glDrawBuffers(4, bufs);
     drawQuad(program, positionAttrib(), 0.5);
 
-    verifyAttachmentLayer(0, texture.get(), 0, 0);
-    verifyAttachmentLayer(1, texture.get(), 0, 1);
-    verifyAttachmentLayer(2, texture.get(), 0, 2);
-    verifyAttachmentLayer(3, texture.get(), 0, 3);
+    verifyAttachmentLayer(0, texture, 0, 0);
+    verifyAttachmentLayer(1, texture, 0, 1);
+    verifyAttachmentLayer(2, texture, 0, 2);
+    verifyAttachmentLayer(3, texture, 0, 3);
 
     EXPECT_GL_NO_ERROR();
 
@@ -1143,14 +1139,14 @@ TEST_P(DrawBuffersTestES3, 2DArrayTextures)
     ANGLE_SKIP_TEST_IF(!setupTest());
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_ARRAY, texture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, getWindowWidth(), getWindowHeight(),
                  getWindowWidth(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.get(), 0, 0);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture.get(), 0, 1);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture.get(), 0, 2);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture.get(), 0, 3);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture, 0, 1);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture, 0, 2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture, 0, 3);
 
     bool flags[8] = {true, true, true, true, false};
 
@@ -1167,10 +1163,10 @@ TEST_P(DrawBuffersTestES3, 2DArrayTextures)
     glDrawBuffers(4, bufs);
     drawQuad(program, positionAttrib(), 0.5);
 
-    verifyAttachmentLayer(0, texture.get(), 0, 0);
-    verifyAttachmentLayer(1, texture.get(), 0, 1);
-    verifyAttachmentLayer(2, texture.get(), 0, 2);
-    verifyAttachmentLayer(3, texture.get(), 0, 3);
+    verifyAttachmentLayer(0, texture, 0, 0);
+    verifyAttachmentLayer(1, texture, 0, 1);
+    verifyAttachmentLayer(2, texture, 0, 2);
+    verifyAttachmentLayer(3, texture, 0, 3);
 
     EXPECT_GL_NO_ERROR();
 
@@ -1183,14 +1179,14 @@ TEST_P(DrawBuffersTestES3, CubeMapTextures)
     ANGLE_SKIP_TEST_IF(!setupTest());
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture.get());
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
     glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_RGBA8, getWindowWidth(), getWindowHeight());
     EXPECT_GL_NO_ERROR();
 
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.get(), 0, 3);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture.get(), 0, 2);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture.get(), 0, 1);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture.get(), 0, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, 3);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture, 0, 2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture, 0, 1);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture, 0, 0);
     EXPECT_GL_NO_ERROR();
 
     bool flags[8] = {true, true, true, true, false};
@@ -1208,10 +1204,10 @@ TEST_P(DrawBuffersTestES3, CubeMapTextures)
     glDrawBuffers(4, bufs);
     drawQuad(program, positionAttrib(), 0.5);
 
-    verifyAttachmentLayer(0, texture.get(), 0, 3);
-    verifyAttachmentLayer(1, texture.get(), 0, 2);
-    verifyAttachmentLayer(2, texture.get(), 0, 1);
-    verifyAttachmentLayer(3, texture.get(), 0, 0);
+    verifyAttachmentLayer(0, texture, 0, 3);
+    verifyAttachmentLayer(1, texture, 0, 2);
+    verifyAttachmentLayer(2, texture, 0, 1);
+    verifyAttachmentLayer(3, texture, 0, 0);
 
     EXPECT_GL_NO_ERROR();
 
@@ -1225,15 +1221,15 @@ TEST_P(DrawBuffersTestES3, CubeMapArrayTextures)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture.get());
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture);
     glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGBA8, getWindowWidth(), getWindowHeight(),
                    static_cast<GLint>(kCubeFaces.size()));
     EXPECT_GL_NO_ERROR();
 
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.get(), 0, 3);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture.get(), 0, 2);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture.get(), 0, 1);
-    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture.get(), 0, 0);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, 3);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture, 0, 2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture, 0, 1);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture, 0, 0);
     EXPECT_GL_NO_ERROR();
 
     bool flags[8] = {true, true, true, true, false};
@@ -1251,10 +1247,10 @@ TEST_P(DrawBuffersTestES3, CubeMapArrayTextures)
     glDrawBuffers(4, bufs);
     drawQuad(program, positionAttrib(), 0.5);
 
-    verifyAttachmentLayer(0, texture.get(), 0, 3);
-    verifyAttachmentLayer(1, texture.get(), 0, 2);
-    verifyAttachmentLayer(2, texture.get(), 0, 1);
-    verifyAttachmentLayer(3, texture.get(), 0, 0);
+    verifyAttachmentLayer(0, texture, 0, 3);
+    verifyAttachmentLayer(1, texture, 0, 2);
+    verifyAttachmentLayer(2, texture, 0, 1);
+    verifyAttachmentLayer(3, texture, 0, 0);
 
     EXPECT_GL_NO_ERROR();
 

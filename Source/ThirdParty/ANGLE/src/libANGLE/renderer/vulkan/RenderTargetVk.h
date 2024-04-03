@@ -149,7 +149,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
         mFramebufferCacheManager.addKey(sharedFramebufferCacheKey);
     }
     void release(ContextVk *contextVk) { mFramebufferCacheManager.releaseKeys(contextVk); }
-    void destroy(RendererVk *renderer) { mFramebufferCacheManager.destroyKeys(renderer); }
+    void destroy(vk::Renderer *renderer) { mFramebufferCacheManager.destroyKeys(renderer); }
 
   private:
     void reset();

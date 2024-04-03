@@ -226,7 +226,6 @@ class IncompleteTextureSet final : angle::NonCopyable
     using TextureMapWithSamplerFormat = angle::PackedEnumMap<gl::SamplerFormat, gl::TextureMap>;
 
     TextureMapWithSamplerFormat mIncompleteTextures;
-    gl::Buffer *mIncompleteTextureBufferAttachment;
 };
 
 // Helpers to set a matrix uniform value based on GLSL or HLSL semantics.

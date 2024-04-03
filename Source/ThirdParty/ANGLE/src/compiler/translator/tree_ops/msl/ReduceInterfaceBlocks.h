@@ -30,10 +30,7 @@ class TSymbolTable;
 //  struct Foo { int x; }; uniform Foo x;
 //
 
-[[nodiscard]] bool ReduceInterfaceBlocks(TCompiler &compiler,
-                                         TIntermBlock &root,
-                                         IdGen &idGen,
-                                         TSymbolTable *symbolTable);
+[[nodiscard]] bool ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root, IdGen &idGen);
 
 }  // namespace sh
 

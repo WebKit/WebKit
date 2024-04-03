@@ -17,8 +17,8 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "vk_format_utils.h"
 
 namespace
@@ -37,15 +37,15 @@ namespace
 // colorspace. If all supported formats can be reinterpreted, it returns true. Formats which are not
 // supported at all are ignored and not counted as failures.
 bool FormatReinterpretationSupported(const std::vector<GLenum> &optionalSizedFormats,
-                                     const RendererVk *rendererVk,
+                                     const Renderer *renderer,
                                      bool checkLinearColorspace)
 {
     for (GLenum glFormat : optionalSizedFormats)
     {
-        const gl::TextureCaps &baseCaps = rendererVk->getNativeTextureCaps().get(glFormat);
+        const gl::TextureCaps &baseCaps = renderer->getNativeTextureCaps().get(glFormat);
         if (baseCaps.texturable && baseCaps.filterable)
         {
-            const Format &vkFormat = rendererVk->getFormat(glFormat);
+            const Format &vkFormat = renderer->getFormat(glFormat);
             // For capability query, we use the renderable format since that is what we are capable
             // of when we fallback.
             angle::FormatID imageFormatID = vkFormat.getActualRenderableImageFormatID();
@@ -54,14 +54,14 @@ bool FormatReinterpretationSupported(const std::vector<GLenum> &optionalSizedFor
                                                         ? ConvertToLinear(imageFormatID)
                                                         : ConvertToSRGB(imageFormatID);
 
-            const Format &reinterpretedVkFormat = rendererVk->getFormat(reinterpretedFormatID);
+            const Format &reinterpretedVkFormat = renderer->getFormat(reinterpretedFormatID);
 
             if (reinterpretedVkFormat.getActualRenderableImageFormatID() != reinterpretedFormatID)
             {
                 return false;
             }
 
-            if (!rendererVk->haveSameFormatFeatureBits(imageFormatID, reinterpretedFormatID))
+            if (!renderer->haveSameFormatFeatureBits(imageFormatID, reinterpretedFormatID))
             {
                 return false;
             }
@@ -71,7 +71,7 @@ bool FormatReinterpretationSupported(const std::vector<GLenum> &optionalSizedFor
     return true;
 }
 
-bool GetTextureSRGBDecodeSupport(const RendererVk *rendererVk)
+bool GetTextureSRGBDecodeSupport(const Renderer *renderer)
 {
     static constexpr bool kLinearColorspace = true;
 
@@ -87,7 +87,7 @@ bool GetTextureSRGBDecodeSupport(const RendererVk *rendererVk)
         GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT,
     };
 
-    if (!FormatReinterpretationSupported(optionalSizedSRGBFormats, rendererVk, kLinearColorspace))
+    if (!FormatReinterpretationSupported(optionalSizedSRGBFormats, renderer, kLinearColorspace))
     {
         return false;
     }
@@ -95,7 +95,7 @@ bool GetTextureSRGBDecodeSupport(const RendererVk *rendererVk)
     return true;
 }
 
-bool GetTextureSRGBOverrideSupport(const RendererVk *rendererVk,
+bool GetTextureSRGBOverrideSupport(const Renderer *renderer,
                                    const gl::Extensions &supportedExtensions)
 {
     static constexpr bool kNonLinearColorspace = false;
@@ -129,14 +129,14 @@ bool GetTextureSRGBOverrideSupport(const RendererVk *rendererVk,
     std::vector<GLenum> optionalRG8LinearFormats  = {GL_RG8};
     std::vector<GLenum> optionalBPTCLinearFormats = {GL_COMPRESSED_RGBA_BPTC_UNORM_EXT};
 
-    if (!FormatReinterpretationSupported(optionalLinearFormats, rendererVk, kNonLinearColorspace))
+    if (!FormatReinterpretationSupported(optionalLinearFormats, renderer, kNonLinearColorspace))
     {
         return false;
     }
 
     if (supportedExtensions.textureCompressionS3tcSrgbEXT)
     {
-        if (!FormatReinterpretationSupported(optionalS3TCLinearFormats, rendererVk,
+        if (!FormatReinterpretationSupported(optionalS3TCLinearFormats, renderer,
                                              kNonLinearColorspace))
         {
             return false;
@@ -145,7 +145,7 @@ bool GetTextureSRGBOverrideSupport(const RendererVk *rendererVk,
 
     if (supportedExtensions.textureSRGBR8EXT)
     {
-        if (!FormatReinterpretationSupported(optionalR8LinearFormats, rendererVk,
+        if (!FormatReinterpretationSupported(optionalR8LinearFormats, renderer,
                                              kNonLinearColorspace))
         {
             return false;
@@ -154,7 +154,7 @@ bool GetTextureSRGBOverrideSupport(const RendererVk *rendererVk,
 
     if (supportedExtensions.textureSRGBRG8EXT)
     {
-        if (!FormatReinterpretationSupported(optionalRG8LinearFormats, rendererVk,
+        if (!FormatReinterpretationSupported(optionalRG8LinearFormats, renderer,
                                              kNonLinearColorspace))
         {
             return false;
@@ -163,7 +163,7 @@ bool GetTextureSRGBOverrideSupport(const RendererVk *rendererVk,
 
     if (supportedExtensions.textureCompressionBptcEXT)
     {
-        if (!FormatReinterpretationSupported(optionalBPTCLinearFormats, rendererVk,
+        if (!FormatReinterpretationSupported(optionalBPTCLinearFormats, renderer,
                                              kNonLinearColorspace))
         {
             return false;
@@ -173,7 +173,7 @@ bool GetTextureSRGBOverrideSupport(const RendererVk *rendererVk,
     return true;
 }
 
-bool CanSupportYuvInternalFormat(const RendererVk *rendererVk)
+bool CanSupportYuvInternalFormat(const Renderer *renderer)
 {
     // The following formats are not mandatory in Vulkan, even when VK_KHR_sampler_ycbcr_conversion
     // is supported. GL_ANGLE_yuv_internal_format requires support for sampling only the
@@ -183,14 +183,13 @@ bool CanSupportYuvInternalFormat(const RendererVk *rendererVk)
     // Various test cases need multiple YUV formats. It would be preferrable to have support for the
     // 3 plane 8 bit YUV format (VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM) as well.
 
-    const Format &twoPlane8bitYuvFormat = rendererVk->getFormat(GL_G8_B8R8_2PLANE_420_UNORM_ANGLE);
-    bool twoPlane8bitYuvFormatSupported = rendererVk->hasImageFormatFeatureBits(
+    const Format &twoPlane8bitYuvFormat = renderer->getFormat(GL_G8_B8R8_2PLANE_420_UNORM_ANGLE);
+    bool twoPlane8bitYuvFormatSupported = renderer->hasImageFormatFeatureBits(
         twoPlane8bitYuvFormat.getActualImageFormatID(vk::ImageAccess::SampleOnly),
         VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT);
 
-    const Format &threePlane8bitYuvFormat =
-        rendererVk->getFormat(GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE);
-    bool threePlane8bitYuvFormatSupported = rendererVk->hasImageFormatFeatureBits(
+    const Format &threePlane8bitYuvFormat = renderer->getFormat(GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE);
+    bool threePlane8bitYuvFormatSupported = renderer->hasImageFormatFeatureBits(
         threePlane8bitYuvFormat.getActualImageFormatID(vk::ImageAccess::SampleOnly),
         VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT);
 
@@ -233,7 +232,7 @@ GLint LimitToInt(const LargerInt physicalDeviceValue)
         physicalDeviceValue, static_cast<LargerInt>(std::numeric_limits<int32_t>::max() / 2)));
 }
 
-void RendererVk::ensureCapsInitialized() const
+void vk::Renderer::ensureCapsInitialized() const
 {
     if (mCapsInitialized)
         return;
@@ -1288,7 +1287,7 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
                                   const gl::InternalFormat &depthStencilFormat,
                                   EGLint sampleCount)
 {
-    const RendererVk *renderer = display->getRenderer();
+    const vk::Renderer *renderer = display->getRenderer();
 
     const VkPhysicalDeviceProperties &physicalDeviceProperties =
         renderer->getPhysicalDeviceProperties();

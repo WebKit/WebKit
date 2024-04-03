@@ -11,8 +11,8 @@
 
 #include "libANGLE/renderer/vulkan/Suballocation.h"
 #include "libANGLE/Context.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/vk_mem_alloc_wrapper.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -66,7 +66,7 @@ BufferBlock::~BufferBlock()
     ASSERT(mDescriptorSetCacheManager.empty());
 }
 
-void BufferBlock::destroy(RendererVk *renderer)
+void BufferBlock::destroy(Renderer *renderer)
 {
     VkDevice device = renderer->getDevice();
 
@@ -92,7 +92,7 @@ VkResult BufferBlock::init(Context *context,
                            VkMemoryPropertyFlags memoryPropertyFlags,
                            VkDeviceSize size)
 {
-    RendererVk *renderer = context->getRenderer();
+    Renderer *renderer = context->getRenderer();
     ASSERT(!mVirtualBlock.valid());
     ASSERT(!mBuffer.valid());
     ASSERT(!mDeviceMemory.valid());
@@ -121,7 +121,7 @@ void BufferBlock::initWithoutVirtualBlock(Context *context,
                                           VkDeviceSize size,
                                           VkDeviceSize allocatedBufferSize)
 {
-    RendererVk *renderer = context->getRenderer();
+    Renderer *renderer = context->getRenderer();
     ASSERT(!mVirtualBlock.valid());
     ASSERT(!mBuffer.valid());
     ASSERT(!mDeviceMemory.valid());
@@ -183,7 +183,7 @@ VkResult BufferSuballocation::map(Context *context)
 }
 
 // BufferSuballocationGarbage implementation.
-bool BufferSuballocationGarbage::destroyIfComplete(RendererVk *renderer)
+bool BufferSuballocationGarbage::destroyIfComplete(Renderer *renderer)
 {
     if (renderer->hasResourceUseFinished(mLifetime))
     {
@@ -194,7 +194,7 @@ bool BufferSuballocationGarbage::destroyIfComplete(RendererVk *renderer)
     return false;
 }
 
-bool BufferSuballocationGarbage::hasResourceUseSubmitted(RendererVk *renderer) const
+bool BufferSuballocationGarbage::hasResourceUseSubmitted(Renderer *renderer) const
 {
     return renderer->hasResourceUseSubmitted(mLifetime);
 }

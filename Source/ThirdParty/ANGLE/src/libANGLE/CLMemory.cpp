@@ -168,7 +168,7 @@ Memory::Memory(const Buffer &buffer,
       mSize(size),
       mMapCount(0u)
 {
-    ANGLE_CL_IMPL_TRY(context.getImpl().createBuffer(buffer, size, hostPtr, &mImpl));
+    ANGLE_CL_IMPL_TRY(context.getImpl().createBuffer(buffer, hostPtr, &mImpl));
 }
 
 Memory::Memory(const Buffer &buffer, Buffer &parent, MemFlags flags, size_t offset, size_t size)

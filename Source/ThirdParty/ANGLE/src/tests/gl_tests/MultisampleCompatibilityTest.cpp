@@ -383,7 +383,7 @@ TEST_P(MultisampleCompatibilityTest, DrawCoverageAndResolve)
         prepareForDraw(samples);
         glEnable(GL_SAMPLE_COVERAGE);
         glSampleCoverage(1.0, false);
-        drawQuad(drawRed.get(), essl1_shaders::PositionAttrib(), 0.5f);
+        drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
 
         prepareForVerify();
         GLsizei pixelCount = kWidth * kHeight;

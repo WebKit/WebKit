@@ -29,6 +29,7 @@ namespace rx
 class CLProgramVk : public CLProgramImpl
 {
   public:
+    using Ptr = std::unique_ptr<CLProgramVk>;
     struct SpvReflectionData
     {
         angle::HashMap<uint32_t, uint32_t> spvIntLookup;
@@ -150,8 +151,9 @@ class CLProgramVk : public CLProgramImpl
             return std::string{};
         }
     };
-    using DevicePrograms     = angle::HashMap<const _cl_device_id *, DeviceProgramData>;
-    using DeviceProgramDatas = std::vector<const DeviceProgramData *>;
+    using DevicePrograms   = angle::HashMap<const _cl_device_id *, DeviceProgramData>;
+    using LinkPrograms     = std::vector<const DeviceProgramData *>;
+    using LinkProgramsList = std::vector<LinkPrograms>;
 
     CLProgramVk(const cl::Program &program);
 
@@ -196,7 +198,7 @@ class CLProgramVk : public CLProgramImpl
                        std::string options,
                        std::string internalOptions,
                        BuildType buildType,
-                       const DeviceProgramDatas &inputProgramDatas);
+                       const LinkProgramsList &LinkProgramsList);
     angle::spirv::Blob stripReflection(const DeviceProgramData *deviceProgramData);
 
   private:
@@ -209,6 +211,37 @@ class CLProgramVk : public CLProgramImpl
     vk::DescriptorSetLayoutPointerArray mDescriptorSetLayouts;
     vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
     std::mutex mProgramMutex;
+};
+
+class CLAsyncBuildTask : public angle::Closure
+{
+  public:
+    CLAsyncBuildTask(CLProgramVk *programVk,
+                     const cl::DevicePtrs &devices,
+                     std::string options,
+                     std::string internalOptions,
+                     CLProgramVk::BuildType buildType,
+                     const CLProgramVk::LinkProgramsList &LinkProgramsList,
+                     cl::Program *notify)
+        : mProgramVk(programVk),
+          mDevices(devices),
+          mOptions(options),
+          mInternalOptions(internalOptions),
+          mBuildType(buildType),
+          mLinkProgramsList(LinkProgramsList),
+          mNotify(notify)
+    {}
+
+    void operator()() override;
+
+  private:
+    CLProgramVk *mProgramVk;
+    const cl::DevicePtrs mDevices;
+    std::string mOptions;
+    std::string mInternalOptions;
+    CLProgramVk::BuildType mBuildType;
+    const CLProgramVk::LinkProgramsList mLinkProgramsList;
+    cl::Program *mNotify;
 };
 
 }  // namespace rx

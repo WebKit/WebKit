@@ -771,7 +771,14 @@ void GenerateCaps(const FunctionsGL *functions,
         caps->maxElementIndex = static_cast<GLint64>(std::numeric_limits<unsigned int>::max());
     }
 
-    limitations->limitWebglMaxTextureSizeTo4096 = features.limitWebglMaxTextureSizeTo4096.enabled;
+    if (features.limitWebglMaxTextureSizeTo4096.enabled)
+    {
+        limitations->webGLTextureSizeLimit = 4096;
+    }
+    else if (features.limitWebglMaxTextureSizeTo8192.enabled)
+    {
+        limitations->webGLTextureSizeLimit = 8192;
+    }
 
     GLint max3dArrayTextureSizeLimit = std::numeric_limits<GLint>::max();
     if (features.limitMax3dArrayTextureSizeTo1024.enabled)
@@ -2370,14 +2377,19 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, queryCounterBitsGeneratesErrors, IsNexus5X(vendor, device));
 
-    bool limitMaxTextureSize = isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
+    bool isAndroidLessThan14 = IsAndroid() && GetAndroidSDKVersion() < 34;
+    bool isAndroidAtLeast14  = IsAndroid() && GetAndroidSDKVersion() >= 34;
+    bool isIntelLinuxLessThanKernelVersion5 =
+        isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
     ANGLE_FEATURE_CONDITION(features, limitWebglMaxTextureSizeTo4096,
-                            IsAndroid() || limitMaxTextureSize);
+                            isAndroidLessThan14 || isIntelLinuxLessThanKernelVersion5);
+    ANGLE_FEATURE_CONDITION(features, limitWebglMaxTextureSizeTo8192, isAndroidAtLeast14);
     // On Apple switchable graphics, GL_MAX_SAMPLES may differ between the GPUs.
     // 4 is a lowest common denominator that is always supported.
     ANGLE_FEATURE_CONDITION(features, limitMaxMSAASamplesTo4,
                             IsAndroid() || (IsApple() && (isIntel || isAMD || isNvidia)));
-    ANGLE_FEATURE_CONDITION(features, limitMax3dArrayTextureSizeTo1024, limitMaxTextureSize);
+    ANGLE_FEATURE_CONDITION(features, limitMax3dArrayTextureSizeTo1024,
+                            isIntelLinuxLessThanKernelVersion5);
 
     ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, IsApple());
 

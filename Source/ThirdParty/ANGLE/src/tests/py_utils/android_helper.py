@@ -34,6 +34,7 @@ class _Global(object):
     current_suite = None
     traces_outside_of_apk = False
     temp_dir = None
+    use_run_as = True
 
 
 def _ApkPath(suite_name):
@@ -147,7 +148,14 @@ def _AdbShell(cmd):
 
 
 def _GetAdbRoot():
-    shell_id, su_path = _AdbShell('id -u; which su || echo noroot').decode().strip().split('\n')
+    shell_id, su_path, data_permissions = _AdbShell(
+        'id -u; which su || echo noroot; stat --format %a /data').decode().strip().split('\n')
+
+    if data_permissions.endswith('7'):
+        # run-as broken due to "/data readable or writable by others"
+        _Global.use_run_as = False
+        logging.warning('run-as not available due to /data permissions')
+
     if int(shell_id) == 0:
         logging.info('adb already got root')
         return True
@@ -254,7 +262,7 @@ def _CompareHashes(local_path, device_path):
     else:
         cmd = 'test -f {path} && sha256sum -b {path} || true'.format(path=device_path)
 
-    if device_path.startswith('/data'):
+    if _Global.use_run_as and device_path.startswith('/data'):
         # Use run-as for files that reside on /data, which aren't accessible without root
         cmd = "run-as {TEST_PACKAGE_NAME} sh -c '{cmd}'".format(
             TEST_PACKAGE_NAME=TEST_PACKAGE_NAME, cmd=cmd)
@@ -327,6 +335,12 @@ def PrepareRestrictedTraces(traces):
     # of the trace on the device, so keep that in mind as space becomes a problem in the future.
     app_tmp_path = '/data/local/tmp/angle_traces/'
 
+    if _Global.use_run_as:
+        _AdbShell('mkdir -p ' + app_tmp_path + ' && run-as ' + TEST_PACKAGE_NAME +
+                  ' mkdir -p angle_traces')
+    else:
+        _AdbShell('mkdir -p ' + app_tmp_path + ' /data/data/com.android.angle.test/angle_traces/')
+
     def _HashesMatch(local_path, device_path):
         nonlocal total_size, skipped
         if _CompareHashes(local_path, device_path):
@@ -352,18 +366,17 @@ def PrepareRestrictedTraces(traces):
         if _HashesMatch(local_path, device_path):
             return
 
-        tmp_path = posixpath.join(app_tmp_path, lib_name)
-        logging.debug('_PushToAppDir: Pushing %s to %s' % (local_path, tmp_path))
-        try:
-            _AdbRun(['push', local_path, tmp_path])
-            _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' cp ' + tmp_path + ' ./angle_traces/')
-            _AdbShell('rm ' + tmp_path)
-        finally:
-            _RemoveDeviceFile(tmp_path)
-
-    # Create the directories we need
-    _AdbShell('mkdir -p ' + app_tmp_path)
-    _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' mkdir -p angle_traces')
+        if _Global.use_run_as:
+            tmp_path = posixpath.join(app_tmp_path, lib_name)
+            logging.debug('_PushToAppDir: Pushing %s to %s' % (local_path, tmp_path))
+            try:
+                _AdbRun(['push', local_path, tmp_path])
+                _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' cp ' + tmp_path + ' ./angle_traces/')
+                _AdbShell('rm ' + tmp_path)
+            finally:
+                _RemoveDeviceFile(tmp_path)
+        else:
+            _AdbRun(['push', local_path, '/data/data/com.android.angle.test/angle_traces/'])
 
     # Set up each trace
     for idx, trace in enumerate(sorted(traces)):

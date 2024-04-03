@@ -826,7 +826,7 @@ TEST_P(BufferDataTest, MapBufferOES)
     FillVectorWithRandomUBytes(&data);
 
     GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, data.size(), nullptr, GL_STATIC_DRAW);
 
     // Validate that other map flags don't work.
@@ -884,7 +884,7 @@ void main()
         color[4 * i + 3] = 255;
     }
     GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, color.size(), color.data(), GL_DYNAMIC_DRAW);
 
     ANGLE_GL_PROGRAM(program, simpleVertex, simpleFragment);
@@ -1043,7 +1043,7 @@ TEST_P(BufferDataTestES3, GLDriverErrorWhenMappingArrayBuffersDuringDraw)
     auto quadVertices = GetQuadVertices();
 
     GLBuffer vb;
-    glBindBuffer(GL_ARRAY_BUFFER, vb.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vb);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * quadVertices.size(), quadVertices.data(),
                  GL_STATIC_DRAW);
 
@@ -1638,7 +1638,7 @@ TEST_P(BufferStorageTestES3, StorageBufferMapBufferOES)
     FillVectorWithRandomUBytes(&data);
 
     GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferStorageEXT(GL_ARRAY_BUFFER, data.size(), nullptr, GL_MAP_READ_BIT | GL_MAP_WRITE_BIT);
 
     // Validate that other map flags don't work.
@@ -1676,12 +1676,12 @@ TEST_P(BufferStorageTestES3, StorageCopyBufferSubDataMapped)
 
     // Set up the read buffer
     GLBuffer readBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, readBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, readBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(kInitialData), kInitialData.data(), GL_DYNAMIC_DRAW);
 
     // Set up the write buffer to be persistently mapped
     GLBuffer writeBuffer;
-    glBindBuffer(GL_COPY_WRITE_BUFFER, writeBuffer.get());
+    glBindBuffer(GL_COPY_WRITE_BUFFER, writeBuffer);
     glBufferStorageEXT(GL_COPY_WRITE_BUFFER, 16, nullptr,
                        GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
     void *readMapPtr =
@@ -1691,7 +1691,7 @@ TEST_P(BufferStorageTestES3, StorageCopyBufferSubDataMapped)
     ASSERT_GL_NO_ERROR();
 
     // Verify we can copy into the write buffer
-    glBindBuffer(GL_COPY_READ_BUFFER, readBuffer.get());
+    glBindBuffer(GL_COPY_READ_BUFFER, readBuffer);
     glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, 16);
     ASSERT_GL_NO_ERROR();
 
@@ -1716,7 +1716,7 @@ TEST_P(BufferStorageTestES3, DrawElementsElementArrayBufferMapped)
                                -1.0f, 1.0f,  1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
     // Set up array buffer
     GLBuffer readBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, readBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, readBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexBuffer), kVertexBuffer, GL_DYNAMIC_DRAW);
     GLint vLoc = glGetAttribLocation(mProgram, "position");
     GLint cLoc = mAttribLocation;
@@ -1729,7 +1729,7 @@ TEST_P(BufferStorageTestES3, DrawElementsElementArrayBufferMapped)
     GLshort kElementArrayBuffer[] = {0, 0, 0, 0, 0, 0};
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferStorageEXT(GL_ELEMENT_ARRAY_BUFFER, sizeof(kElementArrayBuffer), kElementArrayBuffer,
                        GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT |
                            GL_MAP_COHERENT_BIT_EXT);
@@ -1773,7 +1773,7 @@ TEST_P(BufferStorageTestES3, NoUnmap)
     GLsizei size = sizeof(GLfloat) * 128;
 
     GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferStorageEXT(GL_ARRAY_BUFFER, size, nullptr,
                        GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT |
                            GL_MAP_COHERENT_BIT_EXT);
@@ -1797,7 +1797,7 @@ TEST_P(BufferStorageTestES3, TexImage2DPixelUnpackBufferMappedPersistently)
     FillVectorWithRandomUBytes(&data);
 
     GLBuffer buffer;
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer.get());
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
     glBufferStorageEXT(GL_PIXEL_UNPACK_BUFFER, data.size(), data.data(),
                        GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT);
 
@@ -1832,7 +1832,7 @@ TEST_P(BufferStorageTestES3, StorageBufferSubDataMapped)
 
     // Set up the buffer to be persistently mapped and dynamic
     GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferStorageEXT(GL_ARRAY_BUFFER, 16, nullptr,
                        GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT |
                            GL_MAP_COHERENT_BIT_EXT | GL_DYNAMIC_STORAGE_BIT_EXT);
@@ -1886,7 +1886,7 @@ void main()
     glViewport(0, 0, getWindowWidth(), getWindowHeight());
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer.get());
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
 
     glBufferStorageEXT(GL_UNIFORM_BUFFER, sizeof(float) * 4, nullptr,
                        GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
@@ -1898,7 +1898,7 @@ void main()
 
     ASSERT_NE(mapPtr, nullptr);
 
-    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniformBuffer.get());
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniformBuffer);
 
     glUniformBlockBinding(program, uniformBufferIndex, 0);
 
@@ -1935,7 +1935,7 @@ TEST_P(BufferStorageTestES3, VertexBufferMapped)
     size_t bufferSize = sizeof(GLfloat) * quadVertices.size() * 3;
 
     GLBuffer positionBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
 
     glBufferStorageEXT(GL_ARRAY_BUFFER, bufferSize, nullptr,
                        GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT |
@@ -1982,7 +1982,7 @@ void TestPageSharingBuffers(std::function<void(void)> swapCallback,
     // Init and map
     for (uint32_t i = 0; i < bufferCount; i++)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[i].get());
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
 
         glBufferStorageEXT(GL_ARRAY_BUFFER, bufferSize, nullptr,
                            GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT |
@@ -2008,7 +2008,7 @@ void TestPageSharingBuffers(std::function<void(void)> swapCallback,
             reinterpret_cast<float *>(mapPointers[i])[lastPosition] = 1.0f;
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[i].get());
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
         glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
         glDrawArrays(GL_TRIANGLES, 0, quadVertices.size());
         EXPECT_PIXEL_COLOR_EQ(8, 8, GLColor::red);
@@ -2150,7 +2150,7 @@ TEST_P(BufferStorageTestES3Threaded, VertexBuffer)
 
     // Set up position buffer
     GLBuffer positionBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
                  GL_STATIC_DRAW);
 
@@ -2160,7 +2160,7 @@ TEST_P(BufferStorageTestES3Threaded, VertexBuffer)
 
     // Set up color buffer
     GLBuffer colorBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 
     // Let's create a big buffer which fills 10 pages at pagesize 4096
     GLint bufferSize   = sizeof(GLfloat) * 1024 * 10;
@@ -2175,7 +2175,7 @@ TEST_P(BufferStorageTestES3Threaded, VertexBuffer)
     auto indices = GetQuadIndices();
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
                  GL_STATIC_DRAW);
 
@@ -2406,26 +2406,26 @@ TEST_P(BufferDataOverflowTest, VertexBufferIntegerOverflow)
         "}";
 
     ANGLE_GL_PROGRAM(program, vertexShaderStr.str().c_str(), kFS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     std::vector<GLfloat> data(numItems, 1.0f);
 
     for (GLsizei bufferIndex = 0; bufferIndex < bufferCnt; ++bufferIndex)
     {
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[bufferIndex].get());
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[bufferIndex]);
         glBufferData(GL_ARRAY_BUFFER, numItems * sizeof(float), &data[0], GL_DYNAMIC_DRAW);
 
         std::stringstream attribNameStr;
         attribNameStr << "attrib" << bufferIndex;
 
-        GLint attribLocation = glGetAttribLocation(program.get(), attribNameStr.str().c_str());
+        GLint attribLocation = glGetAttribLocation(program, attribNameStr.str().c_str());
         ASSERT_NE(-1, attribLocation);
 
         glVertexAttribPointer(attribLocation, 1, GL_FLOAT, GL_FALSE, 4, nullptr);
         glEnableVertexAttribArray(attribLocation);
     }
 
-    GLint positionLocation = glGetAttribLocation(program.get(), "position");
+    GLint positionLocation = glGetAttribLocation(program, "position");
     ASSERT_NE(-1, positionLocation);
     glDisableVertexAttribArray(positionLocation);
     glVertexAttrib2f(positionLocation, 1.0f, 1.0f);
@@ -2439,7 +2439,7 @@ TEST_P(BufferDataOverflowTest, VertexBufferIntegerOverflow)
     {
         std::stringstream attribNameStr;
         attribNameStr << "attrib" << bufferIndex;
-        GLint attribLocation = glGetAttribLocation(program.get(), attribNameStr.str().c_str());
+        GLint attribLocation = glGetAttribLocation(program, attribNameStr.str().c_str());
         ASSERT_NE(-1, attribLocation);
         glDisableVertexAttribArray(attribLocation);
     }
@@ -2453,8 +2453,8 @@ TEST_P(BufferDataOverflowTest, CopySubDataValidation)
 {
     GLBuffer readBuffer, writeBuffer;
 
-    glBindBuffer(GL_COPY_READ_BUFFER, readBuffer.get());
-    glBindBuffer(GL_COPY_WRITE_BUFFER, writeBuffer.get());
+    glBindBuffer(GL_COPY_READ_BUFFER, readBuffer);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, writeBuffer);
 
     constexpr int bufSize = 100;
 

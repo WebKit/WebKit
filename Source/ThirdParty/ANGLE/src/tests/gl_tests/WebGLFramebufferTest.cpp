@@ -229,7 +229,7 @@ void WebGLFramebufferTest::testDepthStencilDepthStencil(GLint width, GLint heigh
     }
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
-    GLint uniformLoc = glGetUniformLocation(program.get(), essl1_shaders::ColorUniform());
+    GLint uniformLoc = glGetUniformLocation(program, essl1_shaders::ColorUniform());
     ASSERT_NE(-1, uniformLoc);
 
     struct TestInfo
@@ -273,9 +273,9 @@ void WebGLFramebufferTest::testDepthStencilDepthStencil(GLint width, GLint heigh
 
             glEnable(GL_DEPTH_TEST);
             // Test it works
-            drawUByteColorQuad(program.get(), uniformLoc, GLColor::green);
+            drawUByteColorQuad(program, uniformLoc, GLColor::green);
             // should not draw since DEPTH_FUNC == LESS
-            drawUByteColorQuad(program.get(), uniformLoc, GLColor::red);
+            drawUByteColorQuad(program, uniformLoc, GLColor::red);
             // should be green
             EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
@@ -305,9 +305,9 @@ void WebGLFramebufferTest::testDepthStencilDepthStencil(GLint width, GLint heigh
 
             // If the first attachment is not restored this may fail.
             glClear(GL_DEPTH_BUFFER_BIT);
-            drawUByteColorQuad(program.get(), uniformLoc, GLColor::green);
+            drawUByteColorQuad(program, uniformLoc, GLColor::green);
             // should not draw since DEPTH_FUNC == LESS
-            drawUByteColorQuad(program.get(), uniformLoc, GLColor::red);
+            drawUByteColorQuad(program, uniformLoc, GLColor::red);
             // should be green
             EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
             glDisable(GL_DEPTH_TEST);
@@ -591,7 +591,7 @@ void WebGLFramebufferTest::testUsingIncompleteFramebuffer(GLenum depthFormat,
 
     // Drawing or reading from an incomplete framebuffer should generate
     // INVALID_FRAMEBUFFER_OPERATION.
-    testRenderingAndReading(program.get());
+    testRenderingAndReading(program);
 
     GLFramebuffer fbo2;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo2);
@@ -599,7 +599,7 @@ void WebGLFramebufferTest::testUsingIncompleteFramebuffer(GLenum depthFormat,
 
     // Drawing or reading from an incomplete framebuffer should generate
     // INVALID_FRAMEBUFFER_OPERATION.
-    testRenderingAndReading(program.get());
+    testRenderingAndReading(program);
 
     GLRenderbuffer colorBuffer2;
     glBindRenderbuffer(GL_RENDERBUFFER, colorBuffer2);
@@ -608,7 +608,7 @@ void WebGLFramebufferTest::testUsingIncompleteFramebuffer(GLenum depthFormat,
 
     // Drawing or reading from an incomplete framebuffer should generate
     // INVALID_FRAMEBUFFER_OPERATION.
-    testRenderingAndReading(program.get());
+    testRenderingAndReading(program);
 }
 
 void testFramebufferIncompleteAttachment(GLenum depthFormat)
@@ -822,14 +822,13 @@ TEST_P(WebGLFramebufferTest, TextureAttachmentCommitBug)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_depth_texture"));
 
     GLTexture depthTexture;
-    glBindTexture(GL_TEXTURE_2D, depthTexture.get());
+    glBindTexture(GL_TEXTURE_2D, depthTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1, 1, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,
                  nullptr);
 
     GLFramebuffer framebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture.get(),
-                           0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
 
     glCheckFramebufferStatus(GL_FRAMEBUFFER);
 

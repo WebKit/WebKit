@@ -33,7 +33,6 @@
 #include "libANGLE/renderer/vulkan/ProgramVk.h"
 #include "libANGLE/renderer/vulkan/QueryVk.h"
 #include "libANGLE/renderer/vulkan/RenderbufferVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/SamplerVk.h"
 #include "libANGLE/renderer/vulkan/SemaphoreVk.h"
 #include "libANGLE/renderer/vulkan/ShaderVk.h"
@@ -42,6 +41,7 @@
 #include "libANGLE/renderer/vulkan/TextureVk.h"
 #include "libANGLE/renderer/vulkan/TransformFeedbackVk.h"
 #include "libANGLE/renderer/vulkan/VertexArrayVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include <fstream>
 #include <iostream>
@@ -712,15 +712,26 @@ void DumpPipelineCacheGraph(ContextVk *contextVk, const std::ostringstream &grap
     out.close();
 }
 
-bool BlendModeSupportsDither(const gl::State &state, size_t colorIndex)
+bool BlendModeSupportsDither(const ContextVk *contextVk, size_t colorIndex)
 {
+    const gl::State &state = contextVk->getState();
+
     // Specific combinations of color blend modes are known to work with our dithering emulation.
     // Note we specifically don't check alpha blend, as dither isn't applied to alpha.
     // See http://b/232574868 for more discussion and reasoning.
-    return state.getBlendStateExt().getSrcColorIndexed(colorIndex) ==
-               gl::BlendFactorType::SrcAlpha &&
-           state.getBlendStateExt().getDstColorIndexed(colorIndex) ==
-               gl::BlendFactorType::OneMinusSrcAlpha;
+    gl::BlendFactorType srcBlendFactor = state.getBlendStateExt().getSrcColorIndexed(colorIndex);
+    gl::BlendFactorType dstBlendFactor = state.getBlendStateExt().getDstColorIndexed(colorIndex);
+
+    const bool ditheringCompatibleBlendFactors =
+        (srcBlendFactor == gl::BlendFactorType::SrcAlpha &&
+         dstBlendFactor == gl::BlendFactorType::OneMinusSrcAlpha);
+
+    const bool allowAdditionalBlendFactors =
+        contextVk->getFeatures().enableAdditionalBlendFactorsForDithering.enabled &&
+        (srcBlendFactor == gl::BlendFactorType::One &&
+         dstBlendFactor == gl::BlendFactorType::OneMinusSrcAlpha);
+
+    return ditheringCompatibleBlendFactors || allowAdditionalBlendFactors;
 }
 
 bool ShouldUseGraphicsDriverUniformsExtended(const vk::Context *context)
@@ -879,7 +890,7 @@ ANGLE_INLINE void ContextVk::onRenderPassFinished(RenderPassClosureReason reason
 }
 
 // ContextVk implementation.
-ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk *renderer)
+ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Renderer *renderer)
     : ContextImpl(state, errorSet),
       vk::Context(renderer),
       mGraphicsDirtyBitHandlers{},
@@ -2728,8 +2739,7 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffers(DirtyBits::Iterator *d
         vertexArrayVk->getCurrentArrayBuffers();
 
     // Mark all active vertex buffers as accessed.
-    const gl::AttributesMask attribsMask = executable->getActiveAttribLocationsMask();
-    for (size_t attribIndex : attribsMask)
+    for (uint32_t attribIndex = 0; attribIndex < maxAttrib; ++attribIndex)
     {
         vk::BufferHelper *arrayBuffer = arrayBufferResources[attribIndex];
         if (arrayBuffer)
@@ -5326,7 +5336,7 @@ void ContextVk::updateDither()
             // situations that can lead to incorrect blending.  We only allow blending with specific
             // combinations know to not interfere with dithering.
             if (mState.isBlendEnabledIndexed(static_cast<GLuint>(colorIndex)) &&
-                !BlendModeSupportsDither(mState, colorIndex))
+                !BlendModeSupportsDither(this, colorIndex))
             {
                 continue;
             }
@@ -9049,12 +9059,6 @@ angle::Result ContextVk::ensureInterfacePipelineCache()
     {
         VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
         pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-
-        if (getFeatures().supportsPipelineCreationCacheControl.enabled)
-        {
-            pipelineCacheCreateInfo.flags |=
-                VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT_EXT;
-        }
 
         ANGLE_VK_TRY(this, mInterfacePipelinesCache.init(getDevice(), pipelineCacheCreateInfo));
     }

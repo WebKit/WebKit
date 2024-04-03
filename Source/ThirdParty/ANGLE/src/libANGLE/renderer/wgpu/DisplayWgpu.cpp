@@ -9,6 +9,8 @@
 
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 
+#include <dawn/dawn_proc.h>
+
 #include "common/debug.h"
 
 #include "libANGLE/Display.h"
@@ -197,7 +199,7 @@ rx::ContextImpl *DisplayWgpu::createContext(const gl::State &state,
                                             const gl::Context *shareContext,
                                             const egl::AttributeMap &attribs)
 {
-    return new ContextWgpu(state, errorSet);
+    return new ContextWgpu(state, errorSet, this);
 }
 
 StreamProducerImpl *DisplayWgpu::createStreamProducerD3DTexture(
@@ -247,6 +249,8 @@ void DisplayWgpu::generateCaps(egl::Caps *outCaps) const
 
 egl::Error DisplayWgpu::createWgpuDevice()
 {
+    dawnProcSetProcs(&dawn::native::GetProcs());
+
     WGPUInstanceDescriptor instanceDescriptor{};
     instanceDescriptor.features.timedWaitAnyEnable = true;
     mInstance = std::make_unique<dawn::native::Instance>(&instanceDescriptor);

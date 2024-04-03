@@ -7,7 +7,7 @@
 
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include "libANGLE/Display.h"
 #include "libANGLE/cl_utils.h"
@@ -15,7 +15,7 @@
 namespace rx
 {
 
-CLDeviceVk::CLDeviceVk(const cl::Device &device, RendererVk *renderer)
+CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
     : CLDeviceImpl(device), mRenderer(renderer)
 {
     const VkPhysicalDeviceProperties &props = mRenderer->getPhysicalDeviceProperties();

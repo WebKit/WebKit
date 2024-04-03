@@ -65,9 +65,9 @@ class LinkTask
     virtual std::vector<std::shared_ptr<LinkSubTask>> link(
         const gl::ProgramLinkedResources &resources,
         const gl::ProgramMergedVaryings &mergedVaryings,
-        bool *areSubTasksOptionalOut);
+        bool *canSubTasksRunPostLinkOut);
     // Used for load()
-    virtual std::vector<std::shared_ptr<LinkSubTask>> load(bool *areSubTasksOptionalOut);
+    virtual std::vector<std::shared_ptr<LinkSubTask>> load(bool *canSubTasksRunPostLinkOut);
     virtual angle::Result getResult(const gl::Context *context, gl::InfoLog &infoLog) = 0;
 
     // Used by the GL backend to query whether the driver is linking in parallel internally.

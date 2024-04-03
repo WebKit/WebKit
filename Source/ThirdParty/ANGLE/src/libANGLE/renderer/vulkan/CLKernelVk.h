@@ -9,22 +9,12 @@
 #define LIBANGLE_RENDERER_VULKAN_CLKERNELVK_H_
 
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/renderer/CLKernelImpl.h"
 
 namespace rx
 {
-
-class CLKernelVk : public CLKernelImpl
-{
-  public:
-    CLKernelVk(const cl::Kernel &kernel);
-    ~CLKernelVk() override;
-
-    angle::Result setArg(cl_uint argIndex, size_t argSize, const void *argValue) override;
-
-    angle::Result createInfo(CLKernelImpl::Info *infoOut) const override;
-};
 
 struct CLKernelArgument
 {
@@ -70,6 +60,36 @@ struct CLKernelArgument
 };
 using CLKernelArguments = std::vector<CLKernelArgument>;
 using CLKernelArgsMap   = angle::HashMap<std::string, CLKernelArguments>;
+
+class CLKernelVk : public CLKernelImpl
+{
+  public:
+    using Ptr = std::unique_ptr<CLKernelVk>;
+    CLKernelVk(const cl::Kernel &kernel,
+               std::string &name,
+               std::string &attributes,
+               CLKernelArguments &args);
+    ~CLKernelVk() override;
+
+    angle::Result setArg(cl_uint argIndex, size_t argSize, const void *argValue) override;
+
+    angle::Result createInfo(CLKernelImpl::Info *infoOut) const override;
+
+    const CLProgramVk *getProgram() { return mProgram; }
+    const std::string &getKernelName() { return mName; }
+    const CLKernelArguments &getArgs() { return mArgs; }
+    VkDescriptorSet &getDescriptorSet() { return mDescriptorSet; }
+    vk::AtomicBindingPointer<vk::PipelineLayout> &getPipelineLayout() { return mPipelineLayout; }
+
+  private:
+    CLProgramVk *mProgram;
+    CLContextVk *mContext;
+    std::string mName;
+    std::string mAttributes;
+    CLKernelArguments mArgs;
+    VkDescriptorSet mDescriptorSet{VK_NULL_HANDLE};
+    vk::AtomicBindingPointer<vk::PipelineLayout> mPipelineLayout;
+};
 
 }  // namespace rx
 

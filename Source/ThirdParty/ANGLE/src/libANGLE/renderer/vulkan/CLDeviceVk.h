@@ -21,7 +21,7 @@ namespace rx
 class CLDeviceVk : public CLDeviceImpl
 {
   public:
-    explicit CLDeviceVk(const cl::Device &device, RendererVk *renderer);
+    explicit CLDeviceVk(const cl::Device &device, vk::Renderer *renderer);
     ~CLDeviceVk() override;
 
     Info createInfo(cl::DeviceType type) const override;
@@ -38,7 +38,7 @@ class CLDeviceVk : public CLDeviceImpl
                                    cl_uint *numDevicesRet) override;
 
   private:
-    RendererVk *mRenderer;
+    vk::Renderer *mRenderer;
     angle::HashMap<cl::DeviceInfo, cl_uint> mInfoUInt;
     angle::HashMap<cl::DeviceInfo, cl_ulong> mInfoULong;
     angle::HashMap<cl::DeviceInfo, size_t> mInfoSizeT;

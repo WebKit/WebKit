@@ -10,7 +10,7 @@
 #include "libANGLE/renderer/vulkan/SecondaryCommandPool.h"
 
 #include "common/debug.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx

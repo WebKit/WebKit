@@ -452,7 +452,8 @@ class Program final : public LabeledObject, public angle::Subject
         return mState.getFragmentOutputIndexes();
     }
 
-    bool needsSync() { return !mOptionalLinkTasks.empty(); }
+    bool needsSync() const { return !mPostLinkTasks.empty(); }
+
     angle::Result syncState(const Context *context);
 
     // Try to resolve linking. Inlined to make sure its overhead is as low as possible.
@@ -521,13 +522,8 @@ class Program final : public LabeledObject, public angle::Subject
 
     // Block until linking is finished and resolve it.
     void resolveLinkImpl(const gl::Context *context);
-    // Block until optional link tasks are finished.
-    void waitForOptionalLinkTasks(const gl::Context *context);
-    void onLinkInputChange(const gl::Context *context)
-    {
-        // The link tasks work on link input.  If link input changes, they must be finished first.
-        waitForOptionalLinkTasks(context);
-    }
+    // Block until post-link tasks are finished.
+    void waitForPostLinkTasks(const gl::Context *context);
 
     void postResolveLink(const gl::Context *context);
     void cacheProgramBinary(const gl::Context *context);
@@ -549,8 +545,8 @@ class Program final : public LabeledObject, public angle::Subject
     // Optional link tasks that may still be running after a link has succeeded.  These tasks are
     // not waited on in |resolveLink| as they are optimization passes.  Instead, they are waited on
     // when the program is first used.
-    std::vector<std::shared_ptr<rx::LinkSubTask>> mOptionalLinkTasks;
-    std::vector<std::shared_ptr<angle::WaitableEvent>> mOptionalLinkTaskWaitableEvents;
+    std::vector<std::shared_ptr<rx::LinkSubTask>> mPostLinkTasks;
+    std::vector<std::shared_ptr<angle::WaitableEvent>> mPostLinkTaskWaitableEvents;
 
     unsigned int mRefCount;
 

@@ -12,6 +12,7 @@
 
 #include "image_util/loadimage.h"
 #include "libANGLE/renderer/ContextImpl.h"
+#include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 
 namespace rx
 {
@@ -19,7 +20,7 @@ namespace rx
 class ContextWgpu : public ContextImpl
 {
   public:
-    ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet);
+    ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet, DisplayWgpu *display);
     ~ContextWgpu() override;
 
     angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
@@ -254,6 +255,8 @@ class ContextWgpu : public ContextImpl
 
     const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 
+    DisplayWgpu *getDisplay() { return mDisplay; }
+
   private:
     gl::Caps mCaps;
     gl::TextureCapsMap mTextureCaps;
@@ -262,6 +265,8 @@ class ContextWgpu : public ContextImpl
     ShPixelLocalStorageOptions mPLSOptions;
 
     angle::ImageLoadContext mImageLoadContext;
+
+    DisplayWgpu *mDisplay;
 };
 
 }  // namespace rx

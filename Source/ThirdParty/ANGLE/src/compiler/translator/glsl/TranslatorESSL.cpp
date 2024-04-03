@@ -157,10 +157,9 @@ bool TranslatorESSL::translate(TIntermBlock *root,
             if (!DeclarePerVertexBlocks(this, root, &getSymbolTable(), nullptr, nullptr))
                 return false;
         }
-        else if ((IsExtensionEnabled(getExtensionBehavior(), TExtension::EXT_clip_cull_distance) ||
-                  IsExtensionEnabled(getExtensionBehavior(),
-                                     TExtension::ANGLE_clip_cull_distance)) &&
-                 areClipDistanceOrCullDistanceRedeclared())
+        else if (areClipDistanceOrCullDistanceUsed() &&
+                 (IsExtensionEnabled(getExtensionBehavior(), TExtension::EXT_clip_cull_distance) ||
+                  IsExtensionEnabled(getExtensionBehavior(), TExtension::ANGLE_clip_cull_distance)))
         {
             // When clip distance state emulation is not needed,
             // the redeclared extension built-ins still should be moved to gl_PerVertex
@@ -281,9 +280,7 @@ void TranslatorESSL::writeExtensionBehavior(const ShCompileOptions &compileOptio
             {
                 sink << "#extension GL_EXT_clip_cull_distance : " << GetBehaviorString(iter->second)
                      << "\n";
-                if (areClipDistanceOrCullDistanceRedeclared() ||
-                    (mMetadataFlags[MetadataFlags::HasClipDistance] &&
-                     compileOptions.emulateClipDistanceState))
+                if (areClipDistanceOrCullDistanceUsed())
                 {
                     sink << "#extension GL_EXT_shader_io_blocks : "
                          << GetBehaviorString(iter->second) << "\n";

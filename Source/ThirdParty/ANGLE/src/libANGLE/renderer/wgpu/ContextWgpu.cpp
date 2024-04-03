@@ -34,8 +34,8 @@
 namespace rx
 {
 
-ContextWgpu::ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet)
-    : ContextImpl(state, errorSet)
+ContextWgpu::ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet, DisplayWgpu *display)
+    : ContextImpl(state, errorSet), mDisplay(display)
 {
     mExtensions                               = gl::Extensions();
     mExtensions.blendEquationAdvancedKHR      = true;

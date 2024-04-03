@@ -402,13 +402,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     const mtl::ContextDevice &getMetalDevice() const { return mContextDevice; }
 
-    angle::Result copy2DTextureSlice0Level0ToWorkTexture(const mtl::TextureRef &srcTexture);
-    const mtl::TextureRef &getWorkTexture() const { return mWorkTexture; }
-    angle::Result copyTextureSliceLevelToWorkBuffer(const gl::Context *context,
-                                                    const mtl::TextureRef &srcTexture,
-                                                    const mtl::MipmapNativeLevel &mipNativeLevel,
-                                                    uint32_t layerIndex);
-    const mtl::BufferRef &getWorkBuffer() const { return mWorkBuffer; }
     mtl::BufferManager &getBufferManager() { return mBufferManager; }
 
     mtl::PipelineCache &getPipelineCache() { return mPipelineCache; }
@@ -608,8 +601,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     VertexArrayMtl *mVertexArray      = nullptr;
     ProgramExecutableMtl *mExecutable = nullptr;
     QueryMtl *mOcclusionQuery         = nullptr;
-    mtl::TextureRef mWorkTexture;
-    mtl::BufferRef mWorkBuffer;
 
     using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
 

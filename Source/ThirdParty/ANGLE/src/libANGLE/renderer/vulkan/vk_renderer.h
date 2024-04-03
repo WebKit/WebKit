@@ -3,8 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// RendererVk.h:
-//    Defines the class interface for RendererVk.
+// vk_renderer.h:
+//    Defines the class interface for Renderer.
 //
 
 #ifndef LIBANGLE_RENDERER_VULKAN_RENDERERVK_H_
@@ -27,12 +27,12 @@
 #include "libANGLE/renderer/vulkan/DebugAnnotatorVk.h"
 #include "libANGLE/renderer/vulkan/MemoryTracking.h"
 #include "libANGLE/renderer/vulkan/QueryVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/UtilsVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_internal_shaders_autogen.h"
 #include "libANGLE/renderer/vulkan/vk_mem_alloc_wrapper.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 
 namespace angle
 {
@@ -66,7 +66,7 @@ class ImageMemorySuballocator : angle::NonCopyable
     ImageMemorySuballocator();
     ~ImageMemorySuballocator();
 
-    void destroy(RendererVk *renderer);
+    void destroy(vk::Renderer *renderer);
 
     // Allocates memory for the image and binds it.
     VkResult allocateAndBindMemory(Context *context,
@@ -83,7 +83,7 @@ class ImageMemorySuballocator : angle::NonCopyable
                                    VkDeviceSize *sizeOut);
 
     // Maps the memory to initialize with non-zero value.
-    VkResult mapMemoryAndInitWithNonZeroValue(RendererVk *renderer,
+    VkResult mapMemoryAndInitWithNonZeroValue(vk::Renderer *renderer,
                                               Allocation *allocation,
                                               VkDeviceSize size,
                                               int value,
@@ -92,7 +92,6 @@ class ImageMemorySuballocator : angle::NonCopyable
     // Determines if dedicated memory is required for the allocation.
     bool needsDedicatedMemory(VkDeviceSize size) const;
 };
-}  // namespace vk
 
 // Supports one semaphore from current surface, and one semaphore passed to
 // glSignalSemaphoreEXT.
@@ -111,7 +110,7 @@ void CollectGarbage(std::vector<vk::GarbageObject> *garbageOut, ArgT object, Arg
 }
 
 // Recursive function to process variable arguments for garbage destroy
-inline void DestroyGarbage(RendererVk *renderer) {}
+inline void DestroyGarbage(vk::Renderer *renderer) {}
 
 class OneOffCommandPool : angle::NonCopyable
 {
@@ -149,11 +148,11 @@ enum class UseVulkanSwapchain
     No,
 };
 
-class RendererVk : angle::NonCopyable
+class Renderer : angle::NonCopyable
 {
   public:
-    RendererVk();
-    ~RendererVk();
+    Renderer();
+    ~Renderer();
 
     angle::Result initialize(vk::Context *context,
                              vk::GlobalOps *globalOps,
@@ -166,7 +165,7 @@ class RendererVk : angle::NonCopyable
                              angle::NativeWindowSystem nativeWindowSystem,
                              const angle::FeatureOverrides &featureOverrides);
 
-    // Reload volk vk* function ptrs if needed for an already initialized RendererVk
+    // Reload volk vk* function ptrs if needed for an already initialized Renderer
     void reloadVolkIfNeeded() const;
     void onDestroy(vk::Context *context);
 
@@ -787,6 +786,7 @@ class RendererVk : angle::NonCopyable
     angle::Result initPipelineCache(vk::Context *context,
                                     vk::PipelineCache *pipelineCache,
                                     bool *success);
+    angle::Result ensurePipelineCacheInitialized(vk::Context *context);
 
     template <VkFormatFeatureFlags VkFormatProperties::*features>
     VkFormatFeatureFlags getFormatFeatureBits(angle::FormatID formatID,
@@ -892,7 +892,6 @@ class RendererVk : angle::NonCopyable
     VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT mPrimitivesGeneratedQueryFeatures;
     VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT mPrimitiveTopologyListRestartFeatures;
     VkPhysicalDeviceSamplerYcbcrConversionFeatures mSamplerYcbcrConversionFeatures;
-    VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT mPipelineCreationCacheControlFeatures;
     VkPhysicalDeviceExtendedDynamicStateFeaturesEXT mExtendedDynamicStateFeatures;
     VkPhysicalDeviceExtendedDynamicState2FeaturesEXT mExtendedDynamicState2Features;
     VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT mGraphicsPipelineLibraryFeatures;
@@ -963,13 +962,17 @@ class RendererVk : angle::NonCopyable
     uint32_t mDeviceLocalVertexConversionBufferMemoryTypeIndex;
     size_t mVertexConversionBufferAlignment;
 
-    // All access to the pipeline cache is done through EGL objects so it is thread safe to not
-    // use a lock.
+    // The mutex protects -
+    // 1. initialization of the cache
+    // 2. Vulkan driver guarantess synchronization for read and write operations but the spec
+    //    requires external synchronization when mPipelineCache is the dstCache of
+    //    vkMergePipelineCaches. Lock the mutex if mergeProgramPipelineCachesToGlobalCache is
+    //    enabled
     std::mutex mPipelineCacheMutex;
     vk::PipelineCache mPipelineCache;
     uint32_t mPipelineCacheVkUpdateTimeout;
     size_t mPipelineCacheSizeAtLastSync;
-    bool mPipelineCacheInitialized;
+    std::atomic<bool> mPipelineCacheInitialized;
 
     // Latest validation data for debug overlay.
     std::string mLastValidationMessage;
@@ -1052,21 +1055,21 @@ class RendererVk : angle::NonCopyable
 
     // Memory tracker for allocations and deallocations.
     MemoryAllocationTracker mMemoryAllocationTracker;
-};  // namespace rx
+};
 
-ANGLE_INLINE Serial RendererVk::generateQueueSerial(SerialIndex index)
+ANGLE_INLINE Serial Renderer::generateQueueSerial(SerialIndex index)
 {
     return mQueueSerialFactory[index].generate();
 }
 
-ANGLE_INLINE void RendererVk::reserveQueueSerials(SerialIndex index,
-                                                  size_t count,
-                                                  RangedSerialFactory *rangedSerialFactory)
+ANGLE_INLINE void Renderer::reserveQueueSerials(SerialIndex index,
+                                                size_t count,
+                                                RangedSerialFactory *rangedSerialFactory)
 {
     mQueueSerialFactory[index].reserve(rangedSerialFactory, count);
 }
 
-ANGLE_INLINE bool RendererVk::hasResourceUseSubmitted(const vk::ResourceUse &use) const
+ANGLE_INLINE bool Renderer::hasResourceUseSubmitted(const vk::ResourceUse &use) const
 {
     if (isAsyncCommandQueueEnabled())
     {
@@ -1078,7 +1081,7 @@ ANGLE_INLINE bool RendererVk::hasResourceUseSubmitted(const vk::ResourceUse &use
     }
 }
 
-ANGLE_INLINE bool RendererVk::hasQueueSerialSubmitted(const QueueSerial &queueSerial) const
+ANGLE_INLINE bool Renderer::hasQueueSerialSubmitted(const QueueSerial &queueSerial) const
 {
     if (isAsyncCommandQueueEnabled())
     {
@@ -1090,7 +1093,7 @@ ANGLE_INLINE bool RendererVk::hasQueueSerialSubmitted(const QueueSerial &queueSe
     }
 }
 
-ANGLE_INLINE Serial RendererVk::getLastSubmittedSerial(SerialIndex index) const
+ANGLE_INLINE Serial Renderer::getLastSubmittedSerial(SerialIndex index) const
 {
     if (isAsyncCommandQueueEnabled())
     {
@@ -1102,17 +1105,17 @@ ANGLE_INLINE Serial RendererVk::getLastSubmittedSerial(SerialIndex index) const
     }
 }
 
-ANGLE_INLINE bool RendererVk::hasResourceUseFinished(const vk::ResourceUse &use) const
+ANGLE_INLINE bool Renderer::hasResourceUseFinished(const vk::ResourceUse &use) const
 {
     return mCommandQueue.hasResourceUseFinished(use);
 }
 
-ANGLE_INLINE bool RendererVk::hasQueueSerialFinished(const QueueSerial &queueSerial) const
+ANGLE_INLINE bool Renderer::hasQueueSerialFinished(const QueueSerial &queueSerial) const
 {
     return mCommandQueue.hasQueueSerialFinished(queueSerial);
 }
 
-ANGLE_INLINE angle::Result RendererVk::waitForPresentToBeSubmitted(
+ANGLE_INLINE angle::Result Renderer::waitForPresentToBeSubmitted(
     vk::SwapchainStatus *swapchainStatus)
 {
     if (isAsyncCommandQueueEnabled())
@@ -1123,23 +1126,23 @@ ANGLE_INLINE angle::Result RendererVk::waitForPresentToBeSubmitted(
     return angle::Result::Continue;
 }
 
-ANGLE_INLINE void RendererVk::requestAsyncCommandsAndGarbageCleanup(vk::Context *context)
+ANGLE_INLINE void Renderer::requestAsyncCommandsAndGarbageCleanup(vk::Context *context)
 {
     mCommandProcessor.requestCommandsAndGarbageCleanup();
 }
 
-ANGLE_INLINE angle::Result RendererVk::checkCompletedCommands(vk::Context *context)
+ANGLE_INLINE angle::Result Renderer::checkCompletedCommands(vk::Context *context)
 {
     return mCommandQueue.checkAndCleanupCompletedCommands(context);
 }
 
-ANGLE_INLINE angle::Result RendererVk::retireFinishedCommands(vk::Context *context)
+ANGLE_INLINE angle::Result Renderer::retireFinishedCommands(vk::Context *context)
 {
     return mCommandQueue.retireFinishedCommands(context);
 }
 
 template <typename ArgT, typename... ArgsT>
-void DestroyGarbage(RendererVk *renderer, ArgT object, ArgsT... objectsIn)
+void DestroyGarbage(Renderer *renderer, ArgT object, ArgsT... objectsIn)
 {
     if (object->valid())
     {
@@ -1149,7 +1152,7 @@ void DestroyGarbage(RendererVk *renderer, ArgT object, ArgsT... objectsIn)
 }
 
 template <typename... ArgsT>
-void DestroyGarbage(RendererVk *renderer, vk::Allocation *object, ArgsT... objectsIn)
+void DestroyGarbage(Renderer *renderer, vk::Allocation *object, ArgsT... objectsIn)
 {
     if (object->valid())
     {
@@ -1157,6 +1160,7 @@ void DestroyGarbage(RendererVk *renderer, vk::Allocation *object, ArgsT... objec
     }
     DestroyGarbage(renderer, objectsIn...);
 }
+}  // namespace vk
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_VULKAN_RENDERERVK_H_

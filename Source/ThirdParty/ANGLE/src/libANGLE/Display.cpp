@@ -2331,15 +2331,18 @@ void Display::initVersionString()
 
 void Display::initClientAPIString()
 {
-    // If the max supported desktop version is not None, we support a desktop GL frontend.
+    std::string supportedClientAPIs = "OpenGL_ES";
+
+#ifdef ANGLE_ENABLE_GL_DESKTOP_FRONTEND
+    // If angle_enable_gl_desktop_frontend is enabled and the max supported desktop version
+    // is not None, we support a desktop GL frontend.
     if (mImplementation->getMaxSupportedDesktopVersion().valid())
     {
-        mClientAPIString = "OpenGL_ES OpenGL";
+        supportedClientAPIs += " OpenGL";
     }
-    else
-    {
-        mClientAPIString = "OpenGL_ES";
-    }
+#endif  // ANGLE_ENABLE_GL_DESKTOP_FRONTEND
+
+    mClientAPIString = supportedClientAPIs;
 }
 
 void Display::initializeFrontendFeatures()

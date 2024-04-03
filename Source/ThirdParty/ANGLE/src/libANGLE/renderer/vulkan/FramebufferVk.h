@@ -14,22 +14,21 @@
 #include "libANGLE/renderer/FramebufferImpl.h"
 #include "libANGLE/renderer/RenderTargetCache.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
 #include "libANGLE/renderer/vulkan/UtilsVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 
 namespace rx
 {
-class RendererVk;
 class RenderTargetVk;
 class WindowSurfaceVk;
 
 class FramebufferVk : public FramebufferImpl
 {
   public:
-    FramebufferVk(RendererVk *renderer, const gl::FramebufferState &state);
+    FramebufferVk(vk::Renderer *renderer, const gl::FramebufferState &state);
     ~FramebufferVk() override;
     void destroy(const gl::Context *context) override;
 
@@ -157,14 +156,14 @@ class FramebufferVk : public FramebufferImpl
 
     enum class RenderTargetImage
     {
-        AttachmentImage,
-        ResolveImage
+        Attachment,
+        Resolve,
+        FragmentShadingRate,
     };
 
     struct RenderTargetInfo
     {
-        RenderTargetInfo()
-            : renderTarget(nullptr), renderTargetImage(RenderTargetImage::AttachmentImage)
+        RenderTargetInfo() : renderTarget(nullptr), renderTargetImage(RenderTargetImage::Attachment)
         {}
         RenderTargetInfo(RenderTargetVk *renderTarget, RenderTargetImage renderTargetImage)
             : renderTarget(renderTarget), renderTargetImage(renderTargetImage)

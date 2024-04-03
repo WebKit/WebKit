@@ -21,7 +21,7 @@ class LinkTaskNULL : public LinkTask
     ~LinkTaskNULL() override = default;
     std::vector<std::shared_ptr<LinkSubTask>> link(const gl::ProgramLinkedResources &resources,
                                                    const gl::ProgramMergedVaryings &mergedVaryings,
-                                                   bool *areSubTasksOptionalOut) override
+                                                   bool *canSubTasksRunPostLinkOut) override
     {
         return {};
     }

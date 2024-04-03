@@ -325,6 +325,8 @@ class PLSProgram
     }
 
     GLuint get() const { return mProgram; }
+    operator GLuint() { return get(); }
+    operator GLuint() const { return get(); }
 
     void bind()
     {
@@ -2581,8 +2583,8 @@ TEST_P(PixelLocalStorageTest, PLSWithSamplers)
         pixelLocalStoreANGLE(pls2, value);
         pixelLocalStoreANGLE(pls1, vec4(0, 1, 1, 1));
     })");
-    glUniform1i(glGetUniformLocation(mProgram.get(), "tex0"), 0);
-    glUniform1i(glGetUniformLocation(mProgram.get(), "tex1"), 3);
+    glUniform1i(glGetUniformLocation(mProgram, "tex0"), 0);
+    glUniform1i(glGetUniformLocation(mProgram, "tex1"), 3);
 
     glFramebufferPixelLocalClearValuefvANGLE(1, ClearF(1, 1, 0, 1));
     glBeginPixelLocalStorageANGLE(

@@ -278,6 +278,12 @@ def _run_perf(args, common_args, env, steps_per_trial=None):
         if SKIP in json_results['num_failures_by_type']:
             return SKIP, None, None
 
+        # Extract debug files for https://issuetracker.google.com/296921272
+        if args.isolated_script_test_output:
+            isolated_out_dir = os.path.dirname(args.isolated_script_test_output)
+            for path in glob.glob(os.path.join(render_output_dir, '*gzdbg*')):
+                shutil.move(path, isolated_out_dir)
+
         sample_metrics = _read_metrics(os.path.join(render_output_dir, 'angle_metrics'))
 
         if sample_metrics:

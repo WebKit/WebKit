@@ -4,8 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_TRANSLATOR_MSL_NODETYPE_H_
-#define COMPILER_TRANSLATOR_MSL_NODETYPE_H_
+#ifndef COMPILER_TRANSLATOR_NODETYPE_H_
+#define COMPILER_TRANSLATOR_NODETYPE_H_
 
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
@@ -39,117 +39,117 @@ enum class NodeType
 // TIntermTraverser is a heavy object to construct.
 class GetNodeType : private TIntermTraverser
 {
-    NodeType nodeType;
-
   public:
     GetNodeType() : TIntermTraverser(true, false, false) {}
 
     NodeType operator()(TIntermNode &node)
     {
         node.visit(Visit::PreVisit, this);
-        return nodeType;
+        return mNodeType;
     }
 
   private:
-    void visitSymbol(TIntermSymbol *) override { nodeType = NodeType::Symbol; }
+    void visitSymbol(TIntermSymbol *) override { mNodeType = NodeType::Symbol; }
 
-    void visitConstantUnion(TIntermConstantUnion *) override { nodeType = NodeType::ConstantUnion; }
+    void visitConstantUnion(TIntermConstantUnion *) override { mNodeType = NodeType::ConstantUnion; }
 
     void visitFunctionPrototype(TIntermFunctionPrototype *) override
     {
-        nodeType = NodeType::FunctionPrototype;
+        mNodeType = NodeType::FunctionPrototype;
     }
 
     void visitPreprocessorDirective(TIntermPreprocessorDirective *) override
     {
-        nodeType = NodeType::PreprocessorDirective;
+        mNodeType = NodeType::PreprocessorDirective;
     }
 
     bool visitSwizzle(Visit, TIntermSwizzle *) override
     {
-        nodeType = NodeType::Swizzle;
+        mNodeType = NodeType::Swizzle;
         return false;
     }
 
     bool visitBinary(Visit, TIntermBinary *) override
     {
-        nodeType = NodeType::Binary;
+        mNodeType = NodeType::Binary;
         return false;
     }
 
     bool visitUnary(Visit, TIntermUnary *) override
     {
-        nodeType = NodeType::Unary;
+        mNodeType = NodeType::Unary;
         return false;
     }
 
     bool visitTernary(Visit, TIntermTernary *) override
     {
-        nodeType = NodeType::Ternary;
+        mNodeType = NodeType::Ternary;
         return false;
     }
 
     bool visitIfElse(Visit, TIntermIfElse *) override
     {
-        nodeType = NodeType::IfElse;
+        mNodeType = NodeType::IfElse;
         return false;
     }
 
     bool visitSwitch(Visit, TIntermSwitch *) override
     {
-        nodeType = NodeType::Switch;
+        mNodeType = NodeType::Switch;
         return false;
     }
 
     bool visitCase(Visit, TIntermCase *) override
     {
-        nodeType = NodeType::Case;
+        mNodeType = NodeType::Case;
         return false;
     }
 
     bool visitFunctionDefinition(Visit, TIntermFunctionDefinition *) override
     {
-        nodeType = NodeType::FunctionDefinition;
+        mNodeType = NodeType::FunctionDefinition;
         return false;
     }
 
     bool visitAggregate(Visit, TIntermAggregate *) override
     {
-        nodeType = NodeType::Aggregate;
+        mNodeType = NodeType::Aggregate;
         return false;
     }
 
     bool visitBlock(Visit, TIntermBlock *) override
     {
-        nodeType = NodeType::Block;
+        mNodeType = NodeType::Block;
         return false;
     }
 
     bool visitGlobalQualifierDeclaration(Visit, TIntermGlobalQualifierDeclaration *) override
     {
-        nodeType = NodeType::GlobalQualifierDeclaration;
+        mNodeType = NodeType::GlobalQualifierDeclaration;
         return false;
     }
 
     bool visitDeclaration(Visit, TIntermDeclaration *) override
     {
-        nodeType = NodeType::Declaration;
+        mNodeType = NodeType::Declaration;
         return false;
     }
 
     bool visitLoop(Visit, TIntermLoop *) override
     {
-        nodeType = NodeType::Loop;
+        mNodeType = NodeType::Loop;
         return false;
     }
 
     bool visitBranch(Visit, TIntermBranch *) override
     {
-        nodeType = NodeType::Branch;
+        mNodeType = NodeType::Branch;
         return false;
     }
+
+    NodeType mNodeType;
 };
 
 }  // namespace sh
 
-#endif  // COMPILER_TRANSLATOR_MSL_NODETYPE_H_
+#endif  // COMPILER_TRANSLATOR_NODETYPE_H_

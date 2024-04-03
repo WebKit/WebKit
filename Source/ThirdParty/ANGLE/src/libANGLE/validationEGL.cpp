@@ -5163,7 +5163,9 @@ bool ValidateBindAPI(const ValidationContext *val, const EGLenum api)
     switch (api)
     {
         case EGL_OPENGL_ES_API:
+#ifdef ANGLE_ENABLE_GL_DESKTOP_FRONTEND
         case EGL_OPENGL_API:
+#endif  // ANGLE_ENABLE_GL_DESKTOP_FRONTEND
             break;
         case EGL_OPENVG_API:
             val->setError(EGL_BAD_PARAMETER);

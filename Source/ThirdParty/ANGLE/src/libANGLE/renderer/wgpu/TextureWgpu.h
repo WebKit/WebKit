@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_WGPU_TEXTUREWGPU_H_
 
 #include "libANGLE/renderer/TextureImpl.h"
+#include "libANGLE/renderer/wgpu/wgpu_helpers.h"
 
 namespace rx
 {
@@ -162,6 +163,11 @@ class TextureWgpu : public TextureImpl
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
+
+    webgpu::ImageHelper &getImage() { return mImage; }
+
+  private:
+    webgpu::ImageHelper mImage;
 };
 
 }  // namespace rx

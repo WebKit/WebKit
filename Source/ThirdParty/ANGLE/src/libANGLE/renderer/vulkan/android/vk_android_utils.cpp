@@ -10,7 +10,7 @@
 
 #include "common/android_util.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -26,7 +26,7 @@ namespace vk
 namespace
 {
 #if defined(ANGLE_PLATFORM_ANDROID)
-DisplayVkAndroid *GetDisplayVkAndroid(RendererVk *renderer)
+DisplayVkAndroid *GetDisplayVkAndroid(Renderer *renderer)
 {
     DisplayVk *displayVk = static_cast<DisplayVk *>(renderer->getGlobalOps());
     return static_cast<DisplayVkAndroid *>(displayVk);
@@ -112,10 +112,10 @@ angle::Result InitAndroidExternalMemory(Context *context,
 #endif
 }
 
-void ReleaseAndroidExternalMemory(RendererVk *rendererVk, EGLClientBuffer clientBuffer)
+void ReleaseAndroidExternalMemory(Renderer *renderer, EGLClientBuffer clientBuffer)
 {
 #if defined(ANGLE_PLATFORM_ANDROID)
-    const AHBFunctions &functions = GetDisplayVkAndroid(rendererVk)->getAHBFunctions();
+    const AHBFunctions &functions = GetDisplayVkAndroid(renderer)->getAHBFunctions();
     ASSERT(functions.valid());
     struct AHardwareBuffer *hardwareBuffer =
         angle::android::ClientBufferToAHardwareBuffer(clientBuffer);

@@ -243,6 +243,7 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
 
     sources = angle_end2end_tests_sources + [ "angle_end2end_tests_main.cpp" ]
     libs = []
+    defines = []
     configs += [ "${angle_root}:libANGLE_config" ]
 
     if (is_ios) {
@@ -328,6 +329,10 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
 
       # Need to bundle the libraries inside the .app.
       deps += [ "$angle_root:angle" ]
+    }
+
+    if (angle_enable_gl_desktop_frontend) {
+      defines += [ "ANGLE_ENABLE_GL_DESKTOP_FRONTEND" ]
     }
   }
 }

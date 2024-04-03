@@ -328,8 +328,6 @@
 		31CDFFFD249184B000486F27 /* imageformats.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598B2284FC400018F2D8 /* imageformats.h */; };
 		31CDFFFE249184B000486F27 /* copyimage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59862284FC400018F2D8 /* copyimage.h */; };
 		31CDFFFF249184B000486F27 /* generatemip.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598C2284FC400018F2D8 /* generatemip.h */; };
-		3A084D472B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A084D452B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h */; };
-		3A084D482B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A084D462B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp */; };
 		3A0EBF992980B495002C72BC /* logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF812980B445002C72BC /* logging.h */; };
 		3A0EBF9A2980B495002C72BC /* sys_byteorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF822980B445002C72BC /* sys_byteorder.h */; };
 		3A0EBF9B2980B49D002C72BC /* sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF942980B445002C72BC /* sha1.h */; };
@@ -376,6 +374,12 @@
 		4458D1242B635DDB00B64F47 /* libANGLE-shared.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */; };
 		4458D1272B635E1000B64F47 /* translator_fuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */; };
 		6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E27925827EA43F500B1BA86 /* BaseTypes.cpp */; };
+		7B1538852BBC2C7A00B50C74 /* IntermRebuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1538812BBC2C7A00B50C74 /* IntermRebuild.cpp */; };
+		7B1538862BBC2C7A00B50C74 /* NodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538822BBC2C7A00B50C74 /* NodeType.h */; };
+		7B1538872BBC2C7A00B50C74 /* IntermRebuild.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */; };
+		7B1538882BBC2C7A00B50C74 /* AsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538842BBC2C7A00B50C74 /* AsNode.h */; };
+		7B15388B2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */; };
+		7B15388C2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */; };
 		7B19599326C3C22000C09322 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
 		7B19599426C3C22000C09322 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
 		7B19599526C3C64E00C09322 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD594E2284ECD10018F2D8 /* xxhash.c */; };
@@ -383,12 +387,8 @@
 		7B24C80D28D9A25100E2DDB1 /* SymbolTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B24C80B28D9A25000E2DDB1 /* SymbolTable.cpp */; };
 		7B24C80E28D9A25100E2DDB1 /* SymbolTable_ESSL_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B24C80C28D9A25000E2DDB1 /* SymbolTable_ESSL_autogen.cpp */; };
 		7B359D552A7CECAE0016DC59 /* DriverUniformMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D4B2A7CECAE0016DC59 /* DriverUniformMetal.cpp */; };
-		7B359D562A7CECAE0016DC59 /* NodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D4C2A7CECAE0016DC59 /* NodeType.h */; };
-		7B359D572A7CECAE0016DC59 /* IntermRebuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D4D2A7CECAE0016DC59 /* IntermRebuild.cpp */; };
-		7B359D582A7CECAE0016DC59 /* IntermRebuild.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D4E2A7CECAE0016DC59 /* IntermRebuild.h */; };
 		7B359D592A7CECAE0016DC59 /* DriverUniformMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D4F2A7CECAE0016DC59 /* DriverUniformMetal.h */; };
 		7B359D5A2A7CECAE0016DC59 /* UtilsMSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D502A7CECAE0016DC59 /* UtilsMSL.cpp */; };
-		7B359D5B2A7CECAE0016DC59 /* AsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D512A7CECAE0016DC59 /* AsNode.h */; };
 		7B359D5C2A7CECAE0016DC59 /* TranslatorMSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D522A7CECAE0016DC59 /* TranslatorMSL.h */; };
 		7B359D5D2A7CECAE0016DC59 /* UtilsMSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D532A7CECAE0016DC59 /* UtilsMSL.h */; };
 		7B359D5E2A7CECAE0016DC59 /* TranslatorMSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D542A7CECAE0016DC59 /* TranslatorMSL.cpp */; };
@@ -1034,8 +1034,6 @@
 		31B15721236B803300CAA4FD /* SystemInfo_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemInfo_internal.h; sourceTree = "<group>"; };
 		31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ANGLE-dynamic.xcconfig"; sourceTree = "<group>"; };
 		31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libANGLE-shared.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3A084D452B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateStructFromFunctionDeclarations.h; sourceTree = "<group>"; };
-		3A084D462B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateStructFromFunctionDeclarations.cpp; sourceTree = "<group>"; };
 		3A0EBF802980B445002C72BC /* trace_event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace_event.h; sourceTree = "<group>"; };
 		3A0EBF812980B445002C72BC /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
 		3A0EBF822980B445002C72BC /* sys_byteorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sys_byteorder.h; sourceTree = "<group>"; };
@@ -1462,16 +1460,18 @@
 		7B037F9329E98CF100D23E74 /* SourcesCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourcesCGL.cpp; path = WebKit/SourcesCGL.cpp; sourceTree = "<group>"; };
 		7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourcesPlatform.cpp; path = WebKit/SourcesPlatform.cpp; sourceTree = "<group>"; };
 		7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "SourcesPlatform-mm.mm"; path = "WebKit/SourcesPlatform-mm.mm"; sourceTree = "<group>"; };
+		7B1538812BBC2C7A00B50C74 /* IntermRebuild.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntermRebuild.cpp; sourceTree = "<group>"; };
+		7B1538822BBC2C7A00B50C74 /* NodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeType.h; sourceTree = "<group>"; };
+		7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntermRebuild.h; sourceTree = "<group>"; };
+		7B1538842BBC2C7A00B50C74 /* AsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsNode.h; sourceTree = "<group>"; };
+		7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateStructFromFunctionDeclarations.cpp; sourceTree = "<group>"; };
+		7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateStructFromFunctionDeclarations.h; sourceTree = "<group>"; };
 		7B24C80928D9A20D00E2DDB1 /* ImmutableString_ESSL_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableString_ESSL_autogen.cpp; sourceTree = "<group>"; };
 		7B24C80B28D9A25000E2DDB1 /* SymbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable.cpp; sourceTree = "<group>"; };
 		7B24C80C28D9A25000E2DDB1 /* SymbolTable_ESSL_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable_ESSL_autogen.cpp; sourceTree = "<group>"; };
 		7B359D4B2A7CECAE0016DC59 /* DriverUniformMetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverUniformMetal.cpp; sourceTree = "<group>"; };
-		7B359D4C2A7CECAE0016DC59 /* NodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeType.h; sourceTree = "<group>"; };
-		7B359D4D2A7CECAE0016DC59 /* IntermRebuild.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntermRebuild.cpp; sourceTree = "<group>"; };
-		7B359D4E2A7CECAE0016DC59 /* IntermRebuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntermRebuild.h; sourceTree = "<group>"; };
 		7B359D4F2A7CECAE0016DC59 /* DriverUniformMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverUniformMetal.h; sourceTree = "<group>"; };
 		7B359D502A7CECAE0016DC59 /* UtilsMSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UtilsMSL.cpp; sourceTree = "<group>"; };
-		7B359D512A7CECAE0016DC59 /* AsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsNode.h; sourceTree = "<group>"; };
 		7B359D522A7CECAE0016DC59 /* TranslatorMSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranslatorMSL.h; sourceTree = "<group>"; };
 		7B359D532A7CECAE0016DC59 /* UtilsMSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilsMSL.h; sourceTree = "<group>"; };
 		7B359D542A7CECAE0016DC59 /* TranslatorMSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorMSL.cpp; sourceTree = "<group>"; };
@@ -1916,6 +1916,7 @@
 				FF81FF202581919700894E24 /* msl */,
 				5CBD596922826A00002B22AA /* treeops */,
 				5C55D6EA22826C9800B5BA2C /* treeutil */,
+				7B1538842BBC2C7A00B50C74 /* AsNode.h */,
 				6E27925827EA43F500B1BA86 /* BaseTypes.cpp */,
 				31012DA018B97B9B0039062F /* BaseTypes.h */,
 				5C1DBBFD1B04375F00235552 /* blocklayout.cpp */,
@@ -1963,9 +1964,12 @@
 				31012DCA18B97B9B0039062F /* InitializeGlobals.h */,
 				5C1DBC091B04375F00235552 /* IntermNode.cpp */,
 				5C1DBC0A1B04375F00235552 /* IntermNode.h */,
+				7B1538812BBC2C7A00B50C74 /* IntermRebuild.cpp */,
+				7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */,
 				315EBD651FCE443100AC7A89 /* IsASTDepthBelowLimit.cpp */,
 				315EBD571FCE442D00AC7A89 /* IsASTDepthBelowLimit.h */,
 				5C1DBC0B1B04375F00235552 /* length_limits.h */,
+				7B1538822BBC2C7A00B50C74 /* NodeType.h */,
 				5C1DBC0C1B04375F00235552 /* Operator.cpp */,
 				FF194FBB27432C4D006A97A3 /* Operator_autogen.h */,
 				315EBD751FCE443500AC7A89 /* OutputTree.cpp */,
@@ -2687,8 +2691,8 @@
 				5C55D62B22826B9700B5BA2C /* RewriteTexelFetchOffset.h */,
 				5C55D60322826B9000B5BA2C /* SeparateDeclarations.cpp */,
 				5C55D61422826B9100B5BA2C /* SeparateDeclarations.h */,
-				3A084D462B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp */,
-				3A084D452B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h */,
+				7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */,
+				7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */,
 				FF194FD427432CC2006A97A3 /* SeparateStructFromUniformDeclarations.cpp */,
 				FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */,
 				5C55D61722826B9200B5BA2C /* SimplifyLoopConditions.cpp */,
@@ -3250,7 +3254,6 @@
 		FF81FF202581919700894E24 /* msl */ = {
 			isa = PBXGroup;
 			children = (
-				7B359D512A7CECAE0016DC59 /* AsNode.h */,
 				FF81FF3E2581919700894E24 /* AstHelpers.cpp */,
 				FF81FF472581919700894E24 /* AstHelpers.h */,
 				3A2C66ED29236D4100FEDF46 /* ConstantNames.cpp */,
@@ -3265,8 +3268,6 @@
 				FF81FF522581919700894E24 /* EmitMetal.h */,
 				FF81FF512581919700894E24 /* IdGen.cpp */,
 				FF81FF382581919700894E24 /* IdGen.h */,
-				7B359D4D2A7CECAE0016DC59 /* IntermRebuild.cpp */,
-				7B359D4E2A7CECAE0016DC59 /* IntermRebuild.h */,
 				FF81FF322581919700894E24 /* Layout.cpp */,
 				FF81FF402581919700894E24 /* Layout.h */,
 				FF81FF5A2581919700894E24 /* MapFunctionsToDefinitions.cpp */,
@@ -3277,7 +3278,6 @@
 				FF81FF562581919700894E24 /* ModifyStruct.h */,
 				FF81FF212581919700894E24 /* Name.cpp */,
 				FF81FF242581919700894E24 /* Name.h */,
-				7B359D4C2A7CECAE0016DC59 /* NodeType.h */,
 				FF81FF372581919700894E24 /* Pipeline.cpp */,
 				FF81FF492581919700894E24 /* Pipeline.h */,
 				FF81FF502581919700894E24 /* ProgramPrelude.cpp */,
@@ -3316,7 +3316,7 @@
 				31CD007F249184FD00486F27 /* angletypes.h in Headers */,
 				31CDFF542491848C00486F27 /* angleutils.h in Headers */,
 				7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */,
-				7B359D5B2A7CECAE0016DC59 /* AsNode.h in Headers */,
+				7B1538882BBC2C7A00B50C74 /* AsNode.h in Headers */,
 				3A2C66FB292372CC00FEDF46 /* AstcDecompressor.h in Headers */,
 				31CD0054249184FC00486F27 /* AttributeMap.h in Headers */,
 				3A0EBF9E2980B4A0002C72BC /* base_export.h in Headers */,
@@ -3502,7 +3502,7 @@
 				31CDFFE9249184A700486F27 /* IntermNode.h in Headers */,
 				31CDFFB3249184A100486F27 /* IntermNode_util.h in Headers */,
 				31CDFFB4249184A100486F27 /* IntermNodePatternMatcher.h in Headers */,
-				7B359D582A7CECAE0016DC59 /* IntermRebuild.h in Headers */,
+				7B1538872BBC2C7A00B50C74 /* IntermRebuild.h in Headers */,
 				31CDFFB0249184A100486F27 /* IntermTraverse.h in Headers */,
 				7B359DB32A7CEDAA0016DC59 /* IntroduceVertexIndexID.h in Headers */,
 				31CD000B249184BB00486F27 /* IOSurfaceSurfaceEAGL.h in Headers */,
@@ -3535,7 +3535,7 @@
 				7B359DA22A7CEDAA0016DC59 /* NameEmbeddedUniformStructsMetal.h in Headers */,
 				3A0EBF9F2980B4A0002C72BC /* no_destructor.h in Headers */,
 				31CDFFB5249184A100486F27 /* NodeSearch.h in Headers */,
-				7B359D562A7CECAE0016DC59 /* NodeType.h in Headers */,
+				7B1538862BBC2C7A00B50C74 /* NodeType.h in Headers */,
 				31CD001D249184E700486F27 /* null_functions.h in Headers */,
 				31CDFF732491849200486F27 /* numeric_lex.h in Headers */,
 				31CD0052249184FC00486F27 /* Observer.h in Headers */,
@@ -3620,7 +3620,6 @@
 				7B359DA82A7CEDAA0016DC59 /* RewriteInterpolants.h in Headers */,
 				7B359D9F2A7CEDAA0016DC59 /* RewriteOutArgs.h in Headers */,
 				7B7608352898326C000012A1 /* RewritePixelLocalStorage.h in Headers */,
-				3A084D472B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.h in Headers */,
 				7B359D6F2A7CED3C0016DC59 /* RewriteRepeatedAssignToSwizzled.h in Headers */,
 				FF62F64327446DC800AD6EDC /* RewriteSampleMaskVariable.h in Headers */,
 				31CDFF7D2491849800486F27 /* RewriteStructSamplers.h in Headers */,
@@ -3646,6 +3645,7 @@
 				7B359DAB2A7CEDAA0016DC59 /* SeparateCompoundExpressions.h in Headers */,
 				7B359DAD2A7CEDAA0016DC59 /* SeparateCompoundStructDeclarations.h in Headers */,
 				31CDFF8E2491849800486F27 /* SeparateDeclarations.h in Headers */,
+				7B15388C2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h in Headers */,
 				FF194FE427432CC3006A97A3 /* SeparateStructFromUniformDeclarations.h in Headers */,
 				31CD0031249184F400486F27 /* serial_utils.h in Headers */,
 				31CDFFD0249184A700486F27 /* Severity.h in Headers */,
@@ -4028,7 +4028,7 @@
 				DF83E2B92639FD83000825EF /* IntermNode.cpp in Sources */,
 				DF83E2B22639FD83000825EF /* IntermNode_util.cpp in Sources */,
 				DF83E28C2639FD83000825EF /* IntermNodePatternMatcher.cpp in Sources */,
-				7B359D572A7CECAE0016DC59 /* IntermRebuild.cpp in Sources */,
+				7B1538852BBC2C7A00B50C74 /* IntermRebuild.cpp in Sources */,
 				DF83E2CF2639FD84000825EF /* IntermTraverse.cpp in Sources */,
 				7B359DAE2A7CEDAA0016DC59 /* IntroduceVertexIndexID.cpp in Sources */,
 				DF83E3752639FEB8000825EF /* IOSurfaceSurfaceMtl.mm in Sources */,
@@ -4131,7 +4131,6 @@
 				DF83E2762639FD33000825EF /* RemoveUnreferencedVariables.cpp in Sources */,
 				DF83E31F2639FE17000825EF /* Renderbuffer.cpp in Sources */,
 				DF83E36E2639FE92000825EF /* RenderbufferGL.cpp in Sources */,
-				3A084D482B8C317B00374F23 /* SeparateStructFromFunctionDeclarations.cpp in Sources */,
 				7B76083B289832BD000012A1 /* RenderbufferImpl.cpp in Sources */,
 				DF83E3852639FEB8000825EF /* RenderBufferMtl.mm in Sources */,
 				DF83E39C2639FED4000825EF /* renderer_utils.cpp in Sources */,
@@ -4169,6 +4168,7 @@
 				7B359DA92A7CEDAA0016DC59 /* SeparateCompoundExpressions.cpp in Sources */,
 				7B359DA62A7CEDAA0016DC59 /* SeparateCompoundStructDeclarations.cpp in Sources */,
 				DF83E28A2639FD33000825EF /* SeparateDeclarations.cpp in Sources */,
+				7B15388B2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp in Sources */,
 				FF194FE227432CC3006A97A3 /* SeparateStructFromUniformDeclarations.cpp in Sources */,
 				3A2C67032923766600FEDF46 /* serialize_mock.cpp in Sources */,
 				3A0EBF9C2980B49D002C72BC /* sha1.cc in Sources */,

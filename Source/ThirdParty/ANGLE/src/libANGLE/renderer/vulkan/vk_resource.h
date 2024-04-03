@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// ResourceVk:
+// Resource:
 //    Resource lifetime tracking in the Vulkan back-end.
 //
 
@@ -158,8 +158,8 @@ class SharedGarbage final : angle::NonCopyable
     ~SharedGarbage();
     SharedGarbage &operator=(SharedGarbage &&rhs);
 
-    bool destroyIfComplete(RendererVk *renderer);
-    bool hasResourceUseSubmitted(RendererVk *renderer) const;
+    bool destroyIfComplete(Renderer *renderer);
+    bool hasResourceUseSubmitted(Renderer *renderer) const;
     // This is not being used now.
     VkDeviceSize getSize() const { return 0; }
 
@@ -189,7 +189,7 @@ class SharedGarbageList final : angle::NonCopyable
         ASSERT(mUnsubmittedQueue.empty());
     }
 
-    void add(RendererVk *renderer, T &&garbage)
+    void add(Renderer *renderer, T &&garbage)
     {
         VkDeviceSize size = garbage.getSize();
         if (garbage.destroyIfComplete(renderer))
@@ -230,7 +230,7 @@ class SharedGarbageList final : angle::NonCopyable
     void resetDestroyedGarbageSize() { mTotalGarbageDestroyed = 0; }
 
     // Number of bytes destroyed is returned.
-    void cleanupSubmittedGarbage(RendererVk *renderer)
+    void cleanupSubmittedGarbage(Renderer *renderer)
     {
         std::unique_lock<std::mutex> lock(mSubmittedQueueDequeueMutex);
         VkDeviceSize bytesDestroyed = 0;
@@ -254,7 +254,7 @@ class SharedGarbageList final : angle::NonCopyable
     // this list. Since this call is only used for pending submission garbage list and that list
     // only temporary stores garbage, it does not destroy garbage in this list. And moving garbage
     // around is expected to be cheap in general, so lock contention is not expected.
-    void cleanupUnsubmittedGarbage(RendererVk *renderer)
+    void cleanupUnsubmittedGarbage(Renderer *renderer)
     {
         std::unique_lock<std::mutex> enqueueLock(mMutex);
         size_t count            = mUnsubmittedQueue.size();
@@ -399,14 +399,14 @@ class ReadWriteResource : public Resource
     ResourceUse mWriteUse;
 };
 
-// Adds "void release(RendererVk *)" method for collecting garbage.
+// Adds "void release(Renderer *)" method for collecting garbage.
 // Enables RendererScoped<> for classes that support DeviceScoped<>.
 template <class T>
 class ReleasableResource final : public Resource
 {
   public:
     // Calls collectGarbage() on the object.
-    void release(RendererVk *renderer);
+    void release(Renderer *renderer);
 
     const T &get() const { return mObject; }
     T &get() { return mObject; }

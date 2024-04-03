@@ -16,8 +16,10 @@
 
 namespace rx
 {
-
-class RendererVk;
+namespace vk
+{
+class Renderer;
+}
 
 class DeviceVk : public DeviceImpl
 {
@@ -31,7 +33,7 @@ class DeviceVk : public DeviceImpl
                             void **outValue) override;
     EGLint getType() override;
     void generateExtensions(egl::DeviceExtensions *outExtensions) const override;
-    RendererVk *getRenderer() const { return mRenderer; }
+    vk::Renderer *getRenderer() const { return mRenderer; }
 
   private:
     // Wrappers for some global vulkan methods which need to read env variables.
@@ -51,7 +53,7 @@ class DeviceVk : public DeviceImpl
     static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL WrappedGetInstanceProcAddr(VkInstance instance,
                                                                                const char *pName);
 
-    RendererVk *mRenderer = nullptr;
+    vk::Renderer *mRenderer = nullptr;
 };
 
 }  // namespace rx

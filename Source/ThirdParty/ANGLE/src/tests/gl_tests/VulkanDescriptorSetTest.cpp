@@ -80,7 +80,7 @@ TEST_P(VulkanDescriptorSetTest, AtomicCounterReadLimitedDescriptorPool)
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     // The initial value of counter 'ac' is 3u.
     unsigned int bufferData[3] = {11u, 3u, 1u};
@@ -91,7 +91,7 @@ TEST_P(VulkanDescriptorSetTest, AtomicCounterReadLimitedDescriptorPool)
     for (int i = 0; i < 5; ++i)
     {
         glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(bufferData), bufferData, GL_STATIC_DRAW);
-        drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.0f);
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
         ASSERT_GL_NO_ERROR();
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
     }

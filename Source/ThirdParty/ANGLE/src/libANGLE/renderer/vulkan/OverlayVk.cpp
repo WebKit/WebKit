@@ -23,8 +23,8 @@ OverlayVk::~OverlayVk() = default;
 
 void OverlayVk::onDestroy(const gl::Context *context)
 {
-    RendererVk *renderer = vk::GetImpl(context)->getRenderer();
-    VkDevice device      = renderer->getDevice();
+    vk::Renderer *renderer = vk::GetImpl(context)->getRenderer();
+    VkDevice device        = renderer->getDevice();
 
     mFontImage.destroy(renderer);
     mFontImageView.destroy(device);
@@ -32,7 +32,7 @@ void OverlayVk::onDestroy(const gl::Context *context)
 
 angle::Result OverlayVk::createFont(ContextVk *contextVk)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     // Create a buffer to stage font data upload.
     VkBufferCreateInfo bufferCreateInfo = {};
@@ -122,7 +122,7 @@ angle::Result OverlayVk::onPresent(ContextVk *contextVk,
         ANGLE_TRY(createFont(contextVk));
     }
 
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     vk::RendererScoped<vk::BufferHelper> textDataBuffer(renderer);
     vk::RendererScoped<vk::BufferHelper> graphDataBuffer(renderer);

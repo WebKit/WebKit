@@ -9,7 +9,7 @@
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include "libANGLE/CLPlatform.h"
 #include "libANGLE/cl_utils.h"
@@ -40,8 +40,8 @@ std::string CreateExtensionString(const NameVersionVector &extList)
 
 angle::Result InitBackendRenderer(egl::Display *display)
 {
-    // Initialize the backend RendererVk by initializing a dummy/default EGL display object
-    // TODO(aannestrand) Implement display-less RendererVk init
+    // Initialize the backend vk::Renderer by initializing a dummy/default EGL display object
+    // TODO(aannestrand) Implement display-less vk::Renderer init
     // http://anglebug.com/8515
     // TODO(aannestrand) Add CL and EGL context testing
     // http://anglebug.com/8514

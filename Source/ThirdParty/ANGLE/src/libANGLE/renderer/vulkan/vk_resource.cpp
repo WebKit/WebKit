@@ -7,7 +7,7 @@
 //    Resource lifetime tracking in the Vulkan back-end.
 //
 
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 
@@ -26,7 +26,7 @@ angle::Result Resource::waitForIdle(ContextVk *contextVk,
         ANGLE_TRY(contextVk->flushImpl(nullptr, nullptr, reason));
     }
 
-    RendererVk *renderer = contextVk->getRenderer();
+    Renderer *renderer = contextVk->getRenderer();
     // Make sure the driver is done with the resource.
     if (!renderer->hasResourceUseFinished(mUse))
     {
@@ -79,7 +79,7 @@ SharedGarbage &SharedGarbage::operator=(SharedGarbage &&rhs)
     return *this;
 }
 
-bool SharedGarbage::destroyIfComplete(RendererVk *renderer)
+bool SharedGarbage::destroyIfComplete(Renderer *renderer)
 {
     if (renderer->hasResourceUseFinished(mLifetime))
     {
@@ -92,14 +92,14 @@ bool SharedGarbage::destroyIfComplete(RendererVk *renderer)
     return false;
 }
 
-bool SharedGarbage::hasResourceUseSubmitted(RendererVk *renderer) const
+bool SharedGarbage::hasResourceUseSubmitted(Renderer *renderer) const
 {
     return renderer->hasResourceUseSubmitted(mLifetime);
 }
 
 // ReleasableResource implementation.
 template <class T>
-void ReleasableResource<T>::release(RendererVk *renderer)
+void ReleasableResource<T>::release(Renderer *renderer)
 {
     renderer->collectGarbage(mUse, &mObject);
 }

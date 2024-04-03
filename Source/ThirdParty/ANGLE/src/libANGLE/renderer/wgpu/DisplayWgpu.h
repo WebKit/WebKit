@@ -90,6 +90,8 @@ class DisplayWgpu : public DisplayImpl
 
     void populateFeatureList(angle::FeatureList *features) override {}
 
+    wgpu::Device &getDevice() { return mDevice; }
+
   private:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;
     void generateCaps(egl::Caps *outCaps) const override;

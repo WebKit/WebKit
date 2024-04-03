@@ -8,8 +8,8 @@
 
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/SymbolTable.h"
-#include "compiler/translator/msl/AsNode.h"
-#include "compiler/translator/msl/IntermRebuild.h"
+#include "compiler/translator/AsNode.h"
+#include "compiler/translator/IntermRebuild.h"
 
 #define GUARD2(cond, failVal) \
     do                        \

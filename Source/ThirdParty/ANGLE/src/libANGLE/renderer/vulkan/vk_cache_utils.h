@@ -15,8 +15,8 @@
 #include "common/FixedVector.h"
 #include "common/WorkerThread.h"
 #include "libANGLE/Uniform.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace gl
@@ -1102,7 +1102,7 @@ class YcbcrConversionDesc final
 
     bool valid() const { return mExternalOrVkFormat != 0; }
     void reset();
-    void update(RendererVk *rendererVk,
+    void update(Renderer *renderer,
                 uint64_t externalFormat,
                 VkSamplerYcbcrModelConversion conversionModel,
                 VkSamplerYcbcrRange colorRange,
@@ -1113,7 +1113,7 @@ class YcbcrConversionDesc final
                 angle::FormatID intendedFormatID,
                 YcbcrLinearFilterSupport linearFilterSupported);
     VkFilter getChromaFilter() const { return static_cast<VkFilter>(mChromaFilter); }
-    bool updateChromaFilter(RendererVk *rendererVk, VkFilter filter);
+    bool updateChromaFilter(Renderer *renderer, VkFilter filter);
     void updateConversionModel(VkSamplerYcbcrModelConversion conversionModel);
     uint64_t getExternalFormat() const { return mIsExternalFormat ? mExternalOrVkFormat : 0; }
 
@@ -1301,7 +1301,7 @@ class PipelineCacheAccess
                                    const VkComputePipelineCreateInfo &createInfo,
                                    vk::Pipeline *pipelineOut);
 
-    void merge(RendererVk *renderer, const vk::PipelineCache &pipelineCache);
+    void merge(Renderer *renderer, const vk::PipelineCache &pipelineCache);
 
     bool isThreadSafe() const { return mMutex != nullptr; }
 
@@ -1318,7 +1318,7 @@ class PipelineCacheAccess
 class CreateMonolithicPipelineTask : public Context, public angle::Closure
 {
   public:
-    CreateMonolithicPipelineTask(RendererVk *renderer,
+    CreateMonolithicPipelineTask(Renderer *renderer,
                                  const PipelineCacheAccess &pipelineCache,
                                  const PipelineLayout &pipelineLayout,
                                  const ShaderModuleMap &shaders,
@@ -1487,7 +1487,7 @@ class FramebufferHelper : public Resource
     FramebufferHelper &operator=(FramebufferHelper &&other);
 
     angle::Result init(ContextVk *contextVk, const VkFramebufferCreateInfo &createInfo);
-    void destroy(RendererVk *rendererVk);
+    void destroy(Renderer *renderer);
     void release(ContextVk *contextVk);
 
     bool valid() { return mFramebuffer.valid(); }
@@ -2042,9 +2042,9 @@ class SharedCacheKeyManager
     void addKey(const SharedCacheKeyT &key);
     // Iterate over the descriptor array and release the descriptor and cache.
     void releaseKeys(ContextVk *contextVk);
-    void releaseKeys(RendererVk *rendererVk);
+    void releaseKeys(Renderer *renderer);
     // Iterate over the descriptor array and destroy the descriptor and cache.
-    void destroyKeys(RendererVk *renderer);
+    void destroyKeys(Renderer *renderer);
     void clear();
 
     // The following APIs are expected to be used for assertion only
@@ -2266,7 +2266,7 @@ class FramebufferCache final : angle::NonCopyable
     FramebufferCache() = default;
     ~FramebufferCache() { ASSERT(mPayload.empty()); }
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(vk::Renderer *renderer);
 
     bool get(ContextVk *contextVk, const vk::FramebufferDesc &desc, vk::Framebuffer &framebuffer);
     void insert(ContextVk *contextVk,
@@ -2529,7 +2529,7 @@ class DescriptorSetLayoutCache final : angle::NonCopyable
     DescriptorSetLayoutCache();
     ~DescriptorSetLayoutCache();
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(vk::Renderer *renderer);
 
     angle::Result getDescriptorSetLayout(
         vk::Context *context,
@@ -2548,7 +2548,7 @@ class PipelineLayoutCache final : public HasCacheStats<VulkanCacheType::Pipeline
     PipelineLayoutCache();
     ~PipelineLayoutCache() override;
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(vk::Renderer *renderer);
 
     angle::Result getPipelineLayout(
         vk::Context *context,
@@ -2567,7 +2567,7 @@ class SamplerCache final : public HasCacheStats<VulkanCacheType::Sampler>
     SamplerCache();
     ~SamplerCache() override;
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(vk::Renderer *renderer);
 
     angle::Result getSampler(ContextVk *contextVk,
                              const vk::SamplerDesc &desc,
@@ -2585,7 +2585,7 @@ class SamplerYcbcrConversionCache final
     SamplerYcbcrConversionCache();
     ~SamplerYcbcrConversionCache() override;
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(vk::Renderer *renderer);
 
     angle::Result getSamplerYcbcrConversion(vk::Context *context,
                                             const vk::YcbcrConversionDesc &ycbcrConversionDesc,

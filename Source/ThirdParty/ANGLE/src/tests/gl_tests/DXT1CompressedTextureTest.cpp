@@ -228,7 +228,7 @@ TEST_P(DXT1CompressedTextureTest, NonBlockSizesMipLevels)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     constexpr GLuint kWidth  = 674;
     constexpr GLuint kHeight = 114;
@@ -261,7 +261,7 @@ TEST_P(DXT1CompressedTextureTest, CompressedTexSubImageValidation)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     // Size mip 0 to a large size
     glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, pixel_0_width,
@@ -289,7 +289,7 @@ TEST_P(DXT1CompressedTextureTest, CopyTexSubImage2DDisallowed)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, pixel_0_width,
                            pixel_0_height, 0, pixel_0_size, nullptr);
@@ -454,7 +454,7 @@ TEST_P(DXT1CompressedTextureTestES3, CompressedTexSubImageValidation)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_ARRAY, texture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
 
     // Size mip 0 to a large size
     glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, pixel_0_width,
@@ -481,7 +481,7 @@ TEST_P(DXT1CompressedTextureTestES3, CompressedTexSubImage3DValidationPerSlice)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_ARRAY, texture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
     const GLenum format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 
     // 8x8x2, 4x4x2, 2x2x2, 1x1x2
@@ -516,7 +516,7 @@ TEST_P(DXT1CompressedTextureTestES3, CompressedTexSubImage3DValidationPerLevel)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_ARRAY, texture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
     const GLenum format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 
     // 8x8x2, 4x4x2, 2x2x2, 1x1x2
@@ -543,7 +543,7 @@ TEST_P(DXT1CompressedTextureTestES3, CopyTexSubImage3DDisallowed)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_compression_dxt1"));
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D_ARRAY, texture.get());
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
 
     GLsizei depth = 4;
     glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, pixel_0_width,

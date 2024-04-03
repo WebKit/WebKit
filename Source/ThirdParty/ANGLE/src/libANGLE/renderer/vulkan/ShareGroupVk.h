@@ -11,16 +11,14 @@
 #define LIBANGLE_RENDERER_VULKAN_SHAREGROUPVK_H_
 
 #include "libANGLE/renderer/ShareGroupImpl.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx
 {
 constexpr VkDeviceSize kMaxTotalEmptyBufferBytes = 16 * 1024 * 1024;
-
-class RendererVk;
 
 class TextureUpload
 {
@@ -62,12 +60,12 @@ class ShareGroupVk : public ShareGroupImpl
     // Used to flush the mutable textures more often.
     angle::Result onMutableTextureUpload(ContextVk *contextVk, TextureVk *newTexture);
 
-    vk::BufferPool *getDefaultBufferPool(RendererVk *renderer,
+    vk::BufferPool *getDefaultBufferPool(vk::Renderer *renderer,
                                          VkDeviceSize size,
                                          uint32_t memoryTypeIndex,
                                          BufferUsageType usageType);
-    void pruneDefaultBufferPools(RendererVk *renderer);
-    bool isDueForBufferPoolPrune(RendererVk *renderer);
+    void pruneDefaultBufferPools(vk::Renderer *renderer);
+    bool isDueForBufferPoolPrune(vk::Renderer *renderer);
 
     void calculateTotalBufferCount(size_t *bufferCount, VkDeviceSize *totalSize) const;
     void logBufferPools() const;

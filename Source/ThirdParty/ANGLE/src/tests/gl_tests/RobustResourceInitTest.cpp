@@ -392,7 +392,7 @@ TEST_P(RobustResourceInitTest, BufferData)
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
 
-    GLint testValueLoc = glGetAttribLocation(program.get(), "testValue");
+    GLint testValueLoc = glGetAttribLocation(program, "testValue");
     ASSERT_NE(-1, testValueLoc);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -400,7 +400,7 @@ TEST_P(RobustResourceInitTest, BufferData)
     glEnableVertexAttribArray(testValueLoc);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    drawQuad(program.get(), "position", 0.5f);
+    drawQuad(program, "position", 0.5f);
 
     ASSERT_GL_NO_ERROR();
 
@@ -1262,7 +1262,7 @@ TEST_P(RobustResourceInitTestES31, ImageTextureInit_R32UI)
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(1, texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32UI);
 
@@ -1792,20 +1792,19 @@ void RobustResourceInitTest::copyTexSubImage2DCustomFBOTest(int offsetX, int off
     const int fboSize = 16;
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texSize, texSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  nullptr);
     ASSERT_GL_NO_ERROR();
 
     GLRenderbuffer renderbuffer;
-    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer.get());
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, fboSize, fboSize);
     ASSERT_GL_NO_ERROR();
 
     GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                              renderbuffer.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
     ASSERT_GL_NO_ERROR();
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
@@ -1817,8 +1816,8 @@ void RobustResourceInitTest::copyTexSubImage2DCustomFBOTest(int offsetX, int off
     ASSERT_GL_NO_ERROR();
 
     GLFramebuffer readbackFBO;
-    glBindFramebuffer(GL_FRAMEBUFFER, readbackFBO.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(), 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, readbackFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     checkCustomFramebufferNonZeroPixels(texSize, texSize, -offsetX, -offsetY, fboSize, fboSize,
                                         GLColor::red);

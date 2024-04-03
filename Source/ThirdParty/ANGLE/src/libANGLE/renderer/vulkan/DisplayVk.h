@@ -17,8 +17,6 @@
 
 namespace rx
 {
-class RendererVk;
-
 class DisplayVk : public DisplayImpl, public vk::Context, public vk::GlobalOps
 {
   public:

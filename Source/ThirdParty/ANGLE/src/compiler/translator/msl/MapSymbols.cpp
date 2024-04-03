@@ -5,7 +5,7 @@
 //
 
 #include "compiler/translator/msl/MapSymbols.h"
-#include "compiler/translator/msl/IntermRebuild.h"
+#include "compiler/translator/IntermRebuild.h"
 
 using namespace sh;
 

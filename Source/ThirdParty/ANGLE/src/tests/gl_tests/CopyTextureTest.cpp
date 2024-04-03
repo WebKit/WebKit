@@ -2116,7 +2116,7 @@ TEST_P(CopyTextureTestES3, ES3UnormFormats)
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glUniform1i(glGetUniformLocation(program.get(), "tex"), 0);
+        glUniform1i(glGetUniformLocation(program, "tex"), 0);
 
         drawQuad(program, "position", 0.5f, 1.0f, true);
 
@@ -2253,7 +2253,7 @@ TEST_P(CopyTextureTestES3, ES3FloatFormats)
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glUniform1i(glGetUniformLocation(program.get(), "tex"), 0);
+        glUniform1i(glGetUniformLocation(program, "tex"), 0);
 
         drawQuad(program, "position", 0.5f, 1.0f, true);
 
@@ -2376,7 +2376,7 @@ TEST_P(CopyTextureTestES3, ES3UintFormats)
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glUniform1i(glGetUniformLocation(program.get(), "tex"), 0);
+        glUniform1i(glGetUniformLocation(program, "tex"), 0);
 
         drawQuad(program, "position", 0.5f, 1.0f, true);
         ASSERT_GL_NO_ERROR();
@@ -2486,7 +2486,7 @@ TEST_P(CopyTextureTestES3, CopySubTextureOffsetNonRenderableFloat)
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glUniform1i(glGetUniformLocation(program.get(), "tex"), 0);
+        glUniform1i(glGetUniformLocation(program, "tex"), 0);
 
         drawQuad(program, "position", 0.5f, 1.0f, true);
 

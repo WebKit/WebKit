@@ -8,10 +8,10 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/msl/AstHelpers.h"
 #include "compiler/translator/msl/DiscoverDependentFunctions.h"
 #include "compiler/translator/msl/IdGen.h"
-#include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/msl/MapSymbols.h"
 #include "compiler/translator/msl/Pipeline.h"
 #include "compiler/translator/msl/RewritePipelines.h"

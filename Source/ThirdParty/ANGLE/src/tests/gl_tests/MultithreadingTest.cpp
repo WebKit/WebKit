@@ -2674,7 +2674,7 @@ TEST_P(MultithreadingTestES3, RenderThenSampleDifferentContextPriorityUsingEGLIm
         // Create EGLImage.
         image = eglCreateImageKHR(
             dpy, ctx[0], EGL_GL_TEXTURE_2D_KHR,
-            reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(texture.get())), nullptr);
+            reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(texture)), nullptr);
         ASSERT_EGL_SUCCESS();
 
         // Notify second thread that draw is finished.

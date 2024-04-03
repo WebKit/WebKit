@@ -17,11 +17,11 @@
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/DeviceVk.h"
 #include "libANGLE/renderer/vulkan/ImageVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
 #include "libANGLE/renderer/vulkan/SyncVk.h"
 #include "libANGLE/renderer/vulkan/TextureVk.h"
 #include "libANGLE/renderer/vulkan/VkImageImageSiblingVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -137,7 +137,7 @@ angle::Result ShareGroupVk::updateContextsPriority(ContextVk *contextVk,
 
     {
         vk::ScopedQueueSerialIndex index;
-        RendererVk *renderer = contextVk->getRenderer();
+        vk::Renderer *renderer = contextVk->getRenderer();
         ANGLE_TRY(renderer->allocateScopedQueueSerialIndex(&index));
         ANGLE_TRY(renderer->submitPriorityDependency(contextVk, protectionTypes, mContextsPriority,
                                                      newPriority, index.get()));
@@ -157,7 +157,7 @@ angle::Result ShareGroupVk::updateContextsPriority(ContextVk *contextVk,
 
 void ShareGroupVk::onDestroy(const egl::Display *display)
 {
-    RendererVk *renderer = vk::GetImpl(display)->getRenderer();
+    vk::Renderer *renderer = vk::GetImpl(display)->getRenderer();
 
     for (std::unique_ptr<vk::BufferPool> &pool : mDefaultBufferPools)
     {
@@ -165,7 +165,7 @@ void ShareGroupVk::onDestroy(const egl::Display *display)
         {
             // If any context uses display texture share group, it is expected that a
             // BufferBlock may still in used by textures that outlived ShareGroup.  The
-            // non-empty BufferBlock will be put into RendererVk's orphan list instead.
+            // non-empty BufferBlock will be put into Renderer's orphan list instead.
             pool->destroy(renderer, mState.hasAnyContextWithDisplayTextureShareGroup());
         }
     }
@@ -281,7 +281,7 @@ void TextureUpload::onTextureRelease(TextureVk *textureVk)
     }
 }
 
-vk::BufferPool *ShareGroupVk::getDefaultBufferPool(RendererVk *renderer,
+vk::BufferPool *ShareGroupVk::getDefaultBufferPool(vk::Renderer *renderer,
                                                    VkDeviceSize size,
                                                    uint32_t memoryTypeIndex,
                                                    BufferUsageType usageType)
@@ -304,7 +304,7 @@ vk::BufferPool *ShareGroupVk::getDefaultBufferPool(RendererVk *renderer,
     return mDefaultBufferPools[memoryTypeIndex].get();
 }
 
-void ShareGroupVk::pruneDefaultBufferPools(RendererVk *renderer)
+void ShareGroupVk::pruneDefaultBufferPools(vk::Renderer *renderer)
 {
     mLastPruneTime = angle::GetCurrentSystemTime();
 
@@ -329,7 +329,7 @@ void ShareGroupVk::pruneDefaultBufferPools(RendererVk *renderer)
 #endif
 }
 
-bool ShareGroupVk::isDueForBufferPoolPrune(RendererVk *renderer)
+bool ShareGroupVk::isDueForBufferPoolPrune(vk::Renderer *renderer)
 {
     // Ensure we periodically prune to maintain the heuristic information
     double timeElapsed = angle::GetCurrentSystemTime() - mLastPruneTime;

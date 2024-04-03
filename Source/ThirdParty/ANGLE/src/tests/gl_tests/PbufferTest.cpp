@@ -302,7 +302,6 @@ TEST_P(PbufferTest, BindTexImageOverwrite)
     // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
     // textures.
     ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
-
     EGLWindow *window = getEGLWindow();
     window->makeCurrent();
 
@@ -532,7 +531,6 @@ TEST_P(PbufferTest, BindTexImageOverwriteReleasesOrphanedPbuffer)
     // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
     // textures.
     ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
-
     EGLWindow *window = getEGLWindow();
     window->makeCurrent();
 

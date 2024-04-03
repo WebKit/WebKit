@@ -11,8 +11,8 @@
 #include "WindowSurfaceVkHeadless.h"
 
 #include "libANGLE/Display.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {

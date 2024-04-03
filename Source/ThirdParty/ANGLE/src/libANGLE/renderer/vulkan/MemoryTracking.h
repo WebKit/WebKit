@@ -20,10 +20,10 @@
 
 namespace rx
 {
-class RendererVk;
-
 namespace vk
 {
+class Renderer;
+
 // Used to designate memory allocation type for tracking purposes.
 enum class MemoryAllocationType
 {
@@ -123,11 +123,11 @@ class MemoryReport final : angle::NonCopyable
 };
 }  // namespace vk
 
-// Memory tracker for allocations and deallocations, which is used in RendererVk.
+// Memory tracker for allocations and deallocations, which is used in vk::Renderer.
 class MemoryAllocationTracker : angle::NonCopyable
 {
   public:
-    MemoryAllocationTracker(RendererVk *renderer);
+    MemoryAllocationTracker(vk::Renderer *renderer);
     void initMemoryTrackers();
     void onDeviceInit();
     void onDestroy();
@@ -172,7 +172,7 @@ class MemoryAllocationTracker : angle::NonCopyable
 
   private:
     // Pointer to parent renderer object.
-    RendererVk *const mRenderer;
+    vk::Renderer *const mRenderer;
 
     // For tracking the overall memory allocation sizes and counts per memory allocation type.
     std::array<std::atomic<VkDeviceSize>, vk::kMemoryAllocationTypeCount>
