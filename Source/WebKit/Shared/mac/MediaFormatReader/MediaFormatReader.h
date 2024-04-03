@@ -56,7 +56,7 @@ public:
     static RefPtr<MediaFormatReader> create(Allocator&&);
 
     void startOnMainThread(MTPluginByteSourceRef);
-    const MediaTime& duration() const { return m_duration; }
+    MediaTime duration() const;
 
     const Logger& logger() const { ASSERT(m_logger); return *m_logger.get(); }
     const Logger* loggerPtr() const { return m_logger.get(); }
@@ -90,7 +90,7 @@ private:
 
     RetainPtr<MTPluginByteSourceRef> m_byteSource WTF_GUARDED_BY_LOCK(m_parseTracksLock);
     Condition m_parseTracksCondition;
-    Lock m_parseTracksLock;
+    mutable Lock m_parseTracksLock;
     MediaTime m_duration WTF_GUARDED_BY_LOCK(m_parseTracksLock);
     std::optional<OSStatus> m_parseTracksStatus WTF_GUARDED_BY_LOCK(m_parseTracksLock);
     Vector<Ref<MediaTrackReader>> m_trackReaders WTF_GUARDED_BY_LOCK(m_parseTracksLock);
