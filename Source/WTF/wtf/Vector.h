@@ -959,10 +959,15 @@ public:
 
     bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
+#if !USE(BUN_JSC_ADDITIONS)
 private:
+#endif
     void unsafeAppendWithoutCapacityCheck(value_type&& value) { unsafeAppendWithoutCapacityCheck<value_type>(std::forward<value_type>(value)); }
     template<typename U> void unsafeAppendWithoutCapacityCheck(U&&);
     template<typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
+#if USE(BUN_JSC_ADDITIONS)
+private:
+#endif
 
     template<FailureAction> bool growImpl(size_t);
     template<FailureAction> bool reserveCapacity(size_t newCapacity);
