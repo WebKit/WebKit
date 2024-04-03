@@ -368,10 +368,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         textField.value = isEditingName ? this._property.name : this._property.rawValue;
     }
 
-    spreadsheetTextFieldInitialCompletionIndex(textField, completions)
+    spreadsheetTextFieldInitialCompletionIndex(textField, completions, completionPrefix)
     {
         if (textField === this._nameTextField && WI.settings.experimentalCSSSortPropertyNameAutocompletionByUsage.value)
-            return WI.CSSProperty.indexOfCompletionForMostUsedPropertyName(completions);
+            return WI.CSSProperty.indexOfCompletionForMostUsedPropertyName(completions, completionPrefix);
         return 0;
     }
 

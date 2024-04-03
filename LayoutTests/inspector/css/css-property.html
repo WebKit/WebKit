@@ -56,6 +56,41 @@ function test() {
     });
 
     suite.addTestCase({
+        name: "CSSProperty.ExactMatchCompletion",
+        description: "Ensure that exact match completions outweigh higher-count completion candidates.",
+        async test() {
+            let fakeCSSProperties = [
+                {
+                    name: "fake-property-with-high-usage-count",
+                    count: 999,
+                    rank: 1,
+                },
+                {
+                    name: "fake-property",
+                    count: 0,
+                    rank: 1,
+                }
+            ];
+
+            let completions = [];
+            for ({name, count, rank} of fakeCSSProperties) {
+                WI.CSSProperty._cachedNameCounts[name] = count;
+
+                let completion = new WI.QueryResult(name, ["not reached"]);
+                completion.rankForTesting = rank;
+                completions.push(completion);
+            }
+
+
+            InspectorTest.expectEqual(1, WI.CSSProperty.indexOfCompletionForMostUsedPropertyName(completions, "fake-property"), "Exact match outweighs most used property name");
+
+            for ({name} of fakeCSSProperties) {
+                delete WI.CSSProperty._cachedNameCounts[name];
+            }
+        }
+    });
+
+    suite.addTestCase({
         name: "CSSProperty.prototype.get valid",
         description: "Ensure valid, invalid, and internal-only have correct valid state.",
         test(resolve, reject) {
