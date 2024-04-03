@@ -211,6 +211,9 @@ void MediaSessionManagerCocoa::updateSessionState()
     } else
         m_delayCategoryChangeTimer.stop();
 
+    if (mode == AudioSession::Mode::Default && category == AudioSession::CategoryType::PlayAndRecord)
+        mode = AudioSession::Mode::VideoChat;
+
     RouteSharingPolicy policy = (category == AudioSession::CategoryType::MediaPlayback) ? RouteSharingPolicy::LongFormAudio : RouteSharingPolicy::Default;
 
     ALWAYS_LOG(LOGIDENTIFIER, "setting category = ", category, ", mode = ", mode, ", policy = ", policy, ", previous category = ", m_previousCategory);
