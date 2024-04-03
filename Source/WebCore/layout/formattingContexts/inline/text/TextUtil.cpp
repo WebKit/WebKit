@@ -238,6 +238,11 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     ASSERT(length);
     auto text = inlineTextBox.content();
 
+    if (UNLIKELY(!textWidth)) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     if (inlineTextBox.canUseSimpleFontCodePath()) {
 
         auto findBreakingPositionInSimpleText = [&] {
