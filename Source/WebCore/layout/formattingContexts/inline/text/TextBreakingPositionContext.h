@@ -39,6 +39,7 @@ struct TextBreakingPositionContext {
     LineBreak lineBreak { LineBreak::Normal };
     WordBreak wordBreak { WordBreak::Normal };
     NBSPMode nbspMode { NBSPMode::Normal };
+    AtomString locale;
 
     bool isHashTableDeletedValue { false };
 
@@ -54,6 +55,7 @@ inline TextBreakingPositionContext::TextBreakingPositionContext(const RenderStyl
     , lineBreak(style.lineBreak())
     , wordBreak(style.wordBreak())
     , nbspMode(style.nbspMode())
+    , locale(style.computedLocale())
 {
 }
 
