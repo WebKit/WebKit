@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,33 +26,27 @@
 #include "config.h"
 #include "WebAutomationSession.h"
 
-#if USE(CAIRO)
+#if USE(SKIA)
 
 #include "ViewSnapshotStore.h"
 #include <WebCore/NotImplemented.h>
-#include <WebCore/RefPtrCairo.h>
-#include <cairo.h>
+#include <skia/core/SkData.h>
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/encode/SkPngEncoder.h>
+IGNORE_CLANG_WARNINGS_END
+#include <span>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
+static std::optional<String> base64EncodedPNGData(SkImage& image)
 {
-    if (!surface)
+    auto data = SkPngEncoder::Encode(nullptr, &image, { });
+    if (!data)
         return std::nullopt;
 
-    Vector<unsigned char> pngData;
-    cairo_surface_write_to_png_stream(surface, [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
-        auto* pngData = static_cast<Vector<unsigned char>*>(userData);
-        pngData->append(std::span { data, length });
-        return CAIRO_STATUS_SUCCESS;
-    }, &pngData);
-
-    if (pngData.isEmpty())
-        return std::nullopt;
-
-    return base64EncodeToString(pngData);
+    return base64EncodeToString(std::span<const uint8_t>(data->bytes(), data->size()));
 }
 
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& handle)
@@ -61,8 +55,8 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(Shar
     if (!bitmap)
         return std::nullopt;
 
-    auto surface = bitmap->createCairoSurface();
-    return base64EncodedPNGData(surface.get());
+    auto image = bitmap->createPlatformImage();
+    return base64EncodedPNGData(*image.get());
 }
 
 #if !PLATFORM(GTK)
@@ -75,4 +69,4 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
 
 } // namespace WebKit
 
-#endif // USE(CAIRO)
+#endif // USE(SKIA)

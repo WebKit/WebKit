@@ -229,8 +229,8 @@ UIProcess/API/gtk/WebKitWebViewGtk4.cpp @no-unify
 UIProcess/API/soup/HTTPCookieStoreSoup.cpp
 
 UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
-
-UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
+UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp @no-unify
+UIProcess/Automation/skia/WebAutomationSessionSkia.cpp
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
